@@ -44,7 +44,7 @@ public class IBatisRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // now lets poll that the account has been inserted
-        Object answer = template.sendBody("ibatis:selectAllAccounts", null);
+        Object answer = template.sendBody("ibatis:selectAllAccounts??statementType=QueryForList", null);
         List body = assertIsInstanceOf(List.class, answer);
 
         assertEquals("Wrong size: " + body, 1, body.size());
@@ -61,9 +61,9 @@ public class IBatisRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 //Delaying the query so we will not get the "java.sql.SQLException: Table not found in statement" on the slower box
-                from("timer://pollTheDatabase?delay=2000").to("ibatis:selectAllAccounts").to("mock:results");
+                from("timer://pollTheDatabase?delay=2000").to("ibatis:selectAllAccounts?statementType=QueryForList").to("mock:results");
 
-                from("direct:start").to("ibatis:insertAccount");
+                from("direct:start").to("ibatis:insertAccount?statementType=Insert");
             }
         };
     }

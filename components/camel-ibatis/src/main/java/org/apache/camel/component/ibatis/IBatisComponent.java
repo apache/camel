@@ -78,7 +78,9 @@ public class IBatisComponent extends DefaultComponent {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new IBatisEndpoint(uri, this, remaining);
+        IBatisEndpoint answer = new IBatisEndpoint(uri, this, remaining);
+        setProperties(answer, parameters);
+        return answer;
     }
 
     protected SqlMapClient createSqlMapClient() throws IOException {

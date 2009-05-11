@@ -20,51 +20,8 @@ import java.sql.Connection;
 import java.sql.Statement;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * @version $Revision$
- */
-public class IBatisPollingDelayRouteTest extends ContextTestSupport {
-
-    public void testSendAccountBean() throws Exception {
-        createTestData();
-
-        long start = System.currentTimeMillis();
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-
-        assertMockEndpointsSatisfied();
-        long delta = System.currentTimeMillis() - start;
-
-        assertTrue("Should not take that long: " + delta, delta < 5000);
-    }
-
-    private void createTestData() {
-        // insert test data
-        Account account = new Account();
-        account.setId(123);
-        account.setFirstName("James");
-        account.setLastName("Strachan");
-        account.setEmailAddress("TryGuessing@gmail.com");
-        template.sendBody("direct:start", account);
-    }
-
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                // START SNIPPET: e1
-                // run this timer every 2nd second, that will select data from the database and send it to the mock endpiont
-                from("timer://pollTheDatabase?delay=2000").to("ibatis:selectAllAccounts?statementType=QueryForList").to("mock:result");
-                // END SNIPPET: e1
-
-                from("direct:start").to("ibatis:insertAccount?statementType=Insert");
-            }
-        };
-    }
+public class IBatisTestSupport extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -75,6 +32,21 @@ public class IBatisPollingDelayRouteTest extends ContextTestSupport {
         Statement statement = connection.createStatement();
         statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255)  )");
         connection.close();
+
+        Account account = new Account();
+        account.setId(123);
+        account.setFirstName("James");
+        account.setLastName("Strachan");
+        account.setEmailAddress("TryGuessing@gmail.com");
+        template.sendBody("ibatis:insertAccount?statementType=Insert", account);
+
+        account = new Account();
+        account.setId(456);
+        account.setFirstName("Claus");
+        account.setLastName("Ibsen");
+        account.setEmailAddress("Noname@gmail.com");
+
+        template.sendBody("ibatis:insertAccount?statementType=Insert", account);
     }
 
     @Override
@@ -88,8 +60,7 @@ public class IBatisPollingDelayRouteTest extends ContextTestSupport {
     }
 
     private Connection createConnection() throws Exception {
-        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:selectAllAccounts", IBatisEndpoint.class);
+        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
         return endpoint.getSqlClient().getDataSource().getConnection();
     }
-
 }

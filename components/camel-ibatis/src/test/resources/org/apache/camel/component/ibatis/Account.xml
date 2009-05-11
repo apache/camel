@@ -37,7 +37,7 @@
 
   <!-- Select with no parameters using the result map for Account class. -->
   <select id="selectAllAccounts" resultMap="AccountResult">
-    select * from ACCOUNT
+    select * from ACCOUNT order by ACC_ID
   </select>
 
   <!-- A simpler select example without the result map.  Note the
@@ -79,5 +79,9 @@
   <delete id="deleteAccountById" parameterClass="int">
     delete from ACCOUNT where ACC_ID = #id#
   </delete>
+
+  <select id="count" resultClass="int">
+       select count(*) from ACCOUNT
+  </select>
 
 </sqlMap>

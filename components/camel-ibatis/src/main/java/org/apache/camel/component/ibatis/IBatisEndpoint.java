@@ -21,11 +21,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
-
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * An <a href="http://activemq.apache.org/camel/ibatis.html>iBatis Endpoint</a>
@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultPollingEndpoint;
  */
 public class IBatisEndpoint extends DefaultPollingEndpoint {
     private final String entityName;
+    private StatementType statementType;
 
     public IBatisEndpoint(String endpointUri, IBatisComponent component, String entityName) {
         super(endpointUri, component);
@@ -56,6 +57,7 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
+        ObjectHelper.notNull(statementType, "statementType", this);
         return new IBatisProducer(this);
     }
 
@@ -80,6 +82,13 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
         List list = getSqlClient().queryForList(name);
         message.setBody(list);
         message.setHeader("org.apache.camel.ibatis.queryName", name);
+    }
 
+    public StatementType getStatementType() {
+        return statementType;
+    }
+
+    public void setStatementType(StatementType statementType) {
+        this.statementType = statementType;
     }
 }
