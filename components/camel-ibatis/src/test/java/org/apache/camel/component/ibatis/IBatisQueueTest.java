@@ -50,7 +50,7 @@ public class IBatisQueueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         
         // now lets poll that the account has been inserted
-        List body = template.requestBody("ibatis:selectProcessedAccounts", null, List.class);
+        List body = template.requestBody("ibatis:selectProcessedAccounts?statementType=QueryForList", null, List.class);
 
         assertEquals("Wrong size: " + body, 2, body.size());
         Account actual = assertIsInstanceOf(Account.class, body.get(0));
@@ -58,7 +58,7 @@ public class IBatisQueueTest extends ContextTestSupport {
         assertEquals("Account.getFirstName()", "Bob", actual.getFirstName());
         assertEquals("Account.getLastName()", "Denver", actual.getLastName());
 
-        body = template.requestBody("ibatis:selectUnprocessedAccounts", null, List.class);
+        body = template.requestBody("ibatis:selectUnprocessedAccounts?statementType=QueryForList", null, List.class);
         assertEquals("Wrong size: " + body, 0, body.size());
     }
     
@@ -70,7 +70,7 @@ public class IBatisQueueTest extends ContextTestSupport {
                 from("ibatis:selectUnprocessedAccounts?consumer.onConsume=consumeAccount").to("mock:results");
                 // END SNIPPET: e1
 
-                from("direct:start").to("ibatis:insertAccount");
+                from("direct:start").to("ibatis:insertAccount?statementType=Insert");
             }
         };
     }

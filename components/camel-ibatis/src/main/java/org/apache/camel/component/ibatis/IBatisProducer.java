@@ -55,10 +55,8 @@ public class IBatisProducer extends DefaultProducer {
             doUpdate(exchange); break;
         case Delete:
             doDelete(exchange); break;
-        case Default:
-            doDefault(exchange); break;
         default:
-            doDefault(exchange); break;
+            throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
         }
     }
 

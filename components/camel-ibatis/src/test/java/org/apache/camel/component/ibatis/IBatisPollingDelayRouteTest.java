@@ -58,10 +58,10 @@ public class IBatisPollingDelayRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // run this timer every 2nd second, that will select data from the database and send it to the mock endpiont
-                from("timer://pollTheDatabase?delay=2000").to("ibatis:selectAllAccounts").to("mock:result");
+                from("timer://pollTheDatabase?delay=2000").to("ibatis:selectAllAccounts?statementType=QueryForList").to("mock:result");
                 // END SNIPPET: e1
 
-                from("direct:start").to("ibatis:insertAccount");
+                from("direct:start").to("ibatis:insertAccount?statementType=Insert");
             }
         };
     }

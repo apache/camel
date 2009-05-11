@@ -38,7 +38,7 @@ public class IBatisTestSupport extends ContextTestSupport {
         account.setFirstName("James");
         account.setLastName("Strachan");
         account.setEmailAddress("TryGuessing@gmail.com");
-        template.sendBody("ibatis:insertAccount", account);
+        template.sendBody("ibatis:insertAccount?statementType=Insert", account);
 
         account = new Account();
         account.setId(456);
@@ -46,7 +46,7 @@ public class IBatisTestSupport extends ContextTestSupport {
         account.setLastName("Ibsen");
         account.setEmailAddress("Noname@gmail.com");
 
-        template.sendBody("ibatis:insertAccount", account);
+        template.sendBody("ibatis:insertAccount?statementType=Insert", account);
     }
 
     @Override

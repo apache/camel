@@ -16,12 +16,25 @@
  */
 package org.apache.camel.component.ibatis;
 
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+
 /**
- * Statement types to instruct which iBatis operation to use.
- *
  * @version $Revision$
  */
-public enum StatementType {
+public class IBatisUnknownStatementTypeTest extends ContextTestSupport {
 
-    QueryForObject, QueryForList, Insert, Update, Delete
+    public void testStatementTypeNotSet() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("ibatis:selectAllAccounts");
+                }
+            });
+            fail("Should have thrown an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("statementType must be specified on: Endpoint[ibatis:selectAllAccounts]", e.getMessage());
+        }
+    }
 }

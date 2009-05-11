@@ -45,7 +45,7 @@ public class IBatisRouteEmptyResultSetTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("ibatis:selectAllAccounts?consumer.useIterator=false&consumer.routeEmptyResultSet=true").to("mock:results");
 
-                from("direct:start").to("ibatis:insertAccount");
+                from("direct:start").to("ibatis:insertAccount?statementType=Insert");
             }
         };
     }

@@ -24,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.ibatis.strategy.DefaultIBatisProcessingStategy;
 import org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * An <a href="http://camel.apache.org/ibatis.html>iBatis Endpoint</a>
@@ -35,7 +36,7 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     private IBatisProcessingStrategy strategy;
     private boolean useTransactions;
     private String statement;
-    private StatementType statementType = StatementType.Default;
+    private StatementType statementType;
 
     public IBatisEndpoint() {
     }
@@ -56,6 +57,7 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
+        ObjectHelper.notNull(statementType, "statementType", this);
         return new IBatisProducer(this);
     }
 
