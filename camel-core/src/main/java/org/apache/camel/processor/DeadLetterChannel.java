@@ -47,27 +47,26 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
     // or not. Also consider MEP as InOut does not work with async then as the original caller thread
     // is expecting a reply in the sync thread.
 
-    // TODO: DLQ should handle by default, so added option to set global predicate on DLC
-
     // we can use a single shared static timer for async redeliveries
     private final Processor deadLetter;
     private final String deadLetterUri;
     private final Processor output;
     private final Processor redeliveryProcessor;
-    private RedeliveryPolicy redeliveryPolicy;
+    private final RedeliveryPolicy redeliveryPolicy;
+    private final Predicate handledPolicy;
     private Logger logger;
 
     private class RedeliveryData {
         int redeliveryCounter;
         long redeliveryDelay;
         boolean sync = true;
-        Predicate handledPredicate;
         Predicate retryUntilPredicate;
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
         Processor deadLetterQueue = deadLetter;
         Processor onRedeliveryProcessor = redeliveryProcessor;
+        Predicate handledPredicate = handledPolicy;
     }
     
     /**
@@ -80,15 +79,18 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
      * @param redeliveryPolicy          policy for redelivery
      * @param logger                    logger to use for logging failures and redelivery attempts
      * @param exceptionPolicyStrategy   strategy for onException handling
+     * @param handledPolicy             policy for handling failed exception that are moved to the dead letter queue
      */
     public DeadLetterChannel(Processor output, Processor deadLetter, String deadLetterUri, Processor redeliveryProcessor,
-                             RedeliveryPolicy redeliveryPolicy, Logger logger, ExceptionPolicyStrategy exceptionPolicyStrategy) {
+                             RedeliveryPolicy redeliveryPolicy, Logger logger, ExceptionPolicyStrategy exceptionPolicyStrategy,
+                             Predicate handledPolicy) {
         this.output = output;
         this.deadLetter = deadLetter;
         this.deadLetterUri = deadLetterUri;
         this.redeliveryProcessor = redeliveryProcessor;
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
+        this.handledPolicy = handledPolicy;
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
@@ -200,13 +202,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
 
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
-    }
-
-    /**
-     * Sets the redelivery policy
-     */
-    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
     }
 
     public Logger getLogger() {

@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.ErrorHandlerSupport;
@@ -31,6 +32,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * A builder of a <a
@@ -47,6 +49,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private Processor failureProcessor;
     private Endpoint deadLetter;
     private String deadLetterUri;
+    private Predicate handledPolicy;
 
     /**
      * Creates a default DeadLetterChannel with a default endpoint
@@ -74,7 +77,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
+        DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery,
+                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy());
         // must enable stream cache as DeadLetterChannel can do redeliveries and
         // thus it needs to be able to read the stream again
         configure(answer);
@@ -144,6 +148,39 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public DeadLetterChannelBuilder logStackTrace(boolean logStackTrace) {
         getRedeliveryPolicy().setLogStackTrace(logStackTrace);
+        return this;
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  handled or not
+     * @return the builder
+     */
+    public DeadLetterChannelBuilder handled(boolean handled) {
+        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
+        return handled(expression);
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  predicate that determines true or false
+     * @return the builder
+     */
+    public DeadLetterChannelBuilder handled(Predicate handled) {
+        this.setHandledPolicy(handled);
+        return this;
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  expression that determines true or false
+     * @return the builder
+     */
+    public DeadLetterChannelBuilder handled(Expression handled) {
+        this.setHandledPolicy(toPredicate(handled));
         return this;
     }
 
@@ -226,6 +263,10 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return failureProcessor;
     }
 
+    public void setFailureProcessor(Processor failureProcessor) {
+        this.failureProcessor = failureProcessor;
+    }
+
     public String getDeadLetterUri() {
         return deadLetterUri;
     }
@@ -281,6 +322,21 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public void setOnRedelivery(Processor onRedelivery) {
         this.onRedelivery = onRedelivery;
+    }
+
+    public Predicate getHandledPolicy() {
+        return handledPolicy;
+    }
+
+    public void setHandledPolicy(Predicate handled) {
+        this.handledPolicy = handled;
+    }
+
+    /**
+     * Sets the handled using a boolean and thus easier to use for Spring XML configuration as well
+     */
+    public void setHandled(boolean handled) {
+        handled(handled);
     }
 
     @Override

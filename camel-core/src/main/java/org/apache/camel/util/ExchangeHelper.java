@@ -478,6 +478,11 @@ public final class ExchangeHelper {
         } catch (ExecutionException e) {
             // execution failed due to an exception so rethrow the cause
             throw ObjectHelper.wrapCamelExecutionException(null, e.getCause());
+        } finally {
+            // its harmless to cancel if task is already completed
+            // and in any case we do not want to get hold of the task a 2nd time
+            // and its recommended to cancel according to Brian Goetz in his Java Concurrency in Practice book
+            future.cancel(true);
         }
     }
 
@@ -507,6 +512,11 @@ public final class ExchangeHelper {
         } catch (ExecutionException e) {
             // execution failed due to an exception so rethrow the cause
             throw ObjectHelper.wrapCamelExecutionException(null, e.getCause());
+        } finally {
+            // its harmless to cancel if task is already completed
+            // and in any case we do not want to get hold of the task a 2nd time
+            // and its recommended to cancel according to Brian Goetz in his Java Concurrency in Practice book
+            future.cancel(true);
         }
     }
 
