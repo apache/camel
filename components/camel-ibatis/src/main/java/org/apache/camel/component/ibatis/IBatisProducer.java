@@ -40,9 +40,6 @@ public class IBatisProducer extends DefaultProducer {
         this.statement = endpoint.getStatement();
     }
 
-    /**
-     * Calls insert on the SqlMapClient.
-     */
     public void process(Exchange exchange) throws Exception {
         switch (endpoint.getStatementType()) {
         case QueryForObject:
@@ -57,17 +54,6 @@ public class IBatisProducer extends DefaultProducer {
             doDelete(exchange); break;
         default:
             throw new IllegalArgumentException("Unsupported statementType: " + endpoint.getStatementType());
-        }
-    }
-
-    private void doDefault(Exchange exchange) throws Exception {
-        Object body = exchange.getIn().getBody();
-        if (ObjectHelper.isEmpty(body)) {
-            // must be a poll so lets do a query
-            doQueryForList(exchange);
-        } else {
-            // otherwise we insert
-            doInsert(exchange);
         }
     }
 
