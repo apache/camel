@@ -31,38 +31,63 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
 public class JmsInOutPipelineWithBeanTest extends ContextTestSupport {
 
     public void testA() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("activemq:testA").to("bean:dummyBean").to("activemq:a").to("activemq:b");
+
+                from("activemq:a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getOut().setBody(body + ",From A");
+                    }
+                });
+
+                from("activemq:b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getOut().setBody(body + ",From B");
+                    }
+                });
+            }
+        });
+        context.start();
+
         Object response = template.requestBody("activemq:testA", "Hello World");
         assertEquals("Reply", "Hello World,From Bean,From A,From B", response);
     }
 
     public void testB() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("activemq:testB").to("activemq:a").to("bean:dummyBean").to("activemq:b");
+
+                from("activemq:a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getOut().setBody(body + ",From A");
+                    }
+                });
+
+                from("activemq:b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getOut().setBody(body + ",From B");
+                    }
+                });
+            }
+        });
+        context.start();
+
         Object response = template.requestBody("activemq:testB", "Hello World");
         assertEquals("Reply", "Hello World,From A,From Bean,From B", response);
     }
 
     public void testC() throws Exception {
-        Object response = template.requestBody("activemq:testC", "Hello World");
-        assertEquals("Reply", "Hello World,From A,From B,From Bean", response);
-    }
-
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
-        return camelContext;
-    }
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("dummyBean", new MyDummyBean());
-        return reg;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("activemq:testA").to("bean:dummyBean").to("activemq:a").to("activemq:b");
-                from("activemq:testB").to("activemq:a").to("bean:dummyBean").to("activemq:b");
                 from("activemq:testC").to("activemq:a").to("activemq:b").to("bean:dummyBean");
 
                 from("activemq:a").process(new Processor() {
@@ -79,7 +104,23 @@ public class JmsInOutPipelineWithBeanTest extends ContextTestSupport {
                     }
                 });
             }
-        };
+        });
+        context.start();
+
+        Object response = template.requestBody("activemq:testC", "Hello World");
+        assertEquals("Reply", "Hello World,From A,From B,From Bean", response);
+    }
+
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
+        return camelContext;
+    }
+
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry reg = super.createRegistry();
+        reg.bind("dummyBean", new MyDummyBean());
+        return reg;
     }
 
     public static class MyDummyBean {
