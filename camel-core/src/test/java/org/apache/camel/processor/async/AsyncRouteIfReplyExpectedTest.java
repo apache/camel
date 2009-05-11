@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.WaitForTaskToComplete;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
