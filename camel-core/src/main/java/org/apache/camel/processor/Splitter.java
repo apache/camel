@@ -89,8 +89,12 @@ public class Splitter extends MulticastProcessor implements Processor {
                     public Object next() {
                         Object part = iterator.next();
                         Exchange newExchange = exchange.copy();
-                        Message in = newExchange.getIn();
-                        in.setBody(part);
+                        if (part instanceof Message) {
+                            newExchange.setIn((Message)part);
+                        } else {
+                            Message in = newExchange.getIn();
+                            in.setBody(part);
+                        }
                         return new ProcessorExchangePair(getProcessors().iterator().next(), newExchange);
                     }
 
@@ -115,8 +119,12 @@ public class Splitter extends MulticastProcessor implements Processor {
         while (iter.hasNext()) {
             Object part = iter.next();
             Exchange newExchange = exchange.copy();
-            Message in = newExchange.getIn();
-            in.setBody(part);
+            if (part instanceof Message) {
+                newExchange.setIn((Message)part);
+            } else {
+                Message in = newExchange.getIn();
+                in.setBody(part);
+            }
             result.add(new ProcessorExchangePair(getProcessors().iterator().next(), newExchange));
         }
         return result;
