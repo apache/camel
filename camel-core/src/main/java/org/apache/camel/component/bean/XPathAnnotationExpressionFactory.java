@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -24,6 +25,7 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.NamespacePrefix;
 import org.apache.camel.language.XPath;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Factory for the XPath expression annotations.
@@ -36,15 +38,23 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
         String xpath = getExpressionFromAnnotation(annotation);
         XPathBuilder builder = XPathBuilder.xpath(xpath);
-        if (annotation instanceof XPath) {
-            XPath xpathAnnotation = (XPath) annotation;
-            NamespacePrefix[] namespaces = xpathAnnotation.namespaces();
-            if (namespaces != null) {
-                for (NamespacePrefix namespacePrefix : namespaces) {
-                    builder = builder.namespace(namespacePrefix.prefix(), namespacePrefix.uri());
-                }
+        NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
+        if (namespaces != null) {
+            for (NamespacePrefix namespacePrefix : namespaces) {
+                builder = builder.namespace(namespacePrefix.prefix(), namespacePrefix.uri());
             }
+
         }
         return builder;
+    }
+    
+    protected NamespacePrefix[] getExpressionNameSpacePrefix(Annotation annotation) {
+        try {
+            Method method = annotation.getClass().getMethod("namespaces");
+            Object value = ObjectHelper.invokeMethod(method, annotation);
+            return (NamespacePrefix[])value;
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Cannot determine the annotation: " + annotation + " as it does not have an namespaces() method");
+        }        
     }
 }
