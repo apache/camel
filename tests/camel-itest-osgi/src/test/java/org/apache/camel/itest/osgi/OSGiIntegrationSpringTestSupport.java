@@ -52,13 +52,17 @@ public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTe
     }
 
     @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        if (applicationContext != null) {
-            // Try to fix the test error on Hudson
-            if (applicationContext.isActive()) {
-                applicationContext.destroy();
+    public void tearDown() {
+        try {
+            super.tearDown();
+            if (applicationContext != null) {                
+                if (applicationContext.isActive()) {
+                    applicationContext.destroy();
+                }
+                applicationContext = null;
             }
+        } catch (Exception exception) {
+            // Don't throw the exception in the tearDown method            
         }
     }
     
