@@ -121,6 +121,7 @@ public class SplitterPojoTest extends ContextTestSupport {
             // to access the message header and body at same time, 
             // then create the message that we want, splitter will
             // take care rest of them.
+            // *NOTE* this feature requires Camel version >= 1.6.1
             List<Message> answer = new ArrayList<Message>();
             String[] parts = header.split(",");
             for (String part : parts) {

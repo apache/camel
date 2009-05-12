@@ -16,18 +16,22 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * @version $Revision$
- */
-public class TestBean {
-    private String subject;
+import org.apache.camel.component.bean.XPathAnnotationExpressionFactory;
+import org.apache.camel.language.LanguageAnnotation;
+import org.apache.camel.language.NamespacePrefix;
 
-    public void onMethod(@MyXPath("/*/@subject")String subject) {
-        this.subject = subject;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@LanguageAnnotation(language = "xpath", factory = XPathAnnotationExpressionFactory.class)
+public @interface MyXPath {
+    String value();
 
-    public String getSubject() {
-        return subject;
-    }
+    NamespacePrefix[] namespaces() default {
+    @NamespacePrefix(prefix = "n1", uri = "http://example.org/ns1"),
+    @NamespacePrefix(prefix = "n2", uri = "http://example.org/ns2")};
 }
