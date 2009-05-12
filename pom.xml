@@ -118,21 +118,21 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>camel-dev@activemq.apache.org</subscribe>
-      <unsubscribe>camel-dev@activemq.apache.org</unsubscribe>
-      <post>camel-dev@activemq.apache.org</post>
+      <subscribe>dev@camel.apache.org</subscribe>
+      <unsubscribe>dev@camel.apache.org</unsubscribe>
+      <post>dev@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>User List</name>
-      <subscribe>camel-user@activemq.apache.org</subscribe>
-      <unsubscribe>camel-user@activemq.apache.org</unsubscribe>
-      <post>camel-user@activemq.apache.org</post>
+      <subscribe>user@camel.apache.org</subscribe>
+      <unsubscribe>user@camel.apache.org</unsubscribe>
+      <post>user@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>Commits List</name>
-      <subscribe>camel-commits@activemq.apache.org</subscribe>
-      <unsubscribe>camel-commits@activemq.apache.org</unsubscribe>
-      <post>camel-commits@activemq.apache.org</post>
+      <subscribe>commits@camel.apache.org</subscribe>
+      <unsubscribe>commits@camel.apache.org</unsubscribe>
+      <post>commits@camel.apache.org</post>
     </mailingList>
   </mailingLists>
 
@@ -183,9 +183,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/branches/camel-1.x</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/branches/camel-1.x</developerConnection>
-    <url>http://svn.apache.org/viewvc/activemq/camel/branches/camel-1.x</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-1.x</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-1.x</developerConnection>
+    <url>http://svn.apache.org/viewvc/camel/branches/camel-1.x</url>
   </scm>
 
   <dependencyManagement>
