@@ -1080,7 +1080,7 @@
                 <useReleaseProfile>false</useReleaseProfile>
                 <preparationGoals>clean install</preparationGoals>
                 <goals>deploy</goals>
-                <arguments>-Prelease,deploy</arguments>
+                <arguments>-Prelease,deploy,enable-schemagen,sourcecheck,hibernate-derby</arguments>
                 <autoVersionSubmodules>true</autoVersionSubmodules>
             </configuration>
         </plugin>
