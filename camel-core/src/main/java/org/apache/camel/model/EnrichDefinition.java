@@ -29,6 +29,8 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
+ * Represents an XML &lt;enrich/&gt; element
+ *
  * @see Enricher
  */
 @XmlRootElement(name = "enrich")

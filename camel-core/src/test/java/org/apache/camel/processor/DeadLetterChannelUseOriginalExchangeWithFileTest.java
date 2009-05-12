@@ -52,7 +52,7 @@ public class DeadLetterChannelUseOriginalExchangeWithFileTest extends ContextTes
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalExchange().handled(true));
 
-                from("file://target/originalexchange")
+                from("file://target/originalexchange?noop=true")
                     .transform(body().append(" World"))
                     .process(new MyThrowProcessor());
             }

@@ -76,21 +76,29 @@ public class WireTapProcessor extends SendProcessor {
                 throw new IllegalStateException("No producer, this processor has not been started!");
             }
         } else {
-            final Exchange wireTapExchange = configureExchange(exchange);
-
-            // use submit instead of execute to force it to use a new thread, execute might
-            // decide to use current thread, so we must submit a new task
-            // as we dont care for the response we dont hold the future object and wait for the result
-            getExecutorService().submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Processing wiretap: " + wireTapExchange);
-                    }
-                    producer.process(wireTapExchange);
-                    return null;
-                }
-            });
+            Exchange wireTapExchange = configureExchange(exchange);
+            procesWireTap(wireTapExchange);
         }
+    }
+
+    /**
+     * Wiretaps the exchange.
+     *
+     * @param exchange  the exchange to wire tap
+     */
+    protected void procesWireTap(final Exchange exchange) {
+        // use submit instead of execute to force it to use a new thread, execute might
+        // decide to use current thread, so we must submit a new task
+        // as we dont care for the response we dont hold the future object and wait for the result
+        getExecutorService().submit(new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Processing wiretap: " + exchange);
+                }
+                producer.process(exchange);
+                return exchange;
+            }
+        });
     }
 
     @Override

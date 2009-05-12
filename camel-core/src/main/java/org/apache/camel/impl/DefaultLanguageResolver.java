@@ -72,7 +72,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
             if (Language.class.isAssignableFrom(type)) {
                 return (Language)context.getInjector().newInstance(type);
             } else {
-                throw new IllegalArgumentException("Type is not a Language implementation. Found: " + type.getName());
+                throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a Language implementation. Found: " + type.getName());
             }
         } else {
             // no specific language found then try fallback
@@ -88,14 +88,14 @@ public class DefaultLanguageResolver implements LanguageResolver {
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
+            throw new IllegalArgumentException("Invalid URI, no LanguageResolver registered for scheme: " + name, e);
         }
         if (type != null) {
             if (LanguageResolver.class.isAssignableFrom(type)) {
                 LanguageResolver resolver = (LanguageResolver)context.getInjector().newInstance(type);
                 return resolver.resolveLanguage(name, context);
             } else {
-                throw new IllegalArgumentException("Type is not a LanguageResolver implementation. Found: " + type.getName());
+                throw new IllegalArgumentException("Resolving language: " + name + " detected type conflict: Not a LanguageResolver implementation. Found: " + type.getName());
             }
         }
         throw new NoSuchLanguageException(name);
