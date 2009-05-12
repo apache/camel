@@ -118,20 +118,20 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>dev@camel.apache.org</subscribe>
-      <unsubscribe>dev@camel.apache.org</unsubscribe>
+      <subscribe>dev-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@camel.apache.org</unsubscribe>
       <post>dev@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>User List</name>
-      <subscribe>user@camel.apache.org</subscribe>
-      <unsubscribe>user@camel.apache.org</unsubscribe>
+      <subscribe>user-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@camel.apache.org</unsubscribe>
       <post>user@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>Commits List</name>
-      <subscribe>commits@camel.apache.org</subscribe>
-      <unsubscribe>commits@camel.apache.org</unsubscribe>
+      <subscribe>commits-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@camel.apache.org</unsubscribe>
       <post>commits@camel.apache.org</post>
     </mailingList>
   </mailingLists>
