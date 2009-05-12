@@ -59,6 +59,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     public void testFile() throws Exception {
         assertExpression("${file:name}", file.getName());
         assertExpression("${file:name.noext}", "hello");
+        assertExpression("${file:ext}", "txt");
         assertExpression("${file:parent}", file.getParent());
         assertExpression("${file:path}", file.getPath());
         assertExpression("${file:absolute.path}", file.getAbsolutePath());

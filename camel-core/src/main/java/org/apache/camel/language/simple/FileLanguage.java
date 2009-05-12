@@ -59,6 +59,8 @@ public class FileLanguage extends AbstractSimpleLanguage {
                 return FileExpressionBuilder.fileNameExpression();
             } else if (ObjectHelper.equal(remainder, "name.noext")) {
                 return FileExpressionBuilder.fileNameNoExtensionExpression();
+            } else if (ObjectHelper.equal(remainder, "ext")) {
+                return FileExpressionBuilder.fileExtensionExpression();
             } else if (ObjectHelper.equal(remainder, "parent")) {
                 return FileExpressionBuilder.fileParentExpression();
             } else if (ObjectHelper.equal(remainder, "path")) {

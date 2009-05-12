@@ -72,6 +72,24 @@ public final class FileExpressionBuilder {
         };
     }
 
+    public static <E extends Exchange> Expression<E> fileExtensionExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                String name = exchange.getIn().getHeader("CamelFileName", String.class);
+                if (name != null) {
+                    return name.substring(name.lastIndexOf('.') + 1);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "file:ext";
+            }
+        };
+    }
+
     public static <E extends Exchange> Expression<E> fileParentExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
