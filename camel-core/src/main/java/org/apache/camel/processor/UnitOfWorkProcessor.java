@@ -41,7 +41,7 @@ public final class UnitOfWorkProcessor extends DelegateProcessor {
         if (exchange.getUnitOfWork() == null) {
             // If there is no existing UoW, then we should start one and
             // terminate it once processing is completed for the exchange.
-            final DefaultUnitOfWork uow = new DefaultUnitOfWork();
+            final DefaultUnitOfWork uow = new DefaultUnitOfWork(exchange);
             exchange.setUnitOfWork(uow);
             try {
                 uow.start();

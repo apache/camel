@@ -65,6 +65,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     private ExpressionSubElementDefinition handled;
     @XmlAttribute(name = "onRedeliveryRef", required = false)
     private String onRedeliveryRef;
+    @XmlAttribute(name = "useOriginalExchange", required = false)
+    private Boolean useOriginalExchangePolicy = Boolean.FALSE;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
@@ -359,6 +361,26 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     /**
+     * Will use the original input {@link org.apache.camel.Exchange} when an {@link org.apache.camel.Exchange} is moved to the dead letter queue.
+     * <p/>
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange} is doomed for failure.
+     * <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN body we use the original IN body instead. This allows
+     * you to store the original input in the dead letter queue instead of the inprogress snapshot of the IN body.
+     * For instance if you route transform the IN body during routing and then failed. With the original exchange
+     * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange} again as the IN body
+     * is the same as when Camel received it. So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
+     * <p/>
+     * By default this feature is off.
+     *
+     * @return the builder
+     */
+    public OnExceptionDefinition useOriginalExchange() {
+        setUseOriginalExchangePolicy(Boolean.TRUE);
+        return this;
+    }
+
+    /**
      * Sets a processor that should be processed <b>before</b> a redelivey attempt.
      * <p/>
      * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
@@ -465,6 +487,13 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         this.onRedeliveryRef = onRedeliveryRef;
     }
 
+    public Boolean getUseOriginalExchangePolicy() {
+        return useOriginalExchangePolicy;
+    }
+
+    public void setUseOriginalExchangePolicy(Boolean useOriginalExchangePolicy) {
+        this.useOriginalExchangePolicy = useOriginalExchangePolicy;
+    }
 
     // Implementation methods
     //-------------------------------------------------------------------------

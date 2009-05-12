@@ -38,8 +38,10 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private String id;
     private List<Synchronization> synchronizations;
     private List<ProcessorDefinition> routeList;
+    private Exchange originalExchange;
 
-    public DefaultUnitOfWork() {
+    public DefaultUnitOfWork(Exchange exchange) {
+        this.originalExchange = exchange.copy();
     }
 
     public void start() throws Exception {
@@ -54,6 +56,8 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         if (routeList != null) {
             routeList.clear();
         }
+
+        originalExchange = null;
     }
 
     public synchronized void addSynchronization(Synchronization synchronization) {
@@ -107,4 +111,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return Collections.unmodifiableList(routeList);
     }
 
+    public Exchange getOriginalExchange() {
+        return originalExchange;
+    }
 }

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
  * <a href="http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/transaction/
  * support/TransactionSynchronization.html">TransactionSynchronization</a>
  *
+ * @deprecated a new synchronization API is planned for Camel 2.0
  * @version $Revision$
  */
 public interface Synchronization {

@@ -50,6 +50,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private Endpoint deadLetter;
     private String deadLetterUri;
     private Predicate handledPolicy;
+    private boolean useOriginalExchange;
 
     /**
      * Creates a default DeadLetterChannel with a default endpoint
@@ -78,7 +79,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery,
-                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy());
+                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy(), isUseOriginalExchange());
         // must enable stream cache as DeadLetterChannel can do redeliveries and
         // thus it needs to be able to read the stream again
         configure(answer);
@@ -186,6 +187,9 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     /**
      * Sets the logger used for caught exceptions
+     *
+     * @param logger the logger
+     * @return the builder
      */
     public DeadLetterChannelBuilder logger(Logger logger) {
         setLogger(logger);
@@ -194,6 +198,9 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     /**
      * Sets the logging level of exceptions caught
+     *
+     * @param level the logging level
+     * @return the builder
      */
     public DeadLetterChannelBuilder loggingLevel(LoggingLevel level) {
         getLogger().setLevel(level);
@@ -202,6 +209,9 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     /**
      * Sets the log used for caught exceptions
+     *
+     * @param log the logger
+     * @return the builder
      */
     public DeadLetterChannelBuilder log(Log log) {
         getLogger().setLog(log);
@@ -210,6 +220,9 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     /**
      * Sets the log used for caught exceptions
+     *
+     * @param log the log name
+     * @return the builder
      */
     public DeadLetterChannelBuilder log(String log) {
         return log(LogFactory.getLog(log));
@@ -217,6 +230,9 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     /**
      * Sets the log used for caught exceptions
+     *
+     * @param log the log class
+     * @return the builder
      */
     public DeadLetterChannelBuilder log(Class log) {
         return log(LogFactory.getLog(log));
@@ -224,6 +240,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     /**
      * Sets the exception policy to use
+     *
+     * @return the builder
      */
     public DeadLetterChannelBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
         setExceptionPolicyStrategy(exceptionPolicyStrategy);
@@ -234,9 +252,31 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
      * Sets a processor that should be processed <b>before</b> a redelivey attempt.
      * <p/>
      * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     *
+     * @return the builder
      */
     public DeadLetterChannelBuilder onRedelivery(Processor processor) {
         setOnRedelivery(processor);
+        return this;
+    }
+
+    /**
+     * Will use the original input {@link Exchange} when an {@link Exchange} is moved to the dead letter queue.
+     * <p/>
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link Exchange} is doomed for failure.
+     * <br/>
+     * Instead of using the current inprogress {@link Exchange} IN body we use the original IN body instead. This allows
+     * you to store the original input in the dead letter queue instead of the inprogress snapshot of the IN body.
+     * For instance if you route transform the IN body during routing and then failed. With the original exchange
+     * store in the dead letter queue it might be easier to manually re submit the {@link Exchange} again as the IN body
+     * is the same as when Camel received it. So you should be able to send the {@link Exchange} to the same input.
+     * <p/>
+     * By default this feature is off.
+     *
+     * @return the builder
+     */
+    public DeadLetterChannelBuilder useOriginalExchange() {
+        setUseOriginalExchange(true);
         return this;
     }
 
@@ -337,6 +377,14 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
      */
     public void setHandled(boolean handled) {
         handled(handled);
+    }
+
+    public boolean isUseOriginalExchange() {
+        return useOriginalExchange;
+    }
+
+    public void setUseOriginalExchange(boolean useOriginalExchange) {
+        this.useOriginalExchange = useOriginalExchange;
     }
 
     @Override
