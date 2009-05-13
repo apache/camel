@@ -14,9 +14,4 @@ $! ------------------------------------------------------------------------
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------ !$
-Dear $headers.lastName$, $headers.firstName$
-
-Thanks for the order of $headers.item$.
-
-Regards Camel Riders Bookstore
-$body$
+Dear $headers.lastName$, $headers.firstName$! Thanks for the order of $headers.item$. Regards Camel Riders Bookstore $body$
