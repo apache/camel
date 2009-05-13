@@ -50,27 +50,11 @@ public class SpringIntegrationExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new SpringIntegrationExchange(getFromSpringIntegrationEndpoint());
-    }
-
-    @Override
-    public SpringIntegrationMessage getIn() {
-        return (SpringIntegrationMessage) super.getIn();
-    }
-
-    @Override
-    public SpringIntegrationMessage getOut() {
-        return (SpringIntegrationMessage) super.getOut();
-    }
-
-    @Override
-    public SpringIntegrationMessage getOut(boolean lazyCreate) {
-        return (SpringIntegrationMessage) super.getOut(lazyCreate);
-    }
-
-    @Override
-    public SpringIntegrationMessage getFault() {
-        return (SpringIntegrationMessage) super.getFault();
+        if (getFromSpringIntegrationEndpoint() != null) {
+            return new SpringIntegrationExchange(getFromSpringIntegrationEndpoint());
+        } else {
+            return new DefaultExchange(this.getContext(), this.getPattern());
+        }
     }
 
     @Override
