@@ -37,6 +37,7 @@ LoadBalanceDefinition
 LoopDefinition
 MarshalDefinition
 MulticastDefinition
+OnCompletionDefinition
 OnExceptionDefinition
 OptionalIdentifiedType
 OtherwiseDefinition

@@ -55,15 +55,20 @@ public interface Exchange {
     String FILE_PATH = "CamelFilePath";
     String FILE_PARENT = "CamelFileParent";
 
+    String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
+
     String LOOP_INDEX = "CamelLoopIndex";
     String LOOP_SIZE = "CamelLoopSize";
+
+    String MULTICAST_INDEX = "CamelMulticastIndex";
+
+    String ON_COMPLETION = "CamelOnCompletion";
 
     String ROUTE_STOP = "CamelRouteStop";
 
     String REDELIVERED = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
 
-    String MULTICAST_INDEX = "CamelMulticastIndex";
     String SPLIT_INDEX = "CamelSplitIndex";
     String SPLIT_SIZE = "CamelSplitSize";
 
@@ -74,8 +79,6 @@ public interface Exchange {
 
     String TRANSACTED = "CamelTransacted";
     String ROLLBACK_ONLY = "CamelRollbackOnly";
-
-    String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

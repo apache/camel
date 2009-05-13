@@ -1820,20 +1820,42 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Enriches an exchange with additional data obtained from a
      * <code>resourceUri</code>.
      * 
-     * @param resourceUri
-     *            URI of resource endpoint for obtaining additional data.
-     * @param aggregationStrategy
-     *            aggregation strategy to aggregate input data and additional
-     *            data.
-     * @return this processor type
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
     @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
         addOutput(new EnrichDefinition(aggregationStrategy, resourceUri));
-        return (Type)this;
+        return (Type) this;
     }
-    
+
+    /**
+     * Adds a onComplection {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
+     * a callback when the {@link org.apache.camel.Exchange} has finished being processed.
+     * The hook invoke callbacks for either onComplete or onFailure.
+     * <p/>
+     * Will by default always trigger when the {@link org.apache.camel.Exchange} is complete
+     * (either with success or failed).
+     * <br/>
+     * You can limit the callback to either onComplete or onFailure but invoking the nested
+     * builder method.
+     * <p/>
+     * For onFailure the caused exception is stored as a property on the {@link org.apache.camel.Exchange}
+     * with the key {@link org.apache.camel.Exchange#EXCEPTION_CAUGHT}.
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public OnCompletionDefinition onCompletion() {
+        OnCompletionDefinition answer = new OnCompletionDefinition();
+        popBlock();
+        addOutput(answer);
+        pushBlock(answer);
+        return answer;
+    }
+
     // DataFormat support
     // -------------------------------------------------------------------------
 
