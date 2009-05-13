@@ -34,6 +34,10 @@ import org.apache.camel.impl.DefaultComponent;
 public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDefaultsTest {
 
     public void testCustomEndpoint() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
@@ -46,6 +50,10 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     public void testManagedEndpoint() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
@@ -62,6 +70,10 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     public void testCounters() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
         CustomEndpoint resultEndpoint = resolveMandatoryEndpoint("custom:end", CustomEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");

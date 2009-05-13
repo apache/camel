@@ -33,6 +33,13 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
         "service:jmx:rmi:///jndi/rmi://localhost:2123/jmxrmi/camel";
     protected JMXConnector clientConnector;
 
+    protected boolean canRunOnThisPlatform() {
+        String os = System.getProperty("os.name");
+        // Does not work on AIX and the problem is hard to identify, could be issues not allowing to use a custom port
+        // java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.NameNotFoundException: jmxrmi/camel
+        return !os.toLowerCase().contains("aix");
+    }
+
     @Override
     protected void setUp() throws Exception {
         sleepForConnection = 3000;
