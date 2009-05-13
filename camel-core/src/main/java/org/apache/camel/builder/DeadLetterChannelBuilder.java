@@ -50,7 +50,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private Endpoint deadLetter;
     private String deadLetterUri;
     private Predicate handledPolicy;
-    private boolean useOriginalExchange;
+    private boolean useOriginalInBody;
 
     /**
      * Creates a default DeadLetterChannel with a default endpoint
@@ -79,7 +79,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery,
-                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy(), isUseOriginalExchange());
+                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy(), isUseOriginalInBody());
         // must enable stream cache as DeadLetterChannel can do redeliveries and
         // thus it needs to be able to read the stream again
         configure(answer);
@@ -261,7 +261,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Will use the original input {@link Exchange} when an {@link Exchange} is moved to the dead letter queue.
+     * Will use the original input body when an {@link Exchange} is moved to the dead letter queue.
      * <p/>
      * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link Exchange} is doomed for failure.
      * <br/>
@@ -275,8 +275,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
      *
      * @return the builder
      */
-    public DeadLetterChannelBuilder useOriginalExchange() {
-        setUseOriginalExchange(true);
+    public DeadLetterChannelBuilder useOriginalInBody() {
+        setUseOriginalInBody(true);
         return this;
     }
 
@@ -379,12 +379,12 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         handled(handled);
     }
 
-    public boolean isUseOriginalExchange() {
-        return useOriginalExchange;
+    public boolean isUseOriginalInBody() {
+        return useOriginalInBody;
     }
 
-    public void setUseOriginalExchange(boolean useOriginalExchange) {
-        this.useOriginalExchange = useOriginalExchange;
+    public void setUseOriginalInBody(boolean useOriginalInBody) {
+        this.useOriginalInBody = useOriginalInBody;
     }
 
     @Override

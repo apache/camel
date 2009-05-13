@@ -24,13 +24,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for useOriginalExchange option on DeadLetterChannel
+ * Unit test for useOriginalnBody option on DeadLetterChannel
  *
  * @version $Revision$
  */
-public class DeadLetterChannelUseOriginalExchangeTest extends ContextTestSupport {
+public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
 
-    public void testUseOriginalExchange() throws Exception {
+    public void testUseOriginalnBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:a");
         dead.expectedBodiesReceived("Hello");
 
@@ -39,7 +39,7 @@ public class DeadLetterChannelUseOriginalExchangeTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
-    public void testDoNotUseOriginalExchange() throws Exception {
+    public void testDoNotUseOriginalInBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:b");
         dead.expectedBodiesReceived("Hello World");
 
@@ -55,7 +55,7 @@ public class DeadLetterChannelUseOriginalExchangeTest extends ContextTestSupport
             public void configure() throws Exception {
                 // will use original
                 DeadLetterChannelBuilder a = deadLetterChannel("mock:a")
-                    .maximumRedeliveries(2).delay(0).logStackTrace(false).useOriginalExchange().handled(true);
+                    .maximumRedeliveries(2).delay(0).logStackTrace(false).useOriginalInBody().handled(true);
 
                 // will NOT use original
                 DeadLetterChannelBuilder b = deadLetterChannel("mock:b")

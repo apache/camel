@@ -55,7 +55,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
     private final RedeliveryPolicy redeliveryPolicy;
     private final Predicate handledPolicy;
     private final Logger logger;
-    private final boolean useOriginalExchangePolicy;
+    private final boolean useOriginalInBodyPolicy;
 
     private class RedeliveryData {
         int redeliveryCounter;
@@ -67,7 +67,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
         Processor deadLetterQueue = deadLetter;
         Processor onRedeliveryProcessor = redeliveryProcessor;
         Predicate handledPredicate = handledPolicy;
-        boolean useOriginalExchange = useOriginalExchangePolicy;
+        boolean useOriginalInBody = useOriginalInBodyPolicy;
     }
     
     /**
@@ -81,11 +81,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
      * @param logger                    logger to use for logging failures and redelivery attempts
      * @param exceptionPolicyStrategy   strategy for onException handling
      * @param handledPolicy             policy for handling failed exception that are moved to the dead letter queue
-     * @param useOriginalExchangePolicy should the original exchange be moved to the dead letter queue or the most recent exchange?
+     * @param useOriginalInBodyPolicy   should the original IN body be moved to the dead letter queue or the current exchange IN body?
      */
     public DeadLetterChannel(Processor output, Processor deadLetter, String deadLetterUri, Processor redeliveryProcessor,
                              RedeliveryPolicy redeliveryPolicy, Logger logger, ExceptionPolicyStrategy exceptionPolicyStrategy,
-                             Predicate handledPolicy, boolean useOriginalExchangePolicy) {
+                             Predicate handledPolicy, boolean useOriginalInBodyPolicy) {
         this.output = output;
         this.deadLetter = deadLetter;
         this.deadLetterUri = deadLetterUri;
@@ -93,7 +93,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
         this.handledPolicy = handledPolicy;
-        this.useOriginalExchangePolicy = useOriginalExchangePolicy;
+        this.useOriginalInBodyPolicy = useOriginalInBodyPolicy;
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
@@ -239,7 +239,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
             data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
             data.retryUntilPredicate = exceptionPolicy.getRetryUntilPolicy();
-            data.useOriginalExchange = exceptionPolicy.getUseOriginalExchangePolicy();
+            data.useOriginalInBody = exceptionPolicy.getUseOriginalExchangePolicy();
 
             // route specific failure handler?
             Processor processor = exceptionPolicy.getErrorHandler();
@@ -297,20 +297,14 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
         // reset cached streams so they can be read again
         MessageHelper.resetStreamCache(exchange.getIn());
 
-        // prepare original exchange if it should be moved instead of most recent
-        if (data.useOriginalExchange) {
+        // prepare original IN body if it should be moved instead of current body
+        if (data.useOriginalInBody) {
             if (log.isTraceEnabled()) {
-                log.trace("Using the original exchange bodies in the DedLetterQueue instead of the current exchange bodies");
+                log.trace("Using the original IN body in the DedLetterQueue instead of the current IN body");
             }
 
-            Exchange original = exchange.getUnitOfWork().getOriginalExchange();
-            // replace exchange IN/OUT with from original
-            exchange.setIn(original.getIn());
-            if (original.hasOut()) {
-                exchange.setOut(original.getOut());
-            } else {
-                exchange.setOut(null);
-            }
+            Object original = exchange.getUnitOfWork().getOriginalInBody();
+            exchange.getIn().setBody(original);
         }
 
         if (log.isTraceEnabled()) {

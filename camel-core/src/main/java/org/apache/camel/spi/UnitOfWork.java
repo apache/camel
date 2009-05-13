@@ -56,9 +56,9 @@ public interface UnitOfWork {
     String getId();
 
     /**
-     * Gets the original {@link org.apache.camel.Exchange} this Unit of Work was started with.
+     * Gets the original IN body this Unit of Work was started with.
      *
-     * @return the original exchange
+     * @return the original IN body
      */
-    Exchange getOriginalExchange();
+    Object getOriginalInBody();
 }

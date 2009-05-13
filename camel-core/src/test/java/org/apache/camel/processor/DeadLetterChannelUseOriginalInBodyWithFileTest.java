@@ -26,9 +26,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class DeadLetterChannelUseOriginalExchangeWithFileTest extends ContextTestSupport {
+public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestSupport {
 
-    public void testOriginalExchangeIsFile() throws Exception {
+    public void testOriginalInBodyIsFile() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(1);
         dead.message(0).body().isInstanceOf(GenericFile.class);
@@ -50,7 +50,7 @@ public class DeadLetterChannelUseOriginalExchangeWithFileTest extends ContextTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalExchange().handled(true));
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalInBody().handled(true));
 
                 from("file://target/originalexchange?noop=true")
                     .transform(body().append(" World"))
