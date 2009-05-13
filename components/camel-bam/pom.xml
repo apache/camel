@@ -21,16 +21,16 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+  <artifactId>camel-bam</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: BAM</name>
+  <description>Camel BAM support</description>
+
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
     <version>1.6.1-SNAPSHOT</version>
   </parent>
-
-  <artifactId>camel-bam</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: BAM</name>
-  <description>Camel BAM support</description>
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.bam.*</camel.osgi.export.pkg>
@@ -122,12 +122,7 @@
           <includes>
             <include>**/*Test.*</include>
           </includes>
-          <excludes>
-            <!-- TODO no idea yet why this seems to fail in a recursive build -
-                 but works in a build of just the camel-bam module -->
-
-            <!--<exclude>**/MultipleActivitiesConcurrentlyTest.*</exclude>-->
-          </excludes>
+          <excludes />
         </configuration>
       </plugin>
 
@@ -135,7 +130,6 @@
   </build>
 
   <profiles>
-
     <profile>
       <id>hibernate-hsqldb</id>
       <build>
@@ -274,36 +268,36 @@
                 <configuration>
                   <tasks>
                     <path id="cp">
-                      <path refid="maven.test.classpath"/>
-                      <path refid="maven.compile.classpath"/>
-                      <path refid="maven.dependency.classpath"/>
+                      <path refid="maven.test.classpath" />
+                      <path refid="maven.compile.classpath" />
+                      <path refid="maven.dependency.classpath" />
                     </path>
                     <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
-                      <classpath refid="cp"/>
+                      <classpath refid="cp" />
                     </taskdef>
 
-                    <mkdir dir="${basedir}/target/jpa-classes"/>
+                    <mkdir dir="${basedir}/target/jpa-classes" />
                     <openjpac directory="${basedir}/target/jpa-classes">
-                      <classpath refid="cp"/>
+                      <classpath refid="cp" />
                       <fileset dir="${basedir}/target/classes">
-                        <include name="org/apache/camel/bam/model/*.class"/>
+                        <include name="org/apache/camel/bam/model/*.class" />
                       </fileset>
                     </openjpac>
                     <copy overwrite="true" todir="${basedir}/target/classes">
-                      <fileset dir="${basedir}/target/jpa-classes"/>
+                      <fileset dir="${basedir}/target/jpa-classes" />
                     </copy>
 
                     <!--
-                                    <mkdir dir="${basedir}/target/jpa-test-classes"/>
-                                    <openjpac directory="${basedir}/target/jpa-test-classes">
-                                      <classpath refid="cp"/>
-                                      <fileset dir="${basedir}/target/test-classes">
-                                        <include name="org/apache/camel/examples/*.class"/>
-                                      </fileset>
-                                    </openjpac>
-                                    <copy overwrite="true" todir="${basedir}/target/test-classes">
-                                      <fileset dir="${basedir}/target/jpa-test-classes"/>
-                                    </copy>
+                    <mkdir dir="${basedir}/target/jpa-test-classes" />
+                    <openjpac directory="${basedir}/target/jpa-test-classes">
+                      <classpath refid="cp" />
+                      <fileset dir="${basedir}/target/test-classes">
+                        <include name="org/apache/camel/examples/*.class" />
+                      </fileset>
+                    </openjpac>
+                    <copy overwrite="true" todir="${basedir}/target/test-classes">
+                      <fileset dir="${basedir}/target/jpa-test-classes" />
+                    </copy>
                     -->
                   </tasks>
                 </configuration>

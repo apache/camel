@@ -200,7 +200,7 @@
             <!-- enable easy JMX connection to JConsole -->
             <systemProperty>
               <name>com.sun.management.jmxremote</name>
-              <value/>
+              <value />
             </systemProperty>
           </systemProperties>
           <scanIntervalSeconds>10</scanIntervalSeconds>
