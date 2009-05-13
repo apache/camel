@@ -34,6 +34,10 @@ public class RoutePerformanceTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(1000);
 
     public void testPerformance() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
         long start = System.currentTimeMillis();
 
         MockEndpoint endpoint = getMockEndpoint("mock:results");
@@ -44,6 +48,12 @@ public class RoutePerformanceTest extends ContextTestSupport {
         long delta = System.currentTimeMillis() - start;
 
         System.out.println("RoutePerformanceTest: Took: " + delta + " ms");
+    }
+
+    private boolean canRunOnThisPlatform() {
+        String os = System.getProperty("os.name");
+        // HP-UX is just to slow to run this test
+        return !os.toLowerCase().contains("hp-ux");
     }
 
     @Override
