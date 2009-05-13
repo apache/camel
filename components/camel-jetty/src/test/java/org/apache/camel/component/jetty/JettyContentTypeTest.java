@@ -32,7 +32,7 @@ public class JettyContentTypeTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("<order>123</order>");
         exchange.getIn().setHeader("user", "Claus");
-        exchange.getIn().setHeader("content-type", "text/xml");
+        exchange.getIn().setHeader("Content-Type", "text/xml");
         if (usingGZip) {
             GZIPHelper.setGZIPMessageHeader(exchange.getIn());
         }
@@ -40,7 +40,7 @@ public class JettyContentTypeTest extends ContextTestSupport {
 
         String body = exchange.getOut().getBody(String.class);
         assertEquals("<order>OK</order>", body);
-        assertOutMessageHeader(exchange, "content-type", "text/xml");
+        assertOutMessageHeader(exchange, "Content-Type", "text/xml");
     }
 
     public void testSameContentType() throws Exception {
@@ -74,8 +74,11 @@ public class JettyContentTypeTest extends ContextTestSupport {
 
     public class MyBookService implements Processor {
         public void process(Exchange exchange) throws Exception {
-            if (exchange.getIn().getHeader("user") != null && exchange.getIn().getBody(String.class).equals("<order>123</order>")) {
-                exchange.getOut().setBody("<order>OK</order>");                
+            if (exchange.getIn().getHeader("user") != null 
+                && exchange.getIn().getBody(String.class).equals("<order>123</order>")
+                && exchange.getIn().getHeader("Content-Type").equals("text/xml")) {
+                exchange.getOut().setBody("<order>OK</order>");
+                exchange.getOut().setHeader("Content-Type", "text/xml");
             } else {
                 exchange.getOut().setBody("FAIL");
                 exchange.getOut().setHeader("Content-Type", "text/plain");
