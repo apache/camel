@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelExecutionException;
+import javax.jms.ConnectionFactory;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision$
+ * Unit test for useOriginalBody unit test
  */
-public class OnCompletionTest extends ContextTestSupport {
+public class JmsOnCompletionTest extends ContextTestSupport {
 
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("Bye World");
@@ -35,7 +39,7 @@ public class OnCompletionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("activemq:queue:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,12 +51,7 @@ public class OnCompletionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Kabom");
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Kabom", e.getCause().getMessage());
-        }
+        template.sendBody("activemq:queue:start", "Kabom");
 
         assertMockEndpointsSatisfied();
     }
@@ -63,7 +62,7 @@ public class OnCompletionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
+                from("activemq:queue:start")
                     .onCompletion()
                         // this route is only invoked when the original route is complete as a kind
                         // of completion callback
@@ -91,4 +90,14 @@ public class OnCompletionTest extends ContextTestSupport {
             exchange.getIn().setBody("Bye World");
         }
     }
+
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+        camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
+
+        return camelContext;
+    }
+
 }
