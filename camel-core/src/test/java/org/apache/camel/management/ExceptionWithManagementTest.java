@@ -25,15 +25,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-
 /**
  * A testcase for exception handler when management is enabled (by default).
  * 
  * @version $Revision$
  */
 public class ExceptionWithManagementTest extends ContextTestSupport {
-    
-    
+
     public void testExceptionHandler() throws Exception {
         MockEndpoint error = this.resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(1);
@@ -51,10 +49,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         Thread.sleep(2000);
         error.assertIsSatisfied();
         out.assertIsSatisfied();
-        
     }
-    
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

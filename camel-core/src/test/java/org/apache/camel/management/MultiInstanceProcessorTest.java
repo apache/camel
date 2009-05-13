@@ -44,6 +44,10 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
      */
     @Override
     public void testMBeansRegistered() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
                 && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
@@ -71,6 +75,9 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
 
     @Override
     public void testCounters() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(

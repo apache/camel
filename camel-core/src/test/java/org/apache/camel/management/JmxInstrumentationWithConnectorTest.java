@@ -44,6 +44,13 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
         super.setUp();
     }
 
+    protected boolean canRunOnThisPlatform() {
+        String os = System.getProperty("os.name");
+        // Does not work on AIX and the problem is hard to identify, could be issues not allowing to use a custom port
+        // java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.NameNotFoundException: jmxrmi/camel
+        return !os.toLowerCase().contains("aix");
+    }
+
     @Override
     protected void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
