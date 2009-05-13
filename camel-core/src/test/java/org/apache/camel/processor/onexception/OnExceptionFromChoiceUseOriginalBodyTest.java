@@ -24,7 +24,7 @@ import org.apache.camel.impl.JndiRegistry;
 /**
  * Unit test for CAMEL-1188
  */
-public class OnExceptionFromChoiceUseOriginalExchangeTest extends ContextTestSupport {
+public class OnExceptionFromChoiceUseOriginalBodyTest extends ContextTestSupport {
 
     private MyServiceBean myServiceBean;
 
@@ -90,8 +90,8 @@ public class OnExceptionFromChoiceUseOriginalExchangeTest extends ContextTestSup
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                onException(MyTechnicalException.class).useOriginalExchange().maximumRedeliveries(0).handled(true).to("mock:tech");
-                onException(MyFunctionalException.class).useOriginalExchange().maximumRedeliveries(0).handled(true).to("mock:func");
+                onException(MyTechnicalException.class).useOriginalBody().maximumRedeliveries(0).handled(true).to("mock:tech");
+                onException(MyFunctionalException.class).useOriginalBody().maximumRedeliveries(0).handled(true).to("mock:func");
 
                 from("direct:tech")
                     .setBody(constant("<order><type>myType</type><user>Tech</user></order>"))

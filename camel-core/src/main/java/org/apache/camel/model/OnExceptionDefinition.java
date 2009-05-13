@@ -65,8 +65,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     private ExpressionSubElementDefinition handled;
     @XmlAttribute(name = "onRedeliveryRef", required = false)
     private String onRedeliveryRef;
-    @XmlAttribute(name = "useOriginalExchange", required = false)
-    private Boolean useOriginalExchangePolicy = Boolean.FALSE;
+    @XmlAttribute(name = "useOriginalBody", required = false)
+    private Boolean useOriginalBodyPolicy = Boolean.FALSE;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
@@ -361,7 +361,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Exchange} when an {@link org.apache.camel.Exchange} is moved to the dead letter queue.
+     * Will use the original input body when an {@link org.apache.camel.Exchange} is moved to the dead letter queue.
      * <p/>
      * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange} is doomed for failure.
      * <br/>
@@ -375,8 +375,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      *
      * @return the builder
      */
-    public OnExceptionDefinition useOriginalExchange() {
-        setUseOriginalExchangePolicy(Boolean.TRUE);
+    public OnExceptionDefinition useOriginalBody() {
+        setUseOriginalBodyPolicy(Boolean.TRUE);
         return this;
     }
 
@@ -487,12 +487,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         this.onRedeliveryRef = onRedeliveryRef;
     }
 
-    public Boolean getUseOriginalExchangePolicy() {
-        return useOriginalExchangePolicy;
+    public Boolean getUseOriginalBodyPolicy() {
+        return useOriginalBodyPolicy;
     }
 
-    public void setUseOriginalExchangePolicy(Boolean useOriginalExchangePolicy) {
-        this.useOriginalExchangePolicy = useOriginalExchangePolicy;
+    public void setUseOriginalBodyPolicy(Boolean useOriginalBodyPolicy) {
+        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
     }
 
     // Implementation methods

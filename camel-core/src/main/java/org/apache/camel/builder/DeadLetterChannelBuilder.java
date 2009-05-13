@@ -50,7 +50,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private Endpoint deadLetter;
     private String deadLetterUri;
     private Predicate handledPolicy;
-    private boolean useOriginalInBody;
+    private boolean useOriginalBody;
 
     /**
      * Creates a default DeadLetterChannel with a default endpoint
@@ -79,7 +79,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery,
-                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy(), isUseOriginalInBody());
+                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy(), isUseOriginalBody());
         // must enable stream cache as DeadLetterChannel can do redeliveries and
         // thus it needs to be able to read the stream again
         configure(answer);
@@ -275,8 +275,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
      *
      * @return the builder
      */
-    public DeadLetterChannelBuilder useOriginalInBody() {
-        setUseOriginalInBody(true);
+    public DeadLetterChannelBuilder useOriginalBody() {
+        setUseOriginalBody(true);
         return this;
     }
 
@@ -379,12 +379,12 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         handled(handled);
     }
 
-    public boolean isUseOriginalInBody() {
-        return useOriginalInBody;
+    public boolean isUseOriginalBody() {
+        return useOriginalBody;
     }
 
-    public void setUseOriginalInBody(boolean useOriginalInBody) {
-        this.useOriginalInBody = useOriginalInBody;
+    public void setUseOriginalBody(boolean useOriginalBody) {
+        this.useOriginalBody = useOriginalBody;
     }
 
     @Override

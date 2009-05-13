@@ -55,7 +55,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
     private final RedeliveryPolicy redeliveryPolicy;
     private final Predicate handledPolicy;
     private final Logger logger;
-    private final boolean useOriginalInBodyPolicy;
+    private final boolean useOriginalBodyPolicy;
 
     private class RedeliveryData {
         int redeliveryCounter;
@@ -67,7 +67,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
         Processor deadLetterQueue = deadLetter;
         Processor onRedeliveryProcessor = redeliveryProcessor;
         Predicate handledPredicate = handledPolicy;
-        boolean useOriginalInBody = useOriginalInBodyPolicy;
+        boolean useOriginalInBody = useOriginalBodyPolicy;
     }
     
     /**
@@ -81,11 +81,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
      * @param logger                    logger to use for logging failures and redelivery attempts
      * @param exceptionPolicyStrategy   strategy for onException handling
      * @param handledPolicy             policy for handling failed exception that are moved to the dead letter queue
-     * @param useOriginalInBodyPolicy   should the original IN body be moved to the dead letter queue or the current exchange IN body?
+     * @param useOriginalBodyPolicy   should the original IN body be moved to the dead letter queue or the current exchange IN body?
      */
     public DeadLetterChannel(Processor output, Processor deadLetter, String deadLetterUri, Processor redeliveryProcessor,
                              RedeliveryPolicy redeliveryPolicy, Logger logger, ExceptionPolicyStrategy exceptionPolicyStrategy,
-                             Predicate handledPolicy, boolean useOriginalInBodyPolicy) {
+                             Predicate handledPolicy, boolean useOriginalBodyPolicy) {
         this.output = output;
         this.deadLetter = deadLetter;
         this.deadLetterUri = deadLetterUri;
@@ -93,7 +93,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
         this.handledPolicy = handledPolicy;
-        this.useOriginalInBodyPolicy = useOriginalInBodyPolicy;
+        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
@@ -239,7 +239,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
             data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
             data.retryUntilPredicate = exceptionPolicy.getRetryUntilPolicy();
-            data.useOriginalInBody = exceptionPolicy.getUseOriginalExchangePolicy();
+            data.useOriginalInBody = exceptionPolicy.getUseOriginalBodyPolicy();
 
             // route specific failure handler?
             Processor processor = exceptionPolicy.getErrorHandler();
