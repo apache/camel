@@ -29,8 +29,8 @@
         <!-- we mark all exchanges as handled when they are moved to the dead letter queue, so the client
              does not receive an exception -->
         <property name="handled" value="true"/>
-        <!-- use the original exchange when moving to dead letter queue -->
-        <property name="useOriginalExchange" value="true"/>
+        <!-- use the original input body when moving to dead letter queue -->
+        <property name="useOriginalBody" value="true"/>
         <property name="redeliveryPolicy" ref="myRedelivery"/>
     </bean>
 
@@ -47,13 +47,13 @@
         <!-- we mark all exchanges as handled when they are moved to the dead letter queue, so the client
              does not receive an exception -->
         <property name="handled" value="true"/>
-        <!-- do NOT use the original exchange when moving to dead letter queue -->
-        <property name="useOriginalExchange" value="false"/>
+        <!-- do NOT use the original input body when moving to dead letter queue -->
+        <property name="useOriginalBody" value="false"/>
         <property name="redeliveryPolicy" ref="myRedelivery"/>
     </bean>
 
 
-    <bean id="myThrowProcessor" class="org.apache.camel.processor.DeadLetterChannelUseOriginalExchangeWithFileTest$MyThrowProcessor"/>
+    <bean id="myThrowProcessor" class="org.apache.camel.processor.DeadLetterChannelUseOriginalInBodyWithFileTest$MyThrowProcessor"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route errorHandlerRef="dead">

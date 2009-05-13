@@ -33,17 +33,17 @@
         <property name="maximumRedeliveries" value="0"/>
     </bean>
 
-    <bean id="procA" class="org.apache.camel.processor.onexception.OnExceptionUseOriginalExchangeTest$MyThrowProcessor">
+    <bean id="procA" class="org.apache.camel.processor.onexception.OnExceptionUseOriginalBodyTest$MyThrowProcessor">
         <property name="camelException" value="false"/>
     </bean>
 
-    <bean id="procB" class="org.apache.camel.processor.onexception.OnExceptionUseOriginalExchangeTest$MyThrowProcessor">
+    <bean id="procB" class="org.apache.camel.processor.onexception.OnExceptionUseOriginalBodyTest$MyThrowProcessor">
         <property name="camelException" value="true"/>
     </bean>
 
     <camelContext errorHandlerRef="deadLetter" xmlns="http://camel.apache.org/schema/spring">
 
-        <onException useOriginalExchange="true">
+        <onException useOriginalBody="true">
             <exception>java.lang.IllegalArgumentException</exception>
             <redeliveryPolicy maximumRedeliveries="2"/>
             <handled><constant>true</constant></handled>

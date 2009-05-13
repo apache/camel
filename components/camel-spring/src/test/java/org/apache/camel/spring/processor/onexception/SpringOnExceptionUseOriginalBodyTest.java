@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.spring.processor.onexception;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.DeadLetterChannelUseOriginalExchangeWithFileTest;
+import org.apache.camel.processor.onexception.OnExceptionUseOriginalBodyTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  * @version $Revision$
  */
-public class SpringDeadLetterChannelUseOriginalExchangeWithFileTest extends DeadLetterChannelUseOriginalExchangeWithFileTest {
+public class SpringOnExceptionUseOriginalBodyTest extends OnExceptionUseOriginalBodyTest {
 
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringDeadLetterChannelUseOriginalExchangeWithFileTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/onexception/SpringOnExceptionUseOriginalBodyTest.xml");
     }
 
 }

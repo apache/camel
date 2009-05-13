@@ -29,11 +29,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
- * Unit test for useOriginalInBody unit test
+ * Unit test for useOriginalBody unit test
  */
-public class JmsUseOriginalInBodyTest extends ContextTestSupport {
+public class JmsUseOriginalBodyTest extends ContextTestSupport {
 
-    public void testUseOriginalnBody() throws Exception {
+    public void testUseOriginalBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:a");
         dead.expectedBodiesReceived("Hello");
 
@@ -42,7 +42,7 @@ public class JmsUseOriginalInBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testDoNotUseOriginalInBody() throws Exception {
+    public void testDoNotUseOriginalBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:b");
         dead.expectedBodiesReceived("Hello World");
 
@@ -58,7 +58,7 @@ public class JmsUseOriginalInBodyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // will use original
                 DeadLetterChannelBuilder a = deadLetterChannel("mock:a")
-                    .maximumRedeliveries(2).delay(0).logStackTrace(false).useOriginalInBody().handled(true);
+                    .maximumRedeliveries(2).delay(0).logStackTrace(false).useOriginalBody().handled(true);
 
                 // will NOT use original
                 DeadLetterChannelBuilder b = deadLetterChannel("mock:b")
