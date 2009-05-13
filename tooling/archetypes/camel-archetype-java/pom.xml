@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -46,8 +45,7 @@
             </goals>
             <configuration>
               <tasks>
-                <replace casesensitive="true"
-                  file="${project.build.directory}/classes/archetype-resources/pom.xml">
+                <replace casesensitive="true" file="${project.build.directory}/classes/archetype-resources/pom.xml">
                   <replacefilter token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" /> 
                   <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" /> 
                 </replace>
