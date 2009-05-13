@@ -28,8 +28,7 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
-        getOutFilter().add("content-length");
-        getOutFilter().add("content-type");        
+        getOutFilter().add("content-length");                
         getOutFilter().add(HttpConstants.HTTP_METHOD.toLowerCase());
         getOutFilter().add(HttpConstants.HTTP_QUERY);
         getOutFilter().add(HttpConstants.HTTP_RESPONSE_CODE.toLowerCase());
