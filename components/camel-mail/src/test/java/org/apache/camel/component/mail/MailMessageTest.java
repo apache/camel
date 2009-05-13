@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.util.Properties;
+import java.util.Iterator;
 
 import javax.mail.Address;
 import javax.mail.Message;
@@ -26,6 +27,8 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
@@ -44,8 +47,19 @@ public class MailMessageTest extends ContextTestSupport {
 
         assertEquals("mail body", body, in.getBody());
 
-        String to = in.getHeader("TO", String.class);
-        assertEquals("should have 2 receivers", "foo@localhost, bar@localhost", to);
+        // need to use iterator as some mail impl returns String[] and others a single String with comma as separator
+        // so we let Camel create an iterator so we can use the same code for the test
+        Object to = in.getHeader("TO");
+        Iterator<String> it = ObjectHelper.createIterator(to);
+        int i = 0;
+        while (it.hasNext()) {
+            if (i == 0) {
+                assertEquals("foo@localhost", it.next().trim());
+            } else {
+                assertEquals("bar@localhost", it.next().trim());
+            }
+            i++;
+        }
     }
 
     public void testMailMessageHandlesSingleHeader() throws Exception {

@@ -66,6 +66,18 @@
             <artifactId>mail</artifactId>
         </dependency>
 
+        <!-- these 2 jars are buggy and not recommended to use -->
+        <!--dependency>
+            <groupId>org.apache.servicemix.specs</groupId>
+            <artifactId>org.apache.servicemix.specs.javamail-api-1.4</artifactId>
+            <version>1.3.0</version>
+        </dependency-->
+        <!--dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-javamail_1.4_spec</artifactId>
+            <version>1.6</version>
+        </dependency-->
+
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

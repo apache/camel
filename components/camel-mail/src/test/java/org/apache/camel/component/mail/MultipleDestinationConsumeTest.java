@@ -18,6 +18,7 @@ package org.apache.camel.component.mail;
 
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.Iterator;
 
 import javax.mail.Address;
 import javax.mail.Header;
@@ -71,8 +72,19 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
         String text = in.getBody(String.class);
         assertEquals("mail body", body, text);
 
-        String to = in.getHeader("TO", String.class);
-        assertEquals("TO Header", "james@localhost, bar@localhost", to);
+        // need to use iterator as some mail impl returns String[] and others a single String with comma as separator
+        // so we let Camel create an iterator so we can use the same code for the test
+        Object to = in.getHeader("TO");
+        Iterator<String> it = ObjectHelper.createIterator(to);
+        int i = 0;
+        while (it.hasNext()) {
+            if (i == 0) {
+                assertEquals("james@localhost", it.next().trim());
+            } else {
+                assertEquals("bar@localhost", it.next().trim());
+            }
+            i++;
+        }
 
         Enumeration iter = inMessage.getAllHeaders();
         while (iter.hasMoreElements()) {
