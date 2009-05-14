@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -43,7 +44,7 @@ public class HttpInvalidConfigurationTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(HttpConstants.HTTP_METHOD, POST).to("http://http://www.google.com");
+                from("direct:start").setHeader(Exchange.HTTP_METHOD, POST).to("http://http://www.google.com");
             }
         };
     }

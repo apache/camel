@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -28,8 +29,8 @@ public class HttpGetWithPathHeaderTest extends HttpGetTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .setHeader(HttpConstants.HTTP_PATH, constant("search"))
-                    .setHeader(HttpConstants.HTTP_QUERY, constant("hl=en&q=activemq"))
+                    .setHeader(Exchange.HTTP_PATH, constant("search"))
+                    .setHeader(Exchange.HTTP_QUERY, constant("hl=en&q=activemq"))
                     .to("http://www.google.com").to("mock:results");
             }
         };

@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,7 +33,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends ContextTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderReceived("one", "einz");
         mock.expectedHeaderReceived("two", "twei");
-        mock.expectedHeaderReceived(HttpConstants.HTTP_METHOD, "GET");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
         template.requestBody(serverUri + "?one=einz&two=twei", null, Object.class);
 
@@ -43,9 +44,9 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends ContextTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderReceived("one", "uno");
         mock.expectedHeaderReceived("two", "dos");
-        mock.expectedHeaderReceived(HttpConstants.HTTP_METHOD, "GET");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        template.requestBodyAndHeader(serverUri, null, HttpConstants.HTTP_QUERY, "one=uno&two=dos");
+        template.requestBodyAndHeader(serverUri, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
 
         assertMockEndpointsSatisfied();
     }
@@ -53,7 +54,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends ContextTestSuppor
     public void testHttpPost() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived(HttpConstants.HTTP_METHOD, "POST");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
         template.requestBody(serverUri, "Hello World");
 

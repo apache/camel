@@ -21,14 +21,6 @@ package org.apache.camel.component.http;
  */
 public final class HttpConstants {    
 
-    public static final String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
-
-    public static final String HTTP_METHOD = "CamelHttpMethod";
-
-    public static final String HTTP_PATH = "CamelHttpPath";
-
-    public static final String HTTP_QUERY = "CamelHttpQuery";
-
     private HttpConstants() {
         // utility class
     }

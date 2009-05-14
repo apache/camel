@@ -180,7 +180,7 @@ public class HttpProducer extends DefaultProducer {
      */
     protected HttpMethod createMethod(Exchange exchange) {
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(HttpConstants.HTTP_QUERY, String.class);
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
             queryString = ((HttpEndpoint)getEndpoint()).getHttpUri().getQuery();
         }
@@ -188,7 +188,7 @@ public class HttpProducer extends DefaultProducer {
 
         // compute what method to use either GET or POST
         HttpMethods methodToUse;
-        HttpMethods m = exchange.getIn().getHeader(HttpConstants.HTTP_METHOD, HttpMethods.class);
+        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
         if (m != null) {
             // always use what end-user provides in a header
             methodToUse = m;
@@ -206,7 +206,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
-        String path = exchange.getIn().getHeader(HttpConstants.HTTP_PATH, String.class);
+        String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         if (path != null) {
             // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
             if (!uri.endsWith("/")) {

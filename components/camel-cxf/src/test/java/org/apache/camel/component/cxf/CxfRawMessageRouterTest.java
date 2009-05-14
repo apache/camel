@@ -23,6 +23,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.MessageHelper;
 
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
@@ -60,8 +61,8 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
             }
 
         });
-        assertNotNull("We should get the Content-Type here", exchange.getOut().getHeader("Content-Type"));
-        assertEquals("Get wrong content type", "text/xml; charset=utf-8", exchange.getOut().getHeader("Content-Type"));
+        assertNotNull("We should get the Content-Type here", MessageHelper.getContentType(exchange.getOut()));
+        assertEquals("Get wrong content type", "text/xml; charset=utf-8", MessageHelper.getContentType(exchange.getOut()));
         assertNull("We should not get the content-type here", exchange.getOut().getHeader("content-type"));        
         String response = exchange.getOut().getBody(String.class);        
         assertNotNull("Response should not be null", response);

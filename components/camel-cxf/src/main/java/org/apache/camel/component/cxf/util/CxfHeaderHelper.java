@@ -64,7 +64,7 @@ public final class CxfHeaderHelper {
             if (strategy != null
                     && !strategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
 
-                if (CamelTransportConstants.CAMEL_CONTENT_TYPE.equals(entry.getKey())) {
+                if (Exchange.CONTENT_TYPE.equals(entry.getKey())) {
                     message.put(Message.CONTENT_TYPE, entry.getValue());
                 } else if (Client.REQUEST_CONTEXT.equals(entry.getKey())
                             || Client.RESPONSE_CONTEXT.equals(entry.getKey())
@@ -101,7 +101,7 @@ public final class CxfHeaderHelper {
         String key = Message.CONTENT_TYPE;
         Object value = message.get(key);
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
-            headers.put(CamelTransportConstants.CAMEL_CONTENT_TYPE, value);
+            headers.put(Exchange.CONTENT_TYPE, value);
         }
 
         // propagate request context

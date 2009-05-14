@@ -103,10 +103,10 @@ public class HttpPostWithBodyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(HttpConstants.HTTP_METHOD, POST).to("http://www.google.com");
-                from("direct:reset").setHeader(HttpConstants.HTTP_METHOD, POST).
+                from("direct:start").setHeader(Exchange.HTTP_METHOD, POST).to("http://www.google.com");
+                from("direct:reset").setHeader(Exchange.HTTP_METHOD, POST).
                     errorHandler(deadLetterChannel("direct:recovery").maximumRedeliveries(1)).to("http://www.google.com").to("mock:result");
-                from("direct:recovery").setHeader(HttpConstants.HTTP_METHOD, GET).to("http://www.google.com").to("mock:recovery");
+                from("direct:recovery").setHeader(Exchange.HTTP_METHOD, GET).to("http://www.google.com").to("mock:recovery");
             }
         };
     }

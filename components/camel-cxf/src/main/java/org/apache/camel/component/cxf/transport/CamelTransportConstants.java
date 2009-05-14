@@ -45,8 +45,7 @@ public final class CamelTransportConstants {
     public static final String CAMEL_CLIENT_CONFIG_ID = "camel-template";
     public static final String CAMEL_SERVER_CONFIG_ID = "camel-server";
     public static final String CAMEL_REBASED_REPLY_TO = "org.apache.cxf.camel.server.replyto";
-    public static final String CAMEL_CORRELATION_ID = "org.apache.cxf.camel.correlationId";
-    public static final String CAMEL_CONTENT_TYPE = "CamelConentType";
+    public static final String CAMEL_CORRELATION_ID = "org.apache.cxf.camel.correlationId";   
     
     private CamelTransportConstants() {
         // Utility class

@@ -50,7 +50,7 @@ public class JettyHttpGetWithParamTest extends ContextTestSupport {
         mock.expectedHeaderReceived("one", "einz");
         mock.expectedHeaderReceived("two", "twei");
 
-        template.requestBodyAndHeader(serverUri, "Hello World", HttpConstants.HTTP_QUERY, "one=uno&two=dos");
+        template.requestBodyAndHeader(serverUri, "Hello World", Exchange.HTTP_QUERY, "one=uno&two=dos");
 
         assertMockEndpointsSatisfied();
     }

@@ -34,6 +34,10 @@ public interface Exchange {
     String CONTENT_TYPE = "CamelConentType";
     String HTTP_RESPONSE_CODE = "CamelHttpResponseCode";
     String HTTP_URI = "CamelHttpUri";
+    String HTTP_QUERY = "CamelHttpQuery";
+    String HTTP_METHOD = "CamelHttpMethod";
+    String HTTP_PATH = "CamelHttpPath";
+    String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
 
     String BEAN_METHOD_NAME = "CamelBeanMethodName";
     String BEAN_HOLDER = "CamelBeanHolder";

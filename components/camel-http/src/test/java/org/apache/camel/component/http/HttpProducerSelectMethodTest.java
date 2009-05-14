@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.commons.httpclient.HttpMethod;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
@@ -71,7 +72,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
 
         HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
-        exchange.getIn().setHeader(HttpConstants.HTTP_METHOD, POST);
+        exchange.getIn().setHeader(Exchange.HTTP_METHOD, POST);
         try {
             producer.process(exchange);
             fail("Should have thrown HttpOperationFailedException");
@@ -89,7 +90,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
 
         HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
-        exchange.getIn().setHeader(HttpConstants.HTTP_METHOD, GET);
+        exchange.getIn().setHeader(Exchange.HTTP_METHOD, GET);
         try {
             producer.process(exchange);
             fail("Should have thrown HttpOperationFailedException");
@@ -124,7 +125,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
 
         HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
-        exchange.getIn().setHeader(HttpConstants.HTTP_QUERY, "q=Camel");
+        exchange.getIn().setHeader(Exchange.HTTP_QUERY, "q=Camel");
         try {
             producer.process(exchange);
             fail("Should have thrown HttpOperationFailedException");
@@ -142,7 +143,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
 
         HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
-        exchange.getIn().setHeader(HttpConstants.HTTP_QUERY, "q=Camel");
+        exchange.getIn().setHeader(Exchange.HTTP_QUERY, "q=Camel");
         try {
             producer.process(exchange);
             fail("Should have thrown HttpOperationFailedException");
