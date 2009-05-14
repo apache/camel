@@ -35,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 public class MailComponent extends DefaultComponent<MailExchange> implements HeaderFilterStrategyAware {
     private MailConfiguration configuration;
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private ContentTypeResolver contentTypeResolver;
 
     public MailComponent() {
         this.configuration = new MailConfiguration();
@@ -82,6 +83,7 @@ public class MailComponent extends DefaultComponent<MailExchange> implements Hea
         config.configure(url);
 
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
+        endpoint.setContentTypeResolver(contentTypeResolver);
         setProperties(endpoint.getConfiguration(), parameters);
 
         // sanity check that we know the mail server
@@ -121,5 +123,13 @@ public class MailComponent extends DefaultComponent<MailExchange> implements Hea
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
+    }
+
+    public ContentTypeResolver getContentTypeResolver() {
+        return contentTypeResolver;
+    }
+
+    public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
+        this.contentTypeResolver = contentTypeResolver;
     }
 }

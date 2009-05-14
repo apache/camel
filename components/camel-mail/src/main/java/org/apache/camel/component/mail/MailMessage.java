@@ -28,6 +28,8 @@ import javax.mail.Part;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
@@ -35,6 +37,7 @@ import org.apache.camel.util.CollectionHelper;
  * @version $Revision:520964 $
  */
 public class MailMessage extends DefaultMessage {
+    private static final transient Log LOG = LogFactory.getLog(MailMessage.class);
     private Message mailMessage;
 
     public MailMessage() {
@@ -138,10 +141,16 @@ public class MailMessage extends DefaultMessage {
     protected static void extractAttachments(Message message, Map<String, DataHandler> map)
         throws javax.mail.MessagingException, IOException {
 
+        LOG.trace("Extracting attachments +++ start +++");
+
         Object content = message.getContent();
         if (content instanceof Multipart) {
             extractFromMultipart((Multipart)content, map);
+        } else if (content != null) {
+            LOG.trace("No attachments to extract as content is not Multipart: " + content.getClass().getName());
         }
+
+        LOG.trace("Extracting attachments +++ done +++");
     }
     
     protected static void extractFromMultipart(Multipart mp, Map<String, DataHandler> map) 
@@ -149,18 +158,29 @@ public class MailMessage extends DefaultMessage {
 
         for (int i = 0; i < mp.getCount(); i++) {
             Part part = mp.getBodyPart(i);           
+            LOG.trace("Part #" + i + ": " + part);
+
             if (part.isMimeType("multipart/*")) {
+                LOG.trace("Part #" + i + ": is mimetype: multipart/*");
                 extractFromMultipart((Multipart)part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
-                if (disposition != null) {
-                    if (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE)) {
-                        // only add named attachments
-                        if (part.getFileName() != null) {
-                            // Parts marked with a disposition of Part.ATTACHMENT
-                            // are clearly attachments
-                            CollectionHelper.appendValue(map, part.getFileName(), part.getDataHandler());
-                        }
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Part #" + i + ": Disposition: " + part.getDisposition());
+                    LOG.trace("Part #" + i + ": Description: " + part.getDescription());
+                    LOG.trace("Part #" + i + ": ContentType: " + part.getContentType());
+                    LOG.trace("Part #" + i + ": FileName: " + part.getFileName());
+                    LOG.trace("Part #" + i + ": Size: " + part.getSize());
+                    LOG.trace("Part #" + i + ": LineCount: " + part.getLineCount());
+                }
+
+                if (disposition != null && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE))) {
+                    // only add named attachments
+                    String fileName = part.getFileName();
+                    if (fileName != null) {
+                        LOG.debug("Mail contains file attachment: " + fileName);
+                        // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
+                        CollectionHelper.appendValue(map, fileName, part.getDataHandler());
                     }
                 }
             }

@@ -34,11 +34,12 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     private MailBinding binding;
     private MailConfiguration configuration;
+    private ContentTypeResolver contentTypeResolver;
 
     public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        this.binding = new MailBinding(component.getHeaderFilterStrategy());
+        this.binding = new MailBinding(component.getHeaderFilterStrategy(), component.getContentTypeResolver());
     }
 
     public MailEndpoint(String endpointUri, MailConfiguration configuration) {
@@ -121,5 +122,13 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
 
     public MailConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public ContentTypeResolver getContentTypeResolver() {
+        return contentTypeResolver;
+    }
+
+    public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
+        this.contentTypeResolver = contentTypeResolver;
     }
 }
