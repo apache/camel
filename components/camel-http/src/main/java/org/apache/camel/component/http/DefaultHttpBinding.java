@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.MessageHelper;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
@@ -60,6 +61,10 @@ public class DefaultHttpBinding implements HttpBinding {
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();
             Object value = request.getHeader(name);
+            // mapping the content-type 
+            if (name.toLowerCase().equals("content-type")) {
+                name = Exchange.CAMEL_CONTENT_TYPE;
+            }
             if (headerFilterStrategy != null
                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                 headers.put(name, value);
@@ -134,8 +139,8 @@ public class DefaultHttpBinding implements HttpBinding {
             response.setStatus(code);
         }
         // set the content type in the response.
-        if (message.getHeader("Content-Type") != null) {            
-            String contentType = message.getHeader("Content-Type", String.class);            
+        String contentType = MessageHelper.getContentType(message);
+        if (MessageHelper.getContentType(message) != null) {
             response.setContentType(contentType);
         }
 

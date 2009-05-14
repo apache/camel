@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 
@@ -96,5 +97,17 @@ public final class MessageHelper {
         if (message.getBody() instanceof StreamCache) {
             ((StreamCache) message.getBody()).reset();
         }
+    }
+    
+    /**
+     * Returns the MIME content type on the message or null if one is not defined
+     */
+    public static String getContentType(Message message) {        
+        String contentType = message.getHeader(Exchange.CAMEL_CONTENT_TYPE, String.class);
+        if (contentType == null) {
+            // fallback with the Content-Type
+            contentType = message.getHeader("Content-Type", String.class);
+        }
+        return contentType;
     }
 }

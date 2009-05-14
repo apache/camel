@@ -336,7 +336,7 @@ public final class ExchangeHelper {
      * Returns the MIME content type on the input message or null if one is not defined
      */
     public static String getContentType(Exchange exchange) {
-        return exchange.getIn().getHeader("Content-Type", String.class);
+        return MessageHelper.getContentType(exchange.getIn());        
     }
 
     /**

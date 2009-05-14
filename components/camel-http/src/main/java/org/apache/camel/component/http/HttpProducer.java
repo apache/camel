@@ -98,7 +98,7 @@ public class HttpProducer extends DefaultProducer {
     protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
         Message answer = exchange.getOut();
 
-        answer.setHeaders(in.getHeaders());
+        //answer.setHeaders(in.getHeaders());
         answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
         answer.setBody(extractResponseBody(method, exchange));
 
@@ -107,6 +107,9 @@ public class HttpProducer extends DefaultProducer {
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
+            if (name.toLowerCase().equals("content-type")) {
+                name = Exchange.CAMEL_CONTENT_TYPE;
+            }
             if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.setHeader(name, value);
             }

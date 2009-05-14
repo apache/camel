@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.util.MessageHelper;
 
 /**
  * Unit test for exposing a http server that returns images
@@ -39,7 +40,7 @@ public class JettyImageFileTest extends ContextTestSupport {
         template.send(endpoint, exchange);
 
         assertNotNull(exchange.getOut().getBody());
-        assertOutMessageHeader(exchange, "Content-Type", "image/jpeg");
+        assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "image/jpeg");
     }
 
     public void testImageContentType() throws Exception {

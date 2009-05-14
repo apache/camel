@@ -22,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.MessageHelper;
 
 /**
  * Unit test for content-type
@@ -39,8 +41,9 @@ public class JettyContentTypeTest extends ContextTestSupport {
         template.send(endpoint, exchange);
 
         String body = exchange.getOut().getBody(String.class);
+        System.out.print("The out message header is " + exchange.getOut().getHeaders());
         assertEquals("<order>OK</order>", body);
-        assertOutMessageHeader(exchange, "Content-Type", "text/xml");
+        assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "text/xml");
     }
 
     public void testSameContentType() throws Exception {
@@ -60,7 +63,7 @@ public class JettyContentTypeTest extends ContextTestSupport {
 
         String body = exchange.getOut().getBody(String.class);
         assertEquals("FAIL", body);
-        assertOutMessageHeader(exchange, "Content-Type", "text/plain");
+        assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "text/plain");
     }
 
     @Override
@@ -76,12 +79,12 @@ public class JettyContentTypeTest extends ContextTestSupport {
         public void process(Exchange exchange) throws Exception {
             if (exchange.getIn().getHeader("user") != null 
                 && exchange.getIn().getBody(String.class).equals("<order>123</order>")
-                && exchange.getIn().getHeader("Content-Type").equals("text/xml")) {
+                && "text/xml".equals(ExchangeHelper.getContentType(exchange))) {
                 exchange.getOut().setBody("<order>OK</order>");
                 exchange.getOut().setHeader("Content-Type", "text/xml");
             } else {
                 exchange.getOut().setBody("FAIL");
-                exchange.getOut().setHeader("Content-Type", "text/plain");
+                exchange.getOut().setHeader(Exchange.CAMEL_CONTENT_TYPE, "text/plain");
             }
         }
     }
