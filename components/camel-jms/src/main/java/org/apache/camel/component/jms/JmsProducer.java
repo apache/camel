@@ -224,15 +224,17 @@ public class JmsProducer extends DefaultProducer {
                 exchange.setException(e);
             }
         } else {
-            if (!endpoint.getConfiguration().isPreserveMessageQos() && !endpoint.getConfiguration().isExplicitQosEnabled()
-                    && exchange.getIn().getHeaders().containsKey("JMSReplyTo")) {
-                // we are routing an existing JmsMessage, origin from another JMS endpoint
-                // then we need to remove the existing JMSReplyTo, JMSCorrelationID.
-                // as we are not out capable and thus do not expect a reply, and therefore
-                // the consumer of this message we send should not return a reply
-                String to = endpoint.getDestination();
-                LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable: " + exchange + " with destination: " + to);
-                exchange.getIn().setHeader("JMSReplyTo", null);
+            // we must honor these special flags to preverse QoS
+            if (!endpoint.getConfiguration().isPreserveMessageQos() && !endpoint.getConfiguration().isExplicitQosEnabled()) {
+                Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
+                if (replyTo != null) {
+                    // we are routing an existing JmsMessage, origin from another JMS endpoint
+                    // then we need to remove the existing JMSReplyTo
+                    // as we are not out capable and thus do not expect a reply, and therefore
+                    // the consumer of this message we send should not return a reply
+                    LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable with JMSReplyTo: " + replyTo + " for Exchange: " + exchange);
+                    exchange.getIn().setHeader("JMSReplyTo", null);
+                }
             }
 
             getInOnlyTemplate().send(endpoint.getDestination(), new MessageCreator() {
