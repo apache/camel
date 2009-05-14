@@ -27,6 +27,8 @@ import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -220,6 +222,9 @@ public class HttpProducer extends DefaultProducer {
         }
         if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
+            if (requestEntity.getContentType() == null) {
+                LOG.warn("Missing the ContentType in the request entity!");
+            }
         }
 
         return method;
@@ -237,12 +242,12 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        RequestEntity answer = in.getBody(RequestEntity.class);
+        RequestEntity answer = in.getBody(RequestEntity.class);        
         if (answer == null) {
             try {
                 String data = in.getBody(String.class);
                 if (data != null) {
-                    String contentType = in.getHeader("Content-Type", String.class);
+                    String contentType = ExchangeHelper.getContentType(exchange);
                     String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
                     answer = new StringRequestEntity(data, contentType, charset);
                 }
@@ -250,7 +255,6 @@ public class HttpProducer extends DefaultProducer {
                 throw new RuntimeCamelException(e);
             }
         }
-
         return answer;
     }
 

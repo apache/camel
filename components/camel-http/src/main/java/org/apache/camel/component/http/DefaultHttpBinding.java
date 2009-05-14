@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +52,40 @@ public class DefaultHttpBinding implements HttpBinding {
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         // lets force a parse of the body and headers
         message.getBody();
-        message.getHeaders();
+        // populate the headers from the request
+        Map<String, Object> headers = message.getHeaders();
+        
+        //apply the headerFilterStrategy
+        Enumeration names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = (String)names.nextElement();
+            Object value = request.getHeader(name);
+            if (headerFilterStrategy != null
+                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                headers.put(name, value);
+            }
+        }
+
+        //if the request method is Get, we also populate the http request parameters
+        if (request.getMethod().equalsIgnoreCase("GET")) {
+            names = request.getParameterNames();
+            while (names.hasMoreElements()) {
+                String name = (String)names.nextElement();
+                Object value = request.getParameter(name);
+                if (headerFilterStrategy != null
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    headers.put(name, value);
+                }
+            }
+        }
+        
+        // store the method and query and other info in headers
+        headers.put(HttpConstants.HTTP_METHOD, request.getMethod());
+        headers.put(HttpConstants.HTTP_QUERY, request.getQueryString());
+        headers.put(HttpConstants.HTTP_PATH, request.getPathInfo());
+        headers.put(HttpConstants.HTTP_CONTENT_TYPE, request.getContentType());
+        headers.put(HttpConstants.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
+        
     }
 
     public void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException {

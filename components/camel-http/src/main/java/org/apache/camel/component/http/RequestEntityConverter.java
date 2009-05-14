@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
@@ -36,7 +37,7 @@ public class RequestEntityConverter {
         return new InputStreamRequestEntity(
                 GZIPHelper.toGZIPInputStreamIfRequested(
                         exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
-                        buffer.array()));
+                        buffer.array()), ExchangeHelper.getContentType(exchange));
     }
 
     @Converter
@@ -44,7 +45,7 @@ public class RequestEntityConverter {
         return new InputStreamRequestEntity(
                 GZIPHelper.toGZIPInputStreamIfRequested(
                         exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
-                        array));
+                        array), ExchangeHelper.getContentType(exchange));
     }
 
     @Converter
@@ -52,16 +53,21 @@ public class RequestEntityConverter {
         return new InputStreamRequestEntity(
                 GZIPHelper.getGZIPWrappedInputStream(
                         exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
-                        inStream));
+                        inStream), ExchangeHelper.getContentType(exchange));
     }
 
 
     @Converter
     public RequestEntity toRequestEntity(String str, Exchange exchange) throws Exception {
-        return new InputStreamRequestEntity(
+        if (GZIPHelper.containsGzip(exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class))) {            
+            return new InputStreamRequestEntity(
                 GZIPHelper.toGZIPInputStreamIfRequested(
                         exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
-                        str.getBytes()));
+                        str.getBytes()), ExchangeHelper.getContentType(exchange));
+        } else {
+            // will use the default StringRequestEntity
+            return null;
+        }
     }
 
 
