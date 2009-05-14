@@ -223,7 +223,7 @@ public class HttpProducer extends DefaultProducer {
         if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
             if (requestEntity.getContentType() == null) {
-                LOG.warn("Missing the ContentType in the request entity!");
+                LOG.warn("Missing the ContentType in the request entity for the URI " + uri + ". The method is " + method);
             }
         }
 
