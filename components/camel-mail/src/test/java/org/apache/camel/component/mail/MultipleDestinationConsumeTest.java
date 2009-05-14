@@ -17,8 +17,8 @@
 package org.apache.camel.component.mail;
 
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.mail.Address;
 import javax.mail.Header;

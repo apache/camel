@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Properties;
 import java.util.Iterator;
-
+import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -27,7 +26,6 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**

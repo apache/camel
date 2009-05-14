@@ -41,5 +41,5 @@ public interface ContentTypeResolver {
      * @param fileName  the attachment file nane
      * @return the Content-Type or <tt>null</tt> to rely on the mail provider
      */
-    public String resolveContentType(String fileName);
+    String resolveContentType(String fileName);
 }
