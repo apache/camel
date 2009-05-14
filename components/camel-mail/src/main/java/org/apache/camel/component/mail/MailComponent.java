@@ -33,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class MailComponent extends DefaultComponent {
     private MailConfiguration configuration;
+    private ContentTypeResolver contentTypeResolver;
 
     public MailComponent() {
         this.configuration = new MailConfiguration();
@@ -63,6 +64,7 @@ public class MailComponent extends DefaultComponent {
         configureAdditionalJavaMailProperties(config, parameters);
 
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
+        endpoint.setContentTypeResolver(contentTypeResolver);
         setProperties(endpoint.getConfiguration(), parameters);
 
         // sanity check that we know the mail server
@@ -112,4 +114,11 @@ public class MailComponent extends DefaultComponent {
         return path;
     }
 
+    public ContentTypeResolver getContentTypeResolver() {
+        return contentTypeResolver;
+    }
+
+    public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
+        this.contentTypeResolver = contentTypeResolver;
+    }
 }

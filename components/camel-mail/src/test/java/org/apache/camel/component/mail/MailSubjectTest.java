@@ -40,6 +40,8 @@ public class MailSubjectTest extends ContextTestSupport {
         template.sendBody("direct:a", body);
 
         mock.assertIsSatisfied();
+
+        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn().hasAttachments());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

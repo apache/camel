@@ -38,6 +38,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;
     private MailConfiguration configuration;
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private ContentTypeResolver contentTypeResolver;
 
     public MailEndpoint() {
     }
@@ -111,7 +112,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
 
     public MailBinding getBinding() {
         if (binding == null) {
-            binding = new MailBinding(headerFilterStrategy);
+            binding = new MailBinding(headerFilterStrategy, contentTypeResolver);
         }
         return binding;
     }
@@ -139,4 +140,11 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    public ContentTypeResolver getContentTypeResolver() {
+        return contentTypeResolver;
+    }
+
+    public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
+        this.contentTypeResolver = contentTypeResolver;
+    }
 }

@@ -43,6 +43,8 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
@@ -52,14 +54,17 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class MailBinding {
 
+    private static final transient Log LOG = LogFactory.getLog(MailBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
+    private ContentTypeResolver contentTypeResolver;
 
     public MailBinding() {
         headerFilterStrategy = new DefaultHeaderFilterStrategy();
     }
 
-    public MailBinding(HeaderFilterStrategy headerFilterStrategy) {
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver) {
         this.headerFilterStrategy = headerFilterStrategy;
+        this.contentTypeResolver = contentTypeResolver;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -152,7 +157,7 @@ public class MailBinding {
     }
 
     private void setRecipientFromCamelMessage(MimeMessage mimeMessage, Exchange exchange,
-                                                org.apache.camel.Message camelMessage)
+                                              org.apache.camel.Message camelMessage)
         throws MessagingException {
 
         for (Map.Entry<String, Object> entry : camelMessage.getHeaders().entrySet()) {
@@ -208,34 +213,63 @@ public class MailBinding {
         multipart.setSubType("mixed");
         addBodyToMultipart(camelMessage, configuration, multipart);
         String partDisposition = configuration.isUseInlineAttachments() ?  Part.INLINE : Part.ATTACHMENT;
-        addAttachmentsToMultipart(camelMessage, multipart, partDisposition);
+        if (camelMessage.hasAttachments()) {
+            addAttachmentsToMultipart(camelMessage, multipart, partDisposition);
+        }
         return multipart;
     }
 
     protected void addAttachmentsToMultipart(org.apache.camel.Message camelMessage, MimeMultipart multipart, String partDisposition) throws MessagingException {
+        LOG.trace("Adding attachments +++ start +++");
+        int i = 0;
         for (Map.Entry<String, DataHandler> entry : camelMessage.getAttachments().entrySet()) {
             String attachmentFilename = entry.getKey();
             DataHandler handler = entry.getValue();
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Attachment #" + i + ": Disposition: " + partDisposition);
+                LOG.trace("Attachment #" + i + ": DataHandler: " + handler);
+                LOG.trace("Attachment #" + i + ": FileName: " + attachmentFilename);
+            }
             if (handler != null) {
-                if (shouldOutputAttachment(camelMessage, attachmentFilename, handler)) {
+                if (shouldAddAttachment(camelMessage, attachmentFilename, handler)) {
                     // Create another body part
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
                     messageBodyPart.setDataHandler(handler);
                     
                     if (attachmentFilename.toLowerCase().startsWith("cid:")) {
-                    // add a Content-ID header to the attachment
+                        // add a Content-ID header to the attachment
                         messageBodyPart.addHeader("Content-ID", attachmentFilename.substring(4));
                     }
+
                     // Set the filename
                     messageBodyPart.setFileName(attachmentFilename);
+                    LOG.trace("Attachment #" + i + ": ContentType: " + messageBodyPart.getContentType());
+
+                    if (contentTypeResolver != null) {
+                        String contentType = contentTypeResolver.resolveContentType(attachmentFilename);
+                        LOG.trace("Attachment #" + i + ": Using content type resolver: " + contentTypeResolver + " resolved content type as: " + contentType);
+                        if (contentType != null) {
+                            String value = contentType + "; name=" + attachmentFilename;
+                            messageBodyPart.setHeader("Content-Type", value);
+                            LOG.trace("Attachment #" + i + ": ContentType: " + messageBodyPart.getContentType());
+                        }
+                    }
+
                     // Set Disposition
                     messageBodyPart.setDisposition(partDisposition);
                     // Add part to multipart
                     multipart.addBodyPart(messageBodyPart);
+                } else {
+                    LOG.trace("shouldAddAttachment: false");
                 }
+            } else {
+                LOG.warn("Cannot add attachment: " + attachmentFilename + " as DataHandler is null");
             }
+            i++;
         }
+        LOG.trace("Adding attachments +++ done +++");
     }
 
     protected void createMultipartAlternativeMessage(MimeMessage mimeMessage, org.apache.camel.Message camelMessage, MailConfiguration configuration)
@@ -281,11 +315,10 @@ public class MailBinding {
         activeMultipart.addBodyPart(bodyMessage);
     }
 
-
     /**
-     * Strategy to allow filtering of attachments which are put on the Mail message
+     * Strategy to allow filtering of attachments which are added on the Mail message
      */
-    protected boolean shouldOutputAttachment(org.apache.camel.Message camelMessage, String attachmentFilename, DataHandler handler) {
+    protected boolean shouldAddAttachment(org.apache.camel.Message camelMessage, String attachmentFilename, DataHandler handler) {
         return true;
     }
 
