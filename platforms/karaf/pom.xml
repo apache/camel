@@ -24,13 +24,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>platforms</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel</groupId>
     <artifactId>karaf</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.1</version>
+    <version>1.6.2-SNAPSHOT</version>
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <properties>

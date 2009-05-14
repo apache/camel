@@ -24,11 +24,11 @@
     <parent>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-parent</artifactId>
-      <version>1.6.1</version>
+      <version>1.6.2-SNAPSHOT</version>
     </parent>
        
     <artifactId>camel-buildtools</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2-SNAPSHOT</version>
     <name>Apache :: Camel Buildtools</name>
     <description>The build tools for the Camel project</description>    
     <packaging>jar</packaging>

@@ -30,7 +30,7 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>1.6.1</version>
+    <version>1.6.2-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -38,7 +38,7 @@
     <spring-integration-version>1.0.1.RELEASE</spring-integration-version>
   </properties>
 
-  <version>1.6.1</version>
+  <version>1.6.2-SNAPSHOT</version>
 
   <repositories>
     <repository>
