@@ -26,13 +26,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.http.params.HttpParams;
 
-/**
- * Created by IntelliJ IDEA.
- * User: gnodet
- * Date: Sep 7, 2007
- * Time: 8:06:42 PM
- * To change this template use File | Settings | File Templates.
- */
 public class JhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private HttpParams params;

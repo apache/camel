@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -32,6 +33,7 @@ import org.apache.http.HttpResponseFactory;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.ProtocolVersion;
+import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.nio.NHttpConnection;
 import org.apache.http.nio.protocol.EventListener;
@@ -39,10 +41,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
-/**
- * Created by IntelliJ IDEA. User: gnodet Date: Sep 7, 2007 Time: 8:15:54 PM To
- * change this template use File | Settings | File Templates.
- */
 public class JhcConsumer extends DefaultConsumer {
 
     private static final Log LOG = LogFactory.getLog(JhcConsumer.class);
@@ -141,15 +139,16 @@ public class JhcConsumer extends DefaultConsumer {
         public void handle(final HttpRequest request, final HttpContext context,
                            final AsyncResponseHandler handler) throws HttpException, IOException {
             final Exchange exchange = getEndpoint().createExchange();
-            exchange.getIn().setHeader("http.uri", request.getRequestLine().getUri());
+            exchange.getIn().setHeader(Exchange.HTTP_URI, request.getRequestLine().getUri());
             if (request instanceof HttpEntityEnclosingRequest) {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, ((HttpEntityEnclosingRequest)request).getEntity().getContentType());
                 exchange.getIn().setBody(((HttpEntityEnclosingRequest)request).getEntity());
             }
 
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                exchange.setException(e);
+                throw new HttpException("Get the exception when processing the exchange", e);
             }
 
             LOG.debug("handleExchange");
@@ -159,9 +158,14 @@ public class JhcConsumer extends DefaultConsumer {
             if (responseCode == null) {
                 responseCode = HttpStatus.SC_OK;
             }
-            HttpResponse response = responseFactory.newHttpResponse(httpVersion, responseCode, context);
+            HttpResponse response = responseFactory.newHttpResponse(httpVersion, responseCode, context);            
             response.setParams(params);
             HttpEntity entity = exchange.getOut().getBody(HttpEntity.class);
+            String contentType = MessageHelper.getContentType(exchange.getOut());
+            if (contentType != null && entity instanceof AbstractHttpEntity) {
+                // To make sure we set the right content-type here 
+                ((AbstractHttpEntity)entity).setContentType(contentType);
+            }
             response.setEntity(entity);
             response.setParams(getEndpoint().getParams());
             try {

@@ -41,13 +41,6 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 
-/**
- * Created by IntelliJ IDEA.
- * User: gnodet
- * Date: Sep 11, 2007
- * Time: 6:57:34 PM
- * To change this template use File | Settings | File Templates.
- */
 public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandler {
 
 

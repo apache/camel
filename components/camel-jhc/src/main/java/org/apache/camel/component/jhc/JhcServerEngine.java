@@ -97,31 +97,31 @@ public class JhcServerEngine {
     }
 
     public void start() throws IOReactorException {
-        final SocketAddress addr = new InetSocketAddress(port);
-        ioReactor = new DefaultListeningIOReactor(nbThreads, threadFactory, params);
-
-        final IOEventDispatch ioEventDispatch;
-        if ("https".equals(protocol)) {
-            ioEventDispatch = new SSLServerIOEventDispatch(serviceHandler, sslContext, params);
-        } else {
-            ioEventDispatch = new DefaultServerIOEventDispatch(serviceHandler, params);
-        }
-        runner = new Thread() {
-            public void run() {
-                try {
-                    if (!isStarted.getAndSet(true)) {
-                        ioReactor.listen(addr);
-                        ioReactor.execute(ioEventDispatch);
-                    }
-                } catch (InterruptedIOException ex) {
-                    LOG.info("Interrupted");
-                } catch (IOException e) {
-                    LOG.warn("I/O error: " + e.getMessage());
-                }
-                LOG.debug("Shutdown");
+        if (!isStarted.getAndSet(true)) { 
+            final SocketAddress addr = new InetSocketAddress(port);
+            ioReactor = new DefaultListeningIOReactor(nbThreads, threadFactory, params);
+    
+            final IOEventDispatch ioEventDispatch;
+            if ("https".equals(protocol)) {
+                ioEventDispatch = new SSLServerIOEventDispatch(serviceHandler, sslContext, params);
+            } else {
+                ioEventDispatch = new DefaultServerIOEventDispatch(serviceHandler, params);
             }
-        };
-        runner.start();
+            runner = new Thread() {
+                public void run() {
+                    try {
+                        ioReactor.listen(addr);
+                        ioReactor.execute(ioEventDispatch);                    
+                    } catch (InterruptedIOException ex) {
+                        LOG.info("Interrupted");
+                    } catch (IOException e) {
+                        LOG.warn("I/O error: " + e.getMessage());
+                    }
+                    LOG.debug("Shutdown");
+                }
+            };
+            runner.start();
+        }
     }
 
     public void stop() throws IOException {

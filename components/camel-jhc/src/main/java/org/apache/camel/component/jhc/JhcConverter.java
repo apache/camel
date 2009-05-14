@@ -22,18 +22,12 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
-/**
- * Created by IntelliJ IDEA.
- * User: gnodet
- * Date: Sep 10, 2007
- * Time: 8:26:44 AM
- * To change this template use File | Settings | File Templates.
- */
 @Converter
 public final class JhcConverter {
 
@@ -56,13 +50,23 @@ public final class JhcConverter {
     }
 
     @Converter
-    public static HttpEntity toEntity(InputStream is) {
-        return new InputStreamEntity(is, -1);
+    public static HttpEntity toEntity(InputStream is, Exchange exchange) {
+        InputStreamEntity answer = new InputStreamEntity(is, -1);
+        String contentType = ExchangeHelper.getContentType(exchange);
+        if (contentType != null) {
+            answer.setContentType(contentType);
+        }
+        return answer;
     }
 
     @Converter
     public static HttpEntity toEntity(String str, Exchange exchange) throws UnsupportedEncodingException {
         String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-        return new StringEntity(str, charset);
+        StringEntity answer =  new StringEntity(str, charset);
+        String contentType = ExchangeHelper.getContentType(exchange);
+        if (contentType != null) {
+            answer.setContentType(contentType);
+        }
+        return answer;
     }
 }
