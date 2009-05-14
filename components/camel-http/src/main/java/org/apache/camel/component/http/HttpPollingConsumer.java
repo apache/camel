@@ -83,7 +83,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
                 }
             }
         
-            message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
+            message.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
             return exchange;
         } catch (IOException e) {
             throw new RuntimeCamelException(e);

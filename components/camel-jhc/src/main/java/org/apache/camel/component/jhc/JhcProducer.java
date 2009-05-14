@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.MessageHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -59,8 +60,7 @@ import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
 
 public class JhcProducer extends DefaultProducer implements Processor {
-
-    public static final String HTTP_RESPONSE_CODE = "http.responseCode";
+    
     private static final transient Log LOG = LogFactory.getLog(JhcProducer.class);
 
     private int nbThreads = 2;
@@ -160,7 +160,7 @@ public class JhcProducer extends DefaultProducer implements Processor {
                 return null;
             }
             entity = new ByteArrayEntity(data);
-            String contentType = in.getHeader("Content-Type", String.class);
+            String contentType = MessageHelper.getContentType(in);
             if (contentType != null) {
                 ((ByteArrayEntity) entity).setContentType(contentType);
             }
@@ -233,6 +233,7 @@ public class JhcProducer extends DefaultProducer implements Processor {
             httpContext.setAttribute(RESPONSE_RECEIVED, Boolean.TRUE);
             Exchange e = (Exchange) httpContext.getAttribute(Exchange.class.getName());
             e.getOut().setBody(httpResponse.getEntity());
+            System.out.println("the response is " + e.getOut().getBody(String.class));
             
             HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
             for (Iterator it = httpResponse.headerIterator(); it.hasNext();) {
@@ -242,7 +243,7 @@ public class JhcProducer extends DefaultProducer implements Processor {
                 }
             }
             
-            e.getOut().setHeader(HTTP_RESPONSE_CODE, httpResponse.getStatusLine().getStatusCode());
+            e.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, httpResponse.getStatusLine().getStatusCode());
         }
 
         public void finalizeContext(HttpContext httpContext) {

@@ -21,6 +21,8 @@ import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.logging.Log;
@@ -30,6 +32,7 @@ import org.apache.http.impl.nio.SSLServerIOEventDispatch;
 import org.apache.http.impl.nio.reactor.DefaultListeningIOReactor;
 import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.http.nio.reactor.IOReactorStatus;
 import org.apache.http.nio.reactor.ListeningIOReactor;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpRequestHandlerRegistry;
@@ -46,7 +49,7 @@ public class JhcServerEngine {
     private SSLContext sslContext;
     private AsyncBufferingHttpServiceHandler serviceHandler;
     private HttpRequestHandlerRegistry handlerRegistry;
-    private boolean isStarted;
+    private AtomicBoolean isStarted = new AtomicBoolean(false);
     private int referenceCounter;
 
     JhcServerEngine(HttpParams params, int port, String protocol) {
@@ -90,7 +93,7 @@ public class JhcServerEngine {
     }
 
     public boolean isStarted() {
-        return isStarted;
+        return isStarted.get();
     }
 
     public void start() throws IOReactorException {
@@ -106,9 +109,10 @@ public class JhcServerEngine {
         runner = new Thread() {
             public void run() {
                 try {
-                    ioReactor.listen(addr);
-                    isStarted = true;
-                    ioReactor.execute(ioEventDispatch);
+                    if (!isStarted.getAndSet(true)) {
+                        ioReactor.listen(addr);
+                        ioReactor.execute(ioEventDispatch);
+                    }
                 } catch (InterruptedIOException ex) {
                     LOG.info("Interrupted");
                 } catch (IOException e) {
@@ -129,7 +133,7 @@ public class JhcServerEngine {
         } catch (InterruptedException e) {
             //do nothing here
         }
-        isStarted = false;
+        isStarted.getAndSet(false);
         LOG.debug("Runner stopped");
     }
 }

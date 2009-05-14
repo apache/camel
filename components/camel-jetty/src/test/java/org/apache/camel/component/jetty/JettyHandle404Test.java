@@ -35,7 +35,7 @@ public class JettyHandle404Test extends ContextTestSupport {
     public void testSimulate404() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Page not found");
-        mock.expectedHeaderReceived(HttpConstants.HTTP_RESPONSE_CODE, 404);
+        mock.expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 404);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -53,7 +53,7 @@ public class JettyHandle404Test extends ContextTestSupport {
                 from("direct:start").enrich("direct:tohttp", new AggregationStrategy() {
                     public Exchange aggregate(Exchange original, Exchange resource) {
                         // get the response code
-                        Integer code = resource.getOut().getHeader(HttpConstants.HTTP_RESPONSE_CODE, Integer.class);
+                        Integer code = resource.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
                         assertEquals(404, code.intValue());
                         return resource;
                     }
@@ -70,7 +70,7 @@ public class JettyHandle404Test extends ContextTestSupport {
                                     // copy the caused exception values to the exchange as we want the response in the regular exchange
                                     // instead as an exception that will get thrown and thus the route breaks
                                     HttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HttpOperationFailedException.class);
-                                    exchange.getOut().setHeader(HttpConstants.HTTP_RESPONSE_CODE, cause.getStatusCode());
+                                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
                                     exchange.getOut().setBody(cause.getResponseBody());
                                 }
                             })
@@ -82,7 +82,7 @@ public class JettyHandle404Test extends ContextTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Page not found");
-                                exchange.getOut().setHeader(HttpConstants.HTTP_RESPONSE_CODE, 404);
+                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                             }
                         });
             }

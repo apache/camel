@@ -155,8 +155,11 @@ public class JhcConsumer extends DefaultConsumer {
             LOG.debug("handleExchange");
             // create the default response to this request
             ProtocolVersion httpVersion = (HttpVersion)request.getRequestLine().getProtocolVersion();
-
-            HttpResponse response = responseFactory.newHttpResponse(httpVersion, HttpStatus.SC_OK, context);
+            Integer responseCode = exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+            if (responseCode == null) {
+                responseCode = HttpStatus.SC_OK;
+            }
+            HttpResponse response = responseFactory.newHttpResponse(httpVersion, responseCode, context);
             response.setParams(params);
             HttpEntity entity = exchange.getOut().getBody(HttpEntity.class);
             response.setEntity(entity);
@@ -164,7 +167,7 @@ public class JhcConsumer extends DefaultConsumer {
             try {
                 handler.sendResponse(response);
             } catch (Exception e) {
-                LOG.info(e);
+                LOG.info("Get exception when send the reponse" + e);
             }
         }
 

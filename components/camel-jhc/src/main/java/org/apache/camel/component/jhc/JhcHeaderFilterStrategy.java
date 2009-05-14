@@ -32,8 +32,7 @@ public class JhcHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // We could import filters from http component but that also means
         // a new dependency on camel-http
         getOutFilter().add("content-length");
-        getOutFilter().add("content-type");
-        getOutFilter().add(JhcProducer.HTTP_RESPONSE_CODE);
+        getOutFilter().add("content-type");        
         setLowerCase(true);
 
         // filter headers begin with "Camel" or "org.apache.camel"

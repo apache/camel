@@ -99,7 +99,7 @@ public class HttpProducer extends DefaultProducer {
         Message answer = exchange.getOut();
 
         //answer.setHeaders(in.getHeaders());
-        answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
+        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
         answer.setBody(extractResponseBody(method, exchange));
 
         // propagate HTTP response headers
@@ -108,7 +108,7 @@ public class HttpProducer extends DefaultProducer {
             String name = header.getName();
             String value = header.getValue();
             if (name.toLowerCase().equals("content-type")) {
-                name = Exchange.CAMEL_CONTENT_TYPE;
+                name = Exchange.CONTENT_TYPE;
             }
             if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.setHeader(name, value);
@@ -200,7 +200,7 @@ public class HttpProducer extends DefaultProducer {
             methodToUse = requestEntity != null ? HttpMethods.POST : HttpMethods.GET;
         }
 
-        String uri = exchange.getIn().getHeader(HttpConstants.HTTP_URI, String.class);
+        String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
         if (uri == null) {
             uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
         }

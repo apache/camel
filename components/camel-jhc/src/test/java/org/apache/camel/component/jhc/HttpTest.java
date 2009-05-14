@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -46,7 +47,7 @@ public class HttpTest extends ContextTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:start", null);
-
+        
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
@@ -56,8 +57,7 @@ public class HttpTest extends ContextTestSupport {
         assertNotNull("in", in);
 
         String body = in.getBody(String.class);
-
-        log.debug("Body: " + body);
+        
         assertNotNull("Should have a body!", body);
         assertTrue("body should contain: " + expectedText, body.contains(expectedText));
     }
@@ -75,7 +75,7 @@ public class HttpTest extends ContextTestSupport {
             con.setDoInput(true);
             con.setDoOutput(false);
             con.connect();
-            System.err.println("Message: " + con.getResponseMessage());
+            log.info("Message: " + con.getResponseMessage());
             InputStream is = con.getInputStream();
             byte[] buf = new byte[8192];
             int len;
@@ -88,7 +88,7 @@ public class HttpTest extends ContextTestSupport {
                 baos.write(buf, 0, len);
             }
             String str = baos.toString();
-            System.err.println("Response: " + str);
+            log.info("Response: " + str);
             assertEquals("request using url" + url + "can't get the expert result", 
                          expect, str);
         }
@@ -99,8 +99,10 @@ public class HttpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jhc:http://localhost:8192/test1").transform(constant("<response> Test1<response/>"));
-                from("direct:start").to("jhc:http://localhost:8192/test1/pom.xml").to("mock:results");
                 from("jhc:http://localhost:8192/test2").transform(constant("<response> Test2<response/>"));
+                //TODO we need revisit this test when the call back Done API is finished in Camel 2.0
+                from("direct:start").to("http://localhost:8192/test1/pom.xml").to("mock:results");
+                
             }
         };
     }

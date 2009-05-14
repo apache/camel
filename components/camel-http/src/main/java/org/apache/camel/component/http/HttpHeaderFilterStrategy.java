@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
@@ -31,8 +32,7 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
         getOutFilter().add(HttpConstants.HTTP_METHOD.toLowerCase());
-        getOutFilter().add(HttpConstants.HTTP_QUERY);
-        getOutFilter().add(HttpConstants.HTTP_RESPONSE_CODE.toLowerCase());
+        getOutFilter().add(HttpConstants.HTTP_QUERY);        
         setLowerCase(true);
         
         // filter headers begin with "Camel" or "org.apache.camel"

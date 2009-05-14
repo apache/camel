@@ -63,7 +63,7 @@ public class DefaultHttpBinding implements HttpBinding {
             Object value = request.getHeader(name);
             // mapping the content-type 
             if (name.toLowerCase().equals("content-type")) {
-                name = Exchange.CAMEL_CONTENT_TYPE;
+                name = Exchange.CONTENT_TYPE;
             }
             if (headerFilterStrategy != null
                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
@@ -88,7 +88,7 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(HttpConstants.HTTP_METHOD, request.getMethod());
         headers.put(HttpConstants.HTTP_QUERY, request.getQueryString());
         headers.put(HttpConstants.HTTP_PATH, request.getPathInfo());
-        headers.put(HttpConstants.HTTP_CONTENT_TYPE, request.getContentType());
+        headers.put(Exchange.CONTENT_TYPE, request.getContentType());
         headers.put(HttpConstants.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
         
     }
@@ -134,8 +134,8 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         // set the status code in the response. Default is 200.
-        if (message.getHeader(HttpConstants.HTTP_RESPONSE_CODE) != null) {
-            int code = message.getHeader(HttpConstants.HTTP_RESPONSE_CODE, Integer.class);
+        if (message.getHeader(Exchange.HTTP_RESPONSE_CODE) != null) {
+            int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
             response.setStatus(code);
         }
         // set the content type in the response.

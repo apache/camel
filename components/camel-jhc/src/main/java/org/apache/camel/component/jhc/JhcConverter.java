@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
@@ -60,7 +61,8 @@ public final class JhcConverter {
     }
 
     @Converter
-    public static HttpEntity toEntity(String str) throws UnsupportedEncodingException {
-        return new StringEntity(str);
+    public static HttpEntity toEntity(String str, Exchange exchange) throws UnsupportedEncodingException {
+        String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+        return new StringEntity(str, charset);
     }
 }

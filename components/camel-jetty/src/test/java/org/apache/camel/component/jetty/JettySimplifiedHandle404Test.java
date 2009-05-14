@@ -34,7 +34,7 @@ public class JettySimplifiedHandle404Test extends ContextTestSupport {
     public void testSimulate404() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Page not found");
-        mock.expectedHeaderReceived(HttpConstants.HTTP_RESPONSE_CODE, 404);
+        mock.expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 404);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -57,7 +57,7 @@ public class JettySimplifiedHandle404Test extends ContextTestSupport {
                 from("direct:start").enrich("http://localhost:8222/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
                     public Exchange aggregate(Exchange original, Exchange resource) {
                         // get the response code
-                        Integer code = resource.getOut().getHeader(HttpConstants.HTTP_RESPONSE_CODE, Integer.class);
+                        Integer code = resource.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
                         assertEquals(404, code.intValue());
                         return resource;
                     }
@@ -68,7 +68,7 @@ public class JettySimplifiedHandle404Test extends ContextTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Page not found");
-                                exchange.getOut().setHeader(HttpConstants.HTTP_RESPONSE_CODE, 404);
+                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                             }
                         });
                 // END SNIPPET: e1

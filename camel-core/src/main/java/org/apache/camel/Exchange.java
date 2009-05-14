@@ -31,7 +31,9 @@ import org.apache.camel.spi.UnitOfWork;
 public interface Exchange {
 
     String ASYNC_WAIT = "CamelAsyncWait";
-    String CAMEL_CONTENT_TYPE = "CamelConentType";
+    String CONTENT_TYPE = "CamelConentType";
+    String HTTP_RESPONSE_CODE = "CamelHttpResponseCode";
+    String HTTP_URI = "CamelHttpUri";
 
     String BEAN_METHOD_NAME = "CamelBeanMethodName";
     String BEAN_HOLDER = "CamelBeanHolder";

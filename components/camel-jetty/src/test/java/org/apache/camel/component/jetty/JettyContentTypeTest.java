@@ -84,7 +84,7 @@ public class JettyContentTypeTest extends ContextTestSupport {
                 exchange.getOut().setHeader("Content-Type", "text/xml");
             } else {
                 exchange.getOut().setBody("FAIL");
-                exchange.getOut().setHeader(Exchange.CAMEL_CONTENT_TYPE, "text/plain");
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
             }
         }
     }

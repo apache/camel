@@ -60,6 +60,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -90,7 +95,7 @@
           </includes>
           <excludes>
             <!-- TODO disable for now as its causing the CI build to hang -->
-            <exclude>**/HttpTest.*</exclude>
+            <!--  exclude>**/HttpTest.*</exclude-->
           </excludes>
         </configuration>
       </plugin>
