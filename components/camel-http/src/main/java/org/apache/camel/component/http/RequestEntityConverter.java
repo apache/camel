@@ -29,6 +29,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
@@ -45,36 +46,38 @@ public class RequestEntityConverter {
     @Converter
     public RequestEntity toRequestEntity(ByteBuffer buffer, Exchange exchange) throws Exception {
         return new InputStreamRequestEntity(
-               GZIPHelper.toGZIPInputStreamIfRequested(
-                   (String) exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING),
-                   buffer.array()));
-    } 
+                GZIPHelper.toGZIPInputStreamIfRequested(
+                        exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
+                        buffer.array()), ExchangeHelper.getContentType(exchange));
+    }
 
     @Converter
     public RequestEntity toRequestEntity(byte[] array, Exchange exchange) throws Exception {
         return new InputStreamRequestEntity(
-               GZIPHelper.toGZIPInputStreamIfRequested(
-                   (String) exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING),
-                   array));
-    } 
+                GZIPHelper.toGZIPInputStreamIfRequested(
+                        exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
+                        array), ExchangeHelper.getContentType(exchange));
+    }
 
     @Converter
     public RequestEntity toRequestEntity(InputStream inStream, Exchange exchange) throws Exception {
         return new InputStreamRequestEntity(
-               GZIPHelper.getGZIPWrappedInputStream(
-                    (String) exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING),
-                    inStream));
-    } 
-
+                GZIPHelper.getGZIPWrappedInputStream(
+                        exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
+                        inStream), ExchangeHelper.getContentType(exchange));
+    }
 
     @Converter
     public RequestEntity toRequestEntity(String str, Exchange exchange) throws Exception {
-        return new InputStreamRequestEntity(
-               GZIPHelper.toGZIPInputStreamIfRequested(
-                   (String) exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING),
-                   str.getBytes()));
-    } 
-
-
+        if (GZIPHelper.containsGzip(exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class))) {            
+            return new InputStreamRequestEntity(
+                GZIPHelper.toGZIPInputStreamIfRequested(
+                        exchange.getIn().getHeader(GZIPHelper.CONTENT_ENCODING, String.class),
+                        str.getBytes()), ExchangeHelper.getContentType(exchange));
+        } else {
+            // will use the default StringRequestEntity
+            return null;
+        }
+    }
 }
 

@@ -33,6 +33,8 @@ import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -209,6 +211,9 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         }
         if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
+            if (requestEntity.getContentType() == null) {
+                LOG.warn("Missing the ContentType in the request entity for the URI " + uri + ". The method is " + method);
+            }
         }
 
         return method;
@@ -225,13 +230,14 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         if (in.getBody() == null) {
             return null;
         }
+
         try {
             return in.getBody(RequestEntity.class);
         } catch (NoTypeConversionAvailableException ex) {
             try {
                 String data = in.getBody(String.class);
                 if (data != null) {
-                    String contentType = in.getHeader("Content-Type", String.class);
+                    String contentType = ExchangeHelper.getContentType(exchange);
                     String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
                     return new StringRequestEntity(data, contentType, charset);
                 } else {
@@ -241,7 +247,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeCamelException(e);
             }
-        }
+        }        
     }
 
     public HttpClient getHttpClient() {

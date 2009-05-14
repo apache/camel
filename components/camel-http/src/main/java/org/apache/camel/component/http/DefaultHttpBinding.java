@@ -17,12 +17,11 @@
 package org.apache.camel.component.http;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.zip.GZIPOutputStream;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +51,36 @@ public class DefaultHttpBinding implements HttpBinding {
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         // lets force a parse of the body and headers
         message.getBody();
-        message.getHeaders();
+        // populate the headers from the request
+        Map<String, Object> headers = message.getHeaders();
+        
+        //apply the headerFilterStrategy
+        Enumeration names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+            String name = (String)names.nextElement();
+            Object value = request.getHeader(name);
+            if (headerFilterStrategy != null
+                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+                headers.put(name, value);
+            }
+        }
+
+        //if the request method is Get, we also populate the http request parameters
+        if (request.getMethod().equalsIgnoreCase("GET")) {
+            names = request.getParameterNames();
+            while (names.hasMoreElements()) {
+                String name = (String)names.nextElement();
+                Object value = request.getParameter(name);
+                if (headerFilterStrategy != null
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+                    headers.put(name, value);
+                }
+            }
+        }
+        
+        // store the method and query and other info in headers
+        headers.put(HttpMethods.HTTP_METHOD, request.getMethod());
+        headers.put(HttpProducer.QUERY, request.getQueryString());
     }
 
     public void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException {

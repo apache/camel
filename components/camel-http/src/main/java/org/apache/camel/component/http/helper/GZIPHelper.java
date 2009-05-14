@@ -124,7 +124,7 @@ public final class GZIPHelper {
         return compressed;
     }
 
-    private static boolean containsGzip(String str) {
+    public static boolean containsGzip(String str) {
         return str != null && str.toLowerCase().indexOf(GZIP) >= 0;
     }
 
