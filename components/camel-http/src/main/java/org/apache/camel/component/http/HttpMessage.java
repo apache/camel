@@ -56,34 +56,5 @@ public class HttpMessage extends DefaultMessage {
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
-    }
-
-    @Override
-    protected void populateInitialHeaders(Map<String, Object> map) {
-        // populate the http request headers
-        Enumeration names = request.getHeaderNames();
-        while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
-            Object value = request.getHeader(name);
-            map.put(name, value);
-        }
-
-        //if the request method is Get, we also populate the http request parameters
-        if (request.getMethod().equalsIgnoreCase("GET")) {
-            names = request.getParameterNames();
-            while (names.hasMoreElements()) {
-                String name = (String)names.nextElement();
-                Object value = request.getParameter(name);
-                map.put(name, value);
-            }
-        }
-        
-        // store the method and query and other info in headers
-        map.put(HttpConstants.HTTP_METHOD, request.getMethod());
-        map.put(HttpConstants.HTTP_QUERY, request.getQueryString());
-        map.put(HttpConstants.HTTP_PATH, request.getPathInfo());
-        map.put(HttpConstants.HTTP_CONTENT_TYPE, request.getContentType());
-        map.put(HttpConstants.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
-
-    }
+    }   
 }
