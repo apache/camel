@@ -71,7 +71,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
                 // first hit is always a error code 500 to force the caller to retry
                 if (counter++ < 1) {
                     // simulate http error 500
-                    exchange.getOut().setHeader(HttpConstants.HTTP_RESPONSE_CODE, 500);
+                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
                     exchange.getOut().setBody("Damn some internal server error");
                     return;
                 }
@@ -79,7 +79,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
                 String user = exchange.getIn().getHeader("user", String.class);
                 if ("unknown".equals(user)) {
                     // no page for a unknown user
-                    exchange.getOut().setHeader(HttpConstants.HTTP_RESPONSE_CODE, 404);
+                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                     exchange.getOut().setBody("Page does not exists");
                     return;
                 } else if ("guest".equals(user)) {

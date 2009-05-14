@@ -58,8 +58,8 @@ public class JettyFileMulticastTest extends AbstractJUnit38SpringContextTests {
         assertEquals("Should get one message for mock endpoint", resultExchanges.size(), 1);
         
         String result = resultExchanges.get(0).getIn().getBody(String.class);
-        assertEquals("Should get the request", "<response>Hello form Willem</response>", result);
-        assertEquals("Should get the header", "greetMe", resultExchanges.get(0).getIn().getHeader("Operation"));        
+        assertEquals("Should get the request", "<response>Hello form Willem</response>", result);        
+        assertEquals("Should get the responise code", 200, resultExchanges.get(0).getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));        
         
     }
 
