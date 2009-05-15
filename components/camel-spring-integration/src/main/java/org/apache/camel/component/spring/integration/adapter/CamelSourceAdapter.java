@@ -72,6 +72,9 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
                 exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , replyChannel);
                 replyChannel.subscribe(new MessageHandler() {
                     public void handleMessage(Message<?> message) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("set the out message with the SI response message");
+                        }
                         //TODO set the corralationID
                         SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
                     }
