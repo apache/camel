@@ -1850,6 +1850,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     @SuppressWarnings("unchecked")
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
+        // we must remove all existing on completion definition (as they are global)
+        // and thus we are the only one as route scoped should override any global scoped
+        answer.removeAllOnCompletionDefinition(this);
         popBlock();
         addOutput(answer);
         pushBlock(answer);

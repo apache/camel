@@ -48,6 +48,8 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     @XmlTransient
     private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
     @XmlTransient
+    private List<OnCompletionDefinition> onCompletions = new ArrayList<OnCompletionDefinition>();
+    @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
     private ErrorHandlerBuilder errorHandlerBuilder;
@@ -102,6 +104,14 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
     public void setOnExceptions(List<OnExceptionDefinition> onExceptions) {
         this.onExceptions = onExceptions;
+    }
+
+    public List<OnCompletionDefinition> getOnCompletions() {
+        return onCompletions;
+    }
+
+    public void setOnCompletions(List<OnCompletionDefinition> onCompletions) {
+        this.onCompletions = onCompletions;
     }
 
     public CamelContext getCamelContext() {
@@ -227,8 +237,11 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
             route.getOutputs().add(0, sendTo);
         }
 
-        // add on exceptions
-        route.getOutputs().addAll(getOnExceptions());
+        // add on completions after the interceptors
+        route.getOutputs().addAll(getOnCompletions());
+
+        // add on exceptions at top since we need to inject this by the error handlers
+        route.getOutputs().addAll(0, getOnExceptions());
 
         getRoutes().add(route);
         return route;
@@ -293,6 +306,17 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     public OnExceptionDefinition onException(Class exception) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exception);
         getOnExceptions().add(answer);
+        return answer;
+    }
+
+    /**
+     * Adds an on completion
+     *
+     * @return the builder
+     */
+    public OnCompletionDefinition onCompletion() {
+        OnCompletionDefinition answer = new OnCompletionDefinition();
+        getOnCompletions().add(answer);
         return answer;
     }
 

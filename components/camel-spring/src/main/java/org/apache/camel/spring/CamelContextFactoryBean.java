@@ -38,6 +38,7 @@ import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -118,6 +119,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private DataFormatsDefinition dataFormats;
     @XmlElement(name = "onException", required = false)
     private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
+    @XmlElement(name = "onCompletion", required = false)
+    private List<OnCompletionDefinition> onCompletions = new ArrayList<OnCompletionDefinition>();
     @XmlElement(name = "intercept", required = false)
     private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
     @XmlElement(name = "interceptFrom", required = false)
@@ -233,9 +236,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // this is needed as JAXB does not build excaclty the same model definition as Spring DSL would do
         // using route builders. So we have here a little custom code to fix the JAXB gaps
         for (RouteDefinition route : routes) {
+            // interceptors should be first
             initInterceptors(route);
-            initOnExceptions(route);
+            // then on completion
+            initOnCompletions(route);
+            // then polices
             initPolicies(route);
+            // and last on exception
+            initOnExceptions(route);
         }
 
         if (dataFormats != null) {
@@ -326,6 +334,30 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             route.getOutputs().add(0, intercept);
         }
 
+    }
+
+    private void initOnCompletions(RouteDefinition route) {
+        // only add global onCompletion if there are no route alredy
+        boolean hasRouteScope = false;
+        for (ProcessorDefinition out : route.getOutputs()) {
+            if (out instanceof OnCompletionDefinition) {
+                hasRouteScope = true;
+                break;
+            }
+        }
+        // only add global onCompletion if we do *not* have any route onCompletion defined in the route
+        // add onCompletion *after* intercept, as its important intercept is first 
+        if (!hasRouteScope) {
+            int index = 0;
+            for (int i = 0; i < route.getOutputs().size(); i++) {
+                index = i;
+                ProcessorDefinition out = route.getOutputs().get(i);
+                if (!(out instanceof InterceptDefinition)) {
+                    break;
+                }
+            }
+            route.getOutputs().addAll(index, getOnCompletions());
+        }
     }
 
     private void initPolicies(RouteDefinition route) {
@@ -597,6 +629,30 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.shouldStartContext = shouldStartContext;
     }
 
+    public void setDataFormats(DataFormatsDefinition dataFormats) {
+        this.dataFormats = dataFormats;
+    }
+
+    public DataFormatsDefinition getDataFormats() {
+        return dataFormats;
+    }
+
+    public void setOnExceptions(List<OnExceptionDefinition> onExceptions) {
+        this.onExceptions = onExceptions;
+    }
+
+    public List<OnExceptionDefinition> getOnExceptions() {
+        return onExceptions;
+    }
+
+    public List<OnCompletionDefinition> getOnCompletions() {
+        return onCompletions;
+    }
+
+    public void setOnCompletions(List<OnCompletionDefinition> onCompletions) {
+        this.onCompletions = onCompletions;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -702,19 +758,4 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
     }
     
-    public void setDataFormats(DataFormatsDefinition dataFormats) {
-        this.dataFormats = dataFormats;
-    }
-
-    public DataFormatsDefinition getDataFormats() {
-        return dataFormats;
-    }
-
-    public void setOnExceptions(List<OnExceptionDefinition> onExceptions) {
-        this.onExceptions = onExceptions;
-    }
-
-    public List<OnExceptionDefinition> getOnExceptions() {
-        return onExceptions;
-    }
 }

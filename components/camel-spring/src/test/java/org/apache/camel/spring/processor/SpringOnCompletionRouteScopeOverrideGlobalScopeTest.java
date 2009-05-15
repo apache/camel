@@ -14,22 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spring.processor;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.OnCompletionRouteScopeOverrideGlobalScopeTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * A callback for {@link org.apache.camel.Exchange} when they are polled by a {@link org.apache.camel.PollingConsumer}.
- * <p/>
- * Is used if the {@link org.apache.camel.Exchange} needs to prepare, eg loading content that it otherwise would have
- * loaded lazy on demand.
- *
  * @version $Revision$
  */
-public interface PollingConsumerAware {
+public class SpringOnCompletionRouteScopeOverrideGlobalScopeTest extends OnCompletionRouteScopeOverrideGlobalScopeTest {
 
-    /**
-     * Callback when an {@link org.apache.camel.Exchange} has been pooled.
-     *
-     * @param exchange  the exchange
-     */
-    void exchangePolled(Exchange exchange);
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringOnCompletionRouteScopeOverrideGlobalScopeTest.xml");
+    }
+
 }

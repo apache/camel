@@ -16,6 +16,9 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -61,6 +64,24 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = createOutputsProcessor(routeContext);
         return new OnCompletionProcessor(childProcessor, onCompleteOnly, onFailureOnly);
+    }
+
+    /**
+     * Removes all existing {@link org.apache.camel.model.OnCompletionDefinition} from the defintion.
+     * <p/>
+     * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>.
+     * Hence we remove all existing as they are global.
+     *
+     * @param definition the parent defintion that is the route 
+     */
+    @SuppressWarnings("unchecked")
+    public void removeAllOnCompletionDefinition(ProcessorDefinition definition) {
+        for (Iterator<ProcessorDefinition> it = definition.getOutputs().iterator(); it.hasNext();) {
+            ProcessorDefinition out = it.next();
+            if (out instanceof OnCompletionDefinition) {
+                it.remove();
+            }
+        }
     }
 
     @Override

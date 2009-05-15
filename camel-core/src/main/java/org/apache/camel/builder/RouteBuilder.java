@@ -31,6 +31,7 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.OnCompletionDefinition;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
@@ -211,6 +212,17 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
             last = last == null ? onException(ex) : last.onException(ex);
         }
         return last != null ? last : onException(Exception.class);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/oncompletion.html">On completion</a>
+     * callback for doing custom routing when the {@link org.apache.camel.Exchange} is complete.
+     *
+     * @return the builder
+     */
+    public OnCompletionDefinition onCompletion() {
+        routeCollection.setCamelContext(getContext());
+        return routeCollection.onCompletion();
     }
     
     // Properties
