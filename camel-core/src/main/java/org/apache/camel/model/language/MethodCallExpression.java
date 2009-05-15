@@ -20,11 +20,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.bean.BeanExpression;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For expressions and predicates using the
@@ -39,6 +41,10 @@ public class MethodCallExpression extends ExpressionDefinition {
     private String bean;
     @XmlAttribute(required = false)
     private String method;
+    @XmlTransient
+    // we don't need to support the beanType class in Spring
+    private Class beanType;
+    
 
     public MethodCallExpression() {
     }
@@ -49,6 +55,17 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     public MethodCallExpression(String beanName, String method) {
         super(beanName);
+        this.method = method;
+    }
+    
+    public MethodCallExpression(Class type) {
+        super(type.toString());
+        this.beanType = type;        
+    }
+    
+    public MethodCallExpression(Class type, String method) {
+        super(type.toString());
+        this.beanType = type;
         this.method = method;
     }
 
@@ -64,14 +81,24 @@ public class MethodCallExpression extends ExpressionDefinition {
         this.method = method;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Expression createExpression(RouteContext routeContext) {
-        return new BeanExpression(beanName(), getMethod());
+        if (beanType != null) {            
+            return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
+        } else {
+            return new BeanExpression(beanName(), getMethod());   
+        }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Predicate createPredicate(RouteContext routeContext) {
-        return new BeanExpression(beanName(), getMethod());
+        if (beanType != null) {
+            return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
+        } else {
+            return new BeanExpression(beanName(), getMethod());
+        }
     }
 
     protected String beanName() {

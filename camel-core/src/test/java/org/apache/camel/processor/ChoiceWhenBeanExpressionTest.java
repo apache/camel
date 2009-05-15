@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.builder.PredicateBuilder.not;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,18 +25,32 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     private MockEndpoint gradeA;
     private MockEndpoint otherGrade;
     
-    public void testGradeA() throws Exception {       
+    protected void verifyGradeA(String endpointUri) throws Exception {       
+        gradeA.reset();
+        otherGrade.reset();
         gradeA.expectedMessageCount(1);
         otherGrade.expectedMessageCount(0);
-        template.sendBody("direct:start", new Student(95));
+        template.sendBody(endpointUri, new Student(95));
         assertMockEndpointsSatisfied();
     }
     
-    public void testOtherGrade() throws Exception {       
+    public void verifyOtherGrade(String endpointUri) throws Exception {
+        gradeA.reset();
+        otherGrade.reset();
         gradeA.expectedMessageCount(0);
         otherGrade.expectedMessageCount(1);
-        template.sendBody("direct:start", new Student(60));
+        template.sendBody(endpointUri, new Student(60));
         assertMockEndpointsSatisfied();
+    }
+    
+    public void testBeanExpression() throws Exception {
+        verifyGradeA("direct:expression");
+        verifyOtherGrade("direct:expression");
+    }
+    
+    public void testMethod() throws Exception {
+        verifyGradeA("direct:method");
+        verifyOtherGrade("direct:method");
     }
     
     @Override
@@ -51,9 +64,15 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {                
-                from("direct:start")
+                from("direct:expression")
                     .choice()
                         .when().expression(bean(MyBean.class, "isGradeA")).to("mock:gradeA")
+                        .otherwise().to("mock:otherGrade")
+                    .end();
+                
+                from("direct:method")
+                    .choice()
+                        .when().method(MyBean.class).to("mock:gradeA")
                         .otherwise().to("mock:otherGrade")
                     .end();
             }
