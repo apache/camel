@@ -147,7 +147,18 @@ public abstract class BuilderSupport {
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
      *
-     * @param beanType  the bean's class
+     * @param beanType the Class of the bean which we want to invoke
+     * @return the builder
+     */
+    public ValueBuilder bean(Class<?> beanType) {
+        return Builder.bean(beanType, null);
+    }
+    
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * value builder
+     *
+     * @param beanType the Class of the bean which we want to invoke
      * @param methodName  the method name that will be invoked
      * @return the builder
      */
