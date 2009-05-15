@@ -17,6 +17,7 @@
 package org.apache.camel.processor.async;
 
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -113,7 +114,11 @@ public class AsyncRouteTest extends ContextTestSupport {
         Future future = out.getOut().getBody(Future.class);
 
         assertMockEndpointsSatisfied();
+
+        // for slower computers we invoke the get with a timeout
+        future.get(1, TimeUnit.SECONDS);
         assertTrue("Should be done", future.isDone());
+
         assertEquals("AB", route);
     }
 
