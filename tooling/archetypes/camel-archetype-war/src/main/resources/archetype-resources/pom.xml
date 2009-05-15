@@ -59,7 +59,12 @@
       <artifactId>xbean-spring</artifactId>
       <version>${xbean-spring-version}</version>
     </dependency>
-    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jms</artifactId>
+      <version>${camel-version}</version>
+    </dependency>  
+  
     <!-- Dependencies for stream processing in Camel
          http://camel.apache.org/stream.html -->
     <dependency>
