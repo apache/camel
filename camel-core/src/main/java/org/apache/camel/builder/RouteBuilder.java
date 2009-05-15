@@ -28,10 +28,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.OnCompletionDefinition;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is

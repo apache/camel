@@ -16,15 +16,19 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -35,12 +39,16 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition> {
+public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> {
 
     @XmlAttribute(required = false)
     private Boolean onCompleteOnly = Boolean.TRUE;
     @XmlAttribute(required = false)
     private Boolean onFailureOnly = Boolean.TRUE;
+    @XmlElement(name = "onWhen", required = false)
+    private WhenDefinition onWhen;
+    @XmlElementRef
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public OnCompletionDefinition() {
     }
@@ -63,7 +71,13 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = createOutputsProcessor(routeContext);
-        return new OnCompletionProcessor(childProcessor, onCompleteOnly, onFailureOnly);
+
+        Predicate when = null;
+        if (onWhen != null) {
+            when = onWhen.getExpression().createPredicate(routeContext);
+        }
+
+        return new OnCompletionProcessor(childProcessor, onCompleteOnly, onFailureOnly, when);
     }
 
     /**
@@ -72,7 +86,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>.
      * Hence we remove all existing as they are global.
      *
-     * @param definition the parent defintion that is the route 
+     * @param definition the parent defintion that is the route
      */
     @SuppressWarnings("unchecked")
     public void removeAllOnCompletionDefinition(ProcessorDefinition definition) {
@@ -96,7 +110,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      *
      * @return the builder
      */
-    public OutputDefinition onCompleteOnly() {
+    public OnCompletionDefinition onCompleteOnly() {
         // must define return type as OutputDefinition and not this type to avoid end user being able
         // to invoke onFailureOnly/onCompleteOnly more than once
         setOnCompleteOnly(Boolean.TRUE);
@@ -109,12 +123,50 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      *
      * @return the builder
      */
-    public OutputDefinition onFailureOnly() {
+    public OnCompletionDefinition onFailureOnly() {
         // must define return type as OutputDefinition and not this type to avoid end user being able
         // to invoke onFailureOnly/onCompleteOnly more than once
         setOnCompleteOnly(Boolean.FALSE);
         setOnFailureOnly(Boolean.TRUE);
         return this;
+    }
+
+    /**
+     * Sets an additional predicate that should be true before the onCompletion is triggered.
+     * <p/>
+     * To be used for fine grained controlling whether a completion callback should be invoked or not
+     *
+     * @param predicate predicate that determines true or false
+     * @return the builder
+     */
+    public OnCompletionDefinition onWhen(Predicate predicate) {
+        setOnWhen(new WhenDefinition(predicate));
+        return this;
+    }
+
+    /**
+     * Creates an expression to configure an additional predicate that should be true before the
+     * onException is triggered.
+     * <p/>
+     * To be used for fine grained controlling whether a thrown exception should be intercepted
+     * by this exception type or not.
+     *
+     * @return the expression clause to configure
+     */
+    public ExpressionClause<OnCompletionDefinition> onWhen() {
+        onWhen = new WhenDefinition();
+        ExpressionClause<OnCompletionDefinition> clause = new ExpressionClause<OnCompletionDefinition>(this);
+        onWhen.setExpression(clause);
+        return clause;
+    }
+
+
+    public List<ProcessorDefinition> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorDefinition> outputs) {
+        this.outputs = outputs;
     }
 
     public Boolean getOnCompleteOnly() {
@@ -132,4 +184,13 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     public void setOnFailureOnly(Boolean onFailureOnly) {
         this.onFailureOnly = onFailureOnly;
     }
+
+    public WhenDefinition getOnWhen() {
+        return onWhen;
+    }
+
+    public void setOnWhen(WhenDefinition onWhen) {
+        this.onWhen = onWhen;
+    }
+
 }

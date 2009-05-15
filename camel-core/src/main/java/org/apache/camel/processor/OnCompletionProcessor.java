@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronizationAdapter;
@@ -39,11 +40,13 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
     private Processor processor;
     private boolean onComplete;
     private boolean onFailure;
+    private Predicate onWhen;
 
-    public OnCompletionProcessor(Processor processor, boolean onComplete, boolean onFailure) {
+    public OnCompletionProcessor(Processor processor, boolean onComplete, boolean onFailure, Predicate onWhen) {
         this.processor = processor;
         this.onComplete = onComplete;
         this.onFailure = onFailure;
+        this.onWhen = onWhen;
     }
 
     protected void doStart() throws Exception {
@@ -76,12 +79,13 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
                     return;
                 }
 
+                if (onWhen != null && !onWhen.matches(exchange)) {
+                    // predicate did not match so do not route the onComplete
+                    return;
+                }
+
                 // must use a copy as we dont want it to cause side effects of the original exchange
-                final Exchange copy = exchange.newCopy();
-                // set MEP to InOnly as this wire tap is a fire and forget
-                copy.setPattern(ExchangePattern.InOnly);
-                // add a header flag to indicate its a on completion exchange
-                copy.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
+                final Exchange copy = prepareExchange(exchange);
 
                 getExecutorService().submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
@@ -99,12 +103,13 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
                     return;
                 }
 
+                if (onWhen != null && !onWhen.matches(exchange)) {
+                    // predicate did not match so do not route the onComplete
+                    return;
+                }
+
                 // must use a copy as we dont want it to cause side effects of the original exchange
-                final Exchange copy = exchange.newCopy();
-                // set MEP to InOnly as this wire tap is a fire and forget
-                copy.setPattern(ExchangePattern.InOnly);
-                // add a header flag to indicate its a on completion exchange
-                copy.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
+                final Exchange copy = prepareExchange(exchange);
                 // must remove exception otherwise onFaulure routing will fail as well
                 // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
                 copy.setException(null);
@@ -132,6 +137,22 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
                 }
             }
         });
+    }
+
+    /**
+     * Prepares the {@link Exchange} to send as onCompletion.
+     *
+     * @param exchange the current exchange
+     * @return the exchange to be routed in onComplete
+     */
+    protected Exchange prepareExchange(Exchange exchange) {
+        // must use a copy as we dont want it to cause side effects of the original exchange
+        final Exchange copy = exchange.newCopy();
+        // set MEP to InOnly as this wire tap is a fire and forget
+        copy.setPattern(ExchangePattern.InOnly);
+        // add a header flag to indicate its a on completion exchange
+        copy.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
+        return copy;
     }
 
     public ExecutorService getExecutorService() {
