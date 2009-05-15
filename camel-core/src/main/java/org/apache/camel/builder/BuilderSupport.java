@@ -139,6 +139,18 @@ public abstract class BuilderSupport {
     public ValueBuilder bean(String beanRef) {
         return Builder.bean(beanRef, null);
     }
+    
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * value builder
+     *
+     * @param beanType  the bean's class
+     * @param methodName  the method name that will be invoked
+     * @return the builder
+     */
+    public ValueBuilder bean(Class<?> beanType, String methodName) {
+        return Builder.bean(beanType, methodName);
+    }
 
     /**
      * Returns an expression value builder that replaces all occurrences of the 

@@ -104,9 +104,9 @@ public class ChoiceCompoundPredicateTest extends ContextTestSupport {
 
                 // As you can see with the predicates above we can stack them to build compound predicates
 
-                // In our route below we can create a nice content based rotuer based on the predicates we
+                // In our route below we can create a nice content based router based on the predicates we
                 // have defined. Then the route is easy to read and understand.
-                // We encourge you to define complex predicates outside the fluent router bulder as
+                // We encourage you to define complex predicates outside the fluent router builder as
                 // it will just get a bit complex for humans to read
                 from("direct:start").choice()
                   .when(god).to("mock:god")

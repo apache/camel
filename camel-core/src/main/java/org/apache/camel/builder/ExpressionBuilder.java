@@ -34,6 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ExpressionAdapter;
+import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.spi.Language;
 
 /**
@@ -772,7 +773,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // resolve language using context to have a clear separation of packages
-                // must call evalute to return the nested langauge evaluate when evaluating
+                // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
                 Language language = exchange.getContext().resolveLanguage("bean");
                 return language.createExpression(expression).evaluate(exchange, Object.class);
@@ -783,6 +784,10 @@ public final class ExpressionBuilder {
                 return "bean(" + expression + ")";
             }
         };
+    }
+    
+    public static Expression beanExpression(final Class beanType, final String methodName) {
+        return BeanLanguage.bean(beanType, methodName);        
     }
 
     public static Expression beanExpression(final String beanRef, final String methodName) {

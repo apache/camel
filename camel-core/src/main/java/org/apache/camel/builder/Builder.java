@@ -58,6 +58,19 @@ public final class Builder {
         Expression expression = ExpressionBuilder.beanExpression(beanRef, method);
         return new ValueBuilder(expression);
     }
+    
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * value builder
+     *
+     * @param beanType the bean class which will be invoked
+     * @param method   name of method to invoke
+     * @return the builder
+     */
+    public static ValueBuilder bean(Class beanType, String method) {
+        Expression expression = ExpressionBuilder.beanExpression(beanType, method);
+        return new ValueBuilder(expression);
+    }
 
     /**
      * Returns a constant expression
