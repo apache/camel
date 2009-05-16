@@ -60,7 +60,7 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
             public void configure() {
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
-                        jpaMessageIdRepository(bean(JpaTemplate.class), PROCESSOR_NAME)
+                        jpaMessageIdRepository(lookup(JpaTemplate.class), PROCESSOR_NAME)
                 ).to("mock:result");
             }
         };

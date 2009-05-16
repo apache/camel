@@ -38,7 +38,6 @@ import org.apache.commons.logging.LogFactory;
 public abstract class BuilderSupport {
     private CamelContext context;
     private ErrorHandlerBuilder errorHandlerBuilder;
-    private boolean inheritErrorHandler = true;
 
     protected BuilderSupport(CamelContext context) {
         this.context = context;
@@ -144,10 +143,22 @@ public abstract class BuilderSupport {
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
      *
+     * @param beanRef  reference to bean to lookup in the Registry
+     * @param method   name of method to invoke
+     * @return the builder
+     */
+    public ValueBuilder bean(String beanRef, String method) {
+        return Builder.bean(beanRef, method);
+    }
+
+    /**
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
+     * value builder
+     *
      * @param beanType the Class of the bean which we want to invoke
      * @return the builder
      */
-    public ValueBuilder bean(Class<?> beanType) {
+    public ValueBuilder bean(Class beanType) {
         return Builder.bean(beanType, null);
     }
     
@@ -156,11 +167,11 @@ public abstract class BuilderSupport {
      * value builder
      *
      * @param beanType the Class of the bean which we want to invoke
-     * @param methodName  the method name that will be invoked
+     * @param method   name of method to invoke
      * @return the builder
      */
-    public ValueBuilder bean(Class<?> beanType, String methodName) {
-        return Builder.bean(beanType, methodName);
+    public ValueBuilder bean(Class beanType, String method) {
+        return Builder.bean(beanType, method);
     }
 
     /**
@@ -179,18 +190,6 @@ public abstract class BuilderSupport {
         return Builder.regexReplaceAll(content, regex, replacement);
     }    
     
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder
-     *
-     * @param beanRef  reference to bean to lookup in the Registry
-     * @param method   name of method to invoke
-     * @return the builder
-     */
-    public ValueBuilder bean(String beanRef, String method) {
-        return Builder.bean(beanRef, method);
-    }
-
     /**
      * Returns a exception expression value builder
      */
@@ -377,11 +376,4 @@ public abstract class BuilderSupport {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
-    public boolean isInheritErrorHandler() {
-        return inheritErrorHandler;
-    }
-
-    public void setInheritErrorHandler(boolean inheritErrorHandler) {
-        this.inheritErrorHandler = inheritErrorHandler;
-    }
 }

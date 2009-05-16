@@ -49,7 +49,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
         context.addRoutes(new SpringRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Policy required = bean("PROPAGATION_REQUIRED_POLICY", SpringTransactionPolicy.class);
+                Policy required = lookup("PROPAGATION_REQUIRED_POLICY", SpringTransactionPolicy.class);
                 from("activemq:queue:foo?replyTo=queue:foo.reply").policy(required).process(cp).to("activemq-1:queue:bar?replyTo=queue:bar.reply");
                 from("activemq-1:queue:bar").process(new Processor() {
                     public void process(Exchange e) {

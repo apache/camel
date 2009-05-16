@@ -55,7 +55,7 @@ public class TransactionalClientDataSourceWithOnExceptionTest extends Transactio
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 // use required as transaction policy
-                SpringTransactionPolicy required = bean("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
+                SpringTransactionPolicy required = lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
 
                 // configure to use transaction error handler and pass on the required as it will fetch
                 // the transaction manager from it that it needs

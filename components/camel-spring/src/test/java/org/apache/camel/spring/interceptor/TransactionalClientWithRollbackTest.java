@@ -89,7 +89,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 // setup the transaction policy
-                SpringTransactionPolicy required = bean("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
+                SpringTransactionPolicy required = lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
 
                 // use transaction error handler
                 errorHandler(transactionErrorHandler(required));

@@ -99,7 +99,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // lookup the transaction policy
-                SpringTransactionPolicy required = bean("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
+                SpringTransactionPolicy required = lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
 
                 // use this error handler instead of DeadLetterChannel that is the default
                 // Notice: transactionErrorHandler is in SpringRouteBuilder

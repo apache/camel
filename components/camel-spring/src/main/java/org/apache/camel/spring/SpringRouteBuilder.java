@@ -36,7 +36,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
     private ApplicationContext applicationContext;
 
     public TransactionErrorHandler transactionInterceptor() {
-        return new TransactionErrorHandler(bean(TransactionTemplate.class));
+        return new TransactionErrorHandler(lookup(TransactionTemplate.class));
     }
 
     /**
@@ -49,7 +49,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * @return the bean
      */
     @SuppressWarnings("unchecked")
-    public <T> T bean(String beanName, Class<T> type) {
+    public <T> T lookup(String beanName, Class<T> type) {
         ApplicationContext context = getApplicationContext();
         return (T)context.getBean(beanName, type);
     }
@@ -63,7 +63,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * @return the bean
      */
     @SuppressWarnings("unchecked")
-    public <T> T bean(Class<T> type) {
+    public <T> T lookup(Class<T> type) {
         ApplicationContext context = getApplicationContext();
         String[] names = context.getBeanNamesForType(type, true, true);
         if (names != null) {

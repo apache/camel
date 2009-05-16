@@ -62,9 +62,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         return new SpringRouteBuilder() {
             public void configure() {
 
-                SpringTransactionPolicy requried = new SpringTransactionPolicy(bean("PROPAGATION_REQUIRED", TransactionTemplate.class));
-                SpringTransactionPolicy notsupported = new SpringTransactionPolicy(bean("PROPAGATION_NOT_SUPPORTED", TransactionTemplate.class));
-                SpringTransactionPolicy requirenew = new SpringTransactionPolicy(bean("PROPAGATION_REQUIRES_NEW", TransactionTemplate.class));
+                SpringTransactionPolicy requried = new SpringTransactionPolicy(lookup("PROPAGATION_REQUIRED", TransactionTemplate.class));
+                SpringTransactionPolicy notsupported = new SpringTransactionPolicy(lookup("PROPAGATION_NOT_SUPPORTED", TransactionTemplate.class));
+                SpringTransactionPolicy requirenew = new SpringTransactionPolicy(lookup("PROPAGATION_REQUIRES_NEW", TransactionTemplate.class));
 
                 Policy rollback = new Policy() {
                     public Processor wrap(RouteContext routeContext, Processor processor) {

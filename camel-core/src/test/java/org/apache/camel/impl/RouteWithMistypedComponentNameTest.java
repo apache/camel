@@ -27,25 +27,40 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RouteWithMistypedComponentNameTest extends TestSupport {
 
-    public void testNoSuchComponent() throws Exception {
+    public void testNoSuchEndpoint() throws Exception {
         CamelContext context = new DefaultCamelContext();
         try {
-            context.addRoutes(createRouteBuilder());
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:hello").to("mock:result");
+
+                    // unknown component
+                    Endpoint endpoint = endpoint("mistyped:hello");
+                }
+            });
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             // expected
         }
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("direct:hello").to("mock:result");
 
-                // unknown component
-                Endpoint endpoint = endpoint("mistyped:hello");
-            }
-        };
+    public void testNoSuchEndpointType() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:hello").to("mock:result");
+
+                    // unknown component
+                    Endpoint endpoint = endpoint("mistyped:hello", Endpoint.class);
+                }
+            });
+            fail("Should have thrown a ResolveEndpointFailedException");
+        } catch (ResolveEndpointFailedException e) {
+            // expected
+        }
     }
-
 }

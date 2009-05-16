@@ -23,7 +23,7 @@ public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
     
     public void configure() throws Exception {
         // get the required policy
-        SpringTransactionPolicy required = bean("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
+        SpringTransactionPolicy required = lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
 
         // For spring based transaction, end users are encouraged to use the
         // transaction error handler instead of the default DeadLetterChannel.
