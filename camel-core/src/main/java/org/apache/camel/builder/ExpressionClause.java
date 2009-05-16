@@ -172,21 +172,6 @@ public class ExpressionClause<T> extends ExpressionType {
         setExpressionType(expression);
         return result;
     }
-    
-    /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
-     * which basically means the bean is invoked to determine the expression
-     * value.
-     * 
-     * @param beanType the Class of the bean which we want to invoke
-     * @return the builder to continue processing the DSL
-     */
-    public T method(Class beanType) {
-        MethodCallExpression expression = new MethodCallExpression(beanType);
-        setExpressionType(expression);
-        return result;
-    }
 
     /**
      * Evaluates an expression using the
@@ -199,22 +184,6 @@ public class ExpressionClause<T> extends ExpressionType {
      */
     public T method(String bean, String method) {
         MethodCallExpression expression = new MethodCallExpression(bean, method);
-        setExpressionType(expression);
-        return result;
-    }
-    
-    /**
-     * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
-     * which basically means the bean is invoked to determine the expression
-     * value.
-     * 
-     * @param beanType the Class of the bean which we want to invoke
-     * @param method the name of the method to invoke on the bean
-     * @return the builder to continue processing the DSL
-     */
-    public T method(Class beanType, String method) {
-        MethodCallExpression expression = new MethodCallExpression(beanType, method);
         setExpressionType(expression);
         return result;
     }

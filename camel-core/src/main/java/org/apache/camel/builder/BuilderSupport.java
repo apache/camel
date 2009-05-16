@@ -133,41 +133,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder
-     *
-     * @param beanRef  reference to bean to lookup in the Registry
-     * @return the builder
-     */
-    public ValueBuilder bean(String beanRef) {
-        return Builder.bean(beanRef, null);
-    }
-    
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder
-     *
-     * @param beanType the Class of the bean which we want to invoke
-     * @return the builder
-     */
-    public ValueBuilder bean(Class<?> beanType) {
-        return Builder.bean(beanType, null);
-    }
-    
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder
-     *
-     * @param beanType the Class of the bean which we want to invoke
-     * @param methodName  the method name that will be invoked
-     * @return the builder
-     */
-    public ValueBuilder bean(Class<?> beanType, String methodName) {
-        return Builder.bean(beanType, methodName);
-    }
-
-    /**
-     * Returns an expression value builder that replaces all occurrences of the 
+     * Returns an expression value builder that replaces all occurrences of the
      * regular expression with the given replacement
      */
     public ValueBuilder regexReplaceAll(Expression content, String regex, String replacement) {

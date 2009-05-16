@@ -33,7 +33,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 
-
 /**
  * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a>.
  *
@@ -724,14 +723,18 @@ public final class ExpressionBuilder {
     }
 
     public static <E extends Exchange> Expression<E> beanExpression(final String bean) {
-        return BeanLanguage.bean(bean);
-    }
-    
-    public static <E extends Exchange> Expression<E> beanExpression(final String bean, final String method) {
-        return BeanLanguage.bean(bean, method);
-    }
-    public static Expression beanExpression(final Class beanType, final String methodName) {
-        return BeanLanguage.bean(beanType, methodName);        
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                // must call evalute to return the nested langauge evaluate when evaluating
+                // stacked expressions
+                return BeanLanguage.bean(bean).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "bean(" + bean + ")";
+            }
+        };
     }
 
 }
