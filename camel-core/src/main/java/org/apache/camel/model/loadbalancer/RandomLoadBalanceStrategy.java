@@ -33,4 +33,8 @@ public class RandomLoadBalanceStrategy extends LoadBalancerDefinition {
         return new org.apache.camel.processor.loadbalancer.RandomLoadBalancer();
     }
 
+    @Override
+    public String toString() {
+        return "RandomLoadBalancer";
+    }
 }

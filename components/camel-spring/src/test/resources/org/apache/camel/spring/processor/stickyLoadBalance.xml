@@ -22,48 +22,20 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-
   <!-- START SNIPPET: example -->
-
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route errorHandlerRef="noErrorHandler">
-      <from uri="direct:exception"/>
+    <route>
+      <from uri="direct:start"/>
       <loadBalance>
-          <failOver/>
-          <to uri="direct:x"/>
-          <to uri="direct:y"/>
-          <to uri="direct:z"/>
-      </loadBalance>      
-    </route>    
-    <route errorHandlerRef="noErrorHandler">
-      <from uri="direct:customerException"/>
-      <loadBalance>
-          <failOver exception="org.apache.camel.processor.FailOverLoadBalanceTest$MyException"/>
-          <to uri="direct:x"/>
-          <to uri="direct:y"/>
-          <to uri="direct:z"/>
+          <sticky>
+              <correlationExpression><header>foo</header></correlationExpression>
+          </sticky>
+          <to uri="mock:x"/>
+          <to uri="mock:y"/>
+          <to uri="mock:z"/>
       </loadBalance>
     </route>
-    <route errorHandlerRef="noErrorHandler">
-       <from uri="direct:x"/>
-       <process ref="myExceptionProcessor"/>
-       <to uri="mock:x"/>
-    </route>
-    <route errorHandlerRef="noErrorHandler">
-       <from uri="direct:y"/>
-       <process ref="myAnotherExceptionProcessor"/>
-       <to uri="mock:y"/>
-    </route>    
-    <route errorHandlerRef="noErrorHandler">
-       <from uri="direct:z"/>       
-       <to uri="mock:z"/>
-    </route>    
   </camelContext>
-  
-  <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
-  <bean id="myExceptionProcessor" class="org.apache.camel.processor.FailOverLoadBalanceTest$MyExceptionProcessor"/>
-  <bean id="myAnotherExceptionProcessor" class="org.apache.camel.processor.FailOverLoadBalanceTest$MyAnotherExceptionProcessor"/>
-  
   <!-- END SNIPPET: example -->
 
 </beans>

@@ -129,13 +129,14 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     
     // Fluent API
     // -------------------------------------------------------------------------
+
     /**
-     * Sets the load balancer to use
+     * Uses a custom load balancer
      *
      * @param loadBalancer  the load balancer
      * @return the builder
      */
-    public LoadBalanceDefinition setLoadBalancer(LoadBalancer loadBalancer) {
+    public LoadBalanceDefinition loadBalance(LoadBalancer loadBalancer) {
         loadBalancerType = new LoadBalancerDefinition(loadBalancer);
         return this;
     }

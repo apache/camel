@@ -49,6 +49,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.DefaultChannel;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.DataFormat;
@@ -840,6 +841,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return answer;
     }
 
+    /**
+     * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a>
+     * Creates a loadbalance
+     *
+     * @param loadBalancer a custom load balancer to use
+     * @return  the builder
+     */
+    public LoadBalanceDefinition loadBalance(LoadBalancer loadBalancer) {
+        LoadBalanceDefinition answer = new LoadBalanceDefinition();
+        addOutput(answer);
+        return answer.loadBalance(loadBalancer);
+    }
 
     /**
      * <a href="http://camel.apache.org/content-based-router.html">Content Based Router EIP:</a>

@@ -27,9 +27,14 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "topic")
 public class TopicLoadBalanceStrategy extends LoadBalancerDefinition {
+
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         return new org.apache.camel.processor.loadbalancer.TopicLoadBalancer();
     }
 
+    @Override
+    public String toString() {
+        return "TopicLoadBalancer";
+    }
 }

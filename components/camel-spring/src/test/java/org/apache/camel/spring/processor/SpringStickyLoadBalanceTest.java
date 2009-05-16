@@ -16,15 +16,14 @@
  */
 package org.apache.camel.spring.processor;
 
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.LoadBalanceTest;
-
+import org.apache.camel.processor.StickyLoadBalanceTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SpringLoadBalanceTest extends LoadBalanceTest {
+public class SpringStickyLoadBalanceTest extends StickyLoadBalanceTest {
+
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/loadBalance.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/stickyLoadBalance.xml");
     }
 
 }

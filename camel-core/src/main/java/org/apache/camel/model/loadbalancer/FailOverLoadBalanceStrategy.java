@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
@@ -30,17 +29,18 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "failOver")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailOverLoadBalanceStrategy extends LoadBalancerDefinition {    
-    @XmlAttribute
+
+    @XmlAttribute (name = "exception", required = false)
     private String failedException;
     
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         if (ObjectHelper.isNotEmpty(failedException)) {
-            Class failExceptionClazz = ObjectHelper.loadClass(failedException);
-            if (failExceptionClazz == null) {
-                throw new RuntimeCamelException("Cannot find failException: " + failedException + " to be used with this FailOverLoadBalancer");
+            Class type = routeContext.getCamelContext().getClassResolver().resolveClass(failedException);
+            if (type == null) {
+                throw new IllegalArgumentException("Cannot find class: " + failedException + " in the classpath");
             }
-            return new FailOverLoadBalancer(failExceptionClazz);
+            return new FailOverLoadBalancer(type);
         } else {
             return new FailOverLoadBalancer();
         }
@@ -54,5 +54,8 @@ public class FailOverLoadBalanceStrategy extends LoadBalancerDefinition {
         return failedException;
     }
 
-
+    @Override
+    public String toString() {
+        return "FailOverLoadBalancer";
+    }
 }

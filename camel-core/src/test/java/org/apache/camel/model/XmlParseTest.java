@@ -204,7 +204,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
         assertTrue("The loadBalancer shoud be StickyLoadBalanceStrategy", loadBalance.getLoadBalancerType() instanceof StickyLoadBalanceStrategy);
         StickyLoadBalanceStrategy strategy = (StickyLoadBalanceStrategy)loadBalance.getLoadBalancerType();
-        assertNotNull("the expression should not be null ", strategy.getExpressionType());
+        assertNotNull("the expression should not be null ", strategy.getCorrelationExpression());
     }
 
     public void testParseBatchResequencerXml() throws Exception {

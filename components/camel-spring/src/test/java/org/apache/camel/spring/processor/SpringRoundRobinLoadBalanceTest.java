@@ -14,27 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.loadbalancer;
+package org.apache.camel.spring.processor;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.RoundRobinLoadBalanceTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.spi.RouteContext;
+public class SpringRoundRobinLoadBalanceTest extends RoundRobinLoadBalanceTest {
 
-/**
- * Represents an XML &lt;roundRobin/&gt; element
- */
-@XmlRootElement(name = "roundRobin")
-public class RoundRobinLoadBalanceStrategy extends LoadBalancerDefinition {
-
-    @Override
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        return new org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer();
-    }
-
-    @Override
-    public String toString() {
-        return "RoundRobinLoadBalancer";
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/roundRobinLoadBalance.xml");
     }
 
 }

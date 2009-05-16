@@ -22,14 +22,12 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-
   <!-- START SNIPPET: example -->
-
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
       <loadBalance>
-          <roundRobin/>
+          <random/>
           <to uri="mock:x"/>
           <to uri="mock:y"/>
           <to uri="mock:z"/>

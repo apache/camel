@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor;
 
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
-public class LoadBalanceTest extends ContextTestSupport {
+public class RoundRobinLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
@@ -69,12 +68,10 @@ public class LoadBalanceTest extends ContextTestSupport {
         expectsMessageCount(0, x, y);
         sendMessage("bar", body);
         assertMockEndpointsSatisfied();
-
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
         template.sendBodyAndHeader("direct:start", body, "foo", headerValue);
     }
-
 
 }
