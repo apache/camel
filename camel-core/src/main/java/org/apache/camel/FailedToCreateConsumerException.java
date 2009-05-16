@@ -22,14 +22,14 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class FailedToCreateConsumerException extends RuntimeCamelException {
-    private final Endpoint endpoint;
+    private final String uri;
 
     public FailedToCreateConsumerException(Endpoint endpoint, Throwable cause) {
         super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + cause, cause);
-        this.endpoint = endpoint;
+        this.uri = endpoint.getEndpointUri();
     }
 
-    public Endpoint getEndpoint() {
-        return endpoint;
+    public String getUri() {
+        return uri;
     }
 }

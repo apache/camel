@@ -23,7 +23,8 @@ package org.apache.camel;
  */
 public class CamelExchangeException extends CamelException {
     private static final long serialVersionUID = -8721487431101572630L;
-    private final Exchange exchange;
+    // exchange is not guaranted to be serializable so we set it as transient
+    private final transient Exchange exchange;
 
     public CamelExchangeException(String message, Exchange exchange) {
         super(createMessage(message, exchange));

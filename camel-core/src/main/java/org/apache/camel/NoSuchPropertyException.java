@@ -27,7 +27,7 @@ package org.apache.camel;
 public class NoSuchPropertyException extends CamelExchangeException {
     private static final long serialVersionUID = -8721487431101572630L;
     private final String propertyName;
-    private final Class<?> type;
+    private final transient Class<?> type;
 
     public NoSuchPropertyException(Exchange exchange, String propertyName, Class<?> type) {
         super("No '" + propertyName + "' property available of type: " + type.getName()
@@ -53,6 +53,6 @@ public class NoSuchPropertyException extends CamelExchangeException {
         if (value == null) {
             return "";
         }
-        return " but has value: " + value + " of type: " + value.getClass().getName();
+        return " but has value: " + value + " of type: " + value.getClass().getCanonicalName();
     }
 }

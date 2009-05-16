@@ -22,7 +22,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class InvalidPayloadException extends CamelExchangeException {
-    private final Class<?> type;
+    private final transient Class<?> type;
 
     public InvalidPayloadException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());

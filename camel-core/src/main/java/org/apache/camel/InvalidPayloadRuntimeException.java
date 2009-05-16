@@ -22,7 +22,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
-    private final Class<?> type;
+    private final transient Class<?> type;
 
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());

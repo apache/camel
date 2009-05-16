@@ -22,8 +22,8 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class ExpectedBodyTypeException extends RuntimeCamelException {
-    private final Exchange exchange;
-    private final Class expectedBodyType;
+    private final transient Exchange exchange;
+    private final transient Class expectedBodyType;
 
     public ExpectedBodyTypeException(Exchange exchange, Class expectedBodyType) {
         super("Could not extract IN message body as type: " + expectedBodyType + " body is: "

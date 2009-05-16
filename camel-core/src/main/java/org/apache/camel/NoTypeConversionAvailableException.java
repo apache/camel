@@ -22,8 +22,8 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class NoTypeConversionAvailableException extends CamelException {
-    private final Object value;
-    private final Class type;
+    private final transient Object value;
+    private final transient Class type;
 
     public NoTypeConversionAvailableException(Object value, Class type) {
         super(createMessage(value, type));
