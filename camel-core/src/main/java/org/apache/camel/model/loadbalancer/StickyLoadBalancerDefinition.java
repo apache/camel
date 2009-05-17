@@ -18,44 +18,39 @@ package org.apache.camel.model.loadbalancer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
+import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
-@XmlRootElement(name = "failOver")
+/**
+ * Represents an XML &lt;sticky/&gt; element
+ */
+@XmlRootElement(name = "sticky")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FailOverLoadBalanceStrategy extends LoadBalancerDefinition {    
+public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
 
-    @XmlAttribute (name = "exception", required = false)
-    private String failedException;
-    
+    @XmlElement(name = "correlationExpression", required = false)
+    private ExpressionSubElementDefinition correlationExpression;
+
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        if (ObjectHelper.isNotEmpty(failedException)) {
-            Class type = routeContext.getCamelContext().getClassResolver().resolveClass(failedException);
-            if (type == null) {
-                throw new IllegalArgumentException("Cannot find class: " + failedException + " in the classpath");
-            }
-            return new FailOverLoadBalancer(type);
-        } else {
-            return new FailOverLoadBalancer();
-        }
+        return new StickyLoadBalancer(correlationExpression.createExpression(routeContext));
     }
-    
-    public void setFailedException(String exceptionName) {
-        failedException = exceptionName;
+
+    public ExpressionSubElementDefinition getCorrelationExpression() {
+        return correlationExpression;
     }
-    
-    public String getFailedException() {
-        return failedException;
+
+    public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
+        this.correlationExpression = correlationExpression;
     }
 
     @Override
     public String toString() {
-        return "FailOverLoadBalancer";
+        return "StickyLoadBalancer[" + correlationExpression + "]";
     }
 }

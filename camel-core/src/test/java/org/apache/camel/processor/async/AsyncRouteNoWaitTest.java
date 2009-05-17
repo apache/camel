@@ -60,8 +60,6 @@ public class AsyncRouteNoWaitTest extends ContextTestSupport {
         // cast to future
         Future future = (Future) out;
 
-        assertFalse("Should not be done", future.isDone());
-
         assertMockEndpointsSatisfied();
 
         assertEquals("AB", route);
@@ -86,8 +84,6 @@ public class AsyncRouteNoWaitTest extends ContextTestSupport {
 
         // cast to future
         Future future = (Future) out;
-
-        assertFalse("Should not be done", future.isDone());
 
         assertMockEndpointsSatisfied();
 

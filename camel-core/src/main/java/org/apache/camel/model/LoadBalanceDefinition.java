@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,12 +31,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.model.loadbalancer.FailOverLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.LoadBalancerDefinition;
-import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
@@ -56,11 +57,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     private String ref;
 
     @XmlElements({
-        @XmlElement(required = false, name = "failOver", type = FailOverLoadBalanceStrategy.class),
-        @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalanceStrategy.class),
-        @XmlElement(required = false, name = "random", type = RandomLoadBalanceStrategy.class),
-        @XmlElement(required = false, name = "sticky", type = StickyLoadBalanceStrategy.class),
-        @XmlElement(required = false, name = "topic", type = TopicLoadBalanceStrategy.class)}
+        @XmlElement(required = false, name = "failOver", type = FailoverLoadBalancerDefinition.class),
+        @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
+        @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
+        @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
+        @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class)}
         )
     private LoadBalancerDefinition loadBalancerType;
 
@@ -154,11 +155,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     /**
      * Uses fail over load balancer
      * 
-     * @param throwable exception Class which we want to catch
+     * @param exceptions exception classes which we want to failover if one of them was thrown
      * @return the builder
      */
-    public LoadBalanceDefinition failOver(Class throwable) {
-        loadBalancerType = new LoadBalancerDefinition(new FailOverLoadBalancer(throwable));
+    public LoadBalanceDefinition failOver(Class... exceptions) {
+        loadBalancerType = new LoadBalancerDefinition(new FailOverLoadBalancer(Arrays.asList(exceptions)));
         return this;
     }
 

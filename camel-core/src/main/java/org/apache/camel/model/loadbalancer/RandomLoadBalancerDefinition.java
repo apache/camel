@@ -21,20 +21,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
+
 /**
- * Represents an XML &lt;roundRobin/&gt; element
+ * Represents an XML &lt;random/&gt; element
  */
-@XmlRootElement(name = "roundRobin")
-public class RoundRobinLoadBalanceStrategy extends LoadBalancerDefinition {
+@XmlRootElement(name = "random")
+public class RandomLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        return new org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer();
+        return new org.apache.camel.processor.loadbalancer.RandomLoadBalancer();
     }
 
     @Override
     public String toString() {
-        return "RoundRobinLoadBalancer";
+        return "RandomLoadBalancer";
     }
-
 }

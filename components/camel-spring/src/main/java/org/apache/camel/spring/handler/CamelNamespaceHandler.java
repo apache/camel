@@ -36,11 +36,11 @@ import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
-import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
-import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
+import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
@@ -91,11 +91,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("xmlBeans", XMLBeansDataFormat.class);
 
         // load balancers
-        addBeanDefinitionParser("roundRobin", RoundRobinLoadBalanceStrategy.class);
-        addBeanDefinitionParser("random", RandomLoadBalanceStrategy.class);
-        addBeanDefinitionParser("sticky", StickyLoadBalanceStrategy.class);
-        addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
-        addBeanDefinitionParser("failover", FailOverLoadBalancer.class);
+        addBeanDefinitionParser("roundRobin", RoundRobinLoadBalancerDefinition.class);
+        addBeanDefinitionParser("random", RandomLoadBalancerDefinition.class);
+        addBeanDefinitionParser("sticky", StickyLoadBalancerDefinition.class);
+        addBeanDefinitionParser("topic", TopicLoadBalancerDefinition.class);
+        addBeanDefinitionParser("failover", FailoverLoadBalancerDefinition.class);
 
         // jmx agent
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class);

@@ -22,19 +22,19 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;topic/&gt; element
- * 
+ * Represents an XML &lt;roundRobin/&gt; element
  */
-@XmlRootElement(name = "topic")
-public class TopicLoadBalanceStrategy extends LoadBalancerDefinition {
+@XmlRootElement(name = "roundRobin")
+public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        return new org.apache.camel.processor.loadbalancer.TopicLoadBalancer();
+        return new org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer();
     }
 
     @Override
     public String toString() {
-        return "TopicLoadBalancer";
+        return "RoundRobinLoadBalancer";
     }
+
 }

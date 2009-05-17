@@ -38,7 +38,9 @@
     <route errorHandlerRef="noErrorHandler">
       <from uri="direct:customerException"/>
       <loadBalance>
-          <failOver exception="org.apache.camel.processor.FailOverLoadBalanceTest$MyException"/>
+          <failOver>
+              <exception>org.apache.camel.processor.FailOverLoadBalanceTest$MyException</exception>
+          </failOver>
           <to uri="direct:x"/>
           <to uri="direct:y"/>
           <to uri="direct:z"/>

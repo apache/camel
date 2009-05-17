@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -27,26 +29,47 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class FailOverLoadBalancer extends LoadBalancerSupport {
 
-    private final Class failException;
-
-    public FailOverLoadBalancer(Class throwable) {
-        if (ObjectHelper.isAssignableFrom(Throwable.class, throwable)) {
-            failException = throwable;
-        } else {
-            throw new IllegalArgumentException("Class is not an instance of Trowable: " + throwable);
-        }
-    }
+    private final List<Class> exceptions;
 
     public FailOverLoadBalancer() {
-        this(Throwable.class);
+        this.exceptions = null;
     }
 
-    protected boolean isCheckedException(Exchange exchange) {
-        if (exchange.getException() != null) {
-            if (failException.isAssignableFrom(exchange.getException().getClass())) {
-                return true;
+    public FailOverLoadBalancer(List<Class> exceptions) {
+        this.exceptions = exceptions;
+        for (Class type : exceptions) {
+            if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
+                throw new IllegalArgumentException("Class is not an instance of Trowable: " + type);
             }
         }
+    }
+
+    /**
+     * Should the given failed Exchange failover?
+     *
+     * @param exchange the exchange that failed
+     * @return <tt>true</tt> to failover
+     */
+    protected boolean shouldFailOver(Exchange exchange) {
+        if (exchange.getException() != null) {
+
+            if (exceptions == null || exceptions.isEmpty()) {
+                // always failover if no exceptions defined
+                return true;
+            }
+
+            for (Class exception : exceptions) {
+                // use exception iterator to walk the hieracy tree as the exception is possibly wrapped
+                Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exchange.getException());
+                while (it.hasNext()) {
+                    Throwable e = it.next();
+                    if (exception.isInstance(e)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
@@ -55,16 +78,23 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         if (list.isEmpty()) {
             throw new IllegalStateException("No processors available to process " + exchange);
         }
+
         int index = 0;
         Processor processor = list.get(index);
+
+        // process the first time
         processExchange(processor, exchange);
-        while (isCheckedException(exchange)) {
-            exchange.setException(null);
+
+        // loop while we should fail over
+        while (shouldFailOver(exchange)) {
             index++;
             if (index < list.size()) {
+                // try again but reset exception first
+                exchange.setException(null);
                 processor = list.get(index);
                 processExchange(processor, exchange);
             } else {
+                // no more processors to try
                 break;
             }
         }

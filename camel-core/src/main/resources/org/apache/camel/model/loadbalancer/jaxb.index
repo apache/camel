@@ -14,9 +14,9 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-FailOverLoadBalanceStrategy
+FailoverLoadBalancerDefinition
 LoadBalancerDefinition
-RandomLoadBalanceStrategy
-RoundRobinLoadBalanceStrategy
-StickyLoadBalanceStrategy
-TopicLoadBalanceStrategy
+RandomLoadBalancerDefinition
+RoundRobinLoadBalancerDefinition
+StickyLoadBalancerDefinition
+TopicLoadBalancerDefinition

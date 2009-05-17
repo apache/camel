@@ -20,8 +20,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 
 /**
  * @version $Revision$
@@ -194,7 +194,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertFrom(route, "seda:a");
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
         assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer shoud be RoundRobinLoadBalanceStrategy", loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalanceStrategy);
+        assertTrue("The loadBalancer shoud be RoundRobinLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalancerDefinition);
     }
 
     public void testParseStickyLoadBalance() throws Exception {
@@ -202,8 +202,8 @@ public class XmlParseTest extends XmlTestSupport {
         assertFrom(route, "seda:a");
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
         assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer shoud be StickyLoadBalanceStrategy", loadBalance.getLoadBalancerType() instanceof StickyLoadBalanceStrategy);
-        StickyLoadBalanceStrategy strategy = (StickyLoadBalanceStrategy)loadBalance.getLoadBalancerType();
+        assertTrue("The loadBalancer shoud be StickyLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof StickyLoadBalancerDefinition);
+        StickyLoadBalancerDefinition strategy = (StickyLoadBalancerDefinition)loadBalance.getLoadBalancerType();
         assertNotNull("the expression should not be null ", strategy.getCorrelationExpression());
     }
 
