@@ -21,14 +21,17 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-public class JhcComponent extends DefaultComponent {
+public class JhcComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
     private HttpParams params;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public JhcComponent() {
         
@@ -50,7 +53,19 @@ public class JhcComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new JhcEndpoint(uri, this, new URI(uri.substring(uri.indexOf(':') + 1)));
+        JhcEndpoint jhcEndpoint = new JhcEndpoint(uri, this, new URI(uri.substring(uri.indexOf(':') + 1)));
+        if (getHeaderFilterStrategy() != null) {
+            jhcEndpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+        return jhcEndpoint;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {        
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;        
     }
 
 }

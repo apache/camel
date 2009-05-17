@@ -42,7 +42,7 @@ import org.springframework.integration.message.MessageHandler;
  * @version $Revision$
  */
 public class CamelSourceAdapter extends AbstractCamelAdapter implements InitializingBean, DisposableBean {
-    private final static Log LOG = LogFactory.getLog(CamelSourceAdapter.class);
+    private static final Log LOG = LogFactory.getLog(CamelSourceAdapter.class);
 
     private Consumer consumer;
     private Endpoint camelEndpoint;

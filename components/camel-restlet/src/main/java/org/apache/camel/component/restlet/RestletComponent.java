@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.logging.Log;
@@ -38,18 +40,22 @@ import org.restlet.data.Protocol;
  *
  * @version $Revision$
  */
-public class RestletComponent extends DefaultComponent {
+public class RestletComponent extends DefaultComponent implements HeaderFilterStrategyAware {
     private static final Log LOG = LogFactory.getLog(RestletComponent.class);
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
     private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
     private final Component component = new Component();
+    private HeaderFilterStrategy headerFilterStrategy;
 
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         
         RestletEndpoint result = new RestletEndpoint(this, remaining);
+        if (getHeaderFilterStrategy() != null) {
+            result.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
         setProperties(result, parameters);
         
         // construct URI so we can use it to get the splitted information
@@ -174,6 +180,14 @@ public class RestletComponent extends DefaultComponent {
     
     private static String buildKey(RestletEndpoint endpoint) {
         return endpoint.getHost() + ":" + endpoint.getPort();
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;        
     }
     
 }

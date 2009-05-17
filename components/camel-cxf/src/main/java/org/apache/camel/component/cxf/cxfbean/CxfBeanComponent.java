@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 
 /**
  * CXF Bean component creates {@link CxfBeanEndpoint} which represents a
@@ -29,15 +31,19 @@ import org.apache.camel.impl.DefaultComponent;
  * 
  * @version $Revision$
  */
-public class CxfBeanComponent extends DefaultComponent {
+public class CxfBeanComponent extends DefaultComponent implements HeaderFilterStrategyAware{
 
     private Map<String, CxfBeanEndpoint> endpoints = new HashMap<String, CxfBeanEndpoint>();
+    private HeaderFilterStrategy headerFilterStrategy;
     
     @SuppressWarnings("unchecked")
     @Override
     protected Endpoint createEndpoint(String uri, String remaining,
             Map parameters) throws Exception {
         CxfBeanEndpoint answer = new CxfBeanEndpoint(remaining, this);
+        if (getHeaderFilterStrategy() != null) {
+            answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
         setProperties(answer, parameters);
 
         // add to the endpoints map before calling the endpoint's init() method to 
@@ -73,6 +79,14 @@ public class CxfBeanComponent extends DefaultComponent {
     
     public CxfBeanEndpoint getEndpoint(String endpointUri) {
         return endpoints.get(endpointUri);
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {        
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;        
     }
 
 

@@ -22,6 +22,8 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
@@ -35,11 +37,12 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  *
  * @version $Revision$
  */
-public class HttpComponent extends DefaultComponent {
+public class HttpComponent extends DefaultComponent implements HeaderFilterStrategyAware {
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
     protected HttpBinding httpBinding;
     private boolean matchOnUriPrefix;
+    private HeaderFilterStrategy headerFilterstrategy;
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -122,9 +125,13 @@ public class HttpComponent extends DefaultComponent {
         if (httpBinding != null) {
             endpoint.setBinding(httpBinding);
         }
+        if (getHeaderFilterStrategy() != null) {
+            endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
         if (throwExceptionOnFailure != null) {
             endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
         }
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
@@ -159,6 +166,15 @@ public class HttpComponent extends DefaultComponent {
 
     public boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterstrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterstrategy = strategy;
+        
     }
     
 }
