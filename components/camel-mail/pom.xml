@@ -64,6 +64,7 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
+            <version>${javamail-version}</version>
         </dependency>
 
         <!-- these 2 jars are buggy and not recommended to use -->

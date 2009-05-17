@@ -50,17 +50,12 @@
     <dependency>
         <groupId>xalan</groupId>
         <artifactId>xalan</artifactId>
-        <version>2.7.1</version>
-    </dependency>
-    <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xmlParserAPIs</artifactId>
-        <version>2.6.2</version>
+        <version>${xalan-version}</version>
     </dependency>
     <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
-        <version>2.6.2</version>
+        <version>${xerces-version}</version>
     </dependency>
     <!-- testing -->
     <dependency>
