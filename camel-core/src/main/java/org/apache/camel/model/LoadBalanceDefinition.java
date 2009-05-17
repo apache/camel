@@ -57,12 +57,12 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     private String ref;
 
     @XmlElements({
-        @XmlElement(required = false, name = "failOver", type = FailoverLoadBalancerDefinition.class),
-        @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
-        @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
-        @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
-        @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class)}
-        )
+            @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
+            @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
+            @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
+            @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
+            @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class)}
+    )
     private LoadBalancerDefinition loadBalancerType;
 
     @XmlElementRef
