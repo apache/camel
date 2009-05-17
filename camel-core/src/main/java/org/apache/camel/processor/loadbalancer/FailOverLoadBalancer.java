@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -59,13 +57,9 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
             }
 
             for (Class exception : exceptions) {
-                // use exception iterator to walk the hieracy tree as the exception is possibly wrapped
-                Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exchange.getException());
-                while (it.hasNext()) {
-                    Throwable e = it.next();
-                    if (exception.isInstance(e)) {
-                        return true;
-                    }
+                // will look in exception hierarchy 
+                if (exchange.getException(exception) != null) {
+                    return true;
                 }
             }
         }
