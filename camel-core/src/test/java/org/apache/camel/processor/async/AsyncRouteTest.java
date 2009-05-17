@@ -138,7 +138,7 @@ public class AsyncRouteTest extends ContextTestSupport {
                             // from this point forward this is the async route doing its work
                             // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")
-                        .delay(100)
+                        .delay(500)
                             // and we also work with the message so we can prepare a response
                         .process(new MyProcessor())
                             // and we use mocks for unit testing

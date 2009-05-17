@@ -23,7 +23,7 @@ package org.apache.camel;
  */
 public class RuntimeExchangeException extends RuntimeCamelException {
     private static final long serialVersionUID = -8721487431101572630L;
-    private transient final Exchange exchange;
+    private final transient Exchange exchange;
 
     public RuntimeExchangeException(String message, Exchange exchange) {
         super(createMessage(message, exchange));

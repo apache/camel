@@ -33,7 +33,7 @@
             <async>
                 <to uri="mock:foo"/>
                 <delay>
-                    <constant>100</constant>
+                    <constant>500</constant>
                 </delay>
                 <process ref="myProcessor"/>
                 <to uri="mock:result"/>

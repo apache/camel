@@ -77,14 +77,15 @@ public class AsyncRouteWaitIfReplyExpectedTest extends ContextTestSupport {
                         .transform(body().append(" World"))
                             // now turn the route into async from this point forward
                             // the caller will have a Future<Exchange> returned as response in OUT
-                            // to be used to grap the async response when he fell like it
-                            // we only want to wait for tasks to compelte if we expect a reply
+                            // to be used to grape the async response when he fell like it
+                            // we only want to wait for tasks to complete if we expect a reply
                             // otherwise not
                         .async().waitForTaskToComplete(WaitForTaskToComplete.IfReplyExpected)
                             // from this point forward this is the async route doing its work
                             // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")
-                        .delay(100)
+                            // wait a litter longer for the slow box
+                        .delay(500)
                             // and we also work with the message so we can prepare a response
                         .process(new MyProcessor())
                             // and we use mocks for unit testing
