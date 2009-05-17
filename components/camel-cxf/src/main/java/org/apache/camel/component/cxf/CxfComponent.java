@@ -22,9 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -32,9 +30,8 @@ import org.apache.camel.util.CamelContextHelper;
  * 
  * @version $Revision$
  */
-public class CxfComponent extends DefaultComponent implements HeaderFilterStrategyAware{
-    private HeaderFilterStrategy headerFilterStrategy;
-    
+public class CxfComponent extends HeaderFilterStrategyComponent {
+        
     public CxfComponent() {
     }
 
@@ -64,9 +61,7 @@ public class CxfComponent extends DefaultComponent implements HeaderFilterStrate
                     CxfEndpointBean.class);
 
             result = new CxfSpringEndpoint(this, bean);
-            if (getHeaderFilterStrategy() != null) {
-                result.setHeaderFilterStrategy(headerFilterStrategy);
-            }
+            setEndpointHeaderFilterStrategy(result);
            
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.
@@ -85,13 +80,5 @@ public class CxfComponent extends DefaultComponent implements HeaderFilterStrate
         
         return result;
     }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;
-    }
-    
+        
 }

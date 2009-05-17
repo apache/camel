@@ -23,7 +23,7 @@ package org.apache.camel.component.mail;
  * <p/>
  * Note using SUN mail jar have no problem with resolving Content-Type based on file attachments. This resolver
  * is thus only needed to work around mail providers having bugs or when you a new mime type is unknown by the
- * mail provider allowing you to deterime it.
+ * mail provider allowing you to determine it.
  *
  * @version $Revision$
  */
@@ -38,7 +38,7 @@ public interface ContentTypeResolver {
      * The returned value should only be the mime part of the ContentType header, for example:
      * <tt>image/jpeg</tt> should be returned. Camel will add the remaining <tt>; name=FILENAME</tt>.
      *
-     * @param fileName  the attachment file nane
+     * @param fileName  the attachment file name
      * @return the Content-Type or <tt>null</tt> to rely on the mail provider
      */
     String resolveContentType(String fileName);

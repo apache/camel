@@ -113,9 +113,7 @@ public class JettyHttpComponent extends HttpComponent {
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
-        if (getHeaderFilterStrategy() != null) {
-            result.setHeaderFilterStrategy(getHeaderFilterStrategy());
-        }
+        setEndpointHeaderFilterStrategy(result);
         if (handlerList.size() > 0) {
             result.setHandlers(handlerList);
         }

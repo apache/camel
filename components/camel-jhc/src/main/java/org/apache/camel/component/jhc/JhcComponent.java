@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.http.params.BasicHttpParams;
@@ -28,10 +29,10 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-public class JhcComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+public class JhcComponent extends HeaderFilterStrategyComponent {
 
     private HttpParams params;
-    private HeaderFilterStrategy headerFilterStrategy;
+    
 
     public JhcComponent() {
         
@@ -59,13 +60,5 @@ public class JhcComponent extends DefaultComponent implements HeaderFilterStrate
         }
         return jhcEndpoint;
     }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {        
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;        
-    }
-
+    
 }
