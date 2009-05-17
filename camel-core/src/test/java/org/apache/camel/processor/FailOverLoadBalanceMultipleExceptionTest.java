@@ -45,7 +45,7 @@ public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").loadBalance()
-                    .failOver(IllegalArgumentException.class, IOException.class, CamelException.class)
+                    .failover(IllegalArgumentException.class, IOException.class, CamelException.class)
                         .to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").to("mock:x").process(new Processor() {

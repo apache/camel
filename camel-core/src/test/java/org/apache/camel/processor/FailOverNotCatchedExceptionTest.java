@@ -44,8 +44,15 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").loadBalance()
-                    .failOver(IOException.class).to("direct:x", "direct:y", "direct:z");
+                // START SNIPPET: e1
+                from("direct:start")
+                    // here we will load balance if IOException was thrown
+                    // any other kind of exception will result in the Exchange as failed
+                    // to failover over any kind of exception we can just omit the exception
+                    // in the failOver DSL
+                    .loadBalance().failover(IOException.class)
+                        .to("direct:x", "direct:y", "direct:z");
+                // END SNIPPET: e1
 
                 from("direct:x").to("mock:x").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

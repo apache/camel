@@ -45,7 +45,7 @@ public class FailOverLoadBalanceWrappedExceptionTest extends ContextTestSupport 
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").loadBalance()
-                    .failOver(IOException.class).to("direct:x", "direct:y", "direct:z");
+                    .failover(IOException.class).to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").to("mock:x").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

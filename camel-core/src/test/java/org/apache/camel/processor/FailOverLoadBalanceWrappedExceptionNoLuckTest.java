@@ -43,7 +43,7 @@ public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSu
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").loadBalance()
-                    .failOver(IOException.class).to("direct:x", "direct:y");
+                    .failover(IOException.class).to("direct:x", "direct:y");
 
                 from("direct:x").to("mock:x").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

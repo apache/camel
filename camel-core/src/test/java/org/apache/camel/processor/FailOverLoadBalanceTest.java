@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -42,11 +41,9 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
     }
     
     public static class MyException extends Exception {
-        
     }
     
     public static class MyAnotherException extends Exception {
-        
     }
     
     public static class MyExceptionProcessor implements Processor {        
@@ -64,15 +61,12 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // First we need to turn off the default error handler
-                errorHandler(new NoErrorHandlerBuilder());
-                
                 from("direct:exception").loadBalance()
                     // catch all the exception here
-                    .failOver().to("direct:x", "direct:y", "direct:z");
+                    .failover().to("direct:x", "direct:y", "direct:z");
                 
                 from("direct:customerException").loadBalance()
-                    .failOver(MyException.class).to("direct:x", "direct:y", "direct:z");
+                    .failover(MyException.class).to("direct:x", "direct:y", "direct:z");
                 
                 from("direct:x").process(new MyExceptionProcessor()).to("mock:x");
                 
