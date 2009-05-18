@@ -45,7 +45,7 @@ public class FileConsumeSimpleRelativeMoveToAbsoluteTest extends ContextTestSupp
     public void testMoveToSubDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        // will flattern when using absolute path in move
+        // will flatten when using absolute path in move
         mock.expectedFileExists(base + "/.done/bye.txt");
         mock.expectedFileExists(base + "/.done/hello.txt");
         mock.expectedFileExists(base + "/.done/goodday.txt");

@@ -60,7 +60,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean noop;
     protected boolean recursive;
     protected boolean delete;
-    protected boolean flattern;
+    protected boolean flatten;
     protected String tempPrefix;
     protected String include;
     protected String exclude;
@@ -192,12 +192,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.delete = delete;
     }
 
-    public boolean isFlattern() {
-        return flattern;
+    public boolean isFlatten() {
+        return flatten;
     }
 
-    public void setFlattern(boolean flattern) {
-        this.flattern = flattern;
+    public void setFlatten(boolean flatten) {
+        this.flatten = flatten;
     }
 
     public Expression getMove() {
@@ -400,8 +400,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     public void configureMessage(GenericFile<T> file, Message message) {
         message.setBody(file);
 
-        if (flattern) {
-            // when flattern the file name should not contain any paths
+        if (flatten) {
+            // when flatten the file name should not contain any paths
             message.setHeader(Exchange.FILE_NAME, file.getFileNameOnly());
         } else {
             // compute name to set on header that should be relative to starting directory

@@ -179,8 +179,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
             name = expression.evaluate(exchange, String.class);
         }
 
-        // flattern name
-        if (name != null && endpoint.isFlattern()) {
+        // flatten name
+        if (name != null && endpoint.isFlatten()) {
             int pos = name.lastIndexOf(getFileSeparator());
             if (pos == -1) {
                 pos = name.lastIndexOf('/');
