@@ -80,7 +80,7 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ThrowFault
-                from(routerEndpointURI).throwFault(SOAP_FAULT);
+                from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
                 // END SNIPPET: ThrowFault
             }
         };
