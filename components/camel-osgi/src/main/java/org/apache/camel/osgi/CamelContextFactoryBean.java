@@ -52,13 +52,15 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
     }
     
     protected SpringCamelContext createContext() {
-        SpringCamelContext context = super.createContext();
-        LOG.debug("The bundle context is " + bundleContext);
+        SpringCamelContext context = super.createContext();        
         if (bundleContext != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("The bundle context is not be null, let's setup the Osgi resolvers");
+            }
+            context.setFactoryFinderClass(OsgiFactoryFinder.class);
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
-            addOsgiAnnotationTypeConverterLoader(context, bundleContext);
-            context.setFactoryFinderClass(OsgiFactoryFinder.class);
+            addOsgiAnnotationTypeConverterLoader(context, bundleContext);            
         }
         
         return context;
