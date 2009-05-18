@@ -56,6 +56,7 @@ import static org.apache.camel.util.ExchangeHelper.convertToType;
  */
 public class BeanInfo {
     private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private final CamelContext camelContext;
     private final Class type;
     private final ParameterMappingStrategy strategy;
@@ -74,6 +75,17 @@ public class BeanInfo {
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
+
+        // configure the default excludes methods
+        synchronized (EXCLUDED_METHODS) {
+            if (EXCLUDED_METHODS.size() == 0) {
+                // exclude all java.lang.Object methods as we dont want to invoke them
+                for (Method method : Object.class.getMethods()) {
+                    EXCLUDED_METHODS.add(method);
+                }
+            }
+        }
+
         introspect(getType());
         // if there are only 1 method with 1 operation then select it as a default/fallback method
         if (operations.size() == 1) {
@@ -169,6 +181,7 @@ public class BeanInfo {
      *
      * @param clazz the class
      * @param method the method
+     * @return the method info, is newer <tt>null</tt>
      */
     protected MethodInfo introspect(Class clazz, Method method) {
         if (LOG.isTraceEnabled()) {
@@ -319,9 +332,7 @@ public class BeanInfo {
             List<MethodInfo> possibles = new ArrayList<MethodInfo>();
             List<MethodInfo> possiblesWithException = new ArrayList<MethodInfo>();
             for (MethodInfo methodInfo : operationList) {
-                // TODO: AOP proxies have additional methods - consider having a static
-                // method exclude list to skip all known AOP proxy methods
-                // TODO: This class could use some TRACE logging
+                // TODO: AOP proxies have additional methods - well known methods should be added to EXCLUDE_METHODS
 
                 // test for MEP pattern matching
                 boolean out = exchange.getPattern().isOutCapable();
@@ -368,7 +379,6 @@ public class BeanInfo {
         } else if (possibles.size() == 1) {
             return possibles.get(0);
         } else if (possibles.isEmpty()) {
-            // TODO: This code is not covered by existing unit test in camel-core, need to be tested
             if (LOG.isTraceEnabled()) {
                 LOG.trace("No poosible methods trying to convert body to parameter types");
             }
@@ -426,6 +436,14 @@ public class BeanInfo {
      * @return true if valid, false to skip the method
      */
     protected boolean isValidMethod(Class clazz, Method method) {
+        // must not be in the excluded list
+        for (Method excluded : EXCLUDED_METHODS) {
+            if (ObjectHelper.isOverridingMethod(excluded, method)) {
+                // the method is overriding an excluded method so its not valid
+                return false;
+            }
+        }
+
         // must be a public method
         if (!Modifier.isPublic(method.getModifiers())) {
             return false;
@@ -447,28 +465,11 @@ public class BeanInfo {
      */
     private MethodInfo overridesExistingMethod(MethodInfo methodInfo) {
         for (MethodInfo info : methodMap.values()) {
+            Method source = info.getMethod();
+            Method target = methodInfo.getMethod();
 
-            // name test
-            if (!info.getMethod().getName().equals(methodInfo.getMethod().getName())) {
-                continue;
-            }
-
-            // parameter types
-            if (info.getMethod().getParameterTypes().length != methodInfo.getMethod().getParameterTypes().length) {
-                continue;
-            }
-
-            boolean found = false;
-            for (int i = 0; i < info.getMethod().getParameterTypes().length; i++) {
-                Class type1 = info.getMethod().getParameterTypes()[i];
-                Class type2 = methodInfo.getMethod().getParameterTypes()[i];
-                if (type1.equals(type2)) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found) {
+            boolean override = ObjectHelper.isOverridingMethod(source, target);
+            if (override) {
                 // same name, same parameters, then its overrides an existing class
                 return info;
             }

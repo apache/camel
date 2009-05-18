@@ -601,6 +601,34 @@ public final class ObjectHelper {
     }
 
     /**
+     * Tests whether the target method overrides the source method.
+     * <p/>
+     * Tests whether they have the same name, return type, and parameter list.
+     *
+     * @param source  the source method
+     * @param target  the target method
+     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     */
+    public static boolean isOverridingMethod(Method source, Method target) {
+        if (source.getName().equals(target.getName()) &&
+                source.getReturnType().equals(target.getReturnType()) &&
+                source.getParameterTypes().length == target.getParameterTypes().length) {
+
+            // test if parameter types is the same as well
+            for (int i = 0; i < source.getParameterTypes().length; i++) {
+                if (!(source.getParameterTypes()[i].equals(target.getParameterTypes()[i]))) {
+                    return false;
+                }
+            }
+
+            // the have same name, return type and parameter list, so its overriding
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns a list of methods which are annotated with the given annotation
      *
      * @param type the type to reflect on
