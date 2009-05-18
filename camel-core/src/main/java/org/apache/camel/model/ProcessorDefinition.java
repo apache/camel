@@ -1225,29 +1225,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Creates a fault message based on the given throwable.
+     * Sets the exception on the {@link org.apache.camel.Exchange}
      *
-     * @param fault   the fault
+     * @param exception the exception to throw
      * @return the builder
-     * @deprecated should be renamed to throw Exception
      */
     @SuppressWarnings("unchecked")
-    public Type throwFault(Throwable fault) {
-        ThrowFaultDefinition answer = new ThrowFaultDefinition();
-        answer.setFault(fault);
+    public Type throwException(Exception exception) {
+        ThrowExceptionDefinition answer = new ThrowExceptionDefinition();
+        answer.setException(exception);
         addOutput(answer);
         return (Type) this;
-    }
-
-    /**
-     * Creates a fault message based on the given message.
-     *
-     * @param message  the fault message
-     * @return the builder
-     * @deprecated should be renamed to throw Exception
-     */
-    public Type throwFault(String message) {
-        return throwFault(new CamelException(message));
     }
 
     /**

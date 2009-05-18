@@ -138,7 +138,6 @@ public class XmlParseTest extends XmlTestSupport {
         assertFrom(route, "seda:a");
         ConvertBodyDefinition node = assertOneProcessorInstanceOf(ConvertBodyDefinition.class, route);
         assertEquals("java.lang.Integer", node.getType());
-        assertEquals(Integer.class, node.getTypeClass());
     }
 
     public void testParseRoutingSlipXml() throws Exception {

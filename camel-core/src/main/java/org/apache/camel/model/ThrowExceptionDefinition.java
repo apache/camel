@@ -18,83 +18,62 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.ThrowFaultProcessor;
+import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;throwFault/&gt; element
- * @deprecated should be renamed to throwException and not be FAULT based
+ * Represents an XML &lt;throwException/&gt; element
  */
-@XmlRootElement(name = "throwFault")
+@XmlRootElement(name = "throwException")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrowFaultDefinition extends ProcessorDefinition<ThrowFaultDefinition> {
+public class ThrowExceptionDefinition extends ProcessorDefinition<ThrowExceptionDefinition> {
+    @XmlAttribute(name = "ref", required = false)
+    private String ref;
     @XmlTransient
-    private Throwable fault;
-    @XmlTransient
-    private Processor processor;
-    @XmlAttribute (required = true)
-    private String faultRef;
+    private Exception exception;
 
-    public ThrowFaultDefinition() {
+    public ThrowExceptionDefinition() {
     }
 
     @Override
     public String getShortName() {
-        return "throwFault";
+        return "throwException";
     }
 
     @Override
     public String toString() {
-        if (faultRef != null) {
-            return "ThrowFault[ref: " + faultRef + "]";
-        } else {
-            return "ThrowFault[" + fault.getClass().getCanonicalName();
-        }
-    }
-
-    public void setFault(Throwable fault) {
-        this.fault = fault;
-    }
-
-    public Throwable getFault() {
-        return fault;
-    }
-
-    public void setFaultRef(String ref) {
-        this.faultRef = ref;
-    }
-
-    public String getFaultRef() {
-        return faultRef;
+        return "ThrowException[" + (exception != null ? exception.getClass().getCanonicalName() : "ref: " + ref) + "]";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        if (processor == null) {
-            if (fault == null) {
-                fault = routeContext.lookup(faultRef, Throwable.class);
-                if (fault == null) {
-                    // can't find the fault instance, create a new one
-                    fault = new CamelException(faultRef);
-                }
-            }
-            processor = new ThrowFaultProcessor(fault);
+        if (ref != null && exception == null) {
+            this.exception = routeContext.getCamelContext().getRegistry().lookup(ref, Exception.class);
         }
-        return processor;
+
+        ObjectHelper.notNull(exception, "exception or ref", this);
+        return new ThrowExceptionProcessor(exception);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<ProcessorDefinition> getOutputs() {
         return Collections.EMPTY_LIST;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 }

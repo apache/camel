@@ -29,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;convertBodyTo/&gt; element
@@ -74,6 +73,13 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        if (getTypeClass() == null) {
+            this.typeClass = routeContext.getCamelContext().getClassResolver().resolveClass(getType());
+            if (getTypeClass() == null) {
+                throw new RuntimeCamelException("Cannot load the class with the class name: " + getType());
+            }
+        }
+
         return new ConvertBodyProcessor(getTypeClass(), getCharset());
     }
 
@@ -83,16 +89,16 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
         return Collections.EMPTY_LIST;
     }
 
-    protected Class createTypeClass() {
-        return ObjectHelper.loadClass(getType(), getClass().getClassLoader());
+    public String getType() {
+        return type;
     }
 
     public void setType(String type) {
         this.type = type;
     }
 
-    public String getType() {
-        return type;
+    public Class getTypeClass() {
+        return typeClass;
     }
 
     public void setTypeClass(Class typeClass) {
@@ -107,15 +113,4 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
         this.charset = charset;
     }
 
-    public Class getTypeClass() {
-        if (typeClass == null) {
-            Class clazz = createTypeClass();
-            if (clazz == null) {
-                throw new RuntimeCamelException("Cannot load the class with the class name: " + getType());
-            }
-            setTypeClass(clazz);
-        }
-        return typeClass;
-    }
-    
 }

@@ -63,7 +63,7 @@ SortDefinition
 SplitDefinition
 StopDefinition
 ThrottleDefinition
-ThrowFaultDefinition
+ThrowExceptionDefinition
 ToDefinition
 TransactedDefinition
 TransformDefinition

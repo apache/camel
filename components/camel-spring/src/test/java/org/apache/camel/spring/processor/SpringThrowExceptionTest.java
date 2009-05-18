@@ -14,30 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.spring.processor;
 
-package org.apache.camel.processor;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.ThrowExceptionTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+                                  
 /**
- * The processor which implements the ThrowFault DSL
+ * @version $Revision$
  */
-public class ThrowFaultProcessor implements Processor {
-    private final Throwable fault;
+public class SpringThrowExceptionTest extends ThrowExceptionTest {
 
-    public ThrowFaultProcessor(Throwable fault) {
-        this.fault = fault;
-    }
-
-    /**
-     * Set the fault message in the exchange
-     * @see org.apache.camel.Processor#process(org.apache.camel.Exchange)
-     */
-    public void process(Exchange exchange) throws Exception {
-        Message message = exchange.getFault();
-        message.setBody(fault);
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringThrowExceptionTest.xml");
     }
 
 }
