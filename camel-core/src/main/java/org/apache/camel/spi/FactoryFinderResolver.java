@@ -24,9 +24,9 @@ package org.apache.camel.spi;
 public interface FactoryFinderResolver {
 
     /**
-     * Creates a new defaut factory finder using a default resource path.
+     * Creates a new default factory finder using a default resource path.
      *
-     * @param classResolver the class resolcer to use
+     * @param classResolver the class resolver to use
      * @return a factory finder.
      */
     FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver);
@@ -34,7 +34,7 @@ public interface FactoryFinderResolver {
     /**
      * Creates a new factory finder.
      *
-     * @param classResolver the class resolcer to use
+     * @param classResolver the class resolver to use
      * @param resourcePath the resource path as base to lookup files within
      * @return a factory finder.
      */

@@ -51,12 +51,14 @@ public class CamelContextFactory implements BundleContextAware {
     public DefaultCamelContext createContext() {
         DefaultCamelContext context = new DefaultCamelContext();
         if (bundleContext != null) {
-            LOG.debug("The bundle context is not be null, let's setup the Osgi resolvers");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("The bundle context is not be null, let's setup the Osgi resolvers");
+            }
+            context.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
             context.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
-            addOsgiAnnotationTypeConverterLoader(context, bundleContext);
-            context.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
+            addOsgiAnnotationTypeConverterLoader(context, bundleContext);            
         }
         
         return context;

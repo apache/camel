@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
+package org.apache.camel.itest.osgi.jaxb;
 
-package org.apache.camel.itest.osgi;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.osgi.CamelContextFactory;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.camel.osgi.OsgiFactoryFinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.ops4j.pax.exam.Inject;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
-import org.osgi.framework.BundleContext;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -39,27 +39,30 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
-public class OSGiIntegrationTestSupport extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(OSGiIntegrationTestSupport.class);
-    @Inject
-    protected BundleContext bundleContext;
-            
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();        
-    }
+@RunWith(JUnit4TestRunner.class)
+public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
+    private static final transient Log LOG = LogFactory.getLog(JaxbFallbackConverterTest.class);
     
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
+                from("direct:start").convertBodyTo(PersonType.class).to("mock:bar");
+            }
+        };
     }
-    
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContextFactory factory = new CamelContextFactory();
-        factory.setBundleContext(bundleContext);
-        LOG.info("Get the bundleContext is " + bundleContext);
-        return factory.createContext();
-    }
+
+    @Test
+    public void testSendMessage() throws Exception {
+        MockEndpoint mock =  getMandatoryEndpoint("mock:bar", MockEndpoint.class);
+        assertNotNull("The mock endpoint should not be null", mock);
+        
+        PersonType expected = new PersonType();
+        expected.setFirstName("FOO");
+        expected.setLastName("BAR");
+        mock.expectedBodiesReceived(expected);
+        template.sendBody("direct:start", "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+        assertMockEndpointsSatisfied();        
+    }    
     
     @Configuration
     public static Option[] configure() {
@@ -74,9 +77,9 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("features").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-osgi", "camel-spring", "camel-test"),
+                          "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-jaxb"),
             
-            knopflerfish(), felix(), equinox());
+            felix());
         
         return options;
     }
