@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeException;
 import org.apache.camel.Expression;
+import org.apache.camel.Handler;
 import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
@@ -63,6 +64,7 @@ public class BeanInfo {
     private final Map<String, List<MethodInfo>> operations = new ConcurrentHashMap<String, List<MethodInfo>>();
     private final List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
     private final List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
+    private final List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<MethodInfo>();
     private final Map<Method, MethodInfo> methodMap = new ConcurrentHashMap<Method, MethodInfo>();
     private MethodInfo defaultMethod;
     private BeanInfo superBeanInfo;
@@ -218,11 +220,14 @@ public class BeanInfo {
             operations.put(opName, methods);
         }
 
-        if (methodInfo.hasBodyParameter()) {
+        if (methodInfo.hasCustomAnnotation()) {
+            operationsWithCustomAnnotation.add(methodInfo);
+        } else if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
         }
-        if (methodInfo.isHasCustomAnnotation() && !methodInfo.hasBodyParameter()) {
-            operationsWithCustomAnnotation.add(methodInfo);
+
+        if (methodInfo.hasHandlerAnnotation()) {
+            operationsWithHandlerAnnotation.add(methodInfo);
         }
 
         // must add to method map last otherwise we break stuff
@@ -260,6 +265,7 @@ public class BeanInfo {
         List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();
 
         boolean hasCustomAnnotation = false;
+        boolean hasHandlerAnnotation = ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
         for (int i = 0; i < parameterTypes.length; i++) {
             Class parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations = parametersAnnotations[i];
@@ -289,8 +295,7 @@ public class BeanInfo {
         }
 
         // now lets add the method to the repository
-        MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation);
-        return methodInfo;
+        return new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
     }
 
     /**
@@ -299,27 +304,52 @@ public class BeanInfo {
      *
      * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
-     * @return the method to invoke or null if no definitive method could be
-     *         matched
+     * @return the method to invoke or null if no definitive method could be matched
      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
      */
     protected MethodInfo chooseMethod(Object pojo, Exchange exchange) throws AmbiguousMethodCallException {
-        if (operationsWithBody.size() == 1) {
-            // only one body possible so we got a hit
-            return operationsWithBody.get(0);
-        } else if (!operationsWithBody.isEmpty()) {
-            // multiple operations so find the best suited if possible
-            return chooseMethodWithMatchingBody(exchange, operationsWithBody);
+        // @Handler should be select first
+        // then any single method that has a custom @annotation
+        // or any single method that has a match parameter type that matches the Exchange payload
+        // and last then try to select the best among the rest
+
+        if (operationsWithHandlerAnnotation.size() > 1) {
+            // if we have more than 1 @Handler then its ambiguous
+            throw new AmbiguousMethodCallException(exchange, operationsWithHandlerAnnotation);
+        }
+
+        if (operationsWithHandlerAnnotation.size() == 1) {
+            // methods with handler should be preferred
+            return operationsWithHandlerAnnotation.get(0);
         } else if (operationsWithCustomAnnotation.size() == 1) {
             // if there is one method with an annotation then use that one
             return operationsWithCustomAnnotation.get(0);
+        } else if (operationsWithBody.size() == 1) {
+            // if there is one method with body then use that one
+            return operationsWithBody.get(0);
         }
-        // no we could not find a method to invoke, so either there are none or there are ambigiuous methods.
+
+        Collection<MethodInfo> possibleOperations = new ArrayList<MethodInfo>();
+        possibleOperations.addAll(operationsWithBody);
+        possibleOperations.addAll(operationsWithCustomAnnotation);
+
+        if (!possibleOperations.isEmpty()) {
+             // multiple possible operations so find the best suited if possible
+            MethodInfo answer = chooseMethodWithMatchingBody(exchange, possibleOperations);
+            if (answer == null) {
+                throw new AmbiguousMethodCallException(exchange, possibleOperations);
+            } else {
+                return answer;
+            }
+        }
+
+        // not possible to determine
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList) throws AmbiguousMethodCallException {
+    private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList)
+            throws AmbiguousMethodCallException {
         // lets see if we can find a method who's body param type matches the message body
         Message in = exchange.getIn();
         Object body = in.getBody();
@@ -478,11 +508,12 @@ public class BeanInfo {
         return null;
     }
 
-    private MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles) throws AmbiguousMethodCallException {
+    private MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles)
+            throws AmbiguousMethodCallException {
         // if we have only one method with custom annotations lets choose that
         MethodInfo chosen = null;
         for (MethodInfo possible : possibles) {
-            if (possible.isHasCustomAnnotation()) {
+            if (possible.hasCustomAnnotation()) {
                 if (chosen != null) {
                     chosen = null;
                     break;
@@ -542,7 +573,7 @@ public class BeanInfo {
                     AnnotationExpressionFactory expressionFactory = (AnnotationExpressionFactory) object;
                     return expressionFactory.createExpression(camelContext, annotation, languageAnnotation, parameterType);
                 } else {
-                    LOG.error("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
+                    LOG.warn("Ignoring bad annotation: " + languageAnnotation + "on method: " + method
                             + " which declares a factory: " + type.getName()
                             + " which does not implement " + AnnotationExpressionFactory.class.getName());
                 }

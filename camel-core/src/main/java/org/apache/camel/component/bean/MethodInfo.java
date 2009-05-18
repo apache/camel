@@ -50,16 +50,19 @@ public class MethodInfo {
     private final List<ParameterInfo> parameters;
     private final List<ParameterInfo> bodyParameters;
     private final boolean hasCustomAnnotation;
+    private final boolean hasHandlerAnnotation;
     private Expression parametersExpression;
     private ExchangePattern pattern = ExchangePattern.InOut;
     private RecipientList recipientList;
 
-    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters, boolean hasCustomAnnotation) {
+    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
+                      boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
         this.type = type;
         this.method = method;
         this.parameters = parameters;
         this.bodyParameters = bodyParameters;
         this.hasCustomAnnotation = hasCustomAnnotation;
+        this.hasHandlerAnnotation = hasHandlerAnnotation;
         this.parametersExpression = createParametersExpression();
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
@@ -134,6 +137,9 @@ public class MethodInfo {
     }
 
     public Class getBodyParameterType() {
+        if (bodyParameters.isEmpty()) {
+            return null;
+        }
         ParameterInfo parameterInfo = bodyParameters.get(0);
         return parameterInfo.getType();
     }
@@ -151,8 +157,12 @@ public class MethodInfo {
         return !bodyParameters.isEmpty();
     }
 
-    public boolean isHasCustomAnnotation() {
+    public boolean hasCustomAnnotation() {
         return hasCustomAnnotation;
+    }
+
+    public boolean hasHandlerAnnotation() {
+        return hasHandlerAnnotation;
     }
 
     public boolean isReturnTypeVoid() {

@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.Simple;
 import org.apache.camel.processor.BeanRouteTest;
@@ -32,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
+    protected MyOtherBean myOtherBean = new MyOtherBean();
 
     public void testSendMessage() throws Exception {
         template.sendBodyAndHeader("direct:in", "<hello>world!</hello>", "foo", "bar");
@@ -39,10 +41,17 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
         assertEquals("bean body: " + myBean, "bar", myBean.bar);
     }
 
+    public void testSendMessageHandler() throws Exception {
+        template.sendBodyAndHeader("direct:other", "<hello>world!</hello>", "foo", "bar");
+
+        assertEquals("bean body: " + myOtherBean, "bar", myOtherBean.bar);
+    }
+
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("myBean", myBean);
+        answer.bind("myOtherBean", myOtherBean);
         return answer;
     }
 
@@ -50,6 +59,8 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in").beanRef("myBean");
+
+                from("direct:other").beanRef("myOtherBean");
             }
         };
     }
@@ -61,6 +72,24 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
             fail("bar() called with: " + body);
         }
 
+        public void foo(@Simple("header.foo") String bar) {
+            this.bar = bar;
+            LOG.info("foo() method called with: " + bar);
+        }
+
+        public void wrongMethod(String body) {
+            fail("wrongMethod() called with: " + body);
+        }
+    }
+
+    public static class MyOtherBean {
+        public String bar;
+
+        public void bar(String body) {
+            fail("bar() called with: " + body);
+        }
+
+        @Handler
         public void foo(@Simple("header.foo") String bar) {
             this.bar = bar;
             LOG.info("foo() method called with: " + bar);

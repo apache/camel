@@ -81,7 +81,7 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
         EasyMock.replay(beanMock);
         Exchange result = template.send("direct:start2", new DefaultExchange(context));
         assertNotNull(result.getException());
-        assertEquals(result.getException().getClass(), IllegalStateException.class);
+        assertIsInstanceOf(AmbiguousMethodCallException.class, result.getException());
         EasyMock.verify(beanMock);
     }
 

@@ -61,7 +61,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         assertEquals(RequestB.class, method.getGenericParameterTypes()[0]);
     }
 
-    public void testNoMatch() throws Exception {
+    public void testAmbigious() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
         Message message = new DefaultMessage();
@@ -69,8 +69,12 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);
 
-        MethodInvocation methodInvocation = beanInfo.createInvocation(new Bean(), exchange);
-        assertNull("Should not find a suitable method", methodInvocation);
+        try {
+            MethodInvocation methodInvocation = beanInfo.createInvocation(new Bean(), exchange);
+            fail("Should have thrown an exception");
+        } catch (AmbiguousMethodCallException e) {
+            assertEquals(2, e.getMethods().size());
+        }
     }
 
     class Bean {

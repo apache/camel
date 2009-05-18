@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.bean;
 
+import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -56,9 +58,9 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel().logStackTrace(false).disableRedelivery());
+                errorHandler(deadLetterChannel().logStackTrace(false).maximumRedeliveries(3));
 
-                onException(Exception.class).handled(true).beanRef("foo").to("mock:result");
+                onException(Exception.class).handled(true).beanRef("foo", "handleFailure").to("mock:result");
 
                 from("direct:a").beanRef("foo").to("mock:result");
 
@@ -76,11 +78,11 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
             return "Exception";
         }
 
-        public String handleFailure(String order, Exception e) {
+        public String handleFailure(@Body String order, @ExchangeException IllegalArgumentException e) {
             return "Failure";
         }
 
-        public String handleOrder(String order) {
+        public String handleOrder(@Body String order) {
             return "Order";
         }
     }
