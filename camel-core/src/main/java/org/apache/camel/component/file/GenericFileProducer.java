@@ -124,12 +124,12 @@ public class GenericFileProducer<T> extends DefaultProducer {
         try {
             // build directory if auto create is enabled
             if (endpoint.isAutoCreate()) {
-                int lastPathIndex = fileName.lastIndexOf(getFileSeparator());
-                if (lastPathIndex != -1) {
-                    String directory = fileName.substring(0, lastPathIndex);
-                    // skip trailing /
-                    directory = FileUtil.stripLeadingSeparator(directory);
-                    if (!operations.buildDirectory(directory, false)) {
+                // use java.io.File to compute the file path
+                File file = new File(fileName);
+                String directory = file.getParent();
+                boolean absolute = file.isAbsolute();
+                if (directory != null) {
+                    if (!operations.buildDirectory(directory, absolute)) {
                         log.debug("Cannot build directory [" + directory + "] (could be because of denied permissions)");
                     }
                 }
