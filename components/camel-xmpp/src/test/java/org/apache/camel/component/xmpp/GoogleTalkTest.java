@@ -28,6 +28,12 @@ public class GoogleTalkTest extends ContextTestSupport {
         result.assertIsSatisfied();
     }
     
+    public void xtestSendToGTalkWithSubject() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        template.sendBodyAndHeader("direct:start", "Hi!", "Subject", "From Camel");
+        result.assertIsSatisfied();
+    }
+
     // get around junit warning
     public void testNothing() throws Exception {        
     }

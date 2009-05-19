@@ -56,7 +56,18 @@ public class XmppBinding {
             String name = entry.getKey();
             Object value = entry.getValue();
             if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
-                message.setProperty(name, value);
+
+                if ("subject".equalsIgnoreCase(name)) {
+                    // special for subject
+                    String subject = exchange.getContext().getTypeConverter().convertTo(String.class, value);
+                    message.setSubject(subject);
+                } else if ("language".equalsIgnoreCase(name)) {
+                    // special for language
+                    String language = exchange.getContext().getTypeConverter().convertTo(String.class, value);
+                    message.setLanguage(language);
+                } else {
+                    message.setProperty(name, value);
+                }
             }
         }
         
