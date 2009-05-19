@@ -226,6 +226,50 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.bar} not in '100,200'", true);
     }
 
+    public void testIs() throws Exception {
+        assertExpression("${in.header.foo} is 'java.lang.String'", true);
+        assertExpression("${in.header.foo} is 'java.lang.Integer'", false);
+
+        assertExpression("${in.header.foo} is 'String'", true);
+        assertExpression("${in.header.foo} is 'Integer'", false);
+
+        assertExpression("${in.header.foo} is String", true);
+        assertExpression("${in.header.foo} is Integer", false);
+    }
+
+    public void testIsNot() throws Exception {
+        assertExpression("${in.header.foo} not is 'java.lang.String'", false);
+        assertExpression("${in.header.foo} not is 'java.lang.Integer'", true);
+
+        assertExpression("${in.header.foo} not is 'String'", false);
+        assertExpression("${in.header.foo} not is 'Integer'", true);
+
+        assertExpression("${in.header.foo} not is String", false);
+        assertExpression("${in.header.foo} not is Integer", true);
+    }
+
+    public void testRange() throws Exception {
+        assertExpression("${in.header.bar} range 100..200", true);
+        assertExpression("${in.header.bar} range 200..300", false);
+
+        assertExpression("${in.header.foo} range 200..300", false);
+        assertExpression("${bean:generator.generateId} range 123..130", true);
+        assertExpression("${bean:generator.generateId} range 120..123", true);
+        assertExpression("${bean:generator.generateId} range 120..122", false);
+        assertExpression("${bean:generator.generateId} range 124..130", false);
+    }
+
+    public void testNotRange() throws Exception {
+        assertExpression("${in.header.bar} not range 100..200", false);
+        assertExpression("${in.header.bar} not range 200..300", true);
+
+        assertExpression("${in.header.foo} not range 200..300", true);
+        assertExpression("${bean:generator.generateId} not range 123..130", false);
+        assertExpression("${bean:generator.generateId} not range 120..123", false);
+        assertExpression("${bean:generator.generateId} not range 120..122", true);
+        assertExpression("${bean:generator.generateId} not range 124..130", true);
+    }
+
     protected String getLanguageName() {
         return "simple";
     }

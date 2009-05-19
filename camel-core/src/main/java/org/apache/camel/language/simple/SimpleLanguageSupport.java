@@ -41,7 +41,8 @@ import static org.apache.camel.language.simple.SimpleLangaugeOperator.*;
 public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
     protected static final Pattern PATTERN = Pattern.compile(
-            "^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in)\\s+(.+)$");
+            "^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in|is|not is|range|not range)\\s+(.+)$");
+    protected static final Pattern RANGE_PATTERN = Pattern.compile("^(\\d+)(\\.\\.)(\\d+)$");
     protected final Log log = LogFactory.getLog(getClass());
 
     public Predicate createPredicate(String expression) {
@@ -146,6 +147,39 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     ValueBuilder vb = new ValueBuilder(left);
                     predicate = vb.in(values.toArray());
                     if (operator == NOT_IN) {
+                        predicate = PredicateBuilder.not(predicate);
+                    }
+                } else if (operator == IS || operator == NOT_IS) {
+                    String name = right.evaluate(exchange, String.class);
+                    Class rightType = exchange.getContext().getClassResolver().resolveClass(name);
+                    if (rightType == null) {
+                        // prefix class name with java.lang. so people can use String as shorthand
+                        rightType = exchange.getContext().getClassResolver().resolveClass("java.lang." + name);
+                    }
+                    if (rightType == null) {
+                        throw new IllegalArgumentException("Syntax error in is operator: " + expression
+                                + " cannot find class with name: " + name);
+                    }
+                    predicate = PredicateBuilder.isInstanceOf(left, rightType);
+                    if (operator == NOT_IS) {
+                        predicate = PredicateBuilder.not(predicate);
+                    }
+                } else if (operator == RANGE || operator == NOT_RANGE) {
+                    String range = right.evaluate(exchange, String.class);
+                    Matcher matcher = RANGE_PATTERN.matcher(range);
+                    if (matcher.matches()) {
+                        // wrap as constant expression for the from and to values
+                        Expression from = ExpressionBuilder.constantExpression(matcher.group(1));
+                        Expression to = ExpressionBuilder.constantExpression(matcher.group(3));
+
+                        // build a compound predicate for the range
+                        predicate = PredicateBuilder.isGreaterThanOrEqualTo(left, from);
+                        predicate = PredicateBuilder.and(predicate, PredicateBuilder.isLessThanOrEqualTo(left, to));
+                    } else {
+                        throw new IllegalArgumentException("Syntax error in range operator: " + expression + " is not valid."
+                                + " Valid syntax: from..to (where from and to are numbers).");
+                    }
+                    if (operator == NOT_RANGE) {
                         predicate = PredicateBuilder.not(predicate);
                     }
                 }

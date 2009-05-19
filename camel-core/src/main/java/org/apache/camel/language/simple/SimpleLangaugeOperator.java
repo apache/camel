@@ -19,23 +19,27 @@ package org.apache.camel.language.simple;
 /**
  * Operators supported by simple language
  * <ul>
- *   <li>EQ : ==</li>
- *   <li>GT : ></li>
- *   <li>GTE : >=</li>
- *   <li>LT : <</li>
- *   <li>LTE : <=</li>
- *   <li>NOT : !=</li>
+ *   <li>== : equlas</li>
+ *   <li>> : greather than</li>
+ *   <li>>= : greather than or equals</li>
+ *   <li>< : less than</li>
+ *   <li><= : less than or equals</li>
+ *   <li>!= : not</li>
  *   <li>contains : tested for if it contains the value</li>
  *   <li>not contains : tested for if it does not contain the value</li>
  *   <li>regex : matching a regular expression</li>
  *   <li>not regex : not matching a regular expression</li>
  *   <li>in : tested for in a list of values separated by comma</li>
  *   <li>not in : tested for not in a list of values separated by comma</li>
+ *   <li>is : tested for if type is an instanceof the given type</li>
+ *   <li>not is: tested for not if type is an instanceof the given type</li>
+ *   <li>range : tested for if it is within the provided range</li>
+ *   <li>not range : tested for not if it is within the provided range</li>
  * </ul>
  */
 public enum SimpleLangaugeOperator {
 
-    EQ, GT, GTE, LT, LTE, NOT, CONTAINS, NOT_CONTAINS, REGEX, NOT_REGEX, IN, NOT_IN;
+    EQ, GT, GTE, LT, LTE, NOT, CONTAINS, NOT_CONTAINS, REGEX, NOT_REGEX, IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE;
 
     public static SimpleLangaugeOperator asOperator(String text) {
         if ("==".equals(text)) {
@@ -62,6 +66,14 @@ public enum SimpleLangaugeOperator {
             return IN;
         } else if ("not in".equals(text)) {
             return NOT_IN;
+        } else if ("is".equals(text)) {
+            return IS;
+        } else if ("not is".equals(text)) {
+            return NOT_IS;
+        } else if ("range".equals(text)) {
+            return RANGE;
+        } else if ("not range".equals(text)) {
+            return NOT_RANGE;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -91,6 +103,14 @@ public enum SimpleLangaugeOperator {
             return "in";
         } else if (operator == NOT_IN) {
             return "not in";
+        } else if (operator == IS) {
+            return "is";
+        } else if (operator == NOT_IS) {
+            return "not is";
+        } else if (operator == RANGE) {
+            return "range";
+        } else if (operator == NOT_RANGE) {
+            return "not range";
         }
         return "";
     }
