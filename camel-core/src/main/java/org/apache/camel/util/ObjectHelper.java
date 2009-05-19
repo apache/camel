@@ -38,6 +38,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,6 +54,71 @@ public final class ObjectHelper {
      * Utility classes should not have a public constructor.
      */
     private ObjectHelper() {
+    }
+
+    /**
+     * A helper method for comparing objects for equality in which it uses type coerce to coerce
+     * types between the left and right values. This allows you to equal test eg String and Integer as
+     * Camel will be able to coerce the types
+     */
+    public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue) {
+        // try without type coerce
+        boolean answer = equal(leftValue, rightValue);
+        if (answer) {
+            return true;
+        }
+
+        if (leftValue == null || rightValue == null) {
+            // no reason to continue as the first equal did not match and now one of the values is null
+            // so it wont help to type coerece to a null type
+            return false;
+        }
+
+        // convert left to right
+        Object value = converter.convertTo(rightValue.getClass(), leftValue);
+        answer = equal(value, rightValue);
+        if (answer) {
+            return true;
+        }
+
+        // convert right to left
+        value = converter.convertTo(leftValue.getClass(), rightValue);
+        answer = equal(leftValue, value);
+        return answer;
+    }
+
+    /**
+     * A helper method for comparing objects for equality in which it uses type coerce to coerce
+     * types between the left and right values. This allows you to equal test eg String and Integer as
+     * Camel will be able to coerce the types
+     */
+    public static boolean typeCoerceNotEquals(TypeConverter converter, Object leftValue, Object rightValue) {
+        return !typeCoerceEquals(converter, leftValue, rightValue);
+    }
+
+    /**
+     * A helper method for comparing objects ordering in which it uses type coerce to coerce
+     * types between the left and right values. This allows you to equal test eg String and Integer as
+     * Camel will be able to coerce the types
+     */
+    @SuppressWarnings("unchecked")
+    public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
+        if (rightValue instanceof Comparable) {
+            Object value = converter.convertTo(rightValue.getClass(), leftValue);
+            if (value != null) {
+                return ((Comparable) rightValue).compareTo(value) * -1;
+            }
+        }
+
+        if (leftValue instanceof Comparable) {
+            Object value = converter.convertTo(leftValue.getClass(), rightValue);
+            if (value != null) {
+                return ((Comparable) leftValue).compareTo(value);
+            }
+        }
+
+        // use regular compare
+        return compare(leftValue, rightValue);
     }
 
     /**
@@ -610,9 +676,9 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target) {
-        if (source.getName().equals(target.getName()) &&
-                source.getReturnType().equals(target.getReturnType()) &&
-                source.getParameterTypes().length == target.getParameterTypes().length) {
+        if (source.getName().equals(target.getName())
+                && source.getReturnType().equals(target.getReturnType()) 
+                && source.getParameterTypes().length == target.getParameterTypes().length) {
 
             // test if parameter types is the same as well
             for (int i = 0; i < source.getParameterTypes().length; i++) {

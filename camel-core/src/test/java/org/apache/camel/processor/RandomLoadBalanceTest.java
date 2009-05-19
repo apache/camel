@@ -44,10 +44,10 @@ public class RandomLoadBalanceTest extends ContextTestSupport {
     }
 
     public void testRandom() throws Exception {
-        // it should be safe to assume that they should at least each get > 10 messages
-        x.expectedMinimumMessageCount(10);
-        y.expectedMinimumMessageCount(10);
-        z.expectedMinimumMessageCount(10);
+        // it should be safe to assume that they should at least each get > 5 messages
+        x.expectedMinimumMessageCount(5);
+        y.expectedMinimumMessageCount(5);
+        z.expectedMinimumMessageCount(5);
 
         for (int i = 0; i < 100; i++) {
             template.sendBody("direct:start", "Hello World");

@@ -138,7 +138,15 @@ public final class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                return ObjectHelper.equal(leftValue, rightValue);
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -151,7 +159,15 @@ public final class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                return !ObjectHelper.equal(leftValue, rightValue);
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return false;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return true;
+                }
+
+                return ObjectHelper.typeCoerceNotEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -164,7 +180,15 @@ public final class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                return compare(leftValue, rightValue) < 0;
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) < 0;
             }
 
             protected String getOperationText() {
@@ -177,7 +201,15 @@ public final class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                return compare(leftValue, rightValue) <= 0;
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) <= 0;
             }
 
             protected String getOperationText() {
@@ -190,7 +222,15 @@ public final class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                return compare(leftValue, rightValue) > 0;
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return false;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) > 0;
             }
 
             protected String getOperationText() {
@@ -203,7 +243,15 @@ public final class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
-                return compare(leftValue, rightValue) >= 0;
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.typeCoerceCompare(exchange.getContext().getTypeConverter(), leftValue, rightValue) >= 0;
             }
 
             protected String getOperationText() {
@@ -216,6 +264,14 @@ public final class PredicateBuilder {
         return new BinaryPredicateSupport(left, right) {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
                 return ObjectHelper.contains(leftValue, rightValue);
             }
 
@@ -226,11 +282,43 @@ public final class PredicateBuilder {
     }
 
     public static Predicate isNull(final Expression expression) {
-        return isEqualTo(expression, ExpressionBuilder.constantExpression(null));
+        return new BinaryPredicateSupport(expression, ExpressionBuilder.constantExpression(null)) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null) {
+                    // the left operator is null so its true
+                    return true;
+                } 
+
+                return ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
+            }
+
+            protected String getOperationText() {
+                // leave the operation text as "is not" as Camel will insert right and left expression around it
+                // so it will be displayed as: XXX is null
+                return "is";
+            }
+        };
     }
 
     public static Predicate isNotNull(final Expression expression) {
-        return isNotEqualTo(expression, ExpressionBuilder.constantExpression(null));
+        return new BinaryPredicateSupport(expression, ExpressionBuilder.constantExpression(null)) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue != null) {
+                    // the left operator is not null so its true
+                    return true;
+                }
+
+                return ObjectHelper.typeCoerceNotEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue);
+            }
+
+            protected String getOperationText() {
+                // leave the operation text as "is not" as Camel will insert right and left expression around it
+                // so it will be displayed as: XXX is not null
+                return "is not";
+            }
+        };
     }
 
     public static Predicate isInstanceOf(final Expression expression, final Class<?> type) {

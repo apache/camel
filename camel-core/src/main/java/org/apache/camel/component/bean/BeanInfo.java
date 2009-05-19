@@ -349,7 +349,7 @@ public class BeanInfo {
 
     @SuppressWarnings("unchecked")
     private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList)
-            throws AmbiguousMethodCallException {
+        throws AmbiguousMethodCallException {
         // lets see if we can find a method who's body param type matches the message body
         Message in = exchange.getIn();
         Object body = in.getBody();
@@ -509,7 +509,7 @@ public class BeanInfo {
     }
 
     private MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles)
-            throws AmbiguousMethodCallException {
+        throws AmbiguousMethodCallException {
         // if we have only one method with custom annotations lets choose that
         MethodInfo chosen = null;
         for (MethodInfo possible : possibles) {

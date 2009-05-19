@@ -58,7 +58,7 @@ public class SendProcessor extends ServiceSupport implements Processor {
             if (isStopped()) {
                 LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
             } else {
-                throw new IllegalStateException("No producer, this processor has not been started!");
+                throw new IllegalStateException("No producer, this processor has not been started: " + this);
             }
         } else {
             exchange = configureExchange(exchange);

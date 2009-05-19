@@ -129,11 +129,17 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     public void testIsNull() throws Exception {
         assertExpression("${in.header.foo} == null", false);
         assertExpression("${in.header.none} == null", true);
+
+        assertExpression("${in.header.foo} == 'null'", false);
+        assertExpression("${in.header.none} == 'null'", true);
     }
 
     public void testIsNotNull() throws Exception {
         assertExpression("${in.header.foo} != null", true);
         assertExpression("${in.header.none} != null", false);
+
+        assertExpression("${in.header.foo} != 'null'", true);
+        assertExpression("${in.header.none} != 'null'", false);
     }
 
     public void testRightOperatorIsSimpleLanauge() throws Exception {

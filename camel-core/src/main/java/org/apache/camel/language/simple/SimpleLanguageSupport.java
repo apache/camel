@@ -78,11 +78,14 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
         final Expression right;
         final Expression rightConverted;
+        final Boolean isNull;
         // special null handling
-        if ("null".equals(text)) {
+        if ("null".equals(text) || "'null'".equals(text)) {
+            isNull = Boolean.TRUE;
             right = createConstantExpression(null);
             rightConverted = right;
         } else {
+            isNull = Boolean.FALSE;
             // text can either be a constant enclosed by ' ' or another expression using ${ } placeholders
             String constant = ObjectHelper.between(text, "'", "'");
             if (constant == null) {
@@ -100,7 +103,14 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         return new Expression() {
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 Predicate predicate = null;
-                if (operator == EQ) {
+
+                if (operator == EQ && isNull) {
+                    // special for EQ null
+                    predicate = PredicateBuilder.isNull(left);
+                } else if (operator == NOT && isNull) {
+                    // special for not EQ null
+                    predicate = PredicateBuilder.isNotNull(left);
+                } else if (operator == EQ) {
                     predicate = PredicateBuilder.isEqualTo(left, rightConverted);
                 } else if (operator == GT) {
                     predicate = PredicateBuilder.isGreaterThan(left, rightConverted);

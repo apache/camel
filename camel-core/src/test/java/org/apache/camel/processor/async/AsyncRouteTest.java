@@ -112,12 +112,9 @@ public class AsyncRouteTest extends ContextTestSupport {
         // as it turns into a async route later we get a Future as response
         assertIsInstanceOf(Exchange.class, out);
         Future future = out.getOut().getBody(Future.class);
+        assertFalse("Should not be done", future.isDone());
 
         assertMockEndpointsSatisfied();
-
-        // for slower computers we invoke the get with a timeout
-        future.get(1, TimeUnit.SECONDS);
-        assertTrue("Should be done", future.isDone());
 
         assertEquals("AB", route);
     }

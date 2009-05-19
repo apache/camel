@@ -120,9 +120,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     public Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {
-            // endpoint is optional for this injection point
-            Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, false);
-            return new DefaultProducerTemplate(getCamelContext(), endpoint);
+            return createInjectionProducerTemplate(endpointUri, endpointRef, injectionPointName);
         } else {
             Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, true);
             if (endpoint != null) {
@@ -148,8 +146,13 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
     }
 
-    protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
-        return new ProxyInstantiationException(type, endpoint, e);
+    /**
+     * Factory method to create a {@link org.apache.camel.ProducerTemplate} to be injected into a POJO
+     */
+    protected ProducerTemplate createInjectionProducerTemplate(String endpointUri, String endpointRef, String injectionPointName) {
+        // endpoint is optional for this injection point
+        Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, false);
+        return new DefaultProducerTemplate(getCamelContext(), endpoint);
     }
 
     /**
@@ -176,5 +179,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+    }
+
+    protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
+        return new ProxyInstantiationException(type, endpoint, e);
     }
 }
