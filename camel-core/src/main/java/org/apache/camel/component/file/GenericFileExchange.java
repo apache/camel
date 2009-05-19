@@ -20,10 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumerAware;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultExchange;
@@ -32,34 +30,13 @@ public class GenericFileExchange<T> extends DefaultExchange implements PollingCo
 
     private GenericFile<T> file;
 
-    public GenericFileExchange(CamelContext context) {
-        super(context);
-    }
-
-    public GenericFileExchange(CamelContext context, ExchangePattern pattern) {
-        super(context, pattern);
-    }
-
-    public GenericFileExchange(Exchange parent) {
-        super(parent);
-    }
-
     public GenericFileExchange(Endpoint fromEndpoint) {
         super(fromEndpoint);
-    }
-
-    public GenericFileExchange(GenericFileEndpoint endpoint, ExchangePattern pattern, GenericFile<T> file) {
-        super(endpoint, pattern);
-        setGenericFile(file);
     }
 
     public GenericFileExchange(DefaultExchange parent, GenericFile<T> file) {
         super(parent);
         setGenericFile(file);
-    }
-
-    public GenericFileExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        super(fromEndpoint, pattern);
     }
 
     protected void populateHeaders(GenericFile<T> file) {

@@ -79,13 +79,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public GenericFileExchange<File> createExchange(GenericFile<File> file) {
-        GenericFileExchange<File> exchange = new GenericFileExchange<File>(getCamelContext());
+        GenericFileExchange<File> exchange = new GenericFileExchange<File>(this);
         exchange.setGenericFile(file);
         return exchange;
     }
 
     public GenericFileExchange createExchange() {
-        return new GenericFileExchange(getCamelContext());
+        return new GenericFileExchange(this);
     }
 
     public FileOperations getOperations() {

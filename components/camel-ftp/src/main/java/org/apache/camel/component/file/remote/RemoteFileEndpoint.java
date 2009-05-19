@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -44,12 +42,15 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     @Override
     public GenericFileExchange createExchange() {
-        return new RemoteFileExchange(this, getExchangePattern());
+        return new RemoteFileExchange(this);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public GenericFileExchange<T> createExchange(GenericFile<T> file) {
-        return new RemoteFileExchange<T>(this, getExchangePattern(), (RemoteFile<T>) file);
+        RemoteFileExchange answer = new RemoteFileExchange<T>(this);
+        answer.setGenericFile(file);
+        return answer;
     }
 
     @Override
@@ -65,7 +66,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
         // we assume its a file if the name has a dot in it (eg foo.txt)
         if (configuration.getDirectory().contains(".")) {
-            throw new IllegalArgumentException("Only directory is supported. Endpoint must be configured with a valid directory: " + configuration.getDirectory());
+            throw new IllegalArgumentException("Only directory is supported. Endpoint must be configured with a valid directory: "
+                    + configuration.getDirectory());
         }
 
         if (isDelete() && getMove() != null) {

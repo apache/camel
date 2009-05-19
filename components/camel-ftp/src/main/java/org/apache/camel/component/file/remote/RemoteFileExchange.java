@@ -16,42 +16,19 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.impl.DefaultExchange;
 
 public class RemoteFileExchange<T> extends GenericFileExchange<T> {
 
-    public RemoteFileExchange(CamelContext context, ExchangePattern pattern) {
-        super(context, pattern);
-    }
-
-    public RemoteFileExchange(CamelContext context) {
-        super(context);
-    }
-
     public RemoteFileExchange(DefaultExchange parent, RemoteFile<T> remoteFile) {
         super(parent, remoteFile);
     }
 
-    public RemoteFileExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        super(fromEndpoint, pattern);
-    }
-
     public RemoteFileExchange(Endpoint fromEndpoint) {
         super(fromEndpoint);
-    }
-
-    public RemoteFileExchange(Exchange parent) {
-        super(parent);
-    }
-
-    public RemoteFileExchange(RemoteFileEndpoint<T> endpoint, ExchangePattern pattern, RemoteFile<T> genericFile) {
-        super(endpoint, pattern, genericFile);
     }
 
     @Override
