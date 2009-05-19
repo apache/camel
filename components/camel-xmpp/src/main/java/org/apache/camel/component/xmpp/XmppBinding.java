@@ -56,7 +56,18 @@ public class XmppBinding {
             // BUG?
             if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToCamelHeaders(name, value)) {
-                message.setProperty(name, value);
+
+                if ("subject".equalsIgnoreCase(name)) {
+                    // special for subject
+                    String subject = exchange.getContext().getTypeConverter().convertTo(String.class, value);
+                    message.setSubject(subject);
+                } else if ("language".equalsIgnoreCase(name)) {
+                    // special for language
+                    String language = exchange.getContext().getTypeConverter().convertTo(String.class, value);
+                    message.setLanguage(language);
+                } else {
+                    message.setProperty(name, value);
+                }
             }
         }
         String id = exchange.getExchangeId();
