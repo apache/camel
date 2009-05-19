@@ -563,7 +563,7 @@ public class BeanInfo {
         } else if (annotation instanceof OutHeaders) {
             return ExpressionBuilder.outHeadersExpression();
         } else if (annotation instanceof ExchangeException) {
-            return ExpressionBuilder.exchangeExceptionExpression();
+            return ExpressionBuilder.exchangeExceptionExpression(parameterType);
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {

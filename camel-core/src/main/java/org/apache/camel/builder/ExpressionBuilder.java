@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -36,6 +37,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -162,6 +164,43 @@ public final class ExpressionBuilder {
         };
     }   
     
+    /**
+     * Returns an expression for an exception set on the exchange
+     * <p/>
+     * Is used to get the caused exception that typically have been wrapped in some sort
+     * of Camel wrapper exception
+     * @param type the exception type
+     * @see Exchange#getException(Class)
+     * @return an expression object which will return the exception set on the exchange
+     */
+    public static Expression exchangeExceptionExpression(final Class<Exception> type) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Exception exception = exchange.getException(type);
+                if (exception == null) {
+                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                    // must use exception iterator to walk it and find the type we are looking for
+                    Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
+                    while (it.hasNext()) {
+                        Throwable e = it.next();
+                        if (type.isInstance(e)) {
+                            return type.cast(e);
+                        }
+                    }
+                    // not found
+                    return null;
+
+                }
+                return exception;
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeException[" + type + "]";
+            }
+        };
+    }
+
     /**
      * Returns an expression for the type converter
      *
