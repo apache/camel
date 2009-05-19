@@ -19,9 +19,7 @@ package org.apache.camel.itest.osgi.jaxb;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.camel.osgi.OsgiFactoryFinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -30,9 +28,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
@@ -60,7 +56,9 @@ public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
         expected.setFirstName("FOO");
         expected.setLastName("BAR");
         mock.expectedBodiesReceived(expected);
-        template.sendBody("direct:start", "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+        mock.expectedHeaderReceived("foo", "bar");
+        template.sendBodyAndHeader("direct:start", "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>",
+                                   "foo", "bar");
         assertMockEndpointsSatisfied();        
     }    
     

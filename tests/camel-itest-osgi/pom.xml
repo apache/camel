@@ -178,8 +178,9 @@
                         </includes>
                         <excludes>
                             <!--There are some conflicts of the JAXB OSGi bundle and Hudson System jar
-                                so I comment out this OSGiIntegrationSpringTest -->
-                            <exclude>**/OSGiIntegrationSpringTest.*</exclude> -->
+                                so I comment out these JAXB related tests -->
+                            <exclude>**/OSGiIntegrationSpringTest.*</exclude>
+                            <exclude>**/JaxbFallbackConverterTest.*</exclude>
                         </excludes>               
                     </configuration>
                 </plugin>
