@@ -235,6 +235,13 @@ public class SimpleOperatorTest extends LanguageTestSupport {
 
         assertExpression("${in.header.foo} is String", true);
         assertExpression("${in.header.foo} is Integer", false);
+
+        try {
+            assertExpression("${in.header.foo} is com.mycompany.DoesNotExist", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
     }
 
     public void testIsNot() throws Exception {
@@ -246,6 +253,13 @@ public class SimpleOperatorTest extends LanguageTestSupport {
 
         assertExpression("${in.header.foo} not is String", false);
         assertExpression("${in.header.foo} not is Integer", true);
+
+        try {
+            assertExpression("${in.header.foo} is not com.mycompany.DoesNotExist", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
     }
 
     public void testRange() throws Exception {
@@ -257,6 +271,34 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${bean:generator.generateId} range 120..123", true);
         assertExpression("${bean:generator.generateId} range 120..122", false);
         assertExpression("${bean:generator.generateId} range 124..130", false);
+
+        try {
+            assertExpression("${in.header.foo} range abc..200", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
+
+        try {
+            assertExpression("${in.header.foo} range abc..", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
+
+        try {
+            assertExpression("${in.header.foo} range 100 200", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
+
+        try {
+            assertExpression("${in.header.foo} range 100.200", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
     }
 
     public void testNotRange() throws Exception {
@@ -268,6 +310,34 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${bean:generator.generateId} not range 120..123", false);
         assertExpression("${bean:generator.generateId} not range 120..122", true);
         assertExpression("${bean:generator.generateId} not range 124..130", true);
+
+        try {
+            assertExpression("${in.header.foo} not range abc..200", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
+
+        try {
+            assertExpression("${in.header.foo} not range abc..", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
+
+        try {
+            assertExpression("${in.header.foo} not range 100 200", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
+
+        try {
+            assertExpression("${in.header.foo} not range 100.200", false);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Syntax error"));
+        }
     }
 
     protected String getLanguageName() {
