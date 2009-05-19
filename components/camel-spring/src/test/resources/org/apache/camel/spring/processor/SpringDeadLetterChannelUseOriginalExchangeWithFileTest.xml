@@ -57,7 +57,7 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route errorHandlerRef="dead">
-            <from uri="file://target/originalexchange"/>
+            <from uri="file://target/originalexchange?noop=true"/>
             <setBody><simple>${in.body} World</simple></setBody>
             <process ref="myThrowProcessor"/>
         </route>
