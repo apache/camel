@@ -19,10 +19,8 @@ package org.apache.camel.scala.dsl;
 import org.apache.camel.model.RouteDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SRouteDefinition(val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[RouteDefinition] {
+case class SRouteDefinition(override val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
  
-  val unwrap = target
-  
-  def ==>(block: => Unit) = apply(this, block)
+  def ==> : SRouteDefinition = this
 
 }

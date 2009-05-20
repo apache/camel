@@ -23,9 +23,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's IdempotentConsumerDefinition
  */
-class SIdempotentConsumerDefinition(val target: IdempotentConsumerDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[IdempotentConsumerDefinition] {
-  
-  val unwrap = target
+case class SIdempotentConsumerDefinition(override val target: IdempotentConsumerDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[IdempotentConsumerDefinition] {
   
   def memory(size: Int) = { 
     target.setMessageIdRepository(MemoryIdempotentRepository.memoryIdempotentRepository(size))

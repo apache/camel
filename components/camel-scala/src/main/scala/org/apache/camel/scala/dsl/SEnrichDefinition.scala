@@ -20,10 +20,8 @@ import org.apache.camel.model.EnrichDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's DelayDefinition
+ * Scala enrichment for Camel's EnrichDefinition
  */
-class SEnrichDefinition(val target: EnrichDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[EnrichDefinition] {
- 
-  val unwrap = target
+case class SEnrichDefinition(override val target: EnrichDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[EnrichDefinition] {
 
 }

@@ -24,9 +24,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala wrapper for Camel AggregateDefinition
  */
-class SAggregateDefinition(val target: AggregateDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[AggregateDefinition] {
-  
-  val unwrap = target
+case class SAggregateDefinition(override val target: AggregateDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[AggregateDefinition] {
   
   def strategy(function: (Exchange, Exchange) => Exchange) = {
     println("testing")

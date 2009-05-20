@@ -22,9 +22,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's InterceptFromDefinition
  */
-class SInterceptFromDefinition(val target: InterceptFromDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[InterceptFromDefinition] {
-  
-  val unwrap = target
+case class SInterceptFromDefinition(override val target: InterceptFromDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[InterceptFromDefinition] {
   
   override def apply(block: => Unit) : SInterceptFromDefinition = {
     builder.build(this, block)

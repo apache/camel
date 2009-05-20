@@ -22,10 +22,8 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's LoadBalanceDefinition
  */
-class SLoadBalanceDefinition(val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[LoadBalanceDefinition] {
+case class SLoadBalanceDefinition(override val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoadBalanceDefinition] {
  
-  val unwrap = target
-  
   def roundrobin = {
     target.roundRobin
     this;

@@ -14,13 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.ProcessorDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
-
-class SProcessorDefinition(val target: ProcessorDefinition[P] forSome {type P})(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ProcessorDefinition[P] forSome {type P}] {
+/**
+ * Helper trait to pass a block of code into a DSL instance
+ */
+trait Block {
   
-  val unwrap = target
+  /**
+   * Execute the block of code within the context of the current DSL node
+   * and return the DSL node itself
+   */
+  def apply(block: => Unit) : DSL with Block
 
 }

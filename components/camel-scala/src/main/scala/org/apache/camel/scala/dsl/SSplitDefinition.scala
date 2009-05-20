@@ -19,8 +19,6 @@ package org.apache.camel.scala.dsl;
 import org.apache.camel.model.SplitDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SSplitDefinition(val target: SplitDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[SplitDefinition] {
+case class SSplitDefinition(override val target: SplitDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[SplitDefinition] {
   
-  val unwrap = target
-
 }

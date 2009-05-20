@@ -16,10 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ProcessorDefinition
-import org.apache.camel.model.FilterDefinition
-import org.apache.camel.model.{ChoiceDefinition, EnrichDefinition}
-import org.apache.camel.model.IdempotentConsumerDefinition
+import org.apache.camel.model._
 
 import org.apache.camel.model.dataformat.DataFormatDefinition
 
@@ -27,11 +24,10 @@ import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-abstract class SAbstractDefinition extends DSL {
-  
-  type RawProcessorDefinition = ProcessorDefinition[P] forSome {type P}
-  
-  val target : ProcessorDefinition[T] forSome {type T}
+abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
+
+  val target : P
+  val unwrap = target
   implicit val builder: RouteBuilder
   implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
   
@@ -47,83 +43,72 @@ abstract class SAbstractDefinition extends DSL {
     this
   }
   
-  def when(filter: Exchange => Boolean) : SChoiceDefinition =
-    new SChoiceDefinition(target.choice).when(filter)
+  def when(filter: Exchange => Boolean) : SChoiceDefinition = SChoiceDefinition(target.choice).when(filter)
     
-  def as[Target](toType: Class[Target]) = {
-    target.convertBodyTo(toType)
-    new SProcessorDefinition(target.asInstanceOf[RawProcessorDefinition])
-  }
+  def as[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
   
-  def attempt : STryDefinition = new STryDefinition(target.doTry)
+  def attempt : STryDefinition = STryDefinition(target.doTry)
   
-  def split(expression: Exchange => Any) = 
-    new SSplitDefinition(target.split(expression))
+  def split(expression: Exchange => Any) = SSplitDefinition(target.split(expression))
     
-  def recipients(expression: Exchange => Any) = 
-    new SProcessorDefinition(target.recipientList(expression).asInstanceOf[RawProcessorDefinition])
-
   def apply(block: => Unit) = {
     builder.build(this, block)
     this
   }
 
   def bean(bean: Any) = bean match {
-    case cls: Class[_] => new SProcessorDefinition(target.bean(cls).asInstanceOf[RawProcessorDefinition])
-    case ref: String => new SProcessorDefinition(target.beanRef(ref).asInstanceOf[RawProcessorDefinition])
-    case obj: Any => new SProcessorDefinition(target.bean(obj).asInstanceOf[RawProcessorDefinition])
+    case cls: Class[_] => wrap(target.bean(cls))
+    case ref: String => wrap(target.beanRef(ref))
+    case obj: Any => wrap(target.bean(obj))
   }
   
-  def choice = new SChoiceDefinition(target.choice)
+  def choice = SChoiceDefinition(target.choice)
   
-  def enrich(uri: String, strategy: AggregationStrategy) = {
-    target.enrich(uri, strategy)
-    this
-  }
+  def enrich(uri: String, strategy: AggregationStrategy) = wrap(target.enrich(uri, strategy))
     
   def otherwise : SChoiceDefinition = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
-  def idempotentconsumer(expression: Exchange => Any) = new SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
+  def idempotentconsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
   
-  def inOnly = new SProcessorDefinition(target.inOnly.asInstanceOf[RawProcessorDefinition])
-  def inOut = new SProcessorDefinition(target.inOut.asInstanceOf[RawProcessorDefinition])
+  def inOnly = wrap(target.inOnly)
+  def inOut = wrap(target.inOut)
   
-  def loop(expression: Exchange => Any) = new SLoopDefinition(target.loop(expression))
+  def loop(expression: Exchange => Any) = SLoopDefinition(target.loop(expression))
   
-  def marshal(format: DataFormatDefinition) = {
-    target.marshal(format)
-    this
-  }
+  def marshal(format: DataFormatDefinition) = wrap(target.marshal(format))
   
-  def multicast = new SMulticastDefinition(target.multicast)
+  def multicast = SMulticastDefinition(target.multicast)
   
-  def process(function: Exchange => Unit) = {
-    target.process(new ScalaProcessor(function))
-    this
-  }
+  def process(function: Exchange => Unit) = wrap(target.process(new ScalaProcessor(function)))
  
-  def throttle(frequency: Frequency) = new SThrottleDefinition(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
+  def throttle(frequency: Frequency) = SThrottleDefinition(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
-  def loadbalance = new SLoadBalanceDefinition(target.loadBalance)
+  def loadbalance = SLoadBalanceDefinition(target.loadBalance)
   
-  def delay(period: Period) = new SDelayDefinition(target.delay(period.milliseconds))
-  
-  def resequence(expression: Exchange => Any) = new SResequenceDefinition(target.resequence(expression))
-  
-  def rollback = new SProcessorDefinition(target.rollback.asInstanceOf[RawProcessorDefinition])
-  
-  def setbody(expression: Exchange => Any) = new SProcessorDefinition(target.setBody(expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
-  
-  def setheader(name: String, expression: Exchange => Any) = new SProcessorDefinition(target.setHeader(name, expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
-  
-  def unmarshal(format: DataFormatDefinition) = {
-    target.unmarshal(format)
-    this
-  }
-  
-  def wiretap(uri: String) = new SProcessorDefinition(target.wireTap(uri).asInstanceOf[RawProcessorDefinition])
-  
-  def aggregate(expression: Exchange => Any) = new SAggregateDefinition(target.aggregate(expression))
+  def delay(period: Period) = SDelayDefinition(target.delay(period.milliseconds))
 
+  def recipients(expression: Exchange => Any) = wrap(target.recipientList(expression))
+  
+  def resequence(expression: Exchange => Any) = SResequenceDefinition(target.resequence(expression))
+  
+  def rollback = wrap(target.rollback)
+  
+  def setbody(expression: Exchange => Any) = wrap(target.setBody(expression))
+  
+  def setheader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
+  
+  def unmarshal(format: DataFormatDefinition) = wrap(target.unmarshal(format))
+  
+  def wiretap(uri: String) = wrap(target.wireTap(uri))
+  
+  def aggregate(expression: Exchange => Any) = SAggregateDefinition(target.aggregate(expression))
+
+  /**
+   * Helper method to return this Scala type instead of creating another wrapper type for the processor
+   */
+  def wrap(block : => Unit) : SAbstractDefinition[_]  = {
+     block
+     this
+  }
 }

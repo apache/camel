@@ -22,10 +22,8 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's DelayDefinition
  */
-class SDelayDefinition(val target: DelayDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[DelayDefinition] {
+case class SDelayDefinition(override val target: DelayDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[DelayDefinition] {
  
-  val unwrap = target
-
   def ms = this
   def milliseconds = ms
     

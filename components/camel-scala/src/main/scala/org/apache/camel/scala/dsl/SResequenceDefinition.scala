@@ -20,11 +20,9 @@ import org.apache.camel.model.ResequenceDefinition
 import org.apache.camel.model.config.BatchResequencerConfig
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SResequenceDefinition(val target: ResequenceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ResequenceDefinition] {
+case class SResequenceDefinition(override val target: ResequenceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ResequenceDefinition] {
   
-  val unwrap = target
-  
-  def batch(count: Int) = {
+  def batch(count: Int) : SResequenceDefinition = {
     val config = new BatchResequencerConfig()
     config.setBatchSize(count)
     target.batch(config)

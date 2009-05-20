@@ -22,8 +22,6 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's LoopDefinition
  */
-class SLoopDefinition(val target: LoopDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[LoopDefinition] {
+case class SLoopDefinition(override val target: LoopDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoopDefinition] {
  
-  val unwrap = target
-  
 }

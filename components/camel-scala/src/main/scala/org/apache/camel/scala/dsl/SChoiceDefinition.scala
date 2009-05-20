@@ -19,9 +19,7 @@ package org.apache.camel.scala.dsl;
 import org.apache.camel.model.ChoiceDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SChoiceDefinition(val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ChoiceDefinition] {
-  
-  val unwrap = target
+case class SChoiceDefinition(override val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ChoiceDefinition] {
   
   override def otherwise = {
     target.otherwise

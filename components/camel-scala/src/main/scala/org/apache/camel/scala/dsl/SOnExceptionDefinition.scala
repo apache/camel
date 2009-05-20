@@ -22,8 +22,6 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's OnExceptionDefinition
  */
-class SOnExceptionDefinition(val target: OnExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[OnExceptionDefinition] {
+case class SOnExceptionDefinition(override val target: OnExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[OnExceptionDefinition] {
   
-  val unwrap = target
-   
 }

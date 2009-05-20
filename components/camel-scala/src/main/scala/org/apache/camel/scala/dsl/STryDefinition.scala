@@ -22,9 +22,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's TryDefinition
  */
-class STryDefinition(val target: TryDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[TryDefinition] {
-  
-  val unwrap = target
+case class STryDefinition(override val target: TryDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[TryDefinition] {
   
   override def apply(block: => Unit) : STryDefinition = super.apply(block).asInstanceOf[STryDefinition]
   

@@ -32,8 +32,8 @@ trait DSL {
   def delay(delay: Period) : SDelayDefinition
   def enrich(uri:String, strategy: AggregationStrategy) : DSL
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
-  def inOnly(): SProcessorDefinition
-  def inOut(): SProcessorDefinition
+  def inOnly(): DSL with Block
+  def inOut(): DSL with Block
   def loadbalance : SLoadBalanceDefinition
   def loop(expression: Exchange => Any) : SLoopDefinition
   def marshal(format : DataFormatDefinition) : DSL

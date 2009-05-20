@@ -70,7 +70,7 @@ class ResequencerTest extends ScalaTestSupport {
        //START SNIPPET: batch
        "direct:d" ==> {
          to ("mock:d")
-         resequence (_.in) batch(5) apply {
+         resequence(_.in).batch(5) {
            to ("mock:e")
          }
        }
