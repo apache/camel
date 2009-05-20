@@ -40,8 +40,8 @@ public class MyRouteBuilder extends RouteBuilder {
         transform.setPrefix("JavaDSL");
         
         from("timer://myTimer?fixedRate=true&period=2000")
-        .bean(transform, "transform")
-        .to("log:ExampleRouter");        
+            .bean(transform, "transform")
+            .to("log:ExampleRouter");        
     }
 
     
