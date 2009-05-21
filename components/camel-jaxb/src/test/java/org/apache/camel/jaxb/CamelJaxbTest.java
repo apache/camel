@@ -47,7 +47,8 @@ public class CamelJaxbTest extends ContextTestSupport {
         expected.setLastName("BAR");
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(expected);
-        template.sendBody("direct:getJAXBElementValue", xml);
+        resultEndpoint.expectedHeaderReceived("foo", "bar");
+        template.sendBodyAndHeader("direct:getJAXBElementValue", xml, "foo", "bar");
 
         resultEndpoint.assertIsSatisfied();
         resultEndpoint.reset();

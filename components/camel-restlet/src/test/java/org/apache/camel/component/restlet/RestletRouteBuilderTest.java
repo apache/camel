@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.restlet.Client;
@@ -69,6 +70,13 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
     
     public void testProducer() throws IOException {
         String response = (String)template.requestBody("direct:start", "<order foo='1'/>");
+        assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
+        
+        response = "";
+        response = (String)template.sendBodyAndHeader(
+             "restlet:http://localhost:9080/orders?restletMethod=post&foo=bar", 
+             ExchangePattern.InOut,
+             "<order foo='1'/>", "id", "89531");
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
     }
 

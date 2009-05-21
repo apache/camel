@@ -38,7 +38,7 @@ public class QuartzCronUsingPlusAsSpaceRouteTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 // triggers every 2th second at precise 00,02,04,06..58
-                // notice we can use + as space when configurd using URI parameter
+                // notice we can use + as space when configured using URI parameter
                 // (Camel also supports using _ as space)
                 from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("mock:result");
                 // END SNIPPET: e1
