@@ -23,7 +23,6 @@ import org.apache.cxf.binding.soap.interceptor.CheckFaultInterceptor;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
 import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
-import org.apache.cxf.binding.soap.interceptor.SoapActionOutInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapHeaderInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapHeaderOutFilterInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapOutInterceptor;
@@ -91,8 +90,7 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
         getService().getInInterceptors().add(new StaxInInterceptor());
         getService().getInInterceptors().add(new SoapActionInInterceptor());
 
-        getService().getOutInterceptors().add(new DataOutInterceptor());
-        getService().getOutInterceptors().add(new SoapActionOutInterceptor());
+        getService().getOutInterceptors().add(new DataOutInterceptor());       
         getService().getOutInterceptors().add(new AttachmentOutInterceptor());
         getService().getOutInterceptors().add(new StaxOutInterceptor());
         getService().getOutInterceptors().add(new SoapHeaderOutFilterInterceptor());
