@@ -37,6 +37,13 @@
     <camel.osgi.export.pkg>org.apache.camel.example.spring.*</camel.osgi.export.pkg>
   </properties>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>onejar-maven-plugin.googlecode.com</id>
+      <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+    </pluginRepository>
+  </pluginRepositories>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -74,6 +81,40 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${pom.version}</version>
+      </plugin>
+      
+      <!-- 
+        lets make an executable jar 
+        you can then start this up via
+        
+          java -jar target/camel-example-spring-*.one-jar.jar -ac META-INF/spring/camel-context.xml
+       -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.apache.camel.spring.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.dstovall</groupId>
+        <artifactId>onejar-maven-plugin</artifactId>
+        <version>1.4.1</version>
+        <executions>
+          <execution>
+          <configuration>
+            <attachToBuild>true</attachToBuild>
+            <classifier>onejar</classifier>
+          </configuration>
+          <goals>
+            <goal>one-jar</goal>
+          </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 
