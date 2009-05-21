@@ -76,17 +76,19 @@
       <mvel-bundle-version>2.0.9_1</mvel-bundle-version>
       <neethi-version>2.0.4</neethi-version>
       <ognl-bundle-version>2.7.3_1</ognl-bundle-version>
+      <oro-bundle-version>2.0.8_1</oro-bundle-version>
       <oscache-bundle-version>2.4_1</oscache-bundle-version>
       <quartz-bundle-version>1.6.1_1</quartz-bundle-version>
       <qpid-bundle-version>1.0-incubating-M2.1_1</qpid-bundle-version>
       <saxon-bundle-version>9.1.0.1_1</saxon-bundle-version>
       <servicemix-specs-version>1.3.0</servicemix-specs-version>
+      <servlet-api-2.5-version>2.5-20081211</servlet-api-2.5-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>
-      <!-- <spring-javaconfig-version>1.0.0.BUILD-SNAPSHOT</spring-javaconfig-version> -->
-      <spring-javaconfig-version>1.0.0.M4</spring-javaconfig-version>
+      <!-- this veresion should be replaced by a internal release version -->
+      <spring-javaconfig-version>1.0.0.BUILD-SNAPSHOT</spring-javaconfig-version>      
       <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_1</tagsoup-bundle-version>
-      <velocity-bundle-version>1.5_1</velocity-bundle-version>
+      <velocity-bundle-version>1.6.2_1</velocity-bundle-version>
       <xalan-bundle-version>2.7.1_1</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_1</xerces-bundle-version>
       <xmlbeans-bundle-version>2.4.0_2</xmlbeans-bundle-version>
