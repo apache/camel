@@ -29,12 +29,8 @@ import org.apache.camel.util.IOHelper;
 
 public class GzipDataFormat implements DataFormat {
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream)
-        throws Exception {
-        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
-        if (is == null) {
-            throw new IllegalArgumentException("Cannot get the inputstream for GzipDataFormat mashalling");
-        }
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
 
         GZIPOutputStream zipOutput = new GZIPOutputStream(stream);
         try {
@@ -45,8 +41,7 @@ public class GzipDataFormat implements DataFormat {
         
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream)
-        throws Exception {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         InputStream is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         GZIPInputStream unzipInput = new GZIPInputStream(is);
         
