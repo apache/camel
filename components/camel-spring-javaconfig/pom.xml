@@ -14,12 +14,17 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
-    <spring-javaconfig-version>1.0.0.BUILD-SNAPSHOT</spring-javaconfig-version>
-    <!--spring-javaconfig-version>1.0.0.M4</spring-javaconfig-version-->
+    <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>    
   </properties>
 
 
   <repositories>
+    <repository>
+      <id>camel.internal.maven.repository</id>
+      <name>Camel internal Maven Repo</name>
+      <url>http://svn.apache.org/repos/asf/camel/m2-repo</url>
+    </repository>
+  
     <repository>
       <id>spring.maven.milestone</id>
       <name>Spring Milestone Maven Repo</name>
