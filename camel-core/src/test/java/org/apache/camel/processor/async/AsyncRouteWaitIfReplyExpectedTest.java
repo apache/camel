@@ -85,7 +85,7 @@ public class AsyncRouteWaitIfReplyExpectedTest extends ContextTestSupport {
                             // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")
                             // wait a litter longer for the slow box
-                        .delay(500)
+                        .delay(1000)
                             // and we also work with the message so we can prepare a response
                         .process(new MyProcessor())
                             // and we use mocks for unit testing
