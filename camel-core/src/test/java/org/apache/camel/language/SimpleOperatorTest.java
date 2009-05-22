@@ -32,6 +32,33 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         return jndi;
     }
 
+    public void tesValueWithSpace() throws Exception {
+        exchange.getIn().setBody("Hello Big World");
+        assertExpression("${in.body} == 'Hello Big World'", true);
+    }
+
+    public void testAnd() throws Exception {
+        assertExpression("${in.header.foo} == abc and ${in.header.bar} == 123", true);
+        assertExpression("${in.header.foo} == abc and ${in.header.bar} == 444", false);
+        assertExpression("${in.header.foo} == def and ${in.header.bar} == 123", false);
+        assertExpression("${in.header.foo} == def and ${in.header.bar} == 444", false);
+
+        assertExpression("${in.header.foo} == abc and ${in.header.bar} > 100", true);
+        assertExpression("${in.header.foo} == abc and ${in.header.bar} < 200", true);
+    }
+
+    public void testOr() throws Exception {
+        assertExpression("${in.header.foo} == abc or ${in.header.bar} == 123", true);
+        assertExpression("${in.header.foo} == abc or ${in.header.bar} == 444", true);
+        assertExpression("${in.header.foo} == def or ${in.header.bar} == 123", true);
+        assertExpression("${in.header.foo} == def or ${in.header.bar} == 444", false);
+
+        assertExpression("${in.header.foo} == abc or ${in.header.bar} < 100", true);
+        assertExpression("${in.header.foo} == abc or ${in.header.bar} < 200", true);
+        assertExpression("${in.header.foo} == def or ${in.header.bar} < 200", true);
+        assertExpression("${in.header.foo} == def or ${in.header.bar} < 100", false);
+    }
+
     public void testEqualOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} == 'abc'", true);
@@ -255,7 +282,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} not is Integer", true);
 
         try {
-            assertExpression("${in.header.foo} is not com.mycompany.DoesNotExist", false);
+            assertExpression("${in.header.foo} not is com.mycompany.DoesNotExist", false);
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().startsWith("Syntax error"));
@@ -287,18 +314,16 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         }
 
         try {
-            assertExpression("${in.header.foo} range 100 200", false);
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Syntax error"));
-        }
-
-        try {
             assertExpression("${in.header.foo} range 100.200", false);
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().startsWith("Syntax error"));
         }
+
+        assertExpression("${in.header.bar} range 100..200 and ${in.header.foo} == abc" , true);
+        assertExpression("${in.header.bar} range 200..300 and ${in.header.foo} == abc" , false);
+        assertExpression("${in.header.bar} range 200..300 or ${in.header.foo} == abc" , true);
+        assertExpression("${in.header.bar} range 200..300 or ${in.header.foo} == def" , false);
     }
 
     public void testNotRange() throws Exception {
@@ -320,13 +345,6 @@ public class SimpleOperatorTest extends LanguageTestSupport {
 
         try {
             assertExpression("${in.header.foo} not range abc..", false);
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Syntax error"));
-        }
-
-        try {
-            assertExpression("${in.header.foo} not range 100 200", false);
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().startsWith("Syntax error"));

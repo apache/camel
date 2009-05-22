@@ -40,8 +40,14 @@ import static org.apache.camel.language.simple.SimpleLangaugeOperator.*;
  */
 public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
-    protected static final Pattern PATTERN = Pattern.compile(
-            "^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in|is|not is|range|not range)\\s+(.+)$");
+    // this is a regex for a given group in a simple expression that uses operators
+    private static final String GROUP_PATTERN =
+        "\\$\\{(\\S+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in|is|not is|range|not range)\\s+('.*'|\\S+)";
+
+    // this is the operator reg ex pattern used to match if a given expression is operator based or not
+    protected static final Pattern PATTERN = Pattern.compile("^(" + GROUP_PATTERN + ")(\\s+(and|or)\\s+(" + GROUP_PATTERN + "))?$");
+
+    // this is special for the range operator where you define the range as from..to (where from and to are numbers)
     protected static final Pattern RANGE_PATTERN = Pattern.compile("^(\\d+)(\\.\\.)(\\d+)$");
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -70,35 +76,73 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
     }
 
     private Expression createOperatorExpression(final Matcher matcher, final String expression) {
-        final Expression left = createSimpleExpression(matcher.group(1), true);
-        final SimpleLangaugeOperator operator = asOperator(matcher.group(2));
+        int groupCount = matcher.groupCount();
 
-        // the right hand side expression can either be a constant expression wiht ' '
+        if (log.isTraceEnabled()) {
+            log.trace("Matcher expression: " + expression);
+            log.trace("Matcher group count: " + groupCount);
+            for (int i = 0; i < matcher.groupCount() + 1; i++) {
+                String group = matcher.group(i);
+                if (log.isTraceEnabled()) {
+                    log.trace("Matcher group #" + i + ": " + group);
+                }
+            }
+        }
+
+        // a simple expression with operator can either be a single group or a dual group
+        String operatorText = matcher.group(6);
+        if (operatorText == null) {
+            // single group
+            return doCreateOperatorExpression(expression, matcher.group(2), matcher.group(3), matcher.group(4));
+        } else {
+            // dual group with an and/or operator between the two groups
+            final Expression first = doCreateOperatorExpression(expression, matcher.group(2), matcher.group(3), matcher.group(4));
+            final SimpleLangaugeOperator operator = asOperator(operatorText);
+            final Expression last = doCreateOperatorExpression(expression, matcher.group(8), matcher.group(9), matcher.group(10));
+
+            // create a compound predicate to combine the two groups with the operator
+            final Predicate compoundPredicate;
+            if (operator == AND) {
+                compoundPredicate = PredicateBuilder.and(PredicateBuilder.toPredicate(first), PredicateBuilder.toPredicate(last));
+            } else if (operator == OR) {
+                compoundPredicate = PredicateBuilder.or(PredicateBuilder.toPredicate(first), PredicateBuilder.toPredicate(last));
+            } else {
+                throw new IllegalArgumentException("Syntax error in expression: " + expression
+                    + ". Expected operator as either and/or but was: " + operator);
+            }
+
+            // return the expression that evaluates this expression
+            return new Expression() {
+                public <T> T evaluate(Exchange exchange, Class<T> type) {
+                    boolean matches = compoundPredicate.matches(exchange);
+                    return exchange.getContext().getTypeConverter().convertTo(type, matches);
+                }
+
+                @Override
+                public String toString() {
+                    return first + " " + operator + " " + last;
+                }
+            };
+        }
+    }
+
+    private Expression doCreateOperatorExpression(final String expression, final String leftText,
+                                                  final String operatorText, final String rightText) {
+        // left value is always a simple expression
+        final Expression left = createSimpleExpression(leftText, true);
+        final SimpleLangaugeOperator operator = asOperator(operatorText);
+
+        // the right hand side expression can either be a constant expression with or without enclosing ' '
         // or another simple expression using ${ } placeholders
-        String text = matcher.group(3);
-
         final Expression right;
-        final Expression rightConverted;
         final Boolean isNull;
         // special null handling
-        if ("null".equals(text) || "'null'".equals(text)) {
+        if ("null".equals(rightText) || "'null'".equals(rightText)) {
             isNull = Boolean.TRUE;
-            right = createConstantExpression(null);
-            rightConverted = right;
+            right = createSimpleOrConstantExpression(null);
         } else {
             isNull = Boolean.FALSE;
-            // text can either be a constant enclosed by ' ' or another expression using ${ } placeholders
-            String constant = ObjectHelper.between(text, "'", "'");
-            if (constant == null) {
-                // if no ' ' around then fallback to the text itself
-                constant = text;
-            }
-            String simple = ObjectHelper.between(text, "${", "}");
-
-            right = simple != null ? createSimpleExpression(simple, true) : createConstantExpression(constant);
-            // to support numeric comparions using > and < operators we must convert the right hand side
-            // to the same type as the left
-            rightConverted = ExpressionBuilder.convertToExpression(right, left);
+            right = createSimpleOrConstantExpression(rightText);
         }
 
         return new Expression() {
@@ -112,19 +156,19 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     // special for not EQ null
                     predicate = PredicateBuilder.isNotNull(left);
                 } else if (operator == EQ) {
-                    predicate = PredicateBuilder.isEqualTo(left, rightConverted);
+                    predicate = PredicateBuilder.isEqualTo(left, right);
                 } else if (operator == GT) {
-                    predicate = PredicateBuilder.isGreaterThan(left, rightConverted);
+                    predicate = PredicateBuilder.isGreaterThan(left, right);
                 } else if (operator == GTE) {
-                    predicate = PredicateBuilder.isGreaterThanOrEqualTo(left, rightConverted);
+                    predicate = PredicateBuilder.isGreaterThanOrEqualTo(left, right);
                 } else if (operator == LT) {
-                    predicate = PredicateBuilder.isLessThan(left, rightConverted);
+                    predicate = PredicateBuilder.isLessThan(left, right);
                 } else if (operator == LTE) {
-                    predicate = PredicateBuilder.isLessThanOrEqualTo(left, rightConverted);
+                    predicate = PredicateBuilder.isLessThanOrEqualTo(left, right);
                 } else if (operator == NOT) {
-                    predicate = PredicateBuilder.isNotEqualTo(left, rightConverted);
+                    predicate = PredicateBuilder.isNotEqualTo(left, right);
                 } else if (operator == CONTAINS || operator == NOT_CONTAINS) {
-                    predicate = PredicateBuilder.contains(left, rightConverted);
+                    predicate = PredicateBuilder.contains(left, right);
                     if (operator == NOT_CONTAINS) {
                         predicate = PredicateBuilder.not(predicate);
                     }
@@ -226,6 +270,22 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
             }
         }
         return ExpressionBuilder.concatExpression(results, expression);
+    }
+
+    protected Expression createSimpleOrConstantExpression(String text) {
+        if (text != null) {
+            String simple = ObjectHelper.between(text, "${", "}");
+            if (simple != null) {
+                return createSimpleExpression(simple, true);
+            }
+
+            simple = ObjectHelper.between(text, "'", "'");
+            if (simple != null) {
+                return createConstantExpression(simple);
+            }
+        }
+
+        return createConstantExpression(text);
     }
 
     protected Expression createConstantExpression(String expression, int start, int end) {
