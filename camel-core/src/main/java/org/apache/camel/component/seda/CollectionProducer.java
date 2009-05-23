@@ -37,7 +37,9 @@ public class CollectionProducer extends DefaultProducer implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        queue.add(exchange.copy());
+        // TODO: We should consider using newCopy(true) as the async() DSL
+        Exchange copy = exchange.copy();
+        queue.add(copy);
     }
 
 }

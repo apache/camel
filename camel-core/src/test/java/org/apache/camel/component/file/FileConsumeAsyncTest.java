@@ -26,27 +26,32 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for consuming the same filename only.
  */
-public class FileConsumeFilesAndDelete extends ContextTestSupport {
+public class FileConsumeAsyncTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/fileonly");
+        deleteDirectory("target/files");
         super.setUp();
         template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader("file://target/files/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
     }
 
-    public void testConsumeAndDelete() throws Exception {
+    public void testConsumeAsync() throws Exception {
+        MockEndpoint before = getMockEndpoint("mock:before");
+        before.expectedMessageCount(1);
+        before.assertIsSatisfied();
+
+        // give a little extra time for consumer to stop
+        Thread.sleep(1000);
+
+        // file should still exist as its the async done that will complete it
+        assertTrue("File should not have been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedMessageCount(1);
+        mock.assertIsSatisfied();
 
-        assertMockEndpointsSatisfied();
-
-        // give time to delete files
-        Thread.sleep(200);
-
-        // file should not exists
+        // give a little time for on completion to delete the file
+        Thread.sleep(100);
         assertFalse("File should been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
     }
 
@@ -54,7 +59,11 @@ public class FileConsumeFilesAndDelete extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/files/?fileName=report.txt&delete=true").to("mock:result");
+                from("file://target/files/?delete=true&delay=10000")
+                    .async()
+                        .to("mock:before")
+                        .delay(3000)
+                        .to("mock:result");
             }
         };
     }

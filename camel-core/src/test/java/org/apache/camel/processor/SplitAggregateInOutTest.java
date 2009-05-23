@@ -117,6 +117,12 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             // put order together in old exchange by adding the order from new exchange
 
+            if (oldExchange == null) {
+                // the first time we aggregate we only have the new exchange,
+                // so we just return it
+                return newExchange;
+            }
+
             // copy from OUT as we use InOut pattern
             String orders = oldExchange.getOut().getBody(String.class);
             String newLine = newExchange.getOut().getBody(String.class);

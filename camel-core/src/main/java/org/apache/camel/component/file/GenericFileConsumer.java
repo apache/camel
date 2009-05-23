@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
@@ -31,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Base class for remote file consumers.
  */
-public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
+public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer implements BatchConsumer {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
@@ -87,12 +88,22 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         if (total > 0 && log.isDebugEnabled()) {
             log.debug("Total " + total + " files to consume");
         }
+
+        processBatch(new ArrayList<Exchange>(exchanges));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void processBatch(List<Exchange> exchanges) {
+        int total = exchanges.size();
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            GenericFileExchange<T> exchange = exchanges.get(index);
-            // add current index and total as headers
-            exchange.getIn().setHeader(Exchange.FILE_BATCH_INDEX, index);
-            exchange.getIn().setHeader(Exchange.FILE_BATCH_SIZE, total);
+            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.get(index);
+            // add current index and total as properties
+            exchange.setProperty(Exchange.BATCH_INDEX, index);
+            exchange.setProperty(Exchange.BATCH_SIZE, total);
+            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+
+            // process the current exchange
             processExchange(exchange);
         }
     }
@@ -130,7 +141,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
 
             boolean begin = processStrategy.begin(operations, endpoint, exchange, exchange.getGenericFile());
             if (!begin) {
-                log.warn(endpoint + " cannot process remote file: " + exchange.getGenericFile());
+                log.warn(endpoint + " cannot begin processing file: " + exchange.getGenericFile());
                 return;
             }
 
@@ -154,91 +165,18 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             if (log.isDebugEnabled()) {
                 log.debug("About to process file: " + target + " using exchange: " + exchange);
             }
-            // Use the async processor interface so that processing of
-            // the exchange can happen asynchronously
-            try {
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
 
-            // after processing
-            final GenericFile<T> file = exchange.getGenericFile();
-            boolean failed = exchange.isFailed();
+            // register on completion callback that does the completiom stategies
+            // (for instance to move the file after we have processed it)
+            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations));
 
-            if (log.isDebugEnabled()) {
-                log.debug("Done processing file: " + file + " using exchange: " + exchange);
-            }
-
-            // commit or rollback
-            boolean committed = false;
-            try {
-                if (!failed) {
-                    // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
-                    processStrategyCommit(processStrategy, exchange, file);
-                    committed = true;
-                } else {
-                    if (exchange.getException() != null) {
-                        // if the failure was an exception then handle it
-                        handleException(exchange.getException());
-                    }
-                }
-            } finally {
-                if (!committed) {
-                    processStrategyRollback(processStrategy, exchange, file);
-                }
-            }
+            // process the exchange
+            getProcessor().process(exchange);
 
         } catch (Exception e) {
             handleException(e);
         }
 
-    }
-
-    /**
-     * Strategy when the file was processed and a commit should be executed.
-     *
-     * @param processStrategy the strategy to perform the commit
-     * @param exchange        the exchange
-     * @param file            the file processed
-     */
-    @SuppressWarnings("unchecked")
-    protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
-                                         GenericFileExchange<T> exchange, GenericFile<T> file) {
-        if (endpoint.isIdempotent()) {
-            // only add to idempotent repository if we could process the file
-            // only use the filename as the key as the file could be moved into a done folder
-            endpoint.getIdempotentRepository().add(file.getFileName());
-        }
-
-        try {
-            if (log.isTraceEnabled()) {
-                log.trace("Committing remote file strategy: " + processStrategy + " for file: " + file);
-            }
-            processStrategy.commit(operations, endpoint, exchange, file);
-        } catch (Exception e) {
-            handleException(e);
-        }
-    }
-
-    /**
-     * Strategy when the file was not processed and a rollback should be
-     * executed.
-     *
-     * @param processStrategy the strategy to perform the commit
-     * @param exchange        the exchange
-     * @param file            the file processed
-     */
-    protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
-                                           GenericFileExchange<T> exchange, GenericFile<T> file) {
-        if (log.isWarnEnabled()) {
-            log.warn("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
-        }
-        try {
-            processStrategy.rollback(operations, endpoint, exchange, file);
-        } catch (Exception e) {
-            handleException(e);
-        }
     }
 
     /**
@@ -273,8 +211,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * <p/>
      * Will always return <tt>false</tt> for certain files/folders:
      * <ul>
-     *   <li>Starting with a dot</li>
-     *   <li>lock files</li>
+     * <li>Starting with a dot</li>
+     * <li>lock files</li>
      * </ul>
      * And then <tt>true</tt> for directories.
      *

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -48,6 +51,7 @@ public class DefaultExchange implements Exchange {
     private UnitOfWork unitOfWork;
     private ExchangePattern pattern;
     private Endpoint fromEndpoint;
+    private List<Synchronization> onCompletions;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -85,11 +89,15 @@ public class DefaultExchange implements Exchange {
         return exchange;
     }
 
-    public Exchange newCopy() {
-        Exchange exchange = copy();
+    public Exchange newCopy(boolean handoverOnCompletion) {
+        Exchange copy = copy();
         // do not share the unit of work
-        exchange.setUnitOfWork(null);
-        return exchange;
+        copy.setUnitOfWork(null);
+        // handover on completeion to the copy if we got any
+        if (handoverOnCompletion && unitOfWork != null) {
+            unitOfWork.handoverSynchronization(copy);
+        }
+        return copy;
     }
 
     public void copyFrom(Exchange exchange) {
@@ -317,6 +325,30 @@ public class DefaultExchange implements Exchange {
 
     public void setUnitOfWork(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
+        if (this.onCompletions != null) {
+            // now an unit of work has been assigned so add the on completions
+            // we might have registered already
+            for (Synchronization onCompletion : this.onCompletions) {
+                this.unitOfWork.addSynchronization(onCompletion);
+            }
+            // cleanup the temporary on completion list as they now have been registered
+            // on the unit of work
+            this.onCompletions.clear();
+            this.onCompletions = null;
+        }
+    }
+
+    public void addOnCompletion(Synchronization onCompletion) {
+        if (this.unitOfWork == null) {
+            // unit of work not yet registered so we store the on completion temporary
+            // until the unit of work is assigned to this exchange by the UnitOfWorkProcessor
+            if (this.onCompletions == null) {
+                this.onCompletions = new ArrayList<Synchronization>();
+            }
+            this.onCompletions.add(onCompletion);
+        } else {
+            this.getUnitOfWork().addSynchronization(onCompletion);
+        }
     }
 
     /**

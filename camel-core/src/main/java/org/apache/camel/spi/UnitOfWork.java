@@ -42,6 +42,17 @@ public interface UnitOfWork {
     void removeSynchronization(Synchronization synchronization);
 
     /**
+     * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
+     * <p/>
+     * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
+     * is continued and routed in the async thread should do the on completion callbacks instead of the
+     * original synchronous thread.
+     * 
+     * @param target  the target exchange
+     */
+    void handoverSynchronization(Exchange target);
+
+    /**
      * Invoked when this unit of work has been completed, whether it has failed or completed
      *
      * @param exchange the current exchange

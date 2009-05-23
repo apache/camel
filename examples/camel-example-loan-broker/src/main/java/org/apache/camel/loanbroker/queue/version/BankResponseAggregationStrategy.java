@@ -36,6 +36,11 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         LOG.debug("Get the exchange to aggregate, older: " + oldExchange + " newer:" + newExchange);
 
+        // the first time we only have the new exchange
+        if (oldExchange == null) {
+            return newExchange;
+        }
+
         Message oldMessage;
         Message newMessage;
         if (aggregatingOutMessage) {

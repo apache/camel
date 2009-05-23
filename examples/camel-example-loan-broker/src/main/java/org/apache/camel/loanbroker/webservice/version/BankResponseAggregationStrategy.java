@@ -26,6 +26,11 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
     public static final String BANK_QUOTE = "bank_quote";
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        // the first time we only have the new exchange
+        if (oldExchange == null) {
+            return newExchange;
+        }
+
         // Get the bank quote instance from the exchange
         BankQuote oldQuote = oldExchange.getProperty(BANK_QUOTE, BankQuote.class);
         // Get the oldQute from out message body if we can't get it from the exchange
@@ -50,7 +55,6 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
         result.getOut().setBody("The best rate is " + bankQuote.toString());
 
         return result;
-
     }
 
 }

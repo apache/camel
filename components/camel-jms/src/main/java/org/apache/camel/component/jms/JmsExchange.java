@@ -37,12 +37,6 @@ public class JmsExchange extends DefaultExchange {
         this.binding = binding;
     }
 
-    public JmsExchange(CamelContext context, ExchangePattern pattern, JmsBinding binding, Message message) {
-        super(context, pattern);
-        this.binding = binding;
-        setIn(new JmsMessage(message));
-    }
-
     public JmsExchange(JmsEndpoint endpoint, ExchangePattern pattern, JmsBinding binding, Message message) {
         this(endpoint, pattern, binding);
         setIn(new JmsMessage(message));

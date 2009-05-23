@@ -56,8 +56,9 @@ public class AsyncProcessor extends DelegateProcessor implements Processor {
             return;
         }
 
-        // use a new copy of the exchange to route async
-        final Exchange copy = exchange.newCopy();
+        // use a new copy of the exchange to route async and handover the on completion to the new copy
+        // so its the new copy that performs the on completion callback when its done
+        final Exchange copy = exchange.newCopy(true);
 
         // let it execute async and return the Future
         Callable<Exchange> task = new Callable<Exchange>() {

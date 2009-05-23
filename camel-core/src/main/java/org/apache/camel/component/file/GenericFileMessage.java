@@ -57,6 +57,11 @@ public class GenericFileMessage<T> extends DefaultMessage {
 
     @Override
     public String toString() {
-        return "GenericFileMessage: " + file;
+        Object body = getBody();
+        if (body instanceof GenericFile) {
+            return "GenericFileMessage with file: " + body;
+        } else {
+            return "GenericFileMessage with body: " + body;
+        }
     }
 }

@@ -24,7 +24,6 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +35,8 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.AtomicExchange;
-import org.apache.camel.util.concurrent.CountingLatch;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -100,25 +100,23 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
         if (isParallelProcessing()) {
             if (this.executorService == null) {
-                // setup default executor
-                this.executorService = Executors.newScheduledThreadPool(5);
+                // setup default executor as parallel processing requires an executor
+                this.executorService = ExecutorServiceHelper.newScheduledThreadPool(5, "Multicast", true);
             }
         }
     }
 
     @Override
     public String toString() {
-        return "Multicast" + getProcessors();
+        return "Multicast[" + getProcessors() + "]";
     }
 
     public void process(Exchange exchange) throws Exception {
         final AtomicExchange result = new AtomicExchange();
         final Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
-        
-        if (isParallelProcessing() && isStreaming()) {
-            doProcessParallelStreaming(result, pairs);
-        } else if (isParallelProcessing()) {
-            doProcessParallel(result, pairs);
+
+        if (isParallelProcessing()) {
+            doProcessParallel(result, pairs, isStreaming());
         } else {
             doProcessSequntiel(result, pairs);
         }
@@ -128,10 +126,15 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    protected void doProcessParallelStreaming(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws InterruptedException, ExecutionException {
-        // execute tasks in parallel and aggregate in the order they are finished (out of order sequence)
-
-        CompletionService<Exchange> completion = new ExecutorCompletionService<Exchange>(executorService);
+    protected void doProcessParallel(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs, boolean streaming) throws InterruptedException, ExecutionException {
+        CompletionService<Exchange> completion;
+        if (streaming) {
+            // execute tasks in paralle+streaming and aggregate in the order they are finished (out of order sequence)
+            completion = new ExecutorCompletionService<Exchange>(executorService);
+        } else {
+            // execute tasks in parallel and aggregate in the order the tasks are submitted (in order sequence)
+            completion = new SubmitOrderedCompletionService<Exchange>(executorService);
+        }
         int total = 0;
 
         for (ProcessorExchangePair pair : pairs) {
@@ -147,7 +150,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                         subExchange.setException(e);
                     }
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parallel streaming processing complete for exchange: " + subExchange);
+                        LOG.trace("Parallel processing complete for exchange: " + subExchange);
                     }
                     return subExchange;
                 }
@@ -165,57 +168,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Done parallel streaming processing " + total + " exchanges");
-        }
-    }
-
-    protected void doProcessParallel(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws InterruptedException {
-        // execute tasks in parallel but aggregate in the same order as the tasks was submitted (in order sequence)
-
-        final List<Exchange> ordered = new ArrayList<Exchange>();
-        final CountingLatch latch = new CountingLatch();
-        int total = 0;
-
-        for (ProcessorExchangePair pair : pairs) {
-            final Processor producer = pair.getProcessor();
-            final Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total, pairs);
-
-            // add to the list of ordered exchanges to aggregate when all the tasks is finished
-            ordered.add(subExchange);
-
-            // increment number of tasks to do
-            latch.increment();
-            executorService.submit(new Runnable() {
-                public void run() {
-                    try {
-                        producer.process(subExchange);
-                    } catch (Exception e) {
-                        subExchange.setException(e);
-                    }
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parallel processing complete for exchange: " + subExchange);
-                    }
-                    // this task is done so decrement
-                    latch.decrement();
-                }
-            });
-
-            total++;
-        }
-
-        // wait for all tasks to be complete
-        latch.await();
-
-        // aggregate in order
-        for (Exchange subExchange : ordered) {
-            if (aggregationStrategy != null) {
-                doAggregate(result, subExchange);
-            }
-        }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Done parallel processing " + total + " exchanges");
+            LOG.debug("Done parallel processing " + total + " exchanges");
         }
     }
 
@@ -252,11 +205,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
      */
     protected synchronized void doAggregate(AtomicExchange result, Exchange exchange) {
         if (aggregationStrategy != null) {
-            if (result.get() == null) {
-                result.set(exchange);
-            } else {
-                result.set(aggregationStrategy.aggregate(result.get(), exchange));
-            }
+            result.set(aggregationStrategy.aggregate(result.get(), exchange));
         }
     }
 

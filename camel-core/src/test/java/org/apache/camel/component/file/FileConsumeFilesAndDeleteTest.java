@@ -16,43 +16,46 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for consuming a batch of files (multiple files in one consume)
+ * Unit test for consuming the same filename only.
  */
-public class FileConsumerBatchTest extends ContextTestSupport {
+public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/file-batch");
+        deleteDirectory("target/fileonly");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file-batch/", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file-batch/", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/files/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+    }
+
+    public void testConsumeAndDelete() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // give time to delete files
+        Thread.sleep(200);
+
+        // file should not exists
+        assertFalse("File should been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/file-batch?consumer.delay=1000").to("mock:result");
+                from("file://target/files/?fileName=report.txt&delete=true").to("mock:result");
             }
         };
     }
-
-    public void testConsumeBatch() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
-
-        // test header keys
-        mock.message(0).header(Exchange.BATCH_SIZE).isEqualTo(2);
-        mock.message(0).header(Exchange.BATCH_INDEX).isEqualTo(0);
-        mock.message(1).header(Exchange.BATCH_INDEX).isEqualTo(1);
-
-        assertMockEndpointsSatisfied();
-    }
-
 }

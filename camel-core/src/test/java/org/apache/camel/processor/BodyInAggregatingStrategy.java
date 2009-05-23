@@ -18,18 +18,17 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
-import org.apache.camel.Message;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class BodyInAggregatingStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        Exchange copy = newExchange.copy();
-        Message newIn = copy.getIn();
-        String oldBody = oldExchange.getIn().getBody(String.class);
-        String newBody = newIn.getBody(String.class);
-        newIn.setBody(oldBody + "+" + newBody);
-        return copy;
+        if (oldExchange != null) {
+            String oldBody = oldExchange.getIn().getBody(String.class);
+            String newBody = newExchange.getIn().getBody(String.class);
+            newExchange.getIn().setBody(oldBody + "+" + newBody);
+        }
+        return newExchange;
     }
 
     /**

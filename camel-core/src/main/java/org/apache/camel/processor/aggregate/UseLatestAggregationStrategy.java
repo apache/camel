@@ -33,9 +33,13 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
     }
     
     protected Exception checkException(Exchange oldExchange, Exchange newExchange) {
-        return newExchange.getException() != null
+        if (oldExchange == null) {
+            return newExchange.getException();
+        } else {
+            return newExchange.getException() != null
                 ? newExchange.getException()
                 : oldExchange.getException();
+        }
     }
 
     @Override

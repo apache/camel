@@ -18,6 +18,7 @@ package org.apache.camel;
 
 import java.util.Map;
 
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -30,42 +31,46 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
-    String ASYNC_WAIT = "CamelAsyncWait";
-    String CONTENT_TYPE = "CamelConentType";
-    String HTTP_RESPONSE_CODE = "CamelHttpResponseCode";
-    String HTTP_URI = "CamelHttpUri";
-    String HTTP_QUERY = "CamelHttpQuery";
-    String HTTP_METHOD = "CamelHttpMethod";
-    String HTTP_PATH = "CamelHttpPath";
-    String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
+    String AGGREGATED_INDEX = "CamelAggregatedIndex";
+    String AGGREGATED_SIZE  = "CamelAggregatedSize";
 
-    String BEAN_METHOD_NAME = "CamelBeanMethodName";
-    String BEAN_HOLDER = "CamelBeanHolder";
+    String ASYNC_WAIT = "CamelAsyncWait";
+
+    String BATCH_INDEX = "CamelBatchIndex";
+    String BATCH_SIZE = "CamelBatchSize";
+    String BATCH_COMPLETE = "CamelBatchComplete";
+
+    String BEAN_METHOD_NAME           = "CamelBeanMethodName";
+    String BEAN_HOLDER                = "CamelBeanHolder";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
 
-    String AGGREGATED_SIZE = "CamelAggregatedSize";
-
     String CHARSET_NAME = "CamelCharsetName";
+    String CONTENT_TYPE = "CamelContentType";
 
     String DATASET_INDEX = "CamelDataSetIndex";
 
-    String EXCEPTION_CAUGHT = "CamelExceptionCaught";
+    String EXCEPTION_CAUGHT  = "CamelExceptionCaught";
     String EXCEPTION_HANDLED = "CamelExceptionHandled";
-    String FAILURE_HANDLED = "CamelFailureHandled";
+    String FAILURE_HANDLED   = "CamelFailureHandled";
 
-    String FILE_BATCH_INDEX = "CamelFileBatchIndex";
-    String FILE_BATCH_SIZE = "CamelFileBatchSize";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
-    String FILE_NAME = "CamelFileName";
-    String FILE_NAME_ONLY = "CamelFileNameOnly";
-    String FILE_NAME_PRODUCED = "CamelFileNameProduced";
-    String FILE_PATH = "CamelFilePath";
-    String FILE_PARENT = "CamelFileParent";
+    String FILE_NAME            = "CamelFileName";
+    String FILE_NAME_ONLY       = "CamelFileNameOnly";
+    String FILE_NAME_PRODUCED   = "CamelFileNameProduced";
+    String FILE_PATH            = "CamelFilePath";
+    String FILE_PARENT          = "CamelFileParent";
+
+    String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
+    String HTTP_METHOD             = "CamelHttpMethod";
+    String HTTP_PATH               = "CamelHttpPath";
+    String HTTP_QUERY              = "CamelHttpQuery";
+    String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
+    String HTTP_URI                = "CamelHttpUri";
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
 
     String LOOP_INDEX = "CamelLoopIndex";
-    String LOOP_SIZE = "CamelLoopSize";
+    String LOOP_SIZE  = "CamelLoopSize";
 
     String MULTICAST_INDEX = "CamelMulticastIndex";
 
@@ -73,18 +78,18 @@ public interface Exchange {
 
     String ROUTE_STOP = "CamelRouteStop";
 
-    String REDELIVERED = "CamelRedelivered";
+    String REDELIVERED        = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
 
     String SPLIT_INDEX = "CamelSplitIndex";
-    String SPLIT_SIZE = "CamelSplitSize";
+    String SPLIT_SIZE  = "CamelSplitSize";
 
-    String TIMER_NAME = "CamelTimerName";
     String TIMER_FIRED_TIME = "CamelTimerFiredTime";
-    String TIMER_PERIOD = "CamelTimerPeriod";
-    String TIMER_TIME = "CamelTimerTime";
+    String TIMER_NAME       = "CamelTimerName";
+    String TIMER_PERIOD     = "CamelTimerPeriod";
+    String TIMER_TIME       = "CamelTimerTime";
 
-    String TRANSACTED = "CamelTransacted";
+    String TRANSACTED    = "CamelTransacted";
     String ROLLBACK_ONLY = "CamelRollbackOnly";
 
     /**
@@ -296,8 +301,10 @@ public interface Exchange {
      * forwarded to another destination as a new instance. Unlike regular copy this operation
      * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
      * for async messaging, where the original and copied exchange are independent.
+     *
+     * @param handoverOnCompletion whether the on completion callbacks should be handed over to the new copy.
      */
-    Exchange newCopy();
+    Exchange newCopy(boolean handoverOnCompletion);
 
     /**
      * Copies the data into this exchange from the given exchange
@@ -341,5 +348,13 @@ public interface Exchange {
      * Set the exchange id
      */
     void setExchangeId(String id);
+
+    /**
+     * Adds a {@link org.apache.camel.spi.Synchronization} to be invoked as callback when
+     * this exchange is completed.
+     *
+     * @param onCompletion  the callback to invoke on completion of this exchange
+     */
+    void addOnCompletion(Synchronization onCompletion);
 
 }

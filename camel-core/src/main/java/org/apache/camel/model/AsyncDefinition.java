@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.processor.AsyncProcessor;
+import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
@@ -56,7 +57,11 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
             executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "AsyncProcessor", true);
         }
         Processor childProcessor = routeContext.createProcessor(this);
-        return new AsyncProcessor(childProcessor, executorService, waitForTaskToComplete);
+
+        // wrap it in a unit of work so the route that comes next is also done in a unit of work
+        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(childProcessor);
+
+        return new AsyncProcessor(uow, executorService, waitForTaskToComplete);
     }
 
     @Override

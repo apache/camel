@@ -152,10 +152,16 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
      */
     // START SNIPPET: e7  
     public static final class MyOrderAggregationStrategy implements AggregationStrategy {
+
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+            if (oldExchange == null) {
+                return newExchange;
+            }
+
             List<OrderItem> order = new ArrayList<OrderItem>(2);
             order.add(oldExchange.getIn().getBody(OrderItem.class));
             order.add(newExchange.getIn().getBody(OrderItem.class));
+
             oldExchange.getIn().setBody(order);
             return oldExchange;
         }

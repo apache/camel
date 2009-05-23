@@ -147,7 +147,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
      */
     protected Exchange prepareExchange(Exchange exchange) {
         // must use a copy as we dont want it to cause side effects of the original exchange
-        final Exchange copy = exchange.newCopy();
+        final Exchange copy = exchange.newCopy(false);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
         // add a header flag to indicate its a on completion exchange

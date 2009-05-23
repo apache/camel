@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -36,6 +37,23 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testMulticastParallel() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(20);
+        mock.whenAnyExchangeReceived(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // they should all be BA as B is faster than A
+                assertEquals("BA", exchange.getIn().getBody(String.class));
+            }
+        });
+
+        for (int i = 0; i < 20; i++) {
+            template.sendBody("direct:start", "Hello");
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -44,6 +62,10 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
                 from("direct:start")
                     .multicast(new AggregationStrategy() {
                         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                            if (oldExchange == null) {
+                                return newExchange;
+                            }
+
                             String body = oldExchange.getIn().getBody(String.class);
                             oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
                             return oldExchange;

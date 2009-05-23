@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -26,33 +29,51 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 /**
  * @version $Revision$
  */
-public class MulticastParallelTest extends ContextTestSupport {
+public class MulticastParallelStressTest extends ContextTestSupport {
 
-    public void testSingleMulticastParallel() throws Exception {
+    public void testTwoMulticast() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("AB");
+        mock.expectedBodiesReceived("ABCD", "ABCD");
+        mock.expectsAscending().header("id");
 
-        template.sendBody("direct:start", "Hello");
+        template.sendBodyAndHeader("direct:start", "", "id", 1);
+        template.sendBodyAndHeader("direct:start", "", "id", 2);
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testMulticastParallel() throws Exception {
+    public void testMoreMulticast() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
-        mock.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // they should all be AB even though A is slower than B
-                assertEquals("AB", exchange.getIn().getBody(String.class));
-            }
-        });
+        mock.expectsAscending().header("id");
 
         for (int i = 0; i < 20; i++) {
-            template.sendBody("direct:start", "Hello");
+            template.sendBodyAndHeader("direct:start", "", "id", i);
         }
 
         assertMockEndpointsSatisfied();
     }
+
+    public void testConcurrencyParallelMulticast() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(20);
+        // this time we cannot expect in order but there should be no duplicates
+        mock.expectsNoDuplicates(header("id"));
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 20; i++) {
+            final int index = i;
+            executor.submit(new Callable<Object>() {
+                public Object call() throws Exception {
+                    template.sendBodyAndHeader("direct:start", "", "id", index);
+                    return null;
+                }
+            });
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -70,16 +91,21 @@ public class MulticastParallelTest extends ContextTestSupport {
                                 oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
                                 return oldExchange;
                             }
-                        })
-                        .parallelProcessing().to("direct:a", "direct:b")
+                        }).parallelProcessing()
+                            .to("direct:a", "direct:b", "direct:c", "direct:d")
                     // use end to indicate end of multicast route
                     .end()
                     .to("mock:result");
 
-                from("direct:a").delay(100).setBody(constant("A"));
+                from("direct:a").delay(20).setBody(body().append("A"));
 
-                from("direct:b").setBody(constant("B"));
+                from("direct:b").setBody(body().append("B"));
+
+                from("direct:c").delay(50).setBody(body().append("C"));
+
+                from("direct:d").delay(10).setBody(body().append("D"));
             }
         };
     }
+
 }

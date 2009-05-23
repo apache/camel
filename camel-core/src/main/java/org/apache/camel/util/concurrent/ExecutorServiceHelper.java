@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Helper for {@link java.util.concurrent.ExecutorService} to construct executors using a thread factory that
@@ -29,7 +30,7 @@ import java.util.concurrent.ThreadFactory;
  */
 public final class ExecutorServiceHelper {
 
-    private static int threadCounter;
+    private static AtomicInteger threadCounter = new AtomicInteger();
 
     private ExecutorServiceHelper() {
     }
@@ -37,12 +38,12 @@ public final class ExecutorServiceHelper {
     /**
      * Creates a new thread name with the given prefix
      */
-    protected static String getThreadName(String name) {
+    public static String getThreadName(String name) {
         return "Camel thread " + nextThreadCounter() + ": " + name;
     }
 
     protected static synchronized int nextThreadCounter() {
-        return ++threadCounter;
+        return threadCounter.getAndIncrement();
     }
 
     public static ScheduledExecutorService newScheduledThreadPool(final int poolSize, final String name, final boolean daemon) {

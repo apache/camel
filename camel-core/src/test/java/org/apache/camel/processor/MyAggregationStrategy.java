@@ -24,22 +24,23 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  * @version $Revision$
 */
 public class MyAggregationStrategy extends UseLatestAggregationStrategy {
+
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         Exchange result = super.aggregate(oldExchange, newExchange);
-        Integer old = (Integer) oldExchange.getProperty("aggregated");
-        if (old == null) {
-            old = 1;
+        if (oldExchange == null) {
+            result.setProperty("aggregated", 1);
+        } else {
+            Integer old = oldExchange.getProperty("aggregated", Integer.class);
+            result.setProperty("aggregated", old + 1);
         }
-        result.setProperty("aggregated", old + 1);
         return result;
     }
 
     /**
      * An expression used to determine if the aggregation is complete
      */
-    public boolean isCompleted(@Header("aggregated")
-                               Integer aggregated) {
+    public boolean isCompleted(@Header("aggregated") Integer aggregated) {
         if (aggregated == null) {
             return false;
         }

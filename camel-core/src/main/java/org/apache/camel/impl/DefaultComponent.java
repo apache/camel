@@ -173,7 +173,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * A factory method to create a default thread pool and executor
      */
     protected ScheduledExecutorService createScheduledExecutorService() {
-        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, this.toString(), true);
+        String name = getClass().getSimpleName();
+        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, name, true);
     }
 
     protected void doStart() throws Exception {

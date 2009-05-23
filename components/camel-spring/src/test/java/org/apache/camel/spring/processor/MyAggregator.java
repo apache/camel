@@ -32,6 +32,10 @@ public class MyAggregator implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // lets append the old body to the new body
+        if (oldExchange == null) {
+            return newExchange;
+        }
+
         String body = oldExchange.getIn().getBody(String.class);
         if (body != null) {
             Message newIn = newExchange.getIn();

@@ -65,12 +65,9 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied(8000);
     }
 
-
-
     protected void sendExchange(String uri, final Object expectedBody) {
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
     }
-
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -103,15 +100,17 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
                 from("jms:queue:point3").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:reply").aggregate(header("cheese"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        Exchange copy = newExchange.copy();
+                        if (oldExchange == null) {
+                            return newExchange;
+                        }
+
                         LOG.info("try to aggregating the message ");
-                        Integer old = (Integer) oldExchange.getProperty("aggregated");
+                        Integer old = oldExchange.getProperty("aggregated", Integer.class);
                         if (old == null) {
                             old = 1;
                         }
-                        Exchange result = copy;
-                        result.setProperty("aggregated", old + 1);
-                        return result;
+                        oldExchange.setProperty("aggregated", old + 1);
+                        return oldExchange;
                     }
                 }).completionPredicate(header("aggregated").isEqualTo(3))
                 .to("mock:reply");

@@ -65,15 +65,10 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
         if (idempotentRepository.contains(messageId)) {
             onDuplicateMessage(exchange, messageId);
         } else {
+            // register our on completion callback
+            exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId));
             // process it first
             processor.process(exchange);
-
-            // then test wheter it was failed or not
-            if (!exchange.isFailed()) {
-                onCompletedMessage(exchange, messageId);
-            } else {
-                onFailedMessage(exchange, messageId);
-            }
         }
     }
 
@@ -128,31 +123,4 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
         }
     }
 
-    /**
-     * A strategy method to allow derived classes to overload the behaviour of
-     * processing a completed message
-     *
-     * @param exchange the exchange
-     * @param messageId the message ID of this exchange
-     */
-    @SuppressWarnings("unchecked")
-    protected void onCompletedMessage(Exchange exchange, String messageId) {
-        idempotentRepository.add(messageId);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Added to repository with id: " + messageId + " for exchange: " + exchange);
-        }
-    }
-
-    /**
-     * A strategy method to allow derived classes to overload the behaviour of
-     * processing a failed message
-     *
-     * @param exchange the exchange
-     * @param messageId the message ID of this exchange
-     */
-    protected void onFailedMessage(Exchange exchange, String messageId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Not added to repository as exchange failed: " + exchange + " with id: " + messageId);
-        }
-    }
 }

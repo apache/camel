@@ -20,9 +20,11 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,6 +41,7 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     private Expression correlationExpression;
     private AggregationStrategy aggregationStrategy;
     private final Map<Object, Exchange> aggregated = new LinkedHashMap<Object, Exchange>();
+    private final AtomicInteger counter = new AtomicInteger();
 
     public DefaultAggregationCollection() {
     }
@@ -55,29 +58,29 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     @Override
     public boolean add(Exchange exchange) {
         Object correlationKey = correlationExpression.evaluate(exchange, Object.class);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluated expression: " + correlationExpression + " as CorrelationKey: " + correlationKey);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Evaluated expression: " + correlationExpression + " as CorrelationKey: " + correlationKey);
         }
+
         Exchange oldExchange = aggregated.get(correlationKey);
         Exchange newExchange = exchange;
 
+        Integer size = 1;
         if (oldExchange != null) {
-            Integer count = oldExchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class);
-            if (count == null) {
-                count = 1;
-            }
-            count++;
-            newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
-            newExchange.setProperty(Exchange.AGGREGATED_SIZE, count);
+            size = oldExchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class);
+            ObjectHelper.notNull(size, Exchange.AGGREGATED_SIZE + " on " + oldExchange);
+            size++;
         }
+        newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
+        newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
+
+        // update the index counter
+        newExchange.setProperty(Exchange.AGGREGATED_INDEX, counter.getAndIncrement());
 
         // the strategy may just update the old exchange and return it
         if (!newExchange.equals(oldExchange)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Put exchange:" + newExchange + " with coorelation key:"  + correlationKey);
-            }
-            if (oldExchange == null) {
-                newExchange.setProperty(Exchange.AGGREGATED_SIZE, Integer.valueOf(1));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Put exchange:" + newExchange + " with coorelation key:"  + correlationKey);
             }
             aggregated.put(correlationKey, newExchange);
         }
@@ -98,9 +101,10 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     @Override
     public void clear() {
         aggregated.clear();
+        counter.set(0);
     }
 
-    public void onAggregation(Object correlationKey, Exchange newExchange) {
+    public void onAggregation(Object correlationKey, Exchange exchange) {
     }
 
     public Expression getCorrelationExpression() {

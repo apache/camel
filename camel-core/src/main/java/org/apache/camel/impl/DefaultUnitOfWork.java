@@ -52,9 +52,11 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
             synchronizations.clear();
+            synchronizations = null;
         }
         if (routeList != null) {
             routeList.clear();
+            routeList = null;
         }
 
         originalInBody = null;
@@ -73,8 +75,21 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         }
     }
 
+    public void handoverSynchronization(Exchange target) {
+        if (synchronizations == null || synchronizations.isEmpty()) {
+            return;
+        }
+
+        for (Synchronization synchronization : synchronizations) {
+            target.addOnCompletion(synchronization);
+        }
+
+        // clear this list as its handed over to the other exchange
+        this.synchronizations.clear();
+    }
+
     public void done(Exchange exchange) {
-        if (synchronizations != null) {
+        if (synchronizations != null && !synchronizations.isEmpty()) {
             boolean failed = exchange.isFailed();
             for (Synchronization synchronization : synchronizations) {
                 if (failed) {

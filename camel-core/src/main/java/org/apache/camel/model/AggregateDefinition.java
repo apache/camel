@@ -68,6 +68,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private String collectionRef;    
     @XmlAttribute(required = false)
     private Boolean groupExchanges;
+    @XmlAttribute(required = false)
+    private Boolean batchConsumer;
     @XmlElement(name = "completionPredicate", required = false)
     private ExpressionSubElementDefinition completionPredicate;
 
@@ -162,19 +164,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (batchSize != null) {
             aggregator.setBatchSize(batchSize);
         }
-        
         if (batchTimeout != null) {
             aggregator.setBatchTimeout(batchTimeout);
         }
-
         if (outBatchSize != null) {
             aggregator.setOutBatchSize(outBatchSize);
         }
-
         if (groupExchanges != null) {
             aggregator.setGroupExchanges(groupExchanges);
         }
-        
+        if (batchConsumer != null) {
+            aggregator.setBatchConsumer(batchConsumer);
+        }
+
         return aggregator;
     }
 
@@ -270,8 +272,28 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.groupExchanges = groupExchanges;
     }
 
+    public Boolean getBatchConsumer() {
+        return batchConsumer;
+    }
+
+    public void setBatchConsumer(Boolean batchConsumer) {
+        this.batchConsumer = batchConsumer;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
+
+    /**
+     * Enables the batch completion mode where we aggregate from a {@link org.apache.camel.BatchConsumer}
+     * and aggregate the total number of exchanges the {@link org.apache.camel.BatchConsumer} has reported
+     * as total by setting the exchange property {@link org.apache.camel.Exchange#BATCH_SIZE}.
+     *
+     * @return builder
+     */
+    public AggregateDefinition batchConsumer() {
+        setBatchConsumer(true);
+        return this;
+    }
 
     /**
      * Sets the in batch size for number of exchanges received
@@ -420,5 +442,5 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }
-    
+
 }

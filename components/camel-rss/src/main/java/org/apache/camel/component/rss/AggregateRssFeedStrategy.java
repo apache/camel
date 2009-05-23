@@ -30,6 +30,9 @@ public class AggregateRssFeedStrategy implements AggregationStrategy {
     protected final transient Log log = LogFactory.getLog(AggregateRssFeedStrategy.class);    
     
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        if (oldExchange == null) {
+            return newExchange;
+        }
         SyndFeed oldFeed = oldExchange.getIn().getBody(SyndFeed.class);
         SyndFeed newFeed = newExchange.getIn().getBody(SyndFeed.class);
         if (oldFeed != null && newFeed != null) {                

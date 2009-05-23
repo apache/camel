@@ -14,16 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.MulticastAnotherAggregatorTest;
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import java.util.List;
 
-public class SpringMulticastAggregatorTest extends MulticastAnotherAggregatorTest {
+/**
+ * A consumer of a batch of message exchanges from an {@link Endpoint}
+ *
+ * @version $Revision$
+ */
+public interface BatchConsumer extends Consumer {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/multicastAggregator.xml");
-    }
+    /**
+     * Processes the list of {@link org.apache.camel.Exchange} in a batch.
+     * <p/>
+     * Each message exchange will be processed individually but the batch
+     * consumer will add properties with the current index and total in the batch.
+     *
+     * @param exchanges list of exchanges in this batch
+     * @throws Exception if an internal processing error has occurred.
+     */
+    void processBatch(List<Exchange> exchanges) throws Exception;
 
 }

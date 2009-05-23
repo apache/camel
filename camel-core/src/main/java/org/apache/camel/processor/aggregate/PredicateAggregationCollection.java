@@ -40,11 +40,11 @@ public class PredicateAggregationCollection extends DefaultAggregationCollection
     }
 
     @Override
-    public void onAggregation(Object correlationKey, Exchange newExchange) {
-        if (aggregationCompletedPredicate.matches(newExchange)) {
+    public void onAggregation(Object correlationKey, Exchange exchange) {
+        if (aggregationCompletedPredicate.matches(exchange)) {
             // this exchange has now aggregated so lets add it to the collection of things to send
             super.getAggregated().remove(correlationKey);
-            collection.add(newExchange);
+            collection.add(exchange);
         }
     }
 
@@ -63,4 +63,5 @@ public class PredicateAggregationCollection extends DefaultAggregationCollection
         collection.clear();
         super.clear();
     }
+
 }

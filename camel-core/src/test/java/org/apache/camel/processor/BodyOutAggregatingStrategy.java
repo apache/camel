@@ -23,10 +23,12 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 public class BodyOutAggregatingStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        Message newOut = newExchange.getOut();
-        String oldBody = oldExchange.getOut().getBody(String.class);
-        String newBody = newOut.getBody(String.class);
-        newOut.setBody(oldBody + "+" + newBody);
+        if (oldExchange != null) {
+            String oldBody = oldExchange.getOut().getBody(String.class);
+            String newBody = newExchange.getOut().getBody(String.class);
+            newExchange.getOut().setBody(oldBody + "+" + newBody);
+        }
+
         return newExchange;
     }
 

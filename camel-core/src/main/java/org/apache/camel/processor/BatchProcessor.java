@@ -36,6 +36,9 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A base class for any kind of {@link Processor} which implements some kind of batch processing.
@@ -47,10 +50,13 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
+    private static final Log LOG = LogFactory.getLog(BatchProcessor.class);
+
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int outBatchSize;
     private boolean groupExchanges;
+    private boolean batchConsumer;
 
     private final Processor processor;
     private final Collection<Exchange> collection;
@@ -129,6 +135,14 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         this.groupExchanges = groupExchanges;
     }
 
+    public boolean isBatchConsumer() {
+        return batchConsumer;
+    }
+
+    public void setBatchConsumer(boolean batchConsumer) {
+        this.batchConsumer = batchConsumer;
+    }
+
     public Processor getProcessor() {
         return processor;
     }
@@ -181,6 +195,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
 
     protected void doStop() throws Exception {
         sender.cancel();
+        ServiceHelper.stopServices(sender);
         ServiceHelper.stopServices(processor);
         collection.clear();
     }
@@ -189,6 +204,19 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
      * Enqueues an exchange for later batch processing.
      */
     public void process(Exchange exchange) throws Exception {
+
+        // if batch consumer is enabled then we need to adjust the batch size
+        // with the size from the batch consumer
+        if (isBatchConsumer()) {
+            int size = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
+            if (batchSize != size) {
+                batchSize = size;
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using batch consumer completion, so setting batch size to: " + batchSize);
+                }
+            }
+        }
+
         sender.enqueueExchange(exchange);
     }
 
@@ -203,7 +231,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         private Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
         public BatchSender() {
-            super("Batch Sender");
+            super(ExecutorServiceHelper.getThreadName("Batch Sender"));
             this.queue = new LinkedList<Exchange>();
         }
 
@@ -243,7 +271,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                             drainQueueTo(collection, batchSize);
                         } else {             
                             exchangeEnqueued = false;
-                            while (isInBatchCompleted(queue.size())) {   
+                            while (isInBatchCompleted(queue.size())) {
                                 drainQueueTo(collection, batchSize);
                             }
                             
@@ -267,7 +295,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                         break;
                     }
 
-                } while (true);
+                } while (isRunAllowed());
 
             } finally {
                 queueLock.unlock();

@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -76,82 +75,62 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             AggregationStrategy surnameAggregator = new AggregationStrategy() {
-                public Exchange aggregate(Exchange oldExchange,
-                        Exchange newExchange) {
-
+                public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                     debugIn("Surname Aggregator", oldExchange, newExchange);
 
-                    Message oldIn = oldExchange.getIn();
-                    Message newIn = newExchange.getIn();
+                    Exchange answer = newExchange;
 
-                    List<String> brothers = null;
-                    if (oldIn.getBody() instanceof List) {
-
-                        brothers = oldIn.getBody(List.class);
-                        brothers.add(newIn.getBody(String.class));
+                    if (oldExchange != null) {
+                        List<String> brothers = oldExchange.getIn().getBody(List.class);
+                        brothers.add(newExchange.getIn().getBody(String.class));
+                        answer = oldExchange;
                     } else {
+                        List<String>brothers = new ArrayList<String>();
+                        brothers.add(newExchange.getIn().getBody(String.class));
+                        newExchange.getIn().setBody(brothers);
+                    }
 
-                        brothers = new ArrayList<String>();
-                        brothers.add(oldIn.getBody(String.class));
-                        brothers.add(newIn.getBody(String.class));
-                        oldExchange.getIn().setBody(brothers);
-                    } // else
+                    debugOut("Surname Aggregator", answer);
 
-                    debugOut("Surname Aggregator", oldExchange);
-
-                    return oldExchange;
+                    return answer;
                 }
             };
-            AggregationStrategy brothersAggregator = new AggregationStrategy() {
-                public Exchange aggregate(Exchange oldExchange,
-                        Exchange newExchange) {
 
+            @SuppressWarnings("unchecked")
+            AggregationStrategy brothersAggregator = new AggregationStrategy() {
+                public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                     debugIn("Brothers Aggregator", oldExchange, newExchange);
 
-                    Message oldIn = oldExchange.getIn();
-                    Message newIn = newExchange.getIn();
+                    Exchange answer = newExchange;
 
-                    Map<String, List> brothers = null;
-                    if (oldIn.getBody() instanceof Map) {
-
-                        brothers = oldIn.getBody(Map.class);
-                        brothers.put(newIn.getHeader(SURNAME_HEADER,
-                                String.class), newIn.getBody(List.class));
+                    if (oldExchange != null) {
+                        Map<String, List> brothers = oldExchange.getIn().getBody(Map.class);
+                        brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class), newExchange.getIn().getBody(List.class));
+                        answer = oldExchange;
                     } else {
+                        Map<String, List> brothers = new HashMap<String, List>();
+                        brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class), newExchange.getIn().getBody(List.class));
+                        newExchange.getIn().setBody(brothers);
+                    }
 
-                        brothers = new HashMap<String, List>();
-                        brothers.put(oldIn.getHeader(SURNAME_HEADER, String.class),
-                                oldIn.getBody(List.class));
-                        brothers.put(newIn.getHeader(SURNAME_HEADER,
-                                String.class), newIn.getBody(List.class));
-                        oldExchange.getIn().setBody(brothers);
-                    } // else
+                    debugOut("Brothers Aggregator", answer);
 
-                    debugOut("Brothers Aggregator", oldExchange);
-
-                    return oldExchange;
+                    return answer;
                 }
             };
 
-            private void debugIn(String stringId, Exchange oldExchange,
-                    Exchange newExchange) {
-
-                log.debug(stringId + " old headers in: "
-                        + oldExchange.getIn().getHeaders());
-                log.debug(stringId + " old body in: "
-                        + oldExchange.getIn().getBody());
-                log.debug(stringId + " new headers in: "
-                        + newExchange.getIn().getHeaders());
-                log.debug(stringId + " new body in: "
-                        + newExchange.getIn().getBody());
+            private void debugIn(String stringId, Exchange oldExchange, Exchange newExchange) {
+                if (oldExchange != null) {
+                    log.debug(stringId + " old headers in: " + oldExchange.getIn().getHeaders());
+                    log.debug(stringId + " old body in: " + oldExchange.getIn().getBody());
+                }
+                log.debug(stringId + " new headers in: " + newExchange.getIn().getHeaders());
+                log.debug(stringId + " new body in: " + newExchange.getIn().getBody());
             }
 
             private void debugOut(String stringId, Exchange exchange) {
-
-                log.debug(stringId + " old headers out: "
-                        + exchange.getIn().getHeaders());
-                log.debug(stringId + " old body out: "
-                        + exchange.getIn().getBody());
+                log.debug(stringId + " old headers out: " + exchange.getIn().getHeaders());
+                log.debug(stringId + " old body out: " + exchange.getIn().getBody());
             }
 
             @Override

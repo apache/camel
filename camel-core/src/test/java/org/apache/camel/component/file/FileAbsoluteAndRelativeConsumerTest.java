@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class FileAbsoluteAndRelativeConsumer extends ContextTestSupport {
+public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
 
     private String base;
 
