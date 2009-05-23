@@ -64,7 +64,6 @@ public class HttpExchange extends DefaultExchange {
     }
 
     protected static ExchangePattern getPatternFromRequest(HttpServletRequest request) {
-        // TODO for now just default to InOut?
         return ExchangePattern.InOut;
     }
 }
