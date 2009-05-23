@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.ibatis;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -91,8 +93,14 @@ import org.apache.commons.logging.LogFactory;
  *
  * @see org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy
  */
-public class IBatisPollingConsumer extends ScheduledPollConsumer {
+public class IBatisPollingConsumer extends ScheduledPollConsumer implements BatchConsumer {
+
     private static final Log LOG = LogFactory.getLog(IBatisPollingConsumer.class);
+
+    private class DataHolder {
+        private Exchange exchange;
+        private Object data;
+    }
 
     /**
      * Statement to run after data has been processed in the route
@@ -122,52 +130,80 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
      */
     @Override
     protected void poll() throws Exception {
+
+        // poll data from the database
         IBatisEndpoint endpoint = getEndpoint();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Polling: " + endpoint);
         }
         List data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
+
+        // create a list of exchange objects with the data
+        List<DataHolder> answer = new ArrayList<DataHolder>();
         if (useIterator) {
-            for (Object object : data) {
-                if (isRunAllowed()) {
-                    process(object);
-                }
+            for (Object item : data) {
+                Exchange exchange = createExchange(item);
+                DataHolder holder = new DataHolder();
+                holder.exchange = exchange;
+                holder.data = item;
+                answer.add(holder);
             }
         } else {
             if (!data.isEmpty() || routeEmptyResultSet) {
-                process(data);
+                Exchange exchange = createExchange(data);
+                DataHolder holder = new DataHolder();
+                holder.exchange = exchange;
+                holder.data = data;
+                answer.add(holder);
+            }
+        }
+
+        // process all the exchanges in this batch
+        processBatch(answer);
+    }
+
+    public void processBatch(List exchanges) throws Exception {
+        final IBatisEndpoint endpoint = getEndpoint();
+        final List<DataHolder> list = exchanges;
+
+        int total = list.size();
+        for (int index = 0; index < total && isRunAllowed(); index++) {
+            // only loop if we are started (allowed to run)
+            Exchange exchange = list.get(index).exchange;
+            Object data = list.get(index).data;
+
+            // add current index and total as properties
+            exchange.setProperty(Exchange.BATCH_INDEX, index);
+            exchange.setProperty(Exchange.BATCH_SIZE, total);
+            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+
+            // process the current exchange
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Processing exchange: " + exchange);
+            }
+            getProcessor().process(exchange);
+
+            try {
+                if (onConsume != null) {
+                    endpoint.getProcessingStrategy().commit(endpoint, exchange, data, onConsume);
+                }
+            } catch (Exception e) {
+                handleException(e);
             }
         }
     }
 
-    /**
-     * Delivers the content
-     *
-     * @param data a single row object if useIterator=true otherwise the entire result set
-     */
-    protected void process(final Object data) throws Exception {
+    private Exchange createExchange(Object data) {
         final IBatisEndpoint endpoint = getEndpoint();
         final Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
 
         Message msg = exchange.getIn();
         msg.setBody(data);
         msg.setHeader(IBatisConstants.IBATIS_STATEMENT_NAME, endpoint.getStatement());
-    
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing exchange: " + exchange);
-        }
 
-        getProcessor().process(exchange);
-
-        try {
-            if (onConsume != null) {
-                endpoint.getProcessingStrategy().commit(endpoint, exchange, data, onConsume);
-            }
-        } catch (Exception e) {
-            handleException(e);
-        }
+        return exchange;
     }
-    
+
     /**
      * Gets the statement(s) to run after successful processing.
      * Use comma to separate multiple statements.
