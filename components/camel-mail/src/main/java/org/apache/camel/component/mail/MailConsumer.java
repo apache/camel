@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
@@ -24,6 +26,8 @@ import javax.mail.MessagingException;
 import javax.mail.Store;
 import javax.mail.search.FlagTerm;
 
+import org.apache.camel.BatchConsumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
@@ -36,7 +40,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  *
  * @version $Revision$
  */
-public class MailConsumer extends ScheduledPollConsumer {
+public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
 
@@ -102,7 +106,8 @@ public class MailConsumer extends ScheduledPollConsumer {
                     messages = folder.getMessages();
                 }
 
-                processMessages(messages);
+                List<Exchange> exchanges = createExchanges(messages);
+                processBatch(exchanges);
 
             } else if (count == -1) {
                 throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
@@ -122,7 +127,84 @@ public class MailConsumer extends ScheduledPollConsumer {
         }
     }
 
-    protected void ensureIsConnected() throws MessagingException {
+    public void processBatch(List<Exchange> exchanges) throws Exception {
+        int total = exchanges.size();
+        for (int index = 0; index < total && isRunAllowed(); index++) {
+            // only loop if we are started (allowed to run)
+            MailExchange exchange = (MailExchange) exchanges.get(index);
+            // add current index and total as properties
+            exchange.setProperty(Exchange.BATCH_INDEX, index);
+            exchange.setProperty(Exchange.BATCH_SIZE, total);
+            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+
+            // process the current exchange
+            processExchange(exchange);
+            if (!exchange.isFailed()) {
+                processCommit(exchange);
+            } else {
+                processRollback(exchange);
+            }
+        }
+    }
+
+    protected List<Exchange> createExchanges(Message[] messages) throws MessagingException {
+        List<Exchange> answer = new ArrayList<Exchange>();
+
+        int fetchSize = endpoint.getConfiguration().getFetchSize();
+        int count = fetchSize == -1 ? messages.length : Math.min(fetchSize, messages.length);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Fetching " + count + " messages. Total " + messages.length + " messages.");
+        }
+
+        for (int i = 0; i < count; i++) {
+            Message message = messages[i];
+            if (!message.getFlags().contains(Flags.Flag.DELETED)) {
+                MailExchange exchange = endpoint.createExchange(message);
+                answer.add(exchange);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping message as it was flagged as deleted: " + MailUtils.dumpMessage(message));
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    /**
+     * Strategy to process the mail message.
+     */
+    protected void processExchange(MailExchange exchange) throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing message: " + MailUtils.dumpMessage(exchange.getIn().getMessage()));
+        }
+        getProcessor().process(exchange);
+    }
+
+    /**
+     * Strategy to flag the message after being processed.
+     */
+    protected void processCommit(MailExchange exchange) throws MessagingException {
+        Message message = exchange.getIn().getMessage();
+
+        if (endpoint.getConfiguration().isDelete()) {
+            LOG.debug("Exchange processed, so flagging message as DELETED");
+            message.setFlag(Flags.Flag.DELETED, true);
+        } else {
+            LOG.debug("Exchange processed, so flagging message as SEEN");
+            message.setFlag(Flags.Flag.SEEN, true);
+        }
+    }
+
+    /**
+     * Strategy when processing the exchange failed.
+     */
+    protected void processRollback(MailExchange exchange) throws MessagingException {
+        LOG.warn("Exchange failed, so rolling back message status: " + exchange);
+    }
+
+    private void ensureIsConnected() throws MessagingException {
         MailConfiguration config = endpoint.getConfiguration();
 
         boolean connected = false;
@@ -150,69 +232,6 @@ public class MailConsumer extends ScheduledPollConsumer {
                 throw new FolderNotFoundException(folder, "Folder not found or invalid: " + config.getFolderName());
             }
         }
-    }
-
-    /**
-     * Process all the messages
-     */
-    protected void processMessages(Message[] messages) throws Exception {
-        int fetchSize = endpoint.getConfiguration().getFetchSize();
-        int count = fetchSize == -1 ? messages.length : Math.min(fetchSize, messages.length);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Fetching " + count + " messages. Total " + messages.length + " messages.");
-        }
-
-        for (int i = 0; i < count; i++) {
-            Message message = messages[i];
-            if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-
-                MailExchange exchange = endpoint.createExchange(message);
-                process(exchange);
-
-                if (!exchange.isFailed()) {
-                    processCommit(exchange);
-                } else {
-                    processRollback(exchange);
-                }
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Skipping message as it was flagged as deleted: " + MailUtils.dumpMessage(message));
-                }
-            }
-        }
-    }
-
-    /**
-     * Strategy to process the mail message.
-     */
-    protected void process(MailExchange exchange) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing message: " + MailUtils.dumpMessage(exchange.getIn().getMessage()));
-        }
-        getProcessor().process(exchange);
-    }
-
-    /**
-     * Strategy to flag the message after being processed.
-     */
-    protected void processCommit(MailExchange exchange) throws MessagingException {
-        Message message = exchange.getIn().getMessage();
-
-        if (endpoint.getConfiguration().isDelete()) {
-            LOG.debug("Exchange processed, so flagging message as DELETED");
-            message.setFlag(Flags.Flag.DELETED, true);
-        } else {
-            LOG.debug("Exchange processed, so flagging message as SEEN");
-            message.setFlag(Flags.Flag.SEEN, true);
-        }
-    }
-
-    /**
-     * Strategy when processing the exchange failed.
-     */
-    protected void processRollback(MailExchange exchange) throws MessagingException {
-        LOG.warn("Exchange failed, so rolling back message status: " + exchange);
     }
 
 }
