@@ -17,6 +17,7 @@
 package org.apache.camel.component.jpa;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,6 +25,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -36,7 +38,8 @@ import org.springframework.orm.jpa.JpaCallback;
 /**
  * @version $Revision$
  */
-public class JpaConsumer extends ScheduledPollConsumer {
+public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer {
+
     private static final transient Log LOG = LogFactory.getLog(JpaConsumer.class);
     private final JpaEndpoint endpoint;
     private final TransactionStrategy template;
@@ -45,6 +48,12 @@ public class JpaConsumer extends ScheduledPollConsumer {
     private String query;
     private String namedQuery;
     private String nativeQuery;
+
+    private class DataHolder {
+        private Exchange exchange;
+        private Object result;
+        private EntityManager manager;
+    }
 
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -55,31 +64,67 @@ public class JpaConsumer extends ScheduledPollConsumer {
     protected void poll() throws Exception {
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+                List<DataHolder> answer = new ArrayList<DataHolder>();
+
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
                 List results = query.getResultList();
                 for (Object result : results) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Processing new entity: " + result);
-                    }
-
-                    if (lockEntity(result, entityManager)) {
-                        // lets turn the result into an exchange and fire it
-                        // into the processor
-                        Exchange exchange = createExchange(result);
-                        try {
-                            getProcessor().process(exchange);
-                        } catch (Exception e) {
-                            throw new PersistenceException(e);
-                        }
-                        getDeleteHandler().deleteObject(entityManager, result);
-                    }
+                    DataHolder holder = new DataHolder();
+                    holder.manager = entityManager;
+                    holder.result = result;
+                    holder.exchange = createExchange(result);
+                    answer.add(holder);
                 }
+
+                try {
+                    processBatch(answer);
+                } catch (Exception e) {
+                    throw new PersistenceException(e);
+                }
+
                 entityManager.flush();
                 return null;
             }
         });
     }
+
+    public void processBatch(List exchanges) throws Exception {
+        final List<DataHolder> list = exchanges;
+        if (list.isEmpty()) {
+            return;
+        }
+
+        EntityManager entityManager = list.get(0).manager;
+        int total = list.size();
+
+        for (int index = 0; index < total && isRunAllowed(); index++) {
+            // only loop if we are started (allowed to run)
+            Exchange exchange = list.get(index).exchange;
+            Object result = list.get(index).result;
+
+            // add current index and total as properties
+            exchange.setProperty(Exchange.BATCH_INDEX, index);
+            exchange.setProperty(Exchange.BATCH_SIZE, total);
+            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+
+            if (lockEntity(result, entityManager)) {
+
+                // process the current exchange
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Processing exchange: " + exchange);
+                }
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    throw new PersistenceException(e);
+                }
+
+                getDeleteHandler().deleteObject(entityManager, result);
+            }
+        }
+    }
+
 
     // Properties
     // -------------------------------------------------------------------------
