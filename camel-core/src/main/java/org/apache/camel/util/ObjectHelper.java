@@ -19,11 +19,14 @@ package org.apache.camel.util;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +42,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -1027,6 +1031,53 @@ public final class ObjectHelper {
      */
     public static Iterator<Throwable> createExceptionIterator(Throwable exception) {
         return new ExceptionIterator(exception);
+    }
+
+    /**
+     * Creates a {@link Scanner} for scanning the given value.
+     *
+     * @param exchange  the current exchange
+     * @param value     the value, typically the message IN body
+     * @return the scanner, is newer <tt>null</tt>
+     */
+    public static Scanner getScanner(Exchange exchange, Object value) {
+        if (value instanceof GenericFile) {
+            // generic file is just a wrapper for the real file so call again with the real file
+            GenericFile gf = (GenericFile) value;
+            return getScanner(exchange, gf.getFile());
+        }
+
+        String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+        Scanner scanner = null;
+        if (value instanceof Readable) {
+            scanner = new Scanner((Readable)value);
+        } else if (value instanceof InputStream) {
+            scanner = charset == null ? new Scanner((InputStream)value) : new Scanner((InputStream)value, charset);
+        } else if (value instanceof File) {
+            try {
+                scanner = charset == null ? new Scanner((File)value) : new Scanner((File)value, charset);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeCamelException(e);
+            }
+        } else if (value instanceof String) {
+            scanner = new Scanner((String)value);
+        } else if (value instanceof ReadableByteChannel) {
+            scanner = charset == null ? new Scanner((ReadableByteChannel)value) : new Scanner((ReadableByteChannel)value, charset);
+        }
+
+        if (scanner == null) {
+            // value is not a suitable type, try to convert value to a string
+            String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+            if (text != null) {
+                scanner = new Scanner(text);
+            }
+        }
+
+        if (scanner == null) {
+            scanner = new Scanner("");
+        }
+
+        return scanner;
     }
 
     private static class ExceptionIterator implements Iterator<Throwable> {

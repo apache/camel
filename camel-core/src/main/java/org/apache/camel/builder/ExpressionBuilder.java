@@ -16,10 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,7 +29,6 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.spi.Language;
@@ -580,7 +575,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = getScanner(exchange, value);
+                Scanner scanner = ObjectHelper.getScanner(exchange, value);
                 scanner.useDelimiter(token);
                 return scanner;
             }
@@ -602,7 +597,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = getScanner(exchange, value);
+                Scanner scanner = ObjectHelper.getScanner(exchange, value);
                 scanner.useDelimiter(regexTokenizer);
                 return scanner;
             }
@@ -832,41 +827,6 @@ public final class ExpressionBuilder {
     public static Expression beanExpression(final String beanRef, final String methodName) {
         String expression = methodName != null ? beanRef + "." + methodName : beanRef;
         return beanExpression(expression);
-    }
-
-    private static Scanner getScanner(Exchange exchange, Object value) {
-        String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-
-        Scanner scanner = null;
-        if (value instanceof Readable) {
-            scanner = new Scanner((Readable)value);
-        } else if (value instanceof InputStream) {
-            scanner = charset == null ? new Scanner((InputStream)value) : new Scanner((InputStream)value, charset);
-        } else if (value instanceof File) {
-            try {
-                scanner = charset == null ? new Scanner((File)value) : new Scanner((File)value, charset);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeCamelException(e);
-            }
-        } else if (value instanceof String) {
-            scanner = new Scanner((String)value);
-        } else if (value instanceof ReadableByteChannel) {
-            scanner = charset == null ? new Scanner((ReadableByteChannel)value) : new Scanner((ReadableByteChannel)value, charset);
-        }
-
-        if (scanner == null) {
-            // value is not a suitable type, try to convert value to a string
-            String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
-            if (text != null) {
-                scanner = new Scanner(text);
-            }
-        }
-
-        if (scanner == null) {
-            scanner = new Scanner("");
-        }
-
-        return scanner;
     }
 
 }
