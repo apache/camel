@@ -54,6 +54,10 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
         return endpoint.createExchange(exchange);
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
+
     protected void doStart() throws Exception {
     }
 

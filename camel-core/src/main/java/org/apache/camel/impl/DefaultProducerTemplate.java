@@ -49,9 +49,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     private static final int DEFAULT_THREADPOOL_SIZE = 5;
     private final CamelContext context;
     private final ProducerCache producerCache = new ProducerCache();
-    // TODO: why do we have endpoint cache as camel context also have endpoint cache?
-    private final Map<String, Endpoint> endpointCache = new HashMap<String, Endpoint>();
-    private boolean useEndpointCache = true;
     private Endpoint defaultEndpoint;
     private ExecutorService executor;
 
@@ -367,23 +364,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         setDefaultEndpoint(getContext().getEndpoint(endpointUri));
     }
 
-    public boolean isUseEndpointCache() {
-        return useEndpointCache;
-    }
-
-    public void setUseEndpointCache(boolean useEndpointCache) {
-        this.useEndpointCache = useEndpointCache;
-    }
-
     public <T extends Endpoint> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
-        Endpoint e;
-        synchronized (endpointCache) {
-            e = endpointCache.get(endpointUri);
-        }
-        if (e != null && expectedClass.isAssignableFrom(e.getClass())) {
-            return expectedClass.asSubclass(expectedClass).cast(e);
-        }
-        return null;
+        return context.getEndpoint(endpointUri, expectedClass);
     }
 
     // Implementation methods
@@ -420,21 +402,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
-        Endpoint endpoint;
-
-        if (isUseEndpointCache()) {
-            synchronized (endpointCache) {
-                endpoint = endpointCache.get(endpointUri);
-                if (endpoint == null) {
-                    endpoint = context.getEndpoint(endpointUri);
-                    if (endpoint != null) {
-                        endpointCache.put(endpointUri, endpoint);
-                    }
-                }
-            }
-        } else {
-            endpoint = context.getEndpoint(endpointUri);
-        }
+        Endpoint endpoint = context.getEndpoint(endpointUri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(endpointUri);
         }
@@ -453,7 +421,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     protected void doStop() throws Exception {
         producerCache.stop();
-        endpointCache.clear();
         if (executor != null) {
             executor.shutdown();
         }

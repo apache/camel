@@ -21,9 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerCallback;
+import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,8 +35,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SendProcessor extends ServiceSupport implements Processor {
     protected static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
+    protected final ProducerCache producerCache = new ProducerCache();
     protected Endpoint destination;
-    protected Producer producer;
     protected ExchangePattern pattern;
 
     public SendProcessor(Endpoint destination) {
@@ -53,38 +54,37 @@ public class SendProcessor extends ServiceSupport implements Processor {
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
     }
 
-    public void process(Exchange exchange) throws Exception {
-        if (producer == null) {
-            if (isStopped()) {
-                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
-            } else {
-                throw new IllegalStateException("No producer, this processor has not been started: " + this);
+    public void process(final Exchange exchange) throws Exception {
+        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
+                exchange = configureExchange(exchange, pattern);
+                producer.process(exchange);
+                return exchange;
             }
-        } else {
-            exchange = configureExchange(exchange);
-            producer.process(exchange);
-        }
+        });
     }
 
     public Endpoint getDestination() {
         return destination;
     }
 
-    protected void doStart() throws Exception {
-        this.producer = destination.createProducer();
-        ServiceHelper.startService(this.producer);
+    protected Producer getProducer() {
+        return producerCache.getProducer(destination);
     }
 
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(this.producer);
-        this.producer = null;
-    }
-
-    protected Exchange configureExchange(Exchange exchange) {
+    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
         if (pattern != null) {
             exchange.setPattern(pattern);
         }
         return exchange;
+    }
+
+    protected void doStart() throws Exception {
+        producerCache.start();
+    }
+
+    protected void doStop() throws Exception {
+        producerCache.stop();
     }
 
 }

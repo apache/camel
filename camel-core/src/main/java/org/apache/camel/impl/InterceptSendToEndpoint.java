@@ -129,6 +129,10 @@ public class InterceptSendToEndpoint implements Endpoint {
                 }
             }
 
+            public boolean isSingleton() {
+                return producer.isSingleton();
+            }
+
             public void start() throws Exception {
                 ServiceHelper.startService(detour);
             }

@@ -25,6 +25,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.IsSingleton;
+import org.apache.camel.ProducerCallback;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +42,8 @@ public class ProducerCache extends ServiceSupport {
 
     private final Map<String, Producer> producers = new HashMap<String, Producer>();
 
+    // TODO: Consider a pool for non singleton producers to leverage in the doInProducer template
+
     public synchronized Producer getProducer(Endpoint endpoint) {
         String key = endpoint.getEndpointUri();
         Producer answer = producers.get(key);
@@ -50,7 +54,23 @@ public class ProducerCache extends ServiceSupport {
             } catch (Exception e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }
-            producers.put(key, answer);
+
+            // only add singletons to the cache
+            boolean singleton = true;
+            if (answer instanceof IsSingleton) {
+                singleton = ((IsSingleton)answer).isSingleton();
+            }
+
+            if (singleton) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Adding to producer cache with key: " + endpoint + " for producer: " + answer);
+                }
+                producers.put(key, answer);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Producer for endpoint: " + key + " is not singleton and thus not added to producer cache");
+                }
+            }
         }
         return answer;
     }
@@ -63,8 +83,7 @@ public class ProducerCache extends ServiceSupport {
      */
     public void send(Endpoint endpoint, Exchange exchange) {
         try {
-            Producer producer = getProducer(endpoint);
-            producer.process(exchange);
+            sendExchange(endpoint, null, null, exchange);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
         }
@@ -76,12 +95,11 @@ public class ProducerCache extends ServiceSupport {
      *
      * @param endpoint the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
+     * @return the exchange
      */
     public Exchange send(Endpoint endpoint, Processor processor) {
         try {
-            Producer producer = getProducer(endpoint);
-            Exchange exchange = producer.createExchange();
-            return sendExchange(endpoint, producer, processor, exchange);
+            return sendExchange(endpoint, null, processor, null);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
         }
@@ -95,28 +113,76 @@ public class ProducerCache extends ServiceSupport {
      * @param pattern the message {@link ExchangePattern} such as
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param processor the transformer used to populate the new exchange
+     * @return the exchange
      */
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
         try {
-            Producer producer = getProducer(endpoint);
-            Exchange exchange = producer.createExchange(pattern);
-            return sendExchange(endpoint, producer, processor, exchange);
+            return sendExchange(endpoint, pattern, processor, null);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
         }
     }
 
 
-    protected Exchange sendExchange(Endpoint endpoint, Producer producer, Processor processor, Exchange exchange) throws Exception {
-        // lets populate using the processor callback
-        processor.process(exchange);
+    /**
+     * Sends an exchange to an endpoint using a supplied callback
+     *
+     * @param endpoint  the endpoint to send the exchange to
+     * @param exchange  the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
+     * @param pattern   the exchange pattern, can be <tt>null</tt>
+     * @param callback  the callback
+     * @return the response from the callback
+     * @throws Exception if an internal processing error has occurred.
+     */
+    public <T> T doInProducer(Endpoint endpoint, Exchange exchange, ExchangePattern pattern, ProducerCallback<T> callback) throws Exception {
+        // get or create the producer
+        Producer producer = getProducer(endpoint);
 
-        // now lets dispatch
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">>>> " + endpoint + " " + exchange);
+        if (producer == null) {
+            if (isStopped()) {
+                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
+                return null;
+            } else {
+                throw new IllegalStateException("No producer, this processor has not been started: " + this);
+            }
         }
-        producer.process(exchange);
-        return exchange;
+
+        try {
+            // invoke the callback
+            return callback.doInProducer(producer, exchange, pattern);
+        } finally {
+            // stop non singleton producers as we should not leak resources
+            boolean singleton = true;
+            if (producer instanceof IsSingleton) {
+                singleton = ((IsSingleton)producer).isSingleton();
+            }
+            if (!singleton) {
+                producer.stop();
+            }
+        }
+    }
+
+    protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
+                                    final Processor processor, Exchange exchange) throws Exception {
+        return doInProducer(endpoint, exchange, pattern, new ProducerCallback<Exchange>() {
+            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
+                if (exchange == null) {
+                    exchange = pattern != null ? producer.createExchange(pattern) : producer.createExchange();
+                }
+
+                if (processor != null) {
+                    // lets populate using the processor callback
+                    processor.process(exchange);
+                }
+
+                // now lets dispatch
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(">>>> " + endpoint + " " + exchange);
+                }
+                producer.process(exchange);
+                return exchange;
+            }
+        });
     }
 
     protected void doStop() throws Exception {

@@ -114,6 +114,10 @@ public class CxfSoapProducer implements Producer {
         processor.process(exchange);
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
+
     public void start() throws Exception {
         producer.start();
     }

@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
@@ -69,16 +71,13 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (producer == null) {
-            if (isStopped()) {
-                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
-            } else {
-                throw new IllegalStateException("No producer, this processor has not been started!");
+        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
+                Exchange wireTapExchange = configureExchange(exchange, pattern);
+                procesWireTap(producer, wireTapExchange);
+                return wireTapExchange;
             }
-        } else {
-            Exchange wireTapExchange = configureExchange(exchange);
-            procesWireTap(wireTapExchange);
-        }
+        });
     }
 
     /**
@@ -86,7 +85,7 @@ public class WireTapProcessor extends SendProcessor {
      *
      * @param exchange  the exchange to wire tap
      */
-    protected void procesWireTap(final Exchange exchange) {
+    protected void procesWireTap(final Producer producer, final Exchange exchange) {
         // use submit instead of execute to force it to use a new thread, execute might
         // decide to use current thread, so we must submit a new task
         // as we dont care for the response we dont hold the future object and wait for the result
@@ -102,7 +101,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     @Override
-    protected Exchange configureExchange(Exchange exchange) {
+    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
         if (newExchangeProcessor == null && newExchangeExpression == null) {
             // use a copy of the original exchange
             return configureCopyExchange(exchange);

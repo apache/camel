@@ -45,39 +45,31 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         endpointB = getMandatoryEndpoint("seda:test.b", SedaEndpoint.class);
         endpointC = getMandatoryEndpoint("seda:test.C", SedaEndpoint.class);
 
-        assertProducerAndConsumerCounts("endpointA", endpointA, 0, 1);
-        assertProducerAndConsumerCounts("endpointB", endpointB, 1, 0);
-        assertProducerAndConsumerCounts("endpointC", endpointC, 0, 0);
+        // send from A over B to results
+        MockEndpoint results = getMockEndpoint("mock:results");
+        results.expectedBodiesReceived(expectedBody);
 
+        template.sendBody(endpointA, expectedBody);
+
+        assertMockEndpointsSatisfied();
+
+        // stop the route
         context.stopRoute(route);
-
-        assertProducerAndConsumerCounts("endpointA", endpointA, 0, 0);
-        assertProducerAndConsumerCounts("endpointB", endpointB, 0, 0);
-        assertProducerAndConsumerCounts("endpointC", endpointC, 0, 0);
-
 
         // lets mutate the route...
         FromDefinition fromType = assertOneElement(route.getInputs());
         fromType.setUri("seda:test.C");
         context.startRoute(route);
 
-        assertProducerAndConsumerCounts("endpointA", endpointA, 0, 0);
-        assertProducerAndConsumerCounts("endpointB", endpointB, 1, 0);
-        assertProducerAndConsumerCounts("endpointC", endpointC, 0, 1);
-
-
         // now lets check it works
-        MockEndpoint results = getMockEndpoint("mock:results");
+        // send from C over B to results
+        results.reset();
+        results = getMockEndpoint("mock:results");
         results.expectedBodiesReceived(expectedBody);
 
         template.sendBody(endpointC, expectedBody);
 
         assertMockEndpointsSatisfied();
-    }
-
-    protected void assertProducerAndConsumerCounts(String name, SedaEndpoint endpoint, int producerCount, int consumerCount) {
-        assertCollectionSize("Producers for " + name, endpoint.getProducers(), producerCount);
-        assertCollectionSize("Consumers for " + name, endpoint.getConsumers(), consumerCount);
     }
 
     @Override

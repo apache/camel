@@ -23,10 +23,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.
@@ -48,7 +48,22 @@ public class ConsumerCache extends ServiceSupport {
             } catch (Exception e) {
                 throw new FailedToCreateConsumerException(endpoint, e);
             }
-            consumers.put(key, answer);
+
+            boolean singleton = true;
+            if (answer instanceof IsSingleton) {
+                singleton = ((IsSingleton)answer).isSingleton();
+            }
+
+            if (singleton) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Adding to consumer cache with key: " + endpoint + " for consumer: " + answer);
+                }
+                consumers.put(key, answer);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Consumer for endpoint: " + key + " is not singleton and thus not added to producer cache");
+                }
+            }
         }
         return answer;
     }

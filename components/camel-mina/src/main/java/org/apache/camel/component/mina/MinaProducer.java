@@ -58,6 +58,13 @@ public class MinaProducer extends DefaultProducer {
         this.sync = endpoint.getConfiguration().isSync();
     }
 
+    @Override
+    public boolean isSingleton() {
+        // the producer should not be singleton otherwise cannot use concurrent producers and safely
+        // use request/reply with correct correlation
+        return false;
+    }
+
     public void process(Exchange exchange) throws Exception {
         if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");

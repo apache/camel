@@ -22,7 +22,7 @@ package org.apache.camel;
  * 
  * @version $Revision$
  */
-public interface Producer extends Processor, Service {
+public interface Producer extends Processor, Service, IsSingleton {
 
     /**
      * Gets the endpoint this producer sends to.
