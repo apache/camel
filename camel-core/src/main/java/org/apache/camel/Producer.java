@@ -24,6 +24,11 @@ package org.apache.camel;
  */
 public interface Producer extends Processor, Service {
 
+    /**
+     * Gets the endpoint this producer sends to.
+     *
+     * @return the endpoint
+     */
     Endpoint getEndpoint();
 
     /**
@@ -36,6 +41,7 @@ public interface Producer extends Processor, Service {
     /**
      * Creates a new exchange of the given pattern to send to this endpoint
      *
+     * @param pattern the exchange pattern
      * @return a newly created exchange
      */
     Exchange createExchange(ExchangePattern pattern);
@@ -43,6 +49,9 @@ public interface Producer extends Processor, Service {
     /**
      * Creates a new exchange for communicating with this exchange using the
      * given exchange to pre-populate the values of the headers and messages
+     *
+     * @param exchange the existing exchange
+     * @return the created exchange
      */
     Exchange createExchange(Exchange exchange);
 }
