@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.restlet;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
@@ -49,33 +48,23 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     private static final Log LOG = LogFactory.getLog(DefaultRestletBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
 
-    /**
-     * Populate Camel message from Restlet request
-     * 
-     * @param request message to be copied from
-     * @param exchange to be populated
-     * @throws Exception 
-     */
     public void populateExchangeFromRestletRequest(Request request, Exchange exchange) throws Exception {
-
         Message inMessage = exchange.getIn();
-        // extract headers from restlet 
+
+        // extract headers from restlet
         for (Map.Entry<String, Object> entry : request.getAttributes().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
-                    entry.getValue(), exchange)) {
-                
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 inMessage.setHeader(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Populate exchange from Restlet request header: " 
                             + entry.getKey() + " value: " + entry.getValue());
                 }
-
             }
         }
         
         // copy query string to header
         String query = request.getResourceRef().getQuery();
-        if (null != query) {
+        if (query != null) {
             inMessage.setHeader(RestletConstants.RESTLET_QUERY_STRING, query);
         }
 
@@ -83,37 +72,26 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             return;
         }
 
-        // TODO: What is this form used for? Doesnt make sence in the code below as form is never used
         Form form = new Form(request.getEntity());
-        if (form != null) {
-            for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
-                // extract body added to the form as the key which has null value
-                if (entry.getValue() == null) {
-                    inMessage.setBody(entry.getKey());
+        for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
+            // extract body added to the form as the key which has null value
+            if (entry.getValue() == null) {
+                inMessage.setBody(entry.getKey());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Populate exchange from Restlet request body: " + entry.getValue());
+                }
+            } else {
+                if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                    inMessage.setHeader(entry.getKey(), entry.getValue());
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Populate exchange from Restlet request body: " + entry.getValue());
-                    }
-                } else {
-                    if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(),
-                            entry.getValue(), exchange)) {
-
-                        inMessage.setHeader(entry.getKey(), entry.getValue());
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Populate exchange from Restlet request user header: "
-                                    + entry.getKey() + " value: " + entry.getValue());
-                        }
+                        LOG.debug("Populate exchange from Restlet request user header: "
+                                + entry.getKey() + " value: " + entry.getValue());
                     }
                 }
             }
         }
     }
 
-    /**
-     * Populate Restlet Request from Camel message
-     * 
-     * @param request to be populated
-     * @param exchange message to be copied from
-     */
     public void populateRestletRequestFromExchange(Request request, Exchange exchange) {
         request.setReferrerRef("camel-restlet");
         String body = exchange.getIn().getBody(String.class);
@@ -156,12 +134,6 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         request.setEntity(form.getWebRepresentation());
     }
 
-    /**
-     * Populate Restlet request from Camel message
-     *  
-     * @param exchange message to be copied from 
-     * @param response to be populated
-     */
     public void populateRestletResponseFromExchange(Exchange exchange, Response response) {
         
         Message out;
@@ -223,14 +195,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         } 
     }
 
-    /**
-     * Populate Camel message from Restlet response
-     * 
-     * @param exchange to be populated
-     * @param response message to be copied from
-     * @throws IOException 
-     */
-    public void populateExchangeFromRestletResponse(Exchange exchange, Response response) throws IOException {
+    public void populateExchangeFromRestletResponse(Exchange exchange, Response response) throws Exception {
         
         for (Map.Entry<String, Object> entry : response.getAttributes().entrySet()) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
@@ -250,7 +215,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setBody(text);
         } else {
-            throw new RuntimeCamelException("Exchange is incapable of receiving response: " + exchange);
+            throw new RuntimeCamelException("Exchange is incapable of receiving response: " + exchange + " with pattern: " + exchange.getPattern());
         }
     }
 

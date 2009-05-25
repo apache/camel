@@ -177,7 +177,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     private static String buildKey(RestletEndpoint endpoint) {
         return endpoint.getHost() + ":" + endpoint.getPort();
     }
-  
-    
+
 }
 

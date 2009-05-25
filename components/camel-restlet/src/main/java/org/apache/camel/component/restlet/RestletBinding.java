@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.restlet;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
@@ -35,18 +33,16 @@ public interface RestletBinding {
      * @param exchange message to be copied from 
      * @param response to be populated
      */
-    void populateRestletResponseFromExchange(Exchange exchange,
-            Response response);
+    void populateRestletResponseFromExchange(Exchange exchange, Response response);
 
     /**
      * Populate Camel message from Restlet request
      * 
      * @param request message to be copied from
      * @param exchange to be populated
-     * @throws Exception 
+     * @throws Exception is thrown if error processing
      */
-    void populateExchangeFromRestletRequest(Request request, 
-            Exchange exchange) throws Exception;
+    void populateExchangeFromRestletRequest(Request request, Exchange exchange) throws Exception;
 
     /**
      * Populate Restlet Request from Camel message
@@ -61,9 +57,8 @@ public interface RestletBinding {
      * 
      * @param exchange to be populated
      * @param response message to be copied from
-     * @throws IOException 
+     * @throws Exception is thrown if error processing
      */
-    void populateExchangeFromRestletResponse(Exchange exchange,
-            Response response) throws IOException;
+    void populateExchangeFromRestletResponse(Exchange exchange, Response response) throws Exception;
 
 }

@@ -56,9 +56,8 @@ public class RestletProducer extends DefaultProducer {
         RestletEndpoint endpoint = (RestletEndpoint)getEndpoint();
         
         String resourceUri = buildUri(endpoint);
-        Request request = new Request(endpoint.getRestletMethod(), 
-                resourceUri);
-        
+        Request request = new Request(endpoint.getRestletMethod(), resourceUri);
+
         RestletBinding binding = endpoint.getRestletBinding();
         binding.populateRestletRequestFromExchange(request, exchange);
         

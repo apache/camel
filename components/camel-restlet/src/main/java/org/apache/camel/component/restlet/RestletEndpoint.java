@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -131,8 +132,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         
         if (!bindingInitialized.getAndSet(true) 
                 && restletBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)restletBinding)
-                .setHeaderFilterStrategy(getHeaderFilterStrategy());
+            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
         return restletBinding;
     }
@@ -145,8 +145,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
         if (restletBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)restletBinding)
-                .setHeaderFilterStrategy(headerFilterStrategy);
+            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(headerFilterStrategy);
         }
     }
 
@@ -154,8 +153,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new RestletHeaderFilterStrategy();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Create Restlet default header filter strategy " 
-                        + headerFilterStrategy);
+                LOG.debug("Create Restlet default header filter strategy " + headerFilterStrategy);
             }
         }
         return headerFilterStrategy;
@@ -167,5 +165,11 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     public Map<String, String> getRestletRealm() {
         return restletRealm;
+    }
+
+    @Override
+    public ExchangePattern getExchangePattern() {
+        // should always use in out for restlet
+        return ExchangePattern.InOut;
     }
 }
