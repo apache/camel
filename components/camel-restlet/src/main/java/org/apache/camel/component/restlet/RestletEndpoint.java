@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -128,5 +129,11 @@ public class RestletEndpoint extends DefaultEndpoint {
 
     public void setRealm(Map<String, String> realm) {
         this.realm = realm;
+    }
+
+    @Override
+    public ExchangePattern getExchangePattern() {
+        // should always use in out for restlet
+        return ExchangePattern.InOut;
     }
 }
