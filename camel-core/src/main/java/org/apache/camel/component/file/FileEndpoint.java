@@ -88,14 +88,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return new GenericFileExchange(this);
     }
 
-    public FileOperations getOperations() {
-        return operations;
-    }
-
-    public void setOperations(FileOperations operations) {
-        this.operations = operations;
-    }
-
     public File getFile() {
         return file;
     }

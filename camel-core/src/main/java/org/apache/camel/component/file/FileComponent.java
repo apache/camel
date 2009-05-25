@@ -39,10 +39,6 @@ public class FileComponent extends GenericFileComponent<File> {
         config.setDirectory(file.getPath());
         result.setConfiguration(config);
 
-        FileOperations operations = new FileOperations();
-        operations.setEndpoint(result);
-        result.setOperations(operations);
-
         return result;
     }
 

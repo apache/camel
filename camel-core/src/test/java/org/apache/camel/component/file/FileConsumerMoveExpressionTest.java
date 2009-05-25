@@ -142,7 +142,6 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
                 FileEndpoint endpoint = new FileEndpoint();
                 endpoint.setCamelContext(context);
                 endpoint.setFile(new File("target/filelanguage/"));
-                endpoint.setOperations(new FileOperations(endpoint));
                 endpoint.setAutoCreate(false);
                 endpoint.setMove(BeanLanguage.bean("myguidgenerator"));
                 endpoint.setExclude(".*bak");

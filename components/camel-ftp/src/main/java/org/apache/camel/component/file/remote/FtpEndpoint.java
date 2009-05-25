@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -25,24 +26,29 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpEndpoint extends RemoteFileEndpoint<FTPFile> {
 
     public FtpEndpoint() {
-        FtpOperations operations = new FtpOperations();
-        operations.setEndpoint(this);
-        this.operations = operations;
     }
 
-    public FtpEndpoint(String uri, FtpComponent component, FtpOperations operations,
-                       RemoteFileConfiguration configuration) {
-        super(uri, component, operations, configuration);
+    public FtpEndpoint(String uri, FtpComponent component, RemoteFileConfiguration configuration) {
+        super(uri, component, configuration);
     }
 
     @Override
-    protected RemoteFileConsumer<FTPFile> buildConsumer(Processor processor, RemoteFileOperations<FTPFile> operations) {
-        return new FtpConsumer(this, processor, operations);
+    protected RemoteFileConsumer<FTPFile> buildConsumer(Processor processor) {
+        return new FtpConsumer(this, processor, createRemoteFileOperations());
+    }
+
+    protected GenericFileProducer<FTPFile> buildProducer() {
+        return new RemoteFileProducer<FTPFile>(this, createRemoteFileOperations());
+    }
+    
+    protected RemoteFileOperations<FTPFile> createRemoteFileOperations() {
+        FtpOperations operations = new FtpOperations();
+        operations.setEndpoint(this);
+        return operations;
     }
 
     @Override
     public String getScheme() {
         return "ftp";
     }
-
 }

@@ -49,10 +49,7 @@ public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
         // customize its own version
         SftpConfiguration config = new SftpConfiguration(new URI(baseUri));
 
-        SftpOperations operations = new SftpOperations();
-        SftpEndpoint result = new SftpEndpoint(uri, this, operations, config);
-        operations.setEndpoint(result);
-        return result;
+        return new SftpEndpoint(uri, this, config);
     }
 
     protected void afterPropertiesSet(GenericFileEndpoint<ChannelSftp.LsEntry> endpoint) throws Exception {

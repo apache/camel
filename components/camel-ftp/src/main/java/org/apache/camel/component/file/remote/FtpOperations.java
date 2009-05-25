@@ -59,6 +59,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean connect(RemoteFileConfiguration config) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Connecting using FTPClient: " + client);
+        }
+
         String host = config.getHost();
         int port = config.getPort();
         String username = config.getUsername();

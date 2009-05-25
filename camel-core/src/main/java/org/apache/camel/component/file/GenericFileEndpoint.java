@@ -50,7 +50,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected final transient Log log = LogFactory.getLog(getClass());
 
     protected GenericFileProcessStrategy<T> processStrategy;
-    protected GenericFileOperations<T> operations;
     protected GenericFileConfiguration configuration;
 
     protected String localWorkDirectory;
@@ -367,14 +366,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setAutoCreate(boolean autoCreate) {
         this.autoCreate = autoCreate;
-    }
-
-    public GenericFileOperations<T> getOperations() {
-        return operations;
-    }
-
-    public void setOperations(GenericFileOperations<T> operations) {
-        this.operations = operations;
     }
 
     public GenericFileProcessStrategy<T> getProcessStrategy() {

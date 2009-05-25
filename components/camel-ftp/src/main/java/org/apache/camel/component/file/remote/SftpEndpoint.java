@@ -18,7 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.Processor;
-
+import org.apache.camel.component.file.GenericFileProducer;
 
 /**
  * Secure FTP endpoint
@@ -26,20 +26,25 @@ import org.apache.camel.Processor;
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     public SftpEndpoint() {
-        SftpOperations operations = new SftpOperations();
-        operations.setEndpoint(this);
-        this.operations = operations;
     }
 
-    public SftpEndpoint(String uri, SftpComponent component, RemoteFileOperations<ChannelSftp.LsEntry> operations,
-                        RemoteFileConfiguration configuration) {
-        super(uri, component, operations, configuration);
+    public SftpEndpoint(String uri, SftpComponent component, RemoteFileConfiguration configuration) {
+        super(uri, component, configuration);
     }
 
     @Override
-    protected RemoteFileConsumer<ChannelSftp.LsEntry> buildConsumer(Processor processor,
-                                                                    RemoteFileOperations<ChannelSftp.LsEntry> operations) {
-        return new SftpConsumer(this, processor, operations);
+    protected RemoteFileConsumer<ChannelSftp.LsEntry> buildConsumer(Processor processor) {
+        return new SftpConsumer(this, processor, createRemoteFileOperations());
+    }
+
+    protected GenericFileProducer<ChannelSftp.LsEntry> buildProducer() {
+        return new RemoteFileProducer<ChannelSftp.LsEntry>(this, createRemoteFileOperations());
+    }
+
+    protected RemoteFileOperations<ChannelSftp.LsEntry> createRemoteFileOperations() {
+        SftpOperations operations = new SftpOperations();
+        operations.setEndpoint(this);
+        return operations;
     }
 
     @Override

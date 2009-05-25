@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
@@ -29,7 +30,7 @@ import org.apache.camel.util.ExchangeHelper;
  * Remote file producer. Handles connecting and disconnecting if we are not.
  * Generic type F is the remote system implementation of a file.
  */
-public class RemoteFileProducer<T> extends GenericFileProducer<T> {
+public class RemoteFileProducer<T> extends GenericFileProducer<T> implements IsSingleton {
 
     private boolean loggedIn;
     
@@ -122,4 +123,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         }
     }
 
+    public boolean isSingleton() {
+        // this producer is stateful because the remote file operations is not thread safe
+        return false;
+    }
 }

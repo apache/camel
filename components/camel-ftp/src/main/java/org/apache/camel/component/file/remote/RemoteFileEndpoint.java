@@ -33,10 +33,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         // no args constructor for spring bean endpoint configuration
     }
 
-    public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileOperations<T> operations,
-                              RemoteFileConfiguration configuration) {
+    public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
         super(uri, component);
-        this.operations = operations;
         this.configuration = configuration;
     }
 
@@ -56,13 +54,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     @Override
     public GenericFileProducer<T> createProducer() throws Exception {
         afterPropertiesSet();
-        return new RemoteFileProducer<T>(this, (RemoteFileOperations<T>) this.operations);
+        return buildProducer();
     }
 
     @Override
     public RemoteFileConsumer<T> createConsumer(Processor processor) throws Exception {
         afterPropertiesSet();
-        RemoteFileConsumer<T> consumer = buildConsumer(processor, (RemoteFileOperations<T>) operations);
+        RemoteFileConsumer<T> consumer = buildConsumer(processor);
 
         // we assume its a file if the name has a dot in it (eg foo.txt)
         if (configuration.getDirectory().contains(".")) {
@@ -95,7 +93,6 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      * @throws Exception is thrown if endpoint is invalid configured for its mandatory options
      */
     protected void afterPropertiesSet() throws Exception {
-        ObjectHelper.notNull(operations, "operations");
         RemoteFileConfiguration config = (RemoteFileConfiguration) getConfiguration();
         ObjectHelper.notEmpty(config.getHost(), "host");
         ObjectHelper.notEmpty(config.getProtocol(), "protocol");
@@ -108,10 +105,16 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      * Remote File Endpoints, impl this method to create a custom consumer specific to their "protocol" etc.
      *
      * @param processor  the processor
-     * @param operations the operations
      * @return the created consumer
      */
-    protected abstract RemoteFileConsumer<T> buildConsumer(Processor processor, RemoteFileOperations<T> operations);
+    protected abstract RemoteFileConsumer<T> buildConsumer(Processor processor);
+
+    /**
+     * Remote File Endpoints, impl this method to create a custom producer specific to their "protocol" etc.
+     *
+     * @return the created producer
+     */
+    protected abstract GenericFileProducer<T> buildProducer();
 
     /**
      * Returns human readable server information for logging purpose

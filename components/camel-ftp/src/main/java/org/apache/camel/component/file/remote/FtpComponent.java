@@ -49,11 +49,7 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
         // must pass on baseUri to the configuration (see above)
         FtpConfiguration config = new FtpConfiguration(new URI(baseUri));
 
-        FtpOperations operations = new FtpOperations();
-        FtpEndpoint result = new FtpEndpoint(uri, this, operations, config);
-        operations.setEndpoint(result);
-
-        return result;
+        return new FtpEndpoint(uri, this, config);
     }
 
     protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {
