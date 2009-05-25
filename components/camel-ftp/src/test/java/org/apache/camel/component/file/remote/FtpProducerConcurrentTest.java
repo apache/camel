@@ -38,8 +38,7 @@ public class FtpProducerConcurrentTest extends FtpServerTestSupport {
     }
 
     public void testConcurrentProducers() throws Exception {
-        // TODO: Bug CAMEL-1641 is fixed by CAMEL-1644
-        // doSendMessages(10, 5);
+        doSendMessages(10, 5);
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
