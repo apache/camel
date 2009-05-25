@@ -50,7 +50,10 @@ trait DSL {
   def to(uris: String*) : DSL
   def unmarshal(format: DataFormatDefinition) : DSL
   def when(filter: Exchange => Boolean) : SChoiceDefinition
-  def wiretap(uris: String) : DSL
+  
+  def wiretap(uri: String) : DSL
+  def wiretap(uri: String, expression: Exchange => Any) : DSL
+  
   def -->(uris: String*) : DSL
 
 }

@@ -28,9 +28,20 @@ class WiretapTest extends ScalaTestSupport {
   def testSimpleTap = doTestWiretap("direct:a", "mock:a")
   def testBlockTap = doTestWiretap("direct:b", "mock:b")
   
+  def testSimpleTapWithBody = doTestWiretapWithBody("direct:c", "mock:c")
+  def testBlockTapWithBody = doTestWiretapWithBody("direct:d", "mock:d")
+  
   def doTestWiretap(from: String, to: String) = {
     to expect { _.received("Calling Elvis", "Calling Paul")}
     mock("mock:tap").expectedBodiesReceivedInAnyOrder("Elvis is alive!", "Stop singing, you're not Elvis")
+    test {
+      from ! (Adult("Elvis"), Adult("Paul"))
+    }
+  }
+  
+  def doTestWiretapWithBody(from: String, to: String) = {
+    to expect { _.received(Adult("Elvis"), Adult("Paul"))}
+    mock("mock:tap-with-body").expectedBodiesReceived("Tapped!", "Tapped!")
     test {
       from ! (Adult("Elvis"), Adult("Paul"))
     }
@@ -40,6 +51,7 @@ class WiretapTest extends ScalaTestSupport {
     new RouteBuilder {
        //START SNIPPET: simple
        "direct:a" wiretap("direct:tap") setbody("Calling " + _.in(classOf[Adult]).name) to ("mock:a")
+       "direct:c" wiretap("direct:tap-with-body", "Tapped!") to ("mock:c")
        //END SNIPPET: simple
        
        //START SNIPPET: block
@@ -48,12 +60,18 @@ class WiretapTest extends ScalaTestSupport {
          setbody("Calling " + _.in(classOf[Adult]).name)
          to ("mock:b")
        }
+       "direct:d" ==> {
+         wiretap("direct:tap-with-body", "Tapped!") 
+         to ("mock:d")
+       }
        //END SNIPPET: block
        
        "direct:tap" setbody(_.in match {
           case Adult("Elvis") => "Elvis is alive!"
           case Adult(_) => "Stop singing, you're not Elvis"
         }) to "mock:tap"
+       
+       "direct:tap-with-body" to "mock:tap-with-body"
     }
 
 }

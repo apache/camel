@@ -29,9 +29,6 @@
               <goal>compile</goal>
               <goal>testCompile</goal>
             </goals>
-            <configuration>
-              <args><arg>-Xprint:namer</arg></args>
-            </configuration>
           </execution>
         </executions>
       </plugin>

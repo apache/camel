@@ -101,6 +101,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def unmarshal(format: DataFormatDefinition) = wrap(target.unmarshal(format))
   
   def wiretap(uri: String) = wrap(target.wireTap(uri))
+  def wiretap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri, expression))
   
   def aggregate(expression: Exchange => Any) = SAggregateDefinition(target.aggregate(expression))
 
