@@ -80,17 +80,35 @@ public class HttpComponent extends DefaultComponent<HttpExchange> implements Hea
             httpBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpBinding.class);
         }
         
-        // check the user name and password for basic authentication
-        String username = getAndRemoveParameter(parameters, "username", String.class);
-        String password = getAndRemoveParameter(parameters, "password", String.class);
-        if (username != null && password != null) {
-            httpClientConfigurer = new BasicAuthenticationHttpClientConfigurer(username, password);
-        }
-        
         // lookup http client front configurer in the registry if provided
         ref = getAndRemoveParameter(parameters, "httpClientConfigurerRef", String.class);
         if (ref != null) {
             httpClientConfigurer = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpClientConfigurer.class);
+        }
+        
+        // check the user name and password for basic authentication
+        String username = getAndRemoveParameter(parameters, "username", String.class);
+        String password = getAndRemoveParameter(parameters, "password", String.class);
+        if (username != null && password != null) {
+            
+            httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
+                httpClientConfigurer, 
+                new BasicAuthenticationHttpClientConfigurer(username, password));
+        }
+        
+        // check the proxy details for proxy configuration
+        String host = getAndRemoveParameter(parameters, "proxyHost", String.class);
+        Integer port = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        if (host != null && port != null) {
+            String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
+            String proxyPassword = getAndRemoveParameter(parameters, "proxyPassword", String.class);
+            if (proxyUsername != null && proxyPassword != null) {
+                httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
+                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port, proxyUsername, proxyPassword));
+            } else {
+                httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
+                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port));
+            }
         }
     }
     
@@ -123,8 +141,8 @@ public class HttpComponent extends DefaultComponent<HttpExchange> implements Hea
             endpoint.setBinding(httpBinding);
         }
         return endpoint;
-    }
-
+    }    
+   
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;
