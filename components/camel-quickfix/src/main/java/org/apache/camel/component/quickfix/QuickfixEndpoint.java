@@ -49,7 +49,6 @@ import quickfix.SessionSettings;
  * from("quickfix-server:acceptor.cfg[?params]").to("someBean", "someMethod").to("quickfix-client:initiator.cfg[?params]");
  * <p/>
  *
- * @author Anton Arhipov
  * @see org.apache.camel.quickfix.QuickfixInitiator
  * @see org.apache.camel.quickfix.QuickfixAcceptor
  */
@@ -65,6 +64,7 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
 
     private Processor processor = new QuickfixProcessor();
     private QuickfixApplication application;
+    private SessionSettings settings;
 
     public QuickfixEndpoint(String uri, CamelContext context, String configuration) {
         super(uri, context);
@@ -127,26 +127,21 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
     }
 
     public void start() throws Exception {
-        Resource configResource = getResource();
-        InputStream inputStream = configResource.getInputStream();
-        ObjectHelper.notNull(inputStream, "Could not load " + configuration);
-        SessionSettings settings = new SessionSettings(inputStream);
-
+        
+        if (settings == null) {
+            Resource configResource = getResource();
+            InputStream inputStream = configResource.getInputStream();
+            ObjectHelper.notNull(inputStream, "Could not load " + configuration);
+            settings = new SessionSettings(inputStream);
+        }
+        
         MessageStoreFactory storeFactory = createMessageStoreFactory(settings);
         LogFactory logFactory = createLogFactory(settings);
 
         createApplication();
 
-        /*
-         * ClassLoader ccl = Thread.currentThread().getContextClassLoader(); try
-         * {
-         * Thread.currentThread().setContextClassLoader(getClass().getClassLoader
-         * ());
-         */
         start(application, storeFactory, settings, logFactory);
-        /*
-         * } finally { Thread.currentThread().setContextClassLoader(ccl); }
-         */
+
     }
 
     protected abstract void start(Application application, MessageStoreFactory storeFactory,
@@ -203,6 +198,10 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
 
     public void setStrict(boolean strict) {
         this.strict = strict;
+    }
+    
+    public void setSettings(SessionSettings settings) {
+        this.settings = settings;
     }
 
     private Resource getResource() {

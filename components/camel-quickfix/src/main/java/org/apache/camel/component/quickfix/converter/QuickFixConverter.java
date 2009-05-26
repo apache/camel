@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.quickfix.QuickfixApplication;
 import org.apache.camel.converter.IOConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +30,9 @@ import quickfix.InvalidMessage;
 import quickfix.Message;
 
 /**
- * @author Anton Arhipov
+ * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
+ * for QuickFix related types' converting .
+ *
  */
 @Converter
 public final class QuickFixConverter {
@@ -67,6 +68,7 @@ public final class QuickFixConverter {
             str = baos.toString();
         }
         in.close();
+        
         return new Message(str);
     }
 
@@ -79,5 +81,10 @@ public final class QuickFixConverter {
     public static String toString(Message message) throws IOException {        
         return message.toString();
     }
-
+    
+    @Converter
+    public static Message toMessage(String message) throws IOException, InvalidMessage {
+        return new Message(message);
+    }
+    
 }
