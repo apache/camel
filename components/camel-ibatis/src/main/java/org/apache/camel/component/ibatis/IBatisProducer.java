@@ -22,8 +22,8 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -174,7 +174,7 @@ public class IBatisProducer extends DefaultProducer {
     }
 
     private void doProcessResult(Exchange exchange, Object result) {
-        if (endpoint.getStatementType() == StatementType.QueryForList || endpoint.getStatementType() == StatementType.QueryForObject ) {
+        if (endpoint.getStatementType() == StatementType.QueryForList || endpoint.getStatementType() == StatementType.QueryForObject) {
             Message answer = exchange.getIn();
             if (ExchangeHelper.isOutCapable(exchange)) {
                 answer = exchange.getOut();
