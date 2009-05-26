@@ -14,24 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.impl;
 
-import org.apache.camel.TypeConverter;
+import java.util.concurrent.BlockingQueue;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Producer;
 
 /**
- * An interface for an object which is interested in being injected with the root {@link TypeConverter}
- * such as for implementing a fallback type converter
+ * A service pool for {@link Producer}.
+ * <p/>
+ * For instance camel-mina and camel-ftp leverages this to allow a pool of producers so we
+ * can support concurrent producers in a thread safe manner.
  *
- * @see org.apache.camel.impl.converter.DefaultTypeConverter#addFallbackTypeConverter(org.apache.camel.TypeConverter)
- *         DefaultTypeConverter.addFallbackConverter
  * @version $Revision$
  */
-public interface TypeConverterAware {
+public class ProducerServicePool extends DefaultServicePool<Endpoint, Producer> {
 
-    /**
-     * Injects the root type converter.
-     *
-     * @param parentTypeConverter the root type converter
-     */
-    void setTypeConverter(TypeConverter parentTypeConverter);
+    public ProducerServicePool(int capacity) {
+        super(capacity);
+    }
+
+    synchronized int size() {
+        int size = 0;
+        for (BlockingQueue<Producer> queue : pool.values()) {
+            size += queue.size();
+        }
+        return size;
+    }
+
 }

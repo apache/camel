@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerCallback;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RoutingSlipDefinition;
@@ -64,15 +66,19 @@ public class RoutingSlip extends ServiceSupport implements Processor {
 
         for (String nextRecipient : recipients) {
             Endpoint endpoint = resolveEndpoint(exchange, nextRecipient);
-            Producer producer = producerCache.getProducer(endpoint);
-            Exchange ex = current.newInstance();
 
+            Exchange copy = current.newInstance();
             updateRoutingSlip(current);
-            copyOutToIn(ex, current);
+            copyOutToIn(copy, current);
 
-            producer.process(ex);
+            producerCache.doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
+                public Object doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
+                    producer.process(exchange);
+                    return exchange;
+                }
+            });
 
-            current = ex;
+            current = copy;
         }
         ExchangeHelper.copyResults(exchange, current);
     }

@@ -19,13 +19,14 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.ServicePool;
+import org.apache.camel.ServicePoolAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -41,38 +42,21 @@ public class ProducerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
     private final Map<String, Producer> producers = new HashMap<String, Producer>();
+    // we use a capacity of 10 per endpoint, so for the same endpoint we have at most 10 producers in the pool
+    // so if we have 6 endpoints in the pool, we can have 6 x 10 producers in total
+    private final ServicePool<Endpoint, Producer> pool = new ProducerServicePool(10);
 
-    // TODO: Consider a pool for non singleton producers to leverage in the doInProducer template
+    // TODO: Let CamelContext expose a global producer cache
+    // TODO: Have easy configuration of pooling in Camel
+    // TODO: Have a SPI interface for pluggable connection pools
 
-    public synchronized Producer getProducer(Endpoint endpoint) {
-        String key = endpoint.getEndpointUri();
-        Producer answer = producers.get(key);
-        if (answer == null) {
-            try {
-                answer = endpoint.createProducer();
-                answer.start();
-            } catch (Exception e) {
-                throw new FailedToCreateProducerException(endpoint, e);
-            }
-
-            // only add singletons to the cache
-            boolean singleton = true;
-            if (answer instanceof IsSingleton) {
-                singleton = ((IsSingleton)answer).isSingleton();
-            }
-
-            if (singleton) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding to producer cache with key: " + endpoint + " for producer: " + answer);
-                }
-                producers.put(key, answer);
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Producer for endpoint: " + key + " is not singleton and thus not added to producer cache");
-                }
-            }
-        }
-        return answer;
+    public Producer getProducer(Endpoint endpoint) {
+        // As the producer is returned outside this method we do not want to return pooled producers
+        // so we pass in false to the method. if we returned pooled producers then the user had
+        // to remember to return it back in the pool.
+        // See method doInProducer that is safe template pattern where we handle the lifecycle and
+        // thus safely can use pooled producers there
+        return doGetProducer(endpoint, false);
     }
 
     /**
@@ -135,8 +119,8 @@ public class ProducerCache extends ServiceSupport {
      * @throws Exception if an internal processing error has occurred.
      */
     public <T> T doInProducer(Endpoint endpoint, Exchange exchange, ExchangePattern pattern, ProducerCallback<T> callback) throws Exception {
-        // get or create the producer
-        Producer producer = getProducer(endpoint);
+        // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
+        Producer producer = doGetProducer(endpoint, true);
 
         if (producer == null) {
             if (isStopped()) {
@@ -151,12 +135,11 @@ public class ProducerCache extends ServiceSupport {
             // invoke the callback
             return callback.doInProducer(producer, exchange, pattern);
         } finally {
-            // stop non singleton producers as we should not leak resources
-            boolean singleton = true;
-            if (producer instanceof IsSingleton) {
-                singleton = ((IsSingleton)producer).isSingleton();
-            }
-            if (!singleton) {
+            if (producer instanceof ServicePoolAware) {
+                // release back to the pool
+                pool.release(endpoint, producer);
+            } else if (!producer.isSingleton()) {
+                // stop non singleton producers as we should not leak resources
                 producer.stop();
             }
         }
@@ -185,11 +168,47 @@ public class ProducerCache extends ServiceSupport {
         });
     }
 
+    protected synchronized Producer doGetProducer(Endpoint endpoint, boolean pooled) {
+        String key = endpoint.getEndpointUri();
+        Producer answer = producers.get(key);
+        if (pooled && answer == null) {
+            // try acquire from connection pool
+            answer = pool.acquire(endpoint);
+        }
+
+        if (answer == null) {
+            // create a new producer
+            try {
+                answer = endpoint.createProducer();
+                answer.start();
+            } catch (Exception e) {
+                throw new FailedToCreateProducerException(endpoint, e);
+            }
+
+            // add producer to cache or pool if applicable
+            if (pooled && answer instanceof ServicePoolAware) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Adding to producer service pool with key: " + endpoint + " for producer: " + answer);
+                }
+                answer = pool.acquireIfAbsent(endpoint, answer);
+            } else if (answer.isSingleton()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Adding to producer cache with key: " + endpoint + " for producer: " + answer);
+                }
+                producers.put(key, answer);
+            }
+        }
+
+        return answer;
+    }
+
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(producers.values());
         producers.clear();
+        ServiceHelper.stopServices(pool);
     }
 
     protected void doStart() throws Exception {
+        ServiceHelper.startServices(pool);
     }
 }

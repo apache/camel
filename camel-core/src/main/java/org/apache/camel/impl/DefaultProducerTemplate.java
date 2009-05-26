@@ -341,10 +341,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     // Properties
     // -----------------------------------------------------------------------
-    public Producer getProducer(Endpoint endpoint) {
-        return producerCache.getProducer(endpoint);
-    }
-
     public CamelContext getContext() {
         return context;
     }

@@ -14,24 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
-
-import org.apache.camel.TypeConverter;
+package org.apache.camel;
 
 /**
- * An interface for an object which is interested in being injected with the root {@link TypeConverter}
- * such as for implementing a fallback type converter
+ * Marker interface to indicate this service can be pooled using a {@link org.apache.camel.ServicePool}.
  *
- * @see org.apache.camel.impl.converter.DefaultTypeConverter#addFallbackTypeConverter(org.apache.camel.TypeConverter)
- *         DefaultTypeConverter.addFallbackConverter
  * @version $Revision$
  */
-public interface TypeConverterAware {
-
-    /**
-     * Injects the root type converter.
-     *
-     * @param parentTypeConverter the root type converter
-     */
-    void setTypeConverter(TypeConverter parentTypeConverter);
+public interface ServicePoolAware {
 }

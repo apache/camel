@@ -14,24 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
-
-import org.apache.camel.TypeConverter;
+package org.apache.camel;
 
 /**
- * An interface for an object which is interested in being injected with the root {@link TypeConverter}
- * such as for implementing a fallback type converter
+ * A service pool is like a connection pool.
  *
- * @see org.apache.camel.impl.converter.DefaultTypeConverter#addFallbackTypeConverter(org.apache.camel.TypeConverter)
- *         DefaultTypeConverter.addFallbackConverter
  * @version $Revision$
  */
-public interface TypeConverterAware {
+public interface ServicePool<Key, Service> extends org.apache.camel.Service {
 
     /**
-     * Injects the root type converter.
+     * Acquires the given service. If absent in pool the service
+     * is added to the pool.
      *
-     * @param parentTypeConverter the root type converter
+     * @param key the key
+     * @param service the service
+     * @return the acquired service, is newer <tt>null</tt>
      */
-    void setTypeConverter(TypeConverter parentTypeConverter);
+    Service acquireIfAbsent(Key key, Service service);
+
+    /**
+     * Tries to acquire the servie with the given key
+     * @param key the key
+     * @return the acquired service, or <tt>null</tt> if no free in pool
+     */
+    Service acquire(Key key);
+
+    /**
+     * Releases the service back to the pool
+     *
+     * @param key  the key
+     * @param service the service
+     */
+    void release(Key key, Service service);
+
 }

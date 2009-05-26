@@ -24,6 +24,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Producer;
+import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -40,7 +41,7 @@ import org.apache.mina.transport.socket.nio.SocketConnector;
  *
  * @version $Revision$
  */
-public class MinaProducer extends DefaultProducer {
+public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     private static final transient Log LOG = LogFactory.getLog(MinaProducer.class);
     private IoSession session;
     private MinaEndpoint endpoint;

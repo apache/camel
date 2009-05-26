@@ -68,10 +68,6 @@ public class SendProcessor extends ServiceSupport implements Processor {
         return destination;
     }
 
-    protected Producer getProducer() {
-        return producerCache.getProducer(destination);
-    }
-
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
         if (pattern != null) {
             exchange.setPattern(pattern);
