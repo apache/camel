@@ -93,17 +93,15 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String host = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer port = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         if (host != null && port != null) {
-        	String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
+            String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
             String proxyPassword = getAndRemoveParameter(parameters, "proxyPassword", String.class);
-        	if(proxyUsername!=null && proxyPassword!=null){
-        		httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-        		    httpClientConfigurer,
-        		    new ProxyHttpClientConfigurer(host, port, proxyUsername, proxyPassword));
-        	} else {
-        		httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-        		    httpClientConfigurer,
-        		    new ProxyHttpClientConfigurer(host, port));
-        	}
+            if (proxyUsername != null && proxyPassword != null) {
+                httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
+                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port, proxyUsername, proxyPassword));
+            } else {
+                httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
+                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port));
+            }
         }
         matchOnUriPrefix = Boolean.parseBoolean(getAndRemoveParameter(parameters, "matchOnUriPrefix", String.class));
     }

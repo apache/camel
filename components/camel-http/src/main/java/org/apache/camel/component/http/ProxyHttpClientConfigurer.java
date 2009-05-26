@@ -44,13 +44,13 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this.username = username;
         this.password = password;
     }
-	
-	public void configureHttpClient(HttpClient client) {
-		client.getHostConfiguration().setProxy(host, port);
-		
-		if(username!=null && password!=null){
-			Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
-			client.getState().setProxyCredentials(AuthScope.ANY, defaultcreds);
-		}
-	}
+
+    public void configureHttpClient(HttpClient client) {
+        client.getHostConfiguration().setProxy(host, port);
+
+        if (username != null && password != null) {
+            Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
+            client.getState().setProxyCredentials(AuthScope.ANY, defaultcreds);
+        }
+    }
 }

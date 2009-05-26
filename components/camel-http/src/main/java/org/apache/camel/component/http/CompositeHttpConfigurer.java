@@ -36,7 +36,7 @@ public class CompositeHttpConfigurer implements HttpClientConfigurer {
     }
 
     public void configureHttpClient(HttpClient client) {
-        for(HttpClientConfigurer configurer : configurers) {
+        for (HttpClientConfigurer configurer : configurers) {
             configurer.configureHttpClient(client);
         }        
     }
