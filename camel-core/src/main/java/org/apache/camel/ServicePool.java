@@ -24,17 +24,17 @@ package org.apache.camel;
 public interface ServicePool<Key, Service> extends org.apache.camel.Service {
 
     /**
-     * Acquires the given service. If absent in pool the service
-     * is added to the pool.
+     * Adds the given service to the pool and acquires it.
      *
      * @param key the key
      * @param service the service
      * @return the acquired service, is newer <tt>null</tt>
      */
-    Service acquireIfAbsent(Key key, Service service);
+    Service addAndAcquire(Key key, Service service);
 
     /**
      * Tries to acquire the servie with the given key
+     * 
      * @param key the key
      * @return the acquired service, or <tt>null</tt> if no free in pool
      */

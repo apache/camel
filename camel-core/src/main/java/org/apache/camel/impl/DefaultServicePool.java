@@ -46,7 +46,7 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
         this.capacity = capacity;
     }
 
-    public synchronized Service acquireIfAbsent(Key key, Service service) {
+    public synchronized Service addAndAcquire(Key key, Service service) {
         BlockingQueue<Service> entry = pool.get(key);
         if (entry == null) {
             entry = new ArrayBlockingQueue<Service>(capacity);
@@ -55,7 +55,11 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
         if (log.isTraceEnabled()) {
             log.trace("AddAndAcquire key: " + key + " service: " + service);
         }
-        // do not add the service as we acquire it
+
+        // test if queue will be full
+        if (entry.size() >= capacity) {
+            throw new IllegalStateException("Queue full");
+        }
         return service;
     }
 

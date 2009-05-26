@@ -19,8 +19,6 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ServicePool;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,6 +26,8 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
+import org.apache.camel.ServicePool;
+import org.apache.camel.ServicePoolAware;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -190,7 +190,7 @@ public class ProducerCache extends ServiceSupport {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Adding to producer service pool with key: " + endpoint + " for producer: " + answer);
                 }
-                answer = pool.acquireIfAbsent(endpoint, answer);
+                answer = pool.addAndAcquire(endpoint, answer);
             } else if (answer.isSingleton()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Adding to producer cache with key: " + endpoint + " for producer: " + answer);

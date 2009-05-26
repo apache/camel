@@ -16,31 +16,54 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.ServicePool;
-import org.apache.camel.ServicePoolAware;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.ServicePoolAware;
 
 /**
  * @version $Revision$
  */
 public class ServicePoolTest extends ContextTestSupport {
 
-    // TODO: Add unit test for only once stop/start of pooled service
-    // TODO: Add some stress test of the pool
-
+    private static boolean cleanup;
     private ProducerServicePool pool;
 
     private class MyProducer extends DefaultProducer implements ServicePoolAware {
 
-        public MyProducer(Endpoint endpoint) {
+        private boolean start;
+        private boolean stop;
+
+        public MyProducer(Endpoint endpoint) throws Exception {
             super(endpoint);
+            start();
         }
 
         public void process(Exchange exchange) throws Exception {
             // noop
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            super.doStart();
+            assertEquals("Should not be started twice", false, start);
+            start = true;
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            super.doStop();
+            assertEquals("Should not be stopped twice", false, stop);
+            stop = true;
+            cleanup = true;
         }
     }
 
@@ -55,6 +78,7 @@ public class ServicePoolTest extends ContextTestSupport {
     protected void tearDown() throws Exception {
         pool.stop();
         super.tearDown();
+        assertEquals("Should have stopped the produers", true, cleanup);
     }
 
     public void testSingleEnry() throws Exception {
@@ -64,7 +88,7 @@ public class ServicePoolTest extends ContextTestSupport {
         assertEquals(0, pool.size());
 
         Producer producer = new MyProducer(endpoint);
-        producer = pool.acquireIfAbsent(endpoint, producer);
+        producer = pool.addAndAcquire(endpoint, producer);
         assertEquals(0, pool.size());
 
         pool.release(endpoint, producer);
@@ -76,9 +100,6 @@ public class ServicePoolTest extends ContextTestSupport {
 
         pool.release(endpoint, producer);
         assertEquals(1, pool.size());
-
-        pool.stop();
-        assertEquals(0, pool.size());
     }
 
     public void testTwoEnries() throws Exception {
@@ -87,17 +108,14 @@ public class ServicePoolTest extends ContextTestSupport {
         Producer producer1 = new MyProducer(endpoint);
         Producer producer2 = new MyProducer(endpoint);
 
-        producer1 = pool.acquireIfAbsent(endpoint, producer1);
-        producer2 = pool.acquireIfAbsent(endpoint, producer2);
+        producer1 = pool.addAndAcquire(endpoint, producer1);
+        producer2 = pool.addAndAcquire(endpoint, producer2);
 
         assertEquals(0, pool.size());
         pool.release(endpoint, producer1);
         assertEquals(1, pool.size());
         pool.release(endpoint, producer2);
         assertEquals(2, pool.size());
-
-        pool.stop();
-        assertEquals(0, pool.size());
     }
 
     public void testThreeEntries() throws Exception {
@@ -107,9 +125,9 @@ public class ServicePoolTest extends ContextTestSupport {
         Producer producer2 = new MyProducer(endpoint);
         Producer producer3 = new MyProducer(endpoint);
 
-        producer1 = pool.acquireIfAbsent(endpoint, producer1);
-        producer2 = pool.acquireIfAbsent(endpoint, producer2);
-        producer3 = pool.acquireIfAbsent(endpoint, producer3);
+        producer1 = pool.addAndAcquire(endpoint, producer1);
+        producer2 = pool.addAndAcquire(endpoint, producer2);
+        producer3 = pool.addAndAcquire(endpoint, producer3);
 
         assertEquals(0, pool.size());
         pool.release(endpoint, producer1);
@@ -118,9 +136,116 @@ public class ServicePoolTest extends ContextTestSupport {
         assertEquals(2, pool.size());
         pool.release(endpoint, producer3);
         assertEquals(3, pool.size());
+    }
 
-        pool.stop();
-        assertEquals(0, pool.size());
+    public void testAcquireAddRelease() throws Exception {
+        Endpoint endpoint = context.getEndpoint("mock:foo");
+        for (int i = 0; i < 10; i++) {
+            Producer producer = pool.acquire(endpoint);
+            if (producer == null) {
+                producer = pool.addAndAcquire(endpoint, new MyProducer(endpoint));
+            }
+            assertNotNull(producer);
+            pool.release(endpoint, producer);
+        }
     }
     
+    public void testAcquireAdd() throws Exception {
+        Endpoint endpoint = context.getEndpoint("mock:foo");
+        List<Producer> producers = new ArrayList<Producer>();
+
+        for (int i = 0; i < 5; i++) {
+            Producer producer = pool.acquire(endpoint);
+            if (producer == null) {
+                producer = pool.addAndAcquire(endpoint, new MyProducer(endpoint));
+            }
+            assertNotNull(producer);
+            producers.add(producer);
+        }
+
+        // release afterwards
+        for (Producer producer : producers) {
+            pool.release(endpoint, producer);
+        }
+    }
+
+    public void testAcquireAddQueueFull() throws Exception {
+        Endpoint endpoint = context.getEndpoint("mock:foo");
+
+        for (int i = 0; i < 5; i++) {
+            Producer producer = pool.addAndAcquire(endpoint, new MyProducer(endpoint));
+            pool.release(endpoint, producer);
+        }
+
+        // when adding a 6 we get a queue full
+        try {
+            pool.addAndAcquire(endpoint, new MyProducer(endpoint));
+            fail("Should have thrown an exception");
+        } catch (IllegalStateException e) {
+            assertEquals("Queue full", e.getMessage());
+        }
+
+        assertEquals(5, pool.size());
+    }
+
+    public void testConcurrent() throws Exception {
+        final Endpoint endpoint = context.getEndpoint("mock:foo");
+
+        ExecutorService exectur = Executors.newFixedThreadPool(5);
+        List<Future> response = new ArrayList<Future>();
+        for (int i = 0; i < 5; i++) {
+            final int index = i;
+            Future out = exectur.submit(new Callable<Object>() {
+                public Object call() throws Exception {
+                    Producer producer = pool.acquire(endpoint);
+                    if (producer == null) {
+                        producer = pool.addAndAcquire(endpoint, new MyProducer(endpoint));
+                    }
+                    assertNotNull(producer);
+                    pool.release(endpoint, producer);
+                    return index;
+                }
+            });
+
+            response.add(out);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            assertEquals(i, response.get(i).get());
+        }
+
+        assertEquals(5, pool.size());
+    }
+
+    public void testConcurrentStress() throws Exception {
+        final Endpoint endpoint = context.getEndpoint("mock:foo");
+
+        ExecutorService exectur = Executors.newFixedThreadPool(5);
+        List<Future> response = new ArrayList<Future>();
+        for (int i = 0; i < 5; i++) {
+            final int index = i;
+            Future out = exectur.submit(new Callable<Object>() {
+                public Object call() throws Exception {
+                    for (int j = 0; j < 100; j++) {
+                        Producer producer = pool.acquire(endpoint);
+                        if (producer == null) {
+                            producer = pool.addAndAcquire(endpoint, new MyProducer(endpoint));
+                        }
+                        assertNotNull(producer);
+                        pool.release(endpoint, producer);
+                    }
+                    return index;
+                }
+            });
+
+            response.add(out);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            assertEquals(i, response.get(i).get());
+        }
+
+        assertEquals(5, pool.size());
+    }
+
 }
