@@ -21,6 +21,8 @@ package org.apache.camel.component.ibatis;
  */
 public final class IBatisConstants {
 
+    public static final String IBATIS_RESULT = "CamelIBatisResult";
+
     public static final String IBATIS_STATEMENT_NAME = "CamelIBatisStatementName";
 
     private IBatisConstants() {

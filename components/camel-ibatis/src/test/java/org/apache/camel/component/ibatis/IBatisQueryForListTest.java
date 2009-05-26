@@ -17,6 +17,7 @@
 package org.apache.camel.component.ibatis;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
