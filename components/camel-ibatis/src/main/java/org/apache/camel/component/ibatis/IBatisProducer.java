@@ -22,6 +22,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -178,9 +179,25 @@ public class IBatisProducer extends DefaultProducer {
     }
 
     private void doProcessResult(Exchange exchange, Object result) {
-        Message msg = exchange.getOut();
-        msg.setBody(result);
-        msg.setHeader("org.apache.camel.ibatis.queryName", statement);
+        if (endpoint.getStatementType() == StatementType.QueryForList || endpoint.getStatementType() == StatementType.QueryForObject) {
+            Message answer = exchange.getIn();
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                answer = exchange.getOut();
+                // preserve headers
+                answer.getHeaders().putAll(exchange.getIn().getHeaders());
+            }
+            // set the result as body for insert
+            answer.setBody(result);
+
+            answer.setHeader("CamelIBatisResult", result);
+            answer.setHeader("CamelIBatisStatementName", statement);
+            answer.setHeader("org.apache.camel.ibatis.queryName", statement);
+        } else {
+            Message msg = exchange.getIn();
+            msg.setHeader("CamelIBatisResult", result);
+            msg.setHeader("CamelIBatisStatementName", statement);
+            msg.setHeader("org.apache.camel.ibatis.queryName", statement);
+        }
     }
 
 }
