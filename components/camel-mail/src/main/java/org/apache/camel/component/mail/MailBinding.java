@@ -99,15 +99,37 @@ public class MailBinding {
             if (exchange.getIn().hasAttachments()) {
                 appendAttachmentsFromCamel(mimeMessage, exchange.getIn(), endpoint.getConfiguration());
             } else {
-                if ("text/html".equals(endpoint.getConfiguration().getContentType())) {                  
-                    DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), "text/html");
-                    mimeMessage.setDataHandler(new DataHandler(ds));
-                } else {
-                    // its just text/plain
+                String contentType = populateContentType(endpoint, mimeMessage, exchange);
+                if (contentType == null) {
                     mimeMessage.setText(exchange.getIn().getBody(String.class));
+                } else if (contentType.startsWith("text/plain")) {
+                    String charset = ObjectHelper.after(contentType, "charset=");
+                    if (charset != null) {
+                        mimeMessage.setText(exchange.getIn().getBody(String.class), charset);
+                    } else {
+                        mimeMessage.setText(exchange.getIn().getBody(String.class));
+                    }
+                } else {
+                    // store content in a byte array data store
+                    DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
+                    mimeMessage.setDataHandler(new DataHandler(ds));
                 }
             }
         }
+    }
+
+    protected String populateContentType(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) throws MessagingException {
+        // see if we got any content type set
+        String contentType = endpoint.getConfiguration().getContentType();
+        if (exchange.getIn().getHeader("contentType") != null) {
+            contentType = exchange.getIn().getHeader("contentType", String.class);
+        } else if (exchange.getIn().getHeader(Exchange.CONTENT_TYPE) != null) {
+            contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        }
+        if (contentType != null) {
+            mimeMessage.setHeader("Content-Type", contentType);
+        }
+        return contentType;
     }
 
     /**
