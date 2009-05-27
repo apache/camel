@@ -40,7 +40,7 @@ public class HttpProducerConcurrentTest extends ContextTestSupport {
     }
 
     public void testConcurrentProducers() throws Exception {
-       doSendMessages(10, 5);
+        doSendMessages(10, 5);
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
