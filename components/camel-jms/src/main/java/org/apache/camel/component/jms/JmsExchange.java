@@ -20,6 +20,7 @@ import javax.jms.Message;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
@@ -32,12 +33,12 @@ import org.apache.camel.impl.DefaultExchange;
 public class JmsExchange extends DefaultExchange {
     private JmsBinding binding;
 
-    public JmsExchange(JmsEndpoint endpoint, ExchangePattern pattern, JmsBinding binding) {
+    public JmsExchange(Endpoint endpoint, ExchangePattern pattern, JmsBinding binding) {
         super(endpoint, pattern);
         this.binding = binding;
     }
 
-    public JmsExchange(JmsEndpoint endpoint, ExchangePattern pattern, JmsBinding binding, Message message) {
+    public JmsExchange(Endpoint endpoint, ExchangePattern pattern, JmsBinding binding, Message message) {
         this(endpoint, pattern, binding);
         setIn(new JmsMessage(message));
     }
