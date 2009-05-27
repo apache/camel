@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultProducerServicePool;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +52,7 @@ public class XmppRouteTest extends TestCase {
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint endpoint;
-    protected ProducerCache client = new ProducerCache();
+    protected ProducerCache client = new ProducerCache(new DefaultProducerServicePool(10));
 
     public static void main(String[] args) {
         enabled = true;
