@@ -25,8 +25,12 @@ import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
@@ -65,6 +69,11 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             if (LOG.isInfoEnabled()) {
                 LOG.info("Joined room: " + muc.getRoom() + " as: " + endpoint.getNickname());
             }
+
+            // add the presence packet listener to the connection so we only get packets that concers us
+            final ToContainsFilter toFilter = new ToContainsFilter(endpoint.getParticipant());
+            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class), toFilter);
+            connection.addPacketListener(this, packetFilter);
         }
 
         super.doStart();
@@ -91,7 +100,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     }
 
     public void processPacket(Packet packet) {
-        Message message = (Message)packet;
+        Message message = (Message) packet;
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Recieved XMPP message: " + message.getBody());
@@ -100,13 +109,8 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         XmppExchange exchange = endpoint.createExchange(message);
         try {
             getProcessor().process(exchange);
-            if (muc != null) {
-                // must invoke nextMessage to consume the response from the server
-                // otherwise the client local queue will fill up (CAMEL-1467)
-                muc.nextMessage();
-            }
         } catch (Exception e) {
-            LOG.error("Error while processing XMPP message", e);
+            exchange.setException(e);
         }
     }
 
