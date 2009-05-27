@@ -41,7 +41,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class RecipientList extends ServiceSupport implements Processor {
-    private final ProducerCache producerCache = new ProducerCache();
+    private ProducerCache producerCache;
     private Expression expression;
 
     public RecipientList() {
@@ -71,11 +71,20 @@ public class RecipientList extends ServiceSupport implements Processor {
         while (iter.hasNext()) {
             Object recipient = iter.next();
             Endpoint endpoint = resolveEndpoint(exchange, recipient);
-            Producer producer = producerCache.getProducer(endpoint);
+            Producer producer = getProducerCache(exchange).getProducer(endpoint);
             processors.add(producer);
         }
         MulticastProcessor mp = new MulticastProcessor(processors, new UseLatestAggregationStrategy());
         mp.process(exchange);
+    }
+
+    protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
+        // setup producer cache as we need to use the pluggable service pool defined on camel context
+        if (producerCache == null) {
+            this.producerCache = new ProducerCache(exchange.getContext().getProducerServicePool());
+            this.producerCache.start();
+        }
+        return this.producerCache;
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
@@ -86,11 +95,16 @@ public class RecipientList extends ServiceSupport implements Processor {
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
-    protected void doStop() throws Exception {
-        producerCache.stop();
+    protected void doStart() throws Exception {
+        if (producerCache != null) {
+            producerCache.start();
+        }
     }
 
-    protected void doStart() throws Exception {
-        producerCache.start();
+    protected void doStop() throws Exception {
+        if (producerCache != null) {
+            producerCache.stop();
+        }
     }
+
 }

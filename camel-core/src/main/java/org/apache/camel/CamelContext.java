@@ -36,6 +36,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.ServicePool;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -229,17 +230,26 @@ public interface CamelContext extends Service {
     /**
      * Removes a collection of route definitions from the context - stopping any previously running
      * routes if any of them are actively running
+     *
+     * @param routeDefinitions route definitions
+     * @throws Exception if the route definition could not be removed for whatever reason
      */
     void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
      * Starts the given route if it has been previously stopped
+     *
+     * @param route the route to start
+     * @throws Exception is thrown if the route could not be started for whatever reason
      */
     void startRoute(RouteDefinition route) throws Exception;
 
     /**
      * Stops the given route. It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
      * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     *
+     * @param route the route to stop
+     * @throws Exception is thrown if the route could not be stopped for whatever reason
      */
     void stopRoute(RouteDefinition route) throws Exception;
 
@@ -368,11 +378,15 @@ public interface CamelContext extends Service {
     
     /**
      * Sets the properties that can be referenced in the camel context
+     *
+     * @param properties properties
      */
     void setProperties(Map<String, String> properties);
     
     /**
      * Gets the properties that can be referenced in the camel context
+     *
+     * @return the properties
      */
     Map<String, String> getProperties();
     
@@ -395,32 +409,58 @@ public interface CamelContext extends Service {
      *
      * @param path the META-INF path
      * @return the factory finder
+     * @throws NoFactoryAvailableException is thrown if a factory could not be found
      */
     FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
 
     /**
      * Returns the current status of the given route
+     *
+     * @param route the route
+     * @return the status for the route
      */
     ServiceStatus getRouteStatus(RouteDefinition route);
 
     /**
      * Returns the class resolver to be used for loading/lookup of classes.
+     *
+     * @return the resolver
      */
     ClassResolver getClassResolver();
 
     /**
      * Returns the package scanning class resolver
+     *
+     * @return the resolver
      */
     PackageScanClassResolver getPackageScanClassResolver();
 
     /**
      * Sets the class resolver to be use
+     *
+     * @param resolver the resolver
      */
     void setClassResolver(ClassResolver resolver);
 
     /**
      * Sets the package scanning class resolver to use
+     *
+     * @param resolver the resolver
      */
     void setPackageScanClassResolver(PackageScanClassResolver resolver);
+
+    /**
+     * Sets a pluggable service pool to use for {@link Producer} pooling.
+     *
+     * @param servicePool the pool
+     */
+    void setProducerServicePool(ServicePool<Endpoint, Producer> servicePool);
+
+    /**
+     * Gets the service pool for {@link Producer} pooling.
+     *
+     * @return the service pool
+     */
+    ServicePool<Endpoint, Producer> getProducerServicePool();
 
 }

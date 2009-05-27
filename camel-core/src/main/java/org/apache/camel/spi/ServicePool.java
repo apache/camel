@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spi;
 
 /**
- * A service pool is like a connection pool.
+ * A service pool is like a connection pool but can pool any kind of objects.
+ * <p/>
+ * Services that is capable of being pooled should implement the marker interface
+ * {@link org.apache.camel.ServicePoolAware}.
  *
  * @version $Revision$
  */

@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SendProcessor extends ServiceSupport implements Processor {
     protected static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
-    protected final ProducerCache producerCache = new ProducerCache();
+    protected ProducerCache producerCache;
     protected Endpoint destination;
     protected ExchangePattern pattern;
 
@@ -55,13 +55,22 @@ public class SendProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(final Exchange exchange) throws Exception {
-        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+        getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);
                 producer.process(exchange);
                 return exchange;
             }
         });
+    }
+
+    protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
+        // setup producer cache as we need to use the pluggable service pool defined on camel context
+        if (producerCache == null) {
+            this.producerCache = new ProducerCache(exchange.getContext().getProducerServicePool());
+            this.producerCache.start();
+        }
+        return this.producerCache;
     }
 
     public Endpoint getDestination() {
@@ -76,11 +85,15 @@ public class SendProcessor extends ServiceSupport implements Processor {
     }
 
     protected void doStart() throws Exception {
-        producerCache.start();
+        if (producerCache != null) {
+            producerCache.start();
+        }
     }
 
     protected void doStop() throws Exception {
-        producerCache.stop();
+        if (producerCache != null) {
+            producerCache.stop();
+        }
     }
 
 }

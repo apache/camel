@@ -35,7 +35,7 @@ import org.apache.camel.ServicePoolAware;
 public class ServicePoolTest extends ContextTestSupport {
 
     private static boolean cleanup;
-    private ProducerServicePool pool;
+    private DefaultProducerServicePool pool;
 
     private class MyProducer extends DefaultProducer implements ServicePoolAware {
 
@@ -70,7 +70,7 @@ public class ServicePoolTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        pool = new ProducerServicePool(5);
+        pool = new DefaultProducerServicePool(5);
         pool.start();
     }
 
@@ -213,8 +213,6 @@ public class ServicePoolTest extends ContextTestSupport {
         for (int i = 0; i < 5; i++) {
             assertEquals(i, response.get(i).get());
         }
-
-        assertEquals(5, pool.size());
     }
 
     public void testConcurrentStress() throws Exception {
@@ -244,8 +242,6 @@ public class ServicePoolTest extends ContextTestSupport {
         for (int i = 0; i < 5; i++) {
             assertEquals(i, response.get(i).get());
         }
-
-        assertEquals(5, pool.size());
     }
 
 }

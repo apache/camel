@@ -38,7 +38,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class RoutingSlip extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
-    private final ProducerCache producerCache = new ProducerCache();
+    private ProducerCache producerCache;
     private final String header;
     private final String uriDelimiter;
 
@@ -71,7 +71,7 @@ public class RoutingSlip extends ServiceSupport implements Processor {
             updateRoutingSlip(current);
             copyOutToIn(copy, current);
 
-            producerCache.doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
+            getProducerCache(exchange).doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
                 public Object doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
                     producer.process(exchange);
                     return exchange;
@@ -83,16 +83,29 @@ public class RoutingSlip extends ServiceSupport implements Processor {
         ExchangeHelper.copyResults(exchange, current);
     }
 
+    protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
+        // setup producer cache as we need to use the pluggable service pool defined on camel context
+        if (producerCache == null) {
+            this.producerCache = new ProducerCache(exchange.getContext().getProducerServicePool());
+            this.producerCache.start();
+        }
+        return this.producerCache;
+    }
+
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 
-    protected void doStop() throws Exception {
-        producerCache.stop();
+    protected void doStart() throws Exception {
+        if (producerCache != null) {
+            producerCache.start();
+        }
     }
 
-    protected void doStart() throws Exception {
-        producerCache.start();
+    protected void doStop() throws Exception {
+        if (producerCache != null) {
+            producerCache.stop();
+        }
     }
 
     private void updateRoutingSlip(Exchange current) {

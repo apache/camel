@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * Marker interface to indicate this service can be pooled using a {@link org.apache.camel.ServicePool}.
+ * Marker interface to indicate this service can be pooled using a {@link org.apache.camel.spi.ServicePool}.
  *
  * @version $Revision$
  */

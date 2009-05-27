@@ -26,7 +26,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
-import org.apache.camel.ServicePool;
+import org.apache.camel.spi.ServicePool;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -42,13 +42,13 @@ public class ProducerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
     private final Map<String, Producer> producers = new HashMap<String, Producer>();
-    // we use a capacity of 10 per endpoint, so for the same endpoint we have at most 10 producers in the pool
-    // so if we have 6 endpoints in the pool, we can have 6 x 10 producers in total
-    private final ServicePool<Endpoint, Producer> pool = new ProducerServicePool(10);
+    private final ServicePool<Endpoint, Producer> pool;
 
-    // TODO: Let CamelContext expose a global producer cache
     // TODO: Have easy configuration of pooling in Camel
-    // TODO: Have a SPI interface for pluggable connection pools
+
+    public ProducerCache(ServicePool<Endpoint, Producer> producerServicePool) {
+        this.pool = producerServicePool;
+    }
 
     public Producer getProducer(Endpoint endpoint) {
         // As the producer is returned outside this method we do not want to return pooled producers

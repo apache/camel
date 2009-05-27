@@ -71,7 +71,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+        getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 Exchange wireTapExchange = configureExchange(exchange, pattern);
                 procesWireTap(producer, wireTapExchange);

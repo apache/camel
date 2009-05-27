@@ -29,13 +29,13 @@ import org.apache.camel.Producer;
  *
  * @version $Revision$
  */
-public class ProducerServicePool extends DefaultServicePool<Endpoint, Producer> {
+public class DefaultProducerServicePool extends DefaultServicePool<Endpoint, Producer> {
 
-    public ProducerServicePool(int capacity) {
+    public DefaultProducerServicePool(int capacity) {
         super(capacity);
     }
 
-    synchronized int size() {
+    public synchronized int size() {
         int size = 0;
         for (BlockingQueue<Producer> queue : pool.values()) {
             size += queue.size();

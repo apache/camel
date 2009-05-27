@@ -42,6 +42,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
@@ -68,6 +69,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.ServicePool;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.SystemHelper;
@@ -118,6 +120,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
     private ClassResolver classResolver;
     private PackageScanClassResolver packageScanClassResolver;
+    // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
+    // so if we have 6 endpoints in the pool, we have 6 x 100 producers in total
+    private ServicePool<Endpoint, Producer> producerServicePool = new DefaultProducerServicePool(100);
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -839,6 +844,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    public void setProducerServicePool(ServicePool<Endpoint, Producer> producerServicePool) {
+        this.producerServicePool = producerServicePool;
+    }
+
+    public ServicePool<Endpoint, Producer> getProducerServicePool() {
+        return producerServicePool;
+    }
+
     public void start() throws Exception {
         super.start();
         
@@ -850,6 +863,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
+        producerServicePool.stop();
+
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
 
@@ -858,6 +873,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     protected void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
+
+        producerServicePool.start();
 
         if (isStreamCacheEnabled()) {
             // only add a new stream cache if not already configured
