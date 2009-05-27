@@ -870,4 +870,26 @@ public final class ObjectHelper {
         return sb.toString();
     }
 
+    public static String after(String text, String after) {
+        if (!text.contains(after)) {
+            return null;
+        }
+        return text.substring(text.indexOf(after) + after.length());
+    }
+
+    public static String before(String text, String before) {
+        if (!text.contains(before)) {
+            return null;
+        }
+        return text.substring(0, text.indexOf(before));
+    }
+
+    public static String between(String text, String after, String before) {
+        text = after(text, after);
+        if (text == null) {
+            return null;
+        }
+        return before(text, before);
+    }
+
 }
