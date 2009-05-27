@@ -35,8 +35,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * Interface used to represent the context used to configure routes and the
