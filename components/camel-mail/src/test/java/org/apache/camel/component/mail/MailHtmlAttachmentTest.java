@@ -79,7 +79,7 @@ public class MailHtmlAttachmentTest extends ContextTestSupport {
 
         // content type should match
         // TODO: content type does not work with geronomi mail jar (its a buggy jar, use SUN mail jar instead)
-        // assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
+        assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
 
         // save logo for visual inspection
         template.sendBodyAndHeader("file://target", bytes, Exchange.FILE_NAME, "maillogo.jpg");

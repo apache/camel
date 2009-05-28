@@ -55,7 +55,7 @@ public class MailConfiguration implements Cloneable {
     private long connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
     private boolean dummyTrustManager;
     private String contentType = "text/plain";
-    private String alternateBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
+    private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
     private boolean useInlineAttachments;
 
     public MailConfiguration() {
@@ -408,12 +408,12 @@ public class MailConfiguration implements Cloneable {
         this.contentType = contentType;
     }
 
-    public String getAlternateBodyHeader() {
-        return alternateBodyHeader;
+    public String getAlternativeBodyHeader() {
+        return alternativeBodyHeader;
     }
 
-    public void setAlternateBodyHeader(String alternateBodyHeader) {
-        this.alternateBodyHeader = alternateBodyHeader;
+    public void setAlternativeBodyHeader(String alternativeBodyHeader) {
+        this.alternativeBodyHeader = alternativeBodyHeader;
     }
 
     public boolean isUseInlineAttachments() {

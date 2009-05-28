@@ -393,7 +393,7 @@ public class MailBinding {
     }
 
     protected static String getAlternativeBody(MailConfiguration configuration, org.apache.camel.Message camelMessage) {
-        String alternativeBodyHeader = configuration.getAlternateBodyHeader();
+        String alternativeBodyHeader = configuration.getAlternativeBodyHeader();
         return camelMessage.getHeader(alternativeBodyHeader, java.lang.String.class);
     }
 

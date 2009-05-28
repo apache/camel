@@ -40,7 +40,7 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
      // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint("smtp://ryan@mymailserver.com?password=secret", MailEndpoint.class);
         endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);
-        endpoint.getConfiguration().setAlternateBodyHeader(MailConstants.MAIL_ALTERNATIVE_BODY);
+        endpoint.getConfiguration().setAlternativeBodyHeader(MailConstants.MAIL_ALTERNATIVE_BODY);
 
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         Exchange exchange = endpoint.createExchange();
