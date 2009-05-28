@@ -60,7 +60,7 @@ public class FileConsumeAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("file://target/files/?delete=true&delay=10000")
-                    .async()
+                    .threads()
                         .to("mock:before")
                         .delay(3000)
                         .to("mock:result");

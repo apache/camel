@@ -43,7 +43,7 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
 
                 from("direct:in")
-                    .async(2)
+                    .threads(2)
                     .to("mock:foo")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -79,7 +79,7 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
 
                 from("direct:in")
-                    .async(2).waitForTaskToComplete(WaitForTaskToComplete.Newer)
+                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Newer)
                     .to("mock:foo")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

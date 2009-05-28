@@ -43,7 +43,7 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").idempotentConsumer(
                         header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                ).async().to("mock:result");
+                ).threads().to("mock:result");
             }
         });
         context.start();
@@ -68,7 +68,7 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                ).async().process(new Processor() {
+                ).threads().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         if (id.equals("2")) {

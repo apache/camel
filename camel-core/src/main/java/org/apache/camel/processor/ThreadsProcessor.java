@@ -27,7 +27,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
- * Async processor that turns the processing going forward into async mode.
+ * Threads processor that leverage a thread pool for processing exchanges.
  * <p/>
  * The original caller thread will receive a <tt>Future&lt;Exchange&gt;</tt> in the OUT message body.
  * It can then later use this handle to obtain the async response.
@@ -37,13 +37,13 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  *
  * @version $Revision$
  */
-public class AsyncProcessor extends DelegateProcessor implements Processor {
+public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
     private static final int DEFAULT_THREADPOOL_SIZE = 5;
     private ExecutorService executorService;
     private WaitForTaskToComplete waitTaskComplete;
 
-    public AsyncProcessor(Processor output, ExecutorService executorService, WaitForTaskToComplete waitTaskComplete) {
+    public ThreadsProcessor(Processor output, ExecutorService executorService, WaitForTaskToComplete waitTaskComplete) {
         super(output);
         this.executorService = executorService;
         this.waitTaskComplete = waitTaskComplete;

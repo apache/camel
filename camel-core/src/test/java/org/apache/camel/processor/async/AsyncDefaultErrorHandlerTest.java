@@ -40,7 +40,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                    .async(2)
+                    .threads(2)
                     .to("mock:foo")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -68,7 +68,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                    .async(2).waitForTaskToComplete(WaitForTaskToComplete.Newer)
+                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Newer)
                     .to("mock:foo")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

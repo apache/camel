@@ -25,19 +25,19 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
-import org.apache.camel.processor.AsyncProcessor;
+import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
- * Represents an XML &lt;async/&gt; element
+ * Represents an XML &lt;threads/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "async")
+@XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
+public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;
@@ -61,22 +61,22 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
         // wrap it in a unit of work so the route that comes next is also done in a unit of work
         UnitOfWorkProcessor uow = new UnitOfWorkProcessor(childProcessor);
 
-        return new AsyncProcessor(uow, executorService, waitForTaskToComplete);
+        return new ThreadsProcessor(uow, executorService, waitForTaskToComplete);
     }
 
     @Override
     public String getLabel() {
-        return "async";
+        return "threads";
     }
 
     @Override
     public String getShortName() {
-        return "async";
+        return "threads";
     }
 
     @Override
     public String toString() {
-        return "Async[" + getOutputs() + "]";
+        return "Threads[" + getOutputs() + "]";
     }
 
     /**
@@ -84,7 +84,7 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
      *
      * @return the builder
      */
-    public AsyncDefinition executorService(ExecutorService executorService) {
+    public ThreadsDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
@@ -94,7 +94,7 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
      *
      * @return the builder
      */
-    public AsyncDefinition poolSize(int poolSize) {
+    public ThreadsDefinition poolSize(int poolSize) {
         setPoolSize(poolSize);
         return this;
     }
@@ -107,7 +107,7 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
      * @param wait the wait option
      * @return the builder
      */
-    public AsyncDefinition waitForTaskToComplete(WaitForTaskToComplete wait) {
+    public ThreadsDefinition waitForTaskToComplete(WaitForTaskToComplete wait) {
         setWaitForTaskToComplete(wait);
         return this;
     }

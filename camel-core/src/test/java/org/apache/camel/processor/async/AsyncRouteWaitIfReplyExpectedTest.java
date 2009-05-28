@@ -80,7 +80,7 @@ public class AsyncRouteWaitIfReplyExpectedTest extends ContextTestSupport {
                             // to be used to grape the async response when he fell like it
                             // we only want to wait for tasks to complete if we expect a reply
                             // otherwise not
-                        .async().waitForTaskToComplete(WaitForTaskToComplete.IfReplyExpected)
+                        .threads().waitForTaskToComplete(WaitForTaskToComplete.IfReplyExpected)
                             // from this point forward this is the async route doing its work
                             // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")

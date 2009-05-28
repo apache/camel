@@ -104,7 +104,7 @@ public class AsyncRouteNoWaitWithErrorTest extends ContextTestSupport {
                             // now turn the route into async from this point forward
                             // the caller will have a Future<Exchange> returned as response in OUT
                             // to be used to grap the async response when he fell like it
-                        .async().waitForTaskToComplete(WaitForTaskToComplete.Newer)
+                        .threads().waitForTaskToComplete(WaitForTaskToComplete.Newer)
                             // from this point forward this is the async route doing its work
                             // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")

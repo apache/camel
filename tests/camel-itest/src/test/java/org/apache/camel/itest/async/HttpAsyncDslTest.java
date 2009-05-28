@@ -100,11 +100,12 @@ public class HttpAsyncDslTest extends ContextTestSupport {
                     // do some sanity check validation
                     .to("bean:validateOrder")
                     .to("mock:validate")
+                    // use multi threading with a pool size of 20
                     // turn the route async as some others do not expect a reply
-                    // and a few does then we can use the async DSL as a turning point
+                    // and a few does then we can use the threads DSL as a turning point
                     // if the JMS ReplyTo was set then we expect a reply, otherwise not
                     // use a pool of 20 threads for the point forward
-                    .async(20)
+                    .threads(20)
                     // do some CPU heavy processing of the message (we simulate and delay just 100 ms)
                     .unmarshal(mySecureDataFormat).delay(100).to("bean:handleOrder").to("mock:order");
                 // END SNIPPET: e1

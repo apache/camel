@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
@@ -672,8 +671,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Breaks the route into asynchronous. The caller thread will either wait for the async route
-     * to complete or imeddiately comntinue. If continue the OUT message will
+     * Leverages a thread pool for multi threading processing exchanges.
+     * <p/>
+     * The caller thread will either wait for the async route
+     * to complete or imeddiately continue. If continue the OUT message will
      * contain a {@link java.util.concurrent.Future} handle so you can get the real response
      * later using this handle.
      * <p/>
@@ -686,30 +687,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the builder
      */
-    public AsyncDefinition async() {
-        AsyncDefinition answer = new AsyncDefinition();
+    public ThreadsDefinition threads() {
+        ThreadsDefinition answer = new ThreadsDefinition();
         addOutput(answer);
         return answer;
     }
 
     /**
-     * Breaks the route into asynchronous. The caller thread will either wait for the async route
-     * to complete or imeddiately comntinue. If continue the OUT message will
-     * contain a {@link java.util.concurrent.Future} handle so you can get the real response
-     * later using this handle.
+     * Leverages a thread pool for multi threading processing exchanges.
      * <p/>
-     * Will default wait for the async route to complete, but this behavior can be overriden by:
-     * <ul>
-     *   <li>Configuring the <tt>waitForTaskToComplete</tt> option</li>
-     *   <li>Provide an IN header with the key {@link org.apache.camel.Exchange#ASYNC_WAIT} with the
-     * value containing a type {@link org.apache.camel.WaitForTaskToComplete}. The header will take precedence, if provided.</li>
-     * </ul>
+     * See {@link #threads()} for more details.
      *
      * @param poolSize the core pool size
      * @return the builder
      */
-    public AsyncDefinition async(int poolSize) {
-        AsyncDefinition answer = async();
+    public ThreadsDefinition threads(int poolSize) {
+        ThreadsDefinition answer = threads();
         answer.setPoolSize(poolSize);
         return answer;
     }

@@ -15,7 +15,6 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 AggregateDefinition
-AsyncDefinition
 BeanDefinition
 CatchDefinition
 ChoiceDefinition
@@ -62,6 +61,7 @@ SetPropertyDefinition
 SortDefinition
 SplitDefinition
 StopDefinition
+ThreadsDefinition
 ThrottleDefinition
 ThrowExceptionDefinition
 ToDefinition

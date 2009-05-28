@@ -66,7 +66,7 @@ public class FileConcurrentTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
                     .setHeader("id", file("${file:onlyname.noext}"))
-                    .async(20)
+                    .threads(20)
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal()).batchSize(10).batchTimeout(60000).to("mock:result");
             }

@@ -30,14 +30,14 @@
                 <constant>Hello World</constant>
             </transform>
 
-            <async waitForTaskToComplete="IfReplyExpected">
+            <threads waitForTaskToComplete="IfReplyExpected">
                 <to uri="mock:foo"/>
                 <delay>
                     <constant>500</constant>
                 </delay>
                 <process ref="myProcessor"/>
                 <to uri="mock:result"/>
-            </async>
+            </threads>
 
         </route>
     </camelContext>

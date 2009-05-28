@@ -37,7 +37,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
             public void configure() throws Exception {
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
                     .setHeader("id", file("${file:onlyname.noext}"))
-                    .async(20)
+                    .threads(20)
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal()).batchConsumer().batchTimeout(60000).to("mock:result");
             }
