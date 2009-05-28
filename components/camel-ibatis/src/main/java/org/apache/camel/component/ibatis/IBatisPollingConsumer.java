@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.ibatis;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
@@ -141,7 +142,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         List data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
 
         // create a list of exchange objects with the data
-        List<DataHolder> answer = new ArrayList<DataHolder>();
+        Queue<DataHolder> answer = new LinkedList<DataHolder>();
         if (useIterator) {
             for (Object item : data) {
                 Exchange exchange = createExchange(item);
@@ -164,15 +165,15 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         processBatch(answer);
     }
 
-    public void processBatch(List exchanges) throws Exception {
+    public void processBatch(Queue exchanges) throws Exception {
         final IBatisEndpoint endpoint = getEndpoint();
-        final List<DataHolder> list = exchanges;
 
-        int total = list.size();
+        int total = exchanges.size();
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            Exchange exchange = list.get(index).exchange;
-            Object data = list.get(index).data;
+            DataHolder holder = (DataHolder) exchanges.poll();
+            Exchange exchange = holder.exchange;
+            Object data = holder.data;
 
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);

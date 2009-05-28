@@ -17,8 +17,9 @@
 package org.apache.camel.component.jpa;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -66,7 +67,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
     protected void poll() throws Exception {
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                List<DataHolder> answer = new ArrayList<DataHolder>();
+                Queue<DataHolder> answer = new LinkedList<DataHolder>();
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
@@ -91,19 +92,18 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
         });
     }
 
-    public void processBatch(List exchanges) throws Exception {
-        final List<DataHolder> list = exchanges;
-        if (list.isEmpty()) {
+    public void processBatch(Queue exchanges) throws Exception {
+        if (exchanges.isEmpty()) {
             return;
         }
 
-        EntityManager entityManager = list.get(0).manager;
-        int total = list.size();
-
+        int total = exchanges.size();
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            Exchange exchange = list.get(index).exchange;
-            Object result = list.get(index).result;
+            DataHolder holder = (DataHolder) exchanges.poll();
+            EntityManager entityManager = holder.manager;
+            Exchange exchange = holder.exchange;
+            Object result = holder.result;
 
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);

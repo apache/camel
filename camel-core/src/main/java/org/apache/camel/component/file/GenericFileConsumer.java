@@ -18,7 +18,9 @@ package org.apache.camel.component.file;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
@@ -72,7 +74,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         // sort using build in sorters that is expression based
         // first we need to convert to RemoteFileExchange objects so we can sort
         // using expressions
-        List<GenericFileExchange<T>> exchanges = new ArrayList<GenericFileExchange<T>>(files.size());
+        LinkedList<GenericFileExchange> exchanges = new LinkedList<GenericFileExchange>();
         for (GenericFile<T> file : files) {
             GenericFileExchange<T> exchange = endpoint.createExchange(file);
             endpoint.configureMessage(file, exchange.getIn());
@@ -89,15 +91,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             log.debug("Total " + total + " files to consume");
         }
 
-        processBatch(new ArrayList<Exchange>(exchanges));
+        processBatch(exchanges);
     }
 
     @SuppressWarnings("unchecked")
-    public void processBatch(List<Exchange> exchanges) {
+    public void processBatch(Queue exchanges) {
         int total = exchanges.size();
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.get(index);
+            // use poll to remove the head so it does not consume memory even after we have processed it
+            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.poll();
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);

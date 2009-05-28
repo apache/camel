@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
@@ -106,7 +106,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
                     messages = folder.getMessages();
                 }
 
-                List<Exchange> exchanges = createExchanges(messages);
+                Queue<Exchange> exchanges = createExchanges(messages);
                 processBatch(exchanges);
 
             } else if (count == -1) {
@@ -127,11 +127,11 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
     }
 
-    public void processBatch(List<Exchange> exchanges) throws Exception {
+    public void processBatch(Queue exchanges) throws Exception {
         int total = exchanges.size();
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            MailExchange exchange = (MailExchange) exchanges.get(index);
+            MailExchange exchange = (MailExchange) exchanges.poll();
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
@@ -147,8 +147,8 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
     }
 
-    protected List<Exchange> createExchanges(Message[] messages) throws MessagingException {
-        List<Exchange> answer = new ArrayList<Exchange>();
+    protected Queue<Exchange> createExchanges(Message[] messages) throws MessagingException {
+        Queue<Exchange> answer = new LinkedList<Exchange>();
 
         int fetchSize = endpoint.getConfiguration().getFetchSize();
         int count = fetchSize == -1 ? messages.length : Math.min(fetchSize, messages.length);

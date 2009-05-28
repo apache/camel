@@ -16,7 +16,7 @@
  */
 package org.apache.camel;
 
-import java.util.List;
+import java.util.Queue;
 
 /**
  * A consumer of a batch of message exchanges from an {@link Endpoint}
@@ -34,6 +34,6 @@ public interface BatchConsumer extends Consumer {
      * @param exchanges list of exchanges in this batch
      * @throws Exception if an internal processing error has occurred.
      */
-    void processBatch(List<Exchange> exchanges) throws Exception;
+    void processBatch(Queue exchanges) throws Exception;
 
 }
