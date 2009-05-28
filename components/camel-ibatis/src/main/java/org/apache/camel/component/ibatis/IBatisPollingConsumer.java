@@ -97,9 +97,11 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
 
     private static final Log LOG = LogFactory.getLog(IBatisPollingConsumer.class);
 
-    private class DataHolder {
+    private final class DataHolder {
         private Exchange exchange;
         private Object data;
+        private DataHolder() {
+        }
     }
 
     /**

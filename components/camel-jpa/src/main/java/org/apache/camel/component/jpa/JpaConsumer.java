@@ -49,10 +49,12 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
     private String namedQuery;
     private String nativeQuery;
 
-    private class DataHolder {
+    private final class DataHolder {
         private Exchange exchange;
         private Object result;
         private EntityManager manager;
+        private DataHolder() {
+        }
     }
 
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
