@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,10 +32,13 @@ import org.apache.camel.component.http.helper.GZIPHelper;
  * @version $Revision$
  */
 @Converter
-public class HttpConverter {
+public final class HttpConverter {
+
+    private HttpConverter() {
+    }
 
     @Converter
-    public HttpServletRequest toServletRequest(HttpMessage message) {
+    public static HttpServletRequest toServletRequest(HttpMessage message) {
         if (message == null) {
             return null;
         }
@@ -44,7 +46,7 @@ public class HttpConverter {
     }
 
     @Converter
-    public ServletInputStream toServletInputStream(HttpMessage message) throws IOException {
+    public static ServletInputStream toServletInputStream(HttpMessage message) throws IOException {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getInputStream();
@@ -53,21 +55,26 @@ public class HttpConverter {
     }
 
     @Converter
-    public InputStream toInputStream(HttpMessage message) throws Exception {
-        HttpServletRequest request = toServletRequest(message);
-        if (request != null) {
-            return GZIPHelper.getInputStream(request);
-        }
-        return null;
+    public static InputStream toInputStream(HttpMessage message) throws Exception {
+        return toInputStream(toServletRequest(message));
     }
 
     @Converter
-    public BufferedReader toReader(HttpMessage message) throws IOException {
+    public static BufferedReader toReader(HttpMessage message) throws IOException {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getReader();
         }
         return null;
+    }
+
+    @Converter
+    public static InputStream toInputStream(HttpServletRequest request) throws IOException {
+        if (request == null) {
+            return null;
+        }
+        String contentEncoding = request.getHeader(GZIPHelper.CONTENT_ENCODING);
+        return GZIPHelper.toGZIPInputStream(contentEncoding, request.getInputStream());
     }
 
 }

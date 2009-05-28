@@ -33,11 +33,13 @@ import java.io.ByteArrayOutputStream;
  * is using.
  */
 public class LoadingByteArrayOutputStream extends ByteArrayOutputStream {
+
     public LoadingByteArrayOutputStream() {
         super(1024);
     }
-    public LoadingByteArrayOutputStream(int i) {
-        super(i);
+
+    public LoadingByteArrayOutputStream(int size) {
+        super(size);
     }
 
     public ByteArrayInputStream createInputStream() {

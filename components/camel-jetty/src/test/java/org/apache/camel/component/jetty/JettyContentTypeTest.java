@@ -34,7 +34,7 @@ public class JettyContentTypeTest extends ContextTestSupport {
         exchange.getIn().setHeader("user", "Claus");
         exchange.getIn().setHeader("Content-Type", "text/xml");
         if (usingGZip) {
-            GZIPHelper.setGZIPMessageHeader(exchange.getIn());
+            exchange.getIn().setHeader(GZIPHelper.CONTENT_ENCODING, "gzip");
         }
         template.send(endpoint, exchange);
 

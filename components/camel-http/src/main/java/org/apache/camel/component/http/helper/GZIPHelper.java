@@ -16,116 +16,98 @@
  */
 package org.apache.camel.component.http.helper;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Message;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpMethod;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * 
- * Helper/Utility class to help wrapping
- * content into GZIP Input/Output Streams.
- * 
- *
+ * Helper class to help wrapping content into GZIP input and output streams.
  */
 public final class GZIPHelper {
 
     public static final String CONTENT_ENCODING = "Content-Encoding";
     public static final String GZIP = "gzip";
-    
+
 
     // No need for instatiating, so avoid it.
-    private GZIPHelper() { }
+    private GZIPHelper() {
+    }
     
+    /**
+     * @deprecated set the header using {@link Message#setHeader(String, Object)}
+     */
     public static void setGZIPMessageHeader(Message message) {
         message.setHeader(CONTENT_ENCODING, GZIP);
     }
-    
+
+    /**
+     * @deprecated set the header using {@link HttpServletResponse#setHeader(String, String)}
+     */
     public static void setGZIPContentEncoding(HttpServletResponse response) {
         response.setHeader(CONTENT_ENCODING, GZIP);
     }
 
-    // --------- Methods To Decompress ----------
-
-    public static InputStream getInputStream(HttpMethod method)
-        throws IOException {
-
-        Header header = method.getRequestHeader(CONTENT_ENCODING);
-        String contentEncoding =  header != null ? header.getValue() : null;
-        return getGZIPWrappedInputStream(contentEncoding, 
-            method.getResponseBodyAsStream());
-    }
-
-    public static InputStream getInputStream(HttpServletRequest request) throws IOException {
-        InputStream dataStream = request.getInputStream();
-        String contentEncoding = request.getHeader(CONTENT_ENCODING);
-        return getGZIPWrappedInputStream(contentEncoding, dataStream);
-    }
-
-    public static InputStream getGZIPWrappedInputStream(String gzipEncoding,
-        InputStream inStream) throws IOException {
-        if (containsGzip(gzipEncoding)) {
-            return new GZIPInputStream(new BufferedInputStream(inStream));
+    public static InputStream toGZIPInputStream(String contentEncoding, InputStream in) throws IOException {
+        if (isGzip(contentEncoding)) {
+            return new GZIPInputStream(in);
         } else {
-            return inStream;
+            return in;
         }
     }
 
-    public static InputStream toGZIPInputStreamIfRequested(String gzipEncoding, byte[] array)
-        throws Exception {
-        if (containsGzip(gzipEncoding)) {
-            // GZip byte array content
-            ByteArrayOutputStream outputByteArray = new ByteArrayOutputStream();
-            GZIPOutputStream gzipOutputStream = new GZIPOutputStream(
-                outputByteArray);
-            gzipOutputStream.write(array);
-            gzipOutputStream.close();
-            return new ByteArrayInputStream(outputByteArray.toByteArray());
+    public static InputStream toGZIPInputStream(String contentEncoding, byte[] data) throws Exception {
+        if (isGzip(contentEncoding)) {
+            ByteArrayOutputStream os = null;
+            GZIPOutputStream gzip = null;
+            try {
+                os = new ByteArrayOutputStream();
+                gzip = new GZIPOutputStream(os);
+                gzip.write(data);
+                gzip.finish();
+                return new ByteArrayInputStream(os.toByteArray());
+            } finally {
+                ObjectHelper.close(gzip, "gzip", null);
+                ObjectHelper.close(os, "byte array", null);
+            }
         } else {
-            return new ByteArrayInputStream(array);
+            return new ByteArrayInputStream(data);
         }
     }
 
-    // -------------- Methods To Compress --------------
-
-    public static byte[] compressArrayIfGZIPRequested(String gzipEncoding,
-        byte[] array) throws IOException {
-        if (containsGzip(gzipEncoding)) {
-            return getGZIPWrappedOutputStream(array).toByteArray();
-        } else {
-            return array;
+    public static byte[] compressGZIP(byte[] data) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(os);
+        try {
+            gzip.write(data);
+            gzip.finish();
+            return os.toByteArray();
+        } finally {
+            gzip.close();
+            os.close();
         }
     }
-    
-    public static byte[] compressArrayIfGZIPRequested(String gzipEncoding,
-            byte[] array, HttpServletResponse response) throws IOException {
-        if (containsGzip(gzipEncoding)) {
-            return getGZIPWrappedOutputStream(array).toByteArray();
-        } else {
-            return array;
-        }
-    }
-    
-    public static ByteArrayOutputStream getGZIPWrappedOutputStream(byte[] array) throws IOException {
-        ByteArrayOutputStream compressed = new ByteArrayOutputStream();
-        GZIPOutputStream gzout = new GZIPOutputStream(compressed);
-        gzout.write(array);
-        gzout.close();
-        return compressed;
+
+    public static boolean isGzip(Message message) {
+        return isGzip(message.getHeader(CONTENT_ENCODING, String.class));
     }
 
+    public static boolean isGzip(String header) {
+        return header != null && header.toLowerCase().contains("gzip");
+    }
+
+    /**
+     * @deprecated use isGzip
+     */
     public static boolean containsGzip(String str) {
         return str != null && str.toLowerCase().indexOf(GZIP) >= 0;
     }
+
 
 }

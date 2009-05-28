@@ -34,7 +34,7 @@ public class JettyImageFileTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
         Exchange exchange = endpoint.createExchange();        
         if (usingGZip) {
-            GZIPHelper.setGZIPMessageHeader(exchange.getIn());
+            exchange.getIn().setHeader(GZIPHelper.CONTENT_ENCODING, "gzip");
         }
         template.send(endpoint, exchange);
 
