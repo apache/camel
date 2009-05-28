@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.Map;
-
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -180,15 +179,16 @@ public class JmsMessage extends DefaultMessage {
     @Override
     protected String createMessageId() {
         if (jmsMessage == null) {
-            LOG.info("The jmsMessage is not set yet, call the super's createMessageId");
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("No javax.jms.Message set so generating a new message id");
+            }
             return super.createMessageId();
         }
         try {
             String id = getDestinationAsString(jmsMessage.getJMSDestination()) + jmsMessage.getJMSMessageID();
             return getSanitizedString(id);
         } catch (JMSException e) {
-            LOG.error("Failed to get message id from message " + jmsMessage, e);
-            return super.createMessageId();
+            throw new RuntimeCamelException("Failed to get JMSMessageID property", e);
         }
     }
 
