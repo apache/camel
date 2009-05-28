@@ -52,14 +52,15 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        template.sendBody(uri, "<person><id>" + (start + i) + "</id><name>James</name></person>");
+                        template.sendBody(uri, "<person><id>" + (start + i + 1) + "</id><name>James</name></person>");
                     }
                 }
             });
         }
 
-        mock.assertIsSatisfied();
         mock.assertNoDuplicates(body());
+
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
