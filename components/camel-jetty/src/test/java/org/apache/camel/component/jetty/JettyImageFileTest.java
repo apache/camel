@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.util.MessageHelper;
 
 /**
@@ -35,7 +35,7 @@ public class JettyImageFileTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
         Exchange exchange = endpoint.createExchange();        
         if (usingGZip) {
-            GZIPHelper.setGZIPMessageHeader(exchange.getIn());
+            exchange.getIn().setHeader(HttpConstants.CONTENT_ENCODING, "gzip");
         }
         template.send(endpoint, exchange);
 

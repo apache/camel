@@ -21,7 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 
@@ -29,6 +29,7 @@ import org.apache.camel.util.MessageHelper;
  * Unit test for content-type
  */
 public class JettyContentTypeTest extends ContextTestSupport {
+
     protected void sendMessageWithContentType(boolean usingGZip) {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
@@ -36,12 +37,12 @@ public class JettyContentTypeTest extends ContextTestSupport {
         exchange.getIn().setHeader("user", "Claus");
         exchange.getIn().setHeader("Content-Type", "text/xml");
         if (usingGZip) {
-            GZIPHelper.setGZIPMessageHeader(exchange.getIn());
+            exchange.getIn().setHeader(HttpConstants.CONTENT_ENCODING, "gzip");
         }
         template.send(endpoint, exchange);
 
         String body = exchange.getOut().getBody(String.class);
-        System.out.print("The out message header is " + exchange.getOut().getHeaders());
+        // System.out.print("The out message header is " + exchange.getOut().getHeaders());
         assertEquals("<order>OK</order>", body);
         assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "text/xml");
     }

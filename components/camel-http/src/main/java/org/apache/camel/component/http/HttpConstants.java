@@ -19,9 +19,12 @@ package org.apache.camel.component.http;
 /**
  * Constants
  */
-public final class HttpConstants {    
+public final class HttpConstants {
+
+    public static final String CONTENT_ENCODING = "Content-Encoding";
 
     private HttpConstants() {
         // utility class
     }
+
 }

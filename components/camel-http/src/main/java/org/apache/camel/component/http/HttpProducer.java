@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,7 +29,7 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -36,7 +37,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -156,16 +156,22 @@ public class HttpProducer extends DefaultProducer {
      * @throws IOException can be thrown
      */
     protected static InputStream extractResponseBody(HttpMethod method, Exchange exchange) throws IOException {
-        InputStream is = null;
+        InputStream is = method.getResponseBodyAsStream();
+        if (is == null) {
+            return null;
+        }
+
+        Header header = method.getRequestHeader(HttpConstants.CONTENT_ENCODING);
+        String contentEncoding = header != null ? header.getValue() : null;
+
+        is = GZIPHelper.toGZIPInputStream(contentEncoding, is);
+        return doExtractResponseBody(is, exchange);
+    }
+
+    private static InputStream doExtractResponseBody(InputStream is, Exchange exchange) throws IOException {
         try {
             CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
-            is = GZIPHelper.getInputStream(method);            
-            // in case of no response stream
-            if (is == null) {
-                return null;
-            }
-            IOUtils.copy(is, cos);
-            cos.flush();
+            IOHelper.copy(is, cos);
             return cos.getInputStream();
         } finally {
             ObjectHelper.close(is, "Extracting response body", LOG);            
@@ -225,7 +231,7 @@ public class HttpProducer extends DefaultProducer {
         }
         if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
-            if (requestEntity.getContentType() == null) {
+            if (requestEntity != null && requestEntity.getContentType() == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No Content-Type provided for URI: " + uri + " with exchange: " + exchange);
                 }

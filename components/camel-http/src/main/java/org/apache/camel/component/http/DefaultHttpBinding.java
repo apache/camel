@@ -22,16 +22,19 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
-
+import java.util.zip.GZIPOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
@@ -90,7 +93,6 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
         headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
-        
     }
 
     public void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException {
@@ -111,9 +113,9 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     private void copyProtocolHeaders(Message request, Message response) {
-        if (request.getHeader(GZIPHelper.CONTENT_ENCODING) != null) {            
-            String contentEncoding = request.getHeader(GZIPHelper.CONTENT_ENCODING, String.class);            
-            response.setHeader(GZIPHelper.CONTENT_ENCODING, contentEncoding);
+        if (request.getHeader(HttpConstants.CONTENT_ENCODING) != null) {
+            String contentEncoding = request.getHeader(HttpConstants.CONTENT_ENCODING, String.class);
+            response.setHeader(HttpConstants.CONTENT_ENCODING, contentEncoding);
         }        
     }
 
@@ -155,46 +157,54 @@ public class DefaultHttpBinding implements HttpBinding {
 
         // write the body.
         if (message.getBody() != null) {
-            // try to stream the body since that would be the most efficient
-            InputStream is = message.getBody(InputStream.class);
-            if (is != null) {
-                ServletOutputStream os = response.getOutputStream();
-                try {
-                    ByteArrayOutputStream initialArray = new ByteArrayOutputStream();
-                    int c;
-                    // TODO: Use a buffer to write faster instead of looping one char at a time
-                    while ((c = is.read()) >= 0) {
-                        initialArray.write(c);
-                    }
-                    byte[] processedArray = processReponseContent(message, initialArray.toByteArray(), response);
-                    os.write(processedArray);
-                    // set content length before we flush
-                    // Here the processedArray length is used instead of the
-                    // length of the characters in written to the initialArray
-                    // because if the method processReponseContent compresses
-                    // the data, the processedArray may contain a different length 
-                    response.setContentLength(processedArray.length);
-                    os.flush();
-                } finally {
-                    os.close();
-                    is.close();
-                }
+            if (GZIPHelper.isGzip(message)) {
+                doWriteGZIPResponse(message, response, exchange);
             } else {
-                String data = message.getBody(String.class);
-                if (data != null) {
-                    // set content length before we write data
-                    response.setContentLength(data.length());
-                    response.getWriter().print(data);
-                    response.getWriter().flush();
-                }
+                doWriteDirectResponse(message, response, exchange);
             }
-
         }
     }
-    
-    protected byte[] processReponseContent(Message message, byte[] array, HttpServletResponse response) throws IOException {
-        String gzipEncoding = message.getHeader(GZIPHelper.CONTENT_ENCODING, String.class);        
-        return GZIPHelper.compressArrayIfGZIPRequested(gzipEncoding, array, response);
+
+    protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+        InputStream is = message.getBody(InputStream.class);
+        if (is != null) {
+            ServletOutputStream os = response.getOutputStream();
+            try {
+                // copy directly from input stream to output stream
+                IOHelper.copy(is, os);
+            } finally {
+                os.close();
+                is.close();
+            }
+        } else {
+            // not convertable as a stream so try as a String
+            String data = message.getBody(String.class);
+            if (data != null) {
+                // set content length before we write data
+                response.setContentLength(data.length());
+                response.getWriter().print(data);
+                response.getWriter().flush();
+            }
+        }
+    }
+
+    protected void doWriteGZIPResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+        byte[] bytes;
+        try {
+            bytes = message.getMandatoryBody(byte[].class);
+        } catch (InvalidPayloadException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
+        byte[] data = GZIPHelper.compressGZIP(bytes);
+        ServletOutputStream os = response.getOutputStream();
+        try {
+            response.setContentLength(data.length);
+            os.write(data);
+            os.flush();
+        } finally {
+            os.close();
+        }
     }
 
     public Object parseBody(HttpMessage httpMessage) throws IOException {
@@ -207,7 +217,8 @@ public class DefaultHttpBinding implements HttpBinding {
         if (isUseReaderForPayload()) {
             return request.getReader();
         } else {
-            return GZIPHelper.getInputStream(request);
+            // otherwise use input stream
+            return HttpConverter.toInputStream(request);
         }
     }
 
