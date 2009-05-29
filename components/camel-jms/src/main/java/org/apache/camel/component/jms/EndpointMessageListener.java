@@ -60,6 +60,8 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     public void onMessage(final Message message) {
+        LOG.trace("onMessage START");
+
         if (LOG.isDebugEnabled()) {
             LOG.debug(endpoint + " consumer receiving JMS message: " + message);
         }
@@ -73,7 +75,13 @@ public class EndpointMessageListener implements MessageListener {
             }
 
             // process the exchange
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("onMessage.process START");
+            }
             processor.process(exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("onMessage.process END");
+            }
 
             // get the correct jms message to send as reply
             JmsMessage body = null;
@@ -105,7 +113,9 @@ public class EndpointMessageListener implements MessageListener {
 
             // send the reply if we got a response and the exchange is out capable
             if (rce == null && sendReply && !disableReplyTo && exchange.getPattern().isOutCapable()) {
+                LOG.trace("onMessage.sendReply START");
                 sendReply(replyDestination, message, exchange, body, cause);
+                LOG.trace("onMessage.sendReply END");
             }
 
         } catch (Exception e) {
@@ -114,8 +124,13 @@ public class EndpointMessageListener implements MessageListener {
 
         if (rce != null) {
             getExceptionHandler().handleException(rce);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("onMessage END throwing exception: " + rce.getMessage());
+            }
             throw rce;
         }
+
+        LOG.trace("onMessage END");
     }
 
     public JmsExchange createExchange(Message message, Destination replyDestination) {

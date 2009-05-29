@@ -270,7 +270,8 @@ public class JmsBinding {
                 // JMSDeliveryMode, JMSDestination, JMSExpiration, JMSPriorit
                 // The following are set on the underlying JMS provider:
                 // JMSMessageID, JMSTimestamp, JMSRedelivered
-                LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
+                // log at trace level to not spam log
+                LOG.trace("Ignoring JMS header: " + headerName + " with value: " + headerValue);
             }
         } else if (shouldOutputHeader(in, headerName, headerValue, exchange)) {
             // only primitive headers and strings is allowed as properties
