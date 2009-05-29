@@ -33,7 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Resltet producer concurrent test
- *
+ * 
  * @version $Revision$
  */
 public class RestletProducerConcurrentTest extends ContextTestSupport {
@@ -43,7 +43,7 @@ public class RestletProducerConcurrentTest extends ContextTestSupport {
     }
 
     public void testConcurrentProducers() throws Exception {
-       doSendMessages(10, 5);
+        doSendMessages(10, 5);
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
@@ -58,7 +58,10 @@ public class RestletProducerConcurrentTest extends ContextTestSupport {
                     Map<String, Object> headers = new HashMap<String, Object>();
                     headers.put("username", "davsclaus");
                     headers.put("id", index);
-                    return template.requestBodyAndHeaders("restlet:http://localhost:9080/users/{username}/{id}?restletMethod=POST", null, headers, String.class);
+                    return template
+                        .requestBodyAndHeaders(
+                                               "restlet:http://localhost:9080/users/{username}/{id}?restletMethod=POST",
+                                               null, headers, String.class);
                 }
             });
             responses.put(index, out);
@@ -83,8 +86,7 @@ public class RestletProducerConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}/{id}?restletMethod=POST")
-                    .to("log:inbox")
-                    .process(new Processor() {
+                    .to("log:inbox").process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String index = exchange.getIn().getHeader("id", String.class);
                             exchange.getOut().setBody(index);

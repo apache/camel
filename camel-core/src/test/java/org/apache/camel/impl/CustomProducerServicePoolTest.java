@@ -34,7 +34,7 @@ import org.apache.camel.spi.ServicePool;
  */
 public class CustomProducerServicePoolTest extends ContextTestSupport {
 
-    private static int COUNTER;
+    private static int counter;
 
     private class MyEndpoint extends DefaultEndpoint {
 
@@ -63,7 +63,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         }
 
         public void process(Exchange exchange) throws Exception {
-            COUNTER++;
+            counter++;
         }
     }
 
@@ -161,7 +161,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(2, COUNTER);
+        assertEquals(2, counter);
         assertEquals(1, pool.size());
     }
 
