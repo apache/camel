@@ -60,7 +60,7 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?append=false&noop=true";
+                String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
                 from(getFtpUrl()).to(fileUrl, "mock:result");
             }
         };

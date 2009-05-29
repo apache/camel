@@ -111,7 +111,7 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     public Exchange createExchange() {
         // create the file
-        String uri = "file://target/filelanguage";
+        String uri = "file://target/filelanguage?fileExist=Override";
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "test/hello.txt");
 
         // get the file handle

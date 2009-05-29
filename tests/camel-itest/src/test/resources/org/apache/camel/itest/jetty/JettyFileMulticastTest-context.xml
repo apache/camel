@@ -44,7 +44,7 @@
         <setHeader headerName="CamelFileName">
            <constant>test.xml</constant>
         </setHeader>
-        <to uri="file://target?append=false"/>
+        <to uri="file://target?fileExist=Override"/>
         <to uri="mock:fileEndpoint"/>
     </route>
     <route>

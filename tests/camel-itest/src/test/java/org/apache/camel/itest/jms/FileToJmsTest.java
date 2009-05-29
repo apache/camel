@@ -39,7 +39,7 @@ public class FileToJmsTest extends AbstractJUnit38SpringContextTests {
     public void testFileToJms() throws Exception {
         result.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/jmsfile?append=false", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/jmsfile?fileExist=Override", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
     }

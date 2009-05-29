@@ -30,7 +30,7 @@ public class FreemarkerContentCacheTest extends ContextTestSupport {
         super.setUp();
 
         // create a vm file in the classpath as this is the tricky reloading stuff
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?append=false", "Hello ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?fileExist=Override", "Hello ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
     }
 
     public void testNotCached() throws Exception {
@@ -41,7 +41,7 @@ public class FreemarkerContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?append=false", "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?fileExist=Override", "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
 
         mock.reset();
         mock.expectedBodiesReceived("Bye Paris");
@@ -58,7 +58,7 @@ public class FreemarkerContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?append=false", "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?fileExist=Override", "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye

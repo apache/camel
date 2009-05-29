@@ -138,12 +138,26 @@ public class FileOperations implements GenericFileOperations<File> {
     public boolean storeFile(String fileName, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 
+        File file = new File(fileName);
+
+        // if an existing file already exsists what should we do?
+        if (file.exists()) {
+            if (endpoint.getFileExist() == GenericFileExist.Ignore) {
+                // ignore but indicate that the file was written
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("An existing file already exists: " + file + ". Ignore and do not override it.");
+                }
+                return true;
+            } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
+                throw new GenericFileOperationFailedException("File already exist: " + file + ". Cannot write new file.");
+            }
+        }
+
         // we can write the file by 3 different techniques
         // 1. write file to file
         // 2. rename a file from a local work path
         // 3. write stream to file
 
-        File file = new File(fileName);
         try {
 
             // is the body file based
@@ -244,10 +258,11 @@ public class FileOperations implements GenericFileOperations<File> {
      * or override any existing content.
      */
     private FileChannel prepareOutputFileChannel(File target, FileChannel out) throws IOException {
-        if (endpoint.isAppend()) {
+        if (endpoint.getFileExist() == GenericFileExist.Append) {
             out = new RandomAccessFile(target, "rw").getChannel();
             out = out.position(out.size());
         } else {
+            // will override
             out = new FileOutputStream(target).getChannel();
         }
         return out;

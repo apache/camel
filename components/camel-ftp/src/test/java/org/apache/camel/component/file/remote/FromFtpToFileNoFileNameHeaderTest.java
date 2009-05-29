@@ -68,7 +68,7 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?append=false&noop=true";
+                String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
                 // we do not set any filename in the header property so the filename should be the one
                 // from the FTP server we downloaded
                 from(getFtpUrl()).convertBodyTo(String.class).to(fileUrl).to("mock:result");

@@ -64,7 +64,7 @@ public class FileProduceAppendTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                     .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("file://target/test-file-append?append=true", "mock:result");
+                    .to("file://target/test-file-append?fileExist=Append", "mock:result");
             }
         };
     }

@@ -22,31 +22,34 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test that we can produce files even for InOut MEP.
+ * @version $Revision$
  */
-public class FileMEPInOutTest extends ContextTestSupport {
+public class FileProducerFileExistAppendTest extends ContextTestSupport {
 
-    public void testMEPInOutTest() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        deleteDirectory("target/file");
+        template.sendBodyAndHeader("file://target/file", "Hello World\n", Exchange.FILE_NAME, "hello.txt");
+    }
+
+    public void testAppend() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/FileMEPInOutTest.txt", "Hello World");
+        mock.expectedBodiesReceived("Hello World\nBye World");
+        mock.expectedFileExists("target/file/hello.txt", "Hello World\nBye World");
 
-        // request is InOut
-        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
-            "FileMEPInOutTest.txt");
+        template.sendBodyAndHeader("file://target/file?fileExist=Append", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("file://target/?fileExist=Override")
-                    .to("mock:result");
+                from("file://target/file?noop=true&delay=1000").to("mock:result");
             }
         };
     }
-
 }

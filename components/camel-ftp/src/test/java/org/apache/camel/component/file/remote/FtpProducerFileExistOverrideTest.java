@@ -14,37 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.component.file.remote;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test that we can produce files even for InOut MEP.
+ * @version $Revision$
  */
-public class FileMEPInOutTest extends ContextTestSupport {
+public class FtpProducerFileExistOverrideTest extends FtpServerTestSupport {
 
-    public void testMEPInOutTest() throws Exception {
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&delay=2000&noop=true&fileExist=Override";
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        deleteDirectory(FTP_ROOT_DIR + "exist");
+        deleteDirectory("target/exist");
+
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
+    }
+
+    public void testOverride() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/FileMEPInOutTest.txt", "Hello World");
+        mock.expectedBodiesReceived("Bye World");
+        mock.expectedFileExists(FTP_ROOT_DIR + "exist/hello.txt", "Bye World");
 
-        // request is InOut
-        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
-            "FileMEPInOutTest.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("file://target/?fileExist=Override")
-                    .to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

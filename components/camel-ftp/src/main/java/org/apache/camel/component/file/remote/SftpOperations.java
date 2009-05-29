@@ -38,8 +38,10 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -358,14 +360,55 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean storeFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+        // if an existing file already exsists what should we do?
+        if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
+            boolean existFile = existFile(name);
+            if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
+                // ignore but indicate that the file was written
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("An existing file already exists: " + name + ". Ignore and do not override it.");
+                }
+                return true;
+            } else if (existFile && endpoint.getFileExist() == GenericFileExist.Fail) {
+                throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
+            }
+        }
+
         try {
             InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
-            channel.put(in, name);
+            if (endpoint.getFileExist() == GenericFileExist.Append) {
+                channel.put(in, name, ChannelSftp.APPEND);
+            } else {
+                // override is default
+                channel.put(in, name);
+            }
             return true;
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+        }
+    }
+
+    private boolean existFile(String name) {
+        // check whether a file already exists
+        String directory = FileUtil.onlyPath(name);
+        if (directory == null) {
+            return false;
+        }
+
+        String onlyName = FileUtil.stripPath(name);
+        try {
+            Vector files = channel.ls(directory);
+            for (Object file : files) {
+                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
+                if (entry.getFilename().equals(onlyName)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
     }
 

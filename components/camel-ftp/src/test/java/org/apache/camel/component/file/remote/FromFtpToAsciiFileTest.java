@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp3/camel?password=admin&binary=false";
+        return "ftp://admin@localhost:" + getPort() + "/tmp3/camel?password=admin&binary=false&fileExist=Override";
     }
 
     public void testFtpRoute() throws Exception {
@@ -67,7 +67,7 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?append=false&noop=true";
+                String fileUrl = "file:target/ftptest/?fileExist=Override&noop=true";
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.txt")).
                         convertBodyTo(String.class).to(fileUrl).to("mock:result");
             }

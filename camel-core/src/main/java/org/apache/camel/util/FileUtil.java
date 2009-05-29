@@ -354,6 +354,24 @@ public final class FileUtil {
     }
 
     /**
+     * Returns only the leading path (returns <tt>null</tt> if no path)
+     */
+    public static String onlyPath(String name) {
+        if (name == null) {
+            return null;
+        }
+        int pos = name.lastIndexOf("/");
+        if (pos == -1) {
+            pos = name.lastIndexOf(File.separator);
+        }
+        if (pos != -1) {
+            return name.substring(0, pos);
+        }
+        // no path
+        return null;
+    }
+
+    /**
      * Compacts a path by stacking it and reducing <tt>..</tt>
      */
     public static String compactPath(String path) {

@@ -50,7 +50,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
 
                     from("direct:file" + i)
                         .setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt"))
-                        .to("file://" + path + "/?append=false&noop=true", "mock:result");
+                        .to("file://" + path + "/?fileExist=Override&noop=true", "mock:result");
                 }
 
                 from("seda:testFileCreatedAsDir")

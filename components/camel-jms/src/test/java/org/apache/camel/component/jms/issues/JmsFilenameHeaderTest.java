@@ -64,7 +64,7 @@ public class JmsFilenameHeaderTest extends ContextTestSupport {
                 from("direct:in").to("activemq:test.a");
                 from("activemq:test.a").to("direct:save");
 
-                from("direct:save").to("file://target?append=false", "mock:result");
+                from("direct:save").to("file://target?fileExist=Override", "mock:result");
             }
         };
     }

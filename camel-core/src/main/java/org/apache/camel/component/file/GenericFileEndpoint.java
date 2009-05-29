@@ -55,7 +55,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected String localWorkDirectory;
     protected boolean autoCreate = true;
     protected int bufferSize = 128 * 1024;
-    protected boolean append = true;
+    protected GenericFileExist fileExist = GenericFileExist.Override;
     protected boolean noop;
     protected boolean recursive;
     protected boolean delete;
@@ -352,12 +352,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.bufferSize = bufferSize;
     }
 
-    public boolean isAppend() {
-        return append;
+    public GenericFileExist getFileExist() {
+        return fileExist;
     }
 
-    public void setAppend(boolean append) {
-        this.append = append;
+    public void setFileExist(GenericFileExist fileExist) {
+        this.fileExist = fileExist;
     }
 
     public boolean isAutoCreate() {

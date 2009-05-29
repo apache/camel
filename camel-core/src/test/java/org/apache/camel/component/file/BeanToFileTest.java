@@ -52,7 +52,7 @@ public class BeanToFileTest extends ContextTestSupport {
                 from("direct:in").
                     to("bean:myBean").
                     setHeader(Exchange.FILE_NAME, constant("BeanToFileTest.txt")).
-                    to("file://target/?append=false", "mock:result");
+                    to("file://target/?fileExist=Override", "mock:result");
             }
         };
     }

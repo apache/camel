@@ -31,6 +31,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -272,13 +273,53 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean storeFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
+
+        // if an existing file already exsists what should we do?
+        if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
+            boolean existFile = existFile(name);
+            if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
+                // ignore but indicate that the file was written
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("An existing file already exists: " + name + ". Ignore and do not override it.");
+                }
+                return true;
+            } else if (existFile && endpoint.getFileExist() == GenericFileExist.Fail) {
+                throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
+            }
+        }
+
         InputStream is = exchange.getIn().getBody(InputStream.class);
         try {
-            return client.storeFile(name, is);
+            if (endpoint.getFileExist() == GenericFileExist.Append) {
+                return client.appendFile(name, is);
+            } else {
+                return client.storeFile(name, is);
+            }
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
             ObjectHelper.close(is, "store: " + name, LOG);
+        }
+    }
+
+    private boolean existFile(String name) {
+        // check whether a file already exists
+        String directory = FileUtil.onlyPath(name);
+        if (directory == null) {
+            return false;
+        }
+
+        String onlyName = FileUtil.stripPath(name);
+        try {
+            String[] names = client.listNames(directory);
+            for (String existing : names) {
+                if (existing.equals(onlyName)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 

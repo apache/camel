@@ -43,7 +43,7 @@ public class FileHeaderFileNameProducedTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in")
-                    .to("file://target/?append=false")
+                    .to("file://target/?fileExist=Override")
                     .to("mock:result");
             }
         };

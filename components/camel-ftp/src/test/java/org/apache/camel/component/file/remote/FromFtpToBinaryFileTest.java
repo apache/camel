@@ -73,7 +73,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?noop=true&append=false";
+                String fileUrl = "file:target/ftptest/?noop=true&fileExist=Override";
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
                         .to(fileUrl, "mock:result");
             }

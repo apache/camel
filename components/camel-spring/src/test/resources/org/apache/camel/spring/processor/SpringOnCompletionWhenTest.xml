@@ -27,7 +27,7 @@
             <from uri="direct:start"/>
             <onCompletion>
                 <onWhen>
-                    <simple>{$in.body} contains 'Hello'</simple>
+                    <simple>${in.body} contains 'Hello'</simple>
                 </onWhen>
                 <to uri="log:sync"/>
                 <to uri="mock:sync"/>
