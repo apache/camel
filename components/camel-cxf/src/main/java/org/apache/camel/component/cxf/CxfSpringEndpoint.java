@@ -93,10 +93,6 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     public CxfEndpointBean getBean() {
         return bean;
     }
-    
-    public String getBeanId() {
-        return beanId;
-    }
 
     // Package private methods
     // -------------------------------------------------------------------------
@@ -148,8 +144,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         // get service class
         Class<?> cls = getSEIClass();        
         ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
-        
-        // create server factory bean
+                
         // create server factory bean
         // Shouldn't use CxfEndpointUtils.getServerFactoryBean(cls) as it is for
         // CxfSoapComponent
@@ -190,6 +185,11 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     
     // Properties
     // -------------------------------------------------------------------------
+    public String getBeanId() {
+        return beanId;
+    }
+    
+    // this property will be set by spring
     public void setBeanId(String id) {        
         this.beanId = id;
     }

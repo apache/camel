@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.spring;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+package org.apache.camel.component.cxf.jaxrs;
 
-public class NamespaceHandler extends NamespaceHandlerSupport {
-    public void init() {
-        registerBeanDefinitionParser("cxfEndpoint", new CxfEndpointBeanDefinitionParser());
-        registerBeanDefinitionParser("rsServer", new CxfRsServerFactoryBeanDefinitionParser());
-        registerBeanDefinitionParser("rsClient", new CxfRsClientFactoryBeanDefinitionParser());
-    }
+/**
+ * We can get and set the BeanId through this interface
+ */
+public interface BeanIdAware {
+    
+    String getBeanId();
+    
+    void setBeanId(String id);
+
 }

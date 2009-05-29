@@ -38,7 +38,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 /**
- * CxfProducer binds a Camel exchange to a CXF exchange, acts an a CXF 
+ * CxfProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
  * client, and sends the request to a CXF to a server.  Any response will 
  * be bound to Camel exchange. 
  *

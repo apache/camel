@@ -21,15 +21,19 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
-    serviceClass="org.apache.camel.component.cxf.HelloService"/>
-
-
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
-    serviceClass="org.apache.camel.component.cxf.HelloService"/>
+  <cxf:rsServer id="rsServer1" address="http://localhost:9000/server1">
+     <cxf:serviceBeans>
+       <ref bean="customerService"/>
+     </cxf:serviceBeans>
+  </cxf:rsServer>
+    
+  <cxf:rsServer id="rsServer2" address="http://localhost:9000/server2"
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+    
+  <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+  
 
 </beans>

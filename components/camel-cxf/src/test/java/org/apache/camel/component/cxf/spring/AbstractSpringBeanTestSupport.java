@@ -14,14 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf.spring;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import junit.framework.TestCase;
+import org.apache.cxf.BusFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class NamespaceHandler extends NamespaceHandlerSupport {
-    public void init() {
-        registerBeanDefinitionParser("cxfEndpoint", new CxfEndpointBeanDefinitionParser());
-        registerBeanDefinitionParser("rsServer", new CxfRsServerFactoryBeanDefinitionParser());
-        registerBeanDefinitionParser("rsClient", new CxfRsClientFactoryBeanDefinitionParser());
+public abstract class AbstractSpringBeanTestSupport extends TestCase {
+    
+    protected ClassPathXmlApplicationContext ctx;
+    
+    protected abstract String[] getApplicationContextFiles();
+    
+    protected void setUp() throws Exception {
+        ctx =  new ClassPathXmlApplicationContext(getApplicationContextFiles());
     }
+
+    protected void tearDown() throws Exception {
+        ctx.close();
+        BusFactory.setDefaultBus(null);
+    }
+
 }

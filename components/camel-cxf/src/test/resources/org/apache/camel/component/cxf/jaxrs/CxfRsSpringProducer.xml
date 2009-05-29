@@ -18,18 +18,32 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+  <jaxrs:server id="restService"
+		        address="http://localhost:9002" 
+		        staticSubresourceResolution="true">
+    <jaxrs:serviceBeans>
+      <ref bean="customerService"/>
+    </jaxrs:serviceBeans>       
+  </jaxrs:server>
+  
+  <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
-    serviceClass="org.apache.camel.component.cxf.HelloService"/>
+  <cxf:rsClient id="rsClient" address="http://localhost:9002"
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
 
-
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
-    serviceClass="org.apache.camel.component.cxf.HelloService"/>
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+       <from uri="direct:start"/>
+       <to uri="cxfrs://bean://rsClient"/>
+    </route>
+  </camelContext>
 
 </beans>

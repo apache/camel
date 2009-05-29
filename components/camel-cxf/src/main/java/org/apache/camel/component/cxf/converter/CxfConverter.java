@@ -17,6 +17,9 @@
 package org.apache.camel.component.cxf.converter;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.xml.soap.SOAPMessage;
 
@@ -32,6 +35,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.message.MessageContentsList;
 
 /**
@@ -49,20 +53,43 @@ public final class CxfConverter {
     }
 
     @Converter
-    public static Object[] toArray(final MessageContentsList list) throws Exception {
-        if (list == null) {
-            throw new IllegalArgumentException("The MessageChannel is null");
-        }
-        return list.toArray();
-    }
-
-    @Converter
     public static MessageContentsList toMessageContentsList(final Object[] array) {
         if (array != null) {
             return new MessageContentsList(array);
         } else {
             return new MessageContentsList();
         }
+    }
+    
+    @Converter
+    public static List<Class> toClassesList(final String[] classNames) throws ClassNotFoundException {
+        List<Class> answer = new ArrayList<Class>();
+        for (String className : classNames) {
+            answer.add(ClassLoaderUtils.loadClass(className.trim(), CxfConverter.class));
+        }
+        return answer;
+    }
+    
+    @Converter
+    public static List<Class> toClassList(String classeString) throws ClassNotFoundException {
+        String[] classNames = classeString.split(",|;");
+        return toClassesList(classNames);        
+    }
+    
+    @Converter
+    public static Object[] toArray(Object object) {
+        if (object instanceof Collection) {
+            return ((Collection)object).toArray();
+        } else {
+            Object answer[];
+            if (object == null) {
+                answer = new Object[0];
+            } else {
+                answer = new Object[1];
+                answer[0] = object;
+            }
+            return answer;
+        }       
     }
 
     @Converter

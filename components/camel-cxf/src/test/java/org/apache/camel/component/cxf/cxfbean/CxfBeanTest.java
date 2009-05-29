@@ -21,6 +21,7 @@ import java.net.URL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
@@ -70,12 +71,12 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
         URL url = new URL("http://localhost:9000/customerservice/customers/123");
 
         InputStream in = url.openStream();
-        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", getStringFromInputStream(in));
+        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
 
         // START SNIPPET: clientInvocation
         url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
         in = url.openStream();
-        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", getStringFromInputStream(in));
+        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
         // END SNIPPET: clientInvocation
 
     }
@@ -111,14 +112,5 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
         }
 
     }
-    
-    private static String getStringFromInputStream(InputStream in) throws Exception {
-        CachedOutputStream bos = new CachedOutputStream();
-        IOUtils.copy(in, bos);
-        in.close();
-        bos.close();
-        return bos.getOut().toString();
-    }
-
 
 }

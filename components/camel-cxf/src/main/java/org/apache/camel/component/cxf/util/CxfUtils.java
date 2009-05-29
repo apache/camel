@@ -14,14 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.spring;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+package org.apache.camel.component.cxf.util;
 
-public class NamespaceHandler extends NamespaceHandlerSupport {
-    public void init() {
-        registerBeanDefinitionParser("cxfEndpoint", new CxfEndpointBeanDefinitionParser());
-        registerBeanDefinitionParser("rsServer", new CxfRsServerFactoryBeanDefinitionParser());
-        registerBeanDefinitionParser("rsClient", new CxfRsClientFactoryBeanDefinitionParser());
+import java.io.InputStream;
+
+import org.apache.cxf.helpers.IOUtils;
+import org.apache.cxf.io.CachedOutputStream;
+
+
+public final class CxfUtils {
+    
+    private CxfUtils() {
+        // helper class
     }
+    
+    public static String getStringFromInputStream(InputStream in) throws Exception {
+        CachedOutputStream bos = new CachedOutputStream();
+        IOUtils.copy(in, bos);
+        in.close();
+        bos.close();
+        return bos.getOut().toString();
+    }
+
 }

@@ -14,14 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.spring;
+package org.apache.camel.component.cxf.converter;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import java.util.List;
 
-public class NamespaceHandler extends NamespaceHandlerSupport {
-    public void init() {
-        registerBeanDefinitionParser("cxfEndpoint", new CxfEndpointBeanDefinitionParser());
-        registerBeanDefinitionParser("rsServer", new CxfRsServerFactoryBeanDefinitionParser());
-        registerBeanDefinitionParser("rsClient", new CxfRsClientFactoryBeanDefinitionParser());
+import junit.framework.TestCase;
+
+public class ConverterTest extends TestCase {
+    
+    public void testToClassesList() throws Exception {
+        String classString = "java.lang.String, "
+            + "org.apache.camel.component.cxf.converter.ConverterTest ;"
+            + "java.lang.StringBuffer";
+        List<Class> classList = CxfConverter.toClassList(classString);
+        assertEquals("Get the wrong number of classes", classList.size(), 3);
+        assertEquals("Get the wrong the class", classList.get(0), String.class);
+        assertEquals("Get the wrong the class", classList.get(1), ConverterTest.class);
+        assertEquals("Get the wrong the class", classList.get(2), StringBuffer.class);
     }
+    
+    
+
 }
