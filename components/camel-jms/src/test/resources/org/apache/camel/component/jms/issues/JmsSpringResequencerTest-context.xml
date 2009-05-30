@@ -28,7 +28,7 @@ http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/
   		   <resequencer>  		        
     			<simple>body</simple>
     			<to uri="mock:result"/>
-    			<batch-config batchSize="100" batchTimeout="100"/>    			
+    			<batch-config batchSize="100" batchTimeout="10000"/>    			
   			</resequencer>
   			
 		</route>
