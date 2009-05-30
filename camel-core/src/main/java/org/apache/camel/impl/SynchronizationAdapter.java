@@ -28,10 +28,14 @@ import org.apache.camel.spi.Synchronization;
 public class SynchronizationAdapter implements Synchronization {
 
     public void onComplete(Exchange exchange) {
-        // noop
+        onDone(exchange);
     }
 
     public void onFailure(Exchange exchange) {
+        onDone(exchange);
+    }
+
+    public void onDone(Exchange exchange) {
         // noop
     }
 }

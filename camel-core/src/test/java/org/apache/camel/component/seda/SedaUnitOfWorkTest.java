@@ -43,8 +43,11 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // give time for on completiom to run
+        Thread.sleep(100);
+
         assertEquals("onCompleteA", sync);
-        assertEquals("processor", lastOne);
+        assertEquals("onCompleteA", lastOne);
     }
 
     @Override
@@ -59,11 +62,9 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
                         .to("seda:foo");
 
                 from("seda:foo")
-                        // use a little delay to allow the first route to complete
-                        .delay(200)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals("onCompleteA", sync);
+                                assertEquals(null, sync);
                             }
                         })
                         .process(new Processor() {

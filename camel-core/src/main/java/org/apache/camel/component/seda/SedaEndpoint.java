@@ -29,6 +29,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 
@@ -43,6 +44,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private BlockingQueue<Exchange> queue;
     private int size = 1000;
     private int concurrentConsumers = 1;
+    private WaitForTaskToComplete waitTaskComplete = WaitForTaskToComplete.IfReplyExpected;
     private Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
 
@@ -70,7 +72,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
     
     public Producer createProducer() throws Exception {
-        return new SedaProducer(this, getQueue());
+        return new SedaProducer(this, getQueue(), getWaitTaskComplete());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -103,7 +105,15 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
-    
+
+    public WaitForTaskToComplete getWaitTaskComplete() {
+        return waitTaskComplete;
+    }
+
+    public void setWaitTaskComplete(WaitForTaskToComplete waitTaskComplete) {
+        this.waitTaskComplete = waitTaskComplete;
+    }
+
     public boolean isSingleton() {
         return true;
     }

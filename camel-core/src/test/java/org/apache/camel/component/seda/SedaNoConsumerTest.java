@@ -14,52 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
-
-import javax.naming.Context;
+package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * Unit test to demonstrate beans in pipelines.
+ * @version $Revision$
  */
-public class BeanInPipelineTest extends ContextTestSupport {
+public class SedaNoConsumerTest extends ContextTestSupport {
 
-    public void testBeanInPipeline() throws Exception {
-        Object response = template.requestBody("direct:start", "Start:");
-        assertEquals("Start:onetwothree", response);
+    public void testInOnly() throws Exception {
+        // no problem for in only as we do not expect a reply
+        template.sendBody("direct:start", "Hello World");
     }
 
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("one", new MyBean("one"));
-        answer.bind("two", new MyBean("two"));
-        answer.bind("three", new MyBean("three"));
-        return answer;
+    public void testInOut() throws Exception {
+        try {
+            template.requestBody("direct:start", "Hello World");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(IllegalStateException.class, e.getCause());
+            assertTrue(e.getCause().getMessage().startsWith("Cannot send to endpoint: seda:foo as no consumers is registered."));
+        }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pipeline("bean:one", "bean:two", "direct:x", "direct:y", "bean:three");
+                from("direct:start").to("seda:foo");
             }
         };
     }
-
-    public static class MyBean {
-
-        private String postfix;
-
-        public MyBean(String postfix) {
-            this.postfix = postfix;
-        }
-
-        public String doSomething(String body) {
-            return body + postfix;
-        }
-    }
-
 }

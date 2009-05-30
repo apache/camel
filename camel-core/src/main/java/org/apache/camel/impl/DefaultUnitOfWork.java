@@ -26,6 +26,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.UuidGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
@@ -33,6 +35,7 @@ import org.apache.camel.util.UuidGenerator;
  * @version $Revision$
  */
 public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
+    private static final transient Log LOG = LogFactory.getLog(DefaultUnitOfWork.class);
     private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
 
     private String id;
@@ -92,10 +95,15 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         if (synchronizations != null && !synchronizations.isEmpty()) {
             boolean failed = exchange.isFailed();
             for (Synchronization synchronization : synchronizations) {
-                if (failed) {
-                    synchronization.onFailure(exchange);
-                } else {
-                    synchronization.onComplete(exchange);
+                try {
+                    if (failed) {
+                        synchronization.onFailure(exchange);
+                    } else {
+                        synchronization.onComplete(exchange);
+                    }
+                } catch (Exception e) {
+                    // must catch exceptions to ensure all synchronizations have a chance to run
+                    LOG.error("Exception occured during onCompletion. This exception will be ignored: ", e);
                 }
             }
         }

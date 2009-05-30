@@ -39,9 +39,9 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
-    private static final int DEFAULT_THREADPOOL_SIZE = 5;
-    private ExecutorService executorService;
-    private WaitForTaskToComplete waitTaskComplete;
+    protected static final int DEFAULT_THREADPOOL_SIZE = 5;
+    protected ExecutorService executorService;
+    protected WaitForTaskToComplete waitTaskComplete;
 
     public ThreadsProcessor(Processor output, ExecutorService executorService, WaitForTaskToComplete waitTaskComplete) {
         super(output);
@@ -61,13 +61,7 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         final Exchange copy = exchange.newCopy(true);
 
         // let it execute async and return the Future
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                // must use a copy of the original exchange for processing async
-                output.process(copy);
-                return copy;
-            }
-        };
+        Callable<Exchange> task = createTask(output, copy);
 
         // sumbit the task
         Future<Exchange> future = getExecutorService().submit(task);
@@ -93,6 +87,16 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         }
     }
 
+    protected Callable<Exchange> createTask(final Processor output, final Exchange copy) {
+        return new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                // must use a copy of the original exchange for processing async
+                output.process(copy);
+                return copy;
+            }
+        };
+    }
+
     public ExecutorService getExecutorService() {
         if (executorService == null) {
             executorService = createExecutorService();
@@ -100,7 +104,7 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         return executorService;
     }
 
-    private ExecutorService createExecutorService() {
+    protected ExecutorService createExecutorService() {
         return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "AsyncProcessor", true);
     }
 

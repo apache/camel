@@ -16,29 +16,32 @@
  */
 package org.apache.camel.component.seda;
 
-import java.util.Collection;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * A simple {@link org.apache.camel.Producer} which just appends to a {@link Collection} the {@link Exchange} object.
- *
  * @version $Revision$
  */
-public class CollectionProducer extends DefaultProducer implements Processor {
-    protected final Collection<Exchange> queue;
+public class SedaInOutTest extends ContextTestSupport {
 
-    public CollectionProducer(Endpoint endpoint, Collection<Exchange> queue) {
-        super(endpoint);
-        this.queue = queue;
+    public void testInOut() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        String out = template.requestBody("direct:start", "Hello World", String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
     }
 
-    public void process(Exchange exchange) throws Exception {
-        Exchange copy = exchange.copy();
-        queue.add(copy);
-    }
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("seda:foo");
 
+                from("seda:foo").transform(constant("Bye World")).to("mock:result");
+            }
+        };
+    }
 }
