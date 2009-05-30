@@ -28,7 +28,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
   		   <resequence>  		        
     			<simple>body</simple>
     			<to uri="mock:result"/>
-    			<batch-config batchSize="100" batchTimeout="100"/>    			
+    			<batch-config batchSize="100" batchTimeout="10000"/>    			
   			</resequence>
   			
 		</route>
