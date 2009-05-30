@@ -41,12 +41,12 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
     protected static final int DEFAULT_THREADPOOL_SIZE = 5;
     protected ExecutorService executorService;
-    protected WaitForTaskToComplete waitTaskComplete;
+    protected WaitForTaskToComplete waitForTaskToComplete;
 
-    public ThreadsProcessor(Processor output, ExecutorService executorService, WaitForTaskToComplete waitTaskComplete) {
+    public ThreadsProcessor(Processor output, ExecutorService executorService, WaitForTaskToComplete waitForTaskToComplete) {
         super(output);
         this.executorService = executorService;
-        this.waitTaskComplete = waitTaskComplete;
+        this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
     public void process(final Exchange exchange) throws Exception {
@@ -67,7 +67,7 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         Future<Exchange> future = getExecutorService().submit(task);
 
         // compute if we should wait for task to complete or not
-        WaitForTaskToComplete wait = waitTaskComplete;
+        WaitForTaskToComplete wait = waitForTaskToComplete;
         if (exchange.getIn().getHeader(Exchange.ASYNC_WAIT) != null) {
             wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
         }

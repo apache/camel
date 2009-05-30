@@ -44,7 +44,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private BlockingQueue<Exchange> queue;
     private int size = 1000;
     private int concurrentConsumers = 1;
-    private WaitForTaskToComplete waitTaskComplete = WaitForTaskToComplete.IfReplyExpected;
+    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     private Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
 
@@ -72,7 +72,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
     
     public Producer createProducer() throws Exception {
-        return new SedaProducer(this, getQueue(), getWaitTaskComplete());
+        return new SedaProducer(this, getQueue(), getWaitForTaskToComplete());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -106,12 +106,12 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         return concurrentConsumers;
     }
 
-    public WaitForTaskToComplete getWaitTaskComplete() {
-        return waitTaskComplete;
+    public WaitForTaskToComplete getWaitForTaskToComplete() {
+        return waitForTaskToComplete;
     }
 
-    public void setWaitTaskComplete(WaitForTaskToComplete waitTaskComplete) {
-        this.waitTaskComplete = waitTaskComplete;
+    public void setWaitForTaskToComplete(WaitForTaskToComplete waitForTaskToComplete) {
+        this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
     public boolean isSingleton() {

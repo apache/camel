@@ -58,9 +58,9 @@ public class SedaWaitForTaskNewerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:foo?waitTaskComplete=Newer");
+                from("direct:start").to("seda:foo?waitForTaskToComplete=Newer");
 
-                from("seda:foo?waitTaskComplete=Newer").transform(constant("Bye World")).to("mock:result");
+                from("seda:foo?waitForTaskToComplete=Newer").transform(constant("Bye World")).to("mock:result");
             }
         };
     }

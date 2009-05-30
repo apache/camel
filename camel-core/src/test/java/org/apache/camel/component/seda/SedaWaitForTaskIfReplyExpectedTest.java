@@ -57,9 +57,9 @@ public class SedaWaitForTaskIfReplyExpectedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:foo?waitTaskComplete=IfReplyExpected");
+                from("direct:start").to("seda:foo?waitForTaskToComplete=IfReplyExpected");
 
-                from("seda:foo?waitTaskComplete=IfReplyExpected").transform(constant("Bye World")).to("mock:result");
+                from("seda:foo?waitForTaskToComplete=IfReplyExpected").transform(constant("Bye World")).to("mock:result");
             }
         };
     }

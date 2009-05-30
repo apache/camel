@@ -29,12 +29,12 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class SedaProducer extends CollectionProducer {
     private final SedaEndpoint endpoint;
-    private final WaitForTaskToComplete waitTaskComplete;
+    private final WaitForTaskToComplete waitForTaskToComplete;
 
-    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitTaskComplete) {
+    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete) {
         super(endpoint, queue);
         this.endpoint = endpoint;
-        this.waitTaskComplete = waitTaskComplete;
+        this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SedaProducer extends CollectionProducer {
         // set a new from endpoint to be the seda queue
         copy.setFromEndpoint(endpoint);
 
-        WaitForTaskToComplete wait = waitTaskComplete;
+        WaitForTaskToComplete wait = waitForTaskToComplete;
         if (exchange.getIn().getHeader(Exchange.ASYNC_WAIT) != null) {
             wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
         }

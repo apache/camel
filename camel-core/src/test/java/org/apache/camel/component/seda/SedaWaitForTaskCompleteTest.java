@@ -57,9 +57,9 @@ public class SedaWaitForTaskCompleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:foo?waitTaskComplete=Always");
+                from("direct:start").to("seda:foo?waitForTaskToComplete=Always");
 
-                from("seda:foo?waitTaskComplete=Always").transform(constant("Bye World")).to("mock:result");
+                from("seda:foo?waitForTaskToComplete=Always").transform(constant("Bye World")).to("mock:result");
             }
         };
     }
