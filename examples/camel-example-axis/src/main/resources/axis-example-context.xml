@@ -9,8 +9,8 @@
     <bean id="incidentservice" class="org.apache.camel.example.axis.ReportIncidentService"/>
 
     <camel:camelContext id="camelContext">
-        <!-- endpoint named backup that is configued as a file component -->
-        <camel:endpoint id="backup" uri="file://target/?append=false"/>
+        <!-- endpoint named backup that is configured as a file component -->
+        <camel:endpoint id="backup" uri="file://target/"/>
 
     </camel:camelContext>
 
