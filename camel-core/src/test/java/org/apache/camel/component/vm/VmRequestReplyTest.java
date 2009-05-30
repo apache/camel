@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.seda;
+package org.apache.camel.component.vm;
 
-import org.apache.camel.CamelExecutionException;
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
  */
-public class SedaNoConsumerTest extends ContextTestSupport {
+public class VmRequestReplyTest extends ContextTestSupport {
 
     public void testInOnly() throws Exception {
         // no problem for in only as we do not expect a reply
@@ -31,12 +32,27 @@ public class SedaNoConsumerTest extends ContextTestSupport {
     }
 
     public void testInOut() throws Exception {
-        try {
-            template.requestBody("direct:start", "Hello World");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("Cannot send to endpoint: seda:foo as no consumers is registered."));
-        }
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        // create another camel context so we can use the vm component
+        // to send messages between them
+        CamelContext other = new DefaultCamelContext();
+        other.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("vm:foo").transform(constant("Bye World"));
+            }
+        });
+        other.start();
+
+        // should not fail even though its a request/reply but
+        // we use the vm component so the consumer could be
+        // in another camel context
+        template.requestBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        other.stop();
     }
 
     @Override
@@ -44,7 +60,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:foo");
+                from("direct:start").to("vm:foo", "mock:result");
             }
         };
     }

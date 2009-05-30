@@ -14,29 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.seda;
+package org.apache.camel.component.vm;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class SedaNoConsumerTest extends ContextTestSupport {
+public class VmConcurrentConsumersTest extends ContextTestSupport {
 
-    public void testInOnly() throws Exception {
-        // no problem for in only as we do not expect a reply
-        template.sendBody("direct:start", "Hello World");
-    }
+    public void testSendToSeda() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
 
-    public void testInOut() throws Exception {
-        try {
-            template.requestBody("direct:start", "Hello World");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("Cannot send to endpoint: seda:foo as no consumers is registered."));
-        }
+        template.sendBody("vm:foo?concurrentConsumers=5", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -44,7 +39,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:foo");
+                from("vm:foo?concurrentConsumers=5").to("mock:result");
             }
         };
     }

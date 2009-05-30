@@ -50,11 +50,13 @@ public class SedaProducer extends CollectionProducer {
             wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
         }
 
-        if (wait == WaitForTaskToComplete.Always ||
-            (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
+        if (wait == WaitForTaskToComplete.Always
+            || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
 
-            // check if there is a consumer otherwise we end up waiting forever
-            if (endpoint.getConsumers().isEmpty()) {
+            // only check for if there is a consumer if its the seda endpoint where we exepect a consumer in the same
+            // camel context. If you use the vm component the consumer could be in another camel context.
+            // for seda we want to check that a consumer exists otherwise we end up waiting forever for the response.
+            if (endpoint.getEndpointUri().startsWith("seda") && endpoint.getConsumers().isEmpty()) {
                 throw new IllegalStateException("Cannot send to endpoint: " + endpoint.getEndpointUri() + " as no consumers is registered."
                     + " With no consumers we end up waiting forever for the reply, as there are no consumers to process our exchange: " + exchange);
             }

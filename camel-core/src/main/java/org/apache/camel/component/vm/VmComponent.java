@@ -41,7 +41,9 @@ public class VmComponent extends SedaComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         BlockingQueue<Exchange> blockingQueue = getBlockingQueue(uri, parameters);
-        return new SedaEndpoint(uri, this, blockingQueue);
+        SedaEndpoint answer = new SedaEndpoint(uri, this, blockingQueue);
+        answer.configureProperties(parameters);
+        return answer;
     }
 
     @SuppressWarnings("unchecked")
