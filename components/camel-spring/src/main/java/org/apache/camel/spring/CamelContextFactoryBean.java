@@ -282,7 +282,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // setup the policies as JAXB yet again have not created a correct model for us
         List<ProcessorType<?>> types = route.getOutputs();
         PolicyRef policy = null;
-        for (ProcessorType<?> type : types) {
+        for (ProcessorType type : types) {
             if (type instanceof PolicyRef) {
                 policy = (PolicyRef) type;
             } else if (policy != null) {
