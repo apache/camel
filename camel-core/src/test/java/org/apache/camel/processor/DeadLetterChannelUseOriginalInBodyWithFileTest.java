@@ -32,7 +32,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(1);
         dead.message(0).body().isInstanceOf(GenericFile.class);
-        dead.message(0).bodyAs(String.class).isEqualTo("Hello");
+        dead.message(0).body(String.class).isEqualTo("Hello");
 
         template.sendBodyAndHeader("file://target/originalexchange", "Hello", Exchange.FILE_NAME, "hello.txt");
 

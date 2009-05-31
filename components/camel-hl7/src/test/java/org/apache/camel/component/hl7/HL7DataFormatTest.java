@@ -34,8 +34,8 @@ public class HL7DataFormatTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(byte[].class);
-        mock.message(0).bodyAs(String.class).contains("MSA|AA|123");
-        mock.message(0).bodyAs(String.class).contains("QRD|20080805120000");
+        mock.message(0).body(String.class).contains("MSA|AA|123");
+        mock.message(0).body(String.class).contains("QRD|20080805120000");
 
         Message message = createHL7AsMessage();
         template.sendBody("direct:marshal", message);

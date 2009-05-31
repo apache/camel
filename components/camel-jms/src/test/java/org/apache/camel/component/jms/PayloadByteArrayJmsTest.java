@@ -45,7 +45,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(byte[].class);
-        mock.message(0).bodyAs(String.class).isEqualTo("Hello World");
+        mock.message(0).body(String.class).isEqualTo("Hello World");
 
         Reader body = new StringReader("Hello World");
 
@@ -58,7 +58,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(byte[].class);
-        mock.message(0).bodyAs(String.class).isEqualTo("Hello World");
+        mock.message(0).body(String.class).isEqualTo("Hello World");
 
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
@@ -71,7 +71,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(byte[].class);
-        mock.message(0).bodyAs(String.class).isEqualTo("Hello World");
+        mock.message(0).body(String.class).isEqualTo("Hello World");
 
         ByteBuffer body = ByteBuffer.wrap("Hello World".getBytes());
 

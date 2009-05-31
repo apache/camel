@@ -35,7 +35,7 @@ public class RssDataFormatTest extends ContextTestSupport {
     public void testMarshalling() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains(feedXml);
+        mock.message(0).body(String.class).contains(feedXml);
         mock.assertIsSatisfied();
     }
 
@@ -43,7 +43,7 @@ public class RssDataFormatTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(SyndFeed.class);
-        mock.message(0).bodyAs(SyndFeed.class).equals(feed);
+        mock.message(0).body(SyndFeed.class).equals(feed);
         mock.assertIsSatisfied();
     }    
     

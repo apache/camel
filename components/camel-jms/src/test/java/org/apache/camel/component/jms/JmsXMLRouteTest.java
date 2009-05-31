@@ -44,7 +44,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testLondonWithFileStreamAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("James");
+        mock.message(0).body(String.class).contains("James");
 
         Source source = new StreamSource(new FileInputStream(TEST_LONDON));
         assertNotNull(source);
@@ -57,7 +57,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testLondonWithFileStreamAsBytes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("James");
+        mock.message(0).body(String.class).contains("James");
 
         Source source = new StreamSource(new FileInputStream(TEST_LONDON));
         assertNotNull(source);
@@ -70,7 +70,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testLondonWithFileStreamAsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("James");
+        mock.message(0).body(String.class).contains("James");
 
         Source source = new StreamSource(new FileInputStream(TEST_LONDON));
         assertNotNull(source);
@@ -83,7 +83,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testTampaWithFileStreamAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("Hiram");
+        mock.message(0).body(String.class).contains("Hiram");
 
         Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
         assertNotNull(source);
@@ -96,7 +96,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testTampaWithFileStreamAsBytes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("Hiram");
+        mock.message(0).body(String.class).contains("Hiram");
 
         Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
         assertNotNull(source);
@@ -109,7 +109,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testTampaWithFileStreamAsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("Hiram");
+        mock.message(0).body(String.class).contains("Hiram");
 
         Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
         assertNotNull(source);
@@ -122,7 +122,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testLondonWithStringSourceAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("James");
+        mock.message(0).body(String.class).contains("James");
 
         Source source = new StringSource("<person user=\"james\">\n"
                 + "  <firstName>James</firstName>\n"
@@ -139,7 +139,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testLondonWithStringSourceAsBytes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("James");
+        mock.message(0).body(String.class).contains("James");
 
         Source source = new StringSource("<person user=\"james\">\n"
                 + "  <firstName>James</firstName>\n"
@@ -156,7 +156,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     public void testLondonWithStringSourceAsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
-        mock.message(0).bodyAs(String.class).contains("James");
+        mock.message(0).body(String.class).contains("James");
 
         Source source = new StringSource("<person user=\"james\">\n"
                 + "  <firstName>James</firstName>\n"

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mock;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.util.PredicateAssertHelper;
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import static org.apache.camel.builder.ExpressionBuilder.propertyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.*;
 
 /**
  * A builder of assertions on message exchanges
@@ -84,7 +81,7 @@ public abstract class AssertionClause implements Runnable {
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
      */
-    public <T> PredicateValueBuilder bodyAs(Class<T> type) {
+    public <T> PredicateValueBuilder body(Class<T> type) {
         Expression expression = bodyExpression(type);
         return new PredicateValueBuilder(expression);
     }
@@ -94,7 +91,7 @@ public abstract class AssertionClause implements Runnable {
      * exchange
      */
     public PredicateValueBuilder outBody() {
-        Expression expression = bodyExpression();
+        Expression expression = outBodyExpression();
         return new PredicateValueBuilder(expression);
     }
 
@@ -103,7 +100,7 @@ public abstract class AssertionClause implements Runnable {
      * specific type
      */
     public <T> PredicateValueBuilder outBody(Class<T> type) {
-        Expression expression = bodyExpression(type);
+        Expression expression = outBodyExpression(type);
         return new PredicateValueBuilder(expression);
     }
 

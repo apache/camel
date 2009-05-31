@@ -38,7 +38,7 @@ public class FileRouteToJmsTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(byte[].class);
-        mock.message(0).bodyAs(String.class).isEqualTo("Hello World");
+        mock.message(0).body(String.class).isEqualTo("Hello World");
 
         deleteDirectory("target/routefromfile");
         template.sendBodyAndHeader("file://target/routefromfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
