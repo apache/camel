@@ -1,0 +1,55 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.cxf.jaxrs;
+
+import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
+import org.apache.camel.component.cxf.spring.CxfRsClientFactoryBeanDefinitionParser.SpringJAXRSClientFactoryBean;
+import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
+import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class CxfRsSpringEndpointTest extends SpringTestSupport {
+    
+    public void testCreateCxfRsServerFactoryBean() {
+        CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsServer", CxfRsEndpoint.class);
+        SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean)endpoint.createJAXRSServerFactoryBean();
+        assertEquals("Get a wrong beanId", sfb.getBeanId(), "rsServer");
+        assertEquals("Get a wrong address", sfb.getAddress(), "http://localhost:9000/router");
+        assertEquals("Get a wrong size of resource classess", sfb.getResourceClasses().size(), 1);
+        assertEquals("Get a wrong resource class", sfb.getResourceClasses().get(0), CustomerService.class);
+    }
+    
+    public void testCreateCxfRsClientFactoryBean() {
+        CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsClient", CxfRsEndpoint.class);
+        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();
+        assertEquals("Get a wrong beanId", cfb.getBeanId(), "rsClient");
+        assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:9002/helloworld");        
+        assertTrue("Get a wrong resource class instance", cfb.create() instanceof CustomerService);
+    }
+    
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml")); 
+    }
+
+}
