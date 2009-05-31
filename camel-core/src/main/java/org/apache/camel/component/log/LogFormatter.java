@@ -33,6 +33,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showBodyType = true;
     private boolean showBody = true;
     private boolean showOut;
+    private boolean showException;
     private boolean showAll;
     private boolean multiline;
     private int maxChars;
@@ -70,6 +71,12 @@ public class LogFormatter implements ExchangeFormatter {
                 sb.append('\n');
             }
             sb.append(", Body:").append(getBodyAsString(in));
+        }
+        if (exchange.getException() != null && (showAll || showException)) {
+            if (multiline) {
+                sb.append('\n');
+            }
+            sb.append(", Exception:").append(exchange.getException().getMessage());
         }
 
         if (showAll || showOut) {
@@ -179,6 +186,14 @@ public class LogFormatter implements ExchangeFormatter {
 
     public void setShowAll(boolean showAll) {
         this.showAll = showAll;
+    }
+
+    public boolean isShowException() {
+        return showException;
+    }
+
+    public void setShowException(boolean showException) {
+        this.showException = showException;
     }
 
     public boolean isMultiline() {

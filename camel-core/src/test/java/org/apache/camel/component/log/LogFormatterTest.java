@@ -80,4 +80,16 @@ public class LogFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    public void testSendExchangeWithException() throws Exception {
+        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showException=true");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody("Hello World");
+        exchange.setException(new IllegalArgumentException("Damn"));
+
+        Producer producer = endpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
+    }
+
 }
