@@ -70,7 +70,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
             Method mth = osgiClassLoader.getClass().getMethod("getBundle", new Class[]{});
             if (mth != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Loading from osgi buindle using classloader: " + osgiClassLoader);
+                    LOG.debug("Loading from osgi bundle using classloader: " + osgiClassLoader);
                 }
                 loadImplementationsInBundle(test, packageName, osgiClassLoader, mth, classes);
             }
