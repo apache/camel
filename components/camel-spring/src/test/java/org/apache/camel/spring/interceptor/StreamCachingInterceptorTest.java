@@ -17,7 +17,6 @@
 package org.apache.camel.spring.interceptor;
 
 import java.io.StringReader;
-
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.CamelContext;
@@ -25,10 +24,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.hamcrest.Assertions;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 
 /**
  * Test case for enabling stream caching through XML
@@ -44,7 +41,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         Exchange exchange = a.getExchanges().get(0);
-        StreamCache streamCache = Assertions.assertInstanceOf(exchange.getIn().getBody(), StreamCache.class);
+        StreamCache streamCache = assertIsInstanceOf(StreamCache.class, exchange.getIn().getBody());
         assertNotNull(streamCache);
     }
 

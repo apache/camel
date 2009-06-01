@@ -105,10 +105,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hamcrest</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
     </dependency>
     <dependency>
@@ -138,10 +134,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jhc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -231,34 +223,14 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-stringtemplate</artifactId>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-supercsv</artifactId>
-        </dependency>
-    -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-swing</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-tagsoup</artifactId>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-testng</artifactId>
-        </dependency>
-    -->
-    <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test</artifactId>
-    </dependency>    
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-uface</artifactId>
-    </dependency>
+      <artifactId>camel-test</artifactId>
+    </dependency>    
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-velocity</artifactId>

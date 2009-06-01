@@ -25,7 +25,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.hamcrest.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -45,7 +44,7 @@ public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
 
     public void testMocksAreValid() throws Exception {
         // lets check that our injected endpoint is valid
-        FileEndpoint fileEndpoint = Assertions.assertInstanceOf(inputFile, FileEndpoint.class);
+        FileEndpoint fileEndpoint = TestSupport.assertIsInstanceOf(FileEndpoint.class, inputFile);
         assertEquals("File", new File("target/test-default-inbox"), fileEndpoint.getFile());
 
         result.expectedBodiesReceived(expectedBody);

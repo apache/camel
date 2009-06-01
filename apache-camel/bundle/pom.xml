@@ -39,14 +39,6 @@
     <shade.version>1.0.1</shade.version>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>uface.m2</id>
-      <url>http://uface.googlecode.com/svn/maven/</url>
-      <name>UFace Maven Repository</name>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -124,10 +116,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jhc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -221,35 +209,13 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-stringtemplate</artifactId>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-supercsv</artifactId>
-        </dependency>
-    -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-swing</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.ufacekit</groupId>
-          <artifactId>org.ufacekit.ui.swing</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-tagsoup</artifactId>
     </dependency>
-    
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-uface</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

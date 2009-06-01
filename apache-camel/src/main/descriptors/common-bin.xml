@@ -53,7 +53,6 @@
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guice</include>
-        <include>org.apache.camel:camel-hamcrest</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-ibatis</include>
@@ -62,7 +61,6 @@
         <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jetty</include>
-        <include>org.apache.camel:camel-jhc</include>
         <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-josql</include>
@@ -87,10 +85,8 @@
         <include>org.apache.camel:camel-sql</include>
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
-        <include>org.apache.camel:camel-swing</include>
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-tagsoup</include>
-        <include>org.apache.camel:camel-uface</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
