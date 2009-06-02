@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.file.remote;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.UserInfo;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,26 +33,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
-import com.jcraft.jsch.UserInfo;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileExist;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * SFTP remote file operations
  */
