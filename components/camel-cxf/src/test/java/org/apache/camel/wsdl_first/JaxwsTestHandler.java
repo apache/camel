@@ -32,7 +32,7 @@ public class JaxwsTestHandler implements SOAPHandler<SOAPMessageContext> {
         return getHeadersCount;
     }
 
-    public Set<QName> getHeaders() {
+    public Set<QName> getHeaders() {        
         getHeadersCount++;
         return null;
     }

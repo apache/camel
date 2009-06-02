@@ -33,8 +33,10 @@ import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.apache.cxf.configuration.spring.BusWiringType;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
+import org.apache.cxf.jaxrs.model.UserResource;
 import org.apache.cxf.jaxrs.spring.JAXRSServerFactoryBeanDefinitionParser;
 import org.apache.cxf.jaxrs.spring.JAXRSServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -77,9 +79,13 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
             List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("features".equals(name) || "schemaLocations".equals(name) 
-            || "providers".equals(name) || "serviceBeans".equals(name)) {
+            || "providers".equals(name) || "serviceBeans".equals(name)
+            || "modelBeans".equals(name)) {
             List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
+        } else if ("model".equals(name)) {
+            List<UserResource> resources = ResourceUtils.getResourcesFromElement(el);
+            bean.addPropertyValue("modelBeans", resources);
         } else {
             setFirstChildAsProperty(el, ctx, bean, name);            
         }        

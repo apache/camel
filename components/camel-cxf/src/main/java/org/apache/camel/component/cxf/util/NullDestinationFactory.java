@@ -31,7 +31,7 @@ public class NullDestinationFactory implements DestinationFactory {
         // setup the endpoint information
         ei.setAddress("local://" + ei.getService().getName().toString() + "/" + ei.getName().getLocalPart());
         // working as the dispatch mode, the binding factory will not add interceptor
-        ei.getBinding().setProperty(AbstractBindingFactory.DATABINDING_DISABLED, Boolean.TRUE);
+        //ei.getBinding().setProperty(AbstractBindingFactory.DATABINDING_DISABLED, Boolean.TRUE);
         // do nothing here , just creating a null destination to store the observer
         return new NullDestination();
     }

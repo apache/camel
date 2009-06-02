@@ -28,7 +28,9 @@ import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.apache.cxf.configuration.spring.BusWiringType;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.apache.cxf.jaxrs.model.UserResource;
 import org.apache.cxf.jaxrs.spring.JAXRSClientFactoryBeanDefinitionParser;
+import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -40,6 +42,7 @@ public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         super();
         setBeanClass(SpringJAXRSClientFactoryBean.class);
     }
+    
     
     @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
@@ -59,9 +62,12 @@ public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
             List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("features".equals(name) || "providers".equals(name)
-                   || "schemaLocations".equals(name)) {
+                   || "schemaLocations".equals(name) || "modelBeans".equals(name)) {
             List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
+        } else if ("model".equals(name)) {
+            List<UserResource> resources = ResourceUtils.getResourcesFromElement(el);
+            bean.addPropertyValue("modelBeans", resources);
         } else {
             setFirstChildAsProperty(el, ctx, bean, name);            
         }        
