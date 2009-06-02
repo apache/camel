@@ -32,8 +32,9 @@
 
             <threads waitForTaskToComplete="IfReplyExpected">
                 <to uri="mock:foo"/>
-                <delay>
-                    <constant>500</constant>
+                <!-- wait 0.5 sec -->
+                <delay delayTime="500">
+                    <constant/>
                 </delay>
                 <process ref="myProcessor"/>
                 <to uri="mock:result"/>
