@@ -75,9 +75,11 @@
             <xsd:element name="outInterceptors" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="outFaultInterceptors" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="properties" type="beans:mapType" minOccurs="0"/>
-            <xsd:element name="serviceBeans" type="xsd:anyType" minOccurs="0"/>            
+            <xsd:element name="serviceBeans" type="xsd:anyType" minOccurs="0"/>
+            <!-- this is only supported in CXF 2.2.3             
             <xsd:element name="modelBeans" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="model" type="model" minOccurs="0"/>
+             -->
             <xsd:element name="providers" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="extensionMappings" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="languageMappings" type="xsd:anyType" minOccurs="0"/>
@@ -88,7 +90,9 @@
           <xsd:attribute name="bus" type="xsd:string" />
           <xsd:attribute name="serviceClass" type="xsd:string"/>                    
           <xsd:attribute name="transportId" type="xsd:string"/>
+          <!-- this is only supported in CXF 2.2.3 
           <xsd:attribute name="modelRef" type="xsd:string" />
+          -->
           <xsd:attribute name="bindingId" type="xsd:string" />          
           <xsd:attribute name="staticSubresourceResolution" type="xsd:boolean" />
         </xsd:extension>
@@ -110,8 +114,10 @@
             <xsd:element name="outFaultInterceptors" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="properties" type="beans:mapType" minOccurs="0"/>
             <xsd:element name="providers" type="xsd:anyType" minOccurs="0"/>
+            <!-- this is only supported in CXF 2.2.3             
             <xsd:element name="modelBeans" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="model" type="model" minOccurs="0"/>
+             -->
             <xsd:element name="headers" type="xsd:anyType" minOccurs="0"/> 
             <xsd:element name="schemaLocations" type="schemasType" minOccurs="0"/>
           </xsd:all>
@@ -122,7 +128,9 @@
           <xsd:attribute name="bus" type="xsd:string" />
           <xsd:attribute name="transportId" type="xsd:string"/>
           <xsd:attribute name="bindingId" type="xsd:string" />
+          <!-- this is only supported in CXF 2.2.3 
           <xsd:attribute name="modelRef" type="xsd:string" />
+          -->
           <xsd:attribute name="username" type="xsd:string"/>
           <xsd:attribute name="password" type="xsd:string"/>
         </xsd:extension>
@@ -136,6 +144,7 @@
     </xsd:sequence>
   </xsd:complexType>
   
+  <!-- this is only supported in CXF 2.2.3 
   <xsd:complexType name="model">
     <xsd:sequence>
       <xsd:element name="resource" minOccurs="0" maxOccurs="unbounded">
@@ -166,5 +175,5 @@
     </xsd:sequence>
     <xsd:attribute name="id" type="xsd:string"/>
   </xsd:complexType>
-  
+  -->
 </xsd:schema>

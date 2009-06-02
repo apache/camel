@@ -40,11 +40,6 @@ public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         super();
         setBeanClass(SpringJAXRSClientFactoryBean.class);
     }
-        
-    @Override
-    protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
-        mapToProperty(bean, name, val);
-    }
     
     @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {

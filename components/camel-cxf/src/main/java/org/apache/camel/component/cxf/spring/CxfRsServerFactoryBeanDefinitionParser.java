@@ -59,17 +59,6 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         bean.addPropertyValue("beanId", resolveId(element, bean.getBeanDefinition(), ctx));            
     }
     
-    
-    @Override
-    protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
-        if ("endpointName".equals(name) || "serviceName".equals(name)) {
-            QName q = parseQName(e, val);
-            bean.addPropertyValue(name, q);
-        } else {
-            mapToProperty(bean, name, val);
-        }
-    }
-
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
         if ("properties".equals(name) 
