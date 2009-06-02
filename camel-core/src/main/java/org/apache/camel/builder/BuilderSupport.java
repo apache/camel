@@ -175,6 +175,16 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Returns an expression processing the exchange to the given endpoint uri
+     *
+     * @param uri endpoint uri to send the exchange to
+     * @return the builder
+     */
+    public ValueBuilder to(String uri) {
+        return Builder.to(uri);
+    }
+
+    /**
      * Returns an expression value builder that replaces all occurrences of the 
      * regular expression with the given replacement
      */

@@ -210,6 +210,16 @@ public class ValueBuilder implements Expression {
     }
 
     /**
+     * Prepends the string evaluation of this expression with the given value
+     *
+     * @param value the value or expression to prepend
+     * @return the current builder
+     */
+    public ValueBuilder prepend(Object value) {
+        return new ValueBuilder(ExpressionBuilder.prepend(expression, asExpression(value)));
+    }
+
+    /**
      * Sorts the current value using the given comparator. The current value must be convertable
      * to a {@link List} to allow sorting using the comparator.
      *

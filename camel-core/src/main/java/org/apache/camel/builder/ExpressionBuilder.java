@@ -26,12 +26,16 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -695,6 +699,22 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Prepends the String evaluations of the two expressions together
+     */
+    public static Expression prepend(final Expression left, final Expression right) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return right.evaluate(exchange, String.class) + left.evaluate(exchange, String.class);
+            }
+
+            @Override
+            public String toString() {
+                return "prepend(" + left + ", " + right + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an expression which returns the string concatenation value of the various
      * expressions
      *
@@ -828,5 +848,45 @@ public final class ExpressionBuilder {
         String expression = methodName != null ? beanRef + "." + methodName : beanRef;
         return beanExpression(expression);
     }
+
+    /**
+     * Returns an expression processing the exchange to the given endpoint uri
+     *
+     * @param uri endpoint uri to send the exchange to
+     * @return an expression object which will return the OUT body
+     */
+    public static Expression toExpression(final String uri) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Endpoint endpoint = exchange.getContext().getEndpoint(uri);
+                if (endpoint == null) {
+                    throw new NoSuchEndpointException(uri);
+                }
+
+                Producer producer;
+                try {
+                    producer = endpoint.createProducer();
+                    producer.start();
+                    producer.process(exchange);
+                    producer.stop();
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+
+                // return the OUT body, but check for exchange pattern
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    return exchange.getOut().getBody();
+                } else {
+                    return exchange.getIn().getBody();
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "to(" + uri + ")";
+            }
+        };
+    }
+
 
 }

@@ -188,4 +188,16 @@ public final class Builder {
         Expression newExp = ExpressionBuilder.regexReplaceAll(content, regex, replacement);
         return new ValueBuilder(newExp);
     }
+
+    /**
+     * Returns an expression processing the exchange to the given endpoint uri.
+     *
+     * @param uri   endpoint uri
+     * @return the builder
+     */
+    public static ValueBuilder to(String uri) {
+        Expression expression = ExpressionBuilder.toExpression(uri);
+        return new ValueBuilder(expression);
+    }
+
 }
