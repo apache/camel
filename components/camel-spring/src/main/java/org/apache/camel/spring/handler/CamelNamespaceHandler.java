@@ -123,7 +123,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         String beanPostProcessorId = contextId + ":beanPostProcessor";
         childElement.setAttribute("id", beanPostProcessorId);
         BeanDefinition definition = beanPostProcessorParser.parse(childElement, parserContext);
-        definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+        // only register to camel context id as a String. Then we can look it up later
+        // otherwise we get a circular reference in spring and it will not allow custom bean post processing
+        // see more at CAMEL-1663
+        definition.getPropertyValues().addPropertyValue("camelId", contextId);
         parentBuilder.addPropertyReference("beanPostProcessor", beanPostProcessorId);
     }
 

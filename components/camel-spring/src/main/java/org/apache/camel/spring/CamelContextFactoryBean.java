@@ -713,7 +713,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                         additionalBuilders.add(routes);
                     } else {
                         // Throw the exception that we can't find any build here
-                        throw new CamelException("Can't find any routes info with this RouteBuilderDefinition " + builderRef);
+                        throw new CamelException("Cannot find any routes with this RouteBuilder reference: " + builderRef);
                     }
                 }
                 

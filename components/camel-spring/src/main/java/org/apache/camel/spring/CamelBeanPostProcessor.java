@@ -68,11 +68,25 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     private ApplicationContext applicationContext;
     @XmlTransient
     private CamelPostProcessorHelper postProcessor;
+    @XmlTransient
+    private String camelId;
 
     public CamelBeanPostProcessor() {
     }
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Camel bean processing before initialization for bean: " + beanName);
+        }
+
+        // some beans cannot be post processed at this given time, so we gotta check beforehand
+        if (!canPostProcessBean(bean, beanName)) {
+            return bean;
+        }
+
+        if (camelContext == null && applicationContext.containsBean(camelId)) {
+            setCamelContext((CamelContext) applicationContext.getBean(camelId));
+        }
         injectFields(bean);
         injectMethods(bean);
         if (bean instanceof CamelContextAware) {
@@ -87,6 +101,15 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Camel bean processing after initialization for bean: " + beanName);
+        }
+
+        // some beans cannot be post processed at this given time, so we gotta check beforehand
+        if (!canPostProcessBean(bean, beanName)) {
+            return bean;
+        }
+
         if (bean instanceof DefaultEndpoint) {
             DefaultEndpoint defaultEndpoint = (DefaultEndpoint) bean;
             defaultEndpoint.setEndpointUriIfNotSpecified(beanName);
@@ -115,8 +138,34 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         };
     }
 
+    public String getCamelId() {
+        return camelId;
+    }
+
+    public void setCamelId(String camelId) {
+        this.camelId = camelId;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Can we post process the given bean?
+     *
+     * @param bean the bean
+     * @param beanName the bean name
+     * @return true to process it
+     */
+    protected boolean canPostProcessBean(Object bean, String beanName) {
+        // the JMXAgent is a bit strange and causes Spring issues if we let it being
+        // post processed by this one. It does not need it anyway so we are good to go.
+        if (bean instanceof CamelJMXAgentDefinition) {
+            return false;
+        }
+
+        // all other beans can of course be processed
+        return true;
+    }
 
     /**
      * A strategy method to allow implementations to perform some custom JBI
