@@ -52,7 +52,7 @@ public class TransformToTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:bar").transform(to("bar"));
+                from("direct:bar").transform(sendTo("bar"));
             }
         });
         context.start();
@@ -71,7 +71,7 @@ public class TransformToTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform(to("direct:foo")).to("mock:result");
+                    .transform(sendTo("direct:foo")).to("mock:result");
 
                 from("direct:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
