@@ -195,7 +195,7 @@ public final class Builder {
      * @param uri   endpoint uri
      * @return the builder
      */
-    public static ValueBuilder to(String uri) {
+    public static ValueBuilder sendTo(String uri) {
         Expression expression = ExpressionBuilder.toExpression(uri);
         return new ValueBuilder(expression);
     }

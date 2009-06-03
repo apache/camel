@@ -180,8 +180,8 @@ public abstract class BuilderSupport {
      * @param uri endpoint uri to send the exchange to
      * @return the builder
      */
-    public ValueBuilder to(String uri) {
-        return Builder.to(uri);
+    public ValueBuilder sendTo(String uri) {
+        return Builder.sendTo(uri);
     }
 
     /**
