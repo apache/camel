@@ -24,6 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
+    private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&delay=2000&noop=true&fileExist=Append";
@@ -40,9 +41,12 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
 
     public void testAppend() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World\nBye World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "exist/hello.txt", "Hello World\nBye World");
-
+        String expectBody = "Hello World\nBye World";
+        if (ON_WINDOWS) {
+            expectBody = "Hello World\r\nBye World";
+        }
+        mock.expectedBodiesReceived(expectBody);
+        mock.expectedFileExists(FTP_ROOT_DIR + "exist/hello.txt", expectBody);       
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
