@@ -25,17 +25,8 @@
 
     <context:component-scan base-package="org.apache.camel.spring.postprocessor"/>
 
-    <!--<bean id="cbpp" class="org.apache.camel.spring.CamelBeanPostProcessor">-->
-        <!--<property name="camelContext" ref="camel"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="dummy" class="org.apache.camel.spring.MyDummyCamelBeanPostProcessor"/>-->
-
-    <!--<bean id="myRoute" class="org.apache.camel.spring.postprocessor.MyRouteBuilderWithAutowiredPojo"/>-->
-
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <package>org.apache.camel.spring.postprocessor</package>
-        <!--<routeBuilder ref="myRoute"/>-->
     </camelContext>
 
 </beans>
