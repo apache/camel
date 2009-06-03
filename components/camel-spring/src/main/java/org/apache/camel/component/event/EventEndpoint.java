@@ -64,16 +64,17 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     }
 
     public Producer createProducer() throws Exception {
-        ObjectHelper.notNull(getApplicationContext(), "applicationContext");
+        ObjectHelper.notNull(applicationContext, "applicationContext");
         return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
                 ApplicationEvent event = toApplicationEvent(exchange);
-                getApplicationContext().publishEvent(event);
+                applicationContext.publishEvent(event);
             }
         };
     }
 
     public EventConsumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(applicationContext, "applicationContext");
         return new EventConsumer(this, processor);
     }
 

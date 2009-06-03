@@ -31,10 +31,6 @@ public class EventRouteTest extends SpringTestSupport {
     protected String uri = "spring-event:default";
 
     public void testSendingCamelExchangeToEndpointResultsInValidApplicationEventAfterTheRefreshEvent() throws Exception {
-        // TODO: CAMEL-1663: spring-event is broken
-
-        /*
-
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);
 
@@ -55,7 +51,6 @@ public class EventRouteTest extends SpringTestSupport {
         CamelEvent event = assertIsInstanceOf(CamelEvent.class, body);
         Object actualBody = event.getExchange().getIn().getBody();
         assertEquals("Received event body", expectedBody, actualBody);
-        */
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {
