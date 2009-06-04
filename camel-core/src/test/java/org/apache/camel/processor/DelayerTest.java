@@ -27,20 +27,26 @@ public class DelayerTest extends ContextTestSupport {
 
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+
+        // do not wait for the first message
         resultEndpoint.expectedMessageCount(0);
-
-        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "JMSTimestamp", System.currentTimeMillis());
+        resultEndpoint.setResultWaitTime(500);
+        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "MyDelay", 1000);
+        // we should not receive it as we wait at most 0.5 sec and it take 1 sec to send
         resultEndpoint.assertIsSatisfied();
 
         // now if we wait a bit longer we should receive the message!
+        resultEndpoint.reset();
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
+    }
 
+    public void testDelayConstant() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        // should at least take 1 sec to complete
+        resultEndpoint.setMinimumResultWaitTime(1000);
         template.sendBody("seda:b", "<hello>world!</hello>");
-        resultEndpoint.assertIsSatisfied();
-
-        // now if we wait a bit longer we should receive the message!
-        resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -48,10 +54,11 @@ public class DelayerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").delay(header("JMSTimestamp"), 3000).to("mock:result");
+                from("seda:a").delay().header("MyDelay").to("mock:result");
                 // END SNIPPET: ex
+
                 // START SNIPPET: ex2
-                from("seda:b").delay(3000).to("mock:result");
+                from("seda:b").delay(1000).to("mock:result");
                 // END SNIPPET: ex2
             }
         };

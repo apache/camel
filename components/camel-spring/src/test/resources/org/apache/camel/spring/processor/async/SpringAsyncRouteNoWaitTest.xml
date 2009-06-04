@@ -32,9 +32,7 @@
 
             <threads waitForTaskToComplete="Newer">
                 <to uri="mock:foo"/>
-                <delay delayTime="500">
-                    <constant/>
-                </delay>
+                <delay><constant>500</constant></delay>
                 <process ref="myProcessor"/>
                 <to uri="mock:result"/>
             </threads>

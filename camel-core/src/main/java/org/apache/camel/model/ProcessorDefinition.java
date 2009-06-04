@@ -39,6 +39,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
@@ -1111,25 +1112,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a>
      * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
-     * @param processAtExpression  an expression to calculate the time at which the messages should be processed,
-     *                             should be convertable to long as time in millis
+     * @param delay  an expression to calculate the delay time in millis
      * @return the builder
      */
-    public DelayDefinition delay(Expression processAtExpression) {
-        return delay(processAtExpression, 0L);
-    }
-
-    /**
-     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a>
-     * Creates a delayer allowing you to delay the delivery of messages to some destination.
-     *
-     * @param processAtExpression  an expression to calculate the time at which the messages should be processed,
-     *                             should be convertable to long as time in millis
-     * @param delay                the delay in milliseconds which is added to the processAtExpression
-     * @return the builder
-     */
-    public DelayDefinition delay(Expression processAtExpression, long delay) {
-        DelayDefinition answer = new DelayDefinition(processAtExpression, delay);
+    public DelayDefinition delay(Expression delay) {
+        DelayDefinition answer = new DelayDefinition(delay);
         addOutput(answer);
         return answer;
     }
@@ -1150,11 +1137,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a>
      * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
-     * @param delay  the default delay in millis
+     * @param delay  the delay in millis
      * @return the builder
      */
     public DelayDefinition delay(long delay) {
-        return delay(null, delay);
+        return delay(ExpressionBuilder.constantExpression(delay));
     }
 
     /**

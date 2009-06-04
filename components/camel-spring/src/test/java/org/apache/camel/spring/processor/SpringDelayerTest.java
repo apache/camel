@@ -21,8 +21,8 @@ import org.apache.camel.processor.DelayerTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringDelayerTest extends DelayerTest {
+
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this,
-                "org/apache/camel/spring/processor/delayer.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/delayer.xml");
     }
 }

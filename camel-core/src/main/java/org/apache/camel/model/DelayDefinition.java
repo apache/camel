@@ -18,12 +18,11 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.RouteContext;
@@ -37,49 +36,17 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayDefinition extends ExpressionNode {
-    @XmlAttribute
-    private Long delayTime = 0L;
 
     public DelayDefinition() {
     }
 
-    public DelayDefinition(Expression processAtExpression) {
-        super(processAtExpression);
-    }
-
-    public DelayDefinition(ExpressionDefinition processAtExpression) {
-        super(processAtExpression);
-    }
-
-    public DelayDefinition(Expression processAtExpression, long delayTime) {
-        super(processAtExpression);
-        this.delayTime = delayTime;
+    public DelayDefinition(Expression delay) {
+        super(delay);
     }
 
     @Override
-    public String toString() {
-        return "Delay[on: " + getExpression() + " delay: " + delayTime + " -> " + getOutputs() + "]";
-    }
-    
-    // Fluent API
-    // -------------------------------------------------------------------------
-
-    /**
-     * Sets the delay time in millis to delay
-     * @param delay delay time in millis
-     * @return the builder
-     */
-    public DelayDefinition delayTime(Long delay) {
-        setDelayTime(delay);
-        return this;
-    }
-    
-    /**
-     * Set the expression that the delayer will use
-     * @return the builder
-     */
-    public ExpressionClause<DelayDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
+    public String getLabel() {
+        return "delay";
     }
 
     @Override
@@ -87,27 +54,36 @@ public class DelayDefinition extends ExpressionNode {
         return "delay";
     }
 
-    public Long getDelayTime() {
-        return delayTime;
+    @Override
+    public String toString() {
+        return "Delay[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
-    public void setDelayTime(Long delayTime) {
-        this.delayTime = delayTime;
-    }   
-    
+    // Fluent API
+    // -------------------------------------------------------------------------
 
+    /**
+     * Sets the delay time in millis to delay
+     *
+     * @param delay delay time in millis
+     * @return the builder
+     */
+    public DelayDefinition delayTime(Long delay) {
+        setExpression(new ExpressionDefinition(ExpressionBuilder.constantExpression(delay)));
+        return this;
+    }
+    
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        Expression processAtExpression = createAbsoluteTimeDelayExpression(routeContext);
-        return new Delayer(childProcessor, processAtExpression, delayTime);
+        Expression delay = createAbsoluteTimeDelayExpression(routeContext);
+        return new Delayer(childProcessor, delay);
     }
 
     private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {
         ExpressionDefinition expr = getExpression();
         if (expr != null) {
-            if (ObjectHelper.isNotEmpty(expr.getExpression())
-                || expr.getExpressionValue() != null) {
+            if (ObjectHelper.isNotEmpty(expr.getExpression()) || expr.getExpressionValue() != null) {
                 return expr.createExpression(routeContext);
             } 
         } 

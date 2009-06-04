@@ -21,23 +21,20 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-    <!--
-        from("seda:a").delayer(header("JMSTimestamp"), 3000).to("mock:result");
-        from("seda:b").delayer(3000).to("mock:result");
-    -->
+
     <!-- START SNIPPET: example -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="seda:a"/>
-            <delay delayTime="3000">
-                <simple>header.JMSTimestamp</simple>
+            <delay>
+                <header>MyDelay</header>
             </delay>
             <to uri="mock:result"/>
         </route>
         <route>
             <from uri="seda:b"/>
-            <delay delayTime="3000">
-                <language/>
+            <delay>
+                <constant>1000</constant>
             </delay>
             <to uri="mock:result"/>
         </route>

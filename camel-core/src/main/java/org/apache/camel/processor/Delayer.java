@@ -23,40 +23,21 @@ import org.apache.camel.Processor;
 /**
  * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which
  * delays processing the exchange until the correct amount of time has elapsed
- * using an expression to determine the delivery time. <p/> For example if you
- * wish to delay JMS messages by 25 seconds from their publish time you could
- * create an instance of this class with the expression
- * <code>header("JMSTimestamp")</code> and a delay value of 25000L.
+ * using an expression to determine the delivery time.
  * 
  * @version $Revision$
  */
 public class Delayer extends DelayProcessorSupport {
-    private final Expression timeExpression;
-    private long delay;
+    private final Expression delay;
 
-    public Delayer(Processor processor, Expression timeExpression, long delay) {
+    public Delayer(Processor processor, Expression delay) {
         super(processor);
-        this.timeExpression = timeExpression;
         this.delay = delay;
     }
 
     @Override
     public String toString() {
-        return "Delayer[" + (timeExpression != null ? "on: " + timeExpression : "") + " delay: " + delay + " to: " + getProcessor() + "]";
-    }
-
-    // Properties
-    // -------------------------------------------------------------------------
-    public long getDelay() {
-        return delay;
-    }
-
-    /**
-     * Sets the delay from the publish time; which is typically the time from
-     * the expression or the current system time if none is available
-     */
-    public void setDelay(long delay) {
-        this.delay = delay;
+        return "Delayer[" + delay + " to: " + getProcessor() + "]";
     }
 
     // Implementation methods
@@ -68,17 +49,19 @@ public class Delayer extends DelayProcessorSupport {
      */
     protected void delay(Exchange exchange) throws Exception {
         long time = 0;
-        if (timeExpression != null) {
-            Long longValue = timeExpression.evaluate(exchange, Long.class);
+        if (delay != null) {
+            Long longValue = delay.evaluate(exchange, Long.class);
             if (longValue != null) {
                 time = longValue;
             }
         }
         if (time <= 0) {
-            time = defaultProcessTime(exchange);
+            // no delay
+            return;
         }
 
-        time += delay;
+        // now add the current time
+        time += defaultProcessTime(exchange);
 
         waitUntil(time, exchange);
     }
@@ -90,5 +73,6 @@ public class Delayer extends DelayProcessorSupport {
     protected long defaultProcessTime(Exchange exchange) {
         return currentSystemTime();
     }
+
 
 }
