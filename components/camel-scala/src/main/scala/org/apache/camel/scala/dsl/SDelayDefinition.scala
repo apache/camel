@@ -16,7 +16,9 @@
  */
 package org.apache.camel.scala.dsl;
 
+import org.apache.camel.builder.ExpressionBuilder
 import org.apache.camel.model.DelayDefinition
+import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
@@ -39,6 +41,6 @@ case class SDelayDefinition(override val target: DelayDefinition)(implicit val b
   }
   def minutes = min
   
-  def valueInMs : Long = target.getDelayTime().asInstanceOf[Long]
-  def valueInMs_=(period: Long) = target.setDelayTime(period)
+  def valueInMs : Long = target.getExpression().asInstanceOf[Long]
+  def valueInMs_=(period: Long) = target.setExpression(new ExpressionDefinition(ExpressionBuilder.constantExpression(period)))
 }
