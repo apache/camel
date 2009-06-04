@@ -58,7 +58,7 @@ class RollbackTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" to("mock:a") when(_.in != "Batman") rollback
+       "direct:a" to("mock:a") when(_.in != "Batman") rollback;
        //END SNIPPET: simple
       
        //START SNIPPET: block

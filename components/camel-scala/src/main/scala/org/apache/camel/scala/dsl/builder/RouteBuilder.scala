@@ -66,6 +66,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def choice = stack.top.choice
   def -->(uris: String*) = stack.top.to(uris: _*)
   def to(uris: String*) = stack.top.to(uris: _*)
+  
   def when(filter: Exchange => Boolean) = stack.top.when(filter)
   def as[Target](toType: Class[Target]) = stack.top.as(toType)
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
@@ -82,12 +83,22 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def otherwise = stack.top.otherwise
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
   def multicast = stack.top.multicast
-  def process(function: Exchange => Unit) = stack.top.process(function)
+
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def loadbalance = stack.top.loadbalance
   def delay(delay: Period) = stack.top.delay(delay)
   def enrich(uri: String, strategy: AggregationStrategy) = stack.top.enrich(uri, strategy)
+  def onCompletion = {
+    stack.size match {
+      case 0 => SOnCompletionDefinition(builder.onCompletion)(this)
+      case _ => stack.top.onCompletion;
+    }
+  }
+  def onCompletion(predicate: Exchange => Boolean) = stack.top.onCompletion(predicate)
+  def onCompletion(config: Config[SOnCompletionDefinition]) = stack.top.onCompletion(config)
   def policy(policy: Policy) = stack.top.policy(policy)
+  def process(function: Exchange => Unit) = stack.top.process(function)
+  def process(processor: Processor) = stack.top.process(processor)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def rollback = stack.top.rollback
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
@@ -103,4 +114,13 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def setContext(context: CamelContext) = builder.setContext(context)
   
   val serialization = new org.apache.camel.model.dataformat.SerializationDataFormat
+
+  val failureOnly = new Config[SOnCompletionDefinition] {
+    def configure(target: SOnCompletionDefinition) = target.onFailureOnly()
+  }
+
+  val completeOnly = new Config[SOnCompletionDefinition] {
+    def configure(target: SOnCompletionDefinition) = target.onCompleteOnly()
+  }
+
 }

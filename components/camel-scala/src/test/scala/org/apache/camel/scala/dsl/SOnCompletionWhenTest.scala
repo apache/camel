@@ -16,11 +16,23 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.RouteDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
+import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
+import processor.OnCompletionWhenTest
+import reflect.Manifest
 
-case class SRouteDefinition(override val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
- 
-  def ==> (block: => Unit) : SRouteDefinition = this.apply(block).asInstanceOf[SRouteDefinition]
+class SOnCompletionWhenTest extends OnCompletionWhenTest with RouteBuilderSupport {
+
+  override def createRouteBuilder = new RouteBuilder {
+
+    "direct:start" ==> {
+      onCompletion(containsHello(_)) {
+        to("mock:sync")
+      }
+      to("mock:result")
+    }
+
+    def containsHello(exchange: Exchange) = exchange.getIn().getBody(classOf[String]).contains("Hello");
+  }
 
 }

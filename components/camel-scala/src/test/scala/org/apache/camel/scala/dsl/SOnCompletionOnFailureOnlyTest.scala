@@ -16,11 +16,24 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.RouteDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import dsl.SOnCompletionDefinition.{FailureOnly}
+import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
+import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
+import processor.OnCompletionOnFailureOnlyTest
 
-case class SRouteDefinition(override val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
- 
-  def ==> (block: => Unit) : SRouteDefinition = this.apply(block).asInstanceOf[SRouteDefinition]
+class SOnCompletionOnFailureOnlyTest extends OnCompletionOnFailureOnlyTest with RouteBuilderSupport {
+
+  override def createRouteBuilder = new RouteBuilder {
+
+    "direct:start" ==> {
+      onCompletion(failureOnly) {
+        to("mock:sync")
+      }
+      process(new MyProcessor())
+      to("mock:result")
+    }
+
+    def containsHello(exchange: Exchange) = exchange.getIn().getBody(classOf[String]).contains("Hello");
+  }
 
 }

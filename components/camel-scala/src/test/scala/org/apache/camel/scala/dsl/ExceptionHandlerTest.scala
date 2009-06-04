@@ -35,12 +35,12 @@ class ExceptionHandlerTest extends ScalaTestSupport {
       test {
        "direct:a" ! ("any given message", 'Symbol, 256)
       }
-    }catch { case _ => System.out.println("get the exception here")}
+    } catch { case _ => System.out.println("get the exception here")}
   }
 
   val builder =
     new RouteBuilder {
-       def failingProcessor(exchange: Exchange) = {
+       val failingProcessor = (exchange: Exchange) => {
          exchange.in match {
            case text: String => //graciously do nothing
            case symbol: Symbol => throw new UnsupportedOperationException("We don't know how to deal with this symbolically correct")
@@ -48,7 +48,7 @@ class ExceptionHandlerTest extends ScalaTestSupport {
          }
        }
 
-       def catchProcessor(exchange: Exchange) = {
+       val catchProcessor = (exchange: Exchange) => {
           // we shouldn't get any Strings here
           assertFalse(exchange.getIn().getBody().getClass().equals(classOf[String]))
           // the exchange shouldn't have been marked failed

@@ -16,11 +16,23 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.RouteDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import dsl.SOnCompletionDefinition.CompleteOnly
+import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
+import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
+import processor.OnCompletionOnCompleteOnlyTest
 
-case class SRouteDefinition(override val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
- 
-  def ==> (block: => Unit) : SRouteDefinition = this.apply(block).asInstanceOf[SRouteDefinition]
+class SOnCompletionOnCompleteOnlyTest extends OnCompletionOnCompleteOnlyTest with RouteBuilderSupport {
+
+  override def createRouteBuilder = new RouteBuilder {
+
+    "direct:start" ==> {
+      onCompletion(completeOnly) {
+        to("mock:sync")
+      }
+      process(new MyProcessor())
+      to("mock:result")
+    }
+
+  }
 
 }

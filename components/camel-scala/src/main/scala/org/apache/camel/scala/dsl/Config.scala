@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.RouteDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+/**
+ * Generic trait to represent a configuration that can be applied to a target
+ */
+trait Config[T] {
 
-case class SRouteDefinition(override val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
- 
-  def ==> (block: => Unit) : SRouteDefinition = this.apply(block).asInstanceOf[SRouteDefinition]
+  def configure(target: T)
 
 }

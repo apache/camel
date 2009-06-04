@@ -50,15 +50,15 @@ class ContentEnricherTest extends ScalaTestSupport {
     // END SNIPPET: simple
     
     // START SNIPPET: def
-    "direct:b" process(myProcessor) to ("mock:b")
-    
-    def myProcessor(exchange: Exchange) = {
+    val myProcessor = (exchange: Exchange) => {
       exchange.in match {
         case "hello" => exchange.in = "hello from the UK"
         case "hallo" => exchange.in = "hallo vanuit Belgie"
         case "bonjour" => exchange.in = "bonjour de la douce France"
       }
-    }
+    }    
+
+    "direct:b" process(myProcessor) to ("mock:b")
     // END SNIPPET: def
     
     // START SNIPPET: velocity

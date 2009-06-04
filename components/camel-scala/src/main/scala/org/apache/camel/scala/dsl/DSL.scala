@@ -40,9 +40,13 @@ trait DSL {
   def loop(expression: Exchange => Any) : SLoopDefinition
   def marshal(format : DataFormatDefinition) : DSL
   def multicast : SMulticastDefinition
-  def otherwise : DSL
+  def otherwise : DSL with Block
+  def onCompletion : SOnCompletionDefinition
+  def onCompletion(predicate: Exchange => Boolean) : SOnCompletionDefinition
+  def onCompletion(config: Config[SOnCompletionDefinition]) : SOnCompletionDefinition
   def policy(policy: Policy) : DSL
   def process(function: Exchange => Unit) : DSL
+  def process(processor: Processor) : DSL
   def recipients(expression: Exchange => Any) : DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
@@ -52,7 +56,7 @@ trait DSL {
   def throttle(frequency: Frequency) : SThrottleDefinition
   def to(uris: String*) : DSL
   def unmarshal(format: DataFormatDefinition) : DSL
-  def when(filter: Exchange => Boolean) : SChoiceDefinition
+  def when(filter: Exchange => Boolean) : DSL with Block
   
   def wiretap(uri: String) : DSL
   def wiretap(uri: String, expression: Exchange => Any) : DSL

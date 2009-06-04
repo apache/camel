@@ -31,6 +31,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   val unwrap = target
   implicit val builder: RouteBuilder
   implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
+  implicit def predicateBuilder(predicate: Exchange => Boolean) = new ScalaPredicate(predicate)
   
   def -->(uris: String*) = to(uris:_*)
   def to(uris: String*) = {
@@ -44,7 +45,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     this
   }
   
-  def when(filter: Exchange => Boolean) : SChoiceDefinition = SChoiceDefinition(target.choice).when(filter)
+  def when(filter: Exchange => Boolean) : DSL with Block = SChoiceDefinition(target.choice).when(filter)
     
   def as[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
   
@@ -82,12 +83,26 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def multicast = SMulticastDefinition(target.multicast)
   
   def process(function: Exchange => Unit) = wrap(target.process(new ScalaProcessor(function)))
+  def process(processor: Processor) = wrap(target.process(processor))
  
   def throttle(frequency: Frequency) = SThrottleDefinition(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
   def loadbalance = SLoadBalanceDefinition(target.loadBalance)
   
   def delay(period: Period) = SDelayDefinition(target.delay(period.milliseconds))
+  
+  def onCompletion : SOnCompletionDefinition = {
+    var completion = SOnCompletionDefinition(target.onCompletion)
+    // let's end the block in the Java DSL, we have a better way of handling blocks here
+    completion.target.end
+    completion
+  }
+  def onCompletion(predicate: Exchange => Boolean) = onCompletion().when(predicate).asInstanceOf[SOnCompletionDefinition]
+  def onCompletion(config: Config[SOnCompletionDefinition]) = {
+    val completion = onCompletion().asInstanceOf[SOnCompletionDefinition]
+    config.configure(completion)
+    completion
+  }
   
   def policy(policy: Policy) = wrap(target.policy(policy))
 

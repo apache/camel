@@ -38,14 +38,14 @@ class TryCatchFinallyTest extends ScalaTestSupport {
     
   val builder =
     new RouteBuilder {
-       def failingProcessor(exchange: Exchange) = {
+       val failingProcessor = (exchange: Exchange) => {
          exchange.in match {
            case text: String => //graciously do nothing
            case _ => throw new RuntimeException("Strings are good, the rest is bad")
          }
        }
        
-       def catchProcessor(exchange: Exchange) = {
+       val catchProcessor = (exchange: Exchange) => {
           // we shouldn't get any Strings here
           assertFalse(exchange.getIn().getBody().getClass().equals(classOf[String]))
           // the exchange shouldn't have been marked failed
