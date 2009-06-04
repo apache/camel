@@ -16,7 +16,6 @@
  */
 package org.apache.camel.scala.dsl;
 
-import dsl.SOnCompletionDefinition.{FailureOnly}
 import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
 import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
 import processor.OnCompletionOnFailureOnlyTest

@@ -40,7 +40,8 @@ case class SDelayDefinition(override val target: DelayDefinition)(implicit val b
     this
   }
   def minutes = min
-  
-  def valueInMs : Long = target.getExpression().asInstanceOf[Long]
-  def valueInMs_=(period: Long) = target.setExpression(new ExpressionDefinition(ExpressionBuilder.constantExpression(period)))
+
+  // we need this to match the valueInMs_= for now, can be removed once Scala 2.8.0 is out
+  def valueInMs : Long = 0
+  def valueInMs_=(period: Long) = target.delay(period)
 }
