@@ -29,6 +29,7 @@ import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
@@ -190,10 +191,31 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     }
     
     /**
-     * Uses the JSON data format
+     * Uses the JSON data format using the XStream json library
      */
     public T json() {
         return dataFormat(new JsonDataFormat());
+    }
+
+    /**
+     * Uses the JSON data format
+     *
+     * @param library the json library to use
+     */
+    public T json(JsonLibrary library) {
+        return dataFormat(new JsonDataFormat(library));
+    }
+
+    /**
+     * Uses the JSON data format
+     *
+     * @param type the json type to use
+     * @param unmarshalType unmarshal type for json jackson type
+     */
+    public T json(JsonLibrary type, Class<?> unmarshalType) {
+        JsonDataFormat json = new JsonDataFormat(type);
+        json.setUnmarshalType(unmarshalType);
+        return dataFormat(json);
     }
 
     /**

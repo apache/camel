@@ -133,5 +133,21 @@ public class DataFormatDefinition extends IdentifiedType {
             throw new IllegalArgumentException("Failed to set property: " + name + " on: " + bean + ". Reason: " + e, e);
         }
     }
+
+    public String getDataFormatName() {
+        return dataFormatName;
+    }
+
+    public void setDataFormatName(String dataFormatName) {
+        this.dataFormatName = dataFormatName;
+    }
+
+    public DataFormat getDataFormat() {
+        return dataFormat;
+    }
+
+    public void setDataFormat(DataFormat dataFormat) {
+        this.dataFormat = dataFormat;
+    }
 }
 

@@ -20,6 +20,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,8 +33,20 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private Boolean prettyPrint;
 
+    @XmlAttribute(required = false)
+    private JsonLibrary library = JsonLibrary.XStream;
+
+    @XmlAttribute(required = false)
+    private String unmarshalTypeName;
+
+    @XmlTransient
+    private Class<?> unmarshalType;
+
     public JsonDataFormat() {
-        super("org.apache.camel.dataformat.xstream.JsonDataFormat");
+    }
+
+    public JsonDataFormat(JsonLibrary library) {
+        this.library = library;
     }
 
     public Boolean getPrettyPrint() {
@@ -38,6 +55,40 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public Class<?> getUnmarshalType() {
+        return unmarshalType;
+    }
+
+    public void setUnmarshalType(Class<?> unmarshalType) {
+        this.unmarshalType = unmarshalType;
+    }
+
+    @Override
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        if (library == JsonLibrary.XStream) {
+            setProperty(this, "dataFormatName", "org.apache.camel.dataformat.xstream.JsonDataFormat");
+        } else {
+            setProperty(this, "dataFormatName", "org.apache.camel.component.jackson.JacksonDataFormat");
+        }
+
+        if (unmarshalType == null && unmarshalTypeName != null) {
+            try {
+                unmarshalType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshalTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return super.createDataFormat(routeContext);
+    }
+
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        if (unmarshalType != null) {
+            setProperty(dataFormat, "unmarshalType", unmarshalType);
+        }
     }
 
 }

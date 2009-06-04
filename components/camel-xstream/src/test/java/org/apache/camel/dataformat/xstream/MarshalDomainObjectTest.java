@@ -52,7 +52,6 @@ public class MarshalDomainObjectTest extends ContextTestSupport {
         template.sendBody("direct:in", order);
 
         mock.assertIsSatisfied();
-       
 
         String body1 = mock.getExchanges().get(0).getIn().getBody(String.class);
         String body2 = mock.getExchanges().get(1).getIn().getBody(String.class);
