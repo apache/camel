@@ -19,6 +19,8 @@ package org.apache.camel.scala.dsl
 import org.apache.camel.model.dataformat.DataFormatDefinition
 import org.apache.camel.processor.aggregate.AggregationStrategy
 
+import org.apache.camel.spi.Policy
+
 /**
  * Defines the 'keywords' in our Scala DSL
  */
@@ -39,6 +41,7 @@ trait DSL {
   def marshal(format : DataFormatDefinition) : DSL
   def multicast : SMulticastDefinition
   def otherwise : DSL
+  def policy(policy: Policy) : DSL
   def process(function: Exchange => Unit) : DSL
   def recipients(expression: Exchange => Any) : DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
@@ -55,5 +58,4 @@ trait DSL {
   def wiretap(uri: String, expression: Exchange => Any) : DSL
   
   def -->(uris: String*) : DSL
-
 }

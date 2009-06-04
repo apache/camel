@@ -17,6 +17,7 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model._
+import org.apache.camel.spi.Policy
 
 import org.apache.camel.model.dataformat.DataFormatDefinition
 
@@ -87,6 +88,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def loadbalance = SLoadBalanceDefinition(target.loadBalance)
   
   def delay(period: Period) = SDelayDefinition(target.delay(period.milliseconds))
+  
+  def policy(policy: Policy) = wrap(target.policy(policy))
 
   def recipients(expression: Exchange => Any) = wrap(target.recipientList(expression))
   
