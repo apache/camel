@@ -144,7 +144,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:enum").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:foo", "Hello World", "enum", "Newer");
+        template.sendBodyAndHeader("direct:foo", "Hello World", "enum", "Never");
 
         assertMockEndpointsSatisfied();
     }

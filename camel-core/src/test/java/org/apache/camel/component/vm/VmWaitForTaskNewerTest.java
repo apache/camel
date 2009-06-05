@@ -58,9 +58,9 @@ public class VmWaitForTaskNewerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("vm:foo?waitForTaskToComplete=Newer");
+                from("direct:start").to("vm:foo?waitForTaskToComplete=Never");
 
-                from("vm:foo?waitForTaskToComplete=Newer").transform(constant("Bye World")).to("mock:result");
+                from("vm:foo?waitForTaskToComplete=Never").transform(constant("Bye World")).to("mock:result");
             }
         };
     }
