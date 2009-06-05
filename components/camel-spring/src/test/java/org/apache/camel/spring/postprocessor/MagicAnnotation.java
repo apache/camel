@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.spi;
+package org.apache.camel.spring.postprocessor;
 
-import org.apache.camel.spi.Injector;
-import org.springframework.context.ConfigurableApplicationContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A Spring implementation of {@link Injector} allowing Spring to be used to dependency inject newly created POJOs
- *
  * @version $Revision$
  */
-public class SpringInjector implements Injector {
-    private final ConfigurableApplicationContext applicationContext;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface MagicAnnotation {
 
-    public SpringInjector(ConfigurableApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    public <T> T newInstance(Class<T> type) {
-        Object value = applicationContext.getBeanFactory().createBean(type);
-        return type.cast(value);
-    }
+    String value();
 
 }

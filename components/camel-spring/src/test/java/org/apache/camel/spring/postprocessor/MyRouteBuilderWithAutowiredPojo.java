@@ -14,26 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.spi;
+package org.apache.camel.spring.postprocessor;
 
-import org.apache.camel.spi.Injector;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.spring.SpringRouteBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * A Spring implementation of {@link Injector} allowing Spring to be used to dependency inject newly created POJOs
- *
  * @version $Revision$
  */
-public class SpringInjector implements Injector {
-    private final ConfigurableApplicationContext applicationContext;
+public class MyRouteBuilderWithAutowiredPojo extends SpringRouteBuilder {
 
-    public SpringInjector(ConfigurableApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    @Autowired
+    private TestPojo pojo;
+
+    @EndpointInject(uri = "mock:injected")
+    private Endpoint injected;
+
+    public void configure() throws Exception {
+        from("direct:start").to("mock:result").to(injected);
     }
 
-    public <T> T newInstance(Class<T> type) {
-        Object value = applicationContext.getBeanFactory().createBean(type);
-        return type.cast(value);
+    public TestPojo getPojo() {
+        return this.pojo;
     }
 
 }

@@ -321,18 +321,23 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Publishing spring-event: " + event);
-        }
+        if (context != null) {
+            // let the spring camel context handle the events
+            context.onApplicationEvent(event);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Publishing spring-event: " + event);
+            }
 
-        if (event instanceof ContextRefreshedEvent) {
-            // now lets start the CamelContext so that all its possible
-            // dependencies are initialized
-            try {
-                LOG.debug("Starting the context now!");
-                getContext().start();
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
+            if (event instanceof ContextRefreshedEvent) {
+                // now lets start the CamelContext so that all its possible
+                // dependencies are initialized
+                try {
+                    LOG.debug("Starting the context now!");
+                    getContext().start();
+                } catch (Exception e) {
+                    throw wrapRuntimeCamelException(e);
+                }
             }
         }
         /*
@@ -594,7 +599,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                         getContext().addRoutes(routes);
                     } else {
                         // Throw the exception that we can't find any build here
-                        throw new CamelException("Can't find any routes info with this RouteBuilderDefinition " + builderRef);
+                        throw new CamelException("Cannot find any routes with this RouteBuilder reference: " + builderRef);
                     }
                 }
             }
