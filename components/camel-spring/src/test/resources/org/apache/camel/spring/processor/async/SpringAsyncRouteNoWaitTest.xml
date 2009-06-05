@@ -30,7 +30,7 @@
                 <constant>Hello World</constant>
             </transform>
 
-            <threads waitForTaskToComplete="Newer">
+            <threads waitForTaskToComplete="Never">
                 <to uri="mock:foo"/>
                 <delay><constant>500</constant></delay>
                 <process ref="myProcessor"/>
