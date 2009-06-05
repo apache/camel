@@ -18,8 +18,11 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 
@@ -46,7 +49,15 @@ public class CxfRsInvoker extends JAXRSInvoker {
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
         processor.process(camelExchange);
         if (camelExchange.getException() != null) {
-            throw camelExchange.getException();
+            Throwable exception = camelExchange.getException();
+            Object result = null;
+            if (exception instanceof RuntimeCamelException) {
+                exception = ((RuntimeCamelException)exception).getCause();
+            }
+            if (exception instanceof WebApplicationException) {
+                result = ((WebApplicationException)exception).getResponse();
+            }
+            return result;
         }
         return binding.populateCxfRsResponseFromExchange(camelExchange, cxfExchange);
     }
