@@ -48,6 +48,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     private final JavaMailSenderImpl sender;
     private Folder folder;
     private Store store;
+    private int maxMessagesPerPoll;
 
     public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSenderImpl sender) {
         super(endpoint, processor);
@@ -127,8 +128,19 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
     }
 
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
     public void processBatch(Queue exchanges) throws Exception {
         int total = exchanges.size();
+
+        // limit if needed
+        if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            total = maxMessagesPerPoll;
+        }
+
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
             MailExchange exchange = (MailExchange) exchanges.poll();

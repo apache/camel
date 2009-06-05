@@ -83,6 +83,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
+        // set max messages per poll
+        consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+
         configureConsumer(consumer);
         return consumer;
     }

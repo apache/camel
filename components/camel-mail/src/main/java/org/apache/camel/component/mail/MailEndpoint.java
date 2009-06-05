@@ -39,6 +39,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private MailConfiguration configuration;
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     private ContentTypeResolver contentTypeResolver;
+    private int maxMessagesPerPoll;
 
     public MailEndpoint() {
     }
@@ -88,11 +89,12 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
         // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
         answer.setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
+
+        answer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(answer);
 
         return answer;
     }
-
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
@@ -146,5 +148,13 @@ public class MailEndpoint extends ScheduledPollEndpoint {
 
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 }

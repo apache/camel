@@ -49,6 +49,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private int maxMessagesPerPoll;
 
     private final class DataHolder {
         private Exchange exchange;
@@ -92,12 +93,23 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
         });
     }
 
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
     public void processBatch(Queue exchanges) throws Exception {
         if (exchanges.isEmpty()) {
             return;
         }
 
         int total = exchanges.size();
+
+        // limit if needed
+        if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            total = maxMessagesPerPoll;
+        }
+
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
             DataHolder holder = (DataHolder) exchanges.poll();

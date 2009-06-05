@@ -52,6 +52,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean consumeDelete = true;
     private boolean consumeLockEntity = true;
     private boolean flushOnSend = true;
+    private int maxMessagesPerPoll;
 
     public JpaEndpoint() {
     }
@@ -85,6 +86,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         validate();
         JpaConsumer consumer = new JpaConsumer(this, processor);
+        consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(consumer);
         return consumer;
     }
@@ -211,6 +213,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public void setFlushOnSend(boolean flushOnSend) {
         this.flushOnSend = flushOnSend;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
     // Implementation methods

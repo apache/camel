@@ -37,6 +37,7 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     private boolean useTransactions;
     private String statement;
     private StatementType statementType;
+    private int maxMessagesPerPoll;
 
     public IBatisEndpoint() {
     }
@@ -64,6 +65,7 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     @Override
     public IBatisPollingConsumer createConsumer(Processor processor) throws Exception {
         IBatisPollingConsumer consumer = new IBatisPollingConsumer(this, processor);
+        consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(consumer);
         return consumer;
     }
@@ -124,5 +126,13 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
 
     public void setStatementType(StatementType statementType) {
         this.statementType = statementType;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 }

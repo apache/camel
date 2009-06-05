@@ -60,6 +60,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean recursive;
     protected boolean delete;
     protected boolean flatten;
+    protected int maxMessagesPerPoll;
     protected String tempPrefix;
     protected String include;
     protected String exclude;
@@ -382,6 +383,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setLocalWorkDirectory(String localWorkDirectory) {
         this.localWorkDirectory = localWorkDirectory;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
     /**

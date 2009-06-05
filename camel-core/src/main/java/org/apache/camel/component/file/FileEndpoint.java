@@ -69,6 +69,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
+        // set max messages per poll
+        result.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
+
         configureConsumer(result);
         return result;
     }

@@ -40,6 +40,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     protected GenericFileOperations<T> operations;
     protected boolean loggedIn;
     protected String fileExpressionResult;
+    protected int maxMessagesPerPoll;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
@@ -94,9 +95,20 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         processBatch(exchanges);
     }
 
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
     @SuppressWarnings("unchecked")
     public void processBatch(Queue exchanges) {
         int total = exchanges.size();
+
+        // limit if needed
+        if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
+            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            total = maxMessagesPerPoll;
+        }
+
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
             // use poll to remove the head so it does not consume memory even after we have processed it

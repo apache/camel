@@ -120,6 +120,8 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
      */
     private boolean routeEmptyResultSet;
 
+    private int maxMessagesPerPoll;
+
     public IBatisPollingConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
     }
@@ -165,10 +167,21 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         processBatch(answer);
     }
 
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
     public void processBatch(Queue exchanges) throws Exception {
         final IBatisEndpoint endpoint = getEndpoint();
 
         int total = exchanges.size();
+
+        // limit if needed
+        if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            total = maxMessagesPerPoll;
+        }
+
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
             DataHolder holder = (DataHolder) exchanges.poll();

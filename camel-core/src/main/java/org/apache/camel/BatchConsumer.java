@@ -26,6 +26,18 @@ import java.util.Queue;
 public interface BatchConsumer extends Consumer {
 
     /**
+     * Sets a maximum number of messages as a limit to poll at each polling.
+     * <p/>
+     * Can be used to limit eg to 100 to avoid when starting and there are millions
+     * of messages for you in the first poll.
+     * <p/>
+     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     *
+     * @param maxMessagesPerPoll  maximum messages to poll.
+     */
+    void setMaxMessagesPerPoll(int maxMessagesPerPoll);
+
+    /**
      * Processes the list of {@link org.apache.camel.Exchange} in a batch.
      * <p/>
      * Each message exchange will be processed individually but the batch
