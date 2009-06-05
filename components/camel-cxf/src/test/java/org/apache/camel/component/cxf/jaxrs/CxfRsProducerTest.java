@@ -34,21 +34,28 @@ public class CxfRsProducerTest extends SpringTestSupport {
     }
     
     public void testGetConstumer() {
+        // START SNIPPET: example
         Exchange exchange = template.send("direct:start", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
+                // set the operation name 
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
+                // set the parameters , if you just have one parameter 
+                // camel will put this object into an Object[] itself
                 inMessage.setBody("123");
             }
             
         });
-        
+     
+        // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
+        
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
+        // END SNIPPET: example        
     }
     
 

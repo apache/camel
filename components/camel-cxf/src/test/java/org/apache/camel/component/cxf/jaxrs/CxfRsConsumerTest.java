@@ -32,6 +32,8 @@ import org.apache.camel.component.cxf.util.CxfUtils;
 
 public class CxfRsConsumerTest extends ContextTestSupport {
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    
+    // START SNIPPET: example
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
@@ -39,12 +41,15 @@ public class CxfRsConsumerTest extends ContextTestSupport {
 
                     public void process(Exchange exchange) throws Exception {
                         Message inMessage = exchange.getIn();
+                        // Get the operation name from in message
                         String operationName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
+                        // The parameter of the invocation is stored in the body of in message
                         String id = (String) inMessage.getBody(Object[].class)[0];
                         if ("getCustomer".equals(operationName)) {
                             Customer customer = new Customer();
                             customer.setId(Long.parseLong(id));
                             customer.setName("Willem");
+                            // We just put the response Object into the out message body
                             exchange.getOut().setBody(customer);
                         }
                     }
@@ -53,6 +58,7 @@ public class CxfRsConsumerTest extends ContextTestSupport {
             }
         };
     }
+    // END SNIPPET: example
     
     public void testGetCustomer() throws Exception {
         URL url = new URL("http://localhost:9000/customerservice/customers/126");
