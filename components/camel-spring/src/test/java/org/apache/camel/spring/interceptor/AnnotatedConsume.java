@@ -16,28 +16,11 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 /**
  * @version $Revision$
  */
-public class TransactionClientWithAnnotatedBeanTest extends TransactionalClientDataSourceTest {
+public interface AnnotatedConsume {
 
-    @Override
-    protected void setUp() throws Exception {
-        setUseRouteBuilder(false);
-        super.setUp();
-    }
-
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/transactionClientWithAnnotatedBeanTest.xml");
-    }
-
-    @Override
-    protected int getExpectedRouteCount() {
-        return 1;
-    }
+    void handleTitle(String title);
 
 }

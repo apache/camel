@@ -37,7 +37,6 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <!-- policy for required transaction used in our Camel routes -->
     <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
         <property name="transactionManager" ref="txManager"/>
     </bean>
@@ -50,5 +49,7 @@
     </camelContext>
 
     <bean id="annotatedRoute" class="org.apache.camel.spring.interceptor.AnnotatedRoute"/>
+
+    <bean id="annotatedConsumer" class="org.apache.camel.spring.interceptor.AnnotatedConsumeImpl"/>
 
 </beans>

@@ -16,44 +16,38 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import javax.sql.DataSource;
-
-import org.apache.camel.EndpointInject;
+import org.apache.camel.Consume;
+import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Used for unit testing that we can use spring and camel annotations mixed together
+ * @version $Revision$
  */
-@Transactional
-@Service
-public class AnnotatedBookServiceImpl implements AnnotatedBookStore {
+@Transactional(propagation = org.springframework.transaction.annotation.Propagation.NEVER, readOnly = true)
+public class AnnotatedConsumeImpl implements AnnotatedConsume {
 
-    @Autowired
-    private DataSource dataSource;
+    @Produce(uri = "mock:book")
+    ProducerTemplate producer;
 
-    @EndpointInject(uri = "seda:book")
-    private ProducerTemplate template;
-
-    public void orderBook(String title) throws Exception {
+    @Consume(uri = "seda:book")
+    public void handleTitle(String title) {
         Transactional tx = this.getClass().getAnnotation(Transactional.class);
         if (tx == null) {
             throw new IllegalStateException("Spring annotation-driven should have instrumented this class as @Transactional");
         }
-        if (!"REQUIRED".equals(tx.propagation().name())) {
-            throw new IllegalStateException("Should be REQUIRED propagation");
+        if (!"NEVER".equals(tx.propagation().name())) {
+            throw new IllegalStateException("Should be NEVER propagation");
+        }
+        if (!tx.readOnly()) {
+            throw new IllegalStateException("Should be read only");
         }
 
-        if (title.startsWith("Donkey")) {
-            throw new IllegalArgumentException("We don't have Donkeys, only Camels");
+        if (!title.contains("in Action")) {
+            throw new IllegalArgumentException("Not a book title we like");
         }
 
-        // create new local datasource to store in DB
-        new SimpleJdbcTemplate(dataSource).update("insert into books (title) values (?)", title);
-
-        template.sendBody(title);
+        producer.sendBody(title);
     }
+    
 }
