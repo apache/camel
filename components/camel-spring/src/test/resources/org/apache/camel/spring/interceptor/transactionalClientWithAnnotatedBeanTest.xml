@@ -46,4 +46,6 @@
 
     <bean id="annotatedRoute" class="org.apache.camel.spring.interceptor.AnnotatedRoute"/>
 
+    <bean id="annotatedConsumer" class="org.apache.camel.spring.interceptor.AnnotatedConsumeImpl"/>
+
 </beans>
