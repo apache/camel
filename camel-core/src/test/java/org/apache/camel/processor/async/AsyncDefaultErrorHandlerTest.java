@@ -68,7 +68,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Newer)
+                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Never)
                     .to("mock:foo")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

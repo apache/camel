@@ -32,5 +32,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum(String.class)
 public enum WaitForTaskToComplete {
 
-    Newer, IfReplyExpected, Always
+    Never, IfReplyExpected, Always
 }
