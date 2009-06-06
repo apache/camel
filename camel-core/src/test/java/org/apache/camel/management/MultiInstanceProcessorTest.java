@@ -93,9 +93,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
         resultEndpoint.assertIsSatisfied();
 
         verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,nodeid=to3,*"));
         verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,nodeid=to4,*"));
-
     }
 
 }

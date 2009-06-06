@@ -155,6 +155,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
         releaseMBeanServers();
         mbsc = null;
         super.tearDown();
@@ -172,6 +176,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
         releaseMBeanServers();
         super.setUp();
         Thread.sleep(sleepForConnection);
