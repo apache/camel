@@ -56,7 +56,7 @@ public class MailHtmlAttachmentTest extends ContextTestSupport {
         // END SNIPPET: e1
 
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(1500);
+        Thread.sleep(2000);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -78,7 +78,6 @@ public class MailHtmlAttachmentTest extends ContextTestSupport {
         assertTrue("logo should be more than 1000 bytes", bytes.length > 1000);
 
         // content type should match
-        // TODO: content type does not work with geronomi mail jar (its a buggy jar, use SUN mail jar instead)
         assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
 
         // save logo for visual inspection

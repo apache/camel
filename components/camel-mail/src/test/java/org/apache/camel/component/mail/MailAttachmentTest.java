@@ -56,7 +56,7 @@ public class MailAttachmentTest extends ContextTestSupport {
         // END SNIPPET: e1
 
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -74,7 +74,6 @@ public class MailAttachmentTest extends ContextTestSupport {
         DataHandler handler = out.getIn().getAttachment("logo.jpeg");
         assertNotNull("The logo should be there", handler);
 
-        // TODO: content type does not work with geronomi mail jar (its a buggy jar, use SUN mail jar instead)
         assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
 
         producer.stop();
