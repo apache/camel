@@ -17,9 +17,10 @@
 package org.apache.camel.management;
 
 import java.util.Set;
-
 import javax.management.ObjectName;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -34,7 +35,12 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("mock:end").to("mock:end");
+                // must have a little delay to simulate a little processing
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Thread.sleep(10);
+                    }
+                }).to("mock:end").to("mock:end");
             }
         };
     }
@@ -65,7 +71,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
 
         s = mbsc.queryNames(
                 new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 2 processor: " + s, 2, s.size());
+        assertEquals("Could not find 3 processor: " + s, 3, s.size());
 
         s = mbsc.queryNames(
                 new ObjectName(domainName + ":type=routes,*"), null);
