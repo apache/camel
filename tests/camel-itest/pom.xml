@@ -175,7 +175,7 @@
                     <forkMode>pertest</forkMode>
                     <excludes>
                       <!-- TODO FIXME ASAP -->
-                      <exclude>**/XXXTest.*</exclude>
+                      <exclude>**/CustomerServicesWsAddressingTest.*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
