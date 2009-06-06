@@ -56,7 +56,7 @@ public class MailHtmlAttachmentTest extends ContextTestSupport {
         // END SNIPPET: e1
 
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
