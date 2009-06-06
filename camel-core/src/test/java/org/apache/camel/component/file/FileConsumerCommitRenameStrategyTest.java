@@ -48,7 +48,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep to let the file consumer do its renaming
-        Thread.sleep(100);
+        Thread.sleep(500);
 
         // content of file should be Hello Paris
         String content = IOConverter.toString(new File("./target/done/paris.txt"));
@@ -75,7 +75,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep to let the file consumer do its renaming
-        Thread.sleep(100);
+        Thread.sleep(500);
 
         // content of file should be Hello London
         String content = IOConverter.toString(new File("./target/done/london.txt"));
@@ -85,7 +85,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?moveNamePrefix=../done/&consumer.delay=5000").to("mock:report");
+                from("file://target/reports?moveNamePrefix=../done/&consumer.delay=2000").to("mock:report");
             }
         };
     }
