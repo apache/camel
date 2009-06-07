@@ -41,4 +41,12 @@ public interface IdempotentRepository<E> {
      * @return <tt>true</tt> if this repository contains the specified element
      */
     boolean contains(E key);
+
+    /**
+     * Removes the key from the repository.
+     *
+     * @param key the key of the message for duplicate test
+     * @return <tt>true</tt> if the key was removed
+     */
+    boolean remove(E key);
 }

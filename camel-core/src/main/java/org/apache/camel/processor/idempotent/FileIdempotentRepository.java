@@ -138,6 +138,16 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         }
     }
 
+    public boolean remove(String key) {
+        synchronized (cache) {
+            // init store if not loaded before
+            if (init.compareAndSet(false, true)) {
+                loadStore();
+            }
+            return cache.remove(key) != null;
+        }
+    }
+
     public File getFileStore() {
         return fileStore;
     }

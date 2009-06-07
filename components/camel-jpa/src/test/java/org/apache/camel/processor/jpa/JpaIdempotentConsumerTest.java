@@ -19,8 +19,12 @@ package org.apache.camel.processor.jpa;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.IdempotentConsumerTest;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
@@ -39,12 +43,14 @@ import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.j
 /**
  * @version $Revision$
  */
-public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
+public class JpaIdempotentConsumerTest extends ContextTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected ApplicationContext applicationContext;
     protected JpaTemplate jpaTemplate;
+    protected Endpoint startEndpoint;
+    protected MockEndpoint resultEndpoint;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -54,17 +60,8 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() {
-        // START SNIPPET: idempotent
-        return new SpringRouteBuilder() {
-            public void configure() {
-                from("direct:start").idempotentConsumer(
-                        header("messageId"),
-                        jpaMessageIdRepository(lookup(JpaTemplate.class), PROCESSOR_NAME)
-                ).to("mock:result");
-            }
-        };
-        // END SNIPPET: idempotent
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     protected void cleanupRepository() {
@@ -85,4 +82,85 @@ public class JpaIdempotentConsumerTest extends IdempotentConsumerTest {
             }
         });
     }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        startEndpoint = resolveMandatoryEndpoint("direct:start");
+        resultEndpoint = getMockEndpoint("mock:result");
+    }
+
+    public void testDuplicateMessagesAreFilteredOut() throws Exception {
+        context.addRoutes(new SpringRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // START SNIPPET: idempotent
+                from("direct:start").idempotentConsumer(
+                        header("messageId"),
+                        jpaMessageIdRepository(lookup(JpaTemplate.class), PROCESSOR_NAME)
+                ).to("mock:result");
+                // END SNIPPET: idempotent
+            }
+        });
+        context.start();
+
+        resultEndpoint.expectedBodiesReceived("one", "two", "three");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFailedExchangesNotAdded() throws Exception {
+        context.addRoutes(new SpringRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).delay(0).logStackTrace(false));
+
+                from("direct:start").idempotentConsumer(
+                        header("messageId"),
+                        jpaMessageIdRepository(lookup(JpaTemplate.class), PROCESSOR_NAME)
+                ).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("messageId", String.class);
+                        if (id.equals("2")) {
+                            throw new IllegalArgumentException("Damm I cannot handle id 2");
+                        }
+                    }
+                }).to("mock:result");
+            }
+        });
+        context.start();
+
+        // we send in 2 messages with id 2 that fails
+        getMockEndpoint("mock:error").expectedMessageCount(2);
+        resultEndpoint.expectedBodiesReceived("one", "three");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    protected void sendMessage(final Object messageId, final Object body) {
+        template.send(startEndpoint, new Processor() {
+            public void process(Exchange exchange) {
+                // now lets fire in a message
+                Message in = exchange.getIn();
+                in.setBody(body);
+                in.setHeader("messageId", messageId);
+            }
+        });
+    }
+
 }

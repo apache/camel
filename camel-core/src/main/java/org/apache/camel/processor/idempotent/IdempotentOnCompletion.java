@@ -33,10 +33,10 @@ import org.apache.commons.logging.LogFactory;
 public class IdempotentOnCompletion implements Synchronization {
 
     private static final transient Log LOG = LogFactory.getLog(IdempotentOnCompletion.class);
-    private final IdempotentRepository idempotentRepository;
+    private final IdempotentRepository<String> idempotentRepository;
     private final String messageId;
 
-    public IdempotentOnCompletion(IdempotentRepository idempotentRepository, String messageId) {
+    public IdempotentOnCompletion(IdempotentRepository<String> idempotentRepository, String messageId) {
         this.idempotentRepository = idempotentRepository;
         this.messageId = messageId;
     }
@@ -57,12 +57,8 @@ public class IdempotentOnCompletion implements Synchronization {
      * @param exchange the exchange
      * @param messageId the message ID of this exchange
      */
-    @SuppressWarnings("unchecked")
     protected void onCompletedMessage(Exchange exchange, String messageId) {
-        idempotentRepository.add(messageId);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Added to repository with id: " + messageId + " for exchange: " + exchange);
-        }
+        // noop
     }
 
     /**
@@ -73,8 +69,9 @@ public class IdempotentOnCompletion implements Synchronization {
      * @param messageId the message ID of this exchange
      */
     protected void onFailedMessage(Exchange exchange, String messageId) {
+        idempotentRepository.remove(messageId);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Not added to repository as exchange failed: " + exchange + " with id: " + messageId);
+            LOG.debug("Removed from repository as exchange failed: " + exchange + " with id: " + messageId);
         }
     }
 

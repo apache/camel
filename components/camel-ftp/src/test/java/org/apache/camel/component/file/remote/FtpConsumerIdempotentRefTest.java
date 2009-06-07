@@ -89,6 +89,10 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         public boolean contains(String key) {
             return invoked;
         }
+
+        public boolean remove(String key) {
+            return true;
+        }
     }
 
 }

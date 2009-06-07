@@ -88,6 +88,12 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
         }
     }
 
+    public boolean remove(String key) {
+        synchronized (cache) {
+            return cache.remove(key) != null;
+        }
+    }
+
     public Map<String, Object> getCache() {
         return cache;
     }

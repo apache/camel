@@ -42,8 +42,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
     private final Processor processor;
     private final IdempotentRepository idempotentRepository;
 
-    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
-                              Processor processor) {
+    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.processor = processor;
@@ -57,17 +56,21 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
 
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
-        String messageId = messageIdExpression.evaluate(exchange, String.class);
+        final String messageId = messageIdExpression.evaluate(exchange, String.class);
         if (messageId == null) {
             throw new NoMessageIdException(exchange, messageIdExpression);
         }
 
-        if (idempotentRepository.contains(messageId)) {
+        // add the key to the repository
+        boolean newKey = idempotentRepository.add(messageId);
+        if (!newKey) {
+            // we already have this key so its a duplicate message
             onDuplicateMessage(exchange, messageId);
         } else {
             // register our on completion callback
             exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId));
-            // process it first
+
+            // process the exchange
             processor.process(exchange);
         }
     }

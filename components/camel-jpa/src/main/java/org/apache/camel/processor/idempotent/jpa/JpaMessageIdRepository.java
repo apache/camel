@@ -98,4 +98,21 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return rc.booleanValue();
     }
 
+    public boolean remove(final String messageId) {
+        Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                List list = jpaTemplate.find(QUERY_STRING, processorName, messageId);
+                if (list.isEmpty()) {
+                    return Boolean.FALSE;
+                } else {
+                    MessageProcessed processoed = (MessageProcessed) list.get(0);
+                    jpaTemplate.remove(processoed);
+                    jpaTemplate.flush();
+                    return Boolean.TRUE;
+                }
+            }
+        });
+        return rc.booleanValue();
+    }
+
 }
