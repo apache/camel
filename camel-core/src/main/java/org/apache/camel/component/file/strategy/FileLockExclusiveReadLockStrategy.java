@@ -121,12 +121,6 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
         } finally {
             // must close channel first
             ObjectHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
-            // need to delete the lock file
-            File lockfile = new File(lockFileName);
-            boolean deleted = lockfile.delete();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Exclusive lock file: " + lockFileName + " was deleted: " + deleted);
-            }
         }
     }
 
