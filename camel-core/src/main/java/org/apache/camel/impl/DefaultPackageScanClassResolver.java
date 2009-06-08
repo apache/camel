@@ -56,6 +56,9 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             classLoaders = new HashSet<ClassLoader>();
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             if (ccl != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The thread context class loader: " + ccl + "  is used to load the class");
+                }
                 classLoaders.add(ccl);
             }
             classLoaders.add(DefaultPackageScanClassResolver.class.getClassLoader());
@@ -353,7 +356,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             boolean found = false;
             for (ClassLoader classLoader : set) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Testing for class " + externalName + " matches criteria [" + test + "]");
+                    LOG.trace("Testing for class " + externalName + " matches criteria [" + test + "] using ClassLoader:" + classLoader);
                 }
                 try {
                     Class type = classLoader.loadClass(externalName);
