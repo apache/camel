@@ -45,7 +45,7 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         // should at least take 1 sec to complete
-        resultEndpoint.setMinimumResultWaitTime(1000);
+        resultEndpoint.setMinimumResultWaitTime(900);
         template.sendBody("seda:b", "<hello>world!</hello>");
         resultEndpoint.assertIsSatisfied();
     }
