@@ -69,7 +69,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute(required = false)
     private Boolean groupExchanges;
     @XmlAttribute(required = false)
-    private Boolean batchConsumer;
+    private Boolean batchSizeFromConsumer;
     @XmlElement(name = "completionPredicate", required = false)
     private ExpressionSubElementDefinition completionPredicate;
 
@@ -173,8 +173,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (groupExchanges != null) {
             aggregator.setGroupExchanges(groupExchanges);
         }
-        if (batchConsumer != null) {
-            aggregator.setBatchConsumer(batchConsumer);
+        if (batchSizeFromConsumer != null) {
+            aggregator.setBatchConsumer(batchSizeFromConsumer);
         }
 
         return aggregator;
@@ -272,12 +272,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.groupExchanges = groupExchanges;
     }
 
-    public Boolean getBatchConsumer() {
-        return batchConsumer;
+    public Boolean getBatchSizeFromConsumer() {
+        return batchSizeFromConsumer;
     }
 
-    public void setBatchConsumer(Boolean batchConsumer) {
-        this.batchConsumer = batchConsumer;
+    public void setBatchSizeFromConsumer(Boolean batchSizeFromConsumer) {
+        this.batchSizeFromConsumer = batchSizeFromConsumer;
     }
 
     // Fluent API
@@ -290,8 +290,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      *
      * @return builder
      */
-    public AggregateDefinition batchConsumer() {
-        setBatchConsumer(true);
+    public AggregateDefinition batchSizeFromConsumer() {
+        setBatchSizeFromConsumer(true);
         return this;
     }
 

@@ -39,7 +39,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
                     .setHeader("id", file("${file:onlyname.noext}"))
                     .threads(20)
                     .beanRef("business")
-                    .aggregate(header("country"), new MyBusinessTotal()).batchConsumer().batchTimeout(60000).to("mock:result");
+                    .aggregate(header("country"), new MyBusinessTotal()).batchSizeFromConsumer().batchTimeout(60000).to("mock:result");
             }
         });
 
@@ -61,7 +61,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
                     .setHeader("id", file("${file:onlyname.noext}"))
                     .beanRef("business")
-                    .aggregate(header("country"), new MyBusinessTotal()).batchConsumer().batchTimeout(60000).to("mock:result");
+                    .aggregate(header("country"), new MyBusinessTotal()).batchSizeFromConsumer().batchTimeout(60000).to("mock:result");
             }
         });
 
