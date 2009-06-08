@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -41,15 +39,12 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
     }
 
     public void testCorrectFilename() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMinimumMessageCount(1);
-        resultEndpoint.expectedBodiesReceived("Hello World from FTPServer");
-        resultEndpoint.assertIsSatisfied();
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello World from FTPServer");
+        mock.expectedFileExists("target/ftptest/hello.txt", "Hello World from FTPServer");
 
-        // assert the file
-        File file = new File("target/ftptest/hello.txt");
-        assertTrue("The file should exists", file.exists());
-        assertTrue("File size wrong", file.length() > 10);
+        mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
