@@ -360,9 +360,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 }
                 try {
                     Class type = classLoader.loadClass(externalName);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Loaded the class: " + type + " in classloader: " + classLoader);
+                    }
                     if (test.matches(type)) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Found class: " + type + " in classloader: " + classLoader);
+                            LOG.trace("Found class: " + type + " which matches the filter in classloader: " + classLoader);
                         }
                         classes.add(type);
                     }
