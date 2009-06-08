@@ -121,6 +121,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             // process the current exchange
             processExchange(exchange);
         }
+
+        // remove the file from the in progress list in case the batch was limited by max messages per poll
+        for (int index = 0; index < exchanges.size() && isRunAllowed(); index++) {
+            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.poll();
+            String key = exchange.getGenericFile().getFileName();
+            endpoint.getInProgressRepository().remove(key);
+        }
     }
 
     /**
@@ -231,7 +238,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * </ul>
      * And then <tt>true</tt> for directories.
      *
-     * @param file        the remote file
+     * @param file        the file
      * @param isDirectory wether the file is a directory or a file
      * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if not
      */
@@ -284,6 +291,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         return true;
     }
 
+    /**
+     * Is the given file already in progress.
+     *
+     * @param file the file
+     * @return <tt>true</tt> if the file is already in progress
+     */
+    protected boolean isInProgress(GenericFile<T> file) {
+        String key = file.getFileName();
+        return !endpoint.getInProgressRepository().add(key);
+    }
+
     private void evaluteFileExpression() {
         if (fileExpressionResult == null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
@@ -291,6 +309,5 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             fileExpressionResult = endpoint.getFileName().evaluate(dummy, String.class);
         }
     }
-
 
 }

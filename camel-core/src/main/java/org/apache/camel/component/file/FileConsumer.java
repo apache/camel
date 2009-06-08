@@ -64,8 +64,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 }
             } else if (file.isFile()) {
                 if (isValidFile(gf, false)) {
-                    if (isInProgress(file, files)) {
-                        log.trace("Skipping as file is already in progress: " + file);
+                    if (isInProgress(gf)) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Skipping as file is already in progress: " + gf.getFileName());
+                        }
                     } else {
                         // matched file so add
                         fileList.add(gf);
@@ -75,27 +77,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 log.debug("Ignoring unsupported file type for file: " + file);
             }
         }
-    }
-
-    /**
-     * Is the given file already in progress.
-     *
-     * @param target  the target file
-     * @param files   the list of files found in the current directory
-     * @return <tt>true</tt> if the file is already in progress
-     */
-    protected boolean isInProgress(File target, File[] files) {
-        for (File file : files) {
-            String name = file.getName();
-            if (name.endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
-                String before = ObjectHelper.before(name, FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
-                if (target.getName().equals(before)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     /**

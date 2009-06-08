@@ -92,8 +92,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             if (!committed) {
                 processStrategyRollback(processStrategy, exchange, file);
             }
-        }
 
+            // remove file from the in progress list as its no longer in progress
+            endpoint.getInProgressRepository().remove(file.getFileName());
+        }
     }
 
     /**

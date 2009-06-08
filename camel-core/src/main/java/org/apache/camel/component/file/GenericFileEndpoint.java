@@ -30,6 +30,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
@@ -52,6 +53,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected GenericFileProcessStrategy<T> processStrategy;
     protected GenericFileConfiguration configuration;
 
+    protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
     protected String localWorkDirectory;
     protected boolean autoCreate = true;
     protected int bufferSize = 128 * 1024;
@@ -391,6 +393,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public IdempotentRepository<String> getInProgressRepository() {
+        return inProgressRepository;
+    }
+
+    public void setInProgressRepository(IdempotentRepository<String> inProgressRepository) {
+        this.inProgressRepository = inProgressRepository;
     }
 
     /**
