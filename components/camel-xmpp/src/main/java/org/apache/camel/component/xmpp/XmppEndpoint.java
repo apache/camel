@@ -66,11 +66,11 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         if (room != null) {
             return createGroupChatProducer();
         } else {
-            if (participant == null) {
+            if (getParticipant() == null) {
                 throw new IllegalArgumentException("No room or participant configured on this endpoint: "
                                                    + this);
             }
-            return createPrivateChatProducer(participant);
+            return createPrivateChatProducer(getParticipant());
         }
     }
 
@@ -255,7 +255,8 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     public String getParticipant() {
-        return participant;
+        // participant is optional so use user if not provided
+        return participant != null ? participant : user;
     }
 
     public void setParticipant(String participant) {
