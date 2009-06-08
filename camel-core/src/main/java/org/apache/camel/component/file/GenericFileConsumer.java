@@ -206,13 +206,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     protected boolean isValidFile(GenericFile<T> file, boolean isDirectory) {
         if (!isMatched(file, isDirectory)) {
             if (log.isTraceEnabled()) {
-                log.trace("Remote file did not match. Will skip this remote file: " + file);
+                log.trace("File did not match. Will skip this file: " + file);
             }
             return false;
         } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getFileName())) {
             // only use the filename as the key as the file could be moved into a done folder
             if (log.isTraceEnabled()) {
-                log.trace("RemoteFileConsumer is idempotent and the file has been consumed before. Will skip this remote file: " + file);
+                log.trace("This consumer is idempotent and the file has been consumed before. Will skip this file: " + file);
             }
             return false;
         }

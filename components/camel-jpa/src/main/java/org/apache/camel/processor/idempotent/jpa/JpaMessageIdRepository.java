@@ -115,4 +115,9 @@ public class JpaMessageIdRepository implements IdempotentRepository<String> {
         return rc.booleanValue();
     }
 
+    public boolean confirm(String s) {
+        // noop
+        return true;
+    }
+
 }

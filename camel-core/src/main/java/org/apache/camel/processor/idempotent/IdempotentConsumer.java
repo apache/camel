@@ -31,8 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An implementation of the <a
- * href="http://camel.apache.org/idempotent-consumer.html">Idempotent
- * Consumer</a> pattern.
+ * href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  * 
  * @version $Revision$
  */
@@ -41,17 +40,19 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
     private final Expression messageIdExpression;
     private final Processor processor;
     private final IdempotentRepository idempotentRepository;
+    private final boolean eager;
 
-    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository, Processor processor) {
+    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
+                              boolean eager, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
+        this.eager = eager;
         this.processor = processor;
     }
 
     @Override
     public String toString() {
-        return "IdempotentConsumer[expression=" + messageIdExpression + ", repository=" + idempotentRepository
-               + ", processor=" + processor + "]";
+        return "IdempotentConsumer[" + messageIdExpression + " -> " + processor + "]";
     }
 
     @SuppressWarnings("unchecked")
@@ -61,18 +62,26 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
             throw new NoMessageIdException(exchange, messageIdExpression);
         }
 
-        // add the key to the repository
-        boolean newKey = idempotentRepository.add(messageId);
+        boolean newKey;
+        if (eager) {
+            // add the key to the repository
+            newKey = idempotentRepository.add(messageId);
+        } else {
+            // check if we alrady have the key
+            newKey = !idempotentRepository.contains(messageId);
+        }
+
         if (!newKey) {
             // we already have this key so its a duplicate message
             onDuplicateMessage(exchange, messageId);
-        } else {
-            // register our on completion callback
-            exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId));
-
-            // process the exchange
-            processor.process(exchange);
+            return;
         }
+
+        // register our on completion callback
+        exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId, eager));
+
+        // process the exchange
+        processor.process(exchange);
     }
 
     public List<Processor> next() {

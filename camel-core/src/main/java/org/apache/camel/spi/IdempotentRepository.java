@@ -44,9 +44,20 @@ public interface IdempotentRepository<E> {
 
     /**
      * Removes the key from the repository.
+     * <p/>
+     * Is usually invoked if the exchange failed.
      *
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if the key was removed
      */
     boolean remove(E key);
+
+    /**
+     * Confirms the key, after the exchange has been processed sucesfully.
+     *
+     * @param key the key of the message for duplicate test
+     * @return <tt>true</tt> if the key was confirmed
+     */
+    boolean confirm(E key);
+
 }

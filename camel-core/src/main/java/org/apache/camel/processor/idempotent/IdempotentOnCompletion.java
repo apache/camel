@@ -31,17 +31,17 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class IdempotentOnCompletion implements Synchronization {
-
     private static final transient Log LOG = LogFactory.getLog(IdempotentOnCompletion.class);
-    private final IdempotentRepository<String> idempotentRepository;
+    private final IdempotentRepository idempotentRepository;
     private final String messageId;
+    private final boolean eager;
 
-    public IdempotentOnCompletion(IdempotentRepository<String> idempotentRepository, String messageId) {
+    public IdempotentOnCompletion(IdempotentRepository idempotentRepository, String messageId, boolean eager) {
         this.idempotentRepository = idempotentRepository;
         this.messageId = messageId;
+        this.eager = eager;
     }
 
-    @SuppressWarnings("unchecked")
     public void onComplete(Exchange exchange) {
         onCompletedMessage(exchange, messageId);
     }
@@ -57,8 +57,13 @@ public class IdempotentOnCompletion implements Synchronization {
      * @param exchange the exchange
      * @param messageId the message ID of this exchange
      */
+    @SuppressWarnings("unchecked")
     protected void onCompletedMessage(Exchange exchange, String messageId) {
-        // noop
+        if (!eager) {
+            // if not eager we should add the key when its complete
+            idempotentRepository.add(messageId);
+        }
+        idempotentRepository.confirm(messageId);
     }
 
     /**
@@ -68,6 +73,7 @@ public class IdempotentOnCompletion implements Synchronization {
      * @param exchange the exchange
      * @param messageId the message ID of this exchange
      */
+    @SuppressWarnings("unchecked")
     protected void onFailedMessage(Exchange exchange, String messageId) {
         idempotentRepository.remove(messageId);
         if (LOG.isDebugEnabled()) {
@@ -79,4 +85,5 @@ public class IdempotentOnCompletion implements Synchronization {
     public String toString() {
         return "IdempotentOnCompletion[" + messageId + ']';
     }
+
 }

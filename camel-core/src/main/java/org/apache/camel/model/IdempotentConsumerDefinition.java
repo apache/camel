@@ -39,6 +39,8 @@ import org.apache.camel.spi.RouteContext;
 public class IdempotentConsumerDefinition extends ExpressionNode {
     @XmlAttribute
     private String messageIdRepositoryRef;
+    @XmlAttribute
+    private Boolean eager = Boolean.TRUE;
     @XmlTransient
     private IdempotentRepository idempotentRepository;
 
@@ -92,6 +94,19 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         return this;
     }
 
+    /**
+     * Sets whether to eagerly add the key to the idempotent repository or wait until the exchange
+     * is complete. Eager is default enabled.
+     *
+     * @param eager  <tt>true</tt> to add the key before processing, <tt>false</tt> to wait until
+     * the exchange is complete.
+     * @return builder
+     */
+    public IdempotentConsumerDefinition eager(boolean eager) {
+        setEager(eager);
+        return this;
+    }
+
     public String getMessageIdRepositoryRef() {
         return messageIdRepositoryRef;
     }
@@ -108,12 +123,20 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.idempotentRepository = idempotentRepository;
     }
 
+    public Boolean isEager() {
+        return eager;
+    }
+
+    public void setEager(Boolean eager) {
+        this.eager = eager;
+    }
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         IdempotentRepository idempotentRepository = resolveMessageIdRepository(routeContext);
-        return new IdempotentConsumer(getExpression().createExpression(routeContext), idempotentRepository,
-                                      childProcessor);
+        Expression expression = getExpression().createExpression(routeContext);
+        return new IdempotentConsumer(expression, idempotentRepository, eager, childProcessor);
     }
 
     /**

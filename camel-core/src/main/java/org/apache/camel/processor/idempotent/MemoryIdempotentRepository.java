@@ -94,6 +94,11 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
         }
     }
 
+    public boolean confirm(String key) {
+        // noop
+        return true;
+    }
+
     public Map<String, Object> getCache() {
         return cache;
     }

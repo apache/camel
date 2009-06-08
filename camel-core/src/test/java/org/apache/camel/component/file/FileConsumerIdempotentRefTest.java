@@ -99,6 +99,10 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         public boolean remove(String key) {
             return true;
         }
+
+        public boolean confirm(String key) {
+            return true;
+        }
     }
     
 }
