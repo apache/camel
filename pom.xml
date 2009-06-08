@@ -17,8 +17,7 @@
   limitations under the License.
 -->
 
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
@@ -95,7 +94,7 @@
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
-    <camel.osgi.activator></camel.osgi.activator>
+    <camel.osgi.activator />
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
@@ -1254,90 +1253,77 @@
                 <phase>validate</phase>
                 <configuration>
                   <tasks>
-                    <path id="ecp.ws.path" location="${eclipse.workspace.dir}"/>
-                    <property name="full.eclipse.workspace" refid="ecp.ws.path"/>
-                    <path path="${basedir}/etc" id="etc.path"/>
+                    <path id="ecp.ws.path" location="${eclipse.workspace.dir}" />
+                    <property name="full.eclipse.workspace" refid="ecp.ws.path" />
+                    <path path="${basedir}/etc" id="etc.path" />
 
                     <whichresource resource="/activemq-eclipse-pmd" property="pmd.url">
-                      <classpath refid="etc.path"/>
+                      <classpath refid="etc.path" />
                     </whichresource>
                     <whichresource resource="/activemq-pmd-ruleset.xml" property="pmdruleset.url">
-                      <classpath refid="etc.path"/>
+                      <classpath refid="etc.path" />
                     </whichresource>
                     <whichresource resource="/activemq-eclipse-checkstyle" property="eclipse.checkstyle.url">
-                      <classpath refid="etc.path"/>
+                      <classpath refid="etc.path" />
                     </whichresource>
                     <whichresource resource="/activemq-checkstyle.xml" property="checkstyle.url">
-                      <classpath refid="etc.path"/>
+                      <classpath refid="etc.path" />
                     </whichresource>
 
-                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings"/>
-                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle"/>
-                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse"/>
+                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
+                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle" />
+                    <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse" />
 
-                    <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/activemq-checkstyle.xml"/>
+                    <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/activemq-checkstyle.xml" />
 
                     <!-- Add checkstyle config -->
-                    <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml"
-                          tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml"
-                          overwrite="no">
+                    <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="no">
                       <filterset>
-                        <filter token="CHECKSTYLE_CONFIG_FILE"
-                                value="${full.eclipse.workspace}/activemq-checkstyle.xml"/>
-                        <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/activemq-header.txt"/>
+                        <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/activemq-checkstyle.xml" />
+                        <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/activemq-header.txt" />
                       </filterset>
                     </copy>
 
-                    <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl"
-                          in="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml"
-                          out="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new">
-                      <param name="checkstyleconfig" expression="${full.eclipse.workspace}/activemq-checkstyle.xml"/>
+                    <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl" in="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" out="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new">
+                      <param name="checkstyleconfig" expression="${full.eclipse.workspace}/activemq-checkstyle.xml" />
                     </xslt>
-                    <copy file="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new"
-                          tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml"
-                          overwrite="yes"/>
-
+                    <copy file="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="yes" />
 
                     <!-- Add warning flags that we want -->
-                    <propertyfile
-                            file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs">
-                      <entry key="org.eclipse.jdt.core.compiler.problem.missingSerialVersion" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.annotationSuperInterface" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore"/>
+                    <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs">
+                      <entry key="org.eclipse.jdt.core.compiler.problem.missingSerialVersion" value="ignore" />
+                      <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore" />
+                      <entry key="org.eclipse.jdt.core.compiler.problem.annotationSuperInterface" value="ignore" />
+                      <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore" />
                     </propertyfile>
 
                     <!-- Add code format rules -->
-                    <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs"
-                            append="true" fixlastline="true">
-                      <filelist dir="${basedir}/etc/eclipse" files="org.eclipse.jdt.core.prefs"/>
+                    <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs" append="true" fixlastline="true">
+                      <filelist dir="${basedir}/etc/eclipse" files="org.eclipse.jdt.core.prefs" />
                     </concat>
-                    <loadfile property="eclipse.code.format"
-                              srcFile="${basedir}/etc/eclipse/ActiveMQCodeFormatter.xml"/>
-                    <loadfile property="eclipse.code.templates" srcFile="${basedir}/etc/eclipse/codetemplates.xml"/>
-                    <loadfile property="eclipse.camel.java.code.templates" srcFile="${basedir}/etc/eclipse/camel_java_templates.xml"/>
-                    <loadfile property="eclipse.camel.xml.code.templates" srcFile="${basedir}/etc/eclipse/camel_xml_templates.xml"/>  
-                      <propertyfile
-                            file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
-                      <entry key="formatter_profile" value="_ActiveMQ Java Conventions"/>
-                      <entry key="org.eclipse.jdt.ui.formatterprofiles" value="${eclipse.code.format}"/>
-                      <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}"/>
+                    <loadfile property="eclipse.code.format" srcFile="${basedir}/etc/eclipse/ActiveMQCodeFormatter.xml" />
+                    <loadfile property="eclipse.code.templates" srcFile="${basedir}/etc/eclipse/codetemplates.xml" />
+                    <loadfile property="eclipse.camel.java.code.templates" srcFile="${basedir}/etc/eclipse/camel_java_templates.xml" />
+                    <loadfile property="eclipse.camel.xml.code.templates" srcFile="${basedir}/etc/eclipse/camel_xml_templates.xml" />  
+                    <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
+                      <entry key="formatter_profile" value="_ActiveMQ Java Conventions" />
+                      <entry key="org.eclipse.jdt.ui.formatterprofiles" value="${eclipse.code.format}" />
+                      <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}" />
                       
                       <!-- Add Camel templates for Java DSL -->
-                      <entry key="org.eclipse.jdt.ui.text.custom_templates" value="${eclipse.camel.java.code.templates}"/>
+                      <entry key="org.eclipse.jdt.ui.text.custom_templates" value="${eclipse.camel.java.code.templates}" />
 
                       <!-- Add import order -->
-                      <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;"/>
+                      <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;" />
                       <!-- Sort order -->
-                      <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V,"/>
-                      <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M,"/>
-                      <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true"/>
-                      </propertyfile>
-                      <propertyfile
-                            file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.xml.ui.prefs">
-                      <entry key="eclipse.preferences.version" value="1"/>
+                      <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V," />
+                      <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />
+                      <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true" />
+                    </propertyfile>
+                    <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.xml.ui.prefs">
+                      <entry key="eclipse.preferences.version" value="1" />
                        <!-- Add Camel templates for Spring DSL -->
-                      <entry key="org.eclipse.wst.sse.ui.custom_templates" value="${eclipse.camel.xml.code.templates}"/> 
+                      <entry key="org.eclipse.wst.sse.ui.custom_templates" value="${eclipse.camel.xml.code.templates}" /> 
                     </propertyfile>
                   </tasks>
                 </configuration>
@@ -1449,7 +1435,7 @@
           <releases>
             <enabled>false</enabled>
           </releases>
-          <snapshots/>
+          <snapshots />
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </repository>
@@ -1459,7 +1445,7 @@
           <releases>
             <enabled>false</enabled>
           </releases>
-          <snapshots/>
+          <snapshots />
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </pluginRepository>
