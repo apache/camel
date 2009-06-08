@@ -44,11 +44,12 @@ public class CamelNamespaceHandler extends org.apache.camel.spring.handler.Camel
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.osgi.CamelContextFactoryBean.class);
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
+        classes.add(org.apache.camel.ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteDefinition.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
-        classes.add(org.apache.camel.model.dataformat.DataFormatDefinition.class);
+        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);     
+        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.LoadBalancerDefinition.class);
+        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);        
         return classes;
     }
 

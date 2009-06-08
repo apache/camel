@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.w3c.dom.Node;
 
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
 

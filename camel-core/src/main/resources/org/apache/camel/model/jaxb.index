@@ -19,6 +19,7 @@ BeanDefinition
 CatchDefinition
 ChoiceDefinition
 ConvertBodyDefinition
+DataFormatDefinition
 DelayDefinition
 DescriptionDefinition
 EnrichDefinition
@@ -33,6 +34,7 @@ InterceptDefinition
 InterceptFromDefinition
 InterceptSendToEndpointDefinition
 LoadBalanceDefinition
+LoadBalancerDefinition
 LoopDefinition
 MarshalDefinition
 MulticastDefinition

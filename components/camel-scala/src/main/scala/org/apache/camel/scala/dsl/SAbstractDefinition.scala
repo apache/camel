@@ -16,10 +16,10 @@
  */
 package org.apache.camel.scala.dsl;
 
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model._
 import org.apache.camel.spi.Policy
 
-import org.apache.camel.model.dataformat.DataFormatDefinition
 
 import org.apache.camel.processor.aggregate.AggregationStrategy
 

@@ -28,7 +28,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.SendDefinition;
@@ -173,12 +172,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
-        classes.add(ExchangePattern.class);
+        classes.add(org.apache.camel.ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteDefinition.class);
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);     
-        classes.add(org.apache.camel.model.dataformat.DataFormatDefinition.class);
+        classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.LoadBalancerDefinition.class);
+        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
         return classes;
     }
 

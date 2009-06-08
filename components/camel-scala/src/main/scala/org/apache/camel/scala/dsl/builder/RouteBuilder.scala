@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl.builder;
 
 import org.apache.camel.model.{ChoiceDefinition, ProcessorDefinition}
-import org.apache.camel.model.dataformat.DataFormatDefinition
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Policy
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.Routes

@@ -15,7 +15,6 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 FailoverLoadBalancerDefinition
-LoadBalancerDefinition
 RandomLoadBalancerDefinition
 RoundRobinLoadBalancerDefinition
 StickyLoadBalancerDefinition

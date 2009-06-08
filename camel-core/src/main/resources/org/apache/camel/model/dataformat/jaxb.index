@@ -17,7 +17,6 @@
 ArtixDSContentType
 ArtixDSDataFormat
 CsvDataFormat
-DataFormatDefinition
 DataFormatsDefinition
 FlatpackDataFormat
 GzipDataFormat

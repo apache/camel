@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.DataFormatDefinition;
+
 /**
  * Represents the XML type for a collection of DataFormats.
  */

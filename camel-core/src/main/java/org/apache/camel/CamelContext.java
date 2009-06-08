@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExchangeConverter;

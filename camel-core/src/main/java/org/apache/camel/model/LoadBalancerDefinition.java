@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.loadbalancer;
+package org.apache.camel.model;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,14 +24,13 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;loadBalance/&gt; element
+ * Represents an XML &lt;loadBalancer/&gt; element
  */
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)

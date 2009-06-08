@@ -18,6 +18,7 @@ package org.apache.camel.model.loadbalancer;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
