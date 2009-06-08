@@ -111,8 +111,8 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
         return true;
     }
 
-    public void releaseExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
-                                         GenericFile<File> fileGenericFile, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
+                                         GenericFile<File> file, Exchange exchange) throws Exception {
         FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLock", FileLock.class);
         String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLockName", String.class);
         Channel channel = lock.channel();

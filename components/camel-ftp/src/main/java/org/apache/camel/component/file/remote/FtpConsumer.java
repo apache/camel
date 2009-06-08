@@ -59,8 +59,14 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             } else if (file.isFile()) {
                 RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
                 if (isValidFile(remote, false)) {
-                    // matched file so add
-                    fileList.add(remote);
+                    if (isInProgress(remote)) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Skipping as file is already in progress: " + remote.getFileName());
+                        }
+                    } else {
+                        // matched file so add
+                        fileList.add(remote);
+                    }
                 }
             } else {
                 log.debug("Ignoring unsupported remote file type: " + file);

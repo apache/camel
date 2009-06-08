@@ -79,7 +79,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         return true;
     }
 
-    public void releaseExclusiveReadLock(GenericFileOperations<T> opeations, GenericFile<T> file,
+    public void releaseExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
                                          Exchange exchange) throws Exception {
         // noop
     }

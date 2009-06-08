@@ -93,6 +93,10 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         public boolean remove(String key) {
             return true;
         }
+
+        public boolean confirm(String key) {
+            return true;
+        }
     }
 
 }

@@ -24,11 +24,11 @@ import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
-public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
+public class FileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
     private GenericFileRenamer<T> beginRenamer;
     private GenericFileRenamer<T> commitRenamer;
 
-    public GenericFileRenameProcessStrategy() {
+    public FileRenameProcessStrategy() {
     }
 
     @Override

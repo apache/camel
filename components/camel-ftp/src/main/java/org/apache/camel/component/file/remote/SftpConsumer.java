@@ -61,8 +61,14 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             } else {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
                 if (isValidFile(remote, false)) {
-                    // matched file so add
-                    fileList.add(remote);
+                    if (isInProgress(remote)) {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Skipping as file is already in progress: " + remote.getFileName());
+                        }
+                    } else {
+                        // matched file so add
+                        fileList.add(remote);
+                    }
                 }
             }
         }

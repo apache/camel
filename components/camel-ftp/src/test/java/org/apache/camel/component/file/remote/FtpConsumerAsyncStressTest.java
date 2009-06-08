@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.stress;
+package org.apache.camel.component.file.remote;
 
 import java.util.Random;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,22 +26,26 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class FileAsyncStressTest extends ContextTestSupport {
+public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
 
-    private int files = 150;
+    private int files = 100;
+
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/filestress/?password=admin&maxMessagesPerPoll=25";
+    }
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory(FTP_ROOT_DIR + "filestress");
         super.setUp();
-        deleteDirectory("target/filestress");
         for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file:target/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
+            template.sendBodyAndHeader("file://" + FTP_ROOT_DIR + "filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
         }
     }
 
-    public void testAsyncStress() throws Exception {
+    public void testFTPConsumerAsyncStress() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(100);
+        mock.expectedMinimumMessageCount(50);
 
         assertMockEndpointsSatisfied();
     }
@@ -52,10 +55,10 @@ public class FileAsyncStressTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // leverage the fact that we can limit to max 50 files per poll
+                // leverage the fact that we can limit to max 25 files per poll
                 // this will result in polling again and potentially picking up files
                 // that already are in progress
-                from("file:target/filestress?maxMessagesPerPoll=50")
+                from(getFtpUrl())
                     .threads(10)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

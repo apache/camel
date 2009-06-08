@@ -73,10 +73,10 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         // delete local work file, if it was used (eg by ftp component)
         File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
         if (local != null && local.exists()) {
+            boolean deleted = local.delete();
             if (log.isTraceEnabled()) {
-                log.trace("Deleting lock work file: " + local);
+                log.trace("Local work file: " + local + " was deleted: " + deleted);
             }
-            local.delete();
         }
     }
 }
