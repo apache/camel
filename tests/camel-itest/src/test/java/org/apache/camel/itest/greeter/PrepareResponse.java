@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class PrepareResponse implements Processor {
+
     public void process(Exchange exchange) throws Exception {
         Object[] result = exchange.getIn().getBody(Object[].class);
         exchange.getOut().setBody(result[0]);

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.itest.jms;
 
 import org.apache.camel.EndpointInject;
@@ -25,9 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
-/**
- *
- */
 @ContextConfiguration
 public class FileToJmsTest extends AbstractJUnit38SpringContextTests {
 

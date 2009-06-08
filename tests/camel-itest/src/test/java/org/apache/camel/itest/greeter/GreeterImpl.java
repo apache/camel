@@ -32,31 +32,22 @@ public class GreeterImpl implements Greeter {
     private static final Logger LOG =
         Logger.getLogger(GreeterImpl.class.getPackage().getName());
 
-    /* (non-Javadoc)
-     * @see org.apache.hello_world_soap_http.Greeter#greetMe(java.lang.String)
-     */
     public String greetMe(String me) {
         LOG.info("Executing operation greetMe");
-        System.out.println("Executing operation greetMe");
-        System.out.println("Message received: " + me + "\n");
+        LOG.info("Executing operation greetMe");
+        LOG.info("Message received: " + me + "\n");
         return "Hello " + me;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.hello_world_soap_http.Greeter#greetMeOneWay(java.lang.String)
-     */
     public void greetMeOneWay(String me) {
         LOG.info("Executing operation greetMeOneWay");
-        System.out.println("Executing operation greetMeOneWay\n");
-        System.out.println("Hello there " + me);
+        LOG.info("Executing operation greetMeOneWay\n");
+        LOG.info("Hello there " + me);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.hello_world_soap_http.Greeter#sayHi()
-     */
     public String sayHi() {
         LOG.info("Executing operation sayHi");
-        System.out.println("Executing operation sayHi\n");
+        LOG.info("Executing operation sayHi\n");
         return "Bonjour";
     }
 
@@ -66,7 +57,7 @@ public class GreeterImpl implements Greeter {
         faultDetail.setMinor((short)1);
         LOG.info("Executing operation pingMe, throwing PingMeFault exception, message = "
                  + messageIn);
-        System.out.println("Executing operation pingMe, throwing PingMeFault exception\n");
+        LOG.info("Executing operation pingMe, throwing PingMeFault exception\n");
         throw new PingMeFault("PingMeFault raised by server", faultDetail);
     }
 

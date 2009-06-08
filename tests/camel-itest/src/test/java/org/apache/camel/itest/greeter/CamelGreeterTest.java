@@ -43,14 +43,12 @@ public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
 
     private Endpoint endpoint;
 
-
     protected void setUp() throws Exception {
         // Start the Greeter Server
         Object implementor = new GreeterImpl();
         String address = "http://localhost:9000/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
         LOG.info("The WS endpoint is published! ");
-
     }
 
     protected void tearDown() throws Exception {
@@ -59,8 +57,6 @@ public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
             endpoint.stop();
         }
     }
-
-
 
     public void testMocksAreValid() throws Exception {
         assertNotNull(camelContext);
@@ -71,6 +67,7 @@ public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
 
         // Sleep a while and wait for the message whole processing
         Thread.sleep(4000);
+        template.stop();
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
@@ -79,8 +76,6 @@ public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
             String result = (String) exchange.getIn().getBody();
             assertEquals("Get the wrong result ", result, "Hello Willem");
         }
-
-
     }
 
 }

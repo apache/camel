@@ -16,17 +16,10 @@
  */
 package org.apache.camel.itest.greeter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class JmsPrepareRequest implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(JmsPrepareRequest.class);
 
     public void process(Exchange exchange) throws Exception {
         String request = exchange.getIn().getBody(String.class);       

@@ -62,6 +62,7 @@ public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
 
         // Sleep a while and wait for the message whole processing
         Thread.sleep(4000);
+        template.stop();
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();

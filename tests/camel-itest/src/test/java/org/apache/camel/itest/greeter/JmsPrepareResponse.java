@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class JmsPrepareResponse implements Processor {
+
     public void process(Exchange exchange) throws Exception {
         String request = exchange.getIn().getBody(String.class);               
         exchange.getOut().setBody("Hello" + request);

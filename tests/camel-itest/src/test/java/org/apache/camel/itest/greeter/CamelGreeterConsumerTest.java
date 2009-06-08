@@ -19,15 +19,10 @@ package org.apache.camel.itest.greeter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.Endpoint;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +36,6 @@ public class CamelGreeterConsumerTest extends AbstractJUnit38SpringContextTests 
     @Autowired
     protected CamelContext camelContext;
 
-
     public void testMocksAreValid() throws Exception {
         assertNotNull(camelContext);
 
@@ -52,6 +46,8 @@ public class CamelGreeterConsumerTest extends AbstractJUnit38SpringContextTests 
                                                    params, CxfConstants.OPERATION_NAME, "greetMe");
         assertTrue("Result is a list instance ", result instanceof List);
         assertEquals("Get the wrong response", ((List)result).get(0), "HelloWillem");
+
+        template.stop();
     }
 
 }

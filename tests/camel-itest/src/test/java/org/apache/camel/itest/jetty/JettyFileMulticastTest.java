@@ -52,6 +52,7 @@ public class JettyFileMulticastTest extends AbstractJUnit38SpringContextTests {
 
         // Sleep a while and wait for the message whole processing
         Thread.sleep(2000);
+        template.stop();
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> resultExchanges = resultEndpoint.getReceivedExchanges();
