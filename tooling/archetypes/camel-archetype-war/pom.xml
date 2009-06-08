@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -46,26 +45,10 @@
             </goals>
             <configuration>
               <tasks>
-                <replace
-                  file="${project.build.directory}/classes/archetype-resources/pom.xml"
-                  token="$CAMEL_VERSION_REPLACEME$"
-                  value="${project.version}" casesensitive="true">
-                </replace>
-                <replace
-                  file="${project.build.directory}/classes/archetype-resources/pom.xml"
-                  token="$ACTIVEMQ_VERSION_REPLACEME$"
-                  value="${activemq-version}" casesensitive="true">
-                </replace>
-                <replace
-                  file="${project.build.directory}/classes/archetype-resources/pom.xml"
-                  token="$JETTY_VERSION_REPLACEME$"
-                  value="${jetty-version}" casesensitive="true">
-                </replace>
-                <replace
-                  file="${project.build.directory}/classes/archetype-resources/pom.xml"
-                  token="$XBEAN_VERSION_REPLACEME$"
-                  value="${xbean-spring-version}" casesensitive="true">
-                </replace>
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" casesensitive="true" />
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$ACTIVEMQ_VERSION_REPLACEME$" value="${activemq-version}" casesensitive="true" />
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$JETTY_VERSION_REPLACEME$" value="${jetty-version}" casesensitive="true" />
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$XBEAN_VERSION_REPLACEME$" value="${xbean-spring-version}" casesensitive="true" />
               </tasks>
             </configuration>
           </execution>
