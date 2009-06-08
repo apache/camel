@@ -87,7 +87,13 @@ public class BatchProcessor extends ServiceSupport implements Processor {
      * @param batchSize the size
      */
     public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
+        // setting batch size to 0 or negative is like disabling it, so we set it as the max value
+        // as the code logic is dependt on a batch size having 1..n value
+        if (batchSize <= 0) {
+            this.batchSize = Integer.MAX_VALUE;
+        } else {
+            this.batchSize = batchSize;
+        }
     }
 
     public int getOutBatchSize() {
