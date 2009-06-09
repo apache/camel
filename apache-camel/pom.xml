@@ -456,7 +456,7 @@
         <artifactId>camel-maven-plugin</artifactId>
         <reportSets>
           <reportSet>
-            <configuration/>
+            <configuration />
             <reports>
               <report>converters-report</report>
             </reports>
@@ -531,16 +531,16 @@
                   <tasks>
 
                     <exec executable="rsync">
-                      <arg value="-ave"/>
-                      <arg value="ssh"/>
-                      <arg value="people.apache.org:/www/activemq.apache.org/camel/"/>
-                      <arg value="${basedir}/target/website/"/>
+                      <arg value="-ave" />
+                      <arg value="ssh" />
+                      <arg value="people.apache.org:/www/activemq.apache.org/camel/" />
+                      <arg value="${basedir}/target/website/" />
                     </exec>
 
-                    <echo message="Replaceing absolute links with relative ones"/>
+                    <echo message="Replaceing absolute links with relative ones" />
                     <replace dir="${basedir}/target/website">
-                      <replacefilter token="http://activemq.apache.org/camel/maven/" value="maven/"/>
-                      <replacefilter token="http://activemq.apache.org/camel/styles/" value="styles/"/>
+                      <replacefilter token="http://activemq.apache.org/camel/maven/" value="maven/" />
+                      <replacefilter token="http://activemq.apache.org/camel/styles/" value="styles/" />
                     </replace>
 
                   </tasks>
