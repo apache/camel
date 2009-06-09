@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SslCometdProducerConsumerTest extends ContextTestSupport {
 
-    private static final String URI = "cometds://0.0.0.0:8080/service/test?resourceBase=./target/test-classes/webapp&"
+    private static final String URI = "cometds://127.0.0.1:9080/service/test?resourceBase=./target/test-classes/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     protected String pwd = "changeit";
