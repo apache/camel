@@ -129,7 +129,12 @@ public final class MessageHelper {
             length = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
         }
 
-        String body = extractBodyAsString(message);
+        Object obj = message.getBody();
+        if (obj == null) {
+            return "Message: [Body is null]";
+        }
+
+        String body = obj.toString();
         if (body == null) {
             return "Message: [Body is null]";
         }

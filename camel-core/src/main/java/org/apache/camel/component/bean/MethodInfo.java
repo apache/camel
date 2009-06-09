@@ -174,6 +174,7 @@ public class MethodInfo {
     }
 
     protected Expression createParametersExpression() {
+        // TODO: better check for size / parameters do not match up -> NPE
         final int size = parameters.size();
         final Expression[] expressions = new Expression[size];
         for (int i = 0; i < size; i++) {
