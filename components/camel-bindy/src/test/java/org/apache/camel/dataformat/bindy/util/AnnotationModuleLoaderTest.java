@@ -18,11 +18,12 @@ package org.apache.camel.dataformat.bindy.util;
 
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Client;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.junit.Test;
-import junit.framework.Assert;
 
 public class AnnotationModuleLoaderTest extends Assert {
     
