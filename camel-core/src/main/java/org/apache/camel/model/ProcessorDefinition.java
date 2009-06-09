@@ -1813,6 +1813,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
+     * Enriches an exchange with additional data obtained from a
+     * <code>resourceUri</code>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrich(String resourceUri) {
+        addOutput(new EnrichDefinition(resourceUri));
+        return (Type) this;
+    }
+
+    /**
      * Adds a onComplection {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
      * a callback when the {@link org.apache.camel.Exchange} has finished being processed.
      * The hook invoke callbacks for either onComplete or onFailure.
