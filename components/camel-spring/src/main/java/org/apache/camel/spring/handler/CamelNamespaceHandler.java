@@ -84,18 +84,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("template", CamelTemplateFactoryBean.class);
         addBeanDefinitionParser("export", CamelServiceExporter.class);
 
-        // data types
-        addBeanDefinitionParser("artixDS", ArtixDSDataFormat.class);
-        addBeanDefinitionParser("jaxb", JaxbDataFormat.class);
-        addBeanDefinitionParser("serialization", SerializationDataFormat.class);
-        addBeanDefinitionParser("xmlBeans", XMLBeansDataFormat.class);
-
-        // load balancers
-        addBeanDefinitionParser("roundRobin", RoundRobinLoadBalanceStrategy.class);
-        addBeanDefinitionParser("random", RandomLoadBalanceStrategy.class);
-        addBeanDefinitionParser("sticky", StickyLoadBalanceStrategy.class);
-        addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
-
         // jmx agent
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentType.class);
 
@@ -203,9 +191,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 element.setAttribute("id", contextId);
             }
 
-            // now lets parse the routes
+            // now lets parse the routes with JAXB
             Object value = parseUsingJaxb(element, parserContext);
+            
             if (value instanceof CamelContextFactoryBean) {
+                // set the property value with the JAXB parsed value
                 CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)value;
                 builder.addPropertyValue("id", contextId);
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
@@ -213,7 +203,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("dataFormats", factoryBean.getDataFormats());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
                 builder.addPropertyValue("properties", factoryBean.getProperties());
-
                 if (factoryBean.getPackages().length > 0) {
                     builder.addPropertyValue("packages", factoryBean.getPackages());
                 }

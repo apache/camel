@@ -28,18 +28,7 @@ public class CamelNamespaceHandler extends org.apache.camel.spring.handler.Camel
         super.init();
         registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
     }
-
-    protected JAXBContext createJaxbContext() throws JAXBException {
-        StringBuilder packages = new StringBuilder();
-        for (Class cl : getJaxbPackages()) {
-            if (packages.length() > 0) {
-                packages.append(":");
-            }
-            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
-        }
-        return JAXBContext.newInstance(packages.toString(), getClass().getClassLoader());
-    }
-
+    
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.osgi.CamelContextFactoryBean.class);
