@@ -93,11 +93,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         ObjectHelper.notNull(httpConnectionManager, "httpConnectionManager");
 
         HttpClient answer = new HttpClient(getClientParams());
-        answer.setHttpConnectionManager(httpConnectionManager);
-        HttpClientConfigurer configurer = getHttpClientConfigurer();
-        if (configurer != null) {
-            configurer.configureHttpClient(answer);
-        }
 
         // configure http proxy if defined as system property
         // http://java.sun.com/javase/6/docs/technotes/guides/net/proxies.html
@@ -111,6 +106,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
             answer.getHostConfiguration().setProxy(host, port);
         }
 
+        answer.setHttpConnectionManager(httpConnectionManager);
+        HttpClientConfigurer configurer = getHttpClientConfigurer();
+        if (configurer != null) {
+            configurer.configureHttpClient(answer);
+        }
         return answer;
     }
 
