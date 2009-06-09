@@ -17,6 +17,7 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.spi.Injector;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -32,7 +33,9 @@ public class SpringInjector implements Injector {
     }
 
     public <T> T newInstance(Class<T> type) {
-        Object value = applicationContext.getBeanFactory().createBean(type);
+        // use the createBean method with 3 arguments as it exist in Spring 2.0.x as well.
+        // this allows us to be compatible with Spring 2.0 also, and not only 2.5.
+        Object value = applicationContext.getBeanFactory().createBean(type, AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR, false);
         return type.cast(value);
     }
 
