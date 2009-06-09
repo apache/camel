@@ -50,6 +50,7 @@ public class RestletRouteBuilderAuthTest extends SpringTestSupport {
         headers.put("id", "xyz");
         String response = (String) template.requestBodyAndHeaders("direct:start-auth", 
                 "<order foo='1'/>", headers);
+        assertNotNull("No response", response);
         assertTrue(response.contains("requires user authentication"));
     }
 
