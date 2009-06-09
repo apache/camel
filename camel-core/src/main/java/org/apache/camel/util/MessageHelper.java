@@ -110,4 +110,35 @@ public final class MessageHelper {
         }
         return contentType;
     }
+
+    /**
+     * Extracts the body for logging purpose.
+     * <p/>
+     * Will clip the body if its too big for logging.
+     *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param message the message
+     * @return the logging message
+     */
+    public static String extractBodyForLogging(Message message) {
+        // default to 1000 chars
+        int length = 1000;
+
+        String property = message.getExchange().getContext().getProperties().get(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+        if (property != null) {
+            length = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
+        }
+
+        String body = extractBodyAsString(message);
+        if (body == null) {
+            return "Message: [Body is null]";
+        }
+
+        // clip body if length enabled and the body is too big
+        if (length > 0 && body.length() > length) {
+            body = body.substring(0, length) + "... [Body clipped after " + length + " chars, total length is " + body.length() + "]";
+        }
+
+        return "Message: " + body;
+    }
 }

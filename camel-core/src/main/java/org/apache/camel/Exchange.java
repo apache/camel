@@ -36,8 +36,8 @@ public interface Exchange {
 
     String ASYNC_WAIT = "CamelAsyncWait";
 
-    String BATCH_INDEX = "CamelBatchIndex";
-    String BATCH_SIZE = "CamelBatchSize";
+    String BATCH_INDEX    = "CamelBatchIndex";
+    String BATCH_SIZE     = "CamelBatchSize";
     String BATCH_COMPLETE = "CamelBatchComplete";
 
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
@@ -69,8 +69,9 @@ public interface Exchange {
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
 
-    String LOOP_INDEX = "CamelLoopIndex";
-    String LOOP_SIZE  = "CamelLoopSize";
+    String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
+    String LOOP_INDEX               = "CamelLoopIndex";
+    String LOOP_SIZE                = "CamelLoopSize";
 
     String MULTICAST_INDEX = "CamelMulticastIndex";
 

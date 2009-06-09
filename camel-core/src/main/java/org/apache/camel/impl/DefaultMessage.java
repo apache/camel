@@ -19,10 +19,10 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.MessageHelper;
 
 /**
  * The default implementation of {@link org.apache.camel.Message}
@@ -35,7 +35,7 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public String toString() {
-        return "Message: " + getBody();
+        return MessageHelper.extractBodyForLogging(this);
     }
 
     public Object getHeader(String name) {
