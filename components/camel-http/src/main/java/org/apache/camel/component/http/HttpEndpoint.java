@@ -30,6 +30,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a <a href="http://activemq.apache.org/camel/http.html">HTTP
@@ -39,6 +41,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  */
 public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
 
+    private static final transient Log LOG = LogFactory.getLog(HttpEndpoint.class);
     private HttpBinding binding;
     private HttpComponent component;
     private URI httpUri;
@@ -82,6 +85,19 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
      */
     public HttpClient createHttpClient() {
         HttpClient answer = new HttpClient(getClientParams());
+
+        // configure http proxy if defined as system property
+        // http://java.sun.com/javase/6/docs/technotes/guides/net/proxies.html
+        if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
+            String host = System.getProperty("http.proxyHost");
+            int port = Integer.parseInt(System.getProperty("http.proxyPort"));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: "
+                        + host + " port: " + port);
+            }
+            answer.getHostConfiguration().setProxy(host, port);
+        }
+
         answer.setHttpConnectionManager(httpConnectionManager);
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
