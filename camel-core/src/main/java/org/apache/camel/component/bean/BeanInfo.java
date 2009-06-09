@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -82,9 +83,11 @@ public class BeanInfo {
         synchronized (EXCLUDED_METHODS) {
             if (EXCLUDED_METHODS.size() == 0) {
                 // exclude all java.lang.Object methods as we dont want to invoke them
-                for (Method method : Object.class.getMethods()) {
-                    EXCLUDED_METHODS.add(method);
-                }
+                EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
+                // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
+                EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
+
+                // TODO: AOP proxies have additional methods - well known methods should be added to EXCLUDE_METHODS
             }
         }
 
@@ -146,7 +149,7 @@ public class BeanInfo {
         }
         if (methodInfo != null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Choosed method to invoke: " + methodInfo + " on bean: " + pojo);
+                LOG.trace("Chosen method to invoke: " + methodInfo + " on bean: " + pojo);
             }
             return methodInfo.createMethodInvocation(pojo, exchange);
         }
@@ -378,8 +381,6 @@ public class BeanInfo {
             List<MethodInfo> possibles = new ArrayList<MethodInfo>();
             List<MethodInfo> possiblesWithException = new ArrayList<MethodInfo>();
             for (MethodInfo methodInfo : operationList) {
-                // TODO: AOP proxies have additional methods - well known methods should be added to EXCLUDE_METHODS
-
                 // test for MEP pattern matching
                 boolean out = exchange.getPattern().isOutCapable();
                 if (out && methodInfo.isReturnTypeVoid()) {
