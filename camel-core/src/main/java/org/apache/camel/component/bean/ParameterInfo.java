@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 
 import org.apache.camel.Expression;
 
@@ -56,5 +57,17 @@ public class ParameterInfo {
 
     public void setExpression(Expression expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("ParameterInfo");
+        sb.append("[index=").append(index);
+        sb.append(", type=").append(type);
+        sb.append(", annotations=").append(annotations == null ? "null" : Arrays.asList(annotations).toString());
+        sb.append(", expression=").append(expression);
+        sb.append(']');
+        return sb.toString();
     }
 }

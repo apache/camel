@@ -266,7 +266,13 @@ public class BeanInfo {
 
         boolean hasCustomAnnotation = false;
         boolean hasHandlerAnnotation = ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
-        for (int i = 0; i < parameterTypes.length; i++) {
+
+        int size = parameterTypes.length;
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Creating MethodInfo for class: " + clazz + " method: " + method + " having " + size + " parameters");
+        }
+
+        for (int i = 0; i < size; i++) {
             Class parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations = parametersAnnotations[i];
             Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType, parameterAnnotations);
@@ -274,10 +280,15 @@ public class BeanInfo {
 
             ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
             parameters.add(parameterInfo);
-
             if (expression == null) {
-                hasCustomAnnotation |= ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
+                boolean bodyAnnotation = ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
+                if (LOG.isTraceEnabled() && bodyAnnotation) {
+                    LOG.trace("Parameter #" + i + " has @Body annotation");
+                }
+                hasCustomAnnotation |= bodyAnnotation;
                 if (bodyParameters.isEmpty()) {
+                    // okay we have not yet set the body parameter and we have found
+                    // the candidate now to use as body parameter
                     if (Exchange.class.isAssignableFrom(parameterType)) {
                         // use exchange
                         expression = ExpressionBuilder.exchangeExpression();
@@ -285,13 +296,18 @@ public class BeanInfo {
                         // lets assume its the body
                         expression = ExpressionBuilder.bodyExpression(parameterType);
                     }
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Parameter #" + i + " is the body parameter using expression " + expression);
+                    }
                     parameterInfo.setExpression(expression);
                     bodyParameters.add(parameterInfo);
                 } else {
                     // will ignore the expression for parameter evaluation
                 }
             }
-
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Parameter #" + i + " has parameter info: " + parameterInfo);
+            }
         }
 
         // now lets add the method to the repository

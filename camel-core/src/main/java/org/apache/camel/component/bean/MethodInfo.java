@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
-import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -174,12 +173,18 @@ public class MethodInfo {
     }
 
     protected Expression createParametersExpression() {
-        // TODO: better check for size / parameters do not match up -> NPE
         final int size = parameters.size();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Creating parameters expression for " + size + " parameters");
+        }
+
         final Expression[] expressions = new Expression[size];
         for (int i = 0; i < size; i++) {
             Expression parameterExpression = parameters.get(i).getExpression();
             expressions[i] = parameterExpression;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Parameter #" + i + " has expression: " + parameterExpression);
+            }
         }
         return new Expression() {
             @SuppressWarnings("unchecked")
@@ -195,7 +200,13 @@ public class MethodInfo {
                     if (multiParameterArray) {
                         value = ((Object[])body)[i];
                     } else {
-                        value = expressions[i].evaluate(exchange, parameters.get(i).getType());
+                        Expression expression = expressions[i];
+                        if (expression != null) {
+                            value = expression.evaluate(exchange, parameters.get(i).getType());
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Parameter #" + i + " evaluated as: " + value + " type: " + ObjectHelper.type(value));
+                            }
+                        }
                     }
                     // now lets try to coerce the value to the required type
                     answer[i] = value;
