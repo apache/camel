@@ -199,7 +199,11 @@ public class TraceFormatter {
     //-------------------------------------------------------------------------
     protected Object getBreadCrumbID(Exchange exchange) {
         UnitOfWork unitOfWork = exchange.getUnitOfWork();
-        return unitOfWork.getId();
+        if (unitOfWork != null) {
+            return unitOfWork.getId();
+        } else {
+            return exchange.getExchangeId();
+        }
     }
 
     protected Object getBodyAsString(Message in) {
