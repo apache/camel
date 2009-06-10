@@ -60,7 +60,7 @@ public class HttpProducerSOTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://0.0.0.0:9080/myservice")
+                from("jetty://http://localhost:9080/myservice")
                     // but we wait for 2 sec before reply is sent back
                     .delay(2000)
                     .transform().constant("Bye World").to("mock:result");

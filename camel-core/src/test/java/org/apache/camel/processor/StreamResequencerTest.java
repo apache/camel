@@ -17,6 +17,8 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
@@ -56,18 +58,20 @@ public class StreamResequencerTest extends ContextTestSupport {
 
     public void testMultithreaded() throws Exception {
         int numMessages = 500;
-        Thread t1 = new Sender(context.createProducerTemplate(), 0, numMessages, 2);
-        Thread t2 = new Sender(context.createProducerTemplate(), 1, numMessages + 1, 2);
+
+        ExecutorService service = Executors.newFixedThreadPool(2);
+        service.execute(new Sender(context.createProducerTemplate(), 0, numMessages, 2));
+        service.execute(new Sender(context.createProducerTemplate(), 1, numMessages + 1, 2));
+
         Object[] bodies = new Object[numMessages];
         for (int i = 0; i < numMessages; i++) {
             bodies[i] = "msg" + i;
         }
+
         resultEndpoint.expectedBodiesReceived(bodies);
-        t1.start();
-        t2.start();
-        t1.join();
-        t2.join();
         resultEndpoint.assertIsSatisfied();
+
+        service.shutdown();
     }
     
     @Override
@@ -132,13 +136,13 @@ public class StreamResequencerTest extends ContextTestSupport {
 
         @Override
         public void run() {
-            for (int i = start; i < end; i += increment) {
+            for (long i = start; i < end; i += increment) {
                 try {
                     Thread.sleep(2);
                 } catch (InterruptedException e) {
                     // ignore
                 }
-                template.sendBodyAndHeader("direct:start", "msg" + i, "seqnum", Long.valueOf(i));
+                template.sendBodyAndHeader("direct:start", "msg" + i, "seqnum", i);
             }
         }
         

@@ -39,6 +39,14 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
         return false;
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (consumer != null) {
+            consumer.stop();
+        }
+    }
+
     private void sendMessagesToQueue() throws Exception {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.afterPropertiesSet();
@@ -55,7 +63,7 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
                     }
                     template.sendBody("seda:queue", i);
                 }
-            };
+            }
         });
     }
 
