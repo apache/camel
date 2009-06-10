@@ -90,7 +90,7 @@
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
-    <site-repo-url>scpexe://people.apache.org/www/activemq.apache.org/camel/maven/</site-repo-url>
+    <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
@@ -1062,7 +1062,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-release-plugin</artifactId>
             <configuration>
-                <tagBase>https://svn.apache.org/repos/asf/activemq/camel/tags</tagBase>
+                <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
                 <useReleaseProfile>false</useReleaseProfile>
                 <preparationGoals>clean install</preparationGoals>
                 <goals>deploy</goals>
