@@ -39,6 +39,14 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
         return false;
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (consumer != null) {
+            consumer.stop();
+        }
+    }
+
     private void sendMessagesToQueue() throws Exception {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.afterPropertiesSet();
@@ -55,7 +63,7 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
                     }
                     template.sendBody("seda:queue", i);
                 }
-            };
+            }
         });
     }
 
@@ -78,7 +86,7 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
             if (i == 5) {
                 // stop while sending, and then start again to pickup what is left in the queue
                 consumer.stop();
-                Thread.sleep(900);
+                Thread.sleep(500);
                 consumer.start();
             }
             // use 1000 as timeout otherwise we might get null if the consumer hasn't been started again
