@@ -100,8 +100,12 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
     }
 
     public void processPacket(Packet packet) {
-        Message message = (Message) packet;
+        if (packet instanceof Message) {
+            processMessage(null, (Message) packet);
+        }
+    }
 
+    public void processMessage(Chat chat, Message message) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Recieved XMPP message: " + message.getBody());
         }
@@ -112,10 +116,6 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
         } catch (Exception e) {
             exchange.setException(e);
         }
-    }
-
-    public void processMessage(Chat chat, Message message) {
-        processPacket(message);
     }
 
 }
