@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.amqp;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,12 +45,9 @@ public class AMQPRouteTest extends ContextTestSupport {
         }
 
         resultEndpoint.assertIsSatisfied();
-
-
     }
 
-    // TODO fix this test
-    public void xtestJmsRouteWithObjectMessage() throws Exception {
+    public void testJmsRouteWithObjectMessage() throws Exception {
         PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
@@ -82,10 +78,14 @@ public class AMQPRouteTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         // lets create an in JVM broker
-        TransportConnection.createVMBroker(1);
+        try {
+            TransportConnection.createVMBroker(1);
+        } catch (Exception e) {
+            // fails the first time, so create it again
+            TransportConnection.createVMBroker(1);
+        }
 
         super.setUp();
-
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
     }
 
