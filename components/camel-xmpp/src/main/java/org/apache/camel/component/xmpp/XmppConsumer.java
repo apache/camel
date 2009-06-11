@@ -60,6 +60,12 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                 LOG.info("Open private chat to: " + privateChat.getParticipant());
             }
         } else {
+            // add the presence packet listener to the connection so we only get packets that concers us
+            // we must add the listener before creating the muc
+            final ToContainsFilter toFilter = new ToContainsFilter(endpoint.getParticipant());
+            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class), toFilter);
+            connection.addPacketListener(this, packetFilter);
+
             muc = new MultiUserChat(connection, endpoint.resolveRoom(connection));
             muc.addMessageListener(this);
             DiscussionHistory history = new DiscussionHistory();
@@ -69,11 +75,6 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             if (LOG.isInfoEnabled()) {
                 LOG.info("Joined room: " + muc.getRoom() + " as: " + endpoint.getNickname());
             }
-
-            // add the presence packet listener to the connection so we only get packets that concers us
-            final ToContainsFilter toFilter = new ToContainsFilter(endpoint.getParticipant());
-            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class), toFilter);
-            connection.addPacketListener(this, packetFilter);
         }
 
         super.doStart();
