@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +33,7 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>
@@ -174,8 +175,8 @@ public class CxfSpringEndpoint extends CxfEndpoint {
 
     void configure(Object beanInstance) {
         // check the ApplicationContext states first , and call the refresh if necessary
-        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof AbstractApplicationContext) {
-            AbstractApplicationContext context = (AbstractApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
+        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof ConfigurableApplicationContext) {
+            ConfigurableApplicationContext context = (ConfigurableApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
             if (!context.isActive()) {
                 context.refresh();
             }
