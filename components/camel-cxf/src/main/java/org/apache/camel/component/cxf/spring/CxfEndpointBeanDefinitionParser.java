@@ -33,6 +33,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 
 
 
@@ -112,7 +113,12 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
                 Bus bus = BusFactory.getDefaultBus();                
                 setBus(bus);
             }
-            BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx);
+            // check the application status first, just update the bus reference in an active application Context
+            if (ctx instanceof ConfigurableApplicationContext) {
+                if (((ConfigurableApplicationContext)ctx).isActive()) {
+                    BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx); 
+                }
+            }            
         }
         
     }

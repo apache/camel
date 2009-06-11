@@ -38,6 +38,7 @@ import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
 
@@ -216,8 +217,8 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
 
     public void configure(Object beanInstance) {
         // check the ApplicationContext states first , and call the refresh if necessary
-        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof AbstractApplicationContext) {
-            AbstractApplicationContext context = (AbstractApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
+        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof ConfigurableApplicationContext) {
+            ConfigurableApplicationContext context = (ConfigurableApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
             if (!context.isActive()) {
                 context.refresh();
             }
