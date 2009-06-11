@@ -34,9 +34,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
-
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.io.CachedOutputStream;
@@ -63,7 +61,8 @@ public final class CxfUtils {
         visitNodesForNameSpace(element, namespaces);
         W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
         writeElement(element, writer, namespaces);
-        return getStringFromDoc(writer.getDocument());
+        XmlConverter converter = new XmlConverter();
+        return converter.toString(converter.toSource(writer.getDocument()));
         
     }
     
@@ -162,20 +161,6 @@ public final class CxfUtils {
 
         writer.writeEndElement();
         
-    }
-
-    private static String getStringFromDoc(Document document) throws IOException {
-        //Serialize DOM
-        OutputFormat format    = new OutputFormat(document);
-        format.setOmitXMLDeclaration(true);
-        // as a String
-        StringWriter stringOut = new StringWriter();    
-        XMLSerializer serial   = new XMLSerializer(stringOut, 
-                                                    format);
-        serial.serialize(document);
-       
-        return stringOut.toString(); 
-       
     }
 
     private static void visitNodesForNameSpace(Node node, Map<String, String> namespaces) {
