@@ -341,10 +341,33 @@ public class MailBinding {
 
     protected void addBodyToMultipart(org.apache.camel.Message camelMessage, MailConfiguration configuration, MimeMultipart activeMultipart) throws MessagingException {
         BodyPart bodyMessage = new MimeBodyPart();
-        bodyMessage.setContent(camelMessage.getBody(String.class), configuration.getContentType());
+
+        // determine the content type
+        String contentType = configuration.getContentType();
+        if (camelMessage.getHeader("contentType") != null) {
+            contentType = camelMessage.getHeader("contentType", String.class);
+        }
+
+        // set the content according to the content type
+        if (contentType == null) {
+            bodyMessage.setText(camelMessage.getBody(String.class));
+        } else if (contentType.startsWith("text/plain")) {
+            bodyMessage.setText(camelMessage.getBody(String.class));
+            bodyMessage.setHeader("Content-Type", contentType);
+        } else {
+            // store content in a byte array data store
+            DataSource ds;
+            try {
+                ds = new ByteArrayDataSource(camelMessage.getBody(String.class), contentType);
+            } catch (IOException e) {
+                throw new MessagingException("Cannot create DataSource", e);
+            }
+            bodyMessage.setDataHandler(new DataHandler(ds));
+            bodyMessage.setHeader("Content-Type", contentType);
+        }
+
         activeMultipart.addBodyPart(bodyMessage);
     }
-
 
     /**
      * Strategy to allow filtering of attachments which are put on the Mail message
