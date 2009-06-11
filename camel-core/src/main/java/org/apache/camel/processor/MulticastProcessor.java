@@ -92,6 +92,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ExecutorService executorService, boolean streaming) {
         notNull(processors, "processors");
+        // TODO: end() does not work correctly with Splitter
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.isParallelProcessing = parallelProcessing;
@@ -204,8 +205,14 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
      * @param exchange the exchange to be added to the result
      */
     protected synchronized void doAggregate(AtomicExchange result, Exchange exchange) {
-        if (aggregationStrategy != null) {
+        // only aggregate if the exchange is not filtered (eg by the FilterProcessor)
+        Boolean filtered = exchange.getProperty(Exchange.FILTERED, Boolean.class);
+        if (aggregationStrategy != null && (filtered == null || !filtered)) {
             result.set(aggregationStrategy.aggregate(result.get(), exchange));
+        } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Cannot aggregate exchange as its filtered: " + exchange);
+            }
         }
     }
 

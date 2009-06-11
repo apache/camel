@@ -57,10 +57,21 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
 
     @Override
     public boolean add(Exchange exchange) {
+        // do not add exchange if it was filtered
+        Boolean filtered = exchange.getProperty(Exchange.FILTERED, Boolean.class);
+        if (filtered != null && filtered) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Cannot aggregate exchange as its filtered: " + exchange);
+            }
+            return false;
+        }
+
         Object correlationKey = correlationExpression.evaluate(exchange, Object.class);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Evaluated expression: " + correlationExpression + " as CorrelationKey: " + correlationKey);
+            LOG.trace("Evaluated expression: " + correlationExpression + " as correlation key: " + correlationKey);
         }
+
+        // TODO: correlationKey evalutated to null should be skipped by default
 
         Exchange oldExchange = aggregated.get(correlationKey);
         Exchange newExchange = exchange;
@@ -80,7 +91,7 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
         // the strategy may just update the old exchange and return it
         if (!newExchange.equals(oldExchange)) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Put exchange:" + newExchange + " with coorelation key:"  + correlationKey);
+                LOG.trace("Put exchange:" + newExchange + " with correlation key:"  + correlationKey);
             }
             aggregated.put(correlationKey, newExchange);
         }
