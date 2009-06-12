@@ -134,7 +134,8 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
         // wrap the output with the interceptors
         Processor target = nextProcessor;
         for (InterceptStrategy strategy : interceptors) {
-            target = strategy.wrapProcessorInInterceptors(outputDefinition, target, nextProcessor);
+            Processor next = target == nextProcessor ? null : nextProcessor;
+            target = strategy.wrapProcessorInInterceptors(outputDefinition, target, next);
         }
 
         // sets the delegate to our wrapped output

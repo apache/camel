@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -55,6 +56,7 @@ import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
@@ -171,22 +173,41 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (properties != null) {
             getContext().setProperties(properties.asMap());
         }
+
         // set the resolvers first
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
+            LOG.info("Using custom PackageScanClassResolver: " + packageResolver);
             getContext().setPackageScanClassResolver(packageResolver);
         }
         ClassResolver classResolver = getBeanForType(ClassResolver.class);
         if (classResolver != null) {
+            LOG.info("Using custom ClassResolver: " + classResolver);
             getContext().setClassResolver(classResolver);
         }
         FactoryFinderResolver factoryFinderResolver = getBeanForType(FactoryFinderResolver.class);
         if (factoryFinderResolver != null) {
+            LOG.info("Using custom FactoryFinderResolver: " + factoryFinderResolver);
             getContext().setFactoryFinderResolver(factoryFinderResolver);
+        }
+
+        // set the lifecycle strategy if defined
+        LifecycleStrategy lifecycleStrategy = getBeanForType(LifecycleStrategy.class);
+        if (lifecycleStrategy != null) {
+            LOG.info("Using custom LifecycleStrategy: " + lifecycleStrategy);
+            getContext().setLifecycleStrategy(lifecycleStrategy);
+        }
+
+        // set the strategy if defined
+        Registry registry = getBeanForType(Registry.class);
+        if (registry != null) {
+            LOG.info("Using custom Registry: " + registry);
+            getContext().setRegistry(registry);
         }
 
         Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
+            LOG.info("Using custom Debugger: " + debugger);
             getContext().addInterceptStrategy(debugger);
         }
 
@@ -197,29 +218,30 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             if (formatter != null) {
                 tracer.setFormatter(formatter);
             }
+            LOG.info("Using custom Tracer: " + tracer);
             getContext().addInterceptStrategy(tracer);
         }
 
         HandleFault handleFault = getBeanForType(HandleFault.class);
         if (handleFault != null) {
+            LOG.info("Using custom HandleFault: " + handleFault);
             getContext().addInterceptStrategy(handleFault);
         }
 
         Delayer delayer = getBeanForType(Delayer.class);
         if (delayer != null) {
+            LOG.info("Using custom Delayer: " + delayer);
             getContext().addInterceptStrategy(delayer);
         }
 
-        // set the lifecycle strategy if defined
-        LifecycleStrategy lifecycleStrategy = getBeanForType(LifecycleStrategy.class);
-        if (lifecycleStrategy != null) {
-            getContext().setLifecycleStrategy(lifecycleStrategy);
-        }
-
-        // set the strategy if defined
-        Registry registry = getBeanForType(Registry.class);
-        if (registry != null) {
-            getContext().setRegistry(registry);
+        // add global interceptors
+        Map<String, InterceptStrategy> strategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
+        if (strategies != null && !strategies.isEmpty()) {
+            for (String id : strategies.keySet()) {
+                InterceptStrategy strategy = strategies.get(id);
+                LOG.info("Using custom intercept strategy with id: " + id + " and implementation:" + strategy);
+                getContext().addInterceptStrategy(strategy);
+            }
         }
 
         // Set the application context and camelContext for the beanPostProcessor
@@ -682,7 +704,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (errorHandlerRef != null) {
             ErrorHandlerBuilder errorHandlerBuilder = (ErrorHandlerBuilder) getApplicationContext().getBean(errorHandlerRef, ErrorHandlerBuilder.class);
             if (errorHandlerBuilder == null) {
-                throw new IllegalArgumentException("Could not find bean: " + errorHandlerRef);
+                throw new IllegalArgumentException("Cannot find ErrorHandlerBuilder bean with id: " + errorHandlerRef);
             }
             ctx.setErrorHandlerBuilder(errorHandlerBuilder);
         }
@@ -752,6 +774,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             for (String name : getPackages()) {
                 name = ObjectHelper.normalizeClassName(name);
                 if (ObjectHelper.isNotEmpty(name)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Using package: " + name + " to scan for RouteBuilder classes");
+                    }
                     packages.add(name);
                 }
             }
