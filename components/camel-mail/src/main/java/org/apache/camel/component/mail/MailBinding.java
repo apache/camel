@@ -94,40 +94,72 @@ public class MailBinding {
 
         // if there is an alternativebody provided, set up a mime multipart alternative message
         if (hasAlternativeBody(endpoint.getConfiguration(), exchange.getIn())) {
-            createMultipartAlternativeMessage(mimeMessage, exchange.getIn(), endpoint.getConfiguration()); 
+            createMultipartAlternativeMessage(mimeMessage, endpoint.getConfiguration(), exchange);
         } else {
             if (exchange.getIn().hasAttachments()) {
-                appendAttachmentsFromCamel(mimeMessage, exchange.getIn(), endpoint.getConfiguration());
+                appendAttachmentsFromCamel(mimeMessage, endpoint.getConfiguration(), exchange);
             } else {
-                String contentType = populateContentType(endpoint, mimeMessage, exchange);
-                if (contentType == null) {
-                    mimeMessage.setText(exchange.getIn().getBody(String.class));
-                } else if (contentType.startsWith("text/plain")) {
-                    String charset = ObjectHelper.after(contentType, "charset=");
-                    if (charset != null) {
-                        mimeMessage.setText(exchange.getIn().getBody(String.class), charset);
-                    } else {
-                        mimeMessage.setText(exchange.getIn().getBody(String.class));
-                    }
-                } else {
-                    // store content in a byte array data store
-                    DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
-                    mimeMessage.setDataHandler(new DataHandler(ds));
-                }
+                populateContentOnMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange);
             }
         }
     }
 
-    protected String populateContentType(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) throws MessagingException {
+    protected String determineContentType(MailConfiguration configuration, Exchange exchange) {
         // see if we got any content type set
-        String contentType = endpoint.getConfiguration().getContentType();
+        String contentType = configuration.getContentType();
         if (exchange.getIn().getHeader("contentType") != null) {
             contentType = exchange.getIn().getHeader("contentType", String.class);
         } else if (exchange.getIn().getHeader(Exchange.CONTENT_TYPE) != null) {
             contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
-        if (contentType != null) {
-            mimeMessage.setHeader("Content-Type", contentType);
+
+        // fix content type to include a space after semi colon if missing
+        if (contentType != null && contentType.contains(";")) {
+            String before = ObjectHelper.before(contentType, ";");
+            String after = ObjectHelper.after(contentType, ";");
+            if (before != null && after != null) {
+                contentType = before.trim() + "; " + after.trim();
+            }
+        }
+
+        return contentType;
+    }
+
+    protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
+        String contentType = determineContentType(configuration, exchange);
+        if (contentType == null) {
+            part.setText(exchange.getIn().getBody(String.class));
+        } else {
+            if (contentType.startsWith("text/plain")) {
+                String charset = ObjectHelper.after(contentType, "charset=");
+                if (charset != null) {
+                    part.setText(exchange.getIn().getBody(String.class), charset.trim());
+                } else {
+                    part.setText(exchange.getIn().getBody(String.class));
+                }
+            } else {
+                // store content in a byte array data store
+                DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
+                part.setDataHandler(new DataHandler(ds));
+            }
+            part.setHeader("Content-Type", contentType);
+        }
+        return contentType;
+    }
+
+    protected String populateContentOnBodyPart(BodyPart part, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
+        String contentType = determineContentType(configuration, exchange);
+        if (contentType == null) {
+            part.setText(exchange.getIn().getBody(String.class));
+        } else {
+            if (contentType.startsWith("text/plain")) {
+                part.setText(exchange.getIn().getBody(String.class));
+            } else {
+                // store content in a byte array data store
+                DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
+                part.setDataHandler(new DataHandler(ds));
+            }
+            part.setHeader("Content-Type", contentType);
         }
         return contentType;
     }
@@ -221,30 +253,31 @@ public class MailBinding {
     /**
      * Appends the Mail attachments from the Camel {@link MailMessage}
      */
-    protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, org.apache.camel.Message camelMessage,
-                                              MailConfiguration configuration)
-        throws MessagingException {
-        
+    protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, MailConfiguration configuration,
+        Exchange exchange) throws MessagingException, IOException {
+
         // Put parts in message
-        mimeMessage.setContent(createMixedMultipartAttachments(camelMessage, configuration));
+        mimeMessage.setContent(createMixedMultipartAttachments(configuration, exchange));
     }
 
-    private MimeMultipart createMixedMultipartAttachments(org.apache.camel.Message camelMessage, MailConfiguration configuration) throws MessagingException {
+    private MimeMultipart createMixedMultipartAttachments(MailConfiguration configuration, Exchange exchange)
+        throws MessagingException, IOException {
+
         // fill the body with text
         MimeMultipart multipart = new MimeMultipart();
         multipart.setSubType("mixed");
-        addBodyToMultipart(camelMessage, configuration, multipart);
+        addBodyToMultipart(configuration, multipart, exchange);
         String partDisposition = configuration.isUseInlineAttachments() ?  Part.INLINE : Part.ATTACHMENT;
-        if (camelMessage.hasAttachments()) {
-            addAttachmentsToMultipart(camelMessage, multipart, partDisposition);
+        if (exchange.getIn().hasAttachments()) {
+            addAttachmentsToMultipart(multipart, partDisposition, exchange);
         }
         return multipart;
     }
 
-    protected void addAttachmentsToMultipart(org.apache.camel.Message camelMessage, MimeMultipart multipart, String partDisposition) throws MessagingException {
+    protected void addAttachmentsToMultipart(MimeMultipart multipart, String partDisposition, Exchange exchange) throws MessagingException {
         LOG.trace("Adding attachments +++ start +++");
         int i = 0;
-        for (Map.Entry<String, DataHandler> entry : camelMessage.getAttachments().entrySet()) {
+        for (Map.Entry<String, DataHandler> entry : exchange.getIn().getAttachments().entrySet()) {
             String attachmentFilename = entry.getKey();
             DataHandler handler = entry.getValue();
 
@@ -254,7 +287,7 @@ public class MailBinding {
                 LOG.trace("Attachment #" + i + ": FileName: " + attachmentFilename);
             }
             if (handler != null) {
-                if (shouldAddAttachment(camelMessage, attachmentFilename, handler)) {
+                if (shouldAddAttachment(exchange, attachmentFilename, handler)) {
                     // Create another body part
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
@@ -294,53 +327,54 @@ public class MailBinding {
         LOG.trace("Adding attachments +++ done +++");
     }
 
-    protected void createMultipartAlternativeMessage(MimeMessage mimeMessage, org.apache.camel.Message camelMessage, MailConfiguration configuration)
-        throws MessagingException { 
+    protected void createMultipartAlternativeMessage(MimeMessage mimeMessage, MailConfiguration configuration,
+                                                     Exchange exchange) throws MessagingException, IOException {
 
         MimeMultipart multipartAlternative = new MimeMultipart("alternative");
         mimeMessage.setContent(multipartAlternative);
 
         BodyPart plainText = new MimeBodyPart();
-        plainText.setText(getAlternativeBody(configuration, camelMessage));
+        plainText.setText(getAlternativeBody(configuration, exchange.getIn()));
         multipartAlternative.addBodyPart(plainText);
 
         // if there are no attachments, add the body to the same mulitpart message
-        if (!camelMessage.hasAttachments()) {
-            addBodyToMultipart(camelMessage, configuration, multipartAlternative);
+        if (!exchange.getIn().hasAttachments()) {
+            addBodyToMultipart(configuration, multipartAlternative, exchange);
         } else {
             // if there are attachments, but they aren't set to be inline, add them to
-            // treat them as normal. It will append a multipart-mixed with the attachments and the
-            // body text
+            // treat them as normal. It will append a multipart-mixed with the attachments and the body text
             if (!configuration.isUseInlineAttachments()) {
                 BodyPart mixedAttachments = new MimeBodyPart();
-                mixedAttachments.setContent(createMixedMultipartAttachments(camelMessage, configuration));
+                mixedAttachments.setContent(createMixedMultipartAttachments(configuration, exchange));
                 multipartAlternative.addBodyPart(mixedAttachments);
-                //appendAttachmentsFromCamel(mimeMessage, camelMessage, configuration);
-            } else { // if the attachments are set to be inline, attach them as inline attachments
+            } else {
+                // if the attachments are set to be inline, attach them as inline attachments
                 MimeMultipart multipartRelated = new MimeMultipart("related");
                 BodyPart related = new MimeBodyPart();
 
                 related.setContent(multipartRelated);
                 multipartAlternative.addBodyPart(related);
 
-                addBodyToMultipart(camelMessage, configuration, multipartRelated);
+                addBodyToMultipart(configuration, multipartRelated, exchange);
 
-                addAttachmentsToMultipart(camelMessage, multipartRelated, Part.INLINE);
+                addAttachmentsToMultipart(multipartRelated, Part.INLINE, exchange);
             }
         }
 
     }
 
-    protected void addBodyToMultipart(org.apache.camel.Message camelMessage, MailConfiguration configuration, MimeMultipart activeMultipart) throws MessagingException {
+    protected void addBodyToMultipart(MailConfiguration configuration, MimeMultipart activeMultipart, Exchange exchange)
+        throws MessagingException, IOException {
+
         BodyPart bodyMessage = new MimeBodyPart();
-        bodyMessage.setContent(camelMessage.getBody(String.class), configuration.getContentType());
+        populateContentOnBodyPart(bodyMessage, configuration, exchange);
         activeMultipart.addBodyPart(bodyMessage);
     }
 
     /**
      * Strategy to allow filtering of attachments which are added on the Mail message
      */
-    protected boolean shouldAddAttachment(org.apache.camel.Message camelMessage, String attachmentFilename, DataHandler handler) {
+    protected boolean shouldAddAttachment(Exchange exchange, String attachmentFilename, DataHandler handler) {
         return true;
     }
 

@@ -32,8 +32,7 @@ public abstract class AbstractSpringBeanTestSupport extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        ctx.close();
-        BusFactory.setDefaultBus(null);
+        ctx.close();        
     }
 
 }

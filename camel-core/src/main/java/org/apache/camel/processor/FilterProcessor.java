@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The processor which implements the
@@ -27,6 +29,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class FilterProcessor extends DelegateProcessor {
+    private static final Log LOG = LogFactory.getLog(FilterProcessor.class);
     private final Predicate predicate;
 
     public FilterProcessor(Predicate predicate, Processor processor) {
@@ -37,6 +40,12 @@ public class FilterProcessor extends DelegateProcessor {
     public void process(Exchange exchange) throws Exception {
         if (predicate.matches(exchange)) {
             super.process(exchange);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Marking exchange as filtered: " + exchange);
+            }
+            // mark this exchange as filtered
+            exchange.setProperty(Exchange.FILTERED, Boolean.TRUE);
         }
     }
 

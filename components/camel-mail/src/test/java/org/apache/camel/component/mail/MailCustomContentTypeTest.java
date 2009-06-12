@@ -37,7 +37,7 @@ public class MailCustomContentTypeTest extends ContextTestSupport {
         Message msg = box.get(0);
 
         assertTrue(msg.getContentType().startsWith("text/html"));
-        assertEquals("text/html;charset=UTF-8", msg.getContentType());
+        assertEquals("text/html; charset=UTF-8", msg.getContentType());
         assertEquals("<html><body><h1>Hello</h1>World</body></html>", msg.getContent());
     }
 
@@ -50,14 +50,14 @@ public class MailCustomContentTypeTest extends ContextTestSupport {
         Message msg = box.get(0);
 
         assertTrue(msg.getContentType().startsWith("text/html"));
-        assertEquals("text/html;charset=iso-8859-1", msg.getContentType());
+        assertEquals("text/html; charset=iso-8859-1", msg.getContentType());
         assertEquals("<html><body><h1>Hello</h1>World</body></html>", msg.getContent());
     }
 
     public void testSendPlainMailContentTypeInHeader() throws Exception {
         Mailbox.clearAll();
 
-        template.sendBodyAndHeader("direct:b", "Hello World", "contentType", "text/plain;charset=iso-8859-1");
+        template.sendBodyAndHeader("direct:b", "Hello World", "contentType", "text/plain; charset=iso-8859-1");
 
         Mailbox box = Mailbox.get("claus@localhost");
         Message msg = box.get(0);
@@ -68,10 +68,23 @@ public class MailCustomContentTypeTest extends ContextTestSupport {
     public void testSendPlainMailContentTypeInHeader2() throws Exception {
         Mailbox.clearAll();
 
-        template.sendBodyAndHeader("direct:b", "Hello World", Exchange.CONTENT_TYPE, "text/plain;charset=iso-8859-1");
+        template.sendBodyAndHeader("direct:b", "Hello World", Exchange.CONTENT_TYPE, "text/plain; charset=iso-8859-1");
 
         Mailbox box = Mailbox.get("claus@localhost");
         Message msg = box.get(0);
+        assertEquals("text/plain; charset=iso-8859-1", msg.getContentType());
+        assertEquals("Hello World", msg.getContent());
+    }
+
+    public void testSendPlainMailContentTypeTinyTypeInHeader() throws Exception {
+        Mailbox.clearAll();
+
+        // Camel will fixup the Content-Type if you do not have a space after the semi colon
+        template.sendBodyAndHeader("direct:b", "Hello World", "contentType", "text/plain;charset=iso-8859-1");
+
+        Mailbox box = Mailbox.get("claus@localhost");
+        Message msg = box.get(0);
+        // the content type should have a space after the semi colon
         assertEquals("text/plain; charset=iso-8859-1", msg.getContentType());
         assertEquals("Hello World", msg.getContent());
     }

@@ -23,6 +23,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
@@ -35,8 +37,8 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  */
 public class Enricher extends ServiceSupport implements Processor {
 
+    private static final transient Log LOG = LogFactory.getLog(Enricher.class);
     private AggregationStrategy aggregationStrategy;
-
     private Producer producer;
 
     /**
@@ -99,10 +101,19 @@ public class Enricher extends ServiceSupport implements Processor {
             copyResultsPreservePattern(exchange, resourceExchange);
         } else {
             prepareResult(exchange);
+
             // aggregate original exchange and resource exchange
-            Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
-            // copy aggregation result onto original exchange (preserving pattern)
-            copyResultsPreservePattern(exchange, aggregatedExchange);
+            // but do not aggregate if the resource exchange was filtered
+            Boolean filtered = resourceExchange.getProperty(Exchange.FILTERED, Boolean.class);
+            if (filtered == null || !filtered) {
+                Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+                // copy aggregation result onto original exchange (preserving pattern)
+                copyResultsPreservePattern(exchange, aggregatedExchange);
+            } else {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Cannot aggregate exchange as its filtered: " + resourceExchange);
+                }
+            }
         }
     }
 

@@ -26,7 +26,9 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.cxf.configuration.Configurer;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
+import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 
 public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
 

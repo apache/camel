@@ -59,6 +59,7 @@ public interface Exchange {
     String FILE_NAME_PRODUCED   = "CamelFileNameProduced";
     String FILE_PATH            = "CamelFilePath";
     String FILE_PARENT          = "CamelFileParent";
+    String FILTERED             = "CamelFiltered";
 
     String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
     String HTTP_METHOD             = "CamelHttpMethod";

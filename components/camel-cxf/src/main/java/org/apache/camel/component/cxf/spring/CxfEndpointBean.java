@@ -18,13 +18,18 @@ package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
 
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
+
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  *
  */
-public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory {
+public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory
+    implements DisposableBean {
+    
     private List handlers;
 
     public CxfEndpointBean() {
@@ -41,5 +46,12 @@ public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory {
     
     public void setHandlers(List handlers) {
         this.handlers = handlers;
+    }
+
+    public void destroy() throws Exception {
+        // Clean up the BusFactory's defaultBus
+        BusFactory.setDefaultBus(null);
+        BusFactory.setThreadDefaultBus(null);
+        
     }
 }
