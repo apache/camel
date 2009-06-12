@@ -272,6 +272,10 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
                 return wrapper;
             }
+
+            public String toString() {
+                return "Instrument";
+            }
         });
 
     }

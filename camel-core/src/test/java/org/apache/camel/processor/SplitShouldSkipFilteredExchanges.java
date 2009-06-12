@@ -64,16 +64,15 @@ public class SplitShouldSkipFilteredExchanges extends ContextTestSupport {
                 from("direct:split")
                     .split(body(List.class), new MyAggregationStrategy())
                         .filter(goodWord)
-                        .to("mock:filtered");
+                            .to("mock:filtered");
             }
         };
     }
 
-    private class MyAggregationStrategy implements AggregationStrategy {
+    protected class MyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             String newBody = newExchange.getIn().getBody(String.class);
-            assertTrue("Should have been filtered: " + newBody, newBody.contains("World"));
 
             if (oldExchange == null) {
                 return newExchange;

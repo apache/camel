@@ -68,7 +68,7 @@ public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
                     .when(toPredicate(simple("${body} contains 'Goofy'")))
                         .choice()
                             .when(body().contains("Hello")).to("mock:hello")
-                            .otherwise().to("mock:goofy")
+                            .otherwise().to("log:foo").to("mock:goofy")
                         .end()
                     .stop();
 

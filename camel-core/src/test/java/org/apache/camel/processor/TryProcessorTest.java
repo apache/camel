@@ -33,6 +33,7 @@ public class TryProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
+        getMockEndpoint("mock:last").expectedMessageCount(1);
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
         sendBody("direct:start", "<test>Hello World!</test>");
@@ -52,7 +53,8 @@ public class TryProcessorTest extends ContextTestSupport {
                         .process(new ProcessorHandle())
                     .doFinally()
                         .to("mock:finally")
-                    .end();
+                    .end()
+                    .to("mock:last");
             }
         };
     }

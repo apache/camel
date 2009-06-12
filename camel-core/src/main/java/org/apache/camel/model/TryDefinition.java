@@ -102,6 +102,19 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     /**
+     * The finally block for a given handle
+     *
+     * @return  the try builder
+     */
+    public TryDefinition doFinally() {
+        popBlock();
+        FinallyDefinition answer = new FinallyDefinition();
+        addOutput(answer);
+        pushBlock(answer);
+        return this;
+    }
+
+    /**
      * Sets an additional predicate that should be true before the onCatch is triggered.
      * <p/>
      * To be used for fine grained controlling whether a thrown exception should be intercepted
@@ -184,25 +197,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      */
     public TryDefinition handled(Expression handled) {
         return handled(toPredicate(handled));
-    }
-
-    /**
-     * The finally block for a given handle
-     *
-     * @return  the try builder
-     */
-    public TryDefinition doFinally() {
-        popBlock();
-        FinallyDefinition answer = new FinallyDefinition();
-        addOutput(answer);
-        pushBlock(answer);
-        return this;
-    }
-
-    @Override
-    public ProcessorDefinition<? extends ProcessorDefinition> end() {
-        popBlock();
-        return super.end();
     }
 
     // Properties

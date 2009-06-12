@@ -714,9 +714,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public ProcessorDefinition<? extends ProcessorDefinition> end() {
+        // when using doTry .. doCatch .. doFinally we should always
+        // end the try definition to avoid having to use 2 x end() in the route
+        // this is counter intuitive for end users
+        if (this instanceof TryDefinition) {
+            popBlock();
+        }
+
         if (blocks.isEmpty()) {
             if (parent == null) {
-                throw new IllegalArgumentException("Root node with no active block");
+                return this; 
             }
             return parent;
         }

@@ -33,8 +33,6 @@ import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an XML &lt;choice/&gt; element
@@ -44,8 +42,7 @@ import org.apache.commons.logging.LogFactory;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
-    private static final transient Log LOG = LogFactory.getLog(ChoiceDefinition.class);
-    
+
     @XmlElementRef
     private List<WhenDefinition> whenClauses = new ArrayList<WhenDefinition>();
     @XmlElement(required = false)
@@ -74,8 +71,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         Processor otherwiseProcessor = null;
         if (otherwise != null) {
             otherwiseProcessor = otherwise.createProcessor(routeContext);
-        } else {
-            LOG.warn("No otherwise clause was specified for this choice block: " + this + ", any unmatched exchanges will be dropped.");
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
@@ -157,4 +152,5 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     public void setOtherwise(OtherwiseDefinition otherwise) {
         this.otherwise = otherwise;
     }
+
 }
