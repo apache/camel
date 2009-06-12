@@ -18,11 +18,11 @@ package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
 
-import org.springframework.beans.factory.DisposableBean;
-
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
+
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  *

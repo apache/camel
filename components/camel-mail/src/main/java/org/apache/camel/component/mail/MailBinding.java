@@ -254,13 +254,15 @@ public class MailBinding {
      * Appends the Mail attachments from the Camel {@link MailMessage}
      */
     protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, MailConfiguration configuration,
-                                              Exchange exchange) throws MessagingException, IOException {
+        Exchange exchange) throws MessagingException, IOException {
+
         // Put parts in message
         mimeMessage.setContent(createMixedMultipartAttachments(configuration, exchange));
     }
 
     private MimeMultipart createMixedMultipartAttachments(MailConfiguration configuration, Exchange exchange)
-            throws MessagingException, IOException {
+        throws MessagingException, IOException {
+
         // fill the body with text
         MimeMultipart multipart = new MimeMultipart();
         multipart.setSubType("mixed");
@@ -362,7 +364,7 @@ public class MailBinding {
     }
 
     protected void addBodyToMultipart(MailConfiguration configuration, MimeMultipart activeMultipart, Exchange exchange)
-            throws MessagingException, IOException {
+        throws MessagingException, IOException {
 
         BodyPart bodyMessage = new MimeBodyPart();
         populateContentOnBodyPart(bodyMessage, configuration, exchange);
