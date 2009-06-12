@@ -239,7 +239,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (strategies != null && !strategies.isEmpty()) {
             for (String id : strategies.keySet()) {
                 InterceptStrategy strategy = strategies.get(id);
-                LOG.info("Using custom intercept strategy with id: " + id + " and implementation:" + strategy);
+                LOG.info("Using custom intercept strategy with id: " + id + " and implementation: " + strategy);
                 getContext().addInterceptStrategy(strategy);
             }
         }
