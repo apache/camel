@@ -28,7 +28,10 @@ public class AtomPollingLowDelayTest extends ContextTestSupport {
     public void testLowDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(7);
-        mock.setResultWaitTime(1000L);
+        // some servers such as Solaris is deadslow so we adjust the wait time to
+        // be 8 seconds for now. But it should be able to do it much faster for
+        // for instance 1-2 seconds.
+        mock.setResultWaitTime(8 * 1000L);
         mock.assertIsSatisfied();
     }
 
