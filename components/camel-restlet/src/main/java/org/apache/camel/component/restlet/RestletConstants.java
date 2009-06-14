@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.restlet;
 
-import org.apache.camel.Exchange;
-
 /**
  * Constants for Restlet component
  * 
@@ -27,9 +25,6 @@ public final class RestletConstants {
     
     public static final String RESTLET_LOGIN = "CamelRestletLogin";
     public static final String RESTLET_PASSWORD = "CamelRestletPassword";
-    public static final String RESTLET_MEDIA_TYPE = Exchange.CONTENT_TYPE;
-    public static final String RESTLET_RESPONSE_CODE = Exchange.HTTP_RESPONSE_CODE;
-    public static final String RESTLET_QUERY_STRING = Exchange.HTTP_QUERY;
 
     private RestletConstants() {
     }

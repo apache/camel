@@ -110,8 +110,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             attachUriPatternToRestlet(endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
         
-        if (endpoint.getUriPatterns() != null) {
-            for (String uriPattern : endpoint.getUriPatterns()) {
+        if (endpoint.getRestletUriPatterns() != null) {
+            for (String uriPattern : endpoint.getRestletUriPatterns()) {
                 attachUriPatternToRestlet(uriPattern, endpoint, consumer.getRestlet());
             }
         }
@@ -126,8 +126,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             routers.add(getMethodRouter(endpoint.getUriPattern()));
         }
         
-        if (endpoint.getUriPatterns() != null) {
-            for (String uriPattern : endpoint.getUriPatterns()) {
+        if (endpoint.getRestletUriPatterns() != null) {
+            for (String uriPattern : endpoint.getRestletUriPatterns()) {
                 routers.add(getMethodRouter(uriPattern));
             }
         }

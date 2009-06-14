@@ -55,8 +55,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private String uriPattern;
     
     // Optional and for consumer only.  This allows a single route to service multiple 
-    // uriPatterns.  The uriPattern defined in the endpoint will still be honored.
-    private List<String> uriPatterns;
+    // URI patterns.  The URI pattern defined in the endpoint will still be honored.
+    private List<String> restletUriPatterns;
     
     private Map<String, String> restletRealm;
     private HeaderFilterStrategy headerFilterStrategy;
@@ -199,17 +199,17 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     }
 
     /**
-     * @param uriPatterns the uriPatterns to set
+     * @param restletUriPatterns the restletUriPatterns to set
      */
-    public void setUriPatterns(List<String> uriPatterns) {
-        this.uriPatterns = uriPatterns;
+    public void setRestletUriPatterns(List<String> restletUriPatterns) {
+        this.restletUriPatterns = restletUriPatterns;
     }
 
     /**
-     * @return the uriPatterns
+     * @return the restletUriPatterns
      */
-    public List<String> getUriPatterns() {
-        return uriPatterns;
+    public List<String> getRestletUriPatterns() {
+        return restletUriPatterns;
     }
 
 

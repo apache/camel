@@ -44,8 +44,8 @@ public class RestletResponseTest extends ContextTestSupport {
                         String userName = exchange.getIn().getHeader("username", String.class);                        
                         assertNotNull("userName should not be null", userName);
                         exchange.getOut().setBody("{" + userName + "}");
-                        exchange.getOut().setHeader(RestletConstants.RESTLET_RESPONSE_CODE, "417");
-                        exchange.getOut().setHeader(RestletConstants.RESTLET_MEDIA_TYPE, "application/JSON");
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "417");
+                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/JSON");
                     }        
                 });
             }

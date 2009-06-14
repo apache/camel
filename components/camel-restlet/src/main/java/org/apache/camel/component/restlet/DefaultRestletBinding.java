@@ -65,7 +65,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // copy query string to header
         String query = request.getResourceRef().getQuery();
         if (query != null) {
-            inMessage.setHeader(RestletConstants.RESTLET_QUERY_STRING, query);
+            inMessage.setHeader(Exchange.HTTP_QUERY, query);
         }
         
         // copy URI to header
@@ -162,7 +162,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
              
         // get content type
-        MediaType mediaType = out.getHeader(RestletConstants.RESTLET_MEDIA_TYPE, MediaType.class);
+        MediaType mediaType = out.getHeader(Exchange.CONTENT_TYPE, MediaType.class);
         if (mediaType == null) {
             Object body = out.getBody();
             mediaType = MediaType.TEXT_PLAIN;
@@ -174,7 +174,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
                 
         // get response code
-        Integer responseCode = out.getHeader(RestletConstants.RESTLET_RESPONSE_CODE, Integer.class);
+        Integer responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
         if (responseCode != null) {
             response.setStatus(Status.valueOf(responseCode));
         }

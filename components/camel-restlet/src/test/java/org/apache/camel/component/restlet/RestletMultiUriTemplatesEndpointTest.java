@@ -86,7 +86,7 @@ public class RestletMultiUriTemplatesEndpointTest extends AbstractJUnit38SpringC
             public void configure() throws Exception {
                                
                 // START SNIPPET: routeDefinition
-                from("restlet:http://localhost:9080?restletMethods=post,get&uriPatterns=#uriTemplates")
+                from("restlet:http://localhost:9080?restletMethods=post,get&restletUriPatterns=#uriTemplates")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // echo the method

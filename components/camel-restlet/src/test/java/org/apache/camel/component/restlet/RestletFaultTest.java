@@ -38,8 +38,8 @@ public class RestletFaultTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getFault().setHeader(RestletConstants.RESTLET_RESPONSE_CODE, "404");
-                        exchange.getFault().setHeader(RestletConstants.RESTLET_MEDIA_TYPE, "text/plain");
+                        exchange.getFault().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");
+                        exchange.getFault().setHeader(Exchange.CONTENT_TYPE, "text/plain");
                         exchange.getFault().setBody("Application fault");
                         
                     }        
