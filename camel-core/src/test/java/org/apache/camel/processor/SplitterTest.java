@@ -205,7 +205,7 @@ public class SplitterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0));
+                errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0).handled(false));
 
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
 

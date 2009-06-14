@@ -47,7 +47,7 @@
 	    <!-- try redelivery at most 3 times, after that the exchange is dead and its routed to the mock:dead endpoint -->
         <property name="maximumRedeliveries" value="3"/>
 		<!-- delay 250ms before redelivery -->
-        <property name="delay" value="250"/>
+        <property name="redeliverDelay" value="250"/>
     </bean>
 	<!-- END SNIPPET: e2 -->
 

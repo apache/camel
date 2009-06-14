@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class RollbackTest extends ContextTestSupport {
+public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
 
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -39,34 +39,20 @@ public class RollbackTest extends ContextTestSupport {
     }
 
     public void testRollback() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:dead");
-        mock.expectedMessageCount(1);
-
-        getMockEndpoint("mock:rollback").expectedMessageCount(1);
-
         try {
             template.requestBody("direct:start", "bad");
             fail("Should have thrown a RollbackExchangeException");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof RollbackExchangeException);
         }
-
-        assertMockEndpointsSatisfied();
     }
 
     public void testRollbackWithExchange() throws Exception {
-        getMockEndpoint("mock:dead").expectedMessageCount(1);
-
-        MockEndpoint mock = getMockEndpoint("mock:rollback");
-        mock.expectedMessageCount(1);
-
         Exchange out = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("bad");
             }
         });
-        assertMockEndpointsSatisfied();
-
         assertNotNull(out.getException());
         assertIsInstanceOf(RollbackExchangeException.class, out.getException());
         assertEquals("Should be marked as rollback", true, out.isRollbackOnly());
@@ -77,8 +63,6 @@ public class RollbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).redeliverDelay(0).handled(false));
-
                 from("direct:start")
                     .choice()
                         .when(body().isNotEqualTo("ok"))

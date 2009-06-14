@@ -45,7 +45,7 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 

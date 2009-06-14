@@ -52,12 +52,7 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends ContextTestSupp
         MockEndpoint mock = getMockEndpoint("mock:dead");
         mock.expectedBodiesReceived("Kabom");
 
-        try {
-            template.sendBody("direct:start", "Kabom");
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            assertEquals("Kabom", e.getCause().getMessage());
-        }
+        template.sendBody("direct:start", "Kabom");
 
         assertMockEndpointsSatisfied();
 

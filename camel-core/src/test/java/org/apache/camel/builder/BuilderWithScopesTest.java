@@ -17,7 +17,6 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -113,7 +112,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor).end()
                     .process(toProcessor);
@@ -126,7 +125,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .process(toProcessor);
@@ -137,7 +136,7 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createChoiceBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).end()
@@ -175,7 +174,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).process(toProcessor); // continuation of the second when clause
@@ -186,7 +185,7 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createChoiceWithOtherwiseBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
@@ -224,7 +223,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()

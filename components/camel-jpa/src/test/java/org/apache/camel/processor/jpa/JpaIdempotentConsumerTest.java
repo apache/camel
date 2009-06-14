@@ -121,7 +121,7 @@ public class JpaIdempotentConsumerTest extends ContextTestSupport {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).delay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(false));
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),

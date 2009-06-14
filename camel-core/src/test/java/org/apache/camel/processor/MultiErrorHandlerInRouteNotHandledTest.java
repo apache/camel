@@ -19,13 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test with multi route specific error handlers
  */
-public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
+public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
     private MyProcessor outer = new MyProcessor();
     private MyProcessor inner = new MyProcessor();
 
@@ -48,7 +49,14 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:outer");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown a IllegalArgumentException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
 
         assertMockEndpointsSatisfied();
     }
@@ -61,7 +69,14 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         mock.expectedHeaderReceived("name", "Claus");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown a IllegalArgumentException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
 
         assertMockEndpointsSatisfied();
     }
@@ -71,12 +86,12 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliverDelay(0))
+                    .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).handled(false).redeliverDelay(0))
                     .process(outer)
                     .to("direct:outer");
 
                 from("direct:outer")
-                    .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).redeliverDelay(0))
+                    .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).handled(false).redeliverDelay(0))
                     .process(inner)
                     .to("mock:end");
             }

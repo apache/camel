@@ -31,9 +31,6 @@ import org.apache.camel.util.jndi.JndiContext;
 public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
 
     public void testExchangeAsReturnTypeNotAllowed() throws Exception {
-        MockEndpoint dead = getMockEndpoint("mock:dead");
-        dead.expectedMessageCount(1);
-
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
 
@@ -45,7 +42,6 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
             // expected
         }
 
-        dead.assertIsSatisfied();
         result.assertIsSatisfied();
     }
 
@@ -58,9 +54,6 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // no redelivery for faster unit test
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery());
-
                 from("direct:in")
                     .to("bean:myBean")
                     .to("mock:result");

@@ -48,7 +48,7 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends ContextTestSupport {
                 from(uri).process(new Processor() {
                     public void process(Exchange e) {
                         // use no delay for fast unit testing
-                        errorHandler(deadLetterChannel().maximumRedeliveries(2).delay(0));
+                        errorHandler(deadLetterChannel().maximumRedeliveries(2).redeliverDelay(0).handled(false));
 
                         assertEquals("Hello World", e.getIn().getBody(String.class));
                         // simulate a problem processing the input to see if we can handle it properly

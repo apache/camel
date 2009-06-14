@@ -40,13 +40,9 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
     public void testNoWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:a", "Hello Camel");
-            fail("Should have thrown an Exception");
-        } catch (Exception e) {
-            // expected
-        }
+        template.sendBody("direct:a", "Hello Camel");
 
         assertMockEndpointsSatisfied();
     }
@@ -54,6 +50,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
     public void testWithWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_USER_QUEUE);
         mock.expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
             template.sendBodyAndHeader("direct:a", "Hello Camel", "user", "admin");
@@ -68,10 +65,10 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0));
+                errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliverDelay(100));
 
                 onException(MyUserException.class).onWhen(header("user").isNotNull())
-                    .maximumRedeliveries(1)
+                    .maximumRedeliveries(1).backOffMultiplier(2).redeliverDelay(0)
                     .to(ERROR_USER_QUEUE);
 
                 from("direct:a").process(new Processor() {

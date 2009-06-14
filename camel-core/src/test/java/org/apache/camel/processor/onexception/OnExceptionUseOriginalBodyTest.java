@@ -60,7 +60,7 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // will not use original exchange
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).delay(0));
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).redeliverDelay(0).handled(false));
 
                 // will use original exchange
                 onException(IllegalArgumentException.class)

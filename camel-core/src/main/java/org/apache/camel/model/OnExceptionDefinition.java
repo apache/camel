@@ -248,6 +248,17 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     /**
+     * Sets the delay
+     *
+     * @param delay  the redeliver delay
+     * @return the builder
+     */
+    public OnExceptionDefinition redeliverDelay(long delay) {
+        getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
+        return this;
+    }
+
+    /**
      * Sets the back off multiplier
      *
      * @param backOffMultiplier  the back off multiplier

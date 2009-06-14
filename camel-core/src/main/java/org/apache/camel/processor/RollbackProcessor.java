@@ -42,4 +42,12 @@ public class RollbackProcessor implements Processor {
         exchange.setException(new RollbackExchangeException(message, exchange));
     }
 
+    @Override
+    public String toString() {
+        if (message != null) {
+            return "Rollback[" + message + "]";
+        } else {
+            return "Rollback";
+        }
+    }
 }

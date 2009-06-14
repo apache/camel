@@ -25,10 +25,11 @@
     <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
         <property name="redeliveryPolicy" ref="policy"/>
+        <property name="handled" value="false"/>
     </bean>
 
     <bean id="policy" class="org.apache.camel.processor.RedeliveryPolicy">
-        <property name="delay" value="0"/>
+        <property name="redeliverDelay" value="0"/>
         <property name="maximumRedeliveries" value="1"/>
     </bean>
 

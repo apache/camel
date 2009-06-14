@@ -69,7 +69,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // 0 delay for faster unit test
-                errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).delay(0));
+                errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).redeliverDelay(0));
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         count++;

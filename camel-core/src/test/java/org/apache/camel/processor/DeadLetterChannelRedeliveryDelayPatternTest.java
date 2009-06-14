@@ -59,7 +59,7 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").delayPattern("0:250;2:500").maximumRedeliveries(3)
+                errorHandler(deadLetterChannel("mock:error").delayPattern("0:250;2:500").maximumRedeliveries(3).handled(false)
                     .onRedelivery(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;

@@ -48,12 +48,7 @@ public class ErrorHandlerTest extends ContextTestSupport {
         error.expectedBodiesReceived("Boom");
         result.expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Boom");
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        template.sendBody("direct:start", "Boom");
 
         assertMockEndpointsSatisfied();
     }
@@ -63,7 +58,7 @@ public class ErrorHandlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1))
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliverDelay(0))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

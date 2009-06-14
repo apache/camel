@@ -88,7 +88,7 @@ public class JmsTransferExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(false));
 
                 from(getUri())
                         .process(new Processor() {

@@ -76,7 +76,7 @@ public class ConvertBodyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery());
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().handled(false));
 
                 from("direct:start").convertBodyTo(Integer.class).to("mock:result");
 

@@ -62,9 +62,6 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         assertNotNull("Should have been a cause property", t);
         assertTrue(t instanceof RuntimeException);
         assertEquals("Failed to process due to attempt: 3 being less than: 5", t.getMessage());
-
-        Throwable t2 = deadEndpoint.getExchanges().get(0).getException();
-        assertEquals(t, t2);
     }
 
     @Override
@@ -91,7 +88,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").errorHandler(
                     deadLetterChannel("mock:failed").maximumRedeliveries(2)
-                        .delay(1000)
+                        .redeliverDelay(50)
                         .loggingLevel(LoggingLevel.DEBUG)
 
                 ).process(processor).to("mock:success");

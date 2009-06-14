@@ -62,7 +62,7 @@ public class JettyWithXPathChoiceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
 
                 // Need a convertBodyTo processor here or we may get an error
                 // that we are at the end of the stream

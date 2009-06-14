@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import org.apache.camel.Exchange;
@@ -36,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * The default values are:
  * <ul>
  *   <li>maximumRedeliveries = 5</li>
- *   <li>delay = 1000L (the initial delay)</li>
+ *   <li>redeliverDelay = 1000L (the initial delay)</li>
  *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
  *   <li>backOffMultiplier = 2</li>
  *   <li>useExponentialBackOff = false</li>
@@ -69,10 +70,11 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class RedeliveryPolicy extends DelayPolicy {
+public class RedeliveryPolicy implements Cloneable, Serializable {
     protected static transient Random randomNumberGenerator;
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
 
+    protected long redeliverDelay = 1000L;
     protected int maximumRedeliveries = 5;
     protected long maximumRedeliveryDelay = 60 * 1000L;
     protected double backOffMultiplier = 2;
@@ -91,7 +93,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     @Override
     public String toString() {
         return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
-            + ", delay=" + delay
+            + ", redeliverDelay=" + redeliverDelay
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
@@ -164,7 +166,7 @@ public class RedeliveryPolicy extends DelayPolicy {
         // calculate the delay using the conventional parameters
         long redeliveryDelay;
         if (previousDelay == 0) {
-            redeliveryDelay = delay;
+            redeliveryDelay = redeliverDelay;
         } else if (useExponentialBackOff && backOffMultiplier > 1) {
             redeliveryDelay = Math.round(backOffMultiplier * previousDelay);
         } else {
@@ -213,6 +215,14 @@ public class RedeliveryPolicy extends DelayPolicy {
 
     // Builder methods
     // -------------------------------------------------------------------------
+
+    /**
+     * Sets the delay in milliseconds
+     */
+    public RedeliveryPolicy redeliverDelay(long delay) {
+        setRedeliverDelay(delay);
+        return this;
+    }
 
     /**
      * Sets the maximum number of times a message exchange will be redelivered
@@ -310,6 +320,18 @@ public class RedeliveryPolicy extends DelayPolicy {
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public long getRedeliverDelay() {
+        return redeliverDelay;
+    }
+
+    /**
+     * Sets the delay in milliseconds
+     */
+    public void setRedeliverDelay(long redeliverDelay) {
+        this.redeliverDelay = redeliverDelay;
+    }
+
     public double getBackOffMultiplier() {
         return backOffMultiplier;
     }

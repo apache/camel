@@ -26,6 +26,7 @@
         <property name="deadLetter" ref="dead"/>
         <property name="onRedelivery" ref="myRedeliveryProcessor"/>
         <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
+        <property name="handled" value="false"/>
     </bean>
     
     <bean id="dead" class="org.apache.camel.component.mock.MockEndpoint">
@@ -35,7 +36,7 @@
 
     <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
         <!-- go fast since its a unit test -->
-        <property name="delay" value="0"/>
+        <property name="redeliverDelay" value="0"/>
     </bean>
 
 

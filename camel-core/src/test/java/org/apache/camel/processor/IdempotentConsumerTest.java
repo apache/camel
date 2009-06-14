@@ -60,11 +60,11 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testFailedExchangesNotAdded() throws Exception {
+    public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).delay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false));
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
@@ -82,6 +82,73 @@ public class IdempotentConsumerTest extends ContextTestSupport {
 
         // we send in 2 messages with id 2 that fails
         getMockEndpoint("mock:error").expectedMessageCount(2);
+        resultEndpoint.expectedBodiesReceived("one", "three");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFailedExchangesNotAddedDeadLetterChannelNotHandled() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").handled(false).maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false));
+
+                from("direct:start").idempotentConsumer(
+                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
+                ).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("messageId", String.class);
+                        if (id.equals("2")) {
+                            throw new IllegalArgumentException("Damm I cannot handle id 2");
+                        }
+                    }
+                }).to("mock:result");
+            }
+        });
+        context.start();
+
+        // we send in 2 messages with id 2 that fails
+        getMockEndpoint("mock:error").expectedMessageCount(2);
+        resultEndpoint.expectedBodiesReceived("one", "three");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFailedExchangesNotAdded() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // use default error handler
+                errorHandler(defaultErrorHandler());
+
+                from("direct:start").idempotentConsumer(
+                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
+                ).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("messageId", String.class);
+                        if (id.equals("2")) {
+                            throw new IllegalArgumentException("Damm I cannot handle id 2");
+                        }
+                    }
+                }).to("mock:result");
+            }
+        });
+        context.start();
+
         resultEndpoint.expectedBodiesReceived("one", "three");
 
         sendMessage("1", "one");

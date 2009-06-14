@@ -72,7 +72,7 @@ public class RedeliveryPolicyDefinition {
             answer.setMaximumRedeliveries(maximumRedeliveries);
         }
         if (redeliveryDelay != null) {
-            answer.setDelay(redeliveryDelay);
+            answer.setRedeliverDelay(redeliveryDelay);
         }
         if (retriesExhaustedLogLevel != null) {
             answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);

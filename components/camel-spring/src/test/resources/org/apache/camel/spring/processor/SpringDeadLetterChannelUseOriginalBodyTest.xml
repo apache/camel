@@ -36,7 +36,7 @@
 
     <bean id="myRedelivery" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="2"/>
-        <property name="delay" value="0"/>
+        <property name="redeliverDelay" value="0"/>
         <property name="logStackTrace" value="false"/>
     </bean>
     <!-- END SNIPPET: e1 -->

@@ -58,10 +58,11 @@
     <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:error"/>
         <property name="redeliveryPolicy" ref="myRedeliveryPolicy"/>
+        <property name="handled" value="false"/>
     </bean>
 
     <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
-        <property name="delay" value="0"/>
+        <property name="redeliverDelay" value="0"/>
     </bean>
 
 	<camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">

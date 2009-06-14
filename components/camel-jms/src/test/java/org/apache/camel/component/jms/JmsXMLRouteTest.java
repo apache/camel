@@ -184,7 +184,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").delay(0));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
 
                 // no need to convert to String as JMS producer can handle XML streams now
                 from("direct:object").to("activemq:queue:object?jmsMessageType=Object");

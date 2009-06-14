@@ -65,7 +65,7 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // no redeliveries as we want the ftp consumer to try again
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false).handled(false));
 
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -33,7 +33,7 @@ public class DeadLetterChannelHandledPolicyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).delay(0).logStackTrace(false).handled(true));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).redeliverDelay(0).logStackTrace(false).handled(true));
 
                 from("direct:start")
                     .process(new MyThrowExceptionProcessor());
@@ -53,7 +53,7 @@ public class DeadLetterChannelHandledPolicyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).delay(0).logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).redeliverDelay(0).logStackTrace(false).handled(false));
 
                 from("direct:start")
                     .process(new MyThrowExceptionProcessor());

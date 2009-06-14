@@ -58,11 +58,11 @@ public class JmsUseOriginalBodyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // will use original
                 DeadLetterChannelBuilder a = deadLetterChannel("mock:a")
-                    .maximumRedeliveries(2).delay(0).logStackTrace(false).useOriginalBody().handled(true);
+                    .maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).useOriginalBody().handled(true);
 
                 // will NOT use original
                 DeadLetterChannelBuilder b = deadLetterChannel("mock:b")
-                    .maximumRedeliveries(2).delay(0).logStackTrace(false).handled(true);
+                    .maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(true);
 
                 from("activemq:queue:a")
                     .errorHandler(a)

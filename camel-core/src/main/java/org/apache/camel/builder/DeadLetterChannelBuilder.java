@@ -42,6 +42,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
  * @version $Revision$
  */
 public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
+    private static final boolean HANDLED = true;
     private Logger logger = new Logger(LogFactory.getLog(DeadLetterChannel.class), LoggingLevel.ERROR);
     private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
@@ -102,8 +103,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
-    public DeadLetterChannelBuilder delay(long delay) {
-        getRedeliveryPolicy().delay(delay);
+    public DeadLetterChannelBuilder redeliverDelay(long delay) {
+        getRedeliveryPolicy().redeliverDelay(delay);
         return this;
     }
 
@@ -365,6 +366,9 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Predicate getHandledPolicy() {
+        if (handledPolicy == null) {
+            createHandledPolicy();
+        }
         return handledPolicy;
     }
 
@@ -385,6 +389,10 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public void setUseOriginalBody(boolean useOriginalBody) {
         this.useOriginalBody = useOriginalBody;
+    }
+
+    protected void createHandledPolicy() {
+        handledPolicy = PredicateBuilder.toPredicate(ExpressionBuilder.constantExpression(HANDLED));
     }
 
     @Override

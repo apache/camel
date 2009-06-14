@@ -57,7 +57,7 @@ public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // use dead letter channel that supports redeliveries
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(3).delay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(3).redeliverDelay(0).logStackTrace(false));
 
                 from("direct:start")
                     .pipeline("bean:foo?method=hi", "bean:foo?method=kabom").to("mock:result");

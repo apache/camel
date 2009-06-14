@@ -52,7 +52,7 @@ public class ChannelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false));
 
                 from("direct:start")
                     .process(new Processor() {

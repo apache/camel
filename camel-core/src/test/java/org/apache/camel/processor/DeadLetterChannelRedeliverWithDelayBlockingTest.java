@@ -75,7 +75,7 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").delay(1000).maximumRedeliveries(3).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:dead").redeliverDelay(1000).maximumRedeliveries(3).logStackTrace(false));
 
                 from("direct:start")
                         .process(new Processor() {

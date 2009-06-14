@@ -52,18 +52,12 @@ public class JmsDeadLetterQueueTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:dead");
         mock.expectedBodiesReceived("Kabom");
 
-        try {
-            template.sendBody("direct:start", "Kabom");
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            assertEquals("Kabom", e.getCause().getMessage());
-        }
+        template.sendBody("direct:start", "Kabom");
 
         assertMockEndpointsSatisfied();
 
         // the cause exception is gone in the transformation below
         assertNull(mock.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT));
-
     }
 
     protected CamelContext createCamelContext() throws Exception {

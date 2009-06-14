@@ -17,6 +17,7 @@
 package org.apache.camel.processor.idempotent;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.commons.logging.Log;
@@ -43,7 +44,13 @@ public class IdempotentOnCompletion implements Synchronization {
     }
 
     public void onComplete(Exchange exchange) {
-        onCompletedMessage(exchange, messageId);
+        if (ExchangeHelper.isFailureHandled(exchange)) {
+            // the exchange did not process succesfully but was failure handled by the dead letter channel
+            // and thus moved to the dead letter queue. We should thus not consider it as complete.
+            onFailedMessage(exchange, messageId);
+        } else {
+            onCompletedMessage(exchange, messageId);
+        }
     }
 
     public void onFailure(Exchange exchange) {

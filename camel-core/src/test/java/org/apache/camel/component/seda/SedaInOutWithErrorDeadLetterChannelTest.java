@@ -45,7 +45,7 @@ public class SedaInOutWithErrorDeadLetterChannelTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliverDelay(0).handled(false));
 
                 from("direct:start").to("seda:foo");
 

@@ -60,11 +60,11 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testFailedExchangesNotAdded() throws Exception {
+    public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).delay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(false));
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
@@ -82,6 +82,36 @@ public class IdempotentConsumerAsyncTest extends ContextTestSupport {
 
         // we send in 2 messages with id 2 that fails
         getMockEndpoint("mock:error").expectedMessageCount(2);
+        resultEndpoint.expectedBodiesReceivedInAnyOrder("one", "three");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFailedExchangesNotAdded() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").idempotentConsumer(
+                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
+                ).threads().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("messageId", String.class);
+                        if (id.equals("2")) {
+                            throw new IllegalArgumentException("Damn I cannot handle id 2");
+                        }
+                    }
+                }).to("mock:result");
+            }
+        });
+        context.start();
+
         resultEndpoint.expectedBodiesReceivedInAnyOrder("one", "three");
 
         sendMessage("1", "one");
