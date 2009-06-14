@@ -33,6 +33,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+import org.junit.Test;
 
 public class CamelConduitTest extends CamelTransportTestSupport {
 
@@ -57,6 +58,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         return new DefaultCamelContext();
     }
 
+    @Test
     public void testCamelConduitConfiguration() throws Exception {
         QName testEndpointQNameA = new QName("http://camel.apache.org/camel-test", "portA");
         QName testEndpointQNameB = new QName("http://camel.apache.org/camel-test", "portB");
@@ -86,6 +88,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         bus.shutdown(false);
     }
 
+    @Test
     public void testPrepareSend() throws Exception {
         endpointInfo.setAddress("camel://direct:Producer");
         CamelConduit conduit = setupCamelConduit(endpointInfo, false, false);
@@ -103,6 +106,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         assertTrue("OutputStream should not be null", os != null);
     }
 
+    @Test
     public void testSendOut() throws Exception {
         endpointInfo.setAddress("camel://direct:Producer");
         CamelConduit conduit = setupCamelConduit(endpointInfo, true, false);
@@ -115,6 +119,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         // verify the endpoint get the response
     }
 
+    @Test
     public void testSendOutRunTrip() throws Exception {
         endpointInfo.setAddress("camel://direct:Producer");
         CamelConduit conduit = setupCamelConduit(endpointInfo, true, false);

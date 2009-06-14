@@ -19,12 +19,15 @@ package org.apache.camel.component.cxf.jaxrs;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.CxfRsClientFactoryBeanDefinitionParser.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfRsSpringEndpointTest extends SpringTestSupport {
+public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
     
+    @Test
     public void testCreateCxfRsServerFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsServer", CxfRsEndpoint.class);
         SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean)endpoint.createJAXRSServerFactoryBean();
@@ -34,6 +37,7 @@ public class CxfRsSpringEndpointTest extends SpringTestSupport {
         assertEquals("Get a wrong resource class", sfb.getResourceClasses().get(0), CustomerService.class);
     }
     
+    @Test
     public void testCreateCxfRsClientFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsClient", CxfRsEndpoint.class);
         SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();

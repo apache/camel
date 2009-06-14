@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class CxfRsEndpointTest extends ContextTestSupport {
+public class CxfRsEndpointTest extends CamelTestSupport {
     
+    @Test
     public void testCreateCxfRsEndpoint() throws Exception {
         CxfRsComponent component = new CxfRsComponent(context);
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint("cxfrs://http://localhost:9000"

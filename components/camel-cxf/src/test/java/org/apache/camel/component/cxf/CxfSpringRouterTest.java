@@ -20,14 +20,16 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfSpringRouterTest extends CxfSimpleRouterTest {
     protected AbstractXmlApplicationContext applicationContext;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
         assertNotNull("Should have created a valid spring context", applicationContext);
@@ -35,8 +37,8 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
 
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (applicationContext != null) {
             applicationContext.destroy();
         }

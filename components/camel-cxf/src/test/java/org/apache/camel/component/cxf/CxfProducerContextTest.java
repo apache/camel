@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
+import org.junit.Test;
 
 // We use context to change the producer's endpoint address here
 public class CxfProducerContextTest extends CxfProducerTest {
@@ -37,6 +38,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
     private static final String TEST_KEY = "sendSimpleMessage-test";
     private static final String TEST_VALUE = "exchange property value should get passed through request context";
 
+    @Test
     public void testExchangePropertyPropagation() throws Exception {
         Exchange exchange = sendSimpleMessage();
 
@@ -94,8 +96,4 @@ public class CxfProducerContextTest extends CxfProducerTest {
         return exchange;
     }
     
-    @Override
-    public void testInvokingJaxWsServerWithParams() throws Exception {
-        super.testInvokingJaxWsServerWithParams();
-    }
 }

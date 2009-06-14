@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.transport;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.message.Exchange;
@@ -32,8 +32,10 @@ import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.easymock.classextension.EasyMock;
+import org.junit.After;
+import org.junit.Before;
 
-public abstract class CamelTransportTestSupport extends ContextTestSupport {
+public abstract class CamelTransportTestSupport extends CamelTestSupport {
 
     protected Bus bus;
     protected EndpointInfo endpointInfo;
@@ -41,6 +43,7 @@ public abstract class CamelTransportTestSupport extends ContextTestSupport {
     protected MessageObserver observer;
     protected Message inMessage;
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         BusFactory bf = BusFactory.newInstance();
@@ -57,6 +60,7 @@ public abstract class CamelTransportTestSupport extends ContextTestSupport {
         endpointInfo = new EndpointInfo();
     }
 
+    @After
     public void tearDown() throws Exception {
         bus.shutdown(true);
         super.tearDown();

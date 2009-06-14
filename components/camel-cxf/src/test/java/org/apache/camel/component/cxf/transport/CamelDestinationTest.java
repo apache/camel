@@ -38,6 +38,7 @@ import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.easymock.classextension.EasyMock;
+import org.junit.Test;
 
 public class CamelDestinationTest extends CamelTransportTestSupport {
     private Message destMessage;
@@ -54,6 +55,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         return new DefaultCamelContext();
     }
 
+    @Test
     public void testCamelDestinationConfiguration() throws Exception {
         QName testEndpointQName = new QName("http://camel.apache.org/camel-test", "port");
         // set up the bus with configure file
@@ -93,12 +95,14 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         return camelDestination;
     }
 
+    @Test
     public void testGetTransportFactoryFromBus() throws Exception {
         Bus bus = BusFactory.getDefaultBus();
         assertNotNull(bus.getExtension(ConduitInitiatorManager.class)
             .getConduitInitiator(CamelTransportFactory.TRANSPORT_ID));
     }
 
+    @Test
     public void testOneWayDestination() throws Exception {
         destMessage = null;
         inMessage = null;
@@ -133,6 +137,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         assertEquals("The reponse date should be equals", content, reponse);
     }
 
+    @Test
     public void testRoundTripDestination() throws Exception {
 
         inMessage = null;

@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.bus.CXFBusFactory;
@@ -33,8 +33,10 @@ import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.MessageContentsList;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class CxfProducerRouterTest extends ContextTestSupport {
+public class CxfProducerRouterTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(CxfProducerRouterTest.class);
     private static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
     private static final String REQUEST_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
@@ -44,29 +46,17 @@ public class CxfProducerRouterTest extends ContextTestSupport {
 
     private static final String ECHO_OPERATION = "echo";
     private static final String TEST_MESSAGE = "Hello World!";
-    private ServerImpl simpleServer;
+    
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeClass
+    public static void startServer() throws Exception {        
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
         svrBean.setBus(CXFBusFactory.getDefaultBus());
-
-        simpleServer = (ServerImpl)svrBean.create();
-        simpleServer.start();
-
-
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        if (simpleServer != null) {
-            simpleServer.stop();
-        }
+        svrBean.create();
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -78,7 +68,7 @@ public class CxfProducerRouterTest extends ContextTestSupport {
         };
     }
 
-
+    @Test
     public void testInvokingSimpleServerWithParams() throws Exception {
      // START SNIPPET: sending
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
@@ -103,6 +93,7 @@ public class CxfProducerRouterTest extends ContextTestSupport {
      // END SNIPPET: sending
     }
 
+    @Test
     public void testInvokingSimpleServerWithMessageDataFormat() throws Exception {
         Exchange senderExchange = new DefaultExchange(context, ExchangePattern.InOut);
         senderExchange.getIn().setBody(REQUEST_MESSAGE);

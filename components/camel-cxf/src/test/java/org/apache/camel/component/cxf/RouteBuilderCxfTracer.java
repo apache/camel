@@ -62,7 +62,7 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
         public void process(Exchange e) throws Exception {
             GetPersonResponse gpr = new GetPersonResponse();
             gpr.setName("Bill");
-            gpr.setPersonId(e.getOut().getBody(String.class));
+            gpr.setPersonId(e.getIn().getBody(String.class));
             gpr.setSsn("Test");
 
             MessageContentsList mclOut = new MessageContentsList();

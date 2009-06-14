@@ -26,16 +26,22 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 
 /**
  *
  * @version $Revision$
  */
 @ContextConfiguration
-public class LoggingInterceptorInMessageModeTest extends AbstractJUnit38SpringContextTests {
+public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringContextTests {
     
     protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
     protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
@@ -43,27 +49,8 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit38SpringCo
     @Autowired
     protected CamelContext context;
     
-    protected Server server;
-    
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        startService();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        
-        if (server != null) {
-            server.stop();
-            server = null;
-        }
-        
-        super.tearDown();
-    }
-    
-    protected void startService() {
+    @BeforeClass
+    public static void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
     
@@ -71,10 +58,11 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit38SpringCo
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
     
-        server = svrBean.create();
-        server.start();
+        svrBean.create();
+        
     }
     
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
         
         LoggingOutInterceptor logInterceptor = null;

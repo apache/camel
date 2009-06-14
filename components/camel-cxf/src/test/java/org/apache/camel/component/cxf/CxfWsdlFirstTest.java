@@ -29,7 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
@@ -38,20 +38,11 @@ import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.jaxws.EndpointImpl;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfWsdlFirstTest extends SpringTestSupport {
-
-
-    private ServerImpl server;
-
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        startService();
-    }
+public class CxfWsdlFirstTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeans.xml");
@@ -61,21 +52,14 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         assertNotNull("No context found!", context);
     }
 
-    protected void startService() {
+    @BeforeClass
+    public static void startService() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:9000/PersonService/";
-        EndpointImpl endpoint = (EndpointImpl) Endpoint.publish(address, implementor);
-        server = endpoint.getServer();
+        Endpoint.publish(address, implementor);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        if (server != null) {
-            server.stop();
-        }        
-        super.tearDown();
-        BusFactory.setDefaultBus(null);
-    }
+    
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -84,6 +68,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         };
     }
 
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
 
         JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
@@ -131,6 +116,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
 
     }
 
+    @Test
     @SuppressWarnings("unchecked")
     public void testInvokingServiceWithCamelProducer() throws Exception {
         Exchange exchange = sendJaxWsMessageWithHolders("hello");

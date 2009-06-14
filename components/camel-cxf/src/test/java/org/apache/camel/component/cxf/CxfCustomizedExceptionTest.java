@@ -27,19 +27,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-
-public class CxfCustomizedExceptionTest extends ContextTestSupport {
+public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
     protected static final String ROUTER_ADDRESS = "http://localhost:9002/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
@@ -61,19 +62,18 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
     }    
 
     @Override
-    protected void setUp() throws Exception {
-        BusFactory.setDefaultBus(null);
+    @Before
+    public void setUp() throws Exception {       
         bus = BusFactory.getDefaultBus();
         super.setUp();
 
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         //TODO need to shutdown the server
-        super.tearDown();
-        //bus.shutdown(true);
-        BusFactory.setDefaultBus(null);
+        super.tearDown();       
     }
     
     protected RouteBuilder createRouteBuilder() {
@@ -91,7 +91,7 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
         return new DefaultCamelContext();
     }
 
-
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
@@ -114,6 +114,7 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
 
     }
     
+    @Test
     public void testInvokingServiceFromHTTPURL() throws Exception {
         URL url = new URL(ROUTER_ADDRESS);
         URLConnection urlConnection = url.openConnection();

@@ -18,10 +18,12 @@ package org.apache.camel.component.cxf.converter;
 
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class ConverterTest extends TestCase {
+public class ConverterTest extends Assert {
     
+    @Test
     public void testToClassesList() throws Exception {
         String classString = "java.lang.String, "
             + "org.apache.camel.component.cxf.converter.ConverterTest ;"

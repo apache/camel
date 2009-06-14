@@ -33,8 +33,9 @@
 	   http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camel:camelContext id="camelJiraContext">
+    <camel:camelContext id="camelJiraContext">        
         <camel:jmxAgent id="agent" disabled="true" />
+        <camel:routeBuilder ref="routeBuilder" />
     </camel:camelContext>
 
 	<bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
@@ -56,5 +57,5 @@
         factory-method="createProducerTemplate">
     </bean>
   
-  	<bean class="org.apache.camel.component.cxf.RouteBuilderCxfTracer"/>
+  	<bean id="routeBuilder" class="org.apache.camel.component.cxf.RouteBuilderCxfTracer"/>
 </beans>

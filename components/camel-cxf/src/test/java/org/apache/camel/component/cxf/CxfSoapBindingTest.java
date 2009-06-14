@@ -25,21 +25,23 @@ import java.net.URL;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 
-import junit.framework.TestCase;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class CxfSoapBindingTest extends TestCase {
+public class CxfSoapBindingTest extends Assert {
     private static final String REQUEST_STRING =
         "<testMethod xmlns=\"http://camel.apache.org/testService\"/>";
     private DefaultCamelContext context = new DefaultCamelContext();
 
-
+    
     // setup the default context for testing
+    @Test
     public void testGetCxfInMessage() throws Exception {
         HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
         org.apache.camel.Exchange exchange = new DefaultExchange(context);

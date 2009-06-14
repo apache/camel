@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -28,9 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.cxf.util.CxfUtils;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 
-public class CxfRsConsumerTest extends ContextTestSupport {
+public class CxfRsConsumerTest extends CamelTestSupport {
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
     
     // START SNIPPET: example
@@ -60,6 +61,7 @@ public class CxfRsConsumerTest extends ContextTestSupport {
     }
     // END SNIPPET: example
     
+    @Test
     public void testGetCustomer() throws Exception {
         URL url = new URL("http://localhost:9000/customerservice/customers/126");
 

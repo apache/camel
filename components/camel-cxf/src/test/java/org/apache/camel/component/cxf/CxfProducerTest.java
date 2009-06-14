@@ -39,11 +39,14 @@ import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class CxfProducerTest extends TestCase {
+public class CxfProducerTest extends Assert {
     protected static final String ECHO_OPERATION = "echo";
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
@@ -55,39 +58,22 @@ public class CxfProducerTest extends TestCase {
 
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template = camelContext.createProducerTemplate();
-
-    private ServerImpl simpleServer;
-    private Endpoint jaxwsEndpoint;
-
-    @Override
-    protected void setUp() throws Exception {
+    
+    @BeforeClass
+    public static void startService() throws Exception {
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
         svrBean.setBus(CXFBusFactory.getDefaultBus());
-
-        simpleServer = (ServerImpl)svrBean.create();
-        simpleServer.start();
-
+        svrBean.create();
+        
         GreeterImpl greeterImpl = new GreeterImpl();
-        jaxwsEndpoint = Endpoint.publish(JAXWS_SERVER_ADDRESS, greeterImpl);
-
+        Endpoint.publish(JAXWS_SERVER_ADDRESS, greeterImpl);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        if (simpleServer != null) {
-            simpleServer.stop();
-        }
-        if (jaxwsEndpoint != null) {
-            jaxwsEndpoint.stop();
-        }
-        BusFactory.setDefaultBus(null);
-    }
-
-
+    @Test
     public void testInvokingSimpleServerWithParams() throws Exception {
         Exchange exchange = sendSimpleMessage();
 
@@ -101,6 +87,7 @@ public class CxfProducerTest extends TestCase {
 
     }
 
+    @Test
     public void testInvokingAWrongServer() throws Exception {
         try {
             sendSimpleMessage(getWrongEndpointUri());
@@ -110,6 +97,7 @@ public class CxfProducerTest extends TestCase {
         }
     }
 
+    @Test
     public void testInvokingJaxWsServerWithParams() throws Exception {
         Exchange exchange = sendJaxWsMessage();
 

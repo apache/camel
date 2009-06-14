@@ -24,14 +24,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.cxf.jaxws.EndpointImpl;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CXFGreeterRouterTest extends CxfRouterTestSupport {
+public class CXFGreeterRouterTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
     
     private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",
@@ -45,32 +49,30 @@ public class CXFGreeterRouterTest extends CxfRouterTestSupport {
         + "<faultType>NoSuchCodeLitFault</faultType></testDocLitFault>"
         + "</soap:Body></soap:Envelope>";
     
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
         assertNotNull("Should have created a valid spring context", applicationContext);
-
-
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         
         if (applicationContext != null) {
             applicationContext.destroy();
         }
         super.tearDown();
     }
-    @Override
-    protected void startService() {
+    
+    @BeforeClass
+    public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:9000/SoapContext/SoapPort";
-        EndpointImpl endpoint = (EndpointImpl)Endpoint.publish(address, implementor);
-        server = endpoint.getServer();
+        Endpoint.publish(address, implementor); 
     }
 
-    
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);
         service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
@@ -98,6 +100,7 @@ public class CXFGreeterRouterTest extends CxfRouterTestSupport {
 
     }
     
+    @Test
     public void testRoutingSOAPFault() throws Exception {
         try {
             template.sendBody("http://localhost:9003/CamelContext/RouterPort", testDocLitFaultBody);

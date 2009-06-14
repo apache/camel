@@ -50,9 +50,18 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.outofband.header.OutofBandHeader;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 
 
 /**
@@ -61,7 +70,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  * @version $Revision$
  */
 @ContextConfiguration
-public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTests {
+public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected CamelContext context;
@@ -70,17 +79,16 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
     private Endpoint relayEndpoint;
     private Endpoint noRelayEndpoint;
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {        
         template = context.createProducerTemplate();
 
         relayEndpoint = Endpoint.publish("http://localhost:9090/HeaderService/", new HeaderTesterImpl());
         noRelayEndpoint = Endpoint.publish("http://localhost:7070/HeaderService/", new HeaderTesterImpl(false));
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         
         if (relayEndpoint != null) {
             relayEndpoint.stop();
@@ -91,8 +99,6 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
             noRelayEndpoint.stop();
             noRelayEndpoint = null;
         }
-
-        super.tearDown();
     }
     
     protected static void addOutOfBoundHeader(HeaderTester proxy, boolean invalid) throws JAXBException {
@@ -111,6 +117,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
         
     }
     
+    @Test
     public void testInHeaderCXFClientRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -122,7 +129,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
                    response.getResponseType().equals("pass"));
     }
     
-   
+    @Test
     public void testOutHeaderCXFClientRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -139,6 +146,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
                    Constants.equals(Constants.OUT_HEADER_DATA, header.value));
     }
 
+    @Test
     public void testInOutHeaderCXFClientRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -154,6 +162,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
                    Constants.equals(Constants.IN_OUT_RESPONSE_HEADER_DATA, header.value));
     }
 
+    @Test
     public void testInOutOfBandHeaderCXFClientRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -166,7 +175,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
         assertTrue("Expected the out of band header to propagate but it didn't", 
                    response.getFirstName().equals("pass"));
     }
-    
+
+    @Test
     public void testInoutOutOfBandHeaderCXFClientRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -181,6 +191,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
         validateReturnedOutOfBandHeader(proxy);
     }
 
+    @Test
     public void testOutOutOfBandHeaderCXFClientRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -193,7 +204,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
                    response.getFirstName().equals("pass"));
         validateReturnedOutOfBandHeader(proxy);
     }
-    
+
+    @Test
     public void testInOutOfBandHeaderCXFClientNoRelay() throws Exception {
 
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
@@ -208,7 +220,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
                    response.getFirstName().equals("pass"));
         
     }
-    
+
+    @Test
     public void testOutOutOfBandHeaderCXFClientNoRelay() throws Exception {
         
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
@@ -224,7 +237,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
         validateReturnedOutOfBandHeader(proxy, false);
     }
 
-    
+    @Test
     public void testInoutOutOfBandHeaderCXFClientNoRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -239,6 +252,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
         validateReturnedOutOfBandHeader(proxy, false);
     }
 
+    @Test
     public void testInHeaderCXFClientNoRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -254,7 +268,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
         assertTrue("Expected in in band header *not* to propagate but it did", 
                    response.getResponseType().equals("pass"));
     }
-    
+
+    @Test
     public void testOutHeaderCXFClientNoRelay() throws Exception {
         Thread.sleep(5000);
 
@@ -275,7 +290,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
         assertTrue("Expected in band response header *not* to propagate but it did",
                    header.value == null);
     }
-    
+
+    @Test
     public void testInoutHeaderCXFClientNoRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -295,6 +311,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
                    header.value == null);
     }
 
+    @Test
     public void testMessageHeadersRelaysSpringContext() throws Exception {
         CxfEndpoint endpoint = (CxfEndpoint)context
             .getEndpoint("cxf:bean:serviceExtraRelays?headerFilterStrategy=#customMessageFilterStrategy");
@@ -307,27 +324,33 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit38SpringContextTest
                          CustomHeaderFilter.class, messageHeaderFilterMap.get(ns).getClass());
         }
     }
-    
+
+    @Test
     public void testInOutOfBandHeaderCamelTemplateDirect() throws Exception {
         doTestInOutOfBandHeaderCamelTemplate("direct:directProducer");
     }
 
+    @Test
     public void testOutOutOfBandHeaderCamelTemplateDirect() throws Exception {
         doTestOutOutOfBandHeaderCamelTemplate("direct:directProducer");
     }
-    
+
+    @Test
     public void testInOutOutOfBandHeaderCamelTemplateDirect() throws Exception {
         doTestInOutOutOfBandHeaderCamelTemplate("direct:directProducer");
     }
 
+    @Test
     public void testInOutOfBandHeaderCamelTemplateRelay() throws Exception {
         doTestInOutOfBandHeaderCamelTemplate("direct:relayProducer");
     }
-    
+
+    @Test
     public void testOutOutOfBandHeaderCamelTemplateRelay() throws Exception {
         doTestOutOutOfBandHeaderCamelTemplate("direct:relayProducer");
     }
 
+    @Test
     public void testInOutOutOfBandHeaderCamelTemplateRelay() throws Exception {
         doTestInOutOutOfBandHeaderCamelTemplate("direct:relayProducer");
     }

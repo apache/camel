@@ -17,12 +17,16 @@
 
 package org.apache.camel.component.cxf;
 
+import org.junit.Before;
+
 /**
  * Test for throwing the CustomizedException from Camel CXF consumer with PAYLOAD DataFormat
  */
 public class CxfPayLoadCustomizedExceptionTest extends CxfCustomizedExceptionTest {
+    
+    @Before
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&DataFormat=PAYLOAD";
         super.setUp();
 

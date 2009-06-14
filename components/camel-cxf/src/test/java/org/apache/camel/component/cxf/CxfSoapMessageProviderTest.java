@@ -21,20 +21,22 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.SOAPService;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
-public class CxfSoapMessageProviderTest extends SpringTestSupport {
+public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/SoapMessageProviderContext.xml");
     }
 
+    @Test
     public void testSOAPMessageModeDocLit() throws Exception {
         JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
         fromHandler.reset();

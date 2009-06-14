@@ -25,12 +25,16 @@ import org.apache.camel.non_wrapper.Person;
 import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
-public class TestCamel1145Route extends AbstractJUnit38SpringContextTests {
-
+public class TestCamel1145Route extends AbstractJUnit4SpringContextTests {
+   
+    @Test
     public void testCamel1145Route() throws Exception {
         URL wsdlURL = new URL("http://localhost:9000/PersonService/?wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));

@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.MessageHelper;
+import org.junit.Test;
 
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
@@ -36,6 +37,7 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         };
     }
     
+    @Test
     public void testTheContentType() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.reset();
@@ -50,6 +52,7 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         assertEquals("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type"), "text/xml; charset=utf-8");        
     }
     
+    @Test
     public void testTheContentTypeOnTheWire() throws Exception {
         Exchange exchange = template.send(ROUTER_ADDRESS,  new Processor() {
 

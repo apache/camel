@@ -27,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.cxf.BusFactory;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
@@ -35,6 +36,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"};
     }
 
+    @Test
     public void testCxfEndpointBeanDefinitionParser() {
 
         CxfEndpointBean routerEndpoint = (CxfEndpointBean)ctx.getBean("routerEndpoint");
@@ -43,6 +45,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
 
     }
 
+    @Test
     public void testCxfBusConfiguration() throws Exception {
         // get the camelContext from application context
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");

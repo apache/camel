@@ -27,17 +27,19 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.camel.ContextTestSupport;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
+import org.junit.Test;
 
 
-public class CxfMtomConsumerTest extends ContextTestSupport {
+public class CxfMtomConsumerTest extends CamelTestSupport {
     protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:9090/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloImpl";        
@@ -85,6 +87,7 @@ public class CxfMtomConsumerTest extends ContextTestSupport {
         return ImageIO.read(getClass().getResource(name));
     }
     
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
 
         if (Boolean.getBoolean("java.awt.headless")) {

@@ -21,17 +21,20 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.camel.component.cxf.util.CxfUtils;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfRsRouterTest extends SpringTestSupport {
+public class CxfRsRouterTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {        
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
     }
     
+    @Test
     public void testGetCustomer() throws Exception {
         URL url = new URL("http://localhost:9000/customerservice/customers/123");
 

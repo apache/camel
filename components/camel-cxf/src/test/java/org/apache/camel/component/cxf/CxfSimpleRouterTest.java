@@ -18,13 +18,18 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class CxfSimpleRouterTest extends CxfRouterTestSupport {    
+public class CxfSimpleRouterTest extends CamelTestSupport {    
     protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
     protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
@@ -32,16 +37,16 @@ public class CxfSimpleRouterTest extends CxfRouterTestSupport {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     
-    protected void startService() {
+    @BeforeClass
+    public static void startService() {       
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
     
         svrBean.setAddress(SERVICE_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
-        svrBean.setServiceBean(new HelloServiceImpl());
-        svrBean.setBus(bus);
+        svrBean.setServiceBean(new HelloServiceImpl());        
     
-        server = svrBean.create();
+        Server server = svrBean.create();
         server.start();
     }
     
@@ -62,14 +67,13 @@ public class CxfSimpleRouterTest extends CxfRouterTestSupport {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
-        clientBean.setServiceClass(HelloService.class);
-        clientBean.setBus(bus);
+        clientBean.setServiceClass(HelloService.class);        
 
         HelloService client = (HelloService) proxyFactory.create();
         return client;
     }
 
-
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
@@ -77,6 +81,7 @@ public class CxfSimpleRouterTest extends CxfRouterTestSupport {
 
     }
 
+    @Test
     public void testOnwayInvocation() throws Exception {
         HelloService client = getCXFClient();
         int count = client.getInvocationCount();

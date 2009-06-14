@@ -29,23 +29,28 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.io.CachedOutputStream;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+
 
 /**
  *
  * @version $Revision$
  */
 @ContextConfiguration
-public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
+public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
     
     @Autowired
     protected CamelContext context;
     
-    @Override
+    @Before
     public void setUp() throws Exception {
         RouteBuilder builder = createRouteBuilder();
         context.addRoutes(builder);
@@ -66,6 +71,7 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
         };
     }   
     
+    @Test
     public void testGetConsumer() throws Exception {
         
         URL url = new URL("http://localhost:9000/customerservice/customers/123");
@@ -81,7 +87,7 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
 
     }
 
-    
+    @Test
     public void testPutConsumer() throws Exception {
         PutMethod put = new PutMethod("http://localhost:9000/customerservice/customers");
         RequestEntity entity = new StringRequestEntity(PUT_REQUEST, "text/xml", "ISO-8859-1");
@@ -96,6 +102,7 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
         }
     }
     
+    @Test
     public void testPostConsumer() throws Exception {
         PostMethod post = new PostMethod("http://localhost:9000/customerservice/customers");
         post.addRequestHeader("Accept" , "text/xml");

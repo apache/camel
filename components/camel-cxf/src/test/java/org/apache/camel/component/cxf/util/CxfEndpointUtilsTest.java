@@ -27,8 +27,10 @@ import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class CxfEndpointUtilsTest extends TestCase {
+public class CxfEndpointUtilsTest extends Assert {
     // set up the port name and service name
     protected static final QName SERVICE_NAME =
         new QName("http://www.example.com/test", "ServiceName");
@@ -62,17 +64,20 @@ public class CxfEndpointUtilsTest extends TestCase {
         return (CxfEndpoint)new CxfComponent(context).createEndpoint(uri);
     }
 
+    @Test
     public void testGetProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI());
         QName service = CxfEndpointUtils.getQName(endpoint.getServiceName());
         assertEquals("We should get the right service name", service, SERVICE_NAME);
     }
 
+    @Test
     public void testGetDataFormat() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "&dataFormat=MESSAGE");
         assertEquals("We should get the Message DataFormat", DataFormat.MESSAGE, endpoint.getDataFormat());
     }
 
+    @Test
     public void testCheckServiceClassWithTheEndpoint() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {
@@ -84,6 +89,7 @@ public class CxfEndpointUtilsTest extends TestCase {
         }
     }
 
+    @Test
     public void testCheckServiceClassProcedure() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {
@@ -93,6 +99,7 @@ public class CxfEndpointUtilsTest extends TestCase {
         }
     }
 
+    @Test
     public void testCheckServiceClassConsumer() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {

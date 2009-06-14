@@ -26,10 +26,12 @@ import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.UnknownPersonFault;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfNonWrapperTest extends SpringTestSupport {
+public class CxfNonWrapperTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/nonWrapperProcessor.xml");
@@ -39,7 +41,7 @@ public class CxfNonWrapperTest extends SpringTestSupport {
         assertNotNull("No context found!", context);
     }
 
-
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
 
         URL wsdlURL = getClass().getClassLoader().getResource("person-non-wrapper.wsdl");

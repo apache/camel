@@ -17,9 +17,10 @@
 
 package org.apache.camel.component.cxf;
 
-import junit.framework.TestCase;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -27,8 +28,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @version $Revision$
  */
-public class CxfEndpointTest extends TestCase {
+public class CxfEndpointTest extends Assert {
 
+    @Test
     public void testSpringCxfEndpoint() throws Exception {
         ClassPathXmlApplicationContext ctx =
             new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml"});

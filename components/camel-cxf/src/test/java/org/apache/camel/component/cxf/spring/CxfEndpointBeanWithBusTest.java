@@ -20,6 +20,8 @@ package org.apache.camel.component.cxf.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -29,12 +31,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
     
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ctx =  new ClassPathXmlApplicationContext(
                 new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"});
     }
     
+    @Test
     public void testBusInjectedBySpring() throws Exception {
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         CxfEndpoint endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:routerEndpoint");

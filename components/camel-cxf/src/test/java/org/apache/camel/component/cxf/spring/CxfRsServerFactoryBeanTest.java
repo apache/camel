@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
+import org.junit.Test;
 
 public class CxfRsServerFactoryBeanTest extends AbstractSpringBeanTestSupport {
 
@@ -28,6 +29,7 @@ public class CxfRsServerFactoryBeanTest extends AbstractSpringBeanTestSupport {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfRsServerFactoryBeans.xml"};
     }
     
+    @Test
     public void testCxfRsServerFactoryBean() {
         SpringJAXRSServerFactoryBean sfb1 = (SpringJAXRSServerFactoryBean) ctx.getBean("rsServer1");
         assertEquals("Get a wrong address", sfb1.getAddress(), "http://localhost:9000/server1");        

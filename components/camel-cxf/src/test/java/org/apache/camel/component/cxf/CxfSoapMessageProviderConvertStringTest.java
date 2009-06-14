@@ -17,16 +17,30 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.processor.SpringTestHelper;
+import org.apache.camel.Service;
+import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfSoapMessageProviderConvertStringTest extends CxfSoapMessageProviderTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/component/cxf/SoapMessageProviderConvertString.xml");
+        setUseRouteBuilder(false);
+
+        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+            "org/apache/camel/component/cxf/SoapMessageProviderConvertString.xml");
+        setCamelContextService(new Service() {
+            public void start() throws Exception {
+                applicationContext.start();
+            }
+
+            public void stop() throws Exception {
+                applicationContext.stop();
+            }
+        });
+
+        return SpringCamelContext.springCamelContext(applicationContext);
+
     }
-
-
-
-
 }

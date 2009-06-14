@@ -22,12 +22,15 @@ import org.apache.camel.component.cxf.CxfConsumer;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfProducer;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CamelEndpointSpringConfigureTest extends SpringTestSupport {
+public class CamelEndpointSpringConfigureTest extends CamelSpringTestSupport {
     
+    @Test
     public void testCreateDestinationFromSpring() throws Exception {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) context.getEndpoint("cxf:bean:serviceEndpoint");
         CxfProducer producer = (CxfProducer)cxfEndpoint.createProducer();

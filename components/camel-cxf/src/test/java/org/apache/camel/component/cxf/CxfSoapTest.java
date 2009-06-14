@@ -25,17 +25,18 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.junit.Test;
 
-public class CxfSoapTest extends ContextTestSupport {
+public class CxfSoapTest extends CamelTestSupport {
     private static final String SOAP_STRING =
         "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
         + "<soap:Body><testMethod xmlns=\"http://camel.apache.org/testService\" />"
@@ -56,6 +57,7 @@ public class CxfSoapTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSoapConsumer() throws Exception {
         // send out the request message
         URL request = this.getClass().getResource("SoapRequest.xml");
@@ -74,6 +76,7 @@ public class CxfSoapTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testSoapProducer() throws Exception {
         // set out the source message
         URL request = this.getClass().getResource("RequestBody.xml");

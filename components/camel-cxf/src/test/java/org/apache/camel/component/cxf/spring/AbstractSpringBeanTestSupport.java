@@ -17,21 +17,25 @@
 
 package org.apache.camel.component.cxf.spring;
 
-import junit.framework.TestCase;
 import org.apache.cxf.BusFactory;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public abstract class AbstractSpringBeanTestSupport extends TestCase {
+public abstract class AbstractSpringBeanTestSupport extends Assert {
     
     protected ClassPathXmlApplicationContext ctx;
     
     protected abstract String[] getApplicationContextFiles();
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ctx =  new ClassPathXmlApplicationContext(getApplicationContextFiles());
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         ctx.close();        
     }
 

@@ -25,6 +25,8 @@ import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
@@ -35,6 +37,7 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeansPayloadMode.xml");
     }
     
+    @Test
     @Override
     public void testInvokingServiceFromCXFClient() throws Exception {
 
@@ -75,7 +78,7 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
         verifyJaxwsHandlers(fromHandler, toHandler);
     }
 
-    @Override
+    @Test
     public void testInvokingServiceWithCamelProducer() throws Exception {
         // this test does not apply to PAYLOAD mode
     }

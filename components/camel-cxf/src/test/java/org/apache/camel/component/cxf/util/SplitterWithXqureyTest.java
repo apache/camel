@@ -37,17 +37,18 @@ import com.sun.org.apache.xerces.internal.dom.ElementImpl;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
+import org.junit.Test;
 
 
-public class SplitterWithXqureyTest extends ContextTestSupport {
+public class SplitterWithXqureyTest extends CamelTestSupport {
     private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
         + "xmlns:two=\"http://camel.apache.org/schema/two\">"
         + "<person><name>Willem</name></person> "
@@ -73,6 +74,7 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
         };
     }
     
+    @Test
     public void testSenderXmlData() throws Exception {        
         MockEndpoint result = getMockEndpoint("mock:result");
         result.reset();

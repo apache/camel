@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.CxfRsClientFactoryBeanDefinitionParser.SpringJAXRSClientFactoryBean;
+import org.junit.Test;
 
 public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
     
@@ -26,6 +27,7 @@ public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfRsClientFactoryBeans.xml"};
     }
     
+    @Test
     public void testCxfRsClientFactoryBean() {
         SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) ctx.getBean("rsClient1");
         assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:9000/router");

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -25,9 +26,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class CxfGreeterPayLoadWithFeatureRouterTest extends CXFGreeterRouterTest {
-
+    
+    @Before
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();
         

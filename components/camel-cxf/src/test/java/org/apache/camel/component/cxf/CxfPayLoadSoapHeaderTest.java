@@ -35,12 +35,17 @@ import org.apache.camel.pizza.types.OrderPizzaResponseType;
 import org.apache.camel.pizza.types.OrderPizzaType;
 import org.apache.camel.pizza.types.ToppingsListType;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.jaxws.EndpointImpl;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
+public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext; 
     private final QName serviceName = new QName("http://camel.apache.org/pizza", "PizzaService");
     
@@ -78,29 +83,29 @@ public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
         };
     }
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (applicationContext != null) {
             applicationContext.destroy();
         }
         super.tearDown();
     }
     
-    @Override
-    protected void startService() {
+    @BeforeClass
+    public static void startService() {
         Object implementor = new PizzaImpl();
         String address = "http://localhost:9023/new_pizza_service/services/PizzaService";
-        EndpointImpl endpoint = (EndpointImpl) Endpoint.publish(address, implementor);
-        server = endpoint.getServer();
+        Endpoint.publish(address, implementor);        
     }
 
+    @Test
     public void testPizzaService() {
         Pizza port = getPort();
 

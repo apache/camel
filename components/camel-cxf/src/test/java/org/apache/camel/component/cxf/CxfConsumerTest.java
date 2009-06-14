@@ -19,17 +19,20 @@ package org.apache.camel.component.cxf;
 
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 
-public class CxfConsumerTest extends ContextTestSupport {
+public class CxfConsumerTest extends CamelTestSupport {
     protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
@@ -37,7 +40,6 @@ public class CxfConsumerTest extends ContextTestSupport {
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
     private static final String TEST_MESSAGE = "Hello World!";
-
 
     // START SNIPPET: example
     protected RouteBuilder createRouteBuilder() {
@@ -71,6 +73,7 @@ public class CxfConsumerTest extends ContextTestSupport {
     }
     // END SNIPPET: example
 
+    @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();

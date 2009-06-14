@@ -17,9 +17,11 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test to verify using '#' notation to reference serviceClass.
@@ -27,11 +29,12 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  * @version $Revision$
  */
 @ContextConfiguration
-public class ServiceClassRefTest extends AbstractJUnit38SpringContextTests {
+public class ServiceClassRefTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected CamelContext context;
     
+    @Test
     public void testServiceClassNameCreatedByRefNotation() throws Exception {
         // verify the '#' notation works
         CxfEndpoint endpoint = context.getEndpoint("cxf:bean:fromEndpoint", CxfEndpoint.class);
