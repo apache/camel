@@ -41,8 +41,8 @@ public class SplitWithNestedFilterShouldSkipFilteredExchanges extends SplitShoul
                         .filter(goodWord)
                             .to("mock:filtered")
                         .end()
-                    .end()
-                .to("mock:result");
+                    .end()                    
+                    .to("mock:result");
             }
         };
     }
