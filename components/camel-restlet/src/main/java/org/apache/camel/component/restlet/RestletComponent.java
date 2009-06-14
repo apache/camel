@@ -17,12 +17,13 @@
 package org.apache.camel.component.restlet;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.logging.Log;
@@ -32,6 +33,7 @@ import org.restlet.Guard;
 import org.restlet.Restlet;
 import org.restlet.Server;
 import org.restlet.data.ChallengeScheme;
+import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 
 /**
@@ -103,44 +105,47 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     public void connect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
         addServerIfNeccessary(endpoint);
-        MethodBasedRouter router = getMethodRouter(endpoint.getUriPattern());
         
-        Map<String, String> realm = endpoint.getRestletRealm();
-        Restlet target = consumer.getRestlet();
-        if (realm != null && realm.size() > 0) {
-            Guard guard = new Guard(component.getContext().createChildContext(), 
-                    ChallengeScheme.HTTP_BASIC, "Camel-Restlet Endpoint Realm");
-            for (Map.Entry<String, String> entry : realm.entrySet()) {
-                guard.getSecrets().put(entry.getKey(), entry.getValue().toCharArray());
-            }
-            guard.setNext(target);
-            target = guard;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Target has been set to guard: " + guard);
-            }
+        if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
+            attachUriPatternToRestlet(endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
         
-        router.addRoute(endpoint.getRestletMethod(), target);
-        
-        if (!router.hasBeenAttached()) {
-            component.getDefaultHost().attach(endpoint.getUriPattern(), router);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Attached methodRouter uriPattern: " + endpoint.getUriPattern());
+        if (endpoint.getUriPatterns() != null) {
+            for (String uriPattern : endpoint.getUriPatterns()) {
+                attachUriPatternToRestlet(uriPattern, endpoint, consumer.getRestlet());
             }
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Attached restlet uriPattern: " + endpoint.getUriPattern() + " method: " + endpoint.getRestletMethod());
         }
     }
 
     public void disconnect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
-        MethodBasedRouter router = getMethodRouter(endpoint.getUriPattern());
-        router.removeRoute(endpoint.getRestletMethod());
+        
+        List<MethodBasedRouter> routers = new ArrayList<MethodBasedRouter>();
+        
+        if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
+            routers.add(getMethodRouter(endpoint.getUriPattern()));
+        }
+        
+        if (endpoint.getUriPatterns() != null) {
+            for (String uriPattern : endpoint.getUriPatterns()) {
+                routers.add(getMethodRouter(uriPattern));
+            }
+        }
+        
+        for (MethodBasedRouter router : routers) {
+            if (endpoint.getRestletMethods() != null) {
+                Method[] methods = endpoint.getRestletMethods();
+                for (Method method : methods) {
+                    router.removeRoute(method);
+                }
+            } else {
+                router.removeRoute(endpoint.getRestletMethod());
+            }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Detached restlet uriPattern: " + endpoint.getUriPattern() + " method: " + endpoint.getRestletMethod());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Detached restlet uriPattern: " + router.getUriPattern() 
+                          + " method: " + endpoint.getRestletMethod());
+            }
         }
     }    
     
@@ -176,6 +181,51 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     
     private static String buildKey(RestletEndpoint endpoint) {
         return endpoint.getHost() + ":" + endpoint.getPort();
+    }
+    
+    /**
+     * @param uriPattern
+     * @param endpoint 
+     * @param target 
+     */
+    private void attachUriPatternToRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) {
+        MethodBasedRouter router = getMethodRouter(uriPattern);
+        
+        Map<String, String> realm = endpoint.getRestletRealm();
+        if (realm != null && realm.size() > 0) {
+            Guard guard = new Guard(component.getContext().createChildContext(), 
+                    ChallengeScheme.HTTP_BASIC, "Camel-Restlet Endpoint Realm");
+            for (Map.Entry<String, String> entry : realm.entrySet()) {
+                guard.getSecrets().put(entry.getKey(), entry.getValue().toCharArray());
+            }
+            guard.setNext(target);
+            target = guard;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Target has been set to guard: " + guard);
+            }
+        }
+        
+        if (endpoint.getRestletMethods() != null) {
+            Method[] methods = endpoint.getRestletMethods();
+            for (Method method : methods) {
+                router.addRoute(method, target);   
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Attached restlet uriPattern: " + uriPattern + " method: " + method);
+                }
+            }
+        } else {
+            router.addRoute(endpoint.getRestletMethod(), target);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attached restlet uriPattern: " + uriPattern + " method: " + endpoint.getRestletMethod());
+            }
+        }
+        
+        if (!router.hasBeenAttached()) {
+            component.getDefaultHost().attach(uriPattern, router);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attached methodRouter uriPattern: " + uriPattern);
+            }
+        }
     }
 
 }

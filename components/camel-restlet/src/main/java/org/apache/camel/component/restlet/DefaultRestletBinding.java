@@ -67,6 +67,12 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (query != null) {
             inMessage.setHeader(RestletConstants.RESTLET_QUERY_STRING, query);
         }
+        
+        // copy URI to header
+        inMessage.setHeader(Exchange.HTTP_URI, request.getResourceRef().getIdentifier(true));
+        
+        // copy HTTP method to header
+        inMessage.setHeader(Exchange.HTTP_METHOD, request.getMethod().toString());
 
         if (!request.isEntityAvailable()) {
             return;

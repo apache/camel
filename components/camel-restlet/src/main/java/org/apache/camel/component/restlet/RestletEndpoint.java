@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,10 +44,20 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private static final String DEFAULT_HOST = "localhost";
     
     private Method restletMethod = Method.GET;
+
+    // Optional and for consumer only.  This allows a single route to service multiple 
+    // methods.  If it is non-null, restletMethod is ignored.
+    private Method[] restletMethods;
+    
     private String protocol = DEFAULT_PROTOCOL;
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
     private String uriPattern;
+    
+    // Optional and for consumer only.  This allows a single route to service multiple 
+    // uriPatterns.  The uriPattern defined in the endpoint will still be honored.
+    private List<String> uriPatterns;
+    
     private Map<String, String> restletRealm;
     private HeaderFilterStrategy headerFilterStrategy;
     private RestletBinding restletBinding;
@@ -172,4 +183,36 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         // should always use in out for restlet
         return ExchangePattern.InOut;
     }
+
+    /**
+     * @param restletMethods the restletMethods to set
+     */
+    public void setRestletMethods(Method[] restletMethods) {
+        this.restletMethods = restletMethods;
+    }
+
+    /**
+     * @return the restletMethods
+     */
+    public Method[] getRestletMethods() {
+        return restletMethods;
+    }
+
+    /**
+     * @param uriPatterns the uriPatterns to set
+     */
+    public void setUriPatterns(List<String> uriPatterns) {
+        this.uriPatterns = uriPatterns;
+    }
+
+    /**
+     * @return the uriPatterns
+     */
+    public List<String> getUriPatterns() {
+        return uriPatterns;
+    }
+
+
+
+
 }

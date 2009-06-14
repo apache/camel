@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.restlet.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Converter;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
@@ -30,6 +33,18 @@ public class RestletConverter {
     @Converter
     public Method toMethod(String name) {
         return Method.valueOf(name.toUpperCase());
+    }
+    
+    @Converter
+    public Method[] toMethods(String name) {
+        
+        String[] strings = name.split(",");
+        List<Method> methods = new ArrayList<Method>();
+        for (String string : strings) {
+            methods.add(toMethod(string));
+        }
+        
+        return methods.toArray(new Method[methods.size()]);
     }
     
     @Converter

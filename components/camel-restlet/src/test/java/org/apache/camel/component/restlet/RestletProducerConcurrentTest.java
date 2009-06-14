@@ -32,7 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Resltet producer concurrent test
+ * Restlet producer concurrent test
  * 
  * @version $Revision$
  */

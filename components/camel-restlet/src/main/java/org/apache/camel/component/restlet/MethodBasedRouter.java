@@ -36,6 +36,7 @@ import org.restlet.data.Status;
 class MethodBasedRouter extends Restlet {
     private static final Log LOG = LogFactory.getLog(MethodBasedRouter.class);
     private String uriPattern;
+    
     private Map<Method, Restlet> routes = new ConcurrentHashMap<Method, Restlet>();
     private AtomicBoolean hasBeenAttachedFlag = new AtomicBoolean(false);
 
@@ -81,4 +82,7 @@ class MethodBasedRouter extends Restlet {
         return hasBeenAttachedFlag.getAndSet(true);
     }
     
+    String getUriPattern() {
+        return uriPattern;
+    }
 }
