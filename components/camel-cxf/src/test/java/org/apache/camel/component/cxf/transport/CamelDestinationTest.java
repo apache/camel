@@ -39,7 +39,7 @@ import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.easymock.classextension.EasyMock;
 
-public class CamelDestinationTest extends CamelTestSupport {
+public class CamelDestinationTest extends CamelTransportTestSupport {
     private Message destMessage;
 
     protected RouteBuilder createRouteBuilder() {

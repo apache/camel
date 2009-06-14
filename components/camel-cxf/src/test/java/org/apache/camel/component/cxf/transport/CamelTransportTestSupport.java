@@ -33,7 +33,7 @@ import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.easymock.classextension.EasyMock;
 
-public abstract class CamelTestSupport extends ContextTestSupport {
+public abstract class CamelTransportTestSupport extends ContextTestSupport {
 
     protected Bus bus;
     protected EndpointInfo endpointInfo;

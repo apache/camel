@@ -34,7 +34,7 @@ import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
-public class CamelConduitTest extends CamelTestSupport {
+public class CamelConduitTest extends CamelTransportTestSupport {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
