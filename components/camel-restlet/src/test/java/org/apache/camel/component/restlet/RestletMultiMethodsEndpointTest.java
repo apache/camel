@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.restlet;
 
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,33 +24,13 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * This unit test verifies a single route can service multiple methods.
  * 
  * @version $Revision$
  */
-@ContextConfiguration
-public class RestletMultiMethodsEndpointTest extends AbstractJUnit38SpringContextTests {
-
-    @Autowired
-    protected CamelContext context;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        context.addRoutes(createRouteBuilder());
-        context.start();
-    }
-    
-    @Override
-    public void tearDown() throws Exception {
-        context.stop();
-        super.tearDown();
-    }
+public class RestletMultiMethodsEndpointTest extends ContextTestSupport {
 
     public void testPostMethod() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
@@ -76,11 +55,10 @@ public class RestletMultiMethodsEndpointTest extends AbstractJUnit38SpringContex
         } finally {
             method.releaseConnection();
         }
-
     }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: routeDefinition
@@ -94,7 +72,6 @@ public class RestletMultiMethodsEndpointTest extends AbstractJUnit38SpringContex
                         }
                     });
                 // END SNIPPET: routeDefinition
-                
             }
         };
     }

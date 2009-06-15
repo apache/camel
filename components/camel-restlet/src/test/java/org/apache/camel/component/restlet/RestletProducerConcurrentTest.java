@@ -59,8 +59,7 @@ public class RestletProducerConcurrentTest extends ContextTestSupport {
                     headers.put("username", "davsclaus");
                     headers.put("id", index);
                     return template
-                        .requestBodyAndHeaders(
-                                               "restlet:http://localhost:9080/users/{username}/{id}?restletMethod=POST",
+                        .requestBodyAndHeaders("restlet:http://localhost:9080/users/{username}/{id}?restletMethod=POST",
                                                null, headers, String.class);
                 }
             });

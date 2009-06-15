@@ -16,41 +16,35 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * This unit test verifies a single route can service multiple templates.
  * 
  * @version $Revision$
  */
-@ContextConfiguration
-public class RestletMultiUriTemplatesEndpointTest extends AbstractJUnit38SpringContextTests {
-
-    @Autowired
-    protected CamelContext context;
+public class RestletMultiUriTemplatesEndpointTest extends ContextTestSupport {
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        context.addRoutes(createRouteBuilder());
-        context.start();
-    }
-    
-    @Override
-    public void tearDown() throws Exception {
-        context.stop();
-        super.tearDown();
+    protected JndiRegistry createRegistry() throws Exception {
+        List<String> list = new ArrayList<String>();
+        list.add("/users/{username}");
+        list.add("/atom/collection/{id}/component/{cid}");
+
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("uriTemplates", list);
+        return jndi;
     }
 
     public void testPostUserUriPattern() throws Exception {
@@ -79,12 +73,11 @@ public class RestletMultiUriTemplatesEndpointTest extends AbstractJUnit38SpringC
 
     }
 
-    protected RouteBuilder createRouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-
             @Override
             public void configure() throws Exception {
-                               
                 // START SNIPPET: routeDefinition
                 from("restlet:http://localhost:9080?restletMethods=post,get&restletUriPatterns=#uriTemplates")
                     .process(new Processor() {
@@ -97,12 +90,13 @@ public class RestletMultiUriTemplatesEndpointTest extends AbstractJUnit38SpringC
                             } else if ("http://localhost:9080/atom/collection/foo/component/bar".equals(uri)) {
                                 exchange.getOut().setBody(out + " " + exchange.getIn().getHeader("id", String.class)
                                                           + " " + exchange.getIn().getHeader("cid", String.class));
-                                                          
+
                             }
 
                         }
                     });
                 // END SNIPPET: routeDefinition
+
             }
         };
     }
