@@ -19,17 +19,20 @@ package org.apache.camel.component.atom;
 import java.util.List;
 
 import org.apache.abdera.model.Feed;
-import org.apache.camel.ContextTestSupport;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for AtomPollingConsumer
  */
-public class AtomPollingConsumerTest extends ContextTestSupport {
+public class AtomPollingConsumerTest extends CamelTestSupport {
 
+    @Test
     public void testNoSplitEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -48,6 +51,7 @@ public class AtomPollingConsumerTest extends ContextTestSupport {
         assertEquals(7, entries.size());
     }
 
+    @Test
     public void testUsingAtomUriParameter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedMessageCount(1);

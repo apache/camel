@@ -27,12 +27,15 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.camel.component.feed.EntryFilter;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for UpdatedDateFilter
  */
-public class UpdatedDateFilterTest extends TestCase {
+public class UpdatedDateFilterTest extends Assert {
 
+    @Test
     public void testFilter() throws Exception {
         Document<Feed> doc = AtomUtils.parseDocument("file:src/test/data/feed.atom");
         assertNotNull(doc);

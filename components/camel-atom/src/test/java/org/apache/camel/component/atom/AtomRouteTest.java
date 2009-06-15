@@ -19,19 +19,21 @@ package org.apache.camel.component.atom;
 import java.util.List;
 
 import org.apache.abdera.model.Entry;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class AtomRouteTest extends ContextTestSupport {
+public class AtomRouteTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(AtomRouteTest.class);
 
+    @Test
     public void testFeedGetsUpdatedEvents() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount(7);

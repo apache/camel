@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for fast polling using a low delay
  */
-public class AtomPollingLowDelayTest extends ContextTestSupport {
+public class AtomPollingLowDelayTest extends CamelTestSupport {
 
+    @Test
     public void testLowDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(7);

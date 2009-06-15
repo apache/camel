@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.atom;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
 
 /**
  * Unit test for AtomProducer.
  */
-public class AtomProducerTest extends ContextTestSupport {
+public class AtomProducerTest extends CamelTestSupport {
 
+    @Test
     public void testNotYetImplemented() throws Exception {
         try {
             context.getEndpoint("atom:file://target/out.atom").createProducer();

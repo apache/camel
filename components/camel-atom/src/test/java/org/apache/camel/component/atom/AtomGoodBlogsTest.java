@@ -21,16 +21,20 @@ import java.util.Hashtable;
 import org.apache.abdera.model.Entry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.TestSupport;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.CamelInitialContextFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test with good sample for the wiki documentation
  */
-public class AtomGoodBlogsTest extends TestSupport {
+public class AtomGoodBlogsTest extends CamelTestSupport {
 
     // START SNIPPET: e1
 
@@ -40,7 +44,7 @@ public class AtomGoodBlogsTest extends TestSupport {
     // We use a simple Hashtable for our bean registry. For more advanced usage Spring is supported out-of-the-box
     private Hashtable beans = new Hashtable();
 
-    // We iniitalize Camel
+    // We initialize Camel
     private void setupCamel() throws Exception {
         // First we register a blog service in our bean registry
         beans.put("blogService", new BlogService());
@@ -87,6 +91,7 @@ public class AtomGoodBlogsTest extends TestSupport {
      * This is the actual junit test method that does the assertion that our routes is working
      * as expected
      */
+    @Test
     public void testFiltering() throws Exception {
         // Get the mock endpoint
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
@@ -121,12 +126,14 @@ public class AtomGoodBlogsTest extends TestSupport {
 
     // END SNIPPET: e1
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         setupCamel();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         context.stop();
     }

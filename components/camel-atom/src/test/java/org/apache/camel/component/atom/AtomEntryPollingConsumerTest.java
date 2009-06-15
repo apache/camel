@@ -21,28 +21,32 @@ import java.text.SimpleDateFormat;
 
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Unit test for AtomEntryPollingConsumer
  */
-public class AtomEntryPollingConsumerTest extends ContextTestSupport {
+public class AtomEntryPollingConsumerTest extends CamelTestSupport {
 
+    @Test
     public void testResult() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result1");
         mock.expectedMessageCount(7);
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testResult2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedMessageCount(7);
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testResult3() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result3");
         mock.expectedMessageCount(4);
