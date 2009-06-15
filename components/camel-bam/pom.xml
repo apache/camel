@@ -60,16 +60,9 @@
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
+      <artifactId>camel-test</artifactId>      
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
+    </dependency>   
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-juel</artifactId>
@@ -85,25 +78,10 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>commons-dbcp</groupId>
-          <artifactId>commons-dbcp</artifactId>
-          <version>1.2.1</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-          <version>3.2</version>
-          <scope>test</scope>
-        </dependency>
-    -->
-
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>4.6</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

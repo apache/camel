@@ -16,6 +16,7 @@
  */
 package org.apache.camel.bam;
 
+import org.junit.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -24,7 +25,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $Revision$
  */
 public class MultipleProcessesTest extends BamRouteTest {
+    
     @Override
+    @Test
     public void testBam() throws Exception {
         // TODO fixme
         //overdueEndpoint.expectedMessageCount(1);

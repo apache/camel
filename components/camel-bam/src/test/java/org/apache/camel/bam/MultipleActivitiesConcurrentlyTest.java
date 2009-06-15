@@ -17,6 +17,9 @@
 package org.apache.camel.bam;
 
 import java.util.concurrent.CountDownLatch;
+
+import org.junit.Before;
+import org.junit.Test;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
@@ -25,6 +28,7 @@ import static org.apache.camel.language.juel.JuelExpression.el;
 public class MultipleActivitiesConcurrentlyTest extends MultipleProcessesTest {
 
     @Override
+    @Test
     public void testBam() throws Exception {
         // TODO fixme
         //overdueEndpoint.expectedMessageCount(1);
@@ -53,7 +57,8 @@ public class MultipleActivitiesConcurrentlyTest extends MultipleProcessesTest {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         errorTimeout = 5;
 
         super.setUp();

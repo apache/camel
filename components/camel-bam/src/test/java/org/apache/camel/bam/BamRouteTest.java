@@ -20,7 +20,10 @@ package org.apache.camel.bam;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
+
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -32,10 +35,11 @@ import static org.apache.camel.util.Time.seconds;
 /**
  * @version $Revision$
  */
-public class BamRouteTest extends SpringTestSupport {
+public class BamRouteTest extends CamelSpringTestSupport {
     protected MockEndpoint overdueEndpoint;
     protected int errorTimeout = 2;
 
+    @Test
     public void testBam() throws Exception {
         overdueEndpoint.expectedMessageCount(1);
 
@@ -54,8 +58,8 @@ public class BamRouteTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/bam/spring.xml");
     }
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         overdueEndpoint = getMockEndpoint("mock:overdue");
