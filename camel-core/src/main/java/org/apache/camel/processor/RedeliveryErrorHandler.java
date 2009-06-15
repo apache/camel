@@ -82,20 +82,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return false;
     }
 
-    /**
-     * Whether this error handler supports dead letter queue or not
-     */
-    public abstract boolean supportDeadLetterQueue();
-
     public void process(Exchange exchange) throws Exception {
+        if (output == null) {
+            // no output then just return
+            return;
+        }
+
         processErrorHandler(exchange, new RedeliveryData());
     }
 
     /**
      * Processes the exchange decorated with this dead letter channel.
      */
-    protected void processErrorHandler(final Exchange exchange, final RedeliveryData data) {
-
+    protected void processErrorHandler(final Exchange exchange, final RedeliveryData data) throws Exception {
         while (true) {
             // we can't keep retrying if the route is being shutdown.
             if (!isRunAllowed()) {
@@ -110,15 +109,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // do not handle transacted exchanges that failed as this error handler does not support it
             if (exchange.isTransacted() && !supportTransacted() && exchange.getException() != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("This error handler does not support transacted exchanges."
+                if (log.isTraceEnabled()) {
+                    log.trace("This error handler does not support transacted exchanges."
                         + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
                 }
                 return;
             }
 
             // did previous processing cause an exception?
-            if (exchange.getException() != null) {
+            boolean handle = shouldHandleException(exchange);
+            if (handle) {
                 handleException(exchange, data);
             }
 
@@ -127,10 +127,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (!shouldRedeliver) {
                 // no we should not redeliver to the same output so either try an onException (if any given)
                 // or the dead letter queue
-                boolean isDeadLetter = data.failureProcessor == null && data.deadLetterProcessor != null;
                 Processor target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
                 // deliver to the failure processor (either an on exception or dead letter queue
-                deliverToFailureProcessor(target, exchange, data, isDeadLetter);
+                deliverToFailureProcessor(target, exchange, data);
                 // prepare the exchange for failure before returning
                 prepareExchangeAfterFailure(exchange, data);
                 // and then return
@@ -156,20 +155,47 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // process the exchange (also redelivery)
             try {
-                output.process(exchange);
+                processExchange(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
             }
 
-            // only done if the exchange hasn't failed
-            // and it has not been handled by the failure processor
-            boolean done = exchange.getException() == null || ExchangeHelper.isFailureHandled(exchange);
+            boolean done = isDone(exchange);
             if (done) {
                 return;
             }
             // error occurred so loop back around.....
         }
 
+    }
+
+    /**
+     * Strategy whether the exchange has an exception that we should try to handle.
+     * <p/>
+     * Standard implementations should just look for an exception.
+     */
+    protected boolean shouldHandleException(Exchange exchange) {
+        return exchange.getException() != null;
+    }
+
+    /**
+     * Strategy to process the given exchange to the destinated output.
+     * <p/>
+     * This happens when the exchange is processed the first time and also for redeliveries
+     * to the same destination.
+     */
+    protected void processExchange(Exchange exchange) throws Exception {
+        // process the exchange (also redelivery)
+        output.process(exchange);
+    }
+
+    /**
+     * Strategy to determine if the exchange is done so we can continue
+     */
+    protected boolean isDone(Exchange exchange) throws Exception {
+        // only done if the exchange hasn't failed
+        // and it has not been handled by the failure processor
+        return exchange.getException() == null || ExchangeHelper.isFailureHandled(exchange);
     }
 
     /**
@@ -267,7 +293,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * All redelivery attempts failed so move the exchange to the dead letter queue
      */
     protected void deliverToFailureProcessor(final Processor processor, final Exchange exchange,
-                                             final RedeliveryData data, boolean isDeadLetter) {
+                                             final RedeliveryData data) {
         // we did not success with the redelivery so now we let the failure processor handle it
         // clear exception as we let the failure processor handle it
         exchange.setException(null);
@@ -305,16 +331,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
-    protected void prepareExchangeAfterFailure(Exchange exchange, final RedeliveryData data) {
-        // we did not success with the redelivery so now we let the failure processor handle it
+    protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
+        // we could not process the exchange so we let the failure processor handled it
         ExchangeHelper.setFailureHandled(exchange);
 
-        Predicate handledPredicate = data.handledPredicate;
-
         // honor if already set a handling
-        boolean alreadySet = exchange.getProperty(Exchange.EXCEPTION_HANDLED) != null;
+        boolean alreadySet = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED) != null;
         if (alreadySet) {
-            boolean handled = exchange.getProperty(Exchange.EXCEPTION_HANDLED, Boolean.class);
+            boolean handled = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.class);
             if (log.isDebugEnabled()) {
                 log.debug("This exchange has already been marked for handling: " + handled);
             }
@@ -327,18 +351,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             return;
         }
 
+        Predicate handledPredicate = data.handledPredicate;
         if (handledPredicate == null || !handledPredicate.matches(exchange)) {
             if (log.isDebugEnabled()) {
                 log.debug("This exchange is not handled so its marked as failed: " + exchange);
             }
             // exception not handled, put exception back in the exchange
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED, Boolean.FALSE);
+            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.FALSE);
             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("This exchange is handled so its marked as not failed: " + exchange);
             }
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED, Boolean.TRUE);
+            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
         }
     }
 
@@ -373,6 +398,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     private boolean shouldRedeliver(Exchange exchange, RedeliveryData data) {
+        // if marked as rollback only then do not redeliver
+        Boolean rollback = exchange.getProperty(Exchange.ROLLBACK_ONLY, Boolean.class);
+        if (rollback != null && rollback) {
+            if (log.isTraceEnabled()) {
+                log.trace("This exchange is marked as rollback only, should not be redelivered: " + exchange);
+            }
+            return false;
+        }
         return data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryUntilPredicate);
     }
 

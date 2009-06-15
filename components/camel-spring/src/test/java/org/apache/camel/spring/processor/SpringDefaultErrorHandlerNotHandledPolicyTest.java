@@ -17,8 +17,8 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -58,7 +58,7 @@ public class SpringDefaultErrorHandlerNotHandledPolicyTest extends SpringTestSup
         assertEquals(true, out.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(2, out.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
         assertEquals(true, out.getProperty(Exchange.FAILURE_HANDLED));
-        assertEquals(false, out.getProperty(Exchange.EXCEPTION_HANDLED));
+        assertEquals(false, out.getProperty(Exchange.ERRORHANDLER_HANDLED));
         assertSame("Should be same exception", e, out.getProperty(Exchange.EXCEPTION_CAUGHT));
     }
 

@@ -29,7 +29,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 public class DefaultErrorHandler extends RedeliveryErrorHandler {
 
     /**
-     * Creates the dead letter channel.
+     * Creates the default error handler.
      *
      * @param output                    outer processor that should use this default error handler
      * @param logger                    logger to use for logging failures and redelivery attempts
@@ -44,10 +44,6 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
-    public boolean supportDeadLetterQueue() {
-        return false;
-    }
-
     public void process(Exchange exchange) throws Exception {
         // just to let the stacktrace reveal that this is a dead letter channel
         super.process(exchange);
@@ -55,6 +51,10 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
 
     @Override
     public String toString() {
+        if (output == null) {
+            // if no output then dont do any description
+            return "";
+        }
         return "DefaultErrorHandler[" + output + "]";
     }
 

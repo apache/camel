@@ -55,8 +55,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         DeadLetterChannel answer = new DeadLetterChannel(processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
                 getHandledPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(),
                 isUseOriginalBody());
-        // must enable stream cache as DeadLetterChannel can do redeliveries and
-        // thus it needs to be able to read the stream again
+        // configure error handler before we can use it
         configure(answer);
         return answer;
     }

@@ -54,8 +54,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DefaultErrorHandler answer = new DefaultErrorHandler(processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
                 getHandledPolicy(), getExceptionPolicyStrategy());
-        // must enable stream cache as DeadLetterChannel can do redeliveries and
-        // thus it needs to be able to read the stream again
+        // configure error handler before we can use it
         configure(answer);
         return answer;
     }

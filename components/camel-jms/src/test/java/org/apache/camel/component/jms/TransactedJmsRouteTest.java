@@ -49,6 +49,8 @@ import static org.apache.camel.component.mock.MockEndpoint.assertWait;
  */
 public class TransactedJmsRouteTest extends ContextTestSupport {
 
+    // TODO: This is not a nice unit test. Please do not do like this. Big, confusing and takes long time to run
+
     private static final transient Log LOG = LogFactory.getLog(TransactedJmsRouteTest.class);
     protected int assertTimeoutSeconds = 10;
     private MockEndpoint mockEndpointA;
@@ -278,7 +280,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA);
     }
 
-    public void testSenarioE() throws Exception {
+    public void disabledtestSenarioE() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMessageCount(1);

@@ -54,8 +54,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
     }
 
     public Processor wrap(RouteContext routeContext, Processor processor) {
-        TransactionErrorHandler answer = new TransactionErrorHandler(getTransactionTemplate());
-        answer.setOutput(processor);
+        TransactionErrorHandler answer;
 
         // the goal is to configure the error handler builder on the route as a transacted error handler,
         // either its already a transacted or if not we replace it with a transacted one that we configure here
@@ -86,6 +85,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("The ErrorHandlerBuilder configured is already a TransactionErrorHandlerBuilder: " + builder);
             }
+            answer = createTransactionErrorHandler(routeContext, processor, builder);
             answer.setExceptionPolicy(builder.getExceptionPolicyStrategy());
             // configure our answer based on the existing error handler
             builder.configure(answer);
@@ -107,6 +107,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
                 // use error handlers from the configured builder
                 txBuilder.setErrorHandlers(builder.getErrorHandlers());
             }
+            answer = createTransactionErrorHandler(routeContext, processor, txBuilder);
             answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
             // configure our answer based on the existing error handler
             txBuilder.configure(answer);
@@ -116,6 +117,16 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         }
 
         // return with wrapped transacted error handler
+        return answer;
+    }
+
+    protected TransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor, ErrorHandlerBuilder builder) {
+        TransactionErrorHandler answer;
+        try {
+            answer = (TransactionErrorHandler) builder.createErrorHandler(routeContext, processor);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return answer;
     }
 

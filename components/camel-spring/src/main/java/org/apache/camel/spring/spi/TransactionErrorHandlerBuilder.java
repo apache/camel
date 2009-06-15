@@ -16,29 +16,33 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.Map;
+
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilderSupport;
-import org.apache.camel.processor.ErrorHandlerSupport;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.beans.factory.InitializingBean;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * An error handler which will roll the exception back if there is an error
- * rather than using the dead letter channel and retry logic.
- *
- * A delay is also used after a rollback
+ * A transactional error handler that supports leveraging Spring TransactionManager.
  *
  * @version $Revision$
  */
-public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements InitializingBean {
+public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
+    private static final transient Log LOG = LogFactory.getLog(TransactionErrorHandlerBuilder.class);
+    private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     private TransactionTemplate transactionTemplate;
-    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
 
     public TransactionErrorHandlerBuilder() {
+        // no-arg constructor used by Spring DSL
     }
 
     public TransactionTemplate getTransactionTemplate() {
@@ -50,13 +54,55 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        TransactionErrorHandler answer = new TransactionErrorHandler(transactionTemplate, processor, exceptionPolicyStrategy);
+        if (transactionTemplate == null) {
+            // lookup in context if no transaction template has been configured
+            LOG.debug("No TransactionTemplate configured on TransactedErrorHandlerBuilder. Will try find it in the registry.");
+
+            TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
+            if (policy != null && policy instanceof SpringTransactionPolicy) {
+                transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+            }
+
+            if (transactionTemplate == null) {
+                Map<String, TransactionTemplate> map = routeContext.lookupByType(TransactionTemplate.class);
+                if (map != null && map.size() == 1) {
+                    transactionTemplate = map.values().iterator().next();
+                } else if (LOG.isDebugEnabled()) {
+                    if (map == null || map.isEmpty()) {
+                        LOG.debug("No TransactionTemplate found in registry.");
+                    } else {
+                        LOG.debug("Found " + map.size() + " TransactionTemplate in registry. "
+                                + "Cannot determine which one to use. Please configure a TransactionTemplate on the TransactedErrorHandlerBuilder");
+                    }
+                }
+            }
+
+            if (transactionTemplate == null) {
+                Map<String, PlatformTransactionManager> map = routeContext.lookupByType(PlatformTransactionManager.class);
+                if (map != null && map.size() == 1) {
+                    transactionTemplate = new TransactionTemplate(map.values().iterator().next());
+                } else if (LOG.isDebugEnabled()) {
+                    if (map == null || map.isEmpty()) {
+                        LOG.debug("No PlatformTransactionManager found in registry.");
+                    } else {
+                        LOG.debug("Found " + map.size() + " PlatformTransactionManager in registry. "
+                                + "Cannot determine which one to use for TransactionTemplate. Please configure a TransactionTemplate on the TransactedErrorHandlerBuilder");
+                    }
+                }
+            }
+
+            if (transactionTemplate != null) {
+                LOG.debug("Found TransactionTemplate in registry to use: " + transactionTemplate);
+            }
+        }
+
+        ObjectHelper.notNull(transactionTemplate, "transactionTemplate");
+
+        TransactionErrorHandler answer = new TransactionErrorHandler(processor, getLogger(), getOnRedelivery(),
+                getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy(), transactionTemplate);
+        // configure error handler before we can use it
         configure(answer);
         return answer;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        ObjectHelper.notNull(transactionTemplate, "transactionTemplate");
     }
 
     public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
@@ -67,27 +113,16 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
         this.transactionTemplate = policy.getTransactionTemplate();
     }
 
-    /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
-     */
-    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
-        return exceptionPolicyStrategy;
-    }
-
-    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
-    }
-
     // Builder methods
     // -------------------------------------------------------------------------
 
-    /**
-     * Sets the exception policy to use
-     */
-    public TransactionErrorHandlerBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        setExceptionPolicyStrategy(exceptionPolicyStrategy);
-        return this;
+    protected Logger createLogger() {
+        return new Logger(LogFactory.getLog(TransactionErrorHandler.class), LoggingLevel.ERROR);
+    }
+
+    @Override
+    public String toString() {
+        return "TransactionErrorHandlerBuilder";
     }
 
 }

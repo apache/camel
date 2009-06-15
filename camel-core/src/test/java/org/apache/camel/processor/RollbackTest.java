@@ -70,6 +70,9 @@ public class RollbackTest extends ContextTestSupport {
         assertNotNull(out.getException());
         assertIsInstanceOf(RollbackExchangeException.class, out.getException());
         assertEquals("Should be marked as rollback", true, out.isRollbackOnly());
+        // should not try to redeliver if exchange was marked as rollback only
+        assertEquals(0, out.getOut().getHeader(Exchange.REDELIVERY_COUNTER));
+        assertEquals(false, out.getOut().getHeader(Exchange.REDELIVERED));
     }
 
     @Override
@@ -77,7 +80,7 @@ public class RollbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).redeliverDelay(0).handled(false));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliverDelay(0).handled(false));
 
                 from("direct:start")
                     .choice()

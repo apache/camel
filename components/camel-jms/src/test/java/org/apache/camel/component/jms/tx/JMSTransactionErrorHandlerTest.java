@@ -25,11 +25,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * To demonstrate transacted with minimal configuration.
  */
-public class TransactionMinimalConfigurationTest extends SpringTestSupport {
+public class JMSTransactionErrorHandlerTest extends SpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml");
+            "/org/apache/camel/component/jms/tx/JMSTransactionErrorHandlerTest.xml");
     }
 
     protected int getExpectedRouteCount() {
@@ -42,11 +42,11 @@ public class TransactionMinimalConfigurationTest extends SpringTestSupport {
         mock.expectedBodiesReceived("Bye World");
         // success at 3rd attempt
         mock.message(0).header("count").isEqualTo(3);
-        // since its JMS that does the redeliver we should test for that
-        mock.message(0).header("JMSRedelivered").isEqualTo(true);
-        // and not Camel doing the redelivery
-        mock.message(0).header(Exchange.REDELIVERED).isNull();
-        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
+        // and since it was Camel doing the redelivey we should have headers for this
+        mock.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
+        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+        // and not JMS doing the redelivery
+        mock.message(0).header("JMSRedelivered").isEqualTo(false);
 
         template.sendBody("activemq:queue:okay", "Hello World");
 

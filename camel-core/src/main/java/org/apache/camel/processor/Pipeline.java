@@ -77,15 +77,23 @@ public class Pipeline extends MulticastProcessor implements Processor {
             }
 
             // check for error if so we should break out
-            boolean exceptionHandled = hasExceptionBeenHandled(nextExchange);
+            boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(nextExchange);
             if (nextExchange.isFailed() || exceptionHandled) {
-                // The Exchange.EXCEPTION_HANDLED property is only set if satisfactory handling was done
+                // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
                 // by the error handler. It's still an exception, the exchange still failed.
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
-                              + " exception: " + nextExchange.getException() + " fault: "
-                              + (nextExchange.hasFault() ? nextExchange.getFault() : null)
-                              + (exceptionHandled ? " handled by the error handler" : ""));
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Message exchange has failed so breaking out of pipeline: ").append(nextExchange);
+                    if (nextExchange.getException() != null) {
+                        sb.append(" exception: ").append(nextExchange.getException());
+                    }
+                    if (nextExchange.hasFault()) {
+                        sb.append(" fault: ").append(nextExchange.getFault());
+                    }
+                    if (exceptionHandled) {
+                        sb.append(" handled by the error handler");
+                    }
+                    LOG.debug(sb.toString());
                 }
                 break;
             }
@@ -102,8 +110,8 @@ public class Pipeline extends MulticastProcessor implements Processor {
         ExchangeHelper.copyResults(exchange, nextExchange);
     }
 
-    private static boolean hasExceptionBeenHandled(Exchange nextExchange) {
-        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.EXCEPTION_HANDLED));
+    private static boolean hasExceptionBeenHandledByErrorHandler(Exchange nextExchange) {
+        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
     /**

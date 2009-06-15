@@ -51,10 +51,6 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
-    public boolean supportDeadLetterQueue() {
-        return true;
-    }
-
     public void process(Exchange exchange) throws Exception {
         // just to let the stacktrace reveal that this is a dead letter channel
         super.process(exchange);
@@ -62,6 +58,10 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
 
     @Override
     public String toString() {
+        if (output == null) {
+            // if no output then dont do any description
+            return "";
+        }
         return "DeadLetterChannel[" + output + ", " + (deadLetterUri != null ? deadLetterUri : deadLetter) + "]";
     }
 

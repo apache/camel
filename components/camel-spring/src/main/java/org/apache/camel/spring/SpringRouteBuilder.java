@@ -35,10 +35,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 public abstract class SpringRouteBuilder extends RouteBuilder implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
-    public TransactionErrorHandler transactionInterceptor() {
-        return new TransactionErrorHandler(lookup(TransactionTemplate.class));
-    }
-
     /**
      * Looks up the bean with the given name in the application context and
      * returns it, or throws an exception if the bean is not present or is not
@@ -101,6 +97,16 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      */
     public void setApplicationContext(ApplicationContext applicationContext) {        
         this.applicationContext = applicationContext;
+    }
+
+    /**
+     * Creates a transaction error handler that will lookup in application context for
+     * an exiting transaction manager.
+     *
+     * @return the created error handler
+     */
+    public TransactionErrorHandlerBuilder transactionErrorHandler() {
+        return new TransactionErrorHandlerBuilder();
     }
 
     /**

@@ -50,7 +50,7 @@ public interface Exchange {
     String DATASET_INDEX = "CamelDataSetIndex";
 
     String EXCEPTION_CAUGHT  = "CamelExceptionCaught";
-    String EXCEPTION_HANDLED = "CamelExceptionHandled";
+    String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
     String FAILURE_HANDLED   = "CamelFailureHandled";
 
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
