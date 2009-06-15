@@ -162,6 +162,8 @@ public abstract class CamelTestSupport extends TestSupport {
         if (in != null) {
             log.debug("Using jndi.properties from classpath root");
             properties.load(in);
+        } else {            
+            properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
         }
         return new InitialContext(new Hashtable(properties));
     }
