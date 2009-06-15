@@ -43,9 +43,9 @@ import org.apache.commons.logging.LogFactory;
  *   <li>useExponentialBackOff = false</li>
  *   <li>collisionAvoidanceFactor = 0.15d</li>
  *   <li>useCollisionAvoidance = false</li>
- *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
- *   <li>retryAttemptedLogLevel = LoggingLevel.ERROR</li>
- *   <li>logStrackTrace = true</li>
+ *   <li>retriesExhaustedLogLevel = LoggingLevel.DEBUG</li>
+ *   <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
+ *   <li>logStrackTrace = false</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -82,9 +82,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     // +/-15% for a 30% spread -cgs
     protected double collisionAvoidanceFactor = 0.15d;
     protected boolean useCollisionAvoidance;
-    protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
-    protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.ERROR;
-    protected boolean logStackTrace = true;
+    protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.DEBUG;
+    protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.DEBUG;
+    protected boolean logStackTrace = false;
     protected String delayPattern;
 
     public RedeliveryPolicy() {

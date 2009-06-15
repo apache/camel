@@ -16,9 +16,10 @@
  */
 package org.apache.camel.processor.onexception;
 
+import java.io.IOException;
+
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -26,56 +27,106 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ErrorOccuredInOnExceptionRoute extends ContextTestSupport {
 
-    public void testErrorInOnException() throws Exception {
-        getMockEndpoint("mock:onFunc").expectedMessageCount(1);
-        getMockEndpoint("mock:doneFunc").expectedMessageCount(0);
-        // TODO: should be 1 when RedeliveryErrorHandler works with exception in onException
-        getMockEndpoint("mock:tech").expectedMessageCount(0);
-
-        try {
-            template.sendBody("direct:start", "Hello World");
-        } catch (Exception e) {
-            // TODO: this exception should not be there
-            // ignore
-        }
-
-        assertMockEndpointsSatisfied();
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public void testErrorInOnException() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(MyTechnicalException.class)
                     .handled(true)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // System.out.println("tech");
-                        }
-                    })
                     .to("mock:tech");
 
                 onException(MyFunctionalException.class)
                     .handled(true)
                     .to("mock:onFunc")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // System.out.println("func");
-                                throw new MyTechnicalException("Tech error");
-                            }
-                        })
+                    .throwException(new MyTechnicalException("Tech error"))
                     .to("mock:doneFunc");
 
                 // in this regular route the processing failed
                 from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new MyFunctionalException("Func error");
-                        }
-                    });
+                    .throwException(new MyFunctionalException("Func error"));
             }
-        };
+        });
+        context.start();
 
+        getMockEndpoint("mock:onFunc").expectedMessageCount(1);
+        getMockEndpoint("mock:doneFunc").expectedMessageCount(0);
+        getMockEndpoint("mock:tech").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
+
+    public void testErrorInOnExceptionNotHandledSecondOnException() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(IOException.class)
+                    // we cannot handle this exception so it should propagate back
+                    .to("mock:tech");
+
+                onException(MyFunctionalException.class)
+                    .handled(true)
+                    .to("mock:onFunc")
+                    .throwException(new IOException("Cannot do this"))
+                    .to("mock:doneFunc");
+
+                // in this regular route the processing failed
+                from("direct:start")
+                    .throwException(new MyFunctionalException("Func error"));
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:onFunc").expectedMessageCount(1);
+        getMockEndpoint("mock:doneFunc").expectedMessageCount(0);
+        getMockEndpoint("mock:tech").expectedMessageCount(1);
+
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(IOException.class, e.getCause());
+            assertEquals("Cannot do this", e.getCause().getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testErrorInOnExceptionNotHandled() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(MyFunctionalException.class)
+                    .handled(true)
+                    .to("mock:onFunc")
+                    .throwException(new IOException("Cannot do this"))
+                    .to("mock:doneFunc");
+
+                // in this regular route the processing failed
+                from("direct:start")
+                    .throwException(new MyFunctionalException("Func error"));
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:onFunc").expectedMessageCount(1);
+        getMockEndpoint("mock:doneFunc").expectedMessageCount(0);
+
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(IOException.class, e.getCause());
+            assertEquals("Cannot do this", e.getCause().getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
 }

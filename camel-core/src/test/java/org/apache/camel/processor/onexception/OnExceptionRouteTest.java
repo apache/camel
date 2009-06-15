@@ -16,8 +16,10 @@
  */
 package org.apache.camel.processor.onexception;
 
+import java.io.IOException;
+
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -67,21 +69,23 @@ public class OnExceptionRouteTest extends ContextTestSupport {
     }
 
     public void testErrorWhileHandlingException() throws Exception {
-        getMockEndpoint("mock:error").expectedMessageCount(0);
+        MockEndpoint error = getMockEndpoint("mock:error");
+        error.expectedMessageCount(1);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "<order><type>myType</type><user>FuncError</user></order>");
-            fail("Should throw a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            assertEquals("Damm something did not work", e.getCause().getMessage());
-        }
+        template.sendBody("direct:start", "<order><type>myType</type><user>FuncError</user></order>");
 
         assertMockEndpointsSatisfied();
+
         // should not handle it
         assertNull(myOwnHandlerBean.getPayload());
+
+        // and check that we have the caused exception stored
+        Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        assertIsInstanceOf(IOException.class, cause);
+        assertEquals("Damn something did not work", cause.getMessage());
     }
 
     @Override
@@ -107,7 +111,7 @@ public class OnExceptionRouteTest extends ContextTestSupport {
                 // START SNIPPET: e1
 
                 // default should errors go to mock:error
-                errorHandler(deadLetterChannel("mock:error"));
+                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
                 
                 // if a MyTechnicalException is thrown we will not try to redeliver and we mark it as handled
                 // so the caller does not get a failure

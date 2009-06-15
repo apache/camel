@@ -24,7 +24,7 @@ public class MyOwnHandlerBean {
 
     public void handleFailure(String payload) throws Exception {
         if (payload.indexOf("Error") > -1) {
-            throw new IOException("Damm something did not work");
+            throw new IOException("Damn something did not work");
         }
         this.payload = payload;
     }

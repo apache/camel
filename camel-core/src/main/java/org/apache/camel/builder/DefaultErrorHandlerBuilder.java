@@ -364,9 +364,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         RedeliveryPolicy policy = new RedeliveryPolicy();
         policy.disableRedelivery();
         policy.setRedeliverDelay(0);
-        policy.setLogStackTrace(false);
-        policy.setRetriesExhaustedLogLevel(LoggingLevel.OFF);
-        policy.setRetryAttemptedLogLevel(LoggingLevel.OFF);
         return policy;
     }
 

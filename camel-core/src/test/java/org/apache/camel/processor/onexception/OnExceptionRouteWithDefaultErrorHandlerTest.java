@@ -68,7 +68,7 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
             template.sendBody("direct:start", "<order><type>myType</type><user>FuncError</user></order>");
             fail("Should throw a RuntimeCamelException");
         } catch (RuntimeCamelException e) {
-            assertEquals("Damm something did not work", e.getCause().getMessage());
+            assertEquals("Damn something did not work", e.getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -96,6 +96,8 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                errorHandler(defaultErrorHandler().maximumRedeliveries(5));
+
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true);
                 onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
 

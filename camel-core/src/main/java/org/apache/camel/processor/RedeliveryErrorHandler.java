@@ -127,9 +127,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (!shouldRedeliver) {
                 // no we should not redeliver to the same output so either try an onException (if any given)
                 // or the dead letter queue
+                boolean isDeadLetter = data.failureProcessor == null && data.deadLetterProcessor != null;
                 Processor target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
                 // deliver to the failure processor (either an on exception or dead letter queue
-                deliverToFailureProcessor(target, exchange, data);
+                deliverToFailureProcessor(target, exchange, data, isDeadLetter);
                 // prepare the exchange for failure before returning
                 prepareExchangeAfterFailure(exchange, data);
                 // and then return
@@ -266,9 +267,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * All redelivery attempts failed so move the exchange to the dead letter queue
      */
     protected void deliverToFailureProcessor(final Processor processor, final Exchange exchange,
-                                             final RedeliveryData data) {
+                                             final RedeliveryData data, boolean isDeadLetter) {
         // we did not success with the redelivery so now we let the failure processor handle it
-        ExchangeHelper.setFailureHandled(exchange);
+        // clear exception as we let the failure processor handle it
+        exchange.setException(null);
+
         // must decrement the redelivery counter as we didn't process the redelivery but is
         // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
         decrementRedeliveryCounter(exchange);
@@ -303,7 +306,26 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     protected void prepareExchangeAfterFailure(Exchange exchange, final RedeliveryData data) {
+        // we did not success with the redelivery so now we let the failure processor handle it
+        ExchangeHelper.setFailureHandled(exchange);
+
         Predicate handledPredicate = data.handledPredicate;
+
+        // honor if already set a handling
+        boolean alreadySet = exchange.getProperty(Exchange.EXCEPTION_HANDLED) != null;
+        if (alreadySet) {
+            boolean handled = exchange.getProperty(Exchange.EXCEPTION_HANDLED, Boolean.class);
+            if (log.isDebugEnabled()) {
+                log.debug("This exchange has already been marked for handling: " + handled);
+            }
+            if (handled) {
+                exchange.setException(null);
+            } else {
+                // exception not handled, put exception back in the exchange
+                exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+            }
+            return;
+        }
 
         if (handledPredicate == null || !handledPredicate.matches(exchange)) {
             if (log.isDebugEnabled()) {
