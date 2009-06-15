@@ -17,20 +17,44 @@
 package org.apache.camel.component.amqp;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.qpid.client.transport.TransportConnection;
+import org.apache.qpid.client.vmbroker.AMQVMBrokerCreationException;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 
 /**
  * @version $Revision$
  */
-public class AMQPRouteTest extends ContextTestSupport {
+public class AMQPRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
+    
+    @BeforeClass
+    public static void startBroker() throws Exception {
+        // lets create an in JVM broker
+        try {
+            TransportConnection.createVMBroker(1);
+        } catch (Exception e) {
+            // fails the first time, so create it again
+            TransportConnection.createVMBroker(1);
+        }
+    }
+    
+    @AfterClass
+    public static void shutdownBroker() {
+        TransportConnection.killVMBroker(1);
+    }
+    
 
+    @Test
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
 
@@ -43,6 +67,7 @@ public class AMQPRouteTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testJmsRouteWithObjectMessage() throws Exception {
         PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
 
@@ -54,6 +79,7 @@ public class AMQPRouteTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testJmsRouteWithByteArrayMessage() throws Exception {
         PurchaseOrder aPO = new PurchaseOrder("Beer", 10);
         byte[] expectedBody = SerializationUtils.serialize(aPO);
@@ -71,24 +97,10 @@ public class AMQPRouteTest extends ContextTestSupport {
     }
 
 
-    @Override
-    protected void setUp() throws Exception {
-        // lets create an in JVM broker
-        try {
-            TransportConnection.createVMBroker(1);
-        } catch (Exception e) {
-            // fails the first time, so create it again
-            TransportConnection.createVMBroker(1);
-        }
-
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        TransportConnection.killVMBroker(1);
     }
 
     protected CamelContext createCamelContext() throws Exception {
