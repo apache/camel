@@ -84,7 +84,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean useCollisionAvoidance;
     protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.DEBUG;
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.DEBUG;
-    protected boolean logStackTrace = false;
+    protected boolean logStackTrace;
     protected String delayPattern;
 
     public RedeliveryPolicy() {
