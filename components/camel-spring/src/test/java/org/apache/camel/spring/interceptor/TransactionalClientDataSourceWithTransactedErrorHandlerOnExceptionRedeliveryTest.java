@@ -27,6 +27,7 @@ public class TransactionalClientDataSourceWithTransactedErrorHandlerOnExceptionR
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
+                // START SNIPPET: e1
 
                 // configure transacted error handler to use up till 4 redeliveries
                 // we have not passed in any spring TX manager. Camel will automatic
@@ -37,7 +38,6 @@ public class TransactionalClientDataSourceWithTransactedErrorHandlerOnExceptionR
                 // speical for this exception we only want to do it at most 4 times
                 onException(IllegalArgumentException.class).maximumRedeliveries(4);
 
-                // START SNIPPET: e1
                 from("direct:okay")
                     // marks this route as transacted, and we dont pass in any parameters so we
                     // will auto lookup and use the Policy defined in the spring XML file
