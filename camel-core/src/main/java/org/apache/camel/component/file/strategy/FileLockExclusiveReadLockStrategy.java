@@ -71,7 +71,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
                 try {
                     lock = timeout > 0 ? channel.tryLock() : channel.lock();
                 } catch (IllegalStateException ex) {
-                    // Also catch the OverlappingFileLockException here. Do nothing here
+                    // Also catch the OverlappingFileLockException here. Do nothing here                    
                 }
                 if (lock != null) {
                     if (LOG.isTraceEnabled()) {
@@ -86,7 +86,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
                 } else {
                     boolean interrupted = sleep();
                     if (interrupted) {
-                        // we were interrputed while sleeping, we are likely being shutdown so return false
+                        // we were interrupted while sleeping, we are likely being shutdown so return false
                         return false;
                     }
                 }
@@ -103,7 +103,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
             }
             boolean interrupted = sleep();
             if (interrupted) {
-                // we were interrputed while sleeping, we are likely being shutdown so return false
+                // we were interrupted while sleeping, we are likely being shutdown so return false
                 return false;
             }
         }
@@ -128,10 +128,10 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
         LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
         try {
             Thread.sleep(1000);
-            return true;
+            return false;
         } catch (InterruptedException e) {
             LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
-            return false;
+            return true;
         }
     }
 

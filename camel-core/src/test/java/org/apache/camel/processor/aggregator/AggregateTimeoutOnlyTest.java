@@ -32,7 +32,7 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
         // by default the use latest aggregatation strategy is used so we get message 9
         result.expectedBodiesReceived("Message 9");
         // should take 3 seconds to complete this one
-        result.setMinimumResultWaitTime(3000);
+        result.setMinimumResultWaitTime(2900);
 
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("direct:start", "Message " + i, "id", "1");

@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Acquires read lock to the given file using a marker file so other Camel consumers wont acquire the same file.
- * This is the default behaviour in Camel 1.x.
+ * This is the default behavior in Camel 1.x.
  */
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Log LOG = LogFactory.getLog(MarkerFileExclusiveReadLockStrategy.class);

@@ -45,7 +45,7 @@ public class IdempotentOnCompletion implements Synchronization {
 
     public void onComplete(Exchange exchange) {
         if (ExchangeHelper.isFailureHandled(exchange)) {
-            // the exchange did not process succesfully but was failure handled by the dead letter channel
+            // the exchange did not process successfully but was failure handled by the dead letter channel
             // and thus moved to the dead letter queue. We should thus not consider it as complete.
             onFailedMessage(exchange, messageId);
         } else {
@@ -58,7 +58,7 @@ public class IdempotentOnCompletion implements Synchronization {
     }
 
     /**
-     * A strategy method to allow derived classes to overload the behaviour of
+     * A strategy method to allow derived classes to overload the behavior of
      * processing a completed message
      *
      * @param exchange the exchange
@@ -74,7 +74,7 @@ public class IdempotentOnCompletion implements Synchronization {
     }
 
     /**
-     * A strategy method to allow derived classes to overload the behaviour of
+     * A strategy method to allow derived classes to overload the behavior of
      * processing a failed message
      *
      * @param exchange the exchange
