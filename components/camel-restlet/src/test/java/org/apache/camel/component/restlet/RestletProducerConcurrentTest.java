@@ -26,22 +26,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Restlet producer concurrent test
  * 
  * @version $Revision$
  */
-public class RestletProducerConcurrentTest extends ContextTestSupport {
+public class RestletProducerConcurrentTest extends CamelTestSupport {
 
+    @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
+    @Test
     public void testConcurrentProducers() throws Exception {
         doSendMessages(10, 5);
     }
@@ -50,7 +53,7 @@ public class RestletProducerConcurrentTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap();
+        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {

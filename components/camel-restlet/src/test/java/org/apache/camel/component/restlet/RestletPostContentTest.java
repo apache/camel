@@ -16,22 +16,23 @@
  */
 package org.apache.camel.component.restlet;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.junit.Test;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletPostContentTest extends ContextTestSupport {
+public class RestletPostContentTest extends CamelTestSupport {
 
     private static final String MSG_BODY = "Hello World!";
 
@@ -56,6 +57,7 @@ public class RestletPostContentTest extends ContextTestSupport {
         
     }
     
+    @Test
     public void testPostBody() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         try {

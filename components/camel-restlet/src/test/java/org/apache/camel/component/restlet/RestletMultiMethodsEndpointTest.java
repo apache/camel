@@ -16,22 +16,24 @@
  */
 package org.apache.camel.component.restlet;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.junit.Test;
 
 /**
  * This unit test verifies a single route can service multiple methods.
  * 
  * @version $Revision$
  */
-public class RestletMultiMethodsEndpointTest extends ContextTestSupport {
+public class RestletMultiMethodsEndpointTest extends CamelTestSupport {
 
+    @Test
     public void testPostMethod() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         try {
@@ -45,6 +47,7 @@ public class RestletMultiMethodsEndpointTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testGetMethod() throws Exception {
         HttpMethod method = new GetMethod("http://localhost:9080/users/homer");
         try {

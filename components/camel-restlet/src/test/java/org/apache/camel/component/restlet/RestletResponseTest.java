@@ -19,19 +19,20 @@ package org.apache.camel.component.restlet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.junit.Test;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletResponseTest extends ContextTestSupport {
+public class RestletResponseTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -52,6 +53,7 @@ public class RestletResponseTest extends ContextTestSupport {
         };
     }
     
+    @Test
     public void testCustomResponse() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         try {
@@ -64,6 +66,7 @@ public class RestletResponseTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testRestletProducer() throws Exception {
         Map<String, Object> headers = new HashMap<String, Object>();        
         headers.put("username", "homer");

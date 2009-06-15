@@ -19,22 +19,23 @@ package org.apache.camel.component.restlet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.junit.Test;
 
 /**
  * This unit test verifies a single route can service multiple templates.
  * 
  * @version $Revision$
  */
-public class RestletMultiUriTemplatesEndpointTest extends ContextTestSupport {
+public class RestletMultiUriTemplatesEndpointTest extends CamelTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -47,6 +48,7 @@ public class RestletMultiUriTemplatesEndpointTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testPostUserUriPattern() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         try {
@@ -60,6 +62,7 @@ public class RestletMultiUriTemplatesEndpointTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testGetAtomUriPattern() throws Exception {
         HttpMethod method = new GetMethod("http://localhost:9080/atom/collection/foo/component/bar");
         try {

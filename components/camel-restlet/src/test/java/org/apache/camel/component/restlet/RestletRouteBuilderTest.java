@@ -18,11 +18,12 @@ package org.apache.camel.component.restlet;
 
 import java.io.IOException;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.restlet.Client;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
@@ -30,7 +31,7 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class RestletRouteBuilderTest extends ContextTestSupport {
+public class RestletRouteBuilderTest extends CamelTestSupport {
     private static final String ID = "89531";
 
     @Override
@@ -67,7 +68,7 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
         };
     }
 
-    
+    @Test
     public void testProducer() throws IOException {
         String response = (String)template.requestBody("direct:start", "<order foo='1'/>");
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
@@ -80,6 +81,7 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
     }
 
+    @Test
     public void testConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.GET, 
@@ -87,7 +89,8 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
         assertEquals("received GET request with id=99991 and x=6",
                 response.getEntity().getText());
     }
-    
+
+    @Test
     public void testUnhandledConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.POST, 

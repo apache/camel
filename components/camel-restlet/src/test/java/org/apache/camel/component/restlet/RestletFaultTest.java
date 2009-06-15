@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.component.restlet;
-
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.junit.Test;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletFaultTest extends ContextTestSupport {
+public class RestletFaultTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -48,6 +48,7 @@ public class RestletFaultTest extends ContextTestSupport {
         };
     }
     
+    @Test
     public void testFaultResponse() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         try {
