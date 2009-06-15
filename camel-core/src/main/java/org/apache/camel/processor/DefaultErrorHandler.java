@@ -16,124 +16,36 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * Default error handler
  *
  * @version $Revision$
  */
-public class DefaultErrorHandler extends ErrorHandlerSupport implements Processor {
-    private Processor output;
+public class DefaultErrorHandler extends RedeliveryErrorHandler {
 
-    public DefaultErrorHandler(Processor output, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.output = output;
+    /**
+     * Creates the dead letter channel.
+     *
+     * @param output                    outer processor that should use this default error handler
+     * @param logger                    logger to use for logging failures and redelivery attempts
+     * @param redeliveryProcessor       an optional processor to run before redelivery attempt
+     * @param redeliveryPolicy          policy for redelivery
+     * @param handledPolicy             policy for handling failed exception that are moved to the dead letter queue
+     * @param exceptionPolicyStrategy   strategy for onException handling
+     */
+    public DefaultErrorHandler(Processor output, Logger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
+                               Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        super(output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
     @Override
     public String toString() {
         return "DefaultErrorHandler[" + output + "]";
-    }
-
-    public boolean supportTransacted() {
-        return false;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        try {
-            output.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-
-        // do not handle transacted exchanges as this error handler does not support it
-        boolean handle = true;
-        if (exchange.isTransacted() && !supportTransacted()) {
-            handle = false;
-            if (log.isDebugEnabled()) {
-                log.debug("This error handler does not support transacted exchanges."
-                    + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
-            }
-        }
-
-        if (handle && exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
-            handleException(exchange);
-        }
-    }
-
-    private void handleException(Exchange exchange) throws Exception {
-        Exception e = exchange.getException();
-
-        // store the original caused exception in a property, so we can restore it later
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
-
-        // find the error handler to use (if any)
-        OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
-        if (exceptionPolicy != null) {
-            Predicate handledPredicate = exceptionPolicy.getHandledPolicy();
-
-            Processor processor = exceptionPolicy.getErrorHandler();
-            prepareExchangeBeforeOnException(exchange);
-            if (processor != null) {
-                deliverToFaultProcessor(exchange, processor);
-            }
-            prepareExchangeAfterOnException(exchange, handledPredicate);
-        }
-    }
-
-    private void prepareExchangeBeforeOnException(Exchange exchange) {
-        // okay lower the exception as we are handling it by onException
-        if (exchange.getException() != null) {
-            exchange.setException(null);
-        }
-
-        // clear rollback flags
-        exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
-
-        // reset cached streams so they can be read again
-        MessageHelper.resetStreamCache(exchange.getIn());
-    }
-
-    private void deliverToFaultProcessor(final Exchange exchange, final Processor failureProcessor) throws Exception {
-        failureProcessor.process(exchange);
-    }
-
-    private void prepareExchangeAfterOnException(Exchange exchange, Predicate handledPredicate) {
-        if (handledPredicate == null || !handledPredicate.matches(exchange)) {
-            if (log.isDebugEnabled()) {
-                log.debug("This exchange is not handled so its marked as failed: " + exchange);
-            }
-            // exception not handled, put exception back in the exchange
-            exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("This exchange is handled so its marked as not failed: " + exchange);
-            }
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED, Boolean.TRUE);
-        }
-    }
-
-    /**
-     * Returns the output processor
-     */
-    public Processor getOutput() {
-        return output;
-    }
-
-    protected void doStart() throws Exception {
-        ServiceHelper.startServices(output);
-    }
-
-    protected void doStop() throws Exception {
-        ServiceHelper.stopServices(output);
     }
 
 }

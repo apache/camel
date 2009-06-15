@@ -24,10 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test for using a processor to peek the caused exception
  */
-public class OnExceptionProcessorInspectCausedExceptionTest extends ContextTestSupport {
+public class OnExceptionProcessorInspectCausedExceptionWithDefaultErrorHandlerTest extends ContextTestSupport {
 
     public void testInspectExceptionByProcessor() throws Exception {
-        getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:myerror").expectedMessageCount(1);
 
         try {
@@ -45,12 +44,12 @@ public class OnExceptionProcessorInspectCausedExceptionTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(3));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(3));
 
                 // START SNIPPET: e1
                 // here we register exception cause for MyFunctionException
                 // when this exception occur we want it to be processed by our proceesor
-                onException(MyFunctionalException.class).process(new MyFunctionFailureHandler()).stop();
+                onException(MyFunctionalException.class).process(new MyFunctionFailureHandler());
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {

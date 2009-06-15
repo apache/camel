@@ -23,16 +23,12 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * A builder of a <a
@@ -41,46 +37,24 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
  *
  * @version $Revision$
  */
-public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
-    private static final boolean HANDLED = true;
-    private Logger logger = new Logger(LogFactory.getLog(DeadLetterChannel.class), LoggingLevel.ERROR);
-    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
-    private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
-    private Processor onRedelivery;
-    private Processor failureProcessor;
-    private Endpoint deadLetter;
-    private String deadLetterUri;
-    private Predicate handledPolicy;
-    private boolean useOriginalBody;
+public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
-    /**
-     * Creates a default DeadLetterChannel with a default endpoint
-     */
     public DeadLetterChannelBuilder() {
-        this("log:org.apache.camel.DeadLetterChannel?level=error");
+        // no-arg constructor used by Spring DSL
     }
 
-    /**
-     * Creates a DeadLetterChannel using the given endpoint
-     *
-     * @param deadLetter the dead letter queue
-     */
     public DeadLetterChannelBuilder(Endpoint deadLetter) {
         setDeadLetter(deadLetter);
     }
 
-    /**
-     * Creates a DeadLetterChannel using the given endpoint
-     *
-     * @param uri the dead letter queue
-     */
     public DeadLetterChannelBuilder(String uri) {
         setDeadLetterUri(uri);
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery,
-                getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy(), getHandledPolicy(), isUseOriginalBody());
+        DeadLetterChannel answer = new DeadLetterChannel(processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
+                getHandledPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(),
+                isUseOriginalBody());
         // must enable stream cache as DeadLetterChannel can do redeliveries and
         // thus it needs to be able to read the stream again
         configure(answer);
@@ -89,196 +63,6 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public boolean supportTransacted() {
         return false;
-    }
-
-    // Builder methods
-    // -------------------------------------------------------------------------
-    public DeadLetterChannelBuilder backOffMultiplier(double backOffMultiplier) {
-        getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder collisionAvoidancePercent(short collisionAvoidancePercent) {
-        getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder redeliverDelay(long delay) {
-        getRedeliveryPolicy().redeliverDelay(delay);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder delayPattern(String delayPattern) {
-        getRedeliveryPolicy().delayPattern(delayPattern);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder maximumRedeliveries(int maximumRedeliveries) {
-        getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder disableRedelivery() {
-        getRedeliveryPolicy().maximumRedeliveries(0);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
-        getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder useCollisionAvoidance() {
-        getRedeliveryPolicy().useCollisionAvoidance();
-        return this;
-    }
-
-    public DeadLetterChannelBuilder useExponentialBackOff() {
-        getRedeliveryPolicy().useExponentialBackOff();
-        return this;
-    }
-
-    public DeadLetterChannelBuilder retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
-        getRedeliveryPolicy().setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
-        getRedeliveryPolicy().setRetryAttemptedLogLevel(retryAttemptedLogLevel);
-        return this;
-    }
-
-    public DeadLetterChannelBuilder logStackTrace(boolean logStackTrace) {
-        getRedeliveryPolicy().setLogStackTrace(logStackTrace);
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  handled or not
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder handled(boolean handled) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
-        return handled(expression);
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  predicate that determines true or false
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder handled(Predicate handled) {
-        this.setHandledPolicy(handled);
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  expression that determines true or false
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder handled(Expression handled) {
-        this.setHandledPolicy(toPredicate(handled));
-        return this;
-    }
-
-    /**
-     * Sets the logger used for caught exceptions
-     *
-     * @param logger the logger
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder logger(Logger logger) {
-        setLogger(logger);
-        return this;
-    }
-
-    /**
-     * Sets the logging level of exceptions caught
-     *
-     * @param level the logging level
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder loggingLevel(LoggingLevel level) {
-        getLogger().setLevel(level);
-        return this;
-    }
-
-    /**
-     * Sets the log used for caught exceptions
-     *
-     * @param log the logger
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder log(Log log) {
-        getLogger().setLog(log);
-        return this;
-    }
-
-    /**
-     * Sets the log used for caught exceptions
-     *
-     * @param log the log name
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder log(String log) {
-        return log(LogFactory.getLog(log));
-    }
-
-    /**
-     * Sets the log used for caught exceptions
-     *
-     * @param log the log class
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder log(Class log) {
-        return log(LogFactory.getLog(log));
-    }
-
-    /**
-     * Sets the exception policy to use
-     *
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        setExceptionPolicyStrategy(exceptionPolicyStrategy);
-        return this;
-    }
-
-    /**
-     * Sets a processor that should be processed <b>before</b> a redelivey attempt.
-     * <p/>
-     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
-     *
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder onRedelivery(Processor processor) {
-        setOnRedelivery(processor);
-        return this;
-    }
-
-    /**
-     * Will use the original input body when an {@link Exchange} is moved to the dead letter queue.
-     * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link Exchange} is doomed for failure.
-     * <br/>
-     * Instead of using the current inprogress {@link Exchange} IN body we use the original IN body instead. This allows
-     * you to store the original input in the dead letter queue instead of the inprogress snapshot of the IN body.
-     * For instance if you route transform the IN body during routing and then failed. With the original exchange
-     * store in the dead letter queue it might be easier to manually re submit the {@link Exchange} again as the IN body
-     * is the same as when Camel received it. So you should be able to send the {@link Exchange} to the same input.
-     * <p/>
-     * By default this feature is off.
-     *
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder useOriginalBody() {
-        setUseOriginalBody(true);
-        return this;
     }
 
     // Properties
@@ -304,95 +88,18 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return failureProcessor;
     }
 
-    public void setFailureProcessor(Processor failureProcessor) {
-        this.failureProcessor = failureProcessor;
+    protected Predicate createHandledPolicy() {
+        // should be handled by default for dead letter channel
+        return PredicateBuilder.toPredicate(ExpressionBuilder.constantExpression(true));
     }
 
-    public String getDeadLetterUri() {
-        return deadLetterUri;
+    @Override
+    protected RedeliveryPolicy createRedeliveryPolicy() {
+        return new RedeliveryPolicy();
     }
 
-    public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetter = null;
-        this.deadLetterUri = deadLetterUri;
-    }
-
-    public Endpoint getDeadLetter() {
-        return deadLetter;
-    }
-
-    public void setDeadLetter(Endpoint deadLetter) {
-        this.deadLetter = deadLetter;
-        this.deadLetterUri = deadLetter.getEndpointUri();
-    }
-
-    public RedeliveryPolicy getRedeliveryPolicy() {
-        return redeliveryPolicy;
-    }
-
-    /**
-     * Sets the redelivery policy
-     */
-    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
-     */
-    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
-        return exceptionPolicyStrategy;
-    }
-
-    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
-    }
-
-    public Processor getOnRedelivery() {
-        return onRedelivery;
-    }
-
-    public void setOnRedelivery(Processor onRedelivery) {
-        this.onRedelivery = onRedelivery;
-    }
-
-    public Predicate getHandledPolicy() {
-        if (handledPolicy == null) {
-            createHandledPolicy();
-        }
-        return handledPolicy;
-    }
-
-    public void setHandledPolicy(Predicate handled) {
-        this.handledPolicy = handled;
-    }
-
-    /**
-     * Sets the handled using a boolean and thus easier to use for Spring XML configuration as well
-     */
-    public void setHandled(boolean handled) {
-        handled(handled);
-    }
-
-    public boolean isUseOriginalBody() {
-        return useOriginalBody;
-    }
-
-    public void setUseOriginalBody(boolean useOriginalBody) {
-        this.useOriginalBody = useOriginalBody;
-    }
-
-    protected void createHandledPolicy() {
-        handledPolicy = PredicateBuilder.toPredicate(ExpressionBuilder.constantExpression(HANDLED));
+    protected Logger createLogger() {
+        return new Logger(LogFactory.getLog(DeadLetterChannel.class), LoggingLevel.ERROR);
     }
 
     @Override

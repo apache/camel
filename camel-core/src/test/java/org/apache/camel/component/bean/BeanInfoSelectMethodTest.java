@@ -58,7 +58,7 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel().logStackTrace(false).maximumRedeliveries(3));
+                errorHandler(deadLetterChannel("mock:error").logStackTrace(false).maximumRedeliveries(3));
 
                 onException(Exception.class).handled(true).beanRef("foo", "handleFailure").to("mock:result");
 

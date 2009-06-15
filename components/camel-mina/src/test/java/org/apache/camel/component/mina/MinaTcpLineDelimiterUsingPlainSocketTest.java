@@ -124,7 +124,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends ContextTestSupport
         return new RouteBuilder() {
             public void configure() {
                 // use no delay for fast unit testing
-                errorHandler(deadLetterChannel().maximumRedeliveries(2).redeliverDelay(0).handled(false));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
                 from(uri).process(new Processor() {
                     public void process(Exchange e) {

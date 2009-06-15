@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
@@ -57,11 +57,11 @@ public class JmsUseOriginalBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // will use original
-                DeadLetterChannelBuilder a = deadLetterChannel("mock:a")
+                ErrorHandlerBuilder a = deadLetterChannel("mock:a")
                     .maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).useOriginalBody().handled(true);
 
                 // will NOT use original
-                DeadLetterChannelBuilder b = deadLetterChannel("mock:b")
+                ErrorHandlerBuilder b = deadLetterChannel("mock:b")
                     .maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(true);
 
                 from("activemq:queue:a")

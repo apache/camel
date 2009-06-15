@@ -23,33 +23,23 @@
     ">
 
     <!-- START SNIPPET: e1 -->
-    <!-- this is our POJO bean with our business logic defined as a plain spring bean -->
-    <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService"/>
+    <bean id="myErrorHandler" class="org.apache.camel.builder.DefaultErrorHandlerBuilder">
+        <property name="redeliveryPolicy" ref="myRedelivery"/>
+    </bean>
 
-    <!-- this is the camel context where we define the routes -->
-    <camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="direct:start"/>
-            <onException>
-                <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
-                <handled>
-                    <constant>true</constant>
-                </handled>
-                <bean ref="orderService" method="orderFailed"/>
-                <to uri="mock:error"/>
-            </onException>
-            <bean ref="orderService" method="handleOrder"/>
-            <to uri="mock:result"/>
-        </route>
-
-        <!-- The exception clause specified in the first route will not be used in this route -->
-        <route>
-            <from uri="direct:start_with_no_handler"/>
-            <bean ref="orderService" method="handleOrder"/>
-            <to uri="mock:result"/>
-        </route>
-
-    </camelContext>
+    <bean id="myRedelivery" class="org.apache.camel.processor.RedeliveryPolicy">
+        <property name="maximumRedeliveries" value="2"/>
+        <property name="redeliverDelay" value="0"/>
+        <property name="logStackTrace" value="false"/>
+    </bean>
     <!-- END SNIPPET: e1 -->
 
+    <bean id="myThrowProcessor" class="org.apache.camel.processor.DeadLetterChannelHandledPolicyTest$MyThrowExceptionProcessor"/>
+
+    <camelContext id="camel" errorHandlerRef="myErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <process ref="myThrowProcessor"/>
+        </route>
+    </camelContext>
 </beans>

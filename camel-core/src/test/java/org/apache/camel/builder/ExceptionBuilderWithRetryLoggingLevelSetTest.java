@@ -102,7 +102,7 @@ public class ExceptionBuilderWithRetryLoggingLevelSetTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {             
-                errorHandler(deadLetterChannel().log(getCustomLog()));
+                errorHandler(deadLetterChannel("mock:error").log(getCustomLog()));
                 
                 onException(NullPointerException.class)
                     .maximumRedeliveries(0)
@@ -111,7 +111,7 @@ public class ExceptionBuilderWithRetryLoggingLevelSetTest extends ContextTestSup
                 
                 // START SNIPPET: exceptionBuilder1
                 onException(IOException.class)
-                    .redeliveryDelay(1000L)
+                    .redeliveryDelay(100L)
                     .maximumRedeliveries(3)
                     .maximumRedeliveryDelay(10000L)
                     .backOffMultiplier(1.0)

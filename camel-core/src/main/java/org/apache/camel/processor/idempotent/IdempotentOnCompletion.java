@@ -17,9 +17,9 @@
 package org.apache.camel.processor.idempotent;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

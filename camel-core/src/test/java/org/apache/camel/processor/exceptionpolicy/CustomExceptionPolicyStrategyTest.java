@@ -70,7 +70,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
             // START SNIPPET e1
             public void configure() throws Exception {
                 // configure the error handler to use my policy instead of the default from Camel
-                errorHandler(deadLetterChannel().exceptionPolicyStrategy(new MyPolicy()));
+                errorHandler(deadLetterChannel("mock:error").exceptionPolicyStrategy(new MyPolicy()));
 
                 onException(MyPolicyException.class)
                     .maximumRedeliveries(1)

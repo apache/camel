@@ -70,7 +70,7 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel().logStackTrace(false).disableRedelivery());
+                errorHandler(deadLetterChannel("mock:error").logStackTrace(false).disableRedelivery());
 
                 onException(Exception.class).handled(true).beanRef("foo", "withException").to("mock:result");
 

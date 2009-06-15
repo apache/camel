@@ -37,7 +37,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
         redeliveryPolicy.maximumRedeliveries(1);
         redeliveryPolicy.setUseExponentialBackOff(true);
-        DeadLetterChannelBuilder deadLetterChannelBuilder = new DeadLetterChannelBuilder();
+        DeadLetterChannelBuilder deadLetterChannelBuilder = new DeadLetterChannelBuilder("mock:error");
         deadLetterChannelBuilder.setRedeliveryPolicy(redeliveryPolicy);
         context.setErrorHandlerBuilder(deadLetterChannelBuilder);
     }

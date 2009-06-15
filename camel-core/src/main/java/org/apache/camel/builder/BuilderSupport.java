@@ -330,16 +330,6 @@ public abstract class BuilderSupport {
      * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
      * is a error handler for handling messages that could not be delivered to it's intented destination.
      *
-     * @return the builder
-     */
-    public DeadLetterChannelBuilder deadLetterChannel() {
-        return new DeadLetterChannelBuilder();
-    }
-
-    /**
-     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
-     * is a error handler for handling messages that could not be delivered to it's intented destination.
-     *
      * @param deadLetterUri  uri to the dead letter endpoint storing dead messages
      * @return the builder
      */
@@ -360,6 +350,7 @@ public abstract class BuilderSupport {
 
     // Properties
     // -------------------------------------------------------------------------
+
     public CamelContext getContext() {
         return context;
     }
