@@ -95,7 +95,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2))
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
@@ -113,7 +113,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
                     });
 
                 from("direct:one")
-                    .errorHandler(deadLetterChannel("mock:one").maximumRedeliveries(1))
+                    .errorHandler(deadLetterChannel("mock:one").maximumRedeliveries(1).redeliverDelay(0))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;

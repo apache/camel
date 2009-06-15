@@ -41,6 +41,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class TransactionErrorHandler extends ErrorHandlerSupport {
 
+    // TODO: extend RedeliverErrorHandler
+
     private static final transient Log LOG = LogFactory.getLog(TransactionErrorHandler.class);
     private final TransactionTemplate transactionTemplate;
     private Processor output;

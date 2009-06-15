@@ -42,12 +42,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     // TODO: support onException being able to use other onException to route they exceptions
     // (hard one to get working, has not been supported before)
 
-    // TODO: the while loop method should be refactored a bit so its more higher level so the
-    // code is easier to read and understand
-
-    // TODO: add support for onRedeliver(SocketException.class) to allow running som custom
-    // route when this given exception is being redelivered (create ticket and add in 2.1)
-
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final Processor output;
@@ -64,7 +58,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
-        Processor failureProcessor = deadLetter;
+        Processor deadLetterProcessor = deadLetter;
+        Processor failureProcessor;
         Processor onRedeliveryProcessor = redeliveryProcessor;
         Predicate handledPredicate = handledPolicy;
         boolean useOriginalInBody = useOriginalBodyPolicy;
@@ -86,6 +81,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     public boolean supportTransacted() {
         return false;
     }
+
+    /**
+     * Whether this error handler supports dead letter queue or not
+     */
+    public abstract boolean supportDeadLetterQueue();
 
     public void process(Exchange exchange) throws Exception {
         processErrorHandler(exchange, new RedeliveryData());
@@ -117,7 +117,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return;
             }
 
-            // did previous processing caused an exception?
+            // did previous processing cause an exception?
             if (exchange.getException() != null) {
                 handleException(exchange, data);
             }
@@ -125,17 +125,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // compute if we should redeliver or not
             boolean shouldRedeliver = shouldRedeliver(exchange, data);
             if (!shouldRedeliver) {
-                // TODO: divde into onException and deadLetterQueue
-                // no then move it to the dead letter queue
-                deliverToFailureProcessor(exchange, data);
-                // prepare the exchange for failure
+                // no we should not redeliver to the same output so either try an onException (if any given)
+                // or the dead letter queue
+                Processor target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
+                // deliver to the failure processor (either an on exception or dead letter queue
+                deliverToFailureProcessor(target, exchange, data);
+                // prepare the exchange for failure before returning
                 prepareExchangeAfterFailure(exchange, data);
-                // we could not process the exchange succesfully so break
+                // and then return
                 return;
             }
 
             // if we are redelivering then sleep before trying again
-            if (data.redeliveryCounter > 0) {
+            if (shouldRedeliver && data.redeliveryCounter > 0) {
                 prepareExchangeForRedelivery(exchange);
 
                 // wait until we should redeliver
@@ -151,15 +153,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 deliverToRedeliveryProcessor(exchange, data);
             }
 
-            // process the exchange
+            // process the exchange (also redelivery)
             try {
                 output.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
             }
 
-            // only process if the exchange hasn't failed
-            // and it has not been handled by the error processor
+            // only done if the exchange hasn't failed
+            // and it has not been handled by the failure processor
             boolean done = exchange.getException() == null || ExchangeHelper.isFailureHandled(exchange);
             if (done) {
                 return;
@@ -263,7 +265,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * All redelivery attempts failed so move the exchange to the dead letter queue
      */
-    protected void deliverToFailureProcessor(final Exchange exchange, final RedeliveryData data) {
+    protected void deliverToFailureProcessor(final Processor processor, final Exchange exchange,
+                                             final RedeliveryData data) {
         // we did not success with the redelivery so now we let the failure processor handle it
         ExchangeHelper.setFailureHandled(exchange);
         // must decrement the redelivery counter as we didn't process the redelivery but is
@@ -272,11 +275,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // reset cached streams so they can be read again
         MessageHelper.resetStreamCache(exchange.getIn());
 
-        if (data.failureProcessor != null) {
+        if (processor != null) {
             // prepare original IN body if it should be moved instead of current body
             if (data.useOriginalInBody) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Using the original IN body in the DedLetterQueue instead of the current IN body");
+                    log.trace("Using the original IN body instead of the current IN body");
                 }
 
                 Object original = exchange.getUnitOfWork().getOriginalInBody();
@@ -284,17 +287,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             if (log.isTraceEnabled()) {
-                log.trace("Failure processor " + data.failureProcessor + " is processing Exchange: " + exchange);
+                log.trace("Failure processor " + processor + " is processing Exchange: " + exchange);
             }
             try {
-                data.failureProcessor.process(exchange);
+                processor.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
             }
             log.trace("Failure processor done");
 
             String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
-                    + ". Processed by failure processor: " + data.failureProcessor;
+                    + ". Processed by failure processor: " + processor;
             logFailedDelivery(false, exchange, msg, data, null);
         }
     }
