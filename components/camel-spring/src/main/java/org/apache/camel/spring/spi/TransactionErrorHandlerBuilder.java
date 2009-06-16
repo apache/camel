@@ -58,9 +58,21 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             // lookup in context if no transaction template has been configured
             LOG.debug("No TransactionTemplate configured on TransactedErrorHandlerBuilder. Will try find it in the registry.");
 
-            TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
-            if (policy != null && policy instanceof SpringTransactionPolicy) {
-                transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+            if (transactionTemplate == null) {
+                Map<String, TransactedPolicy> map = routeContext.lookupByType(TransactedPolicy.class);
+                if (map != null && map.size() == 1) {
+                    TransactedPolicy policy = map.values().iterator().next();
+                    if (policy != null && policy instanceof SpringTransactionPolicy) {
+                        transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+                    }
+                }
+            }
+
+            if (transactionTemplate == null) {
+                TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
+                if (policy != null && policy instanceof SpringTransactionPolicy) {
+                    transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
+                }
             }
 
             if (transactionTemplate == null) {
