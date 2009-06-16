@@ -17,26 +17,30 @@
 package org.apache.camel.language.groovy;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class GroovyExpressionTest extends TestSupport {
+public class GroovyExpressionTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(GroovyTest.class);
 
     protected Exchange exchange;
 
+    @Test
     public void testExpressionReturnsTheCorrectValue() throws Exception {
         assertExpression(GroovyLanguage.groovy("exchange.in.headers['foo.bar']"), exchange, "cheese");
         assertExpression(GroovyLanguage.groovy("exchange.in.headers.name"), exchange, "James");
         assertExpression(GroovyLanguage.groovy("exchange.in.headers['doesNotExist']"), exchange, null);
     }
 
+    @Test
     public void testPredicateEvaluation() throws Exception {
         assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'James'"), exchange, true);
         assertPredicate(GroovyLanguage.groovy("exchange.in.headers.name == 'Hiram'"), exchange, false);
@@ -44,12 +48,14 @@ public class GroovyExpressionTest extends TestSupport {
         assertPredicate(GroovyLanguage.groovy("request.headers.name == 'James'"), exchange, true);
     }
 
+    @Test
     public void testProcessorMutatesTheExchange() throws Exception {
         GroovyLanguage.groovy("request.headers.myNewHeader = 'ABC'").evaluate(exchange);
 
         assertInMessageHeader(exchange, "myNewHeader", "ABC");
     }
 
+    @Test
     public void testInvalidExpressionFailsWithMeaningfulException() throws Exception {
         try {
             GroovyLanguage.groovy("exchange.doesNotExist").evaluate(exchange);
@@ -62,7 +68,8 @@ public class GroovyExpressionTest extends TestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.getIn().setHeader("foo.bar", "cheese");
         exchange.getIn().setHeader("name", "James");

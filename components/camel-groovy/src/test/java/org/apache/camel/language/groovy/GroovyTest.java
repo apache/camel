@@ -21,14 +21,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class GroovyTest extends ContextTestSupport {
+public class GroovyTest extends CamelTestSupport {
     protected String expected = "<hello>world!</hello>";
     protected String groovyBuilderClass = "org.apache.camel.language.groovy.example.GroovyRoutes";
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedBodiesReceived(expected);
@@ -40,6 +43,7 @@ public class GroovyTest extends ContextTestSupport {
         log.debug("Should have received one exchange: " + resultEndpoint.getReceivedExchanges());
     }
 
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedMessageCount(0);
