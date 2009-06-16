@@ -25,18 +25,21 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.fs.local.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
-public class JcrRouteTest extends ContextTestSupport {
+public class JcrRouteTest extends CamelTestSupport {
 
     private Repository repository;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         clean();
         super.setUp();
     }
@@ -51,6 +54,7 @@ public class JcrRouteTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testJcrRoute() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
         Exchange out = template.send("direct:a", exchange);

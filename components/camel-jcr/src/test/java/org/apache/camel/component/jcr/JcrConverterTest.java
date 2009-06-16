@@ -31,27 +31,33 @@ import org.apache.jackrabbit.value.BinaryValue;
 import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.StringValue;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Tests for JCR type conversions ({@link JcrConverter})
  */
-public class JcrConverterTest extends TestCase {
+public class JcrConverterTest extends Assert {
 
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
             new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
 
+    @Test
     public void testBooleanValueConverter() throws Exception {
         assertJcrConverterAvailable(BooleanValue.class, Boolean.TRUE);
     }
 
+    @Test
     public void testBinaryValueConverter() throws Exception {
         assertJcrConverterAvailable(BinaryValue.class, new ByteArrayInputStream("test".getBytes()));
     }
 
+    @Test
     public void testDateValueConverter() throws Exception {
         assertJcrConverterAvailable(DateValue.class, Calendar.getInstance());
     }
 
+    @Test
     public void testStringValueConverter() throws Exception {
         assertJcrConverterAvailable(StringValue.class, "plain text");
     }
