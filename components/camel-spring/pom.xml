@@ -74,6 +74,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -162,7 +163,10 @@
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <forkMode>pertest</forkMode>
-          <excludes>
+          <includes>
+             <include>**/*Test.java</include>
+          </includes>
+          <excludes>            
             <!-- TODO FIXME ASAP -->
             <exclude>**/XXXTest.*</exclude>            
           </excludes>
