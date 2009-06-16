@@ -23,8 +23,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test to verify that splitRows=false option.
@@ -32,7 +36,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  * @version $Revision$
  */
 @ContextConfiguration
-public class NoSplitRowsTest extends AbstractJUnit38SpringContextTests {
+public class NoSplitRowsTest extends AbstractJUnit4SpringContextTests {
     
     private static final transient Log LOG = LogFactory.getLog(NoSplitRowsTest.class);
 
@@ -41,6 +45,7 @@ public class NoSplitRowsTest extends AbstractJUnit38SpringContextTests {
 
     protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
 
+    @Test
     public void testHeaderAndTrailer() throws Exception {
         results.expectedMessageCount(1);
         results.message(0).body().isInstanceOf(List.class);

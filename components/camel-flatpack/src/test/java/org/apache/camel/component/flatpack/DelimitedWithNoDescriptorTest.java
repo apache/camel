@@ -26,14 +26,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @version $Revision$
  */
 @ContextConfiguration
-public class DelimitedWithNoDescriptorTest extends AbstractJUnit38SpringContextTests {
+public class DelimitedWithNoDescriptorTest extends AbstractJUnit4SpringContextTests {
     private static final transient Log LOG = LogFactory.getLog(FixedLengthTest.class);
 
     @EndpointInject(uri = "mock:results")
@@ -41,6 +45,7 @@ public class DelimitedWithNoDescriptorTest extends AbstractJUnit38SpringContextT
 
     protected String[] expectedItemDesc = {"James", "Claus"};
 
+    @Test
     public void testCamel() throws Exception {
         results.expectedMessageCount(2);
         results.assertIsSatisfied();

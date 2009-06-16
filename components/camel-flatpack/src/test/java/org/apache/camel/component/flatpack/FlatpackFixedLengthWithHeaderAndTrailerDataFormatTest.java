@@ -19,17 +19,19 @@ package org.apache.camel.component.flatpack;
 import java.io.File;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 /**
  * Unit test for fixed length DataFormat.
  */
-public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends ContextTestSupport {
+public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends CamelTestSupport {
 
+    @Test
     public void testUnmarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         // by default we get on big message

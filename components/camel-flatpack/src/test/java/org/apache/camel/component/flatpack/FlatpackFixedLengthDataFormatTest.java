@@ -22,17 +22,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 /**
  * Unit test for fixed length DataFormat.
  */
-public class FlatpackFixedLengthDataFormatTest extends ContextTestSupport {
+public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
 
+    @Test
     public void testUnmarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         // by default we get on big message
@@ -50,6 +52,7 @@ public class FlatpackFixedLengthDataFormatTest extends ContextTestSupport {
         assertEquals("JOHN", row.get("FIRSTNAME"));
     }
 
+    @Test
     public void testMarshalWithDefinition() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         // by default we get on big message
