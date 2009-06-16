@@ -18,21 +18,23 @@ package org.apache.camel.component.irc;
 
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class IrcRouteTest extends ContextTestSupport {
+public class IrcRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "Message One";
     protected String body2 = "Message Two";
     private boolean sentMessages;
 
+    @Test
     public void testIrcMessages() throws Exception {
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived(body1, body2);
