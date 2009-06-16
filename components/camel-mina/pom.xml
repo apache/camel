@@ -131,10 +131,11 @@
                     <useFile>true</useFile>
                     <forkMode>pertest</forkMode>
                     <includes>
-                        <include>**/*Test.*</include>
+                        <include>**/*Test.java</include>
                     </includes>
                     <excludes>
-                        <!-- <exclude>**/XXXTest.*</exclude> -->
+                        <!-- This test just show the shutdown error -->
+                        <exclude>**/MinaProducerShutdownTest.*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
