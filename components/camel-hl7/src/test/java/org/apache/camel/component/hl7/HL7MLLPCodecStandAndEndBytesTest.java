@@ -22,16 +22,17 @@ import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for the HL7MLLP Codec using different start and end bytes.
  */
-public class HL7MLLPCodecStandAndEndBytesTest extends ContextTestSupport {
+public class HL7MLLPCodecStandAndEndBytesTest extends CamelTestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -70,6 +71,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSendHL7Message() throws Exception {
         String line1 = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
         String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";

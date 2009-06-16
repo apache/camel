@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.hl7;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't require the HAPI library).
  * The message format can be java.lang.String.
  */
-public class HL7MLLPCodecPlainStringTest extends ContextTestSupport {
+public class HL7MLLPCodecPlainStringTest extends CamelTestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -40,6 +41,7 @@ public class HL7MLLPCodecPlainStringTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testPlainString() throws Exception {
         // START SNIPPET: e1
         MockEndpoint mock = getMockEndpoint("mock:result");

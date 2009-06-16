@@ -24,16 +24,17 @@ import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for HL7 routing.
  */
-public class HL7RouteTest extends ContextTestSupport {
+public class HL7RouteTest extends CamelTestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -49,6 +50,7 @@ public class HL7RouteTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSendA19() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:a19");
         mock.expectedMessageCount(1);
@@ -71,6 +73,7 @@ public class HL7RouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendA01() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:a01");
         mock.expectedMessageCount(1);
@@ -92,6 +95,7 @@ public class HL7RouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendUnknown() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unknown");
         mock.expectedMessageCount(1);

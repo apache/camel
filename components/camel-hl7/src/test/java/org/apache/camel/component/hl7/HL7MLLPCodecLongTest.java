@@ -23,17 +23,18 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 
 /**
  * Unit test for the HL7MLLP Codec.
  */
-public class HL7MLLPCodecLongTest extends ContextTestSupport {
+public class HL7MLLPCodecLongTest extends CamelTestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -65,6 +66,7 @@ public class HL7MLLPCodecLongTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSendHL7Message() throws Exception {
         // START SNIPPET: e2
         BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02.txt")));
