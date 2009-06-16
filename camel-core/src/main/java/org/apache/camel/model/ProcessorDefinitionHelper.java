@@ -14,21 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.camel.model.ChoiceDefinition;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.WhenDefinition;
-
 /**
- * Helper class for ProcessorType and the other model classes.
+ * Helper class for ProcessorDefinition and the other model classes.
  */
-public final class ProcessorDefinitionHelper {
+final class ProcessorDefinitionHelper {
 
     private ProcessorDefinitionHelper() {
     }

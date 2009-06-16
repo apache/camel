@@ -34,7 +34,6 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ProcessorDefinitionHelper;
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
