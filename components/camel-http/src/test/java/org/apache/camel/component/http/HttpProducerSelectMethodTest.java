@@ -18,9 +18,10 @@ package org.apache.camel.component.http;
 
 import java.io.IOException;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpMethod;
+import org.junit.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.apache.camel.component.http.HttpMethods.POST;
@@ -28,8 +29,9 @@ import static org.apache.camel.component.http.HttpMethods.POST;
 /**
  * Unit test to verify the algorithm for selecting either GET or POST.
  */
-public class HttpProducerSelectMethodTest extends ContextTestSupport {
+public class HttpProducerSelectMethodTest extends CamelTestSupport {
 
+    @Test
     public void testNoDataDefaultIsGet() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
@@ -47,6 +49,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testDataDefaultIsPost() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
@@ -64,6 +67,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testWithMethodPostInHeader() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
@@ -82,6 +86,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testWithMethodGetInHeader() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
@@ -100,6 +105,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testWithEndpointQuery() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
@@ -117,6 +123,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testWithQueryInHeader() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
@@ -135,6 +142,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testWithQueryInHeaderOverrideEndpoint() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);

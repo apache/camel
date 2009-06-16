@@ -19,18 +19,21 @@ package org.apache.camel.component.http;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpGetTest extends ContextTestSupport {
+public class HttpGetTest extends CamelTestSupport {
     protected String expectedText = "activemq";
 
+    @Test
     public void testHttpGet() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);

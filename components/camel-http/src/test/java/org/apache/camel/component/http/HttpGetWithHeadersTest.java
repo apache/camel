@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
 
 public class HttpGetWithHeadersTest extends HttpGetTest {
 
@@ -34,7 +35,8 @@ public class HttpGetWithHeadersTest extends HttpGetTest {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // "Szukaj" is "Search" in polish language
         expectedText = "Szukaj";
         super.setUp();

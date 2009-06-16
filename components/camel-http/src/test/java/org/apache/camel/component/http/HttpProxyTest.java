@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.HttpClient;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpProxyTest extends ContextTestSupport {
+public class HttpProxyTest extends CamelTestSupport {
 
+    @Test
     public void testNoHttpProxyConfigured() throws Exception {
         HttpEndpoint http = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
 
@@ -32,6 +34,7 @@ public class HttpProxyTest extends ContextTestSupport {
         assertEquals("No proxy configured yet", -1, client.getHostConfiguration().getProxyPort());
     }
 
+    @Test
     public void testHttpProxyConfigured() throws Exception {
         HttpEndpoint http = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
 
@@ -48,6 +51,7 @@ public class HttpProxyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testHttpProxyEndpointConfigured() throws Exception {
         HttpEndpoint http = context.getEndpoint("http://www.google.com?proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
 

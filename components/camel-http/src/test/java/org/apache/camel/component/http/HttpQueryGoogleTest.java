@@ -16,17 +16,20 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
 
 /**
  * Unit test to query Google using GET with endpoint having the query parameters.
  */
-public class HttpQueryGoogleTest extends ContextTestSupport {
+public class HttpQueryGoogleTest extends CamelTestSupport {
 
     public boolean isUseRouteBuilder() {
         return false;
     }
 
+    @Test
     public void testQueryGoogle() throws Exception {
         Object out = template.requestBody("http://www.google.com/search?q=Camel", "");
         assertNotNull(out);

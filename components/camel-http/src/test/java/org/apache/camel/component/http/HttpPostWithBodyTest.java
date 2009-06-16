@@ -20,20 +20,22 @@ package org.apache.camel.component.http;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.apache.camel.component.http.HttpMethods.POST;
 
 
-public class HttpPostWithBodyTest extends ContextTestSupport {
+public class HttpPostWithBodyTest extends CamelTestSupport {
     protected String expectedText = "Method Not Allowed";
 
+    @Test
     public void testHttpPostWithError() throws Exception {
 
         Exchange exchange = template.send("direct:start", new Processor() {
@@ -62,6 +64,7 @@ public class HttpPostWithBodyTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testHttpPostRecovery() throws Exception {
 
         MockEndpoint mockResult = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);

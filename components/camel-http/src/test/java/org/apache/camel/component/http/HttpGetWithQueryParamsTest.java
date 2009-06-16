@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.http;
 
+import org.junit.Before;
+
 /**
  * @version $Revision$ 
  */
 public class HttpGetWithQueryParamsTest extends HttpGetTest {
-    protected void setUp() throws Exception {
+    
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         expectedText = "activemq.apache.org";
     }

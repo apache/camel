@@ -19,16 +19,17 @@ package org.apache.camel.component.http;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 
 public class HttpsGetTest extends HttpGetTest {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         expectedText = "https://mail.google.com/mail/";
         super.setUp();
     }

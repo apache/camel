@@ -16,19 +16,22 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.component.http.HttpMethods.POST;
 
 /**
  * Unit test of invalid configuraiton
  */
-public class HttpInvalidHttpClientConfigurationTest extends ContextTestSupport {
+public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown ResolveEndpointFailedException");
@@ -37,6 +40,7 @@ public class HttpInvalidHttpClientConfigurationTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidHostConfiguration() {
         // dummy
     }
