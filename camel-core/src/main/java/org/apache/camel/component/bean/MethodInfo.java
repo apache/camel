@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.util.ObjectHelper;
@@ -202,9 +203,22 @@ public class MethodInfo {
                     } else {
                         Expression expression = expressions[i];
                         if (expression != null) {
-                            value = expression.evaluate(exchange, parameters.get(i).getType());
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Parameter #" + i + " evaluated as: " + value + " type: " + ObjectHelper.type(value));
+                            // use object first to avoid type convertions so we know if there is a value or not
+                            Object result = expression.evaluate(exchange, Object.class);
+                            if (result != null) {
+                                // we got a value now try to convert it to the expected type
+                                value = exchange.getContext().getTypeConverter().convertTo(parameters.get(i).getType(), result);
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Parameter #" + i + " evaluated as: " + value + " type: " + ObjectHelper.type(value));
+                                }
+                                if (value == null) {
+                                    Exception e = new NoTypeConversionAvailableException(result, parameters.get(i).getType()); 
+                                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                                }
+                            } else {
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Parameter #" + i + " evaluated as null");
+                                }
                             }
                         }
                     }
