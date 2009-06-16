@@ -43,8 +43,7 @@
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <type>test-jar</type>
+            <artifactId>camel-test</artifactId>           
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -54,8 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-            <type>test-jar</type>
+            <artifactId>camel-spring</artifactId>            
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -18,13 +18,16 @@ package org.apache.camel.component.jdbc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class JdbcSpringAnotherRouteTest extends JdbcAnotherRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUseRouteBuilder(false);
         applicationContext = createApplicationContext();
         super.setUp();        
@@ -34,7 +37,8 @@ public class JdbcSpringAnotherRouteTest extends JdbcAnotherRouteTest {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (applicationContext != null) {
             applicationContext.destroy();
         }

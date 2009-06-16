@@ -25,16 +25,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import javax.sql.DataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * @version $Revision$
  */
-public class JdbcProducerConcurrenctTest extends ContextTestSupport {
+public class JdbcProducerConcurrenctTest extends CamelTestSupport {
 
     protected DataSource ds;
     private String driverClass = "org.hsqldb.jdbcDriver";
@@ -42,10 +45,12 @@ public class JdbcProducerConcurrenctTest extends ContextTestSupport {
     private String user = "sa";
     private String password = "";
 
+    @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
+    @Test
     public void testConcurrentProducers() throws Exception {
         doSendMessages(10, 5);
     }
@@ -95,7 +100,8 @@ public class JdbcProducerConcurrenctTest extends ContextTestSupport {
         };
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         DriverManagerDataSource dataSource = new DriverManagerDataSource(url, user, password);
         dataSource.setDriverClassName(driverClass);
         ds = dataSource;
@@ -107,7 +113,8 @@ public class JdbcProducerConcurrenctTest extends ContextTestSupport {
         super.setUp();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         JdbcTemplate jdbc = new JdbcTemplate(ds);
         jdbc.execute("drop table customer");

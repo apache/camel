@@ -20,24 +20,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.sql.DataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * @version $Revision$
  */
-public class JdbcRouteTest extends ContextTestSupport {
+public class JdbcRouteTest extends CamelTestSupport {
     protected DataSource ds;
     private String driverClass = "org.hsqldb.jdbcDriver";
     private String url = "jdbc:hsqldb:mem:camel_jdbc";
     private String user = "sa";
     private String password = "";
 
+    @Test
     public void testJdbcRoutes() throws Exception {
         // START SNIPPET: invoke
         // first we create our exchange using the endpoint
@@ -85,7 +89,8 @@ public class JdbcRouteTest extends ContextTestSupport {
         };
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         DriverManagerDataSource dataSource = new DriverManagerDataSource(url, user, password);
         dataSource.setDriverClassName(driverClass);
         ds = dataSource;
@@ -99,7 +104,8 @@ public class JdbcRouteTest extends ContextTestSupport {
         super.setUp();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         JdbcTemplate jdbc = new JdbcTemplate(ds);
         jdbc.execute("drop table customer");
