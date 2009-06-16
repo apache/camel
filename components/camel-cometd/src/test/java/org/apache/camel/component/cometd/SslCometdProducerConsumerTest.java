@@ -19,21 +19,24 @@ package org.apache.camel.component.cometd;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
  */
-public class SslCometdProducerConsumerTest extends ContextTestSupport {
+public class SslCometdProducerConsumerTest extends CamelTestSupport {
 
     private static final String URI = "cometds://127.0.0.1:9080/service/test?resourceBase=./target/test-classes/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     protected String pwd = "changeit";
     
+    @Test
     public void testProducer() throws Exception {
         Person person = new Person("David", "Greco");
         template.requestBody("direct:input", person);
@@ -47,7 +50,8 @@ public class SslCometdProducerConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         stopCamelContext();
     }
