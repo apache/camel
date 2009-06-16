@@ -47,6 +47,16 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} == abc and ${in.header.bar} < 200", true);
     }
 
+    public void testAndWithQuotation() throws Exception {
+        assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} == '123'", true);
+        assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} == '444'", false);
+        assertExpression("${in.header.foo} == 'def' and ${in.header.bar} == '123'", false);
+        assertExpression("${in.header.foo} == 'def' and ${in.header.bar} == '444'", false);
+
+        assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} > '100'", true);
+        assertExpression("${in.header.foo} == 'abc' and ${in.header.bar} < '200'", true);
+    }
+
     public void testOr() throws Exception {
         assertExpression("${in.header.foo} == abc or ${in.header.bar} == 123", true);
         assertExpression("${in.header.foo} == abc or ${in.header.bar} == 444", true);
@@ -57,6 +67,18 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} == abc or ${in.header.bar} < 200", true);
         assertExpression("${in.header.foo} == def or ${in.header.bar} < 200", true);
         assertExpression("${in.header.foo} == def or ${in.header.bar} < 100", false);
+    }
+
+    public void testOrWithQuotation() throws Exception {
+        assertExpression("${in.header.foo} == 'abc' or ${in.header.bar} == '123'", true);
+        assertExpression("${in.header.foo} == 'abc' or ${in.header.bar} == '444'", true);
+        assertExpression("${in.header.foo} == 'def' or ${in.header.bar} == '123'", true);
+        assertExpression("${in.header.foo} == 'def' or ${in.header.bar} == '444'", false);
+
+        assertExpression("${in.header.foo} == 'abc' or ${in.header.bar} < '100'", true);
+        assertExpression("${in.header.foo} == 'abc' or ${in.header.bar} < '200'", true);
+        assertExpression("${in.header.foo} == 'def' or ${in.header.bar} < '200'", true);
+        assertExpression("${in.header.foo} == 'def' or ${in.header.bar} < '100'", false);
     }
 
     public void testEqualOperator() throws Exception {

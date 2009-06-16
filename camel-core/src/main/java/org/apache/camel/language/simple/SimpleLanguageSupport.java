@@ -42,7 +42,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
     // this is a regex for a given group in a simple expression that uses operators
     protected static final String GROUP_PATTERN =
-        "\\$\\{(\\S+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in|is|not is|range|not range)\\s+('.*'|\\S+)";
+        "\\$\\{(\\S+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in|is|not is|range|not range)\\s+('.*?'|\\S+)";
 
     // this is the operator reg ex pattern used to match if a given expression is operator based or not
     protected static final Pattern PATTERN = Pattern.compile("^(" + GROUP_PATTERN + ")(\\s+(and|or)\\s+(" + GROUP_PATTERN + "))?$");

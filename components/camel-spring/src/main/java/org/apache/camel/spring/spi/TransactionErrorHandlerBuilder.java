@@ -56,7 +56,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         if (transactionTemplate == null) {
             // lookup in context if no transaction template has been configured
-            LOG.debug("No TransactionTemplate configured on TransactedErrorHandlerBuilder. Will try find it in the registry.");
+            LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
             if (transactionTemplate == null) {
                 Map<String, TransactedPolicy> map = routeContext.lookupByType(TransactedPolicy.class);
@@ -81,10 +81,10 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
                     transactionTemplate = map.values().iterator().next();
                 } else if (LOG.isDebugEnabled()) {
                     if (map == null || map.isEmpty()) {
-                        LOG.debug("No TransactionTemplate found in registry.");
+                        LOG.trace("No TransactionTemplate found in registry.");
                     } else {
                         LOG.debug("Found " + map.size() + " TransactionTemplate in registry. "
-                                + "Cannot determine which one to use. Please configure a TransactionTemplate on the TransactedErrorHandlerBuilder");
+                                + "Cannot determine which one to use. Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder");
                     }
                 }
             }
@@ -95,10 +95,10 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
                     transactionTemplate = new TransactionTemplate(map.values().iterator().next());
                 } else if (LOG.isDebugEnabled()) {
                     if (map == null || map.isEmpty()) {
-                        LOG.debug("No PlatformTransactionManager found in registry.");
+                        LOG.trace("No PlatformTransactionManager found in registry.");
                     } else {
                         LOG.debug("Found " + map.size() + " PlatformTransactionManager in registry. "
-                                + "Cannot determine which one to use for TransactionTemplate. Please configure a TransactionTemplate on the TransactedErrorHandlerBuilder");
+                                + "Cannot determine which one to use for TransactionTemplate. Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder");
                     }
                 }
             }
@@ -108,7 +108,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             }
         }
 
-        ObjectHelper.notNull(transactionTemplate, "transactionTemplate");
+        ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
 
         TransactionErrorHandler answer = new TransactionErrorHandler(processor, getLogger(), getOnRedelivery(),
                 getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy(), transactionTemplate);
