@@ -57,8 +57,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
+      <artifactId>camel-test</artifactId>      
       <optional>true</optional>
       <scope>test</scope>
     </dependency>

@@ -22,9 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.TestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.builder.sql.SqlBuilder.sql;
 
@@ -36,6 +38,7 @@ public class SqlTest extends TestSupport {
     protected CamelContext context = new DefaultCamelContext();
     protected Exchange exchange;
 
+    @Test
     public void testExpression() throws Exception {
         Expression expression = sql("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'");
         List value = expression.evaluate(exchange, List.class);
@@ -48,6 +51,7 @@ public class SqlTest extends TestSupport {
         }
     }
 
+    @Test
     public void testExpressionWithHeaderVariable() throws Exception {
         Expression expression = sql("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader");
         List value = expression.evaluate(exchange, List.class);
@@ -62,16 +66,19 @@ public class SqlTest extends TestSupport {
         }
     }
 
+    @Test
     public void testPredicates() throws Exception {
         assertPredicate(sql("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'"), exchange, true);
         assertPredicate(sql("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'Manchester'"), exchange, false);
     }
 
+    @Test
     public void testPredicateWithHeaderVariable() throws Exception {
         assertPredicate(sql("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader"), exchange, true);
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         exchange = createExchange();
     }
 
