@@ -23,19 +23,21 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class ConvertPayloadToInputStreamTest extends ContextTestSupport {
+public class ConvertPayloadToInputStreamTest extends CamelTestSupport {
     protected String expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testConvertPayloadToInputStream() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);

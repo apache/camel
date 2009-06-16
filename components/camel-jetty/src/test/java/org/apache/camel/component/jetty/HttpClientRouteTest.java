@@ -22,15 +22,17 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class HttpClientRouteTest extends ContextTestSupport {
+public class HttpClientRouteTest extends CamelTestSupport {
 
+    @Test
     public void testHttpClient() throws Exception {
         System.getProperties().put("HTTPClient.dontChunkRequests", "yes");
 

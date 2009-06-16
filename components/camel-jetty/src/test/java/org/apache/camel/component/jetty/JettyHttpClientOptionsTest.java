@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpProducer;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for http client options.
  */
-public class JettyHttpClientOptionsTest extends ContextTestSupport {
+public class JettyHttpClientOptionsTest extends CamelTestSupport {
 
+    @Test
     public void testCustomHttpBinding() throws Exception {
         // assert jetty was configured with our timeout
         JettyHttpEndpoint jettyEndpoint = (JettyHttpEndpoint) context.getEndpoint("jetty:http://localhost:8080/myapp/myservice?httpClient.soTimeout=5555");

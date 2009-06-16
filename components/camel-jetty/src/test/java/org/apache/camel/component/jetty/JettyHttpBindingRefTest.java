@@ -19,23 +19,26 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.DefaultHttpBinding;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for http binding ref option.
  */
-public class JettyHttpBindingRefTest extends ContextTestSupport {
+public class JettyHttpBindingRefTest extends CamelTestSupport {
 
+    @Test
     public void testDefaultHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:9080/myapp/myservice", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
     }
 
+    @Test
     public void testCustomHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:9081/myapp/myotherservice", "Hello World");
         assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));

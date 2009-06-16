@@ -18,18 +18,19 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpConstants;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.MessageHelper;
+import org.junit.Test;
 
 /**
  * Unit test for exposing a http server that returns images
  */
-public class JettyImageFileTest extends ContextTestSupport {
+public class JettyImageFileTest extends CamelTestSupport {
     
     private void sendImageContent(boolean usingGZip) throws Exception {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
@@ -43,10 +44,12 @@ public class JettyImageFileTest extends ContextTestSupport {
         assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "image/jpeg");
     }
 
+    @Test
     public void testImageContentType() throws Exception {
         sendImageContent(false);
     }
-    
+
+    @Test
     public void testImageContentWithGZip() throws Exception {
         sendImageContent(true);
     }

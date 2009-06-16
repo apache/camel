@@ -19,18 +19,20 @@ package org.apache.camel.component.jetty;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class MultiThreadedHttpGetTest extends ContextTestSupport {
+public class MultiThreadedHttpGetTest extends CamelTestSupport {
 
+    @Test
     public void testHttpGetWithConversion() throws Exception {
 
         // In this scenario response stream is converted to String
@@ -41,6 +43,7 @@ public class MultiThreadedHttpGetTest extends ContextTestSupport {
         sendMessagesTo(endpointName, 5);
     }
 
+    @Test
     public void testHttpGetWithoutConversion() throws Exception {
 
         // This is needed as by default there are 2 parallel
@@ -54,6 +57,7 @@ public class MultiThreadedHttpGetTest extends ContextTestSupport {
         sendMessagesTo(endpointName, 5);
     }
 
+    @Test
     public void testHttpGetWithExplicitStreamClose() throws Exception {
 
         // We close connections explicitely at the very end of the flow

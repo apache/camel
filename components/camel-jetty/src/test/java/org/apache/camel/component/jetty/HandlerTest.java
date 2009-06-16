@@ -20,20 +20,22 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.mortbay.jetty.handler.StatisticsHandler;
 
-public class HandlerTest extends ContextTestSupport {
+public class HandlerTest extends CamelTestSupport {
     private StatisticsHandler statisticsHandler1 = new StatisticsHandler();
     private StatisticsHandler statisticsHandler2 = new StatisticsHandler();
     private StatisticsHandler statisticsHandler3 = new StatisticsHandler();
 
     private String htmlResponse = "<html><body>Book 123 is Camel in Action</body></html>";
 
+    @Test
     public void testHandler() throws Exception {
         // First test the situation where one should invoke the handler once
         assertEquals(0, statisticsHandler1.getRequests());

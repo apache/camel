@@ -16,19 +16,20 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpConstants;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
+import org.junit.Test;
 
 /**
  * Unit test for content-type
  */
-public class JettyContentTypeTest extends ContextTestSupport {
+public class JettyContentTypeTest extends CamelTestSupport {
 
     protected void sendMessageWithContentType(boolean usingGZip) {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
@@ -47,14 +48,17 @@ public class JettyContentTypeTest extends ContextTestSupport {
         assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "text/xml");
     }
 
+    @Test
     public void testSameContentType() throws Exception {
         sendMessageWithContentType(false);
     }
     
+    @Test
     public void testContentTypeWithGZip() throws Exception {
         sendMessageWithContentType(true);
     }
 
+    @Test
     public void testMixedContentType() throws Exception {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
         Exchange exchange = endpoint.createExchange();

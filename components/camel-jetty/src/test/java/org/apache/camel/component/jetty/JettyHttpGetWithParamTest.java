@@ -17,22 +17,24 @@
 package org.apache.camel.component.jetty;
 
 import junit.framework.Assert;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
-public class JettyHttpGetWithParamTest extends ContextTestSupport {
+public class JettyHttpGetWithParamTest extends CamelTestSupport {
 
     private String serverUri = "http://localhost:9080/myservice";
     private MyParamsProcessor processor = new MyParamsProcessor();
 
+    @Test
     public void testHttpGetWithParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -44,6 +46,7 @@ public class JettyHttpGetWithParamTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHttpGetWithParamsViaHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");

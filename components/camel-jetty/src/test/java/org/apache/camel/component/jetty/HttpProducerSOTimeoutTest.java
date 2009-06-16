@@ -18,18 +18,20 @@ package org.apache.camel.component.jetty;
 
 import java.net.SocketTimeoutException;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for using http client SO timeout
  *
  * @version $Revision$
  */
-public class HttpProducerSOTimeoutTest extends ContextTestSupport {
+public class HttpProducerSOTimeoutTest extends CamelTestSupport {
 
+    @Test
     public void testSendWithSOTimeoutNoTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -39,7 +41,8 @@ public class HttpProducerSOTimeoutTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
+    
+    @Test
     public void testSendWithSOTimeoutTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

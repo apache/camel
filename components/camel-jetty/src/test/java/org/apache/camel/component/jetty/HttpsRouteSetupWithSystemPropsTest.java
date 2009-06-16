@@ -21,11 +21,13 @@ import java.net.URL;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
 
 public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
     
     @Override
-    protected void setUp() throws Exception {   
+    @Before
+    public void setUp() throws Exception {   
         // ensure jsse clients can validate the self signed dummy localhost cert, 
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");

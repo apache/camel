@@ -18,16 +18,18 @@ package org.apache.camel.component.jetty;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for wiki demonstration.
  */
-public class JettyRouteTest extends ContextTestSupport {
+public class JettyRouteTest extends CamelTestSupport {
 
+    @Test
     public void testSendToJetty() throws Exception {
         Object response = template.requestBody("http://localhost:9080/myapp/myservice", "bookid=123");
         // convert the response to a String

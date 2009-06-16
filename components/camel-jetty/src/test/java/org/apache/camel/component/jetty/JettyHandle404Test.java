@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Based on end user on forum how to get the 404 error code in his enrich aggregator
  *
  * @version $Revision$
  */
-public class JettyHandle404Test extends ContextTestSupport {
+public class JettyHandle404Test extends CamelTestSupport {
 
+    @Test
     public void testSimulate404() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Page not found");

@@ -23,15 +23,16 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class HttpRoundtripHeaderTest extends ContextTestSupport {
+public class HttpRoundtripHeaderTest extends CamelTestSupport {
     protected final String uri = "http://localhost:8088/WhichWillGetCloseException";
     protected final String jettyUri = "jetty:" + uri;
     protected final String outputText = ":output";
@@ -39,6 +40,7 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
     protected String expectedText = inputText + outputText;
 
     // http://issues.apache.org/activemq/browse/CAMEL-324
+    @Test
     public void testHttpRoundTripHeaders() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
@@ -54,6 +56,7 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
         assertEquals("response matches: " + expectedText, expectedText, lastLine);
     }
 
+    @Test
     public void testHttpRoundTripHeadersWithNoIngoredHeaders() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);

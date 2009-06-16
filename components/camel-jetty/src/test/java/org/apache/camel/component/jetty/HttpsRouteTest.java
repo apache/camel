@@ -26,23 +26,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 
-public class HttpsRouteTest extends ContextTestSupport {
-    private static final String NULL_VALUE_MARKER = ContextTestSupport.class.getCanonicalName();
+public class HttpsRouteTest extends CamelTestSupport {
+    private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();        
         // ensure jsse clients can validate the self signed dummy localhost cert, 
         // use the server keystore as the trust store for these tests
@@ -51,7 +55,8 @@ public class HttpsRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         restoreSystemProperties();
         super.tearDown();
     }
@@ -72,6 +77,7 @@ public class HttpsRouteTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testEndpoint() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         mockEndpoint.expectedBodiesReceived(expectedBody);
@@ -93,7 +99,7 @@ public class HttpsRouteTest extends ContextTestSupport {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
     
-    
+    @Test
     public void testEndpointWithoutHttps() {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);    
         try {
@@ -104,6 +110,7 @@ public class HttpsRouteTest extends ContextTestSupport {
         assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
     }
 
+    @Test
     public void testHelloEndpoint() throws Exception {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -117,7 +124,8 @@ public class HttpsRouteTest extends ContextTestSupport {
         assertEquals("<b>Hello World</b>", data);
         
     }
-        
+    
+    @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
         try {
             new URL("http://localhost:9080/hello").openStream();

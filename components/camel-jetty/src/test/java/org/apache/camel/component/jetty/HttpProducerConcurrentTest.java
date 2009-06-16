@@ -25,20 +25,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * HTTP producer concurrent test.
  *
  * @version $Revision$
  */
-public class HttpProducerConcurrentTest extends ContextTestSupport {
+public class HttpProducerConcurrentTest extends CamelTestSupport {
 
+    @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
+    @Test
     public void testConcurrentProducers() throws Exception {
         doSendMessages(10, 5);
     }

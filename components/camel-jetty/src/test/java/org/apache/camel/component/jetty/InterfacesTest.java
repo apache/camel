@@ -23,11 +23,12 @@ import java.net.NetworkInterface;
 import java.net.URL;
 import java.util.Enumeration;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 
-public class InterfacesTest extends ContextTestSupport {
+public class InterfacesTest extends CamelTestSupport {
     
     private String remoteInterfaceAddress;
    
@@ -53,6 +54,7 @@ public class InterfacesTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testLocalInterfaceHandled() throws IOException, InterruptedException {
         int expectedMessages = (remoteInterfaceAddress != null) ? 3 : 2;
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
@@ -75,7 +77,7 @@ public class InterfacesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }    
       
-    
+    @Test
     public void testAllInterfaces() throws Exception {
         int expectedMessages = (remoteInterfaceAddress != null) ? 2 : 1;
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);

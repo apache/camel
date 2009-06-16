@@ -25,20 +25,22 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpRouteTest extends ContextTestSupport {
+public class HttpRouteTest extends CamelTestSupport {
     protected String expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testEndpoint() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived(expectedBody);
@@ -60,6 +62,7 @@ public class HttpRouteTest extends ContextTestSupport {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
 
+    @Test
     public void testHelloEndpoint() throws Exception {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();

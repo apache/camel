@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for HttpOperationFailedException should contain reponse body
  */
-public class JettyResponseBodyWhenErrorTest extends ContextTestSupport {
+public class JettyResponseBodyWhenErrorTest extends CamelTestSupport {
 
+    @Test
     public void testResponseBodyWhenError() throws Exception {
         try {
             template.requestBody("http://localhost:9080/myapp/myservice", "bookid=123");

@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
-public class JettyWithXPathChoiceTest extends ContextTestSupport {
+public class JettyWithXPathChoiceTest extends CamelTestSupport {
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
 
+    @Test
     public void testSendToFirstWhen() throws Exception {
         String body = "<one/>";
         expectsMessageCount(0, y, z);
@@ -51,7 +54,8 @@ public class JettyWithXPathChoiceTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");

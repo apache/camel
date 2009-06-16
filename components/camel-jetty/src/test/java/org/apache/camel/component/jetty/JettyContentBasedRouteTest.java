@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.jetty;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test with a simple route test.
  */
-public class JettyContentBasedRouteTest extends ContextTestSupport {
+public class JettyContentBasedRouteTest extends CamelTestSupport {
 
     private String serverUri = "http://localhost:9080/myservice";
 
+    @Test
     public void testSendOne() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:one");
 
@@ -37,6 +39,7 @@ public class JettyContentBasedRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendOther() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:other");
 
