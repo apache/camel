@@ -1151,7 +1151,7 @@
           <useFile>true</useFile>
           <failIfNoTests>false</failIfNoTests>
           <includes>
-             <include>**/*Test.*</include>             
+             <include>**/*Test.java</include>             
           </includes>
         </configuration>
       </plugin>
