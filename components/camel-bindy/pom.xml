@@ -61,8 +61,7 @@
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <artifactId>junit</artifactId>            
             <scope>test</scope>
         </dependency>
         <dependency>
