@@ -16,17 +16,18 @@
  */
 package org.apache.camel.guice;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.junit.Assert;
+import org.junit.Test;
 /**
  * Lets use a RouteBuilder to bind instances of routes to the CamelContext
  *
  * @version $Revision$
  */
-public class ConciseGuiceRouteTest extends TestCase {
+public class ConciseGuiceRouteTest extends Assert {
 
+    @Test
     public void testGuice() throws Exception {
         // lets disable resource injection to avoid JNDI being used
         Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class));

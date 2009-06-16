@@ -30,13 +30,15 @@ import com.google.inject.name.Names;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.guiceyfruit.Injectors;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
  *
  * @version $Revision$
  */
-public class GuiceRouteWithNamedKeysTest extends TestCase {
+public class GuiceRouteWithNamedKeysTest extends Assert {
 
     public static class MyModule extends CamelModuleWithMatchingRoutes {
 
@@ -47,7 +49,7 @@ public class GuiceRouteWithNamedKeysTest extends TestCase {
         }
     }
 
-
+    @Test
     public void testGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
 

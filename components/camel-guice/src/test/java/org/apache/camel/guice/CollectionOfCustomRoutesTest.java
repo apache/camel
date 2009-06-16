@@ -30,13 +30,15 @@ import com.google.inject.name.Named;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Create a collection of routes via a provider method
  *
  * @version $Revision$
  */
-public class CollectionOfCustomRoutesTest extends TestCase {
+public class CollectionOfCustomRoutesTest extends Assert {
 
     public static class MyModule extends CamelModuleWithMatchingRoutes {
 
@@ -47,6 +49,7 @@ public class CollectionOfCustomRoutesTest extends TestCase {
         }
     }
 
+    @Test
     public void testDummy() throws Exception {
 
     }

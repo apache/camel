@@ -29,6 +29,8 @@ import com.google.inject.name.Named;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Routes;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
+import org.junit.Test;
 
 
 
@@ -37,7 +39,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  *
  * @version $Revision$
  */
-public class EndpointInjectionTest extends TestCase {
+public class EndpointInjectionTest extends Assert {
 
     public static class MyModule extends CamelModuleWithMatchingRoutes {
 
@@ -60,6 +62,7 @@ public class EndpointInjectionTest extends TestCase {
         MockEndpoint endpoint;
     }
 
+    @Test
     public void testGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
 

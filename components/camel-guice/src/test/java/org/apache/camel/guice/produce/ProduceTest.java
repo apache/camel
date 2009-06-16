@@ -16,19 +16,25 @@
  */
 package org.apache.camel.guice.produce;
 
-import junit.framework.Assert;
 import org.apache.camel.Produce;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.testing.junit3.GuiceyTestCase;
+import org.guiceyfruit.testing.UseModule;
+import org.guiceyfruit.testing.junit4.GuiceyJUnit4;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Revision$
  */
-public class ProduceTest extends GuiceyTestCase {
+@RunWith(GuiceyJUnit4.class)
+@UseModule(ProduceTest.TestModule.class)
+public class ProduceTest {
 
     @Produce(uri = "direct:myService")
     protected MyListener producer;
 
+    @Test
     public void testInvokeService() throws Exception {
         // lets send a message
         String actual = producer.sayHello("James");

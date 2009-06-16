@@ -16,16 +16,17 @@
  */
 package org.apache.camel.guice;
 
-import junit.framework.TestCase;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
  *
  * @version $Revision$
  */
-public class TraditionalGuiceRouteTest extends TestCase {
+public class TraditionalGuiceRouteTest extends Assert {
 
     public static class MyModule extends CamelModuleWithRouteTypes {
 
@@ -34,6 +35,7 @@ public class TraditionalGuiceRouteTest extends TestCase {
         }
     }
 
+    @Test
     public void testGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
         GuiceTest.assertCamelContextRunningThenCloseInjector(injector);

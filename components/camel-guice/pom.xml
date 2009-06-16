@@ -49,7 +49,7 @@
     <!-- testing -->
     <dependency>
       <groupId>org.guiceyfruit</groupId>
-      <artifactId>guiceyfruit-junit3</artifactId>
+      <artifactId>guiceyfruit-junit4</artifactId>
       <version>${guiceyfruit-version}</version>
       <scope>test</scope>
     </dependency>

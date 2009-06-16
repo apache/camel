@@ -21,12 +21,20 @@ import org.apache.camel.Consume;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.testing.junit3.GuiceyTestCase;
+import org.guiceyfruit.testing.UseModule;
+import org.guiceyfruit.testing.junit4.GuiceyJUnit4;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * @version $Revision$
  */
-public class ConsumeTest extends GuiceyTestCase {
+@RunWith(GuiceyJUnit4.class)
+@UseModule(ConsumeTest.TestModule.class)
+public class ConsumeTest {
 
     @Inject
     protected MyBean bean;
@@ -35,6 +43,7 @@ public class ConsumeTest extends GuiceyTestCase {
 
     protected Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testConsumingWorks() throws Exception {
         template.sendBody("direct:start", expectedBody);
 

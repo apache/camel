@@ -23,13 +23,19 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.testing.junit3.GuiceyTestCase;
+import org.apache.camel.guice.consume.ConsumeTest;
+import org.guiceyfruit.testing.UseModule;
+import org.guiceyfruit.testing.junit4.GuiceyJUnit4;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Revision$
  */
 // START SNIPPET: example
-public class FilterTest extends GuiceyTestCase {
+@RunWith(GuiceyJUnit4.class)
+@UseModule(FilterTest.TestModule.class)
+public class FilterTest {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -37,7 +43,9 @@ public class FilterTest extends GuiceyTestCase {
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
+        resultEndpoint.reset();
         String expectedBody = "<matched/>";
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
@@ -47,7 +55,9 @@ public class FilterTest extends GuiceyTestCase {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
+        resultEndpoint.reset();
         resultEndpoint.expectedMessageCount(0);
 
         template.sendBodyAndHeader("<notMatched/>", "foo", "notMatchedHeaderValue");

@@ -32,6 +32,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.guiceyfruit.Injectors;
 import org.guiceyfruit.jndi.GuiceInitialContextFactory;
 import org.guiceyfruit.jndi.JndiBind;
+import org.junit.Assert;
+import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -41,7 +43,7 @@ import static org.hamcrest.Matchers.is;
  *
  * @version $Revision$
  */
-public class ComponentFoundInRegistryTest extends TestCase {
+public class ComponentFoundInRegistryTest extends Assert {
 
     public static class MyModule extends CamelModuleWithMatchingRoutes {
         @Provides
@@ -51,6 +53,7 @@ public class ComponentFoundInRegistryTest extends TestCase {
         }
     }
 
+    @Test
     public void testGuice() throws Exception {
         Hashtable env = new Hashtable();
         env.put(InitialContext.PROVIDER_URL, GuiceInitialContextFactory.class.getName());

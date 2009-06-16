@@ -22,15 +22,19 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class MainTest extends TestCase {
+public class MainTest extends Assert {
     protected Main main = new Main();
     protected String uri = "mock:results";
     protected Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testMain() throws Exception {
         main.start();
         List<CamelContext> contexts = main.getCamelContexts();
@@ -47,8 +51,8 @@ public class MainTest extends TestCase {
         endpoint.assertIsSatisfied();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (main != null) {
             main.stop();
         }

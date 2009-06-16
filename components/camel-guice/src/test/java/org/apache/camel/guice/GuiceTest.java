@@ -24,11 +24,13 @@ import com.google.inject.Injector;
 
 import org.apache.camel.CamelContext;
 import org.guiceyfruit.Injectors;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class GuiceTest extends TestCase {
+public class GuiceTest extends Assert {
 
     /**
      * Asserts that the CamelContext is available in the given Injector, that its been started, then close the injector
@@ -60,6 +62,7 @@ public class GuiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testGuice() throws Exception {
         // lets disable resource injection to avoid JNDI being used
         Injector injector = Guice.createInjector(new CamelModuleWithMatchingRoutes());
