@@ -19,12 +19,13 @@ package org.apache.camel.processor.jpa;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -37,13 +38,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @version $Revision$
  */
-public class JpaBatchConsumerTest extends ContextTestSupport {
+public class JpaBatchConsumerTest extends CamelTestSupport {
 
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     protected ApplicationContext applicationContext;
     protected JpaTemplate jpaTemplate;
 
+    @Test
     public void testBatchConsumer() throws Exception {
         // first create two records
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("foo@beer.org"));

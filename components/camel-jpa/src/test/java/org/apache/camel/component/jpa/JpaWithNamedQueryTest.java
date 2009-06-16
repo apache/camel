@@ -23,8 +23,6 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -36,13 +34,17 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
  * @version $Revision$
  */
-public class JpaWithNamedQueryTest extends TestCase {
+public class JpaWithNamedQueryTest extends Assert {
     private static final transient Log LOG = LogFactory.getLog(JpaWithNamedQueryTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template = camelContext.createProducerTemplate();
@@ -55,6 +57,7 @@ public class JpaWithNamedQueryTest extends TestCase {
     protected String entityName = MultiSteps.class.getName();
     protected String queryText = "select o from " + entityName + " o where o.step = 1";
 
+    @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
         transactionStrategy.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
@@ -132,10 +135,9 @@ public class JpaWithNamedQueryTest extends TestCase {
         });
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
+        
         ServiceHelper.startServices(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
@@ -151,11 +153,10 @@ public class JpaWithNamedQueryTest extends TestCase {
         return "jpa://" + MultiSteps.class.getName() + "?consumer.namedQuery=step1";
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
 
         ServiceHelper.stopServices(consumer, template, camelContext);
 
-        super.tearDown();
     }
 }

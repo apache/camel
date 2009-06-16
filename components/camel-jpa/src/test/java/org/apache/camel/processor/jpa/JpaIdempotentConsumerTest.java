@@ -19,7 +19,6 @@ package org.apache.camel.processor.jpa;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,6 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -43,7 +45,7 @@ import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.j
 /**
  * @version $Revision$
  */
-public class JpaIdempotentConsumerTest extends ContextTestSupport {
+public class JpaIdempotentConsumerTest extends CamelTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
@@ -84,13 +86,14 @@ public class JpaIdempotentConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
-
         startEndpoint = resolveMandatoryEndpoint("direct:start");
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
@@ -117,6 +120,7 @@ public class JpaIdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new SpringRouteBuilder() {
             @Override

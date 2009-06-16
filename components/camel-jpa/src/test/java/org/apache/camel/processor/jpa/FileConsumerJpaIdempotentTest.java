@@ -20,12 +20,14 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -38,7 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Unit test using jpa idempotent repository for the file consumer.
  */
-public class FileConsumerJpaIdempotentTest extends ContextTestSupport {
+public class FileConsumerJpaIdempotentTest extends CamelTestSupport {
 
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "FileConsumer";
@@ -52,8 +54,8 @@ public class FileConsumerJpaIdempotentTest extends ContextTestSupport {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         cleanupRepository();
         deleteDirectory("target/idempotent");
@@ -88,6 +90,7 @@ public class FileConsumerJpaIdempotentTest extends ContextTestSupport {
         });
     }
 
+    @Test
     public void testFileConsumerJpaIdempotent() throws Exception {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");

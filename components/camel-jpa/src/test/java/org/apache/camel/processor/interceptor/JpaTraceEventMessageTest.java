@@ -19,11 +19,12 @@ package org.apache.camel.processor.interceptor;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -36,12 +37,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @version $Revision$
  */
-public class JpaTraceEventMessageTest extends ContextTestSupport {
+public class JpaTraceEventMessageTest extends CamelTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + JpaTraceEventMessage.class.getName() + " x";
 
     protected ApplicationContext applicationContext;
     protected JpaTemplate jpaTemplate;
 
+    @Test
     public void testSendTraceMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
