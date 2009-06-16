@@ -20,12 +20,14 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class IBatisQueryForListTest extends IBatisTestSupport {
 
+    @Test
     public void testQueryForList() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

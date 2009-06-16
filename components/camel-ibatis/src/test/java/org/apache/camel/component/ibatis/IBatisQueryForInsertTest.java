@@ -18,12 +18,14 @@ package org.apache.camel.component.ibatis;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class IBatisQueryForInsertTest extends IBatisTestSupport {
 
+    @Test
     public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

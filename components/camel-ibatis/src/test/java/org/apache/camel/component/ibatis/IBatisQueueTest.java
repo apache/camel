@@ -20,12 +20,16 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IBatisQueueTest extends ContextTestSupport {
+public class IBatisQueueTest extends CamelTestSupport {
 
+    @Test
     public void testConsume() throws Exception {
 
         MockEndpoint endpoint = getMockEndpoint("mock:results");
@@ -76,7 +80,8 @@ public class IBatisQueueTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // lets create the database...
@@ -88,7 +93,8 @@ public class IBatisQueueTest extends ContextTestSupport {
     }
     
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
         Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();

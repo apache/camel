@@ -20,15 +20,19 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class IBatisRouteTest extends ContextTestSupport {
+public class IBatisRouteTest extends CamelTestSupport {
 
+    @Test
     public void testSendAccountBean() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMinimumMessageCount(1);
@@ -68,7 +72,8 @@ public class IBatisRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // lets create the database...
@@ -79,7 +84,8 @@ public class IBatisRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         Connection connection = createConnection();
         Statement statement = connection.createStatement();
         statement.execute("drop table ACCOUNT");

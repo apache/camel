@@ -19,12 +19,14 @@ package org.apache.camel.component.ibatis;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class IBatisBatchConsumerTest extends IBatisTestSupport {
 
+    @Test
     public void testBatchConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

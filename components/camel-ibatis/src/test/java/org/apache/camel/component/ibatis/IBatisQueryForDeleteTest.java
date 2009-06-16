@@ -18,12 +18,14 @@ package org.apache.camel.component.ibatis;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class IBatisQueryForDeleteTest extends IBatisTestSupport {
 
+    @Test
     public void testDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -42,7 +44,8 @@ public class IBatisQueryForDeleteTest extends IBatisTestSupport {
         rows = template.requestBody("ibatis:count?statementType=QueryForObject", null, Integer.class);
         assertEquals("There should be 0 rows", 0, rows.intValue());
     }
-
+    
+    @Test
     public void testDeleteNotFound() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

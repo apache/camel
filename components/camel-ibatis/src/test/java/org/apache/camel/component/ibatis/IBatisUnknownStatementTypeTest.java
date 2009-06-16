@@ -17,15 +17,17 @@
 package org.apache.camel.component.ibatis;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class IBatisUnknownStatementTypeTest extends ContextTestSupport {
+public class IBatisUnknownStatementTypeTest extends CamelTestSupport {
 
+    @Test
     public void testStatementTypeNotSet() throws Exception {
         try {
             template.sendBody("direct:start", "Hello");
