@@ -54,7 +54,8 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version $Revision$
  */
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean,
-    ApplicationContextAware, ApplicationListener {
+        ApplicationContextAware, ApplicationListener {
+
     private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
@@ -80,7 +81,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         return answer;
     }
 
-
     public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
         return springCamelContext(new ClassPathXmlApplicationContext(configLocations));
     }
@@ -90,11 +90,17 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     private void maybeStart() throws Exception {
-        if (getShouldStartContext()) {
-            LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
+        if (!getShouldStartContext()) {
+            LOG.info("Not starting Apache Camel as property ShouldStartContext is false");
+            return;
+        }
+
+        if (!isStarted()) {
+            LOG.info("Starting Apache Camel as property ShouldStartContext is true");
             start();
         } else {
-            LOG.debug("Not starting the CamelContext since shouldStartContext property was false.");
+            // ignore as Camel is already started
+            LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
         }
     }
 
@@ -104,7 +110,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void onApplicationEvent(ApplicationEvent event) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Publishing spring-event: " + event);
+            LOG.debug("onApplicationEvent: " + event);
         }
 
         if (event instanceof ContextRefreshedEvent) {
@@ -117,15 +123,12 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
-            if (eventEndpoint != null) {
-                eventEndpoint.onApplicationEvent(event);
-            }
+        }
+
+        if (eventEndpoint != null) {
+            eventEndpoint.onApplicationEvent(event);
         } else {
-            if (eventEndpoint != null) {
-                eventEndpoint.onApplicationEvent(event);
-            } else {
-                LOG.warn("No spring-event endpoint enabled for: " + event);
-            }
+            LOG.warn("No spring-event endpoint enabled to handle event: " + event);
         }
     }
 
@@ -181,8 +184,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     protected EventEndpoint createEventEndpoint() {
-        EventEndpoint endpoint = getEndpoint("spring-event:default", EventEndpoint.class);
-        return endpoint;
+        return getEndpoint("spring-event:default", EventEndpoint.class);
     }
 
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
@@ -211,6 +213,16 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public boolean getShouldStartContext() {
         return shouldStartContext;
-    }    
-    
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SpringCamelContext(").append(getName()).append(")");
+        if (applicationContext != null) {
+            sb.append(" with spring id ").append(applicationContext.getId());
+        }
+        return sb.toString();
+    }
+
 }
