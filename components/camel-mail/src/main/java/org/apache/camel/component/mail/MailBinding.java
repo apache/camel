@@ -103,20 +103,9 @@ public class MailBinding {
                 appendAttachmentsFromCamel(mimeMessage, exchange.getIn(), endpoint.getConfiguration());
             } else {
                 String contentType = populateContentType(endpoint, mimeMessage, exchange);
-                if (contentType == null) {
-                    mimeMessage.setText(exchange.getIn().getBody(String.class));
-                } else if (contentType.startsWith("text/plain")) {
-                    String charset = ObjectHelper.after(contentType, "charset=");
-                    if (charset != null) {
-                        mimeMessage.setText(exchange.getIn().getBody(String.class), charset);
-                    } else {
-                        mimeMessage.setText(exchange.getIn().getBody(String.class));
-                    }
-                } else {
-                    // store content in a byte array data store
-                    DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
-                    mimeMessage.setDataHandler(new DataHandler(ds));
-                }
+                // store content in a byte array data store as it works with all types
+                DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
+                mimeMessage.setDataHandler(new DataHandler(ds));
             }
         }
     }
@@ -348,23 +337,15 @@ public class MailBinding {
             contentType = camelMessage.getHeader("contentType", String.class);
         }
 
-        // set the content according to the content type
-        if (contentType == null) {
-            bodyMessage.setText(camelMessage.getBody(String.class));
-        } else if (contentType.startsWith("text/plain")) {
-            bodyMessage.setText(camelMessage.getBody(String.class));
-            bodyMessage.setHeader("Content-Type", contentType);
-        } else {
-            // store content in a byte array data store
-            DataSource ds;
-            try {
-                ds = new ByteArrayDataSource(camelMessage.getBody(String.class), contentType);
-            } catch (IOException e) {
-                throw new MessagingException("Cannot create DataSource", e);
-            }
-            bodyMessage.setDataHandler(new DataHandler(ds));
-            bodyMessage.setHeader("Content-Type", contentType);
+        // store content in a byte array data store
+        DataSource ds;
+        try {
+            ds = new ByteArrayDataSource(camelMessage.getBody(String.class), contentType);
+        } catch (IOException e) {
+            throw new MessagingException("Cannot create DataSource", e);
         }
+        bodyMessage.setDataHandler(new DataHandler(ds));
+        bodyMessage.setHeader("Content-Type", contentType);
 
         activeMultipart.addBodyPart(bodyMessage);
     }

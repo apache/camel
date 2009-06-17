@@ -61,7 +61,7 @@ public class MailCustomContentTypeTest extends ContextTestSupport {
 
         Mailbox box = Mailbox.get("claus@localhost");
         Message msg = box.get(0);
-        assertEquals("text/plain; charset=iso-8859-1", msg.getContentType());
+        assertEquals("text/plain;charset=iso-8859-1", msg.getContentType());
         assertEquals("Hello World", msg.getContent());
     }
 
