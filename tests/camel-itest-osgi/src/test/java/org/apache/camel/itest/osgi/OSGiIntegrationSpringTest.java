@@ -21,8 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 /**

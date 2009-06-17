@@ -20,23 +20,9 @@ package org.apache.camel.itest.osgi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionUtils;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
-
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.mavenConfiguration;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTestSupport {
     
