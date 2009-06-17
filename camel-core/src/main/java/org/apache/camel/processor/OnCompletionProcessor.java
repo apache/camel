@@ -38,14 +38,14 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(OnCompletionProcessor.class);
     private ExecutorService executorService;
     private Processor processor;
-    private boolean onComplete;
-    private boolean onFailure;
+    private boolean onCompleteOnly;
+    private boolean onFailureOnly;
     private Predicate onWhen;
 
-    public OnCompletionProcessor(Processor processor, boolean onComplete, boolean onFailure, Predicate onWhen) {
+    public OnCompletionProcessor(Processor processor, boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen) {
         this.processor = processor;
-        this.onComplete = onComplete;
-        this.onFailure = onFailure;
+        this.onCompleteOnly = onCompleteOnly;
+        this.onFailureOnly = onFailureOnly;
         this.onWhen = onWhen;
     }
 
@@ -66,16 +66,11 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
             return;
         }
 
-        if (!onComplete && !onFailure) {
-            // no need to register callbacks not to be used
-            return;
-        }
-
         // register callback
         exchange.getUnitOfWork().addSynchronization(new SynchronizationAdapter() {
             @Override
             public void onComplete(Exchange exchange) {
-                if (!onComplete) {
+                if (onFailureOnly) {
                     return;
                 }
 
@@ -99,7 +94,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
             }
 
             public void onFailure(Exchange exchange) {
-                if (!onFailure) {
+                if (onCompleteOnly) {
                     return;
                 }
 
@@ -128,9 +123,9 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
 
             @Override
             public String toString() {
-                if (onComplete && onFailure) {
+                if (!onCompleteOnly && !onFailureOnly) {
                     return "onCompleteOrFailure";
-                } else if (onComplete) {
+                } else if (onCompleteOnly) {
                     return "onCompleteOnly";
                 } else {
                     return "onFailureOnly";

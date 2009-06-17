@@ -42,9 +42,9 @@ import org.apache.camel.spi.RouteContext;
 public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> {
 
     @XmlAttribute(required = false)
-    private Boolean onCompleteOnly = Boolean.TRUE;
+    private Boolean onCompleteOnly = Boolean.FALSE;
     @XmlAttribute(required = false)
-    private Boolean onFailureOnly = Boolean.TRUE;
+    private Boolean onFailureOnly = Boolean.FALSE;
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
     @XmlElementRef
@@ -55,7 +55,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
 
     @Override
     public String toString() {
-        return "Synchronize[" + getOutputs() + "]";
+        return "onCompletion[" + getOutputs() + "]";
     }
 
     @Override
@@ -75,6 +75,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
         Predicate when = null;
         if (onWhen != null) {
             when = onWhen.getExpression().createPredicate(routeContext);
+        }
+
+        if (onCompleteOnly && onFailureOnly) {
+            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
         return new OnCompletionProcessor(childProcessor, onCompleteOnly, onFailureOnly, when);
