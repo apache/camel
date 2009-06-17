@@ -107,6 +107,7 @@ public class SplitterTest extends ContextTestSupport {
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
 
         Set<Integer> numbersFound = new TreeSet<Integer>();
+        Set<Integer> propertyNumbersFound = new TreeSet<Integer>();
 
         final String[] names = {"James", "Guillaume", "Hiram", "Rob"};
 
@@ -114,12 +115,16 @@ public class SplitterTest extends ContextTestSupport {
             Exchange exchange = list.get(i);
             Message in = exchange.getIn();
             Integer splitCounter = in.getHeader(Splitter.SPLIT_COUNTER, Integer.class);
+            Integer propertySplitCounter = exchange.getProperty(Splitter.SPLIT_COUNTER, Integer.class);
             numbersFound.add(splitCounter);
+            propertyNumbersFound.add(propertySplitCounter);
             assertEquals(names[splitCounter], in.getBody());
             assertMessageHeader(in, Splitter.SPLIT_SIZE, 4);
+            assertEquals(exchange.getProperty(Splitter.SPLIT_SIZE, Integer.class), new Integer(4));
         }
 
         assertEquals(4, numbersFound.size());
+        assertEquals(4, propertyNumbersFound.size());
     }
 
     public void testSpliterWithAggregationStrategyParallel() throws Exception {
