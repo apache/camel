@@ -22,24 +22,27 @@ import junit.framework.TestCase;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test case for {@link Jt400Component}
  */
 @SuppressWarnings("unchecked")
-public class Jt400ComponentTest extends TestCase {
+public class Jt400ComponentTest extends Assert {
 
     private Jt400Component component;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {        
         component = new Jt400Component();
     }
 
     /**
      * Test creation of a {@link Jt400DataQueueEndpoint}
      */
+    @Test
     public void testCreateEndpoint() throws Exception {
         Endpoint endpoint = component
             .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq",
@@ -51,6 +54,7 @@ public class Jt400ComponentTest extends TestCase {
     /**
      * Test exception when trying to access any other object type on AS/400
      */
+    @Test
     public void testCreateEndpointForOtherObjectType() throws Exception {
         try {
             component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.pgm",

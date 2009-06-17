@@ -16,18 +16,21 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test case for {@link Jt400DataQueueEndpoint}
  */
-public class Jt400DataQueueEndpointTest extends ContextTestSupport {
+public class Jt400DataQueueEndpointTest extends CamelTestSupport {
 
     private Jt400DataQueueEndpoint endpoint;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         endpoint = (Jt400DataQueueEndpoint)resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary");
     }
@@ -35,6 +38,7 @@ public class Jt400DataQueueEndpointTest extends ContextTestSupport {
     /**
      * Check that the AS/400 connection is correctly configured for the URL
      */
+    @Test
     public void testSystemConfiguration() {
         assertEquals("USER", endpoint.getSystem().getUserId());
         assertEquals("host", endpoint.getSystem().getSystemName());

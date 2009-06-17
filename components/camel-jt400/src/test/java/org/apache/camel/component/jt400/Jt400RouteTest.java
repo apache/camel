@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Test case for routes that contain <code>jt400:</code> endpoints This test
@@ -27,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * {@link #USER}, {@link #PASSWORD}, {@link #SYSTEM}, {@link #LIBRARY} and
  * {@link #QUEUE}
  */
-public class Jt400RouteTest extends ContextTestSupport {
+public class Jt400RouteTest extends CamelTestSupport {
 
     // fill in correct values for all constants to test with a real AS/400
     // system
@@ -37,6 +38,7 @@ public class Jt400RouteTest extends ContextTestSupport {
     private static final String LIBRARY = "library";
     private static final String QUEUE = "queue";
 
+    @Test
     public void testBasicTest() throws Exception {
         if (SYSTEM != null) {
             MockEndpoint endpoint = getMockEndpoint("mock:a");
