@@ -31,15 +31,6 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.xml.Namespaces;
-import org.apache.camel.model.config.PropertiesType;
-import org.apache.camel.model.dataformat.ArtixDSDataFormat;
-import org.apache.camel.model.dataformat.JaxbDataFormat;
-import org.apache.camel.model.dataformat.SerializationDataFormat;
-import org.apache.camel.model.dataformat.XMLBeansDataFormat;
-import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
-import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
@@ -50,6 +41,8 @@ import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -58,13 +51,12 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
 
-
-
 /**
  * Camel namespace for the spring XML configuration file.
  */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
+    private static final transient Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
@@ -72,11 +64,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
 
-
     public ModelFileGenerator createModelFileGenerator() throws JAXBException {
         return new ModelFileGenerator(getJaxbContext());
     }
-
 
     public void init() {
         // remoting
@@ -90,10 +80,23 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // TODO switch to use the above mechanism?
         registerParser("endpoint", endpointParser);
 
+        boolean osgi = false;
         Class cl = CamelContextFactoryBean.class;
         try {
             cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
+            osgi = true;
         } catch (Throwable t) {
+            LOG.trace("Cannot find class so assuming not running in OSGI container: " + t.getMessage());
+        }
+
+        if (osgi) {
+            LOG.info("camel-osgi.jar detected in classpath");
+        } else {
+            LOG.info("camel-osgi.jar not detected in classpath");
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using " + cl.getCanonicalName() + " as CamelContextBeanDefinitionParser");
         }
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }

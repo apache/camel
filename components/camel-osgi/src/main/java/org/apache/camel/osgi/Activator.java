@@ -66,6 +66,10 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     }
     
     public void bundleChanged(BundleEvent event) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Bundle changed: " + event);
+        }
+
         try {
             Bundle bundle = event.getBundle();
             if (event.getType() == BundleEvent.RESOLVED) {
@@ -82,9 +86,8 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                 mayBeRemoveTypeConverterFor(bundle);
             }
         } catch (Throwable e) {
-            LOG.fatal("Exception handing bundle changed event", e);
+            LOG.fatal("Exception occured during bundleChanged for event: " + event, e);
         }
-        
     }
 
     protected synchronized void addComponentEntry(String entryPath, Bundle bundle, Map<String, ComponentEntry> entries) {
@@ -163,10 +166,16 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     }
 
     public void start(BundleContext context) throws Exception {
-        bundle = context.getBundle();       
-        context.addBundleListener(this);
+        LOG.info("Camel activator starting");
+
+        bundle = context.getBundle();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("checking existing bundles");
+            LOG.debug("Using bundle: " + bundle);
+        }
+        context.addBundleListener(this);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Checking existing bundles for Camel components, languages and type converters");
         }
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING
@@ -175,15 +184,15 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                 mayBeAddTypeConverterFor(bundle);
             }
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("actived");
-        }
-        
-    }    
+
+        LOG.info("Camel activator started");
+    }
 
     public void stop(BundleContext context) throws Exception {
+        LOG.info("Camel activator stopping");
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("removing the components of existing bundles");
+            LOG.debug("Removing Camel bundles");
         }
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING 
@@ -192,9 +201,8 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                 mayBeRemoveTypeConverterFor(bundle);
             }
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("stopped");
-        }
+
+        LOG.info("Camel activator stopped");
     }
     
     protected Set<String> getConverterPackages(URL resource) {
@@ -240,9 +248,13 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     }
     
     protected static synchronized String[] findTypeConverterPackageNames() {
+        LOG.trace("Finding TypeConverterPackageNames");
         Set<String> packages = new HashSet<String>();
         for (TypeConverterEntry entry : TYPE_CONVERTERS.values()) {
             for (String packageName : entry.converterPackages) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Found TypeConverterPackage: " + packageName);
+                }
                 packages.add(packageName);
             }
         }
@@ -250,14 +262,17 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     }
         
     public static synchronized Class getComponent(String name) throws Exception {
+        LOG.trace("Finding Component: " + name);
         return getClassFromEntries(name, COMPONENTS);
     }
     
     public static synchronized Class getLanguage(String name) throws Exception {
+        LOG.trace("Finding Language: " + name);
         return getClassFromEntries(name, LANGUAGES);
     }
     
     public static synchronized Class getLanguageResolver(String name) throws Exception {
+        LOG.trace("Finding LanguageResolver: " + name);
         return getClassFromEntries(name, LANGUAGE_RESOLVERS);
     }
     
@@ -294,6 +309,5 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         }
         return entry.type;
     }
-    
 
 }

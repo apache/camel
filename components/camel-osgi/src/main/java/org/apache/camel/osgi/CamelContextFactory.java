@@ -14,14 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.osgi;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
@@ -46,19 +41,30 @@ public class CamelContextFactory implements BundleContextAware {
     }
 
     public void setBundleContext(BundleContext bundleContext) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using BundleContext: " + bundleContext);
+        }
         this.bundleContext = bundleContext;
     }
     
     public DefaultCamelContext createContext() {
+        LOG.debug("Creating DefaultCamelContext");
+
         DefaultCamelContext context = new DefaultCamelContext();
         if (bundleContext != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("The bundle context is not be null, let's setup the Osgi resolvers");
+                LOG.debug("Using OSGI resolvers");
             }
+            LOG.debug("Using OsgiFactoryFinder");
             context.setFactoryFinderClass(OsgiFactoryFinder.class);
+            LOG.debug("Using OsgiComponentResolver");
             context.setComponentResolver(new OsgiComponentResolver());
+            LOG.debug("Using OsgiLanguageResolver");
             context.setLanguageResolver(new OsgiLanguageResolver());
             addOsgiAnnotationTypeConverterLoader(context, bundleContext);            
+        } else {
+            // TODO: should we not thrown an excpetion to not allow it to startup
+            LOG.warn("BundleContext not set, cannot run in OSGI container");
         }
         
         return context;
@@ -77,8 +83,10 @@ public class CamelContextFactory implements BundleContextAware {
     }
     
     protected void addOsgiAnnotationTypeConverterLoader(DefaultCamelContext context, BundleContext bundleContext) {
+        LOG.debug("Using OsgiAnnotationTypeConverterLoader");
         DefaultTypeConverter typeConverter = (DefaultTypeConverter) context.getTypeConverter();
         List<TypeConverterLoader> typeConverterLoaders = typeConverter.getTypeConverterLoaders();
+
         // Remove the AnnotationTypeConverterLoader
         TypeConverterLoader atLoader = null; 
         for (TypeConverterLoader loader : typeConverterLoaders) {
@@ -91,6 +99,6 @@ public class CamelContextFactory implements BundleContextAware {
             typeConverterLoaders.remove(atLoader);
         }
         typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(bundleContext));
-        LOG.debug("added the OsgiAnnotationTypeConverterLoader");
-    }    
+    }
+
 }

@@ -28,6 +28,8 @@ public class CamelNamespaceHandler extends org.apache.camel.spring.handler.Camel
         super.init();
         registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
     }
+
+    // TODO: This does not look correct with the code below, why are the so few jaxb packages?
     
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();

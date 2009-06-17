@@ -82,7 +82,7 @@ public class OsgiFactoryFinder extends FactoryFinder {
     public BundleEntry getResource(String name) {
         URL url = null;
         BundleEntry entry = null;
-        BundleContext bundleContext =  Activator.getBundle().getBundleContext();
+        BundleContext bundleContext = Activator.getBundle().getBundleContext();
         for (Bundle bundle : bundleContext.getBundles()) {            
             url = bundle.getEntry(getPath() + name);
             if (url != null) {
