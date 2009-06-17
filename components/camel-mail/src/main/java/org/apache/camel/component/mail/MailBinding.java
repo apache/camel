@@ -127,40 +127,35 @@ public class MailBinding {
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
         String contentType = determineContentType(configuration, exchange);
-        if (contentType == null) {
-            part.setText(exchange.getIn().getBody(String.class));
-        } else {
-            if (contentType.startsWith("text/plain")) {
-                String charset = ObjectHelper.after(contentType, "charset=");
-                if (charset != null) {
-                    part.setText(exchange.getIn().getBody(String.class), charset.trim());
-                } else {
-                    part.setText(exchange.getIn().getBody(String.class));
-                }
-            } else {
-                // store content in a byte array data store
-                DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
-                part.setDataHandler(new DataHandler(ds));
-            }
-            part.setHeader("Content-Type", contentType);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using Content-Type " + contentType + " for MimeMessage: " + part);
         }
+
+        // always store content in a byte array data store to avoid various content type and charset issues
+        DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
+        part.setDataHandler(new DataHandler(ds));
+
+        // set the content type header afterwards
+        part.setHeader("Content-Type", contentType);
+
         return contentType;
     }
 
     protected String populateContentOnBodyPart(BodyPart part, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
         String contentType = determineContentType(configuration, exchange);
-        if (contentType == null) {
-            part.setText(exchange.getIn().getBody(String.class));
-        } else {
-            if (contentType.startsWith("text/plain")) {
-                part.setText(exchange.getIn().getBody(String.class));
-            } else {
-                // store content in a byte array data store
-                DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
-                part.setDataHandler(new DataHandler(ds));
-            }
-            part.setHeader("Content-Type", contentType);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using Content-Type " + contentType + " for BodyPart: " + part);
         }
+
+        // always store content in a byte array data store to avoid various content type and charset issues
+        DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
+        part.setDataHandler(new DataHandler(ds));
+
+        // set the content type header afterwards
+        part.setHeader("Content-Type", contentType);
+
         return contentType;
     }
 
