@@ -50,7 +50,8 @@ public class PackageScanFiltersTest extends TestCase {
         validateFilter(filter, ScanTargetTwo.class);
         validateFilter(filter, ScanTargetThree.class);
 
-        assertEquals("is assignable to any of ScanTargetOne, ScanTargetThree", filter.toString());
+        assertTrue(filter.toString().contains("ScanTargetOne"));
+        assertTrue(filter.toString().contains("ScanTargetThree"));
     }
 
     public void testAnnotatedWithAnyPackageScanFilter() {
