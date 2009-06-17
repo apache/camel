@@ -20,19 +20,21 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
  */
-public class MailContentTypeResolverTest extends ContextTestSupport {
+public class MailContentTypeResolverTest extends CamelTestSupport {
 
+    @Test
     public void testCustomContentTypeResolver() throws Exception {
         // create an exchange with a normal body and attachment to be produced as email
         Endpoint endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");

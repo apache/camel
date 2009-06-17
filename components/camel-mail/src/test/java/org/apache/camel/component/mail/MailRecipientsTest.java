@@ -18,15 +18,17 @@ package org.apache.camel.component.mail;
 
 import javax.mail.Message;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for recipients (To, CC, BCC)
  */
-public class MailRecipientsTest extends ContextTestSupport {
+public class MailRecipientsTest extends CamelTestSupport {
 
+    @Test
     public void testMultiRecipients() throws Exception {
         Mailbox.clearAll();
 

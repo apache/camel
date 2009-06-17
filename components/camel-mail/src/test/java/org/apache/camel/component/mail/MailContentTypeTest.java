@@ -18,15 +18,17 @@ package org.apache.camel.component.mail;
 
 import javax.mail.Message;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for contentType option.
  */
-public class MailContentTypeTest extends ContextTestSupport {
+public class MailContentTypeTest extends CamelTestSupport {
 
+    @Test
     public void testSendHtmlMail() throws Exception {
         Mailbox.clearAll();
 
@@ -39,6 +41,7 @@ public class MailContentTypeTest extends ContextTestSupport {
         assertEquals("<html><body><h1>Hello</h1>World</body></html>", msg.getContent());
     }
 
+    @Test
     public void testSendPlainMail() throws Exception {
         Mailbox.clearAll();
 

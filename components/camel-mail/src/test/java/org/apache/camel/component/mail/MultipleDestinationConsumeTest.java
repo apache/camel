@@ -28,20 +28,23 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Before;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * @version $Revision$
  */
-public class MultipleDestinationConsumeTest extends ContextTestSupport {
+public class MultipleDestinationConsumeTest extends CamelTestSupport {
     private String body = "hello world!";
     private Session mailSession;
 
+    @Test
     public void testSendAndReceiveMails() throws Exception {
         Mailbox.clearAll();
 
@@ -96,7 +99,8 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "localhost");
         mailSession = Session.getInstance(properties, null);

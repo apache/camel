@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for Mail subject support.
  */
-public class MailSubjectTest extends ContextTestSupport {
+public class MailSubjectTest extends CamelTestSupport {
     private String subject = "Camel rocks";
 
+    @Test
     public void testMailSubject() throws Exception {
         Mailbox.clearAll();
 

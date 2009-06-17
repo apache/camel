@@ -21,15 +21,17 @@ import java.util.Map;
 
 import javax.mail.Message;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for Mail using camel headers to set recipeient subject.
  */
-public class MailUsingHeadersTest extends ContextTestSupport {
+public class MailUsingHeadersTest extends CamelTestSupport {
 
+    @Test
     public void testMailUsingHeaders() throws Exception {
         Mailbox.clearAll();
 

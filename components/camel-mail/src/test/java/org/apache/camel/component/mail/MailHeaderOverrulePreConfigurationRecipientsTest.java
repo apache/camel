@@ -19,16 +19,18 @@ package org.apache.camel.component.mail;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test to verify that message headers override pre configuration.
  */
-public class MailHeaderOverrulePreConfigurationRecipientsTest extends ContextTestSupport {
+public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestSupport {
 
+    @Test
     public void testSendWithRecipientsInHeaders() throws Exception {
         Mailbox.clearAll();
 

@@ -18,14 +18,16 @@ package org.apache.camel.component.mail;
 
 import javax.mail.Message;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class MailComponentTest extends ContextTestSupport {
+public class MailComponentTest extends CamelTestSupport {
 
+    @Test
     public void testMailEndpointsAreConfiguredProperlyWhenUsingSmtp() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/subject");
         MailConfiguration config = endpoint.getConfiguration();
@@ -37,6 +39,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
+    @Test
     public void testMailEndpointsAreConfiguredProperlyWhenUsingImap() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost:143/subject");
         MailConfiguration config = endpoint.getConfiguration();
@@ -48,6 +51,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
+    @Test
     public void testMailEndpointsAreConfiguredProperlyWhenUsingPop() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost:110/subject");
         MailConfiguration config = endpoint.getConfiguration();
@@ -59,6 +63,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
+    @Test
     public void testDefaultSMTPConfiguration() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
@@ -78,6 +83,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("unseen", true, config.isUnseen());
     }
 
+    @Test
     public void testDefaultPOP3Configuration() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
@@ -97,6 +103,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("unseen", true, config.isUnseen());
     }
 
+    @Test
     public void testDefaultIMAPConfiguration() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("imap://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
@@ -116,6 +123,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("unseen", true, config.isUnseen());
     }
 
+    @Test
     public void testManyConfigurations() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
             + "&from=me@camelriders.org&delete=true&defaultEncoding=iso-8859-1&folderName=riders"
@@ -137,6 +145,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("contentType", "text/html", config.getContentType());
     }
 
+    @Test
     public void testTo() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/?password=secret&to=someone@outthere.com&folderName=XXX");
         MailConfiguration config = endpoint.getConfiguration();
@@ -154,6 +163,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("fetchSize", -1, config.getFetchSize());
     }
 
+    @Test
     public void testNoUserInfoButUsername() {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25/?password=secret&username=james");
         MailConfiguration config = endpoint.getConfiguration();
@@ -171,6 +181,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("fetchSize", -1, config.getFetchSize());
     }
 
+    @Test
     public void testMailEndpointsWithFetchSize() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?fetchSize=5");
         MailConfiguration config = endpoint.getConfiguration();

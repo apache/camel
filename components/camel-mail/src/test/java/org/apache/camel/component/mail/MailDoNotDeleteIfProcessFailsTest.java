@@ -22,20 +22,22 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Unit test for rollback option.
  */
-public class MailDoNotDeleteIfProcessFailsTest extends ContextTestSupport {
+public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
 
     private static int counter;
 
+    @Test
     public void testRoolbackIfProcessFails() throws Exception {
         prepareMailbox();
 

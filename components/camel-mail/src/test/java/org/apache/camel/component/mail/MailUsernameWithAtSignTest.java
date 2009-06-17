@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for Mail using @ in username option
  */
-public class MailUsernameWithAtSignTest extends ContextTestSupport {
+public class MailUsernameWithAtSignTest extends CamelTestSupport {
 
+    @Test
     public void testMailUsingAtSignInUsername() throws Exception {
         Mailbox.clearAll();
 

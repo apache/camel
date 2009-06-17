@@ -21,19 +21,21 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
  */
-public class MailAttachmentTest extends ContextTestSupport {
+public class MailAttachmentTest extends CamelTestSupport {
 
+    @Test
     public void testSendAndRecieveMailWithAttachments() throws Exception {
         // START SNIPPET: e1
 

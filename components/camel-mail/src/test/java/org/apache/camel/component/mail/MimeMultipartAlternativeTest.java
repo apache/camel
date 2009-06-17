@@ -23,16 +23,17 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
 
 
-public class MimeMultipartAlternativeTest extends ContextTestSupport {
+public class MimeMultipartAlternativeTest extends CamelTestSupport {
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:0001\"></body></html>";
 
@@ -88,11 +89,14 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
 
         
     }
+    
+    @Test
     public void testMultipartEmailWithInlineAttachments() throws Exception {
         sendMultipartEmail(true);
         verifyTheRecivedEmail("Content-Disposition: inline; filename=\"cid:0001\"");
     }    
-        
+    
+    @Test
     public void testMultipartEmailWithRegularAttachments() throws Exception {
         sendMultipartEmail(false);
         verifyTheRecivedEmail("Content-Disposition: attachment; filename=\"cid:0001\"");

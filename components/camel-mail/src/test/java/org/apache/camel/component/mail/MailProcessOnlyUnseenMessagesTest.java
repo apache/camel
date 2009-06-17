@@ -22,17 +22,19 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Unit test for unseen option.
  */
-public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
+public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
 
+    @Test
     public void testProcessOnlyUnseenMessages() throws Exception {
         prepareMailbox();
 

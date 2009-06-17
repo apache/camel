@@ -25,19 +25,22 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class MailMessageTest extends ContextTestSupport {
+public class MailMessageTest extends CamelTestSupport {
     private Session mailSession;
     private MimeMessage mimeMessage;
     private MailEndpoint endpoint;
     private String body = "Hello World!";
 
+    @Test
     public void testMailMessageHandlesMultipleHeaders() throws Exception {
         mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("foo@localhost"), new InternetAddress("bar@localhost")});
 
@@ -61,6 +64,7 @@ public class MailMessageTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMailMessageHandlesSingleHeader() throws Exception {
         mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("frank@localhost")});
 
@@ -74,7 +78,8 @@ public class MailMessageTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         endpoint = resolveMandatoryEndpoint("pop3://someone@myhost:30/subject");

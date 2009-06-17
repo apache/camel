@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for testing mail polling is happening according to the default poll interval.
  */
-public class MailDefaultDelayForMailConsumeTest extends ContextTestSupport {
+public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
 
+    @Test
     public void testConsuming() throws Exception {
         template.sendBody("smtp://bond@localhost", "Hello London");
         MockEndpoint mock = getMockEndpoint("mock:result");

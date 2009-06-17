@@ -21,18 +21,20 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Unit test for batch consumer.
  */
-public class MailBatchConsumerTest extends ContextTestSupport {
+public class MailBatchConsumerTest extends CamelTestSupport {
 
+    @Test
     public void testBatchConsumer() throws Exception {
         prepareMailbox();
         Mailbox mailbox = Mailbox.get("jones@localhost");

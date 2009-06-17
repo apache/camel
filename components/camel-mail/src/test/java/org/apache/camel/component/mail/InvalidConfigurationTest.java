@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for various invalid configurations etc.
  */
-public class InvalidConfigurationTest extends ContextTestSupport {
+public class InvalidConfigurationTest extends CamelTestSupport {
 
+    @Test
     public void testSMTPCanNotBeUsedForConsumingMails() throws Exception {
         Endpoint endpoint = this.context.getEndpoint("smtp://localhost?username=james");
         PollingConsumer consumer = endpoint.createPollingConsumer();
@@ -37,6 +39,7 @@ public class InvalidConfigurationTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSMTPSCanNotBeUsedForConsumingMails() throws Exception {
         Endpoint endpoint = this.context.getEndpoint("smtps://localhost?username=james");
         PollingConsumer consumer = endpoint.createPollingConsumer();
@@ -48,6 +51,7 @@ public class InvalidConfigurationTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNNTPNotSupported() throws Exception {
         try {
             this.context.getEndpoint("nntp://localhost?username=james");

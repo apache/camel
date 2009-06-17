@@ -19,13 +19,15 @@ package org.apache.camel.component.mail;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
-public class MailNameAndEmailInRecipientTest extends ContextTestSupport {
+public class MailNameAndEmailInRecipientTest extends CamelTestSupport {
 
+    @Test
     public void testSendWithNameAndEmailInRecipient() throws Exception {
         Mailbox.clearAll();
 

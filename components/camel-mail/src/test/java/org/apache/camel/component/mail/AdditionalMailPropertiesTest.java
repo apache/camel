@@ -18,21 +18,24 @@ package org.apache.camel.component.mail;
 
 import java.util.Properties;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test allowing end users to set additional mail.xxx properties.
  */
-public class AdditionalMailPropertiesTest extends ContextTestSupport {
+public class AdditionalMailPropertiesTest extends CamelTestSupport {
 
+    @Test
     public void testAdditionalMailProperties() throws Exception {
         MailEndpoint endpoint = (MailEndpoint) context.getEndpoint("pop3://localhost?username=james&mail.pop3.forgettopheaders=true");
         Properties prop = endpoint.getConfiguration().getAdditionalJavaMailProperties();
         assertEquals("true", prop.get("mail.pop3.forgettopheaders"));
     }
 
+    @Test
     public void testConsumeWithAdditionalProperties() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 

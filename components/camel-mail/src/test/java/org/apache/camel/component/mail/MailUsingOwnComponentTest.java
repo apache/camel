@@ -19,13 +19,14 @@ package org.apache.camel.component.mail;
 import javax.mail.Message;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for CAMEL-1249
  */
-public class MailUsingOwnComponentTest extends ContextTestSupport {
+public class MailUsingOwnComponentTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -53,6 +54,7 @@ public class MailUsingOwnComponentTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testUsingOwnMailComponent() throws Exception {
         Mailbox.clearAll();
 

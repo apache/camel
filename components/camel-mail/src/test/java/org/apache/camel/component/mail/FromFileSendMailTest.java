@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * @version $Revision$
  */
-public class FromFileSendMailTest extends ContextTestSupport {
+public class FromFileSendMailTest extends CamelTestSupport {
 
+    @Test
     public void testSendFileAsMail() throws Exception {
         Mailbox.clearAll();
 
