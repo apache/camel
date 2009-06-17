@@ -41,12 +41,16 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                 from(CXF_RS_ENDPOINT_URI).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
-                        Message inMessage = exchange.getIn();
+                        Message inMessage = exchange.getIn();                        
                         // Get the operation name from in message
                         String operationName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
                         // The parameter of the invocation is stored in the body of in message
                         String id = (String) inMessage.getBody(Object[].class)[0];
                         if ("getCustomer".equals(operationName)) {
+                            String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+                            assertEquals("Get a wrong http method", "GET", httpMethod);
+                            String uri = inMessage.getHeader(Exchange.HTTP_URI, String.class);                            
+                            assertEquals("Get a wrong http uri", "/customerservice/customers/126", uri);
                             Customer customer = new Customer();
                             customer.setId(Long.parseLong(id));
                             customer.setName("Willem");

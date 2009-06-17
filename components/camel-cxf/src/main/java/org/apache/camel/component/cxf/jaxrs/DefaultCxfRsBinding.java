@@ -39,12 +39,27 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     
     public void populateExchangeFromCxfRsRequest(org.apache.cxf.message.Exchange cxfExchange,
                                                  Exchange camelExchange, Method method, Object[] paramArray) {
-        Message inMessage = camelExchange.getIn();
-        //TODO copy the message header into the inMessage
-        inMessage.setHeader(CxfConstants.OPERATION_NAME, method.getName());
-        inMessage.setBody(paramArray);        
+        Message camelMessage = camelExchange.getIn();        
+        //Copy the CXF message header into the Camel inMessage
+        org.apache.cxf.message.Message cxfMessage = cxfExchange.getInMessage();
+        
+        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.REQUEST_URI, Exchange.HTTP_URI);
+        
+        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, Exchange.HTTP_METHOD);
+        
+        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.PATH_INFO, Exchange.HTTP_PATH);
+        
+        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.CONTENT_TYPE, Exchange.CONTENT_TYPE);
+        
+        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ENCODING, Exchange.HTTP_CHARACTER_ENCODING);
+        
+        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.QUERY_STRING, Exchange.HTTP_QUERY);
+        
+        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, Exchange.ACCEPT_CONTENT_TYPE);
+                
+        camelMessage.setHeader(CxfConstants.OPERATION_NAME, method.getName());
+        camelMessage.setBody(paramArray);        
     }
-
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {        
         return headerFilterStrategy;
@@ -53,6 +68,12 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;        
+    }
+    
+    private void copyMessageHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, String cxfKey, String camelKey) {
+        if (cxfMessage.get(cxfKey) != null) {
+            camelMessage.setHeader(camelKey, cxfMessage.get(cxfKey));
+        }
     }
 
 }
