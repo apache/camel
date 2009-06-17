@@ -33,6 +33,10 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
+import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
+import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
+import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.ObjectHelper;
@@ -46,9 +50,17 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
 
     protected static final transient Log LOG = LogFactory.getLog(DefaultPackageScanClassResolver.class);
     private Set<ClassLoader> classLoaders;
+    private Set<PackageScanFilter> scanFilters;
 
     public void addClassLoader(ClassLoader classLoader) {
         getClassLoaders().add(classLoader);
+    }
+
+    public void addFilter(PackageScanFilter filter) {
+        if (scanFilters == null) {
+            scanFilters = new LinkedHashSet<PackageScanFilter>();
+        }
+        scanFilters.add(filter);
     }
 
     public Set<ClassLoader> getClassLoaders() {
@@ -80,7 +92,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
-        PackageScanFilter test = new AnnotatedWithPackageScanFilter(annotation, true);
+        PackageScanFilter test = getCompositeFilter(new AnnotatedWithPackageScanFilter(annotation, true));
         Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
@@ -103,7 +115,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             LOG.debug("Searching for annotations of " + annotations + " in packages: " + Arrays.asList(packageNames));
         }
 
-        PackageScanFilter test = new AnnotatedWithAnyPackageScanFilter(annotations, true);
+        PackageScanFilter test = getCompositeFilter(new AnnotatedWithAnyPackageScanFilter(annotations, true));
         Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
@@ -126,7 +138,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
-        PackageScanFilter test = new AssignableToPackageScanFilter(parent);
+        PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
         Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
@@ -157,13 +169,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         return classes;
     }
 
-
     protected void find(PackageScanFilter test, String packageName, Set<Class> classes) {
         packageName = packageName.replace('.', '/');
 
         Set<ClassLoader> set = getClassLoaders();
 
-        for (ClassLoader classLoader : set) {            
+        for (ClassLoader classLoader : set) {
             find(test, packageName, classLoader, classes);
         }
     }
@@ -268,8 +279,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         return loader.getResources(packageName);
     }
 
-
-
+    private PackageScanFilter getCompositeFilter(PackageScanFilter filter) {
+        if (scanFilters != null) {
+            CompositePackageScanFilter composite = new CompositePackageScanFilter(scanFilters);
+            composite.addFilter(filter);
+            return composite;
+        }
+        return filter;
+    }
 
     /**
      * Finds matches in a physical directory on a filesystem. Examines all files

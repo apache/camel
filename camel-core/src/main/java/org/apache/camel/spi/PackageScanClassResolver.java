@@ -84,5 +84,12 @@ public interface PackageScanClassResolver {
      * @return the classes found, returns an empty set if none found
      */
     Set<Class> findByFilter(PackageScanFilter fiter, String... packageNames);
+    
+    /**
+     * Add a filter that will be applied to all scan operations
+     * 
+     * @param filter filter to filter desired classes in all scan operations
+     */
+    void addFilter(PackageScanFilter filter);
 
 }

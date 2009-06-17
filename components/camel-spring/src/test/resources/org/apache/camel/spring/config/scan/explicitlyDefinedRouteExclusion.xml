@@ -26,15 +26,14 @@
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <packageScan>
-      <packages>org.apache.camel.spring.config.scan</packages>
-      <excludes>**/*Excluded*</excludes>
-      <includes>**/*</includes>
-    </packageScan>
+    <beanPostProcessor />
     <endpoint id="start" uri="direct:start"/>
     <endpoint id="result" uri="mock:end"/>
   </camelContext>
 
+  <bean id="explicitlyDefinedRoute" class="org.apache.camel.spring.config.scan.route.MyRouteBuilder" autowire="byType" />
+  <bean id="explicitlyDefinedButExcludedRoute" class="org.apache.camel.spring.config.unscanned.MyExplicitlyDefinedButExcludedRouteBuilder" />
+  
   <context:component-scan
     base-package="org.apache.camel.spring.config.scan.component" />
 

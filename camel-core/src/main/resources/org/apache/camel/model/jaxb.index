@@ -42,6 +42,7 @@ OnCompletionDefinition
 OnExceptionDefinition
 OptionalIdentifiedType
 OtherwiseDefinition
+PackageScanDefinition
 PipelineDefinition
 PolicyDefinition
 ProcessDefinition

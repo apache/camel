@@ -32,6 +32,7 @@ import org.apache.camel.Routes;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
+import org.apache.camel.impl.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.model.FromDefinition;
@@ -41,6 +42,7 @@ import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.PackageScanDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
@@ -104,6 +106,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private PropertiesDefinition properties;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
+    @XmlElement(name = "packageScan", type = PackageScanDefinition.class, required = false)
+    private PackageScanDefinition packageScan;
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;    
     @XmlElements({
@@ -563,6 +567,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.properties = properties;
     }
 
+    /**
+     * @deprecated replaced by {@link #getPackageScan()}
+     */
+    @Deprecated
     public String[] getPackages() {
         return packages;
     }
@@ -572,11 +580,28 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * extend {@link RouteBuilder} to be auto-wired up to the
      * {@link SpringCamelContext} as a route. Note that classes are excluded if
      * they are specifically configured in the spring.xml
-     *
+     * 
+     * @deprecated replaced by {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
      * @param packages the package names which are recursively searched
      */
+    @Deprecated
     public void setPackages(String[] packages) {
         this.packages = packages;
+    }
+
+    public PackageScanDefinition getPackageScan() {
+        return packageScan;
+    }
+
+    /**
+     * Sets the package scanning information. Package scanning allows for the
+     * automatic discovery of certain camel classes at runtime for inclusion
+     * e.g. {@link RouteBuilder} implementations
+     * 
+     * @param packageScan the package scan
+     */
+    public void setPackageScan(PackageScanDefinition packageScan) {
+        this.packageScan = packageScan;
     }
 
     public void setBeanPostProcessor(BeanPostProcessor postProcessor) {
@@ -766,26 +791,55 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Strategy method to try find {@link RouteBuilder} instances on the classpath
      */
     protected void findRouteBuilders() throws Exception {
-        List<String> packages = new ArrayList<String>();
 
-        if (getPackages() != null && getPackages().length > 0) {
+        PackageScanClassResolver resolver = getContext().getPackageScanClassResolver();
+        addPackageElementContentsToScanDefinition();
 
-            // normalize packages as end user can have inserted spaces or \n or the likes
-            for (String name : getPackages()) {
-                name = ObjectHelper.normalizeClassName(name);
-                if (ObjectHelper.isNotEmpty(name)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Using package: " + name + " to scan for RouteBuilder classes");
-                    }
-                    packages.add(name);
-                }
-            }
-            String[] normalized = packages.toArray(new String[packages.size()]);
+        PackageScanDefinition packageScanDef = getPackageScan();
 
-            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(),
-                    getBeanPostProcessor(), getContext().getPackageScanClassResolver());
+        if (packageScanDef != null && packageScanDef.getPackages().size() > 0) {
+
+            PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
+            filter.addIncludePatterns(packageScanDef.getIncludes());
+            filter.addExcludePatterns(packageScanDef.getExcludes());
+            resolver.addFilter(filter);
+
+            String[] normalized = normalizePackages(packageScanDef.getPackages());
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(), getBeanPostProcessor(), getContext()
+                .getPackageScanClassResolver());
             finder.appendBuilders(getAdditionalBuilders());
         }
+
     }
-    
+
+    private void addPackageElementContentsToScanDefinition() {
+        PackageScanDefinition packageScanDef = getPackageScan();
+
+        if (getPackages() != null && getPackages().length > 0) {
+            LOG.warn("Using a packages element to specify packages to search has been deprecated. Please use a package-scan element instead.");
+            if (packageScanDef == null) {
+                packageScanDef = new PackageScanDefinition();
+                setPackageScan(packageScanDef);
+            }
+
+            for (String pkg : getPackages()) {
+                packageScanDef.getPackages().add(pkg);
+            }
+        }
+    }
+
+    private String[] normalizePackages(List<String> unnormalized) {
+        List<String> packages = new ArrayList<String>();
+        for (String name : unnormalized) {
+            name = ObjectHelper.normalizeClassName(name);
+            if (ObjectHelper.isNotEmpty(name)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using package: " + name + " to scan for RouteBuilder classes");
+                }
+                packages.add(name);
+            }
+        }
+        return packages.toArray(new String[packages.size()]);
+    }
+
 }

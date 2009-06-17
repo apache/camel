@@ -14,45 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.scan;
 
 import java.lang.annotation.Annotation;
-import java.util.Set;
 
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Package scan filter for testing if a given class is annotated with any of the annotations.
+ * Package scan filter for testing if a given class is annotated with a certain annotation.
  */
-public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
-    private Set<Class<? extends Annotation>> annotations;
+public class AnnotatedWithPackageScanFilter implements PackageScanFilter {
+
+    private Class<? extends Annotation> annotation;
     private boolean checkMetaAnnotations;
 
-    public AnnotatedWithAnyPackageScanFilter(Set<Class<? extends Annotation>> annotations) {
-        this(annotations, false);
+    public AnnotatedWithPackageScanFilter(Class<? extends Annotation> annotation) {
+        this(annotation, false);
     }
 
-    public AnnotatedWithAnyPackageScanFilter(Set<Class<? extends Annotation>> annotations, boolean checkMetaAnnotations) {
-        this.annotations = annotations;
+    public AnnotatedWithPackageScanFilter(Class<? extends Annotation> annotation, boolean checkMetaAnnotations) {
+        this.annotation = annotation;
         this.checkMetaAnnotations = checkMetaAnnotations;
     }
 
     public boolean matches(Class type) {
-        if (type == null) {
-            return false;
-        }
-        for (Class<? extends Annotation> annotation : annotations) {
-            if (ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations)) {
-                return true;
-            }
-        }
-        return false;
+        return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
     }
 
     @Override
     public String toString() {
-        return "annotated with any @[" + annotations + "]";
+        return "annotated with @" + annotation.getSimpleName();
     }
-
 }

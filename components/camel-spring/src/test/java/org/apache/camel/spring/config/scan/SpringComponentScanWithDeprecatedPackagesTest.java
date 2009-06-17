@@ -17,33 +17,21 @@
 
 package org.apache.camel.spring.config.scan;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringComponentScanTest extends ContextTestSupport {
+public class SpringComponentScanWithDeprecatedPackagesTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
+        ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScanWithPackages.xml");
         context = (CamelContext)c.getBean("camelContext");
         template = context.createProducerTemplate();
 
-    }
-    
-    public void testExcludedRoute() throws InterruptedException {
-        assertEquals(1, context.getRoutes().size());
-        MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
-        mock.expectedMessageCount(0);
-
-        sendBody("direct:shouldNeverRecieveExchange", "dropped like a hot rock");
-        mock.await(500, TimeUnit.MILLISECONDS);
-        mock.assertIsSatisfied();
     }
 
     public void testSpringComponentScanFeature() throws InterruptedException {

@@ -14,36 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import java.lang.annotation.Annotation;
+package org.apache.camel.impl.scan;
 
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * Package scan filter for testing if a given class is annotated with a certain annotation.
+ * Package scan filter for inverting the match result of a subfilter. If the
+ * subfilter would match and return <tt>true</tt> this filter will invert that
+ * match and return <tt>false</tt>.
  */
-public class AnnotatedWithPackageScanFilter implements PackageScanFilter {
+@SuppressWarnings("unchecked")
+public class InvertingPackageScanFilter implements PackageScanFilter {
 
-    private Class<? extends Annotation> annotation;
-    private boolean checkMetaAnnotations;
+    private PackageScanFilter filter;
 
-    public AnnotatedWithPackageScanFilter(Class<? extends Annotation> annotation) {
-        this(annotation, false);
-    }
-
-    public AnnotatedWithPackageScanFilter(Class<? extends Annotation> annotation, boolean checkMetaAnnotations) {
-        this.annotation = annotation;
-        this.checkMetaAnnotations = checkMetaAnnotations;
+    public InvertingPackageScanFilter(PackageScanFilter filter) {
+        this.filter = filter;
     }
 
     public boolean matches(Class type) {
-        return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
+        return !filter.matches(type);
     }
 
     @Override
     public String toString() {
-        return "annotated with @" + annotation.getSimpleName();
+        return "![" + filter.toString() + "]";
     }
+
 }

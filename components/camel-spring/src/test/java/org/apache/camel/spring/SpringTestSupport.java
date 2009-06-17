@@ -16,27 +16,35 @@
  */
 package org.apache.camel.spring;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
+import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
+import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 /**
  * @version $Revision$
  */
 public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
-
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
     @Override
     protected void setUp() throws Exception {
         applicationContext = createApplicationContext();
         assertNotNull("Should have created a valid spring context", applicationContext);
-
         super.setUp();
     }
 
@@ -48,6 +56,67 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
+
+        public void setExcludedClasses(Set<Class> excludedClasses) {
+            excludedClasses = excludedClasses == null ? Collections.EMPTY_SET : excludedClasses;
+            addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
+        }
+
+    }
+
+    /**
+     * Create a parent context that initializes a
+     * {@link org.apache.camel.spi.PackageScanClassResolver} to exclude a set of given classes from
+     * being resolved. Typically this is used at test time to exclude certain routes,
+     * which might otherwise be just noisy, from being discovered and initialized.
+     * <p/>
+     * To use this filtering mechanism it is necessary to provide the
+     * {@link ApplicationContext} returned from here as the parent context to
+     * your test context e.g.
+     *
+     * <pre>
+     * protected AbstractXmlApplicationContext createApplicationContext() {
+     *     return new ClassPathXmlApplicationContext(new String[] {&quot;test-context.xml&quot;}, getRouteExcludingApplicationContext());
+     * }
+     * </pre>
+     *
+     * This will, in turn, call the template methods <code>excludedRoutes</code>
+     * and <code>excludedRoute</code> to determine the classes to be excluded from scanning.
+     *
+     * @see org.apache.camel.spring.config.scan.SpringComponentScanTest for an example.
+     * @return ApplicationContext a parent {@link ApplicationContext} configured
+     *         to exclude certain classes from package scanning
+     */
+    protected ApplicationContext getRouteExcludingApplicationContext() {
+        GenericApplicationContext routeExcludingContext = new GenericApplicationContext();
+        routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
+        routeExcludingContext.refresh();
+
+        ExcludingPackageScanClassResolver excludingResolver = (ExcludingPackageScanClassResolver)routeExcludingContext.getBean("excludingResolver");
+        excludingResolver.setExcludedClasses(new HashSet<Class>(Arrays.asList(excludeRoutes())));
+
+        return routeExcludingContext;
+    }
+
+    /**
+     * Template method used to exclude {@link org.apache.camel.Routes} from the test time context
+     * route scanning
+     *
+     * @return Class[] the classes to be excluded from test time context route scanning
+     */
+    protected Class[] excludeRoutes() {
+        Class excludedRoute = excludeRoute();
+        return excludedRoute != null ? new Class[] {excludedRoute} : new Class[0];
+    }
+
+    /**
+     * Template method used to exclude a {@link org.apache.camel.Routes} from the test camel context
+     */
+    protected Class excludeRoute() {
+        return null;
+    }
 
     /**
      * Looks up the mandatory spring bean of the given name and type, failing if
@@ -85,4 +154,5 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
+
 }

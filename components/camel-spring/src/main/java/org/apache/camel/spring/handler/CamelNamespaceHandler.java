@@ -31,15 +31,6 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.dataformat.ArtixDSDataFormat;
-import org.apache.camel.model.dataformat.JaxbDataFormat;
-import org.apache.camel.model.dataformat.SerializationDataFormat;
-import org.apache.camel.model.dataformat.XMLBeansDataFormat;
-import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
-import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
-import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
-import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
-import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
@@ -160,7 +151,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
         classes.add(org.apache.camel.ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteDefinition.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);     
+        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
         classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
@@ -200,6 +191,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
                 builder.addPropertyValue("properties", factoryBean.getProperties());
+                builder.addPropertyValue("packageScan", factoryBean.getPackageScan());
                 if (factoryBean.getPackages().length > 0) {
                     builder.addPropertyValue("packages", factoryBean.getPackages());
                 }

@@ -14,29 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring.config.scan;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.spring.config.scan.route.MyExcludedRouteBuilder;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringComponentScanTest extends ContextTestSupport {
+public class RouteExclusionFromWithinSpringTestSupportTest extends SpringTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
-        context = (CamelContext)c.getBean("camelContext");
-        template = context.createProducerTemplate();
-
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/config/scan/componentScan.xml"}, getRouteExcludingApplicationContext());
     }
-    
-    public void testExcludedRoute() throws InterruptedException {
+
+    public void testRouteExcluded() throws InterruptedException {
         assertEquals(1, context.getRoutes().size());
         MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
         mock.expectedMessageCount(0);
@@ -46,10 +41,17 @@ public class SpringComponentScanTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-    public void testSpringComponentScanFeature() throws InterruptedException {
+    public void testRoutesNotExcludedWorkNormally() throws InterruptedException {
         template.sendBody("direct:start", "request");
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
     }
+
+    @Override
+    protected Class excludeRoute() {
+
+        return MyExcludedRouteBuilder.class;
+    }
+
 }

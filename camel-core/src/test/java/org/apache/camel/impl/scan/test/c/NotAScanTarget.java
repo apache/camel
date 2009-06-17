@@ -14,26 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.impl.scan.test.c;
 
-import org.apache.camel.spi.PackageScanFilter;
+public class NotAScanTarget {
 
-/**
- * Package scan filter for testing if a given class is assignable to another class.
- */
-public class AssignableToPackageScanFilter implements PackageScanFilter {
-    private final Class parent;
-
-    public AssignableToPackageScanFilter(Class parentType) {
-        this.parent = parentType;
+    public void someMethod() {
     }
 
-    public boolean matches(Class type) {
-        return type != null && parent.isAssignableFrom(type);
-    }
-
-    @Override
-    public String toString() {
-        return "is assignable to " + parent.getSimpleName();
-    }
 }

@@ -20,9 +20,11 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.NodeList;
 
@@ -110,6 +112,12 @@ public final class CollectionHelper {
             }
         }
         return answer;
+    }
+
+    public static <T> Set<T> createSetContaining(T... contents) {
+        Set<T> contentsAsSet = new HashSet<T>();
+        contentsAsSet.addAll(Arrays.asList(contents));
+        return contentsAsSet;
     }
 
     public static String collectionAsCommaDelimitedString(String[] col) {
