@@ -16,18 +16,14 @@
  */
 package org.apache.camel.osgi;
 
-
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class OsgiFactoryFinderResolver implements FactoryFinderResolver {
-    private static final transient Log LOG = LogFactory.getLog(OsgiFactoryFinderResolver.class);
 
     public FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver) {        
         return resolveFactoryFinder(classResolver, "META-INF/services/org/apache/camel/");

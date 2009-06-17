@@ -42,6 +42,8 @@ import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -55,6 +57,7 @@ import org.springframework.beans.factory.xml.ParserContext;
  */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
+    private static final Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
@@ -80,11 +83,24 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class);
 
         // camel context
+        boolean osgi = false;
         Class cl = CamelContextFactoryBean.class;
         try {
             cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
+            osgi = true;
         } catch (Throwable t) {
             // not running with camel-osgi so we fallback to the regular factory bean
+            LOG.trace("Cannot find class so assuming not running in OSGI container: " + t.getMessage());
+        }
+
+        if (osgi) {
+            LOG.info("camel-osgi.jar detected in classpath");
+        } else {
+            LOG.info("camel-osgi.jar not detected in classpath");
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using " + cl.getCanonicalName() + " as CamelContextBeanDefinitionParser");
         }
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }

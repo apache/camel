@@ -138,7 +138,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
                         String urlString = pathString.substring(pathString.indexOf(packageName));
                         urls.add(urlString);
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("added url " + urlString);
+                            LOG.trace("Added url: " + urlString);
                         }
                     }
                 }
