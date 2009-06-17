@@ -40,7 +40,6 @@
     org.apache.camel.spring.*;${camel.osgi.version},
     org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
     org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
-    org.apache.camel.component.file;${camel.osgi.split.pkg};${camel.osgi.version},
     org.apache.camel.component.test;${camel.osgi.split.pkg};${camel.osgi.version},
     org.apache.camel.component.validator;${camel.osgi.split.pkg};${camel.osgi.version},
     org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version}

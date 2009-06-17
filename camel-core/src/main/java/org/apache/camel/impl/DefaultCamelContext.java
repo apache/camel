@@ -855,6 +855,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public void start() throws Exception {
         super.start();
         
+        LOG.debug("Starting routes");
         // the context is now considered started (i.e. isStarted() == true))
         // starting routes is done after, not during context startup
         synchronized (this) {
@@ -862,8 +863,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 routeService.start();
             }
         }
-
-        producerServicePool.stop();
+        LOG.debug("Started routes");
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
@@ -874,7 +874,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
 
-        producerServicePool.start();
+        startServices(producerServicePool);
 
         if (isStreamCacheEnabled()) {
             // only add a new stream cache if not already configured
@@ -941,6 +941,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }        
     }
 
+    protected synchronized void doStop() throws Exception {
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
+        stopServices(routeServices.values());
+        stopServices(servicesToClose);
+        if (components != null) {
+            for (Component component : components.values()) {
+                stopServices(component);
+            }
+        }
+        servicesToClose.clear();
+        stopServices(producerServicePool);
+
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
+    }
+
     protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
         if (list != null) {
             for (RouteDefinition route : list) {
@@ -959,20 +974,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (shouldStartRoutes()) {
             routeService.start();
         }
-    }
-
-    protected synchronized void doStop() throws Exception {
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
-        stopServices(routeServices.values());
-        stopServices(servicesToClose);
-        if (components != null) {
-            for (Component component : components.values()) {
-                stopServices(component);
-            }
-        }
-        
-        servicesToClose.clear();
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }
 
     /**
@@ -1159,6 +1160,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultCamelContext(" + getName() + ")";
     }
 
 }

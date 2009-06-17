@@ -816,7 +816,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         PackageScanDefinition packageScanDef = getPackageScan();
 
         if (getPackages() != null && getPackages().length > 0) {
-            LOG.warn("Using a packages element to specify packages to search has been deprecated. Please use a package-scan element instead.");
+            LOG.warn("Using a packages element to specify packages to search has been deprecated. Please use a packageScan element instead.");
             if (packageScanDef == null) {
                 packageScanDef = new PackageScanDefinition();
                 setPackageScan(packageScanDef);
