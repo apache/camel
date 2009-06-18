@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.PollableChannel;
@@ -31,9 +32,10 @@ import org.springframework.integration.message.GenericMessage;
 import org.springframework.integration.message.MessageHandler;
 import org.springframework.integration.message.StringMessage;
 
-public class CamelTargetAdapterTest extends SpringTestSupport {
+public class CamelTargetAdapterTest extends CamelSpringTestSupport {
     private static final String MESSAGE_BODY = "hello world";
 
+    @Test
     public void testSendingOneWayMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);
@@ -42,6 +44,7 @@ public class CamelTargetAdapterTest extends SpringTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testSendingTwoWayMessage() throws Exception {
 
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelB");
@@ -57,6 +60,7 @@ public class CamelTargetAdapterTest extends SpringTestSupport {
         requestChannel.send(message);
     }
 
+    @Test
     public void testSendingTwoWayMessageWithMessageAddress() throws Exception {
 
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelD");

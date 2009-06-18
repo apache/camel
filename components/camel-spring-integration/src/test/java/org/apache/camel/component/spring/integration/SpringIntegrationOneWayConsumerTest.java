@@ -18,15 +18,17 @@
 package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.core.MessageChannel;
 import org.springframework.integration.message.StringMessage;
 
 
-public class SpringIntegrationOneWayConsumerTest extends SpringTestSupport {
+public class SpringIntegrationOneWayConsumerTest extends CamelSpringTestSupport {
     private static final String MESSAGE_BODY = "hello world";
 
+    @Test
     public void testSendingOneWayMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);

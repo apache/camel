@@ -18,14 +18,16 @@ package org.apache.camel.component.spring.integration.adapter;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.spring.integration.HelloWorldService;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.PollableChannel;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageHandler;
 
-public class CamelSourceAdapterTest extends SpringTestSupport {
+public class CamelSourceAdapterTest extends CamelSpringTestSupport {
+    @Test
     public void testSendingOneWayMessage() throws Exception {
         DirectChannel channelA = (DirectChannel) applicationContext.getBean("channelA");
         channelA.subscribe(new MessageHandler() {
@@ -36,6 +38,7 @@ public class CamelSourceAdapterTest extends SpringTestSupport {
         template.sendBody("direct:OneWay", "Willem");
     }
 
+    @Test
     public void testSendingTwoWayMessage() throws Exception {
         String result = (String) template.sendBody("direct:TwoWay", ExchangePattern.InOut, "Willem");
         assertEquals("Can't get the right response", result, "Hello Willem");

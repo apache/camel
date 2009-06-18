@@ -20,7 +20,8 @@ package org.apache.camel.component.spring.integration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.AbstractPollableChannel;
 import org.springframework.integration.channel.DirectChannel;
@@ -31,9 +32,10 @@ import org.springframework.integration.message.GenericMessage;
 import org.springframework.integration.message.MessageHandler;
 
 
-public class SpringIntegrationTwoWayConsumerTest extends SpringTestSupport {
+public class SpringIntegrationTwoWayConsumerTest extends CamelSpringTestSupport {
     private static final String MESSAGE_BODY = "Request message";    
 
+    @Test
     public void testSendingTwoWayMessage() throws Exception {
         
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("requestChannel");

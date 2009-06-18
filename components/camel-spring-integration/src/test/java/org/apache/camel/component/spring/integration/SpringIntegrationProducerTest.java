@@ -17,20 +17,23 @@
 package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringIntegrationProducerTest extends SpringTestSupport {
+public class SpringIntegrationProducerTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/producer.xml");
     }
 
+    @Test
     public void testSendingTwoWayMessage() throws Exception {
         String result = (String) template.sendBody("direct:twowayMessage", ExchangePattern.InOut, "Willem");
         assertEquals("Can't get the right response", result, "Hello Willem");
     }
     
+    @Test
     public void testSendingOneWayMessage() throws Exception {
         template.sendBody("direct:onewayMessage", "Greet");
         HelloWorldService service = (HelloWorldService)applicationContext.getBean("helloService");

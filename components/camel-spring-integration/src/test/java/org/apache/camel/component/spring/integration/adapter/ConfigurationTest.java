@@ -17,13 +17,16 @@
 package org.apache.camel.component.spring.integration.adapter;
 
 import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ConfigurationTest extends TestCase {
+public class ConfigurationTest extends Assert {
     private AbstractXmlApplicationContext context;
 
 
+    @Test
     public void testCamelSourceEndpoint() throws Exception {
         context =
             new ClassPathXmlApplicationContext(new String[] {"/org/apache/camel/component/spring/integration/adapter/CamelSource.xml"});
@@ -39,6 +42,7 @@ public class ConfigurationTest extends TestCase {
 
     }
 
+    @Test
     public void testCamelTragetEndpoint() throws Exception {
         context =
             new ClassPathXmlApplicationContext(new String[] {"/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml"});
