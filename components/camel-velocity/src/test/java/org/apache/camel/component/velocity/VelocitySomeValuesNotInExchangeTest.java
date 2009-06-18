@@ -19,15 +19,17 @@ package org.apache.camel.component.velocity;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test with some variables missing.
  */
-public class VelocitySomeValuesNotInExchangeTest extends ContextTestSupport {
+public class VelocitySomeValuesNotInExchangeTest extends CamelTestSupport {
 
+    @Test
     public void testWithAllValues() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -42,6 +44,7 @@ public class VelocitySomeValuesNotInExchangeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithSomeValues() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

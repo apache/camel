@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.velocity;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for wiki documentation
  */
-public class VelocityLetterTest extends ContextTestSupport {
+public class VelocityLetterTest extends CamelTestSupport {
 
     // START SNIPPET: e1
     private Exchange createLetter() {
@@ -38,6 +39,7 @@ public class VelocityLetterTest extends ContextTestSupport {
         return exchange;
     }
 
+    @Test
     public void testVelocityLetter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

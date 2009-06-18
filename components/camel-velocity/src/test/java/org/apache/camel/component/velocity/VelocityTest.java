@@ -16,21 +16,24 @@
  */
 package org.apache.camel.component.velocity;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class VelocityTest extends ContextTestSupport {
+public class VelocityTest extends CamelTestSupport {
+    @Test
     public void testReceivesFooResponse() throws Exception {
         assertRespondsWith("foo", "<hello>foo</hello>");
     }
 
+    @Test
     public void testReceivesBarResponse() throws Exception {
         assertRespondsWith("bar", "<hello>bar</hello>");
     }

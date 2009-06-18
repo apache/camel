@@ -21,17 +21,20 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class VelocitySetHeaderTest extends SpringTestSupport {
+public class VelocitySetHeaderTest extends CamelSpringTestSupport {
+    @Test
     public void testSendingApple() throws Exception {
         assertRespondsWith("apple", "I am an apple");
     }
 
+    @Test
     public void testSendingOrgane() throws Exception {
         assertRespondsWith("orange", "I am an orange");
     }

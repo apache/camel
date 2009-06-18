@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.velocity;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test with the body as a Domain object.
  *
  * @version $Revision$
  */
-public class VelocityBodyAsDomainObjectTest extends ContextTestSupport {
+public class VelocityBodyAsDomainObjectTest extends CamelTestSupport {
 
+    @Test
     public void testWithObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
