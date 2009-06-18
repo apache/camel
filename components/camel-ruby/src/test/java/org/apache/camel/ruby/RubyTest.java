@@ -19,18 +19,20 @@ package org.apache.camel.ruby;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jruby.Main;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class RubyTest extends ContextTestSupport {
+public class RubyTest extends CamelTestSupport {
     protected String expected = "<hello>world!</hello>";
     protected String scriptName = "src/test/java/org/apache/camel/ruby/example.rb";
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedBodiesReceived(expected);
@@ -40,6 +42,7 @@ public class RubyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedMessageCount(0);

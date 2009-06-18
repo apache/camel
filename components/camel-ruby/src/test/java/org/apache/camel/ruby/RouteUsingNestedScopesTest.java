@@ -16,12 +16,15 @@
  */
 package org.apache.camel.ruby;
 
+import org.junit.Before;
+
 /**
  * @version $Revision$
  */
 public class RouteUsingNestedScopesTest extends RubyTest {
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         scriptName = "src/test/java/org/apache/camel/ruby/scopes.rb";
         super.setUp();
     }
