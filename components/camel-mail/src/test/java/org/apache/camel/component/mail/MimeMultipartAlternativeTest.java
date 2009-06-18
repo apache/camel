@@ -58,7 +58,6 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         producer.process(exchange); 
         
         producer.stop();
-
     }
     
     private void verifyTheRecivedEmail(String expectString) throws Exception {
@@ -67,6 +66,8 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        // this header should be removed
+        mock.message(0).header(MailConstants.MAIL_ALTERNATIVE_BODY).isNull();
         Exchange out = mock.assertExchangeReceived(0);
         mock.assertIsSatisfied();
 
@@ -86,8 +87,6 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         assertNotNull("Should not have null attachments", attachments);
         assertEquals(1, attachments.size());
         assertEquals("multipart body should have 2 parts", 2, out.getIn().getBody(MimeMultipart.class).getCount());
-
-        
     }
     
     @Test

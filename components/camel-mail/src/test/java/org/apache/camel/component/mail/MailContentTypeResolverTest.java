@@ -53,7 +53,7 @@ public class MailContentTypeResolverTest extends CamelTestSupport {
         producer.process(exchange);
 
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(1000);
+        Thread.sleep(4000);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

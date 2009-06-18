@@ -71,8 +71,8 @@ public class MailBinding {
         throws MessagingException, IOException {
 
         // camel message headers takes presedence over endpoint configuration
-        if (hasRecipientHeaders(exchange.getIn())) {
-            setRecipientFromCamelMessage(mimeMessage, exchange, exchange.getIn());
+        if (hasRecipientHeaders(exchange)) {
+            setRecipientFromCamelMessage(mimeMessage, exchange);
         } else {
             // fallback to endpoint configuration
             setRecipientFromEndpointConfiguration(mimeMessage, endpoint);
@@ -84,7 +84,7 @@ public class MailBinding {
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
-        appendHeadersFromCamelMessage(mimeMessage, exchange, exchange.getIn());
+        appendHeadersFromCamelMessage(mimeMessage, endpoint.getConfiguration(), exchange);
 
         if (empty(mimeMessage.getFrom())) {
             // lets default the address to the endpoint destination
@@ -93,7 +93,7 @@ public class MailBinding {
         }
 
         // if there is an alternativebody provided, set up a mime multipart alternative message
-        if (hasAlternativeBody(endpoint.getConfiguration(), exchange.getIn())) {
+        if (hasAlternativeBody(endpoint.getConfiguration(), exchange)) {
             createMultipartAlternativeMessage(mimeMessage, endpoint.getConfiguration(), exchange);
         } else {
             if (exchange.getIn().hasAttachments()) {
@@ -125,7 +125,9 @@ public class MailBinding {
         return contentType;
     }
 
-    protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
+    protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
+        throws MessagingException, IOException {
+
         String contentType = determineContentType(configuration, exchange);
 
         if (LOG.isTraceEnabled()) {
@@ -142,7 +144,9 @@ public class MailBinding {
         return contentType;
     }
 
-    protected String populateContentOnBodyPart(BodyPart part, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
+    protected String populateContentOnBodyPart(BodyPart part, MailConfiguration configuration, Exchange exchange)
+        throws MessagingException, IOException {
+
         String contentType = determineContentType(configuration, exchange);
 
         if (LOG.isTraceEnabled()) {
@@ -174,11 +178,10 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
-    protected void appendHeadersFromCamelMessage(MimeMessage mimeMessage, Exchange exchange,
-                                                 org.apache.camel.Message camelMessage)
+    protected void appendHeadersFromCamelMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
         throws MessagingException {
 
-        for (Map.Entry<String, Object> entry : camelMessage.getHeaders().entrySet()) {
+        for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             if (headerValue != null) {
@@ -187,6 +190,12 @@ public class MailBinding {
 
                     if (isRecipientHeader(headerName)) {
                         // skip any recipients as they are handled specially
+                        continue;
+                    }
+
+                    // alternative body should also be skipped
+                    if (headerName.equalsIgnoreCase(configuration.getAlternativeBodyHeader())) {
+                        // skip alternative body
                         continue;
                     }
 
@@ -205,11 +214,8 @@ public class MailBinding {
         }
     }
 
-    private void setRecipientFromCamelMessage(MimeMessage mimeMessage, Exchange exchange,
-                                              org.apache.camel.Message camelMessage)
-        throws MessagingException {
-
-        for (Map.Entry<String, Object> entry : camelMessage.getHeaders().entrySet()) {
+    private void setRecipientFromCamelMessage(MimeMessage mimeMessage, Exchange exchange) throws MessagingException {
+        for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             if (headerValue != null && isRecipientHeader(headerName)) {
@@ -248,8 +254,8 @@ public class MailBinding {
     /**
      * Appends the Mail attachments from the Camel {@link MailMessage}
      */
-    protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, MailConfiguration configuration,
-        Exchange exchange) throws MessagingException, IOException {
+    protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
+        throws MessagingException, IOException {
 
         // Put parts in message
         mimeMessage.setContent(createMixedMultipartAttachments(configuration, exchange));
@@ -322,14 +328,17 @@ public class MailBinding {
         LOG.trace("Adding attachments +++ done +++");
     }
 
-    protected void createMultipartAlternativeMessage(MimeMessage mimeMessage, MailConfiguration configuration,
-                                                     Exchange exchange) throws MessagingException, IOException {
+    protected void createMultipartAlternativeMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
+        throws MessagingException, IOException {
 
         MimeMultipart multipartAlternative = new MimeMultipart("alternative");
         mimeMessage.setContent(multipartAlternative);
 
         BodyPart plainText = new MimeBodyPart();
-        plainText.setText(getAlternativeBody(configuration, exchange.getIn()));
+        plainText.setText(getAlternativeBody(configuration, exchange));
+        // remove the header with the alternative mail now that we got it
+        // otherwise it might end up twice in the mail reader
+        exchange.getIn().removeHeader(configuration.getAlternativeBodyHeader());
         multipartAlternative.addBodyPart(plainText);
 
         // if there are no attachments, add the body to the same mulitpart message
@@ -355,7 +364,6 @@ public class MailBinding {
                 addAttachmentsToMultipart(multipartRelated, Part.INLINE, exchange);
             }
         }
-
     }
 
     protected void addBodyToMultipart(MailConfiguration configuration, MimeMultipart activeMultipart, Exchange exchange)
@@ -408,8 +416,8 @@ public class MailBinding {
     /**
      * Does the given camel message contain any To, CC or BCC header names?
      */
-    private static boolean hasRecipientHeaders(org.apache.camel.Message camelMessage) {
-        for (String key : camelMessage.getHeaders().keySet()) {
+    private static boolean hasRecipientHeaders(Exchange exchange) {
+        for (String key : exchange.getIn().getHeaders().keySet()) {
             if (isRecipientHeader(key)) {
                 return true;
             }
@@ -417,13 +425,13 @@ public class MailBinding {
         return false;
     }
 
-    protected static boolean hasAlternativeBody(MailConfiguration configuration, org.apache.camel.Message camelMessage) {
-        return getAlternativeBody(configuration, camelMessage) != null;
+    protected static boolean hasAlternativeBody(MailConfiguration configuration, Exchange exchange) {
+        return getAlternativeBody(configuration, exchange) != null;
     }
 
-    protected static String getAlternativeBody(MailConfiguration configuration, org.apache.camel.Message camelMessage) {
+    protected static String getAlternativeBody(MailConfiguration configuration, Exchange exchange) {
         String alternativeBodyHeader = configuration.getAlternativeBodyHeader();
-        return camelMessage.getHeader(alternativeBodyHeader, java.lang.String.class);
+        return exchange.getIn().getHeader(alternativeBodyHeader, java.lang.String.class);
     }
 
     /**
