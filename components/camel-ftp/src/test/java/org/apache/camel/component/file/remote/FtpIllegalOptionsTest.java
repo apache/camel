@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class FtpIllegalOptionsTest extends ContextTestSupport {
+public class FtpIllegalOptionsTest extends CamelTestSupport {
 
+    @Test
     public void testIllegalOptions() throws Exception {
         try {
             context.getEndpoint("ftp://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {

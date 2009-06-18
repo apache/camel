@@ -24,6 +24,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to verify that we can pool a BINARY file from the FTP Server and store it on a local file path
@@ -37,11 +39,13 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
 
+    @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);

@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test used for FTP wiki documentation
  */
-public class FromFtpToBinarySampleTest extends ContextTestSupport {
+public class FromFtpToBinarySampleTest extends CamelTestSupport {
 
+    @Test
     public void testDummy() throws Exception {
         // this is a noop test
     }

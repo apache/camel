@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for the idempotent=true option.
@@ -30,7 +32,8 @@ public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/idempotent");
     }
@@ -44,6 +47,7 @@ public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
         };
     }
 
+    @Test
     public void testIdempotent() throws Exception {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");

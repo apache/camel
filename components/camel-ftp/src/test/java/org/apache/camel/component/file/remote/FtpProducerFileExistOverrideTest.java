@@ -19,6 +19,8 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -30,7 +32,8 @@ public class FtpProducerFileExistOverrideTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "exist");
         deleteDirectory("target/exist");
@@ -38,6 +41,7 @@ public class FtpProducerFileExistOverrideTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
+    @Test
     public void testOverride() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");

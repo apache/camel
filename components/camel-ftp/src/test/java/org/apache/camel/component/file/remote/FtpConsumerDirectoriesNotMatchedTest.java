@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test that ftp consumer will not match directories (CAMEL-920)
@@ -30,11 +32,13 @@ public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
 
+    @Test
     public void testSkipDirectories() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);

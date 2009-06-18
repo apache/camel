@@ -24,13 +24,16 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSupport {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
@@ -49,6 +52,7 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
         return "ftp://admin@localhost:" + getPort() + "?password=admin&binary=true";
     }
 
+    @Test
     public void testFromFileToFtp() throws Exception {
         File expectedOnFtpServer = new File(FTP_ROOT_DIR + "logo.jpeg");
         // the poller won't start for 1.5 seconds, so we check to make sure the file

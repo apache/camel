@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit testing a FTP ASCII transfer that Camel provides the needed conversion to String from
@@ -32,6 +34,7 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         return "ftp://admin@localhost:" + getPort() + "/tmp5/camel?password=admin&binary=false";
     }
 
+    @Test
     public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
@@ -39,7 +42,8 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }

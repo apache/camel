@@ -22,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -35,7 +37,8 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR + "filestress");
         super.setUp();
         for (int i = 0; i < files; i++) {
@@ -43,6 +46,7 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
         }
     }
 
+    @Test
     public void testFTPConsumerAsyncStress() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(50);

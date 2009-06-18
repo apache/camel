@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 /**
  * Unit test to verify exclusive read - that we do not poll files that is in progress of being written.
@@ -43,6 +44,7 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
         return false;
     }
 
+    @Test
     public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
         // can only be tested on Windows
         if (!ON_WINDOWS) {
@@ -71,6 +73,7 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testPollFileWhileSlowFileIsBeingWrittenWithTimeout() throws Exception {
         // can only be tested on Windows
         if (!ON_WINDOWS) {

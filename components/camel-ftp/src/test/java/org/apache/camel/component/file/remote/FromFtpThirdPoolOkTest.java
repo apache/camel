@@ -21,6 +21,8 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -35,12 +37,14 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("res/home/thirdpool");
         deleteDirectory("target/thridpool");
         super.setUp();
     }
 
+    @Test
     public void testPollFileAndShouldBeDeletedAtThirdPoll() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), body, Exchange.FILE_NAME, "hello.txt");
 

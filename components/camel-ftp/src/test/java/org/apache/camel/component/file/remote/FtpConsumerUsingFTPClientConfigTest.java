@@ -20,6 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClientConfig;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for ftpClientConfig option.
@@ -31,7 +33,8 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
@@ -49,6 +52,7 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
         return config;
     }
 
+    @Test
     public void testFTPClientConfig() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

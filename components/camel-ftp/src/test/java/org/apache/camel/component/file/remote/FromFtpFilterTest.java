@@ -21,6 +21,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * Unit test to test filter option.
@@ -38,6 +39,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -48,6 +50,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

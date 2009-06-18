@@ -20,9 +20,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Random;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
@@ -30,32 +30,34 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 /**
  * Base class for unit testing using a FTPServer
  */
-public abstract class FtpServerTestSupport extends ContextTestSupport {
+public abstract class FtpServerTestSupport extends CamelTestSupport {
 
     public static final String FTP_ROOT_DIR = "./res/home/";
 
-    protected FtpServer ftpServer;
+    protected static FtpServer ftpServer;
 
-    private int port;
+    private static int port;
 
-    public int getPort() {
+    public static int getPort() {
         return port;
     }
 
-    protected void setUp() throws Exception {
-        initPort();
-        super.setUp();
+    @BeforeClass
+    public static void startServer() throws Exception {
+        initPort();        
         initFtpServer();
         ftpServer.start();
     }
 
-    protected void tearDown() throws Exception {
-        try {
-            super.tearDown();
+    @AfterClass
+    public static void shutdownServer() throws Exception {
+        try {            
             ftpServer.stop();
             ftpServer = null;
             port = 0;
@@ -66,7 +68,7 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
         }
     }
 
-    protected void initFtpServer() throws Exception {
+    public static void initFtpServer() throws Exception {
         if (port < 21000) {
             throw new IllegalArgumentException("Port number is not initialized in an expected range: " + getPort());
         }
@@ -89,7 +91,7 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
         ftpServer = serverFactory.createServer();
     }
 
-    protected void initPort() throws Exception {
+    public static void initPort() throws Exception {
         File file = new File("./target/ftpport.txt");
         file = file.getAbsoluteFile();
 

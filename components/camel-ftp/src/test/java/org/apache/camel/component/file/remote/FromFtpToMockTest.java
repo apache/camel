@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -30,6 +31,7 @@ public class FromFtpToMockTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/tmp/camel?password=admin&recursive=true";
     }
 
+    @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived(expectedBody);

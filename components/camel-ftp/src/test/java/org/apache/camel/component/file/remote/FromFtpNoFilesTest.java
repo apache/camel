@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test to verify polling a server with no files to poll.
@@ -28,6 +29,7 @@ public class FromFtpNoFilesTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin&binary=false&readLock=rename&consumer.delay=2000";
     }
 
+    @Test
     public void testPoolIn3SecondsButNoFiles() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
         createDirectory(FTP_ROOT_DIR + "slowfile");

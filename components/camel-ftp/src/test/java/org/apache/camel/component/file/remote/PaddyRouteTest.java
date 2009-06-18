@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 
 /**
  * An unit test based on Paddy having trouble with SFTP.
@@ -31,6 +32,7 @@ public class PaddyRouteTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/paddy/?password=admin&recursive=true";
     }
 
+    @Test
     public void testConsumeFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

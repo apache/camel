@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for FTP using expression (file language)
@@ -39,7 +41,8 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "filelanguage");
         deleteDirectory("target/filelanguage");
@@ -52,18 +55,21 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         return jndi;
     }
 
+    @Test
     public void testProduceBeanByExpression() throws Exception {
         template.sendBody(getFtpUrl() + "&fileName=${bean:myguidgenerator}.bak", "Hello World");
 
         assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
 
+    @Test
     public void testProduceBeanByHeader() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "${bean:myguidgenerator}.bak");
 
         assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
 
+    @Test
     public void testProducerDateByHeader() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "myfile-${date:now:yyyyMMdd}.txt");
 
@@ -71,6 +77,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-" + date + ".txt");
     }
 
+    @Test
     public void testProducerDateByExpression() throws Exception {
         template.sendBody(getFtpUrl() + "&fileName=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
@@ -78,6 +85,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-" + date + ".txt");
     }
 
+    @Test
     public void testProducerComplexByExpression() throws Exception {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody(getFtpUrl() + "&fileName=" + expression, "Hello World");
@@ -86,6 +94,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         assertFileExists(FTP_ROOT_DIR + "filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
+    @Test
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
         template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${in.header.foo}.txt",
                 "Hello World", "foo", "abc");
@@ -93,6 +102,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-abc.txt");
     }
 
+    @Test
     public void testProducerWithDateHeader() throws Exception {
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);

@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 /**
  * Unit test to verify *NON* exclusive read.
@@ -44,7 +45,7 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
         return false;
     }
 
-
+    @Test
     public void testPollFileWhileSlowFileIsBeingWrittenUsingNonExclusiveRead() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

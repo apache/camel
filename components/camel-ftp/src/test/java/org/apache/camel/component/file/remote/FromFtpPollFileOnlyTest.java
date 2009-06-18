@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to poll a file from the FTP server and not a folder as most test is.
@@ -31,6 +33,7 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin";
     }
 
+    @Test
     public void testPollFileOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World from FTPServer");
@@ -39,7 +42,8 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }

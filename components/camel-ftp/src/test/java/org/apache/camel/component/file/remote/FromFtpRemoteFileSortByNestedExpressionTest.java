@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to verify remotefile sort by option.
@@ -29,7 +31,8 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
@@ -39,6 +42,7 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         return false;
     }
 
+    @Test
     public void testSortFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -54,6 +58,7 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSortFilesReverse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

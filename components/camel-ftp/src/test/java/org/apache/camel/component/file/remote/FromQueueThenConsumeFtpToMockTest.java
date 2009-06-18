@@ -23,6 +23,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test based on user forum question
@@ -42,7 +44,8 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "getme");
         prepareFtpServer();
@@ -61,6 +64,7 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testFromQueueThenConsumeFtp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");

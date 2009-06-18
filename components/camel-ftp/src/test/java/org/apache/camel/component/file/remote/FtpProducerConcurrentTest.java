@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Concurrent producers test.
@@ -33,10 +34,12 @@ public class FtpProducerConcurrentTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/concurrent?binary=false&password=admin";
     }
 
+    @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
+    @Test
     public void testConcurrentProducers() throws Exception {
         doSendMessages(10, 5);
     }

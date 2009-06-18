@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.IdempotentRepository;
+import org.junit.Test;
 
 /**
  * Unit test for the idempotentRepository # option.
@@ -50,6 +51,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         };
     }
 
+    @Test
     public void testIdempotent() throws Exception {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");

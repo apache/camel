@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -32,7 +34,8 @@ public class FromFtpPassiveModeTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR + "passive");
         super.setUp();
         prepareFtpServer();
@@ -58,6 +61,7 @@ public class FromFtpPassiveModeTest extends FtpServerTestSupport {
         };
     }
 
+    @Test
     public void testFtpPassiveMode() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

@@ -24,6 +24,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to verify that using option setNames and having multi remote directories the files
@@ -38,13 +40,15 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR + "/incoming");
         deleteDirectory("./target/ftpsetnamestest");
         super.setUp();
         prepareFtpServer();
     }
 
+    @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);

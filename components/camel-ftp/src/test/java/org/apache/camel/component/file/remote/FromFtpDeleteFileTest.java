@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to test delete option.
@@ -34,7 +36,8 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
@@ -57,6 +60,7 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
         assertTrue("The file should exists", file.exists());
     }
 
+    @Test
     public void testPollFileAndShouldBeDeleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

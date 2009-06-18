@@ -22,6 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for login failure due bad password and login with accepted password
@@ -29,11 +31,13 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 public class FtpLoginTest extends FtpServerTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "login");
     }
 
+    @Test
     public void testBadLogin() throws Exception {
         try {
             uploadFile("dummy", "cantremeber");

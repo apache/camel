@@ -21,6 +21,8 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to verify remotefile filter option.
@@ -38,6 +40,7 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFtpFilter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -46,7 +49,8 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }

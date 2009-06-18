@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.converter.IOConverter;
+import org.junit.Test;
 
 /**
  * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
@@ -29,6 +30,7 @@ public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin";
     }
 
+    @Test
     public void testProduceAndBuildFullRemotFolderTest() throws Exception {
         deleteDirectory(FTP_ROOT_DIR + "");
 

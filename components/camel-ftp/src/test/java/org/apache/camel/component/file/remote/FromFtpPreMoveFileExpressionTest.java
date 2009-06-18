@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to test preMove option.
@@ -36,7 +38,8 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR + "movefile");
         super.setUp();
         prepareFtpServer();
@@ -60,6 +63,7 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
         assertTrue("The file should exists", file.exists());
     }
 
+    @Test
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

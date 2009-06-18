@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -29,7 +31,8 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "multidir");
         prepareFtpServer();
@@ -41,6 +44,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Godday World", "sub/sub2/godday.txt");
     }
 
+    @Test
     public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World", "Hello World", "Godday World");

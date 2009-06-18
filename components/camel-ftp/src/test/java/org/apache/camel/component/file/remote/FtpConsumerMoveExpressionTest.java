@@ -23,6 +23,8 @@ import java.util.Date;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for FTP using expression (file language)
@@ -34,7 +36,8 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("res/home/filelanguage");
         deleteDirectory("target/filelanguage");
@@ -47,7 +50,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
         return jndi;
     }
 
-
+    @Test
     public void testMoveUsingExpression() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Reports");

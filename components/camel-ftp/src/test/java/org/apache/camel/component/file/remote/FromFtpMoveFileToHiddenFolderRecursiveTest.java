@@ -19,6 +19,8 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test based on end user problem with SFTP on Windows
@@ -31,7 +33,8 @@ public class FromFtpMoveFileToHiddenFolderRecursiveTest extends FtpServerTestSup
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
         super.setUp();
         prepareFtpServer();
@@ -43,6 +46,7 @@ public class FromFtpMoveFileToHiddenFolderRecursiveTest extends FtpServerTestSup
         template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "goodday/goodday.txt");
     }
 
+    @Test
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");

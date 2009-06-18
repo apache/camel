@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test CAMEL-1247
@@ -31,7 +33,8 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory(FTP_ROOT_DIR);
         createDirectory(FTP_ROOT_DIR);
@@ -42,6 +45,7 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
+    @Test
     public void testWithNoFileInOption() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

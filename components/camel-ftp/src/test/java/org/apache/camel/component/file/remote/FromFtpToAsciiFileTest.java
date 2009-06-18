@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to verify that we can pool an ASCII file from the FTP Server and store it on a local file path
@@ -33,6 +35,7 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/tmp3/camel?password=admin&binary=false&fileExist=Override";
     }
 
+    @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
@@ -46,7 +49,8 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }

@@ -18,16 +18,18 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 
 /**
  * @version $Revision$
  */
-public class UriConfigurationTest extends TestSupport {
+public class UriConfigurationTest extends CamelTestSupport {
     protected CamelContext context = new DefaultCamelContext();
 
+    @Test
     public void testFtpConfigurationDefaults() {
         Endpoint endpoint = context.getEndpoint("ftp://hostname");
         assertIsInstanceOf(FtpEndpoint.class, endpoint);
@@ -42,6 +44,7 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals(false, config.isBinary());
     }
 
+    @Test
     public void testSftpConfigurationDefaults() {
         Endpoint endpoint = context.getEndpoint("sftp://hostname");
         assertIsInstanceOf(SftpEndpoint.class, endpoint);
@@ -56,6 +59,7 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals(false, config.isBinary());
     }
 
+    @Test
     public void testFtpExplicitConfiguration() {
         Endpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true");
         assertIsInstanceOf(FtpEndpoint.class, endpoint);
@@ -70,6 +74,7 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals(true, config.isBinary());
     }
 
+    @Test
     public void testSftpExplicitConfiguration() {
         Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true");
         assertIsInstanceOf(SftpEndpoint.class, endpoint);
@@ -83,7 +88,8 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
     }
-
+    
+    @Test
     public void testRemoteFileEndpointFiles() {
         assertRemoteFileEndpointFile("ftp://hostname/foo/bar", "foo/bar");
         assertRemoteFileEndpointFile("ftp://hostname/foo/bar/", "foo/bar");
@@ -115,6 +121,7 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("For uri: " + endpointUri + " the file is not equal", expectedFile, file);
     }
 
+    @Test
     public void testSftpKnownHostsFileConfiguration() {
         Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&knownHostsFile=/home/janstey/.ssh/known_hosts");
         assertIsInstanceOf(SftpEndpoint.class, endpoint);
