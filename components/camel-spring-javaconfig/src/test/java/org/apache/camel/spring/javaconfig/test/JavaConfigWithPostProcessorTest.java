@@ -16,11 +16,14 @@
  */
 package org.apache.camel.spring.javaconfig.test;
 
+import org.junit.Test;
 import org.springframework.config.java.plugin.context.AnnotationDrivenConfig;
 import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @version $Revision$
@@ -28,9 +31,10 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 @ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.test.MyConfig", loader = JavaConfigContextLoader.class)
 @AnnotationDrivenConfig
 @Component
-public class JavaConfigWithPostProcessorTest extends AbstractJUnit38SpringContextTests implements Cheese {
+public class JavaConfigWithPostProcessorTest extends AbstractJUnit4SpringContextTests implements Cheese {
     private boolean doCheeseCalled;
 
+    @Test
     public void testPostProcessorInjectsMe() throws Exception {
         assertEquals("doCheese() should be called", true, doCheeseCalled);
 

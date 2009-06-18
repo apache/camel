@@ -22,12 +22,13 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
+import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Tests filtering using Spring Test and Java Config
@@ -38,7 +39,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 @ContextConfiguration(
         locations = "org.apache.camel.spring.javaconfig.patterns.FilterTest$ContextConfig",
         loader = JavaConfigContextLoader.class)
-public class FilterTest extends AbstractJUnit38SpringContextTests {
+public class FilterTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -47,6 +48,7 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
     protected ProducerTemplate template;
 
     @DirtiesContext
+    @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
@@ -58,6 +60,7 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
     }
 
     @DirtiesContext
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 

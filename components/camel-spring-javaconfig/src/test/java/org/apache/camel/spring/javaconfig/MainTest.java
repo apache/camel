@@ -16,14 +16,16 @@
  */
 package org.apache.camel.spring.javaconfig;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
-public class MainTest extends TestCase {
+public class MainTest extends Assert {
+    @Test
     public void  testOptions() throws Exception {
         CamelContext context = createCamelContext(new String[]{"-bp", "org.apache.camel.spring.javaconfig"});
         runTests(context);
