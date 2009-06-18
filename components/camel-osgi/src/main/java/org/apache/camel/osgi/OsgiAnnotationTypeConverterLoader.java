@@ -18,12 +18,12 @@ package org.apache.camel.osgi;
 
 import java.util.Set;
 
+import org.apache.camel.Converter;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.Converter;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 
 public class OsgiAnnotationTypeConverterLoader extends AnnotationTypeConverterLoader {
