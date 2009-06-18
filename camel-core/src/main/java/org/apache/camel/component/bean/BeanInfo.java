@@ -121,7 +121,7 @@ public class BeanInfo {
         return answer;
     }
 
-    public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) throws RuntimeCamelException {
+    public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) {
         MethodInfo methodInfo = introspect(type, method);
         if (methodInfo != null) {
             return methodInfo.createMethodInvocation(pojo, exchange);
@@ -129,7 +129,7 @@ public class BeanInfo {
         return null;
     }
 
-    public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws RuntimeCamelException, AmbiguousMethodCallException {
+    public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
 
         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
@@ -139,6 +139,9 @@ public class BeanInfo {
                 if (methods != null && methods.size() == 1) {
                     methodInfo = methods.get(0);
                 }
+            } else {
+                // a specific method was given to invoke but not found
+                throw new MethodNotFoundException(exchange, pojo, name);
             }
         }
         if (methodInfo == null) {
