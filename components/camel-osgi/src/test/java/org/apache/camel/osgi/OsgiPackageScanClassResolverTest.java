@@ -23,9 +23,11 @@ import org.apache.camel.Converter;
 import org.apache.camel.Routes;
 import org.apache.camel.osgi.test.MyRouteBuilder;
 import org.apache.camel.osgi.test.MyTypeConverter;
+import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
 public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
+    @Test
     public void testOsgiResolverFindAnnotatedTest() throws IOException {
         BundleContext  context = getActivator().getBundle().getBundleContext();
         OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
@@ -35,7 +37,8 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
         assertEquals("There should find a class", classes.size(), 1);
         assertTrue("Find a wrong class", classes.contains(MyTypeConverter.class));
     }
-    
+ 
+    @Test
     public void testOsgiResolverFindImplementationTest() {
         BundleContext  context = getActivator().getBundle().getBundleContext();
         OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);

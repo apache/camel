@@ -17,12 +17,14 @@
 
 package org.apache.camel.osgi;
 import junit.framework.TestCase;
+import org.junit.Test;
 import org.springframework.osgi.mock.MockBundle;
 import org.springframework.osgi.mock.MockBundleContext;
 
 
 public class ActivatorTest extends CamelOsgiTestSupport {    
-       
+    
+    @Test
     public void testGetComponent() throws Exception {
         Class clazz = Activator.getComponent("timer");
         assertNull("Here should not find the timer component", clazz);
@@ -33,6 +35,7 @@ public class ActivatorTest extends CamelOsgiTestSupport {
         
     }
     
+    @Test
     public void testGetLanaguge() throws Exception {
         Class clazz = Activator.getLanguage("bean_test");
         assertNotNull("The bean_test component should not be null", clazz);
@@ -47,6 +50,7 @@ public class ActivatorTest extends CamelOsgiTestSupport {
         return false;
     }
     
+    @Test
     public void testFindTypeConverterPackageNames() throws Exception {
         String[] packages = Activator.findTypeConverterPackageNames();
         assertTrue("We should find some converter packages here", packages.length > 0);        

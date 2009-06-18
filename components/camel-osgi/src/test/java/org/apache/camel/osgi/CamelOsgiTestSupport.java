@@ -17,22 +17,27 @@
 package org.apache.camel.osgi;
 
 import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.mock.MockBundle;
 import org.springframework.osgi.mock.MockBundleContext;
 
-public class CamelOsgiTestSupport extends TestCase {
+public class CamelOsgiTestSupport extends Assert {
     private Activator testActivator;
     private MockBundleContext bundleContext = new MockBundleContext();
     private OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(bundleContext);
     private MockBundle bundle = new CamelMockBundle();
     
+    @Before
     public void setUp() throws Exception {        
         bundleContext.setBundle(bundle);
         testActivator = new Activator();
         testActivator.start(bundleContext);
     }
     
+    @After    
     public void tearDown() throws Exception {
         testActivator.stop(bundleContext);
     }

@@ -17,9 +17,11 @@
 package org.apache.camel.osgi;
 
 import org.apache.camel.osgi.test.MockTypeConverterRegistry;
+import org.junit.Test;
 
 public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport {
     
+    @Test
     public void testLoad() throws Exception {               
         OsgiAnnotationTypeConverterLoader loader = new OsgiAnnotationTypeConverterLoader(getResolver());
         MockTypeConverterRegistry registry = new MockTypeConverterRegistry();

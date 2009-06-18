@@ -21,9 +21,11 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Language;
+import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
 public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {
+    @Test
     public void testOsgiResolverFindLanguageTest() throws IOException {
         BundleContext context = getActivator().getBundle().getBundleContext();        
         CamelContext camelContext = new DefaultCamelContext();
