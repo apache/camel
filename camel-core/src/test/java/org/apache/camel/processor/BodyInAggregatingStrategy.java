@@ -17,7 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Header;
+import org.apache.camel.Property;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class BodyInAggregatingStrategy implements AggregationStrategy {
@@ -34,7 +34,7 @@ public class BodyInAggregatingStrategy implements AggregationStrategy {
     /**
      * An expression used to determine if the aggregation is complete
      */
-    public boolean isCompleted(@Header(Exchange.AGGREGATED_SIZE) Integer aggregated) {
+    public boolean isCompleted(@Property(Exchange.AGGREGATED_SIZE) Integer aggregated) {
         if (aggregated == null) {
             return false;
         }
