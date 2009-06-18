@@ -20,24 +20,25 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.rmi.registry.LocateRegistry;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class RmiRouteTest extends TestCase {
+public class RmiRouteTest extends Assert {
 
     protected int getPort() {
         return 37541;
     }
 
+    @Test
     public void testPojoRoutes() throws Exception {
         if (classPathHasSpaces()) {
             return;
@@ -92,7 +93,7 @@ public class RmiRouteTest extends TestCase {
             for (int i = 0; i < urls.length; i++) {
                 if (urls[i].getPath().contains(" ")) {
                     System.err.println("=======================================================================");
-                    System.err.println(" TEST Skipped: " + getName());
+                    System.err.println(" TEST Skipped: " + this.getClass().getName());
                     System.err.println("   Your probably on windows.  We detected that the classpath");
                     System.err.println("   has a space in it.  Try running maven with the following option: ");
                     System.err.println("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");

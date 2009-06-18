@@ -23,14 +23,15 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class RmiConcurrencyTest extends ContextTestSupport {
+public class RmiConcurrencyTest extends CamelTestSupport {
 
     private static boolean created;
 
@@ -54,10 +55,12 @@ public class RmiConcurrencyTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
+    @Test
     public void testConcurrentProducers() throws Exception {
         doSendMessages(10, 5);
     }
@@ -109,7 +112,7 @@ public class RmiConcurrencyTest extends ContextTestSupport {
             for (int i = 0; i < urls.length; i++) {
                 if (urls[i].getPath().contains(" ")) {
                     System.err.println("=======================================================================");
-                    System.err.println(" TEST Skipped: " + getName());
+                    System.err.println(" TEST Skipped: " + this.getClass().getName());
                     System.err.println("   Your probably on windows.  We detected that the classpath");
                     System.err.println("   has a space in it.  Try running maven with the following option: ");
                     System.err.println("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
