@@ -20,18 +20,21 @@ import java.util.List;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rss.RssEndpoint;
 import org.apache.camel.component.rss.RssUtils;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
-public class RssDataFormatTest extends ContextTestSupport {
+public class RssDataFormatTest extends CamelTestSupport {
     private String feedXml;
     private SyndFeed feed;
 
+    @Test
     public void testMarshalling() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
@@ -39,6 +42,7 @@ public class RssDataFormatTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testUnmarshalling() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
@@ -48,7 +52,8 @@ public class RssDataFormatTest extends ContextTestSupport {
     }    
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         feed = RssUtils.createFeed("file:src/test/data/rss20.xml");
         feedXml = RssConverter.feedToXml(feed);
         super.setUp();

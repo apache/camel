@@ -24,13 +24,15 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Body;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
-public class RssFilterTest extends ContextTestSupport {
+public class RssFilterTest extends CamelTestSupport {
 
+    @Test
     public void testFilterOutNonCamelPosts() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(6);

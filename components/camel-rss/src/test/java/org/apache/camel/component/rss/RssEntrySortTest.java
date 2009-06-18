@@ -24,14 +24,16 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Body;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
-public class RssEntrySortTest extends ContextTestSupport {
+public class RssEntrySortTest extends CamelTestSupport {
 
+    @Test
     public void testSortedEntries() throws Exception { 
         MockEndpoint mock = getMockEndpoint("mock:sorted");
         mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
@@ -39,6 +41,7 @@ public class RssEntrySortTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testUnSortedEntries() throws Exception { 
         MockEndpoint mock = getMockEndpoint("mock:unsorted");
         mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));

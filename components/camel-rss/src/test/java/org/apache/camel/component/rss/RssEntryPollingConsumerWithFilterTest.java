@@ -28,14 +28,16 @@ import junit.framework.Assert;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
-public class RssEntryPollingConsumerWithFilterTest extends ContextTestSupport {
+public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
 
+    @Test
     public void testListOfEntriesIsSplitIntoPieces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // two entries were published after Fri, 31 Oct 2008 12:02:21 -0500

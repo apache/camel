@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.rss;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class RssEntryPollingConsumerTest extends ContextTestSupport {
+public class RssEntryPollingConsumerTest extends CamelTestSupport {
 
+    @Test
     public void testListOfEntriesIsSplitIntoPieces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);

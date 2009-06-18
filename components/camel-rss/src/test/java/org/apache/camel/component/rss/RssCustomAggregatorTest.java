@@ -25,14 +25,17 @@ import java.io.IOException;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
-public class RssCustomAggregatorTest extends ContextTestSupport {
+public class RssCustomAggregatorTest extends CamelTestSupport {
 
+    @Test
     public void testMergingListOfEntries() throws Exception { 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -49,7 +52,8 @@ public class RssCustomAggregatorTest extends ContextTestSupport {
     }
     
     @Override
-    protected void setUp() throws Exception {        
+    @Before
+    public void setUp() throws Exception {        
         super.setUp();   
         copy("src/test/data/rss20.xml", "target/rss20.xml");                
     }
