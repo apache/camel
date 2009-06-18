@@ -19,12 +19,14 @@ package org.apache.camel.component.jackson;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class JacksonMarshalTest extends ContextTestSupport {
+public class JacksonMarshalTest extends CamelTestSupport {
 
+    @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
 
         Map<String, Object> in = new HashMap<String, Object>();
@@ -44,6 +46,7 @@ public class JacksonMarshalTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
 
         TestPojo in = new TestPojo();

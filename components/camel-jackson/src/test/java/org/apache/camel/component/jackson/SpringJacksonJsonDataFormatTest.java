@@ -17,7 +17,10 @@
 package org.apache.camel.component.jackson;
 
 import org.apache.camel.CamelContext;
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.Service;
+import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
@@ -25,7 +28,21 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringJacksonJsonDataFormatTest extends JacksonJsonDataFormatTest {
 
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/jackson/SpringJacksonJsonDataFormatTest.xml");
+        setUseRouteBuilder(false);
+
+        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonJsonDataFormatTest.xml");
+        setCamelContextService(new Service() {
+            public void start() throws Exception {
+                applicationContext.start();
+
+            }
+
+            public void stop() throws Exception {
+                applicationContext.stop();
+            }
+        });
+
+        return SpringCamelContext.springCamelContext(applicationContext);       
     }
 
 }
