@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Collection;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -59,7 +60,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         Class type;
     }
     
-    private class TypeConverterEntry {
+    public class TypeConverterEntry {
         Bundle bundle;
         URL resource;
         Set<String> converterPackages;
@@ -246,21 +247,12 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     protected static Bundle getBundle() {
         return bundle;
     }
-    
-    protected static synchronized String[] findTypeConverterPackageNames() {
-        LOG.trace("Finding TypeConverterPackageNames");
-        Set<String> packages = new HashSet<String>();
-        for (TypeConverterEntry entry : TYPE_CONVERTERS.values()) {
-            for (String packageName : entry.converterPackages) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Found TypeConverterPackage: " + packageName);
-                }
-                packages.add(packageName);
-            }
-        }
-        return packages.toArray(new String[packages.size()]);
+
+    protected static synchronized TypeConverterEntry[] getTypeConverterEntries() {
+        Collection<TypeConverterEntry> entries = TYPE_CONVERTERS.values();
+        return entries.toArray(new TypeConverterEntry[entries.size()]);
     }
-        
+
     public static synchronized Class getComponent(String name) throws Exception {
         LOG.trace("Finding Component: " + name);
         return getClassFromEntries(name, COMPONENTS);

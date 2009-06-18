@@ -16,6 +16,8 @@
  */
 
 package org.apache.camel.osgi;
+import java.util.Set;
+
 import junit.framework.TestCase;
 import org.springframework.osgi.mock.MockBundle;
 import org.springframework.osgi.mock.MockBundleContext;
@@ -38,20 +40,23 @@ public class ActivatorTest extends CamelOsgiTestSupport {
         assertNotNull("The bean_test component should not be null", clazz);
     }
     
-    private boolean containsPackageName(String packageName, String[] packages) {
-        for (String name : packages) {
-            if (name.equals(packageName)) {
-                return true;
+    private boolean containsPackageName(String packageName, Activator.TypeConverterEntry[] entries) {
+        for (Activator.TypeConverterEntry entry : entries) {
+            for (String name : entry.converterPackages) {
+                if (name.equals(packageName)) {
+                    return true;
+                }
             }
         }
         return false;
     }
     
-    public void testFindTypeConverterPackageNames() throws Exception {
-        String[] packages = Activator.findTypeConverterPackageNames();
-        assertEquals("We should find three converter package here", 3, packages.length);
-        
-        assertTrue("Here should contains org.apache.camel.osgi.test", containsPackageName("org.apache.camel.osgi.test", packages));
+    public void testGetTypeConverterEntries() throws Exception {
+        Activator.TypeConverterEntry[] entries = Activator.getTypeConverterEntries();
+
+        assertTrue("Here should contains org.apache.camel.converter", containsPackageName("org.apache.camel.converter", entries));
+        assertTrue("Here should contains org.apache.camel.spring.converter", containsPackageName("org.apache.camel.spring.converter", entries));
+        assertTrue("Here should contains org.apache.camel.osgi.test", containsPackageName("org.apache.camel.osgi.test", entries));
     }
 
 }
