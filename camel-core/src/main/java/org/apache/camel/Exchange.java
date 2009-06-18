@@ -31,6 +31,8 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
+    String ACCEPT_CONTENT_TYPE = "CamelAcceptContentType";
+    
     String AGGREGATED_INDEX = "CamelAggregatedIndex";
     String AGGREGATED_SIZE  = "CamelAggregatedSize";
 
@@ -60,11 +62,12 @@ public interface Exchange {
     String FILE_PATH            = "CamelFilePath";
     String FILE_PARENT          = "CamelFileParent";
     String FILTERED             = "CamelFiltered";
-
+    
     String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
     String HTTP_METHOD             = "CamelHttpMethod";
     String HTTP_PATH               = "CamelHttpPath";
     String HTTP_QUERY              = "CamelHttpQuery";
+    String HTTP_RELATIVE_PATH      = "CamelHttpRelativePath";
     String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
     String HTTP_URI                = "CamelHttpUri";
 
