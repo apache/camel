@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test to verift that we can have multiple recipients in To, CC and BCC
+ * Unit test to verify that we can have multiple recipients in To, CC and BCC
  */
 public class MailMultipleRecipientsTest extends CamelTestSupport {
 
