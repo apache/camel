@@ -41,7 +41,6 @@ import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -87,7 +86,7 @@ public class MailBinding {
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
-        appendHeadersFromCamelMessage(mimeMessage, exchange, exchange.getIn());
+        appendHeadersFromCamelMessage(mimeMessage, endpoint.getConfiguration(), exchange, exchange.getIn());
 
         if (empty(mimeMessage.getFrom())) {
             // lets default the address to the endpoint destination
@@ -137,7 +136,7 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
-    protected void appendHeadersFromCamelMessage(MimeMessage mimeMessage, Exchange exchange,
+    protected void appendHeadersFromCamelMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange,
                                                  org.apache.camel.Message camelMessage)
         throws MessagingException {
 
@@ -150,6 +149,12 @@ public class MailBinding {
 
                     if (isRecipientHeader(headerName)) {
                         // skip any recipients as they are handled specially
+                        continue;
+                    }
+
+                    // alternative body should also be skipped
+                    if (headerName.equalsIgnoreCase(configuration.getAlternateBodyHeader())) {
+                        // skip alternative body
                         continue;
                     }
 
