@@ -199,6 +199,12 @@ public abstract class TestSupport extends TestCase {
         return value;
     }
 
+    public static Object assertProperty(Exchange exchange, String name, Object expected) {
+        Object value = exchange.getProperty(name);
+        assertEquals("Property: " + name + " on Exchange: " + exchange, expected, value);
+        return value;
+    }
+
     /**
      * Asserts that the given expression when evaluated returns the given answer
      */

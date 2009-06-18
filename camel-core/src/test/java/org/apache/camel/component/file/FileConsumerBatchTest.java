@@ -48,9 +48,9 @@ public class FileConsumerBatchTest extends ContextTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
         // test header keys
-        mock.message(0).header(Exchange.BATCH_SIZE).isEqualTo(2);
-        mock.message(0).header(Exchange.BATCH_INDEX).isEqualTo(0);
-        mock.message(1).header(Exchange.BATCH_INDEX).isEqualTo(1);
+        mock.message(0).property(Exchange.BATCH_SIZE).isEqualTo(2);
+        mock.message(0).property(Exchange.BATCH_INDEX).isEqualTo(0);
+        mock.message(1).property(Exchange.BATCH_INDEX).isEqualTo(1);
 
         assertMockEndpointsSatisfied();
     }

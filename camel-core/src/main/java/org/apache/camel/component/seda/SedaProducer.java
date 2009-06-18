@@ -46,8 +46,8 @@ public class SedaProducer extends CollectionProducer {
         copy.setFromEndpoint(endpoint);
 
         WaitForTaskToComplete wait = waitForTaskToComplete;
-        if (exchange.getIn().getHeader(Exchange.ASYNC_WAIT) != null) {
-            wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
+        if (exchange.getProperty(Exchange.ASYNC_WAIT) != null) {
+            wait = exchange.getProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
         }
 
         if (wait == WaitForTaskToComplete.Always

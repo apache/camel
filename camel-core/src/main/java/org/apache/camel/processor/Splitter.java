@@ -133,9 +133,9 @@ public class Splitter extends MulticastProcessor implements Processor {
     @Override
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs) {
         super.updateNewExchange(exchange, index, allPairs);
-        exchange.getIn().setHeader(Exchange.SPLIT_INDEX, index);
+        exchange.setProperty(Exchange.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
-            exchange.getIn().setHeader(Exchange.SPLIT_SIZE, ((Collection) allPairs).size());
+            exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection) allPairs).size());
         }
     }
 

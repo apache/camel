@@ -31,7 +31,7 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
         MockEndpoint successEndpoint = getMockEndpoint("mock:success");
 
         failedEndpoint.expectedBodiesReceived(body);
-        failedEndpoint.message(0).header(Exchange.EXCEPTION_CAUGHT).isEqualTo(RUNTIME_EXCEPTION);
+        failedEndpoint.message(0).property(Exchange.EXCEPTION_CAUGHT).isEqualTo(RUNTIME_EXCEPTION);
         failedEndpoint.expectedMessageCount(1);
 
         successEndpoint.expectedMessageCount(0);

@@ -68,8 +68,8 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
         // compute if we should wait for task to complete or not
         WaitForTaskToComplete wait = waitForTaskToComplete;
-        if (exchange.getIn().getHeader(Exchange.ASYNC_WAIT) != null) {
-            wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
+        if (exchange.getProperty(Exchange.ASYNC_WAIT) != null) {
+            wait = exchange.getProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
         }
 
         if (wait == WaitForTaskToComplete.Always) {

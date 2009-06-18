@@ -53,8 +53,8 @@ public class SplitterTest extends ContextTestSupport {
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
             Message in = exchange.getIn();
-            assertMessageHeader(in, Exchange.SPLIT_INDEX, i);
-            assertMessageHeader(in, Exchange.SPLIT_SIZE, 4);
+            assertProperty(exchange, Exchange.SPLIT_INDEX, i);
+            assertProperty(exchange, Exchange.SPLIT_SIZE, 4);
         }
     }
 
@@ -74,7 +74,7 @@ public class SplitterTest extends ContextTestSupport {
         Message out = result.getOut();
         assertEquals("Roman", out.getBody());
         assertMessageHeader(out, "foo", "bar");
-        assertMessageHeader(out, Exchange.SPLIT_INDEX, 4);
+        assertProperty(result, Exchange.SPLIT_INDEX, 4);
     }
 
     public void testEmptyBody() {
@@ -111,10 +111,10 @@ public class SplitterTest extends ContextTestSupport {
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
             Message in = exchange.getIn();
-            Integer splitCounter = in.getHeader(Exchange.SPLIT_INDEX, Integer.class);
+            Integer splitCounter = exchange.getProperty(Exchange.SPLIT_INDEX, Integer.class);
             numbersFound.add(splitCounter);
             assertEquals(names[splitCounter], in.getBody());
-            assertMessageHeader(in, Exchange.SPLIT_SIZE, 4);
+            assertProperty(exchange, Exchange.SPLIT_SIZE, 4);
         }
 
         assertEquals(4, numbersFound.size());
@@ -174,9 +174,9 @@ public class SplitterTest extends ContextTestSupport {
         
         assertMockEndpointsSatisfied();
         for (Exchange exchange : resultEndpoint.getReceivedExchanges()) {
-            assertNotNull(exchange.getIn().getHeader(Exchange.SPLIT_INDEX));
+            assertNotNull(exchange.getProperty(Exchange.SPLIT_INDEX));
             //this header cannot be set when streaming is used
-            assertNull(exchange.getIn().getHeader(Exchange.SPLIT_SIZE));
+            assertNull(exchange.getProperty(Exchange.SPLIT_SIZE));
         }
     }
     

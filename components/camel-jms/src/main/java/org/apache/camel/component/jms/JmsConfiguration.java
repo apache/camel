@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -51,6 +49,9 @@ import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
+
+import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+
 /**
  * @version $Revision$
  */

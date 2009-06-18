@@ -217,7 +217,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs) {
-        exchange.getIn().setHeader(Exchange.MULTICAST_INDEX, index);
+        exchange.setProperty(Exchange.MULTICAST_INDEX, index);
     }
 
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
