@@ -23,6 +23,8 @@ import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Assert;
+import org.junit.Test;
 
 import static org.apache.camel.component.xquery.XQueryBuilder.xquery;
 import static org.apache.camel.util.ObjectHelper.className;
@@ -30,7 +32,8 @@ import static org.apache.camel.util.ObjectHelper.className;
 /**
  * @version $Revision$
  */
-public class XQueryTest extends TestCase {
+public class XQueryTest extends Assert {
+    @Test
     public void testXQuery() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.getIn().setBody("<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");

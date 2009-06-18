@@ -16,18 +16,21 @@
  */
 package org.apache.camel.builder.saxon;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class XQueryRecipientListTest extends ContextTestSupport {
+public class XQueryRecipientListTest extends CamelTestSupport {
 
     protected MockEndpoint londonEndpoint;
     protected MockEndpoint tampaEndpoint;
 
+    @Test
     public void testSendLondonMessage() throws Exception {
         londonEndpoint.expectedMessageCount(1);
         tampaEndpoint.expectedMessageCount(0);
@@ -37,6 +40,7 @@ public class XQueryRecipientListTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendTampaMessage() throws Exception {
         londonEndpoint.expectedMessageCount(0);
         tampaEndpoint.expectedMessageCount(1);
@@ -47,7 +51,8 @@ public class XQueryRecipientListTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         londonEndpoint = getMockEndpoint("mock:foo.London");

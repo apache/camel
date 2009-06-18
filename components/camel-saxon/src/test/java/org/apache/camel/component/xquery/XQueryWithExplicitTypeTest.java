@@ -17,16 +17,19 @@
 package org.apache.camel.component.xquery;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class XQueryWithExplicitTypeTest extends SpringTestSupport {
+public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
     protected MockEndpoint raleighEndpoint;
     protected MockEndpoint tampaEndpoint;
 
+    @Test
     public void testFunctions() throws Exception {
         raleighEndpoint.expectedMessageCount(1);
         tampaEndpoint.expectedMessageCount(0);
@@ -37,7 +40,8 @@ public class XQueryWithExplicitTypeTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         raleighEndpoint = getMockEndpoint("mock:foo.Raleigh");

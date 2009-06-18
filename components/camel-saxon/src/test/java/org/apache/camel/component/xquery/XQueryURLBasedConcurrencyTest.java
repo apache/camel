@@ -18,18 +18,20 @@ package org.apache.camel.component.xquery;
 
 import java.util.Random;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * Concurrency test of XQuery using classpath resources (to).
  */
-public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
+public class XQueryURLBasedConcurrencyTest extends CamelTestSupport {
 
+    @Test
     public void testConcurrency() throws Exception {
         int total = 1000;
 

@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.xquery;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test to verify that headers can be propogated through this component.
  */
-public class XQueryPropogateHeadersTest extends ContextTestSupport {
+public class XQueryPropogateHeadersTest extends CamelTestSupport {
 
+    @Test
     public void testPropogateHeadersTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -38,6 +40,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropogateHeadersUsingTransform() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -50,6 +53,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropogateHeadersUsingSetBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -18,21 +18,23 @@ package org.apache.camel.builder.saxon;
 
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xquery.XQuery;
 import org.apache.camel.processor.BeanRouteTest;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class BeanWithXQueryInjectionTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(BeanRouteTest.class);
+public class BeanWithXQueryInjectionTest extends CamelTestSupport {
+    private static final transient Log LOG = LogFactory.getLog(BeanWithXQueryInjectionTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         String expectedBody = "<foo id='bar'>hellow</foo>";
 

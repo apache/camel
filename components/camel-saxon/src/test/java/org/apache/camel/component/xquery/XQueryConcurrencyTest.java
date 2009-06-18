@@ -18,18 +18,20 @@ package org.apache.camel.component.xquery;
 
 import java.util.Random;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * Concurrency test of XQuery using transform.xquery DSL.
  */
-public class XQueryConcurrencyTest extends ContextTestSupport {
+public class XQueryConcurrencyTest extends CamelTestSupport {
 
     private String uri = "seda:in?concurrentConsumers=5";
 
+    @Test
     public void testConcurrency() throws Exception {
         int total = 1000;
 

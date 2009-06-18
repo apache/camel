@@ -17,14 +17,16 @@
 package org.apache.camel.component.xquery;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class XQueryExampleTest extends SpringTestSupport {
+public class XQueryExampleTest extends CamelSpringTestSupport {
 
+    @Test
     public void testExample() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<employee id=\"James\"><name><firstName>James</firstName>"

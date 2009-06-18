@@ -16,19 +16,22 @@
  */
 package org.apache.camel.builder.saxon;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class XQueryTransformTest extends ContextTestSupport {
+public class XQueryTransformTest extends CamelTestSupport {
 
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         // saxon converts all quotes to "
         resultEndpoint.expectedBodiesReceived("<person name=\"Jonathan\"/>");
@@ -39,7 +42,8 @@ public class XQueryTransformTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");
