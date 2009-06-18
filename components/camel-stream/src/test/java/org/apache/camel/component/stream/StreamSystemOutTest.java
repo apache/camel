@@ -16,19 +16,22 @@
  */
 package org.apache.camel.component.stream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for System.out
  */
-public class StreamSystemOutTest extends ContextTestSupport {
+public class StreamSystemOutTest extends CamelTestSupport {
 
     // START SNIPPET: e1
+    @Test
     public void testStringContent() throws Exception {
         template.sendBody("direct:in", "Hello Text World\n");
     }
 
+    @Test
     public void testBinaryContent() {
         template.sendBody("direct:in", "Hello Bytes World\n".getBytes());
     }

@@ -19,19 +19,22 @@ package org.apache.camel.component.stream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for scan stream file
  */
-public class ScanStreamFileTest extends ContextTestSupport {
+public class ScanStreamFileTest extends CamelTestSupport {
 
     private File file;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("./target/stream");
         createDirectory("./target/stream");
 
@@ -42,6 +45,7 @@ public class ScanStreamFileTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testScanFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello", "World");

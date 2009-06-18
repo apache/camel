@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.stream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class StreamRouteBuilderTest extends ContextTestSupport {
+public class StreamRouteBuilderTest extends CamelTestSupport {
 
+    @Test
     public void testStringContent() {
         template.sendBody("direct:start", "this is text\n");
     }
 
+    @Test
     public void testBinaryContent() {
         template.sendBody("direct:start", "This is bytes\n".getBytes());
     }

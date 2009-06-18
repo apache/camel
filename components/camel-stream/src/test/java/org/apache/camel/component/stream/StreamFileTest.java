@@ -20,16 +20,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for stream file
  */
-public class StreamFileTest extends ContextTestSupport {
+public class StreamFileTest extends CamelTestSupport {
 
     private FileOutputStream fos;
 
@@ -39,7 +41,8 @@ public class StreamFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("./target/stream");
         createDirectory("./target/stream");
 
@@ -53,6 +56,7 @@ public class StreamFileTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testFile() throws Exception {
         try {
             MockEndpoint mock = getMockEndpoint("mock:result");

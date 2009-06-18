@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.stream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for delay option.
  */
-public class StreamDelayTest extends ContextTestSupport {
+public class StreamDelayTest extends CamelTestSupport {
 
+    @Test
     public void testStringContent() throws Exception {
         long start = System.currentTimeMillis();
         template.sendBody("direct:in", "Hello Text World\n");

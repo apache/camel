@@ -19,24 +19,27 @@ package org.apache.camel.component.stream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test when using custom output stream.
  */
-public class StreamHeaderTest extends ContextTestSupport {
+public class StreamHeaderTest extends CamelTestSupport {
 
     // START SNIPPET: e1
     private OutputStream mystream = new MyOutputStream();
     private StringBuffer sb = new StringBuffer();
 
+    @Test
     public void testStringContent() {
         template.sendBody("direct:in", "Hello");
         // StreamProducer appends \n in text mode
         assertEquals("Hello\n", sb.toString());
     }
 
+    @Test
     public void testBinaryContent() {
         template.sendBody("direct:in", "Hello".getBytes());
         // StreamProducer is in binary mode so no \n is appended
