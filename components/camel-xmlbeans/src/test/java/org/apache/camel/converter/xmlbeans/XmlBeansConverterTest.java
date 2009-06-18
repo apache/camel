@@ -16,15 +16,17 @@
  */
 package org.apache.camel.converter.xmlbeans;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xmlbeans.XmlObject;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class XmlBeansConverterTest extends ContextTestSupport {
+public class XmlBeansConverterTest extends CamelTestSupport {
+    @Test
     public void testConvertToXmlObject() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");
         Message in = exchange.getIn();
