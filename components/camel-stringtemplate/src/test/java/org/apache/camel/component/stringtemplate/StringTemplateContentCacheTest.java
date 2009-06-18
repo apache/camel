@@ -16,23 +16,27 @@
  */
 package org.apache.camel.component.stringtemplate;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test the cahce when reloading .tm files in the classpath
  */
-public class StringTemplateContentCacheTest extends ContextTestSupport {
+public class StringTemplateContentCacheTest extends CamelTestSupport {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // create a tm file in the classpath as this is the tricky reloading stuff
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate?fileExist=Override", "Hello $headers.name$", Exchange.FILE_NAME, "hello.tm");
     }
 
+    @Test
     public void testNotCached() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London");
@@ -50,6 +54,7 @@ public class StringTemplateContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testCached() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London");
