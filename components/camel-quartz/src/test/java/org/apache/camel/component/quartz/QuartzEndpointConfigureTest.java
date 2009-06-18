@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.quartz;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
+import org.junit.Test;
 import org.quartz.CronTrigger;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -26,8 +27,9 @@ import org.quartz.Trigger;
 /**
  * @version $Revision$
  */
-public class QuartzEndpointConfigureTest extends ContextTestSupport {
+public class QuartzEndpointConfigureTest extends CamelTestSupport {
 
+    @Test
     public void testConfigureGroupAndName() throws Exception {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3");
         Trigger trigger = endpoint.getTrigger();
@@ -38,6 +40,7 @@ public class QuartzEndpointConfigureTest extends ContextTestSupport {
         assertEquals("getRepeatCount()", 3, simpleTrigger.getRepeatCount());
     }
 
+    @Test
     public void testConfigureName() throws Exception {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myName");
         Trigger trigger = endpoint.getTrigger();
@@ -45,6 +48,7 @@ public class QuartzEndpointConfigureTest extends ContextTestSupport {
         assertEquals("getGroup()", "Camel", trigger.getGroup());
     }
 
+    @Test
     public void testConfigureCronExpression() throws Exception {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myTimerName?cron=0+0/5+12-18+?+*+MON-FRI");
         CronTrigger trigger = assertIsInstanceOf(CronTrigger.class, endpoint.getTrigger());
@@ -53,6 +57,7 @@ public class QuartzEndpointConfigureTest extends ContextTestSupport {
         assertEquals("cron expression", "0 0/5 12-18 ? * MON-FRI", trigger.getCronExpression());
     }
 
+    @Test
     public void testConfigureAnotherCronExpression() throws Exception {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myTimerName?cron=0+0+*+*+*+?");
         CronTrigger trigger = assertIsInstanceOf(CronTrigger.class, endpoint.getTrigger());

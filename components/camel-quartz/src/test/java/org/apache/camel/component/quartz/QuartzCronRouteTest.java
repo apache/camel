@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.quartz;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class QuartzCronRouteTest extends ContextTestSupport {
+public class QuartzCronRouteTest extends CamelTestSupport {
 
+    @Test
     public void testQuartzCronRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);

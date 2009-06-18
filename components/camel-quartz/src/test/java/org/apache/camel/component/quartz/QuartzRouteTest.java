@@ -18,18 +18,20 @@ package org.apache.camel.component.quartz;
 
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class QuartzRouteTest extends ContextTestSupport {
+public class QuartzRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testQuartzRoute() throws Exception {
         resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);

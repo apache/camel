@@ -17,6 +17,9 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
@@ -29,7 +32,8 @@ public class QuartzEndpointTest extends QuartzRouteTest {
     private Scheduler scheduler;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         scheduler =  StdSchedulerFactory.getDefaultScheduler();
         scheduler.start();
         super.setUp();
@@ -37,7 +41,8 @@ public class QuartzEndpointTest extends QuartzRouteTest {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         scheduler.shutdown();
     }
