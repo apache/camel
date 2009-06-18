@@ -16,17 +16,39 @@
  */
 package org.apache.camel.osgi;
 
+import java.util.Set;
+
+import org.apache.camel.Converter;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class OsgiAnnotationTypeConverterLoader extends AnnotationTypeConverterLoader {
+    
+    private static final transient Log LOG = LogFactory.getLog(OsgiAnnotationTypeConverterLoader.class);
 
     public OsgiAnnotationTypeConverterLoader(PackageScanClassResolver packageScanClassResolver) {
         super(packageScanClassResolver);
     }
 
-    protected String[] findPackageNames() {
-        return Activator.findTypeConverterPackageNames();
+    @Override
+    public void load(TypeConverterRegistry registry) throws Exception {
+        for (Activator.TypeConverterEntry entry : Activator.getTypeConverterEntries()) {
+            OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(entry.bundle.getBundleContext());
+            String[] packages = entry.converterPackages.toArray(new String[entry.converterPackages.size()]);
+            Set<Class> classes = resolver.findAnnotated(Converter.class, packages);           
+            for (Class type : classes) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Loading converter class: " + ObjectHelper.name(type));
+                }
+                loadConverterMethods(registry, type);
+             }
+         }
     }
+    
+    
 
 }

@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         Class type;
     }
     
-    private class TypeConverterEntry {
+    public class TypeConverterEntry {
         Bundle bundle;
         URL resource;
         Set<String> converterPackages;
@@ -247,18 +248,9 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         return bundle;
     }
     
-    protected static synchronized String[] findTypeConverterPackageNames() {
-        LOG.trace("Finding TypeConverterPackageNames");
-        Set<String> packages = new HashSet<String>();
-        for (TypeConverterEntry entry : TYPE_CONVERTERS.values()) {
-            for (String packageName : entry.converterPackages) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Found TypeConverterPackage: " + packageName);
-                }
-                packages.add(packageName);
-            }
-        }
-        return packages.toArray(new String[packages.size()]);
+    protected static synchronized TypeConverterEntry[] getTypeConverterEntries() {
+        Collection<TypeConverterEntry> entries = TYPE_CONVERTERS.values();
+        return entries.toArray(new TypeConverterEntry[entries.size()]);
     }
         
     public static synchronized Class getComponent(String name) throws Exception {
