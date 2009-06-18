@@ -28,76 +28,23 @@
   </parent>
 
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-parent</artifactId>
+  <artifactId>camel</artifactId>
   <version>1.6.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
-  <description>Camel Parent POM</description>
+  <description>Camel build POM</description>
 
   <prerequisites>
     <maven>2.0.9</maven>
   </prerequisites>
 
   <properties>
-    <compiler.fork>false</compiler.fork>
-    <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.2.0</activemq-version>
-    <apacheds-version>1.5.4</apacheds-version>
-    <axiom-version>1.2.8</axiom-version>
-    <cxf-version>2.2</cxf-version>
-    <felix-version>1.4.1</felix-version>
-    <felix-osgi-version>1.2.0</felix-osgi-version>
-    <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
-    <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
-    <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
-    <httpcore-version>4.0-beta3</httpcore-version>
-    <httpcore-niossl-version>4.0-alpha6</httpcore-niossl-version>
-    <jetty-version>6.1.14</jetty-version>
-    <slf4j-version>1.5.5</slf4j-version>
-    <openjpa-version>1.2.0</openjpa-version>
-    <spring-version>2.5.6</spring-version>
-    <spring-osgi-version>1.1.2</spring-osgi-version>
-    <mina-version>1.1.7</mina-version>
-    <uface-version>1.0-m1</uface-version>
-    <jaxb-version>2.1.6</jaxb-version>
-    <jaxb-api-version>2.1</jaxb-api-version>
-    <stax-api-version>1.0.1</stax-api-version>
-    <log4j-version>1.2.14</log4j-version>
-    <commons-io-version>1.3.2</commons-io-version>
-    <commons-logging-version>1.1.1</commons-logging-version>
-    <commons-logging-api-version>1.1</commons-logging-api-version>
-    <commons-collections-version>3.2.1</commons-collections-version>
-    <commons-pool-version>1.4</commons-pool-version>
-    <commons-dbcp-version>1.2.2</commons-dbcp-version>
-    <derby-version>10.4.2.0</derby-version>
-    <easymock-version>2.4</easymock-version>
-    <hamcrest-version>1.2-dev1</hamcrest-version>
-    <hibernate-version>3.2.6.ga</hibernate-version>
-    <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
-    <hsqldb-version>1.8.0.7</hsqldb-version>
-    <groovy-version>1.5.6</groovy-version>
-    <guiceyfruit-version>2.0-beta-4</guiceyfruit-version>
-    <junit-version>3.8.2</junit-version>
-    <saxon-version>9.1.0.1</saxon-version>
-    <scala-version>2.7.3</scala-version>
-    <scala-plugin-version>2.9.1</scala-plugin-version>
-    <testng-version>5.8</testng-version>
-    <xbean-spring-version>3.4</xbean-spring-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
 
-    <!-- OSGi bundles properties -->
-    <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
-    <camel.osgi.activator />
-    <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
-    <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
-    <camel.osgi.version>version=${project.version}</camel.osgi.version>
-    <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
-    <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
-    <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
-    <camel.osgi.exclude.dependencies>true</camel.osgi.exclude.dependencies>
+    <felix-version>1.4.1</felix-version>
   </properties>
 
   <url>http://apache.apache.org/camel/</url>
@@ -160,23 +107,11 @@
         <enabled>true</enabled>
       </releases>
     </repository>
-<!--
-    <repository>
-      <id>guiceyfruit.snapshot</id>
-      <name>GuiceyFruit Snapshot Repository</name>
-      <url>http://guiceyfruit.googlecode.com/svn/repo/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
--->
   </repositories>
 
   <modules>
     <module>buildingtools</module>
+    <module>parent</module>
     <module>camel-core</module>
     <module>components</module>
     <module>examples</module>
@@ -191,777 +126,6 @@
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-1.x</developerConnection>
     <url>http://svn.apache.org/viewvc/camel/branches/camel-1.x</url>
   </scm>
-
-  <dependencyManagement>
-    <dependencies>
-
-      <!-- Camel jars -->
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-amqp</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-atom</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-bam</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-csv</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cxf</artifactId>
-        <version>${project.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-flatpack</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-freemarker</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-ftp</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-groovy</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-guice</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-hamcrest</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-hl7</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-http</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-ibatis</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-irc</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jaxb</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jcr</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jdbc</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jetty</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jhc</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jing</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jms</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-josql</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jpa</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-juel</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jxpath</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mail</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-mina</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-msv</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-ognl</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-osgi</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-quartz</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-rest</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-rmi</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-ruby</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-saxon</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-scala</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-script</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring-integration</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-sql</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-stream</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-stringtemplate</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-supercsv</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-swing</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-tagsoup</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-testng</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-uface</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-velocity</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xmlbeans</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xmpp</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xstream</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-restlet</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-bam</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-cxf</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-docs</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-etl</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-loan-broker</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-jms-file</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-osgi</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-spring</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-example-spring-xquery</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-manual</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
-      <!-- testing jars -->
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-core</artifactId>
-        <type>test-jar</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring</artifactId>
-        <type>test-jar</type>
-        <version>${project.version}</version>
-      </dependency>
-
-      <!-- Required dependencies -->
-      <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging-api</artifactId>
-        <version>${commons-logging-api-version}</version>
-      </dependency>
-
-      <!-- optional dependencies  -->
-      <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${jaxb-api-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.xml</groupId>
-            <artifactId>jsr173</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>stax</groupId>
-        <artifactId>stax-api</artifactId>
-        <version>${stax-api-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>${jaxb-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.jws</groupId>
-            <artifactId>jsr181-api</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-xjc</artifactId>
-        <version>${jaxb-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>${commons-logging-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>${commons-collections-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-pool</groupId>
-        <artifactId>commons-pool</artifactId>
-        <version>${commons-pool-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-dbcp</groupId>
-        <artifactId>commons-dbcp</artifactId>
-        <version>${commons-dbcp-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j-version}</version>
-      </dependency>
-
-      <!-- optional dependencies for felix -->
-      <dependency>       
-        <groupId>org.apache.felix</groupId>
-        <artifactId>org.osgi.core</artifactId>
-        <version>${felix-osgi-version}</version>     
-      </dependency>
-
-      <!-- optional dependencies for JMS -->
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-core</artifactId>
-        <version>${activemq-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-camel</artifactId>
-        <version>${activemq-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-spring</artifactId>
-        <version>${xbean-spring-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jms_1.1_spec</artifactId>
-        <version>${geronimo-jms-spec-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${geronimo-jta-spec-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
-        <version>1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-        <version>1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>2.0.0</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jsp_2.0_spec</artifactId>
-        <version>1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-servlet_2.4_spec</artifactId>
-        <version>1.1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jpa_3.0_spec</artifactId>
-        <version>${geronimo-jpa-spec-version}</version>
-      </dependency>
-
-      <!-- Optional Spring Support -->
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>${spring-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>${spring-version}</version>
-      </dependency>      
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-core</artifactId>
-        <version>${spring-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-beans</artifactId>
-        <version>${spring-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>${spring-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>${spring-version}</version>       
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-aop</artifactId>
-        <version>${spring-version}</version>      
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jdbc</artifactId>
-        <version>${spring-version}</version>         
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-orm</artifactId>
-        <version>${spring-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jms</artifactId>
-        <version>${spring-version}</version>	  
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context-support</artifactId>
-        <version>${spring-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-tx</artifactId>
-        <version>${spring-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework.osgi</groupId>
-        <artifactId>spring-osgi-core</artifactId>
-        <version>${spring-osgi-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework.osgi</groupId>
-        <artifactId>spring-osgi-mock</artifactId>
-        <version>${spring-osgi-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.annotation</groupId>
-        <artifactId>jsr250-api</artifactId>
-        <version>1.0</version>
-      </dependency>
-
-      <!-- optional guice dependencies -->
-      <dependency>
-        <groupId>org.guiceyfruit</groupId>
-        <artifactId>guiceyfruit-core</artifactId>
-        <version>${guiceyfruit-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.guiceyfruit</groupId>
-        <artifactId>guiceyfruit-junit3</artifactId>
-        <version>${guiceyfruit-version}</version>
-      </dependency>
-
-      <!-- optional mina dependencies -->
-      <dependency>
-        <groupId>org.apache.mina</groupId>
-        <artifactId>mina-core</artifactId>
-        <version>${mina-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>${slf4j-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${slf4j-version}</version>
-      </dependency>
-
-      <!-- optional jetty support -->
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-client</artifactId>
-        <version>${jetty-version}</version>
-      </dependency>
-
-      <!-- optional jakarta http core support -->
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore</artifactId>
-        <version>${httpcore-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore-nio</artifactId>
-        <version>${httpcore-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore-niossl</artifactId>
-        <version>${httpcore-niossl-version}</version>
-      </dependency>
-
-      <!-- optional scripting support -->
-      <dependency>
-        <groupId>org.livetribe</groupId>
-        <artifactId>livetribe-jsr223</artifactId>
-        <version>2.0.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>${groovy-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.script</groupId>
-        <artifactId>groovy-engine</artifactId>
-        <version>20070112</version>
-      </dependency>
-
-      <!-- optional Saxon support-->
-      <dependency>
-        <groupId>net.sf.saxon</groupId>
-        <artifactId>saxon</artifactId>
-        <version>${saxon-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>net.sf.saxon</groupId>
-        <artifactId>saxon-dom</artifactId>
-        <version>${saxon-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>net.sf.saxon</groupId>
-        <artifactId>saxon-sql</artifactId>
-        <version>${saxon-version}</version>
-      </dependency>
-
-      <!-- optional CXF support -->
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-core</artifactId>
-        <version>${cxf-version}</version>
-      </dependency>
-
-      <!-- unit testing frameworks -->
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>${testng-version}</version>
-        <classifier>jdk15</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-all</artifactId>
-        <version>${hamcrest-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymockclassextension</artifactId>
-        <version>${easymock-version}</version>
-      </dependency>
-
-      <!-- default JPA support -->
-      <dependency>
-        <groupId>org.apache.openjpa</groupId>
-        <artifactId>openjpa-persistence-jdbc</artifactId>
-        <version>${openjpa-version}</version>
-      </dependency>
-
-      <!-- hibernate and other db systems -->
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${hibernate-entitymanager-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate</artifactId>
-        <version>${hibernate-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derby</artifactId>
-        <version>${derby-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>hsqldb</groupId>
-        <artifactId>hsqldb</artifactId>
-        <version>${hsqldb-version}</version>
-      </dependency>
-
-      <!-- optional JavaMail -->
-      <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>1.4</version>
-      </dependency>
-   
-      <!-- optional XStream -->
-      <dependency>
-        <groupId>com.thoughtworks.xstream</groupId>
-        <artifactId>xstream</artifactId>
-        <version>1.3</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.codehaus.jettison</groupId>
-        <artifactId>jettison</artifactId>
-        <version>1.0.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.ccil.cowan.tagsoup</groupId>
-        <artifactId>tagsoup</artifactId>
-        <version>1.2</version>
-      </dependency>
-
-      <!-- optional Axiom -->
-      <dependency>
-        <groupId>org.apache.ws.commons.axiom</groupId>
-        <artifactId>axiom-impl</artifactId>
-        <version>1.2.8</version>
-      </dependency>
-
-    </dependencies>
-  </dependencyManagement>
 
 
   <build>
@@ -1042,6 +206,51 @@
           <artifactId>maven-jaxb-schemagen-plugin</artifactId>
           <version>1.3-dev</version>
         </plugin>
+        
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.4</version>
+           <configuration>
+              <attach>true</attach>
+              <source>1.5</source>
+              <quiet>true</quiet>
+              <bottom>Apache CAMEL</bottom>
+              <javadocVersion>1.5</javadocVersion>
+              <encoding>UTF-8</encoding>
+            </configuration>
+         </plugin>
+        
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-resources-plugin</artifactId>
+           <version>2.3</version>
+           <configuration>
+              <encoding>UTF-8</encoding>
+           </configuration>
+        </plugin>
+        
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-assembly-plugin</artifactId>
+           <version>2.2-beta-3</version>
+        </plugin>
+
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-dependency-plugin</artifactId>
+           <version>2.1</version>
+        </plugin>
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-shade-plugin</artifactId>
+           <version>1.2</version>
+        </plugin>
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-plugin-plugin</artifactId>
+           <version>2.5</version>
+        </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -1088,36 +297,6 @@
                 <autoVersionSubmodules>true</autoVersionSubmodules>
             </configuration>
         </plugin>
-
-        <plugin>
-      	<groupId>org.apache.maven.plugins</groupId>
-      	<artifactId>maven-checkstyle-plugin</artifactId>
-      	<dependencies>
-      		<dependency>
-      			<groupId>org.apache.camel</groupId>
-      			<artifactId>camel-buildtools</artifactId>
-      			<version>1.5.0</version>
-      		</dependency>
-      	</dependencies>
-      	<executions>
-      		<execution>
-      			<id>validate</id>
-      			<phase>validate</phase>
-      			<configuration>
-      				<configLocation>camel-checkstyle.xml</configLocation>
-      				<consoleOutput>true</consoleOutput>
-      				<failsOnError>true</failsOnError>
-      				<linkXRef>false</linkXRef>
-      				<suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
-      				<sourceDirectory>${basedir}/src</sourceDirectory>
-      				<excludes>**/archetype-resources/**/*.java</excludes>
-      			</configuration>
-      			<goals>
-      				<goal>checkstyle</goal>
-      			</goals>
-      		</execution>
-      	</executions>
-      </plugin>
 
       </plugins>
     </pluginManagement>
@@ -1275,16 +454,16 @@
                     <property name="full.eclipse.workspace" refid="ecp.ws.path" />
                     <path path="${basedir}/etc" id="etc.path" />
 
-                    <whichresource resource="/activemq-eclipse-pmd" property="pmd.url">
+                    <whichresource resource="/camel-eclipse-pmd" property="pmd.url">
                       <classpath refid="etc.path" />
                     </whichresource>
-                    <whichresource resource="/activemq-pmd-ruleset.xml" property="pmdruleset.url">
+                    <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url">
                       <classpath refid="etc.path" />
                     </whichresource>
-                    <whichresource resource="/activemq-eclipse-checkstyle" property="eclipse.checkstyle.url">
+                    <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url">
                       <classpath refid="etc.path" />
                     </whichresource>
-                    <whichresource resource="/activemq-checkstyle.xml" property="checkstyle.url">
+                    <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url">
                       <classpath refid="etc.path" />
                     </whichresource>
 
@@ -1354,52 +533,7 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-    	<id>nochecks</id>
-        <!-- skip the checkstyle source code checking -->
-    </profile>
-    <profile>
-      <id>sourcecheck</id>
-      <!-- endable the checkstyle source code checking -->
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-          </plugin>
-          <!--plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-pmd-plugin</artifactId>
-            </plugin-->
-        </plugins>
-      </build>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>cobertura-maven-plugin</artifactId>
-            <version>2.2</version>
-            <configuration>
-              <formats>
-                <format>html</format>
-              </formats>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-
+   
     <profile>
       <id>rat</id>
       <!-- The profile for Apache Release Audit Tool http://incubator.apache.org/rat/ -->

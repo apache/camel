@@ -23,7 +23,7 @@
 
     <parent>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-parent</artifactId>
+      <artifactId>camel</artifactId>
       <version>1.6.2-SNAPSHOT</version>
     </parent>
        
@@ -37,5 +37,6 @@
     <properties>
         <maven.test.skip>true</maven.test.skip>
     </properties>
-    
+ 
+       
 </project>
