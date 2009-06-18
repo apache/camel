@@ -18,16 +18,18 @@ package org.apache.camel.dataformat.xstream;
 
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class UnmarshalThenMarshalTest extends ContextTestSupport {
+public class UnmarshalThenMarshalTest extends CamelTestSupport {
+    @Test
     public void testSendXmlAndUnmarshal() throws Exception {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);

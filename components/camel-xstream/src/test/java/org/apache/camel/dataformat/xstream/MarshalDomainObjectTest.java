@@ -16,15 +16,17 @@
  */
 package org.apache.camel.dataformat.xstream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Marhsal tests with domain objects.
  */
-public class MarshalDomainObjectTest extends ContextTestSupport {
+public class MarshalDomainObjectTest extends CamelTestSupport {
 
+    @Test
     public void testMarshalDomainObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -39,6 +41,7 @@ public class MarshalDomainObjectTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testMarshalDomainObjectTwice() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -58,6 +61,7 @@ public class MarshalDomainObjectTest extends ContextTestSupport {
         assertEquals("The body should marshalled to the same", body1, body2);
     }
 
+    @Test
     public void testMarshalAndUnmarshal() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         order.setName("Tiger");

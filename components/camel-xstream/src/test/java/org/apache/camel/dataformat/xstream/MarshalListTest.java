@@ -21,15 +21,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Marhsal tests with List objects.
  */
-public class MarshalListTest extends ContextTestSupport {
+public class MarshalListTest extends CamelTestSupport {
 
+    @Test
     public void testMarshalList() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -44,6 +46,7 @@ public class MarshalListTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testMarshalListWithMap() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
