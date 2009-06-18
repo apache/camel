@@ -23,19 +23,20 @@ import java.io.StringWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.junit.Test;
 
 /**
  * Unit test of the encryptXML data format.
  */
-public class XMLSecurityDataFormatTest extends ContextTestSupport {
+public class XMLSecurityDataFormatTest extends CamelTestSupport {
     private static final String XML_FRAGMENT = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
             + "<cheesesites>"
             + "<netherlands>"
@@ -73,7 +74,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
     /*
      * Encryption Tests
      */
-
+    @Test
     public void testFullPayloadXMLEncryption() throws Exception {
         System.out.println("\n***--------- Test: testFullPayloadXMLEncryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -86,6 +87,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
+    @Test
     public void testPartialPayloadXMLContentEncryption() throws Exception {
         System.out.println("\n***--------- Test: testPartialPayloadXMLContentEncryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -98,6 +100,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
+    @Test
     public void testPartialPayloadMultiNodeXMLContentEncryption() throws Exception {
         System.out.println("\n***--------- Test: testPartialPayloadMultiNodeXMLContentEncryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -110,6 +113,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
+    @Test
     public void testPartialPayloadXMLElementEncryptionWithKey() throws Exception {
         System.out.println("\n***--------- Test: testPartialPayloadXMLElementEncryptionWithKey ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -122,6 +126,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
+    @Test
     public void testPartialPayloadXMLElementEncryptionWithKeyAndAlgorithm() throws Exception {
         final byte[] bits128 = {
             (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
@@ -144,7 +149,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
     /*
     * Decryption Tests
     */
-
+    @Test
     public void testFullPayloadXMLDecryption() throws Exception {
         System.out.println("\n***--------- Test: testFullPayloadXMLDecryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -156,7 +161,8 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
 
         sendText();
     }
-
+    
+    @Test
     public void testPartialPayloadXMLContentDecryption() throws Exception {
         System.out.println("\n***--------- Test: testPartialPayloadXMLContentDecryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -169,7 +175,8 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
 
         sendText();
     }
-
+    
+    @Test
     public void testPartialPayloadMultiNodeXMLContentDecryption() throws Exception {
         System.out.println("\n***--------- Test: testPartialPayloadMultiNodeXMLContentDecryption ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -183,6 +190,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
+    @Test
     public void testPartialPayloadXMLElementDecryptionWithKey() throws Exception {
         System.out.println("\n***--------- Test: testPartialPayloadXMLElementDecryptionWithKey ----------***\n");
         context.addRoutes(new RouteBuilder() {
@@ -196,7 +204,7 @@ public class XMLSecurityDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
-
+    @Test
     public void testPartialPayloadXMLContentDecryptionWithKeyAndAlgorithm() throws Exception {
         final byte[] bits128 = {
             (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
