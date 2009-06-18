@@ -18,16 +18,19 @@ package org.apache.camel.component.sql;
 
 import javax.sql.DataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 /**
  * @version $Revision$
  */
-public class SqlPreserveHeaderTest extends ContextTestSupport {
+public class SqlPreserveHeaderTest extends CamelTestSupport {
     protected String driverClass = "org.hsqldb.jdbcDriver";
     protected String url = "jdbc:hsqldb:mem:camel_jdbc";
     protected String user = "sa";
@@ -35,6 +38,7 @@ public class SqlPreserveHeaderTest extends ContextTestSupport {
     private DataSource ds;
     private JdbcTemplate jdbcTemplate;
 
+    @Test
     public void testPreserveHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -45,7 +49,8 @@ public class SqlPreserveHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Class.forName(driverClass);
         super.setUp();
 
@@ -57,7 +62,8 @@ public class SqlPreserveHeaderTest extends ContextTestSupport {
         jdbcTemplate.execute("insert into projects values (3, 'Linux', 'GPL')");
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         jdbcTemplate.execute("drop table projects");

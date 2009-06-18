@@ -21,17 +21,20 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 /**
  * @version $Revision$
  */
-public class SqlDataSourceRefTest extends ContextTestSupport {
+public class SqlDataSourceRefTest extends CamelTestSupport {
     protected String driverClass = "org.hsqldb.jdbcDriver";
     protected String url = "jdbc:hsqldb:mem:camel_jdbc";
     protected String user = "sa";
@@ -45,6 +48,7 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSimpleBody() throws Exception {
         // START SNIPPET: e3
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -69,7 +73,8 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
         // END SNIPPET: e3
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Class.forName(driverClass);
         super.setUp();
 
@@ -84,7 +89,8 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
         // END SNIPPET: e2
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(createDataSource());
         jdbcTemplate.execute("drop table projects");
