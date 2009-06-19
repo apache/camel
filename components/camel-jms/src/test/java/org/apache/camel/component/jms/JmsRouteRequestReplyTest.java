@@ -25,19 +25,19 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.CamelTestSupport;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsRouteRequestReplyTest extends ContextTestSupport {
+public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     // TODO: Split into multiple files so it doesnt take 3 min to run
 

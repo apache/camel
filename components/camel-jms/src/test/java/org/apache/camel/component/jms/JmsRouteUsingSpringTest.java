@@ -17,7 +17,10 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -38,7 +41,8 @@ public class JmsRouteUsingSpringTest extends JmsRouteTest {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         applicationContext.close();
     }

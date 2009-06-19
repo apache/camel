@@ -20,16 +20,18 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
-public class JmsRouteWithInOnlyAndMultipleAcksTest extends ContextTestSupport {
+public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
 
     protected String componentName = "amq";
     
+    @Test
     public void testSendOrderWithMultipleAcks() throws Exception {
         MockEndpoint inbox = getMockEndpoint("mock:inbox");
         inbox.expectedBodiesReceived("Camel in Action");

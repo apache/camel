@@ -27,9 +27,10 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
@@ -37,10 +38,11 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 /**
  * Unit test that we send payload as byte[] for certain types
  */
-public class PayloadByteArrayJmsTest extends ContextTestSupport {
+public class PayloadByteArrayJmsTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
+    @Test
     public void testReaderShouldBeByteArray() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -54,6 +56,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInputStreamShouldBeByteArray() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -67,6 +70,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testByteBufferShouldBeByteArray() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -22,7 +22,6 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -34,8 +33,13 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -47,7 +51,7 @@ import static org.apache.camel.component.mock.MockEndpoint.assertWait;
 /**
  * @version $Revision$
  */
-public class TransactedJmsRouteTest extends ContextTestSupport {
+public class TransactedJmsRouteTest extends CamelTestSupport {
 
     // TODO: This is not a nice unit test. Please do not do like this. Big, confusing and takes long time to run
 
@@ -193,7 +197,8 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         for (Route route : this.context.getRoutes()) {
@@ -207,7 +212,8 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         spring.destroy();
         // Waiting for the broker shutdown
@@ -217,8 +223,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
     /**
      * This test seems to be fail every other run.
      */
+    @Ignore
     public void disabledtestSenarioF() throws Exception {
-        String expected = getName() + ": " + System.currentTimeMillis();
+        String expected = "testSenarioF" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMinimumMessageCount(2);
         mockEndpointC.expectedMessageCount(0);
@@ -234,15 +241,17 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA, mockEndpointB, mockEndpointC, mockEndpointD);
     }
 
+    @Test
     public void testSenarioA() throws Exception {
-        String expected = getName() + ": " + System.currentTimeMillis();
+        String expected = "testSenarioA" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedBodiesReceived(expected);
         sendBody("activemq:queue:a", expected);
         assertIsSatisfied(mockEndpointA);
     }
 
+    @Test
     public void testSenarioB() throws Exception {
-        String expected = getName() + ": " + System.currentTimeMillis();
+        String expected = "testSenarioB" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         // May be more since spring seems to go into tight loop re-delivering.
         mockEndpointB.expectedMinimumMessageCount(2);
@@ -250,8 +259,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(assertTimeoutSeconds, TimeUnit.SECONDS, mockEndpointA, mockEndpointB);
     }
 
+    @Ignore
     public void disabledtestSenarioC() throws Exception {
-        String expected = getName() + ": " + System.currentTimeMillis();
+        String expected = "testSenarioD" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         // Should only get 1 message the incoming transaction does not rollback.
         mockEndpointB.expectedMessageCount(1);
@@ -266,8 +276,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA, mockEndpointB);
     }
 
+    @Ignore
     public void disabledtestSenarioD() throws Exception {
-        String expected = getName() + ": " + System.currentTimeMillis();
+        String expected = "testSenarioD" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(1);
         sendBody("activemq:queue:d", expected);
 
@@ -280,8 +291,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA);
     }
 
+    @Ignore
     public void disabledtestSenarioE() throws Exception {
-        String expected = getName() + ": " + System.currentTimeMillis();
+        String expected = "testSenarioE" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMessageCount(1);
         sendBody("activemq:queue:e", expected);

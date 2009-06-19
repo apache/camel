@@ -21,26 +21,28 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 /**
  * A simple request/reply using custom reply to header.
  */
-public class JmsSimpleRequestCustomReplyToTest extends ContextTestSupport {
+public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(JmsSimpleRequestCustomReplyToTest.class);
     private static String myReplyTo;
     protected String componentName = "activemq";
     private CountDownLatch latch = new CountDownLatch(1);
 
+    @Test
     public void testRequetCustomReplyTo() throws Exception {
         // use another thread to send the late reply to simulate that we do it later, not
         // from the origianl route anyway

@@ -27,8 +27,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
@@ -36,7 +38,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 /**
  * @version $Revision$
  */
-public class BrowsableQueueTest extends ContextTestSupport {
+public class BrowsableQueueTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BrowsableQueueTest.class);
 
     protected MockEndpoint resultEndpoint;
@@ -45,6 +47,7 @@ public class BrowsableQueueTest extends ContextTestSupport {
     protected int counter;
     protected Object[] expectedBodies = {"body1", "body2"};
 
+    @Test
     public void testSendMessagesThenBrowseQueue() throws Exception {
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {

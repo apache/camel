@@ -19,14 +19,16 @@ package org.apache.camel.component.jms.bind;
 import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class JmsMessageBindTest extends SpringTestSupport {
+public class JmsMessageBindTest extends CamelSpringTestSupport {
     
+    @Test
     public void testSendAMessageToBean() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Completed");

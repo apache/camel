@@ -20,17 +20,19 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test from JMS -> routing slip
  */
-public class JmsRoutingSlipTest extends ContextTestSupport {
+public class JmsRoutingSlipTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
+    @Test
     public void testJmsRoutingSlip() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");

@@ -23,18 +23,19 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
 
 /**
  * @version $Revision$
  */
-public class JmsMessageTypeTest extends ContextTestSupport {
+public class JmsMessageTypeTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -49,6 +50,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         return camelContext;
     }
 
+    @Test
     public void testHeaderTextType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -60,6 +62,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertTextType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -72,6 +75,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTextType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -84,6 +88,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderBytesType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World".getBytes());
@@ -94,6 +99,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertBytesType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World".getBytes());
@@ -105,6 +111,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBytesType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World".getBytes());
@@ -116,6 +123,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderMapType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -128,6 +136,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
 
+    @Test
     public void testConvertMapType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -140,6 +149,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
 
+    @Test
     public void testMapType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -155,6 +165,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertEquals("Claus", mock.getExchanges().get(0).getIn().getBody(Map.class).get("name"));
     }
 
+    @Test
     public void testHeaderObjectType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -169,6 +180,7 @@ public class JmsMessageTypeTest extends ContextTestSupport {
         assertEquals("James", mock.getExchanges().get(0).getIn().getBody(MyFooBean.class).getName());
     }
 
+    @Test
     public void testObjectType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

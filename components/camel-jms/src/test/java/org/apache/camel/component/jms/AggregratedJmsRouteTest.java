@@ -21,18 +21,19 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BatchProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
-public class AggregratedJmsRouteTest extends ContextTestSupport {
+public class AggregratedJmsRouteTest extends CamelTestSupport {
 
     private static final transient Log LOG = LogFactory.getLog(AggregratedJmsRouteTest.class);
     private String timeOutEndpointUri = "jms:queue:test.a";
@@ -41,6 +42,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
     /*
      * negative receive wait timeout for jms is blocking so timeout during processing does not hang
      */
+    @Test
     public void testJmsBatchTimeoutExpiryWithAggregrationDelay() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.setSleepForEmptyTest(3 * BatchProcessor.DEFAULT_BATCH_TIMEOUT);
@@ -53,6 +55,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testJmsMulticastAndAggregration() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:reply", MockEndpoint.class);
 

@@ -29,6 +29,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
@@ -36,11 +38,12 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  *
  * @version $Revision$
  */
-public class JmsXMLRouteTest extends ContextTestSupport {
+public class JmsXMLRouteTest extends CamelTestSupport {
 
     private static final String TEST_LONDON = "src/test/data/message1.xml";
     private static final String TEST_TAMPA = "src/test/data/message2.xml";
 
+    @Test
     public void testLondonWithFileStreamAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -54,6 +57,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLondonWithFileStreamAsBytes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -67,6 +71,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLondonWithFileStreamAsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -80,6 +85,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTampaWithFileStreamAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
@@ -93,6 +99,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTampaWithFileStreamAsBytes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
@@ -106,6 +113,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTampaWithFileStreamAsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
@@ -119,6 +127,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLondonWithStringSourceAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -136,6 +145,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLondonWithStringSourceAsBytes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -153,6 +163,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLondonWithStringSourceAsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);

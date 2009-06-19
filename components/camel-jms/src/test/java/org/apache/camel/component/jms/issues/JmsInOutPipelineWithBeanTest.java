@@ -22,24 +22,29 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
 /**
  * Unit test from an user request on the forum.
  */
-public class JmsInOutPipelineWithBeanTest extends ContextTestSupport {
+public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
 
+    @Test
     public void testA() throws Exception {
         Object response = template.requestBody("activemq:testA", "Hello World");
         assertEquals("Reply", "Hello World,From Bean,From A,From B", response);
     }
 
+    @Test
     public void testB() throws Exception {
         Object response = template.requestBody("activemq:testB", "Hello World");
         assertEquals("Reply", "Hello World,From A,From Bean,From B", response);
     }
 
+    @Test
     public void testC() throws Exception {
         Object response = template.requestBody("activemq:testC", "Hello World");
         assertEquals("Reply", "Hello World,From A,From B,From Bean", response);

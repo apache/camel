@@ -27,11 +27,12 @@ import org.w3c.dom.NodeList;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
@@ -42,7 +43,7 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
  *
  * @version $Revision$
  */
-public class JmsTypeConverterIssueTest extends ContextTestSupport {
+public class JmsTypeConverterIssueTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -53,6 +54,7 @@ public class JmsTypeConverterIssueTest extends ContextTestSupport {
         return camelContext;
     }
 
+    @Test
     public void testJmsTypeConverterIssue() throws Exception {
         String body = "<?xml version=\"1.0\"?><portal agent=\"123\"><id>456</id><name>Cool Portal</name></portal>";
 

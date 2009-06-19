@@ -20,19 +20,21 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test for useOriginalBody unit test
  */
-public class JmsOnCompletionTest extends ContextTestSupport {
+public class JmsOnCompletionTest extends CamelTestSupport {
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
@@ -45,6 +47,7 @@ public class JmsOnCompletionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:sync").expectedMessageCount(1);
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);

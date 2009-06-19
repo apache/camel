@@ -21,19 +21,23 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsQosRouteTest extends ContextTestSupport {
+public class JmsQosRouteTest extends CamelTestSupport {
     protected String componentName = "activemq";
     protected BrokerService brokerService;
 
+    @Test
     public void testJmsRoutePreserveQos() throws Exception {
         
         MockEndpoint preserveEndpoint1 = (MockEndpoint) context.getEndpoint("mock:preserve-1");
@@ -50,6 +54,7 @@ public class JmsQosRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(preserveEndpoint1, preserveEndpoint2);
     }
 
+    @Test
     public void testJmsRouteNormalQos() throws Exception {
         
         MockEndpoint regularEndpoint1 = (MockEndpoint) context.getEndpoint("mock:regular-1");
@@ -68,7 +73,8 @@ public class JmsQosRouteTest extends ContextTestSupport {
 
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         brokerService = new BrokerService();
         brokerService.setPersistent(false);
         brokerService.start();
@@ -77,7 +83,8 @@ public class JmsQosRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         brokerService.stop();
     }

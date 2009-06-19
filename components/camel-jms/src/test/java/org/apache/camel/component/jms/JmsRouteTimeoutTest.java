@@ -20,17 +20,19 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test for testing request timeout with a InOut exchange.
  */
-public class JmsRouteTimeoutTest extends ContextTestSupport {
+public class JmsRouteTimeoutTest extends CamelTestSupport {
 
+    @Test
     public void testTimeout() throws Exception {
         try {
             // send a in-out with a timeout for 1 sec 
@@ -41,6 +43,7 @@ public class JmsRouteTimeoutTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoTimeout() throws Exception {
         // START SNIPPET: e1
         // send a in-out with a timeout for 5 sec

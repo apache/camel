@@ -26,7 +26,6 @@ import junit.framework.AssertionFailedError;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -34,6 +33,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
@@ -41,7 +42,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  *
  * @version $Revision$
  */
-public class JmsHeaderFilteringTest extends ContextTestSupport {
+public class JmsHeaderFilteringTest extends CamelTestSupport {
 
     private static final String IN_FILTER_PATTERN = "(org_apache_camel)[_|a-z|A-Z|0-9]*(test)[_|a-z|A-Z|0-9]*";
 
@@ -51,6 +52,7 @@ public class JmsHeaderFilteringTest extends ContextTestSupport {
     private final String assertionReceiver = "mock:errors";
     private CountDownLatch latch = new CountDownLatch(2);
 
+    @Test
     public void testHeaderFilters() throws Exception {
         MockEndpoint errors = this.resolveMandatoryEndpoint(assertionReceiver, MockEndpoint.class);
         errors.expectedMessageCount(0);

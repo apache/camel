@@ -22,21 +22,23 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsRouteWithDefaultKeyFormatStrategyTest extends ContextTestSupport {
+public class JmsRouteWithDefaultKeyFormatStrategyTest extends CamelTestSupport {
 
     protected String getUri() {
         return "activemq:queue:foo?jmsKeyFormatStrategy=default";
     }
 
+    @Test
     public void testIllegalOption() throws Exception {
         try {
             context.getEndpoint("activemq:queue:bar?jmsHeaderStrategy=xxx");
@@ -46,6 +48,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends ContextTestSupport
         }
     }
 
+    @Test
     public void testNoHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -55,6 +58,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithPlainHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -65,6 +69,7 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithMixedHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

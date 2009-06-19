@@ -20,6 +20,7 @@ import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.activemq.command.ActiveMQTempTopic;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
 
 /**
  * @version $Revision$
@@ -28,7 +29,8 @@ public class TemporaryTopicRouteTest extends TemporaryQueueRouteTest {
     private static final transient Log LOG = LogFactory.getLog(TemporaryQueueRouteTest.class);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         endpointUri = "activemq:temp:topic:cheese";
         super.setUp();
     }

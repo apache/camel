@@ -21,18 +21,20 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsOnCompletionAndInterceptAndOnExceptionTest extends ContextTestSupport {
+public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupport {
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:intercept").expectedMessageCount(5);
@@ -47,6 +49,7 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends ContextTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(1);
         getMockEndpoint("mock:intercept").expectedMessageCount(4);

@@ -20,12 +20,13 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
@@ -33,12 +34,13 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  *
  * @version $Revision$
  */
-public class JmsDeadLetterQueueTest extends ContextTestSupport {
+public class JmsDeadLetterQueueTest extends CamelTestSupport {
 
     protected String getUri() {
         return "activemq:queue:dead";
     }
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -48,6 +50,7 @@ public class JmsDeadLetterQueueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testKabom() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:dead");
         mock.expectedBodiesReceived("Kabom");

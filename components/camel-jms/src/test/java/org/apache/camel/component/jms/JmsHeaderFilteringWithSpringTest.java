@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.After;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -41,7 +42,8 @@ public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
 
     
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (applicationContext != null) {
             applicationContext.close();
         }

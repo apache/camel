@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
@@ -27,8 +25,10 @@ import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spring.spi.TransactionErrorHandler;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.After;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
  * Test case derived from:
@@ -38,22 +38,19 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  *
  * @author Kevin Ross
  */
-public abstract class AbstractTransactionTest extends ContextTestSupport {
+public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
+   
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         setCamelContextService(null);
         context = null;
         template = null;
     }
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/jms/tx/JavaDSLTransactionTest.xml");
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JavaDSLTransactionTest.xml");
     }
 
     protected void assertResult() throws InterruptedException {

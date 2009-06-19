@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.jms;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
+
 
 /**
  * @version $Revision$
  */
-public class DefaultJmsHeaderKeyFormatStrategyTest extends TestCase {
+public class DefaultJmsHeaderKeyFormatStrategyTest extends Assert {
 
     private JmsKeyFormatStrategy strategy = new DefaultJmsKeyFormatStrategy();
 
+    @Test
     public void testEncodeValidKeys() {
         assertEquals("foo", strategy.encodeKey("foo"));
         assertEquals("foo123bar", strategy.encodeKey("foo123bar"));
@@ -34,6 +37,7 @@ public class DefaultJmsHeaderKeyFormatStrategyTest extends TestCase {
         assertEquals("My_HYPHEN_Header_You", strategy.encodeKey("My-Header.You"));
     }
 
+    @Test
     public void testDeccodeValidKeys() {
         assertEquals("foo", strategy.decodeKey("foo"));
         assertEquals("foo123bar", strategy.decodeKey("foo123bar"));

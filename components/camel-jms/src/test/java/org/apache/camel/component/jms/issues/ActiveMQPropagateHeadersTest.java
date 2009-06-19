@@ -23,25 +23,27 @@ import javax.jms.Message;
 
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsExchange;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
 /**
  * @version $Revision$
  */
-public class ActiveMQPropagateHeadersTest extends ContextTestSupport {
+public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
 
     protected Object expectedBody = "<time>" + new Date() + "</time>";
     protected ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue");
     protected String correlationID = "ABC-123";
     protected String messageType = getClass().getName();
 
+    @Test
     public void testForwardingAMessageAcrossJMSKeepingCustomJMSHeaders() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 

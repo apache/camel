@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -29,7 +30,8 @@ public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
 
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         componentName = "jms";
         super.setUp();
     }

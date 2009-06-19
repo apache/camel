@@ -27,10 +27,12 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
@@ -38,10 +40,11 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 /**
  * @version $Revision$
  */
-public class ConsumeJmsMapMessageTest extends ContextTestSupport {
+public class ConsumeJmsMapMessageTest extends CamelTestSupport {
     protected JmsTemplate jmsTemplate;
     private MockEndpoint endpoint;
 
+    @Test
     public void testConsumeMapMessage() throws Exception {
         endpoint.expectedMessageCount(1);
 
@@ -73,6 +76,7 @@ public class ConsumeJmsMapMessageTest extends ContextTestSupport {
         assertEquals("map.size", 2, map.size());
     }
 
+    @Test
     public void testSendMapMessage() throws Exception {
 
         endpoint.expectedMessageCount(1);
@@ -88,7 +92,8 @@ public class ConsumeJmsMapMessageTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         endpoint = getMockEndpoint("mock:result");
     }

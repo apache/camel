@@ -21,6 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
 /**
@@ -28,8 +30,9 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  *
  * @version $Revision$
  */
-public class JmsMessageHeaderContentBasedRouterTest extends ContextTestSupport {
+public class JmsMessageHeaderContentBasedRouterTest extends CamelTestSupport {
 
+    @Test
     public void testCBR() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(1);

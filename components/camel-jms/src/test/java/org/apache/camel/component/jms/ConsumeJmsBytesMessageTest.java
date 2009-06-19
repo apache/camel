@@ -27,10 +27,12 @@ import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
@@ -40,10 +42,11 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 /**
  * @version $Revision$
  */
-public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
+public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
     protected JmsTemplate jmsTemplate;
     private MockEndpoint endpoint;
 
+    @Test
     public void testConsumeBytesMessage() throws Exception {
         endpoint.expectedMessageCount(1);
 
@@ -62,6 +65,7 @@ public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
         assertCorrectBytesReceived();
     }
 
+    @Test
     public void testSendBytesMessage() throws Exception {
 
         endpoint.expectedMessageCount(1);
@@ -89,7 +93,8 @@ public class ConsumeJmsBytesMessageTest extends ContextTestSupport {
 
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         endpoint = getMockEndpoint("mock:result");
     }

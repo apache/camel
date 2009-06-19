@@ -22,20 +22,22 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test that we can consume JMS message and store it as file (to avoid regression bug)
  */
-public class JmsRouteToFileTest extends ContextTestSupport {
+public class JmsRouteToFileTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
+    @Test
     public void testRouteToFile() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

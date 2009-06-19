@@ -17,18 +17,22 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class NonTransactedInOutForJmsWithTxnMgrTest extends ContextTestSupport {
+public class NonTransactedInOutForJmsWithTxnMgrTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(NonTransactedInOutForJmsWithTxnMgrTest.class);
     private MyActiveMQConsumer consumer;
     
+    @Test
     public void testJmsNonTransactedInOutWithTxnMgr() throws Exception {
         for (int i = 0; i < 10; i++) {
             String tmpStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><aft>" + i + "</aft>";
@@ -54,8 +58,9 @@ public class NonTransactedInOutForJmsWithTxnMgrTest extends ContextTestSupport {
             }
         };
     }
-
-    protected void setUp() throws Exception {
+    @Override 
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         // start the jms consumer here
         consumer = new MyActiveMQConsumer();
@@ -63,8 +68,9 @@ public class NonTransactedInOutForJmsWithTxnMgrTest extends ContextTestSupport {
         thread.start();
     }
     @Override
-    protected void tearDown() throws Exception {
-        log.debug("tearDown test: " + getName());
+    @After
+    public void tearDown() throws Exception {
+        log.debug("tearDown test: ");
         Thread.sleep(2000);
         consumer.close();
         super.tearDown();

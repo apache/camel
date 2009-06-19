@@ -32,8 +32,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.BrowsableQueueTest;
 import org.apache.camel.component.jms.JmsQueueEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
@@ -41,13 +43,14 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 /**
  * @version $Revision$
  */
-public class TemporaryQueueRouteTest extends ContextTestSupport {
+public class TemporaryQueueRouteTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(TemporaryQueueRouteTest.class);
 
     protected String endpointUri = "activemq:temp:queue:cheese";
     protected Object expectedBody = "<hello>world!</hello>";
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Result");

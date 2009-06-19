@@ -19,13 +19,15 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * To demonstrate transacted with minimal configuration.
  */
-public class TransactionMinimalConfigurationTest extends SpringTestSupport {
+public class TransactionMinimalConfigurationTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
@@ -36,6 +38,7 @@ public class TransactionMinimalConfigurationTest extends SpringTestSupport {
         return 1;
     }
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

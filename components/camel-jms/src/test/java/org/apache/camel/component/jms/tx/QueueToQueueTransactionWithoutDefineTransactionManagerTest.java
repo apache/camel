@@ -16,21 +16,27 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.log4j.Logger;
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
 
     private Logger log = Logger.getLogger(getClass());
     
-    protected CamelContext createCamelContext() throws Exception {
-
-        return createSpringCamelContext(this, "org/apache/camel/component/jms/tx/ActiveMQWithoutTransactionManager.xml");
+    protected int getExpectedRouteCount() {
+        return 0;
     }
-
+    
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/ActiveMQWithoutTransactionManager.xml");
+    }
+    
+    @Ignore
     public void xtestRollbackUsingXmlQueueToQueue() throws Exception {
 
         // configure routes and add to camel context
@@ -52,6 +58,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
         endpoint.assertIsSatisfied();
     }
     
+    @Test
     public void testNoTransactionRollbackUsingXmlQueueToQueue() throws Exception {
 
         // configure routes and add to camel context

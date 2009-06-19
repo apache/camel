@@ -20,25 +20,31 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test for request-reply with jms where processing the input could cause: OK, FAULT or Exception
  */
-public class BruceHandlingBeanExceptionTest extends ContextTestSupport {
+public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
 
+    @Test
     public void testSendOK() throws Exception {
         Object out = template.requestBody("activemq:queue:ok", "Hello World");
         assertEquals("Bye World", out);
     }
 
+    @Test
     public void testSendFailure() throws Exception {
         Object out = template.requestBody("activemq:queue:fault", "Hello World");
         assertEquals("This is a fault message", out);
     }
 
+    @Ignore
+    @Test    
     public void xxxtestSendError() throws Exception {
         // TODO: See CAMEL-585
         Object out = template.requestBody("activemq:queue:error", "Hello World");

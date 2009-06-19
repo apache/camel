@@ -20,19 +20,21 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test for useOriginalBody unit test
  */
-public class JmsUseOriginalBodyTest extends ContextTestSupport {
+public class JmsUseOriginalBodyTest extends CamelTestSupport {
 
+    @Test
     public void testUseOriginalBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:a");
         dead.expectedBodiesReceived("Hello");
@@ -42,6 +44,7 @@ public class JmsUseOriginalBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDoNotUseOriginalBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:b");
         dead.expectedBodiesReceived("Hello World");

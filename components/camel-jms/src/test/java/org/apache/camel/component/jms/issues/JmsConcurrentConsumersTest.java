@@ -23,18 +23,20 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponent;
 /**
  * Concurrent consumer with JMSReply test.
  */
-public class JmsConcurrentConsumersTest extends ContextTestSupport {
+public class JmsConcurrentConsumersTest extends CamelTestSupport {
 
+    @Test
     public void testConcurrentConsumersWithReply() throws Exception {
         // latch for the 5 exchanges we expect
         final CountDownLatch latch = new CountDownLatch(5);

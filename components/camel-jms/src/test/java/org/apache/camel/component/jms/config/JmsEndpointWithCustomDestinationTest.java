@@ -21,15 +21,20 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 
 /**
  * @version $Revision$
  */
 @ContextConfiguration
-public class JmsEndpointWithCustomDestinationTest extends AbstractJUnit38SpringContextTests {
+public class JmsEndpointWithCustomDestinationTest extends AbstractJUnit4SpringContextTests {
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
     @EndpointInject(uri = "mock:result")
@@ -39,6 +44,7 @@ public class JmsEndpointWithCustomDestinationTest extends AbstractJUnit38SpringC
 
     private Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testMessageSentToCustomEndpoint() throws Exception {
         assertNotNull("jmsQueue", jmsQueue);
         assertEquals("jmsqueue.getPhysicalName()", "Test.Camel.CustomEndpoint", jmsQueue.getPhysicalName());

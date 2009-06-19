@@ -20,18 +20,20 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsTransferExceptionTest extends ContextTestSupport {
+public class JmsTransferExceptionTest extends CamelTestSupport {
 
     private static int counter;
 
@@ -40,11 +42,13 @@ public class JmsTransferExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         counter = 0;
         super.setUp();
     }
 
+    @Test
     public void testOk() throws Exception {
         Object out = template.requestBody(getUri(), "Hello World");
         assertEquals("Bye World", out);
@@ -52,6 +56,7 @@ public class JmsTransferExceptionTest extends ContextTestSupport {
         assertEquals(1, counter);
     }
 
+    @Test
     public void testTransferExeption() throws Exception {
         // should fail as we thrown an exception
         MockEndpoint dead = getMockEndpoint("mock:dead");
@@ -73,7 +78,7 @@ public class JmsTransferExceptionTest extends ContextTestSupport {
         // we still try redeliver
         assertEquals(3, counter);
     }
-
+  
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

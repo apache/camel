@@ -23,10 +23,11 @@ import javax.jms.DeliveryMode;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -39,23 +40,26 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 /**
  * @version $Revision$
  */
-public class JmsEndpointConfigurationTest extends ContextTestSupport {
+public class JmsEndpointConfigurationTest extends CamelTestSupport {
     private Processor dummyProcessor = new Processor() {
         public void process(Exchange exchange) throws Exception {
             log.info("Received: " + exchange);
         }
     };
 
+    @Test
     public void testDurableSubscriberConfiguredWithDoubleSlash() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms://topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
         assertDurableSubscriberEndpointIsValid(endpoint);
     }
 
+    @Test
     public void testDurableSubscriberConfiguredWithNoSlashes() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
         assertDurableSubscriberEndpointIsValid(endpoint);
     }
-    
+ 
+    @Test
     public void testSetUsernameAndPassword() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James&password=ABC");
         ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
@@ -63,7 +67,8 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
         assertTrue("The connectionFactory should be the instance of UserCredentialsConnectionFactoryAdapter",
                    cf instanceof UserCredentialsConnectionFactoryAdapter);        
     }
-    
+ 
+    @Test
     public void testNotSetUsernameOrPassword() {
         try {
             JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
@@ -81,6 +86,7 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
         
     }
 
+    @Test
     public void testSelector() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?selector=foo%3D'ABC'");
         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
@@ -94,6 +100,7 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
         assertFalse("Should not have isEagerLoadingOfProperties()", messageListener.isEagerLoadingOfProperties());
     }
 
+    @Test
     public void testConfigureMessageListener() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?disableReplyTo=true&eagerLoadingOfProperties=true");
         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
@@ -105,17 +112,19 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
         assertTrue("Should have isEagerLoadingOfProperties()", messageListener.isEagerLoadingOfProperties());
     }
 
-
+    @Test
     public void testCacheConsumerEnabledForQueue() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar");
         assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_CONSUMER);
     }
 
+    @Test
     public void testCacheConsumerEnabledForTopic() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar");
         assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_CONSUMER);
     }
-    
+
+    @Test
     public void testReplyToPesistentDelivery() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo");
         endpoint.getConfiguration().setDeliveryPersistent(true);

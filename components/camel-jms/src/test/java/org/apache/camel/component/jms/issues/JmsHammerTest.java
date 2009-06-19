@@ -18,11 +18,12 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
 /**
@@ -30,7 +31,7 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  *
  * @version $Revision$
  */
-public class JmsHammerTest extends ContextTestSupport {
+public class JmsHammerTest extends CamelTestSupport {
 
     private static final Log LOG = LogFactory.getLog(JmsHammerTest.class);
 
@@ -58,6 +59,7 @@ public class JmsHammerTest extends ContextTestSupport {
         return camelContext;
     }
 
+    @Test
     public void testHammerJms() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(size);

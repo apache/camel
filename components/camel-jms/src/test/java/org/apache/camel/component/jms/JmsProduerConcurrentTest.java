@@ -25,17 +25,21 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsProduerConcurrentTest extends ContextTestSupport {
+public class JmsProduerConcurrentTest extends CamelTestSupport {
 
+    @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
+    @Test
     public void testConcurrentProducers() throws Exception {
         doSendMessages(10, 5);
     }

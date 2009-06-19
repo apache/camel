@@ -19,13 +19,14 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * To demonstrate the TransactionErrorHandlerBuilder configured in Spring XML.
  */
-public class TransactionErrorHandlerBuilderAsSpringBeanTest extends SpringTestSupport {
+public class TransactionErrorHandlerBuilderAsSpringBeanTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
@@ -36,6 +37,7 @@ public class TransactionErrorHandlerBuilderAsSpringBeanTest extends SpringTestSu
         return 1;
     }
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

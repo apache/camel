@@ -22,18 +22,20 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test for sending the filename for file producer over the JMS wire.
  */
-public class JmsFilenameHeaderTest extends ContextTestSupport {
+public class JmsFilenameHeaderTest extends CamelTestSupport {
 
+    @Test
     public void testFileNameOverJMS() throws Exception {
         String filename = "jmsfilenameheadertest.txt";
         MockEndpoint mock = getMockEndpoint("mock:result");

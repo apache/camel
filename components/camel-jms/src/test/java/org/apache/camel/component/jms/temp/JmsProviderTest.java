@@ -23,15 +23,17 @@ import javax.naming.Context;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.activemq.command.ActiveMQTempTopic;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsProviderMetadata;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JmsProviderTest extends ContextTestSupport {
+public class JmsProviderTest extends CamelTestSupport {
+    @Test
     public void testTemporaryDestinationTypes() throws Exception {
         JmsEndpoint endpoint = getMandatoryEndpoint("activemq:test.queue", JmsEndpoint.class);
         JmsConfiguration configuration = endpoint.getConfiguration();

@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.jms;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class PassThroughJmsKeyFormatStrategyTest extends TestCase {
+public class PassThroughJmsKeyFormatStrategyTest extends Assert {
 
     private JmsKeyFormatStrategy strategy = new PassThroughJmsKeyFormatStrategy();
 
+    @Test
     public void testEncodeValidKeys() {
         assertEquals("foo", strategy.encodeKey("foo"));
         assertEquals("foo123bar", strategy.encodeKey("foo123bar"));
@@ -34,6 +36,7 @@ public class PassThroughJmsKeyFormatStrategyTest extends TestCase {
         assertEquals("My-Header.You", strategy.encodeKey("My-Header.You"));
     }
 
+    @Test
     public void testDeccodeValidKeys() {
         assertEquals("foo", strategy.decodeKey("foo"));
         assertEquals("foo123bar", strategy.decodeKey("foo123bar"));

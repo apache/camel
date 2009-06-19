@@ -20,19 +20,21 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test to verify issue we had in Camel 1.4
  */
-public class JmsToFileMessageIdTest extends ContextTestSupport {
+public class JmsToFileMessageIdTest extends CamelTestSupport {
 
+    @Test
     public void testFromJmsToFileAndMessageId() throws Exception {
         // Mock endpoint to collect message at the end of the route
         MockEndpoint mock = getMockEndpoint("mock:result");

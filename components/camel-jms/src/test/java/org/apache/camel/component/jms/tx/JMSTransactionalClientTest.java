@@ -19,13 +19,14 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Simple unit test for transaction client EIP pattern and JMS.
  */
-public class JMSTransactionalClientTest extends SpringTestSupport {
+public class JMSTransactionalClientTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
@@ -36,6 +37,7 @@ public class JMSTransactionalClientTest extends SpringTestSupport {
         return 1;
     }
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         // START SNIPPET: e1
         MockEndpoint mock = getMockEndpoint("mock:result");

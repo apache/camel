@@ -19,20 +19,24 @@ package org.apache.camel.component.jms.remoting;
 import javax.annotation.Resource;
 
 import org.apache.camel.spring.remoting.ISay;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
 
 
 /**
  * @version $Revision$
  */
 @ContextConfiguration
-public class RemotingTest extends AbstractJUnit38SpringContextTests {
+public class RemotingTest extends AbstractJUnit4SpringContextTests {
     @Resource
     protected ISay sayProxy;
 
+    @Test
     public void testInvokeRemoteClient() throws Exception {
         String rc = sayProxy.say();
-        assertEquals("Hello", rc);
+        Assert.assertEquals("Hello", rc);
     }
 }

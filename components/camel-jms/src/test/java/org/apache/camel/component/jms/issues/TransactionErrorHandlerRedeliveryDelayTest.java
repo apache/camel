@@ -21,15 +21,18 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for issue CAMEL-706
  */
 @ContextConfiguration
-public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractJUnit38SpringContextTests {
+public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractJUnit4SpringContextTests {
 
     private static int counter;
 
@@ -39,6 +42,7 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractJUnit38S
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Test
     public void testTransactedRedeliveryDelay() throws Exception {
         result.expectedMessageCount(1);
         result.expectedBodiesReceived("Bye World");

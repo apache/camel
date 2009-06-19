@@ -20,15 +20,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Unit test for issues CAMEL-1034 and CAMEL-1037
  */
 @ContextConfiguration
-public class JmsResequencerTest extends AbstractJUnit38SpringContextTests {
+public class JmsResequencerTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected CamelContext context;
@@ -38,18 +41,22 @@ public class JmsResequencerTest extends AbstractJUnit38SpringContextTests {
 
     protected ProducerTemplate template;
     
+    @Before
     public void setUp() {
         template = context.createProducerTemplate();
     }
     
+    @After
     public void tearDown() {
         result.reset();
     }
     
+    @Test
     public void testBatchResequencer() throws Exception {
         testResequencer("activemq:queue:in1");
     }
-    
+
+    @Test
     public void testStreamResequencer() throws Exception {
         testResequencer("activemq:queue:in2");
     }

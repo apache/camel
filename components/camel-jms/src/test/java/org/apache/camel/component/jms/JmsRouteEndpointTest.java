@@ -19,17 +19,19 @@ package org.apache.camel.component.jms;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
- * Unit test for creting jms endpoint manually
+ * Unit test for creating jms endpoint manually
  */
-public class JmsRouteEndpointTest extends ContextTestSupport {
+public class JmsRouteEndpointTest extends CamelTestSupport {
 
     private JmsEndpoint jms;
 
+    @Test
     public void testRouteToFile() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

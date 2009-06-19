@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.Test;
 
 /**
  * Test case derived from:
@@ -32,7 +33,12 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
  *
  */
 public class QueueToProcessorTransactionTest extends AbstractTransactionTest {
+    
+    protected int getExpectedRouteCount() {
+        return 0;
+    }
 
+    @Test
     public void testRollbackUsingXmlQueueToProcessor() throws Exception {
 
         // configure routes and add to camel context
