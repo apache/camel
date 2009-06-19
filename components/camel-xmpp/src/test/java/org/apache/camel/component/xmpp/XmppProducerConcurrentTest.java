@@ -20,13 +20,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class XmppProducerConcurrentTest extends ContextTestSupport {
+public class XmppProducerConcurrentTest extends CamelTestSupport {
 
     // a disabled test... before enabling you must fill in your own gmail credentials in the route below
     public void xtestNoConcurrentProducers() throws Exception {
@@ -39,6 +40,7 @@ public class XmppProducerConcurrentTest extends ContextTestSupport {
     }
 
     // get around junit warning
+    @Test
     public void testNothing() throws Exception {
     }
 

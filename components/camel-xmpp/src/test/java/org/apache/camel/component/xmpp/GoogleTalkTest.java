@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class GoogleTalkTest extends ContextTestSupport {
+public class GoogleTalkTest extends CamelTestSupport {
     // a disabled test... before enabling you must fill in your own gmail credentials in the route below
     public void xtestSendToGTalk() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -35,6 +36,7 @@ public class GoogleTalkTest extends ContextTestSupport {
     }
 
     // get around junit warning
+    @Test
     public void testNothing() throws Exception {        
     }
 

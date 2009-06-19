@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.xmpp;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class UriConfigurationTest extends TestCase {
+public class UriConfigurationTest extends Assert {
     protected CamelContext context = new DefaultCamelContext();
 
+    @Test
     public void testPrivateChatConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
@@ -42,6 +43,7 @@ public class UriConfigurationTest extends TestCase {
         assertEquals("someCoolChat", xmppEndpoint.getServiceName());
     }
 
+    @Test
     public void testGroupChatConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com:123?room=cheese&password=secret&nickname=incognito");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
@@ -59,6 +61,7 @@ public class UriConfigurationTest extends TestCase {
     // Changes in default resource name may break
     // clients program assuming the default "Camel" resource name
     // so it is better to avoid changing it.
+    @Test
     public void testDefaultResource() throws Exception {
         Endpoint endpoint = context.getEndpoint("xmpp://camel-user@im.google.com?password=secret");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
