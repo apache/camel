@@ -26,6 +26,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -42,8 +43,6 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
@@ -52,8 +51,10 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class CamelTestSupport extends TestSupport {    
+    
     protected CamelContext context;
     protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 
@@ -84,6 +85,7 @@ public abstract class CamelTestSupport extends TestSupport {
         assertValidContext(context);
 
         template = context.createProducerTemplate();
+        consumer = context.createConsumerTemplate();
 
         postProcessTest();
         
@@ -98,11 +100,15 @@ public abstract class CamelTestSupport extends TestSupport {
         } else {
             log.debug("Using route builder from the created context: " + context);
         }
+        log.debug("Routing Rules are: " + context.getRoutes());
     }
 
     @Override
     protected void tearDown() throws Exception {
         log.debug("tearDown test: " + getName());
+        if (consumer != null) {
+            consumer.stop();
+        }
         if (template != null) {
             template.stop();
         }
@@ -125,7 +131,7 @@ public abstract class CamelTestSupport extends TestSupport {
         } else {
             if (context != null) {
                 context.stop();
-            }
+            }    
         }
     }
 
@@ -134,7 +140,7 @@ public abstract class CamelTestSupport extends TestSupport {
             camelContextService.start();
         } else {
             if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+                DefaultCamelContext defaultCamelContext = (DefaultCamelContext)context;
                 if (!defaultCamelContext.isStarted()) {
                     defaultCamelContext.start();
                 }
@@ -168,7 +174,7 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
+     * Factory method which derived classes can use to create a {@link RouteBuilder}
      * to define the routes for testing
      */
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -186,7 +192,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * @see #createRouteBuilder()
      */
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[]{createRouteBuilder()};
+        return new RouteBuilder[] {createRouteBuilder()};
     }
 
     /**

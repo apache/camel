@@ -26,6 +26,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -42,8 +43,6 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 
@@ -54,8 +53,10 @@ import org.junit.Before;
  * @version $Revision$
  */
 public abstract class CamelTestSupport extends TestSupport {    
+    
     protected CamelContext context;
     protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 
@@ -86,6 +87,7 @@ public abstract class CamelTestSupport extends TestSupport {
         assertValidContext(context);
 
         template = context.createProducerTemplate();
+        consumer = context.createConsumerTemplate();
 
         postProcessTest();
         
@@ -100,17 +102,21 @@ public abstract class CamelTestSupport extends TestSupport {
         } else {
             log.debug("Using route builder from the created context: " + context);
         }
+        log.debug("Routing Rules are: " + context.getRoutes());
     }
 
     @After
     public void tearDown() throws Exception {
-        
+        log.debug("tearDown test ");
+        if (consumer != null) {
+            consumer.stop();
+        }
         if (template != null) {
             template.stop();
         }
         stopCamelContext();
     }
-    
+
     /**
      * Lets post process this test instance to process any Camel annotations.
      * Note that using Spring Test or Guice is a more powerful approach.
@@ -120,14 +126,14 @@ public abstract class CamelTestSupport extends TestSupport {
         processor.setCamelContext(context);
         processor.postProcessBeforeInitialization(this, "this");
     }
-
+    
     protected void stopCamelContext() throws Exception {
         if (camelContextService != null) {
             camelContextService.stop();
         } else {
             if (context != null) {
                 context.stop();
-            }
+            }    
         }
     }
 
@@ -136,7 +142,7 @@ public abstract class CamelTestSupport extends TestSupport {
             camelContextService.start();
         } else {
             if (context instanceof DefaultCamelContext) {
-                DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
+                DefaultCamelContext defaultCamelContext = (DefaultCamelContext)context;
                 if (!defaultCamelContext.isStarted()) {
                     defaultCamelContext.start();
                 }
@@ -169,7 +175,7 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
+     * Factory method which derived classes can use to create a {@link RouteBuilder}
      * to define the routes for testing
      */
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -187,7 +193,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * @see #createRouteBuilder()
      */
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[]{createRouteBuilder()};
+        return new RouteBuilder[] {createRouteBuilder()};
     }
 
     /**
@@ -348,5 +354,4 @@ public abstract class CamelTestSupport extends TestSupport {
     protected void enableJMX() {
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
     }
-
 }
