@@ -77,7 +77,7 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
                 from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=1000").to("seda:feeds");
 
                 // From the feeds we filter each blot entry by using our blog service class
-                from("seda:feeds").filter().method("blogService", "goodBlog").to("seda:goodBlogs");
+                from("seda:feeds").filter().method("blogService", "isGoodBlog").to("seda:goodBlogs");
 
                 // And the good blogs is moved to a mock queue as this sample is also used for unit testing
                 // this is one of the strengths in Camel that you can also use the mock endpoint for your
@@ -115,7 +115,7 @@ public class AtomGoodBlogsTest extends CamelTestSupport {
          */
         public boolean isGoodBlog(Exchange exchange) {
             Entry entry = exchange.getIn().getBody(Entry.class);
-            String title = entry.getTitle();
+            String title = entry.getTitle();            
 
             // We like blogs about Camel
             boolean good = title.toLowerCase().contains("camel");
