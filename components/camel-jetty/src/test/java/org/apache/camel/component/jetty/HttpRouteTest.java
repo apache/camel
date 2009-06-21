@@ -31,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -76,6 +77,13 @@ public class HttpRouteTest extends CamelTestSupport {
         assertEquals("<b>Hello World</b>", data);
 
     }
+    
+    @Test
+    public void testEchoEndpoint() throws Exception {
+        String out = template.requestBody("http://localhost:9080/echo", "HelloWorld", String.class);
+        assertEquals("Get a wrong output " , "HelloWorld", out);
+        
+    }
 
     protected void invokeHttpEndpoint() throws IOException {
         template.requestBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
@@ -99,7 +107,20 @@ public class HttpRouteTest extends CamelTestSupport {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
+                
+                Processor printProcessor = new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message out = exchange.getOut();
+                        out.copyFrom(exchange.getIn());
+                        log.info("The body's object is " + exchange.getIn().getBody());
+                        log.info("Process body = " + exchange.getIn().getBody(String.class));
+                        InputStreamCache cache = out.getBody(InputStreamCache.class);
+                        cache.reset();
+                    }               
+                };
                 from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);
+                
+                from("jetty:http://localhost:9080/echo").process(printProcessor).process(printProcessor);
             }
         };
     }
