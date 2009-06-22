@@ -463,4 +463,10 @@ public interface CamelContext extends Service {
      */
     ServicePool<Endpoint, Producer> getProducerServicePool();
 
+    /**
+     * Sets whether stream caching is enable or not (default is disabled).
+     *
+     * @param cache whether stream cachin is enabled or not
+     */
+    void setStreamCaching(Boolean cache);
 }

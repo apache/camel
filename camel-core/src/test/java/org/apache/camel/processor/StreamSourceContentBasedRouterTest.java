@@ -66,10 +66,10 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // should work with default error handler as the stream cache
-                // should be enabled and make sure the predicates can be evaluated
+                // is enabled and make sure the predicates can be evaluated
                 // multiple times
 
-                from("direct:start").choice()
+                from("direct:start").streamCaching().choice()
                   .when().xpath("/message/text() = 'xx'").to("mock:x")
                   .when().xpath("/message/text() = 'yy'").to("mock:y");
             }

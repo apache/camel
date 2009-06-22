@@ -50,6 +50,19 @@ public final class StreamCaching implements InterceptStrategy {
         return null;
     }
 
+    /**
+     * Remove the {@link StreamCachingInterceptor} from the given list of interceptors
+     *
+     * @param interceptors the list of interceptors
+     */
+    public static void noStreamCaching(List<InterceptStrategy> interceptors) {
+        for (InterceptStrategy strategy : interceptors) {
+            if (strategy instanceof StreamCachingInterceptor) {
+                interceptors.remove(strategy);
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return "StreamCaching";

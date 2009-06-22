@@ -108,7 +108,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
-    private Boolean streamCache = Boolean.TRUE;
+    private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
@@ -760,8 +760,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return streamCache;
     }
 
-    public void setStreamCaching(Boolean trace) {
-        this.streamCache = trace;
+    public void setStreamCaching(Boolean cache) {
+        this.streamCache = cache;
     }
 
     /**

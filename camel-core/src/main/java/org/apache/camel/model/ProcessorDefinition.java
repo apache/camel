@@ -172,7 +172,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             return channel;
         } else {
             // regular definition so add the error handler
-            Processor errorHandler = getErrorHandlerBuilder().createErrorHandler(routeContext, channel.getOutput());
+            Processor output = channel.getOutput();
+            Processor errorHandler = getErrorHandlerBuilder().createErrorHandler(routeContext, output);
             channel.setErrorHandler(errorHandler);
             return channel;
         }

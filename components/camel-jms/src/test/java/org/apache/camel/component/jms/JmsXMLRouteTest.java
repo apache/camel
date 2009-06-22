@@ -23,7 +23,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -195,6 +194,9 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // enable stream caching
+                context.setStreamCaching(true);
+
                 errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
 
                 // no need to convert to String as JMS producer can handle XML streams now

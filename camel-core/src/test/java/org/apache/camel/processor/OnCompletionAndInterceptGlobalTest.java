@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class OnCompletionAndInterceptGlobalTest extends ContextTestSupport {
 
     public void testSynchronizeComplete() throws Exception {
-        getMockEndpoint("mock:intercept").expectedMessageCount(5);
+        getMockEndpoint("mock:intercept").expectedMessageCount(4);
         getMockEndpoint("mock:sync").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
 

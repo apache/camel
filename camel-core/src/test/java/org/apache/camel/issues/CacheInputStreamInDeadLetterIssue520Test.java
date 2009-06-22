@@ -68,6 +68,9 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // enable stream caching
+                context.setStreamCaching(true);
+
                 // 0 delay for faster unit test
                 errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).redeliverDelay(0));
                 from("direct:start").process(new Processor() {

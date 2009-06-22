@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,7 +35,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
+import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -51,8 +50,9 @@ import org.apache.camel.util.CamelContextHelper;
 public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> implements CamelContextAware {
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
-    private String group;
     private CamelContext camelContext;
+    private String group;
+    private Boolean streamCache;
 
     public RouteDefinition() {
     }
@@ -194,6 +194,29 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
+    /**
+     * Disable stream caching for this Route.
+     */
+    public RouteDefinition noStreamCaching() {
+        setStreamCache(Boolean.FALSE);
+        StreamCaching.noStreamCaching(getInterceptStrategies());
+        return this;
+    }
+
+    /**
+     * Enable stream caching for this Route.
+     */
+    public RouteDefinition streamCaching() {
+        setStreamCache(Boolean.TRUE);
+        StreamCaching cache = StreamCaching.getStreamCaching(getCamelContext());
+        if (cache == null) {
+            cache = new StreamCaching();
+        }
+
+        getInterceptStrategies().add(cache);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -214,7 +237,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
 
-        // TODO I don't think this is called when using JAXB!
         if (outputs != null) {
             for (ProcessorDefinition output : outputs) {
                 configureChild(output);
@@ -246,11 +268,23 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         this.group = group;
     }
 
+    public Boolean isStreamCache() {
+        return streamCache;
+    }
+
+    @XmlAttribute
+    public void setStreamCache(Boolean streamCache) {
+        this.streamCache = streamCache;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
         RouteContext routeContext = new DefaultRouteContext(this, fromType, routes);
-        routeContext.getEndpoint(); // force endpoint resolution
+        // should inherit the intercept strategies we have defined
+        routeContext.setInterceptStrategies(this.getInterceptStrategies());
+        // force endpoint resolution
+        routeContext.getEndpoint();
         if (camelContext != null) {
             camelContext.getLifecycleStrategy().onRouteContextCreate(routeContext);
         }
@@ -262,11 +296,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
         routeContext.commit();
         return routeContext;
-    }
-
-    @Override
-    protected void configureChild(ProcessorDefinition output) {
-        super.configureChild(output);
     }
 
 }

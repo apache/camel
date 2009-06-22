@@ -112,11 +112,12 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
             public void configure() {
                 //Stream caching for a single route...
                 //START SNIPPET: route
-                from("direct:a").to("mock:a");
+                from("direct:a").streamCaching().to("mock:a");
                 //END SNIPPET: route
 
                 //... or for all the following routes in this builder
                 //START SNIPPET: routebuilder
+                context.setStreamCaching(true);
                 from("direct:b").to("mock:b");
                 //END SNIPPET: routebuilder
             }

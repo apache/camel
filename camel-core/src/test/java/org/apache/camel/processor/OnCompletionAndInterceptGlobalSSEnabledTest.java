@@ -19,26 +19,28 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Test for handling a StreamSource in a content-based router with XPath predicates
- *
  * @version $Revision$
  */
-public class StreamSourceContentBasedRouterNoErrorHandlerTest extends StreamSourceContentBasedRouterTest {
+public class OnCompletionAndInterceptGlobalSSEnabledTest extends OnCompletionAndInterceptGlobalTest {
 
-    protected RouteBuilder createRouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                errorHandler(noErrorHandler());
-                // should work with no error handler as the stream cache
-                // is enabled and make sure the predicates can be evaluated
-                // multiple times
+            @Override
+            public void configure() throws Exception {
+                // enabled stream cache
+                context.setStreamCaching(true);
 
+                intercept().to("mock:intercept");
+
+                // define a global on completion that is invoked when the exchage is complete
+                onCompletion().to("log:global").to("mock:sync");
+
+                // START SNIPPET: e1
                 from("direct:start")
-                    .streamCaching()
-                        .choice()
-                          .when().xpath("/message/text() = 'xx'").to("mock:x")
-                          .when().xpath("/message/text() = 'yy'").to("mock:y")
-                        .end();
+                    .process(new MyProcessor())
+                    .to("mock:result");
+                // END SNIPPET: e1
             }
         };
     }

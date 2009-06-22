@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class AmahDeadLetterTest extends ContextTestSupport {
+
     public void testException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:err");
         mock.expectedMessageCount(1);
@@ -39,7 +40,8 @@ public class AmahDeadLetterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:err"));
+                errorHandler(deadLetterChannel("mock:err").redeliverDelay(0));
+
                 from("seda:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new Exception("Test exception");

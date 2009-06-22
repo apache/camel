@@ -69,11 +69,13 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
         // add the output as a intercept strategy to the route context so its invoked on each processing step
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {
             public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
-                if (nextTarget != null) {
+                // prefer next target over taget as next target is the real target
+                Processor processor = nextTarget != null ? nextTarget : target;
+                if (processor != null) {
                     // wrap in a pipeline so we continue routing to the next
                     List<Processor> list = new ArrayList<Processor>(2);
                     list.add(output);
-                    list.add(nextTarget);
+                    list.add(processor);
                     return new Pipeline(list);
                 } else {
                     return output;

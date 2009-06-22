@@ -65,7 +65,6 @@ public class HttpRouteTest extends CamelTestSupport {
 
     @Test
     public void testHelloEndpoint() throws Exception {
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         InputStream is = new URL("http://localhost:9080/hello").openStream();
         int c;
@@ -75,14 +74,12 @@ public class HttpRouteTest extends CamelTestSupport {
 
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);
-
     }
     
     @Test
     public void testEchoEndpoint() throws Exception {
         String out = template.requestBody("http://localhost:9080/echo", "HelloWorld", String.class);
         assertEquals("Get a wrong output " , "HelloWorld", out);
-        
     }
 
     protected void invokeHttpEndpoint() throws IOException {
@@ -93,6 +90,9 @@ public class HttpRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                // enable strem cache
+                context.setStreamCaching(true);
+
                 from("jetty:http://localhost:9080/test").to("mock:a");
 
                 Processor proc = new Processor() {

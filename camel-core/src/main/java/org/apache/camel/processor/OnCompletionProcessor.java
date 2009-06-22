@@ -167,6 +167,6 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
 
     @Override
     public String toString() {
-        return "OnCompletionProcessor";
+        return "OnCompletionProcessor[" + processor + "]";
     }
 }

@@ -75,6 +75,9 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                // enable stream caching
+                context.setStreamCaching(true);
+
                 errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 //stream caching should fix re-readability issues when multicasting messags

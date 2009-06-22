@@ -23,18 +23,15 @@ import org.apache.camel.builder.RouteBuilder;
  *
  * @version $Revision$
  */
-public class StreamSourceContentBasedRouterNoErrorHandlerTest extends StreamSourceContentBasedRouterTest {
+public class StreamSourceContentBasedRouterSSEnabledOnCamelContextTest extends StreamSourceContentBasedRouterTest {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(noErrorHandler());
-                // should work with no error handler as the stream cache
-                // is enabled and make sure the predicates can be evaluated
-                // multiple times
+                // enable stream cache globally on camel context
+                context.setStreamCaching(true);
 
                 from("direct:start")
-                    .streamCaching()
                         .choice()
                           .when().xpath("/message/text() = 'xx'").to("mock:x")
                           .when().xpath("/message/text() = 'yy'").to("mock:y")
