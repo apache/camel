@@ -90,7 +90,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb) {        
         // address
         cfb.setAddress(getEndpointUri());
-        cfb.setResourceClass(getResourceClasses().get(0));
+        if (getResourceClasses() != null) {
+            cfb.setResourceClass(getResourceClasses().get(0));
+        }    
     }
    
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {

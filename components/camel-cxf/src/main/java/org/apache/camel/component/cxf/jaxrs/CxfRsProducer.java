@@ -17,8 +17,11 @@
 
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
+
+import javax.ws.rs.core.Response;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -28,6 +31,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.apache.cxf.jaxrs.client.WebClient;
 
 /**
  * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
@@ -44,7 +48,38 @@ public class CxfRsProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
-        Object[] varValues = inMessage.getHeader("VarValues", Object[].class);
+        Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
+        if (httpClientAPI != null && httpClientAPI.booleanValue()) {
+            invokeHttpClient(exchange);
+        } else {
+            invokeProxyClient(exchange);            
+        }
+        
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void invokeHttpClient(Exchange exchange) {
+        Message inMessage = exchange.getIn();       
+        WebClient client = cfb.createWebClient();
+        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class); 
+        Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
+        String path = inMessage.getHeader(Exchange.HTTP_RELATIVE_PATH, String.class);
+        client.path(path);
+        Object body = inMessage.getBody();
+        Object response = null;
+        if (responseClass == null) {
+            response = client.invoke(httpMethod, body, InputStream.class);
+        } else {
+            response = client.invoke(httpMethod, body, responseClass);
+        }
+        if (exchange.getPattern().isOutCapable()) {
+            exchange.getOut().setBody(response);
+        }
+    }
+
+    private void invokeProxyClient(Exchange exchange) throws Exception {
+        Message inMessage = exchange.getIn();
+        Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
         String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
         Client target = null;
         if (varValues == null) {
