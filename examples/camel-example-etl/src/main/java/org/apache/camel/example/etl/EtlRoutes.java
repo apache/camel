@@ -30,9 +30,9 @@ public class EtlRoutes extends SpringRouteBuilder {
             .to("jpa:org.apache.camel.example.etl.CustomerEntity");
 
         // the following will dump the database to files
-        from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false&consumer.delay=3000&consumeLockEntity=false")
+        from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false&delay=3000&consumeLockEntity=false")
             .setHeader(Exchange.FILE_NAME, el("${in.body.userName}.xml"))
-            .to("file:target/customers?append=false");
+            .to("file:target/customers");
     }
 }
 // END SNIPPET: example
