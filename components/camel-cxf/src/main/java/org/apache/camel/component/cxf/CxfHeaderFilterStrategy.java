@@ -30,6 +30,8 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         getOutFilter().add(CxfConstants.OPERATION_NAME);
         getOutFilter().add(CxfConstants.OPERATION_NAMESPACE);
+        // filter headers begin with "Camel" or "org.apache.camel"
+        setOutFilterPattern("(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
     }
 
 }
