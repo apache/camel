@@ -24,6 +24,8 @@ import java.util.Set;
 
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
@@ -50,13 +52,13 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         int classesSize = classes.size(); 
         if (osgiClassLoader != null) {
             // if we have an osgi bundle loader use this one first
-            LOG.debug("Using only osgi bundle classloader");
+            log.debug("Using only osgi bundle classloader");
             findInOsgiClassLoader(test, packageName, osgiClassLoader, classes);
         }
         
         if (classes.size() == classesSize) {
             // Using the regular classloaders as a fallback
-            LOG.debug("Using only regular classloaders");
+            log.debug("Using only regular classloaders");
             for (ClassLoader classLoader : set.toArray(new ClassLoader[set.size()])) {
                 if (!isOsgiClassloader(classLoader)) {
                     find(test, packageName, classLoader, classes);
@@ -69,13 +71,13 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         try {
             Method mth = osgiClassLoader.getClass().getMethod("getBundle", new Class[]{});
             if (mth != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Loading from osgi bundle using classloader: " + osgiClassLoader);
+                if (log.isDebugEnabled()) {
+                    log.debug("Loading from osgi bundle using classloader: " + osgiClassLoader);
                 }
                 loadImplementationsInBundle(test, packageName, osgiClassLoader, mth, classes);
             }
         } catch (NoSuchMethodException e) {
-            LOG.warn("It's not an osgi bundle classloader: " + osgiClassLoader);
+            log.warn("It's not an osgi bundle classloader: " + osgiClassLoader);
         }
     }
 
@@ -118,6 +120,9 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
     }
 
     private static final class OsgiUtil {
+
+        private static final transient Log LOG = LogFactory.getLog(OsgiUtil.class);
+
         private OsgiUtil() {
             // Helper class
         }

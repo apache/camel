@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultPackageScanClassResolver implements PackageScanClassResolver {
 
-    protected static final transient Log LOG = LogFactory.getLog(DefaultPackageScanClassResolver.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
     private Set<ClassLoader> classLoaders;
     private Set<PackageScanFilter> scanFilters;
 
@@ -68,8 +68,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             classLoaders = new HashSet<ClassLoader>();
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             if (ccl != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("The thread context class loader: " + ccl + "  is used to load the class");
+                if (log.isTraceEnabled()) {
+                    log.trace("The thread context class loader: " + ccl + "  is used to load the class");
                 }
                 classLoaders.add(ccl);
             }
@@ -88,8 +88,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             return Collections.EMPTY_SET;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays.asList(packageNames));
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithPackageScanFilter(annotation, true));
@@ -98,8 +98,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(test, pkg, classes);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + classes);
+        if (log.isDebugEnabled()) {
+            log.debug("Found: " + classes);
         }
 
         return classes;
@@ -111,8 +111,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             return Collections.EMPTY_SET;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for annotations of " + annotations + " in packages: " + Arrays.asList(packageNames));
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for annotations of " + annotations + " in packages: " + Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithAnyPackageScanFilter(annotations, true));
@@ -121,8 +121,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(test, pkg, classes);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + classes);
+        if (log.isDebugEnabled()) {
+            log.debug("Found: " + classes);
         }
 
         return classes;
@@ -134,8 +134,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             return Collections.EMPTY_SET;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
@@ -144,8 +144,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(test, pkg, classes);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + classes);
+        if (log.isDebugEnabled()) {
+            log.debug("Found: " + classes);
         }
 
         return classes;
@@ -162,8 +162,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(filter, pkg, classes);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + classes);
+        if (log.isDebugEnabled()) {
+            log.debug("Found: " + classes);
         }
 
         return classes;
@@ -180,8 +180,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     }
 
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class> classes) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
+        if (log.isTraceEnabled()) {
+            log.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
                     + loader.getClass().getName());
         }
 
@@ -189,10 +189,10 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         try {
             urls = getResources(loader, packageName);
             if (!urls.hasMoreElements()) {
-                LOG.trace("No URLs returned by classloader");
+                log.trace("No URLs returned by classloader");
             }
         } catch (IOException ioe) {
-            LOG.warn("Could not read package: " + packageName, ioe);
+            log.warn("Could not read package: " + packageName, ioe);
             return;
         }
 
@@ -200,14 +200,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             URL url = null;
             try {
                 url = urls.nextElement();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("URL from classloader: " + url);
+                if (log.isTraceEnabled()) {
+                    log.trace("URL from classloader: " + url);
                 }
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Decoded urlPath: " + urlPath);
+                if (log.isTraceEnabled()) {
+                    log.trace("Decoded urlPath: " + urlPath);
                 }
 
                 // If it's a file in a directory, trim the stupid file: spec
@@ -217,7 +217,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
 
                 // osgi bundles should be skipped
                 if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
-                    LOG.trace("It's a virtual osgi bundle, skipping");
+                    log.trace("It's a virtual osgi bundle, skipping");
                     continue;
                 }
 
@@ -226,21 +226,21 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     urlPath = urlPath.substring(0, urlPath.indexOf('!'));
                 }
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
+                if (log.isTraceEnabled()) {
+                    log.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
                 }
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading from directory: " + file);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Loading from directory: " + file);
                     }
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
                     InputStream stream;
                     if (urlPath.startsWith("http:")) {
                         // load resources using http such as java webstart
-                        LOG.debug("The current jar is accessed via http");
+                        log.debug("The current jar is accessed via http");
                         URL urlStream = new URL(urlPath);
                         URLConnection con = urlStream.openConnection();
                         // disable cache mainly to avoid jar file locking on Windows
@@ -250,13 +250,13 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                         stream = new FileInputStream(file);
                     }
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading from jar: " + file);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Loading from jar: " + file);
                     }
                     loadImplementationsInJar(test, packageName, stream, urlPath, classes);
                 }
             } catch (IOException ioe) {
-                LOG.warn("Could not read entries in url: " + url, ioe);
+                log.warn("Could not read entries in url: " + url, ioe);
             }
         }
     }
@@ -273,8 +273,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      * @throws IOException is thrown by the classloader
      */
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Getting resource URL for package: " + packageName + " with classloader: " + loader);
+        if (log.isTraceEnabled()) {
+            log.trace("Getting resource URL for package: " + packageName + " with classloader: " + loader);
         }
         return loader.getResources(packageName);
     }
@@ -350,10 +350,10 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 }
             }
         } catch (IOException ioe) {
-            LOG.error("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
+            log.error("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
                 + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
-            ObjectHelper.close(jarStream, urlPath, LOG);
+            ObjectHelper.close(jarStream, urlPath, log);
         }
     }
 
@@ -372,35 +372,35 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             Set<ClassLoader> set = getClassLoaders();
             boolean found = false;
             for (ClassLoader classLoader : set) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Testing for class " + externalName + " matches criteria [" + test + "] using ClassLoader:" + classLoader);
+                if (log.isTraceEnabled()) {
+                    log.trace("Testing for class " + externalName + " matches criteria [" + test + "] using ClassLoader:" + classLoader);
                 }
                 try {
                     Class type = classLoader.loadClass(externalName);
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Loaded the class: " + type + " in classloader: " + classLoader);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Loaded the class: " + type + " in classloader: " + classLoader);
                     }
                     if (test.matches(type)) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Found class: " + type + " which matches the filter in classloader: " + classLoader);
+                        if (log.isTraceEnabled()) {
+                            log.trace("Found class: " + type + " which matches the filter in classloader: " + classLoader);
                         }
                         classes.add(type);
                     }
                     found = true;
                     break;
                 } catch (ClassNotFoundException e) {
-                    LOG.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
+                    log.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
                         + ". Reason: " + e, e);
                 } catch (NoClassDefFoundError e) {
-                    LOG.debug("Could not find the class defintion '" + fqn + "' in classloader: " + classLoader
+                    log.debug("Could not find the class defintion '" + fqn + "' in classloader: " + classLoader
                               + ". Reason: " + e, e);
                 }
             }
             if (!found) {
-                LOG.warn("Could not find class '" + fqn + "' in any classloaders: " + set);
+                log.warn("Could not find class '" + fqn + "' in any classloaders: " + set);
             }
         } catch (Exception e) {
-            LOG.warn("Could not examine class '" + fqn + "' due to a " + e.getClass().getName()
+            log.warn("Could not examine class '" + fqn + "' due to a " + e.getClass().getName()
                 + " with message: " + e.getMessage(), e);
         }
     }

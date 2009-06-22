@@ -45,10 +45,8 @@ public class OsgiAnnotationTypeConverterLoader extends AnnotationTypeConverterLo
                     LOG.debug("Loading converter class: " + ObjectHelper.name(type));
                 }
                 loadConverterMethods(registry, type);
-             }
-         }
+            }
+        }
     }
-    
-    
 
 }
