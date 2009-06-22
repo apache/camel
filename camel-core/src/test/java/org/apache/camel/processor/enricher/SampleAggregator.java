@@ -23,12 +23,8 @@ public class SampleAggregator implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         Object oldBody = oldExchange.getIn().getBody();
-        Object newBody = newExchange.getOut().getBody();
-        if (oldExchange.getPattern().isOutCapable()) {
-            oldExchange.getOut().setBody(oldBody + ":" + newBody);
-        } else {
-            oldExchange.getIn().setBody(oldBody + ":" + newBody);
-        }
+        Object newBody = newExchange.getIn().getBody();
+        oldExchange.getIn().setBody(oldBody + ":" + newBody);
         return oldExchange;
     }
     

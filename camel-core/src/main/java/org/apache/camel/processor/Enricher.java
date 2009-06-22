@@ -23,6 +23,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -106,6 +107,8 @@ public class Enricher extends ServiceSupport implements Processor {
             // but do not aggregate if the resource exchange was filtered
             Boolean filtered = resourceExchange.getProperty(Exchange.FILTERED, Boolean.class);
             if (filtered == null || !filtered) {
+                // prepare the exchanges for aggregation
+                ExchangeHelper.prepareAggregation(exchange, resourceExchange);
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                 // copy aggregation result onto original exchange (preserving pattern)
                 copyResultsPreservePattern(exchange, aggregatedExchange);

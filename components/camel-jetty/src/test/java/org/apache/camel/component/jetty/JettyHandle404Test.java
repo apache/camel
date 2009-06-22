@@ -54,7 +54,7 @@ public class JettyHandle404Test extends CamelTestSupport {
                 from("direct:start").enrich("direct:tohttp", new AggregationStrategy() {
                     public Exchange aggregate(Exchange original, Exchange resource) {
                         // get the response code
-                        Integer code = resource.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                        Integer code = resource.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
                         assertEquals(404, code.intValue());
                         return resource;
                     }

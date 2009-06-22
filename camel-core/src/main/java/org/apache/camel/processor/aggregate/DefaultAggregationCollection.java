@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -82,6 +83,9 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
             ObjectHelper.notNull(size, Exchange.AGGREGATED_SIZE + " on " + oldExchange);
             size++;
         }
+
+        // prepare the exchanges for aggregation
+        ExchangeHelper.prepareAggregation(oldExchange, newExchange);
         newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
         newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
 

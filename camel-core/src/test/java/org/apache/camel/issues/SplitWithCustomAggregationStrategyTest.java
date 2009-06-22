@@ -52,9 +52,6 @@ public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
                         to("direct:splitInOut").
                         to("mock:result");
 
-                //
-                // Need an inOut splitter that aggregates all results together.
-                //
                 from("direct:splitInOut").
                         setHeader("com.example.id").simple("${id}").
                         split(xpath("/search/key"), new AggregationStrategy() {
@@ -63,9 +60,9 @@ public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
                                     return newExchange;
                                 }
 
-                                String oldBody = oldExchange.getOut().getBody(String.class);
-                                String newBody = newExchange.getOut().getBody(String.class);
-                                oldExchange.getOut().setBody(oldBody + newBody);
+                                String oldBody = oldExchange.getIn().getBody(String.class);
+                                String newBody = newExchange.getIn().getBody(String.class);
+                                oldExchange.getIn().setBody(oldBody + newBody);
 
                                 return oldExchange;
                             }

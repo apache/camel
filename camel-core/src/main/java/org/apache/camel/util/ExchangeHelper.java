@@ -389,6 +389,32 @@ public final class ExchangeHelper {
         return null;
     }
 
+    /**
+     * Prepares the exchanges for aggregation.
+     * <p/>
+     * This implementation will copy the OUT body to the IN body so when you do
+     * aggregation the body is <b>only</b> in the IN body to avoid confusing end users.
+     *
+     * @param oldExchange  the old exchange
+     * @param newExchange  the new exchange
+     */
+    public static void prepareAggregation(Exchange oldExchange, Exchange newExchange) {
+        // copy body/header from OUT to IN
+        if (oldExchange != null) {
+            if (oldExchange.hasOut()) {
+                oldExchange.getIn().copyFrom(oldExchange.getOut());
+                oldExchange.setOut(null);
+            }
+        }
+
+        if (newExchange != null) {
+            if (newExchange.hasOut()) {
+                newExchange.getIn().copyFrom(newExchange.getOut());
+                newExchange.setOut(null);
+            }
+        }
+    }
+
     public static boolean isFailureHandled(Exchange exchange) {
         Boolean handled = exchange.getProperty(Exchange.FAILURE_HANDLED, Boolean.class);
         return handled != null && handled;

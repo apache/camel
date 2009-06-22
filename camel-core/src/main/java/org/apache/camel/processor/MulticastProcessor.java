@@ -208,7 +208,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         // only aggregate if the exchange is not filtered (eg by the FilterProcessor)
         Boolean filtered = exchange.getProperty(Exchange.FILTERED, Boolean.class);
         if (aggregationStrategy != null && (filtered == null || !filtered)) {
-            result.set(aggregationStrategy.aggregate(result.get(), exchange));
+            // prepare the exchanges for aggregation
+            Exchange oldExchange = result.get();
+            ExchangeHelper.prepareAggregation(oldExchange, exchange);
+            result.set(aggregationStrategy.aggregate(oldExchange, exchange));
         } else {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Cannot aggregate exchange as its filtered: " + exchange);

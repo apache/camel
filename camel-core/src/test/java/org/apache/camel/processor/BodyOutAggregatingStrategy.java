@@ -17,15 +17,14 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class BodyOutAggregatingStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange != null) {
-            String oldBody = oldExchange.getOut().getBody(String.class);
-            String newBody = newExchange.getOut().getBody(String.class);
+            String oldBody = oldExchange.getIn().getBody(String.class);
+            String newBody = newExchange.getIn().getBody(String.class);
             newExchange.getOut().setBody(oldBody + "+" + newBody);
         }
 

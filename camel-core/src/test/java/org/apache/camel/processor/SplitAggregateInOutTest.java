@@ -123,9 +123,8 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
                 return newExchange;
             }
 
-            // copy from OUT as we use InOut pattern
-            String orders = oldExchange.getOut().getBody(String.class);
-            String newLine = newExchange.getOut().getBody(String.class);
+            String orders = oldExchange.getIn().getBody(String.class);
+            String newLine = newExchange.getIn().getBody(String.class);
 
             LOG.debug("Aggregate old orders: " + orders);
             LOG.debug("Aggregate new order: " + newLine);
@@ -133,7 +132,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
             // put orders together separating by semi colon
             orders = orders + ";" + newLine;
             // put combined order back on old to preserve it
-            oldExchange.getOut().setBody(orders);
+            oldExchange.getIn().setBody(orders);
 
             // return old as this is the one that has all the orders gathered until now
             return oldExchange;
