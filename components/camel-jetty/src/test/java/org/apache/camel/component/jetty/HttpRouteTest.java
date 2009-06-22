@@ -23,14 +23,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpConstants;
+import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -99,9 +98,8 @@ public class HttpRouteTest extends CamelTestSupport {
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         try {
-                            HttpServletRequest request = (HttpServletRequest)
-                                exchange.getProperty(HttpConstants.SERVLET_REQUEST);
-                            HttpSession session = request.getSession();
+                            HttpMessage message = (HttpMessage)exchange.getIn();
+                            HttpSession session = message.getRequest().getSession();
                             assertNotNull("we should get session here", session);
                         } catch (Exception e) {
                             exchange.getFault().setBody(e);

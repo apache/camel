@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.jetty;
 
-import javax.servlet.http.HttpServletRequest;
-
 import junit.framework.Assert;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpConstants;
+import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -69,11 +68,10 @@ public class JettyHttpGetWithParamTest extends CamelTestSupport {
 
     private class MyParamsProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
-            HttpServletRequest request = (HttpServletRequest)
-                exchange.getProperty(HttpConstants.SERVLET_REQUEST);
-            Assert.assertNotNull(request);
-            Assert.assertEquals("uno", request.getParameter("one"));
-            Assert.assertEquals("dos", request.getParameter("two"));
+            HttpMessage message = (HttpMessage)exchange.getIn();
+            Assert.assertNotNull(message.getRequest());
+            Assert.assertEquals("uno", message.getRequest().getParameter("one"));
+            Assert.assertEquals("dos", message.getRequest().getParameter("two"));
 
             exchange.getOut().setBody("Bye World");
             exchange.getOut().setHeader("one", "eins");
