@@ -71,6 +71,8 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         messageHeaderFiltersMap = new HashMap<String, MessageHeaderFilter>();
         addToMessageHeaderFilterMap(new SoapMessageHeaderFilter());
         
+        // filter headers begin with "Camel" or "org.apache.camel"
+        setOutFilterPattern("(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
     }
 
     @SuppressWarnings("unchecked")
