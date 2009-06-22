@@ -22,9 +22,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpExchange;
+import org.apache.camel.component.http.HttpMessage;
 import org.mortbay.util.ajax.Continuation;
 import org.mortbay.util.ajax.ContinuationSupport;
 
@@ -53,9 +54,11 @@ public class CamelContinuationServlet extends CamelServlet {
 
             final Continuation continuation = ContinuationSupport.getContinuation(request, null);
             if (continuation.isNew()) {
-
                 // Have the camel process the HTTP exchange.
-                // final HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);
+                // final DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+                // exchange.setProperty(HttpConstants.SERVLET_REQUEST, request);
+                // exchange.setProperty(HttpConstants.SERVLET_RESPONSE, response);
+                // exchange.setIn(new HttpMessage(exchange, request));
                 // boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
                 //     public void done(boolean sync) {
                 //        if (sync) {
@@ -83,15 +86,13 @@ public class CamelContinuationServlet extends CamelServlet {
             }
 
             if (continuation.isResumed()) {
-                HttpExchange exchange = (HttpExchange)continuation.getObject();
+                Exchange exchange = (Exchange)continuation.getObject();
                 // now lets output to the response
                 consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
-
         } catch (Exception e) {
             throw new ServletException(e);
         }
     }
-
 }

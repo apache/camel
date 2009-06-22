@@ -21,10 +21,11 @@ package org.apache.camel.component.http;
  */
 public final class HttpConstants {
 
+    public static final String SERVLET_REQUEST = "Servlet-Request";
+    public static final String SERVLET_RESPONSE = "Servlet-Response";
     public static final String CONTENT_ENCODING = "Content-Encoding";
 
     private HttpConstants() {
         // utility class
     }
-
 }

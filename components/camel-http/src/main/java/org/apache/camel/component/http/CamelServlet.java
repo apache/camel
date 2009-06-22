@@ -24,10 +24,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.impl.DefaultExchange;
+
 /**
  * @version $Revision$
  */
 public class CamelServlet extends HttpServlet {
+
+    private static final long serialVersionUID = -7061982839117697829L;
 
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
     private boolean matchOnUriPrefix;
@@ -48,7 +53,10 @@ public class CamelServlet extends HttpServlet {
             }
 
             // Have the camel process the HTTP exchange.
-            HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);
+            DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+            exchange.setProperty(HttpConstants.SERVLET_REQUEST, request);
+            exchange.setProperty(HttpConstants.SERVLET_RESPONSE, response);
+            exchange.setIn(new HttpMessage(exchange, request));
             consumer.getProcessor().process(exchange);
 
             // HC: The getBinding() is interesting because it illustrates the
@@ -94,5 +102,4 @@ public class CamelServlet extends HttpServlet {
     public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
         this.matchOnUriPrefix = matchOnUriPrefix;
     }
-
 }

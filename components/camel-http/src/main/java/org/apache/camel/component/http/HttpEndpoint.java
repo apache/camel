@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -78,11 +79,15 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return new HttpExchange(this, pattern);
+        return new DefaultExchange(this, pattern);
     }
 
-    public HttpExchange createExchange(HttpServletRequest request, HttpServletResponse response) {
-        return new HttpExchange(this, request, response);
+    public Exchange createExchange(HttpServletRequest request, HttpServletResponse response) {
+        DefaultExchange exchange = new DefaultExchange(this, ExchangePattern.InOut);
+        exchange.setProperty(HttpConstants.SERVLET_REQUEST, request);
+        exchange.setProperty(HttpConstants.SERVLET_RESPONSE, response);
+        exchange.setIn(new HttpMessage(exchange, request));
+        return exchange;
     }
 
     /**

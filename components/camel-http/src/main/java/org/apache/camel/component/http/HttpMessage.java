@@ -17,11 +17,10 @@
 package org.apache.camel.component.http;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 
@@ -31,18 +30,13 @@ import org.apache.camel.impl.DefaultMessage;
 public class HttpMessage extends DefaultMessage {
     private HttpServletRequest request;
 
-    public HttpMessage(HttpExchange exchange, HttpServletRequest request) {
+    public HttpMessage(Exchange exchange, HttpServletRequest request) {
         setExchange(exchange);
         this.request = request;
 
         // use binding to read the request allowing end users to use their
         // implementation of the binding
-        getExchange().getEndpoint().getBinding().readRequest(request, this);
-    }
-
-    @Override
-    public HttpExchange getExchange() {
-        return (HttpExchange)super.getExchange();
+        getEndpoint().getBinding().readRequest(request, this);
     }
 
     public HttpServletRequest getRequest() {
@@ -52,9 +46,13 @@ public class HttpMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         try {
-            return getExchange().getEndpoint().getBinding().parseBody(this);
+            return getEndpoint().getBinding().parseBody(this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
-    }   
+    }
+    
+    private HttpEndpoint getEndpoint() {
+        return (HttpEndpoint) getExchange().getFromEndpoint();
+    }
 }

@@ -95,7 +95,7 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
     }
 
-    public void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException {
+    public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
         if (exchange.isFailed()) {
             if (exchange.hasFault()) {
                 doWriteFaultResponse(exchange.getFault(), response, exchange);
