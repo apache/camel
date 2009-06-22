@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -55,7 +54,7 @@ import org.apache.commons.logging.LogFactory;
  * <p/>
  * <p>
  * General searches are initiated by calling the
- * {@link #find(ResolverUtil.Test, String)} ()} method and supplying a package
+ * {@link #find(org.apache.camel.util.ResolverUtil.Test, String)}} method and supplying a package
  * name and a Test instance. This will cause the named package <b>and all
  * sub-packages</b> to be scanned for classes that meet the test. There are
  * also utility methods for the common use cases of scanning multiple packages
@@ -78,7 +77,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Tim Fennell
  */
 public class ResolverUtil<T> {
-    protected static final transient Log LOG = LogFactory.getLog(ResolverUtil.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     /**
      * A simple interface that specifies how to test classes to determine if
@@ -228,8 +227,8 @@ public class ResolverUtil<T> {
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays
                 .asList(packageNames));
         }
 
@@ -238,8 +237,8 @@ public class ResolverUtil<T> {
             find(test, pkg);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + getClasses());
+        if (log.isDebugEnabled()) {
+            log.debug("Found: " + getClasses());
         }
     }
 
@@ -257,8 +256,8 @@ public class ResolverUtil<T> {
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays
                 .asList(packageNames));
         }
 
@@ -267,8 +266,8 @@ public class ResolverUtil<T> {
             find(test, pkg);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + getClasses());
+        if (log.isDebugEnabled()) {
+            log.debug("Found: " + getClasses());
         }
     }
 
@@ -288,7 +287,7 @@ public class ResolverUtil<T> {
 
         Set<ClassLoader> set = getClassLoaders();
 
-        LOG.debug("Using only regular classloaders");
+        log.debug("Using only regular classloaders");
         for (ClassLoader classLoader : set) {            
             find(test, packageName, classLoader);            
         }
@@ -306,8 +305,8 @@ public class ResolverUtil<T> {
      * @param loader the class loader     
      */
     protected void find(Test test, String packageName, ClassLoader loader) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
+        if (log.isTraceEnabled()) {
+            log.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
                     + loader.getClass().getName());
         }        
 
@@ -315,10 +314,10 @@ public class ResolverUtil<T> {
         try {
             urls = getResources(loader, packageName);
             if (!urls.hasMoreElements()) {
-                LOG.trace("No URLs returned by classloader");
+                log.trace("No URLs returned by classloader");
             }
         } catch (IOException ioe) {
-            LOG.warn("Could not read package: " + packageName, ioe);
+            log.warn("Could not read package: " + packageName, ioe);
             return;
         }
 
@@ -326,14 +325,14 @@ public class ResolverUtil<T> {
             URL url = null;
             try {
                 url = urls.nextElement();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("URL from classloader: " + url);
+                if (log.isTraceEnabled()) {
+                    log.trace("URL from classloader: " + url);
                 }
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Decoded urlPath: " + urlPath);
+                if (log.isTraceEnabled()) {
+                    log.trace("Decoded urlPath: " + urlPath);
                 }
 
                 // If it's a file in a directory, trim the stupid file: spec
@@ -343,7 +342,7 @@ public class ResolverUtil<T> {
 
                 // osgi bundles should be skipped
                 if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
-                    LOG.trace("It's a virtual osgi bundle, skipping");
+                    log.trace("It's a virtual osgi bundle, skipping");
                     continue;
                 }
 
@@ -352,21 +351,21 @@ public class ResolverUtil<T> {
                     urlPath = urlPath.substring(0, urlPath.indexOf('!'));
                 }
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
+                if (log.isTraceEnabled()) {
+                    log.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
                 }
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading from directory: " + file);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Loading from directory: " + file);
                     }
                     loadImplementationsInDirectory(test, packageName, file);
                 } else {
                     InputStream stream;
                     if (urlPath.startsWith("http:")) {
                         // load resources using http such as java webstart
-                        LOG.debug("The current jar is accessed via http");
+                        log.debug("The current jar is accessed via http");
                         URL urlStream = new URL(urlPath);
                         URLConnection con = urlStream.openConnection();
                         // disable cache mainly to avoid jar file locking on Windows
@@ -376,13 +375,13 @@ public class ResolverUtil<T> {
                         stream = new FileInputStream(file);
                     }
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading from jar: " + file);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Loading from jar: " + file);
                     }
                     loadImplementationsInJar(test, packageName, stream, urlPath);
                 }
             } catch (IOException ioe) {
-                LOG.warn("Could not read entries in url: " + url, ioe);
+                log.warn("Could not read entries in url: " + url, ioe);
             }
         }
     }
@@ -399,8 +398,8 @@ public class ResolverUtil<T> {
      * @throws IOException is thrown by the classloader
      */
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Getting resource URL for package: " + packageName + " with classloader: " + loader);
+        if (log.isTraceEnabled()) {
+            log.trace("Getting resource URL for package: " + packageName + " with classloader: " + loader);
         }
         return loader.getResources(packageName);
     }
@@ -451,7 +450,6 @@ public class ResolverUtil<T> {
      * @param test    a Test used to filter the classes that are discovered
      * @param parent  the parent package under which classes must be in order to
      *                be considered
-     * @param jarfile the jar file to be examined for classes
      * @param stream  the inputstream of the jar file to be examined for classes
      * @param urlPath the url of the jar file to be examined for classes
      */
@@ -471,10 +469,10 @@ public class ResolverUtil<T> {
                 }
             }
         } catch (IOException ioe) {
-            LOG.error("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
+            log.error("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
                 + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
-            ObjectHelper.close(jarStream, urlPath, LOG);
+            ObjectHelper.close(jarStream, urlPath, log);
         }
     }
 
@@ -492,32 +490,32 @@ public class ResolverUtil<T> {
             Set<ClassLoader> set = getClassLoaders();
             boolean found = false;
             for (ClassLoader classLoader : set) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Testing for class " + externalName + " matches criteria [" + test + "]");
+                if (log.isTraceEnabled()) {
+                    log.trace("Testing for class " + externalName + " matches criteria [" + test + "]");
                 }
                 try {
                     Class type = classLoader.loadClass(externalName);
                     if (test.matches(type)) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Found class: " + type + " in classloader: " + classLoader);
+                        if (log.isTraceEnabled()) {
+                            log.trace("Found class: " + type + " in classloader: " + classLoader);
                         }
                         matches.add((Class<T>)type);
                     }
                     found = true;
                     break;
                 } catch (ClassNotFoundException e) {
-                    LOG.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
+                    log.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
                         + ". Reason: " + e, e);
                 } catch (NoClassDefFoundError e) {
-                    LOG.debug("Could not find the class defintion '" + fqn + "' in classloader: " + classLoader
+                    log.debug("Could not find the class defintion '" + fqn + "' in classloader: " + classLoader
                               + ". Reason: " + e, e);
                 }
             }
             if (!found) {
-                LOG.warn("Could not find class '" + fqn + "' in any classloaders: " + set);
+                log.warn("Could not find class '" + fqn + "' in any classloaders: " + set);
             }
         } catch (Throwable t) {
-            LOG.warn("Could not examine class '" + fqn + "' due to a " + t.getClass().getName()
+            log.warn("Could not examine class '" + fqn + "' due to a " + t.getClass().getName()
                 + " with message: " + t.getMessage(), t);
         }
     }
