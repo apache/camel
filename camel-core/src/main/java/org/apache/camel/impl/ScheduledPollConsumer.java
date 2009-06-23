@@ -38,7 +38,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     private final ScheduledExecutorService executor;
     private ScheduledFuture<?> future;
-    private Exception firstExceptionThrown;
 
     // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
     private long initialDelay = 1000;
@@ -80,9 +79,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             }
         } catch (Exception e) {
             LOG.warn("An exception occurred while polling: " + this.getEndpoint() + ": " + e.getMessage(), e);
-            if (firstExceptionThrown == null) {
-                firstExceptionThrown = e;
-            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -136,7 +132,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     protected void doStart() throws Exception {
-        firstExceptionThrown = null;
         super.doStart();
         if (isUseFixedDelay()) {
             future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
@@ -151,9 +146,5 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             future.cancel(false);
         }
         super.doStop();
-
-        if (firstExceptionThrown != null) {
-            throw firstExceptionThrown;
-        }
     }
 }

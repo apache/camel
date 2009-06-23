@@ -16,46 +16,33 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.Assert;
 import org.apache.camel.ContextTestSupport;
 
 public class ScheduledPollConsumerTest extends ContextTestSupport {
     
-    public void testExceptionOnPollGetsThrownOnShutdown() throws Exception {
+    public void testExceptionOnPollAndCanStartAgain() throws Exception {
         Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
-        Exception actualException = null;
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
 
         consumer.start();
-        // exception is caught and saved
-        consumer.run(); 
-        
-        try {
-            // exception should be thrown
-            consumer.stop();           
-        } catch (Exception e) {
-            actualException = e;
-        }
-        
-        // make sure its the right exception!
-        Assert.assertEquals(expectedException, actualException);
+        // poll that throws an exception
+        consumer.run();
+        consumer.stop();
+
+        // prepare for 2nd run but this time it should not thrown an exception on poll
+        consumer.setExceptionToThrowOnPoll(null);
+        // start it again and we should be able to run
+        consumer.start();
+        consumer.run();
+        // should be able to stop with no problem
+        consumer.stop();
     }
     
-    public void testNoExceptionOnPollAndNoneThrownOnShutdown() throws Exception {
-        Exception actualException = null;
+    public void testNoExceptionOnPoll() throws Exception {
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(null);
-
         consumer.start();
         consumer.run(); 
-        
-        try {
-            // exception should not be thrown
-            consumer.stop();           
-        } catch (Exception e) {
-            actualException = e;
-        }
-        
-        // make sure no exception was thrown
-        Assert.assertEquals(null, actualException);
+        consumer.stop();
     }
+
 }
