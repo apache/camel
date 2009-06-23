@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor.validation;
 
-import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.validation.Schema;
-
-import org.xml.sax.ErrorHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
+import org.xml.sax.ErrorHandler;
 
 /**
  * Validator error handler.
@@ -44,5 +43,5 @@ public interface ValidatorErrorHandler extends ErrorHandler {
      * @param result   the result
      * @throws ValidationException is thrown in case of validatation errors
      */
-    void handleErrors(Exchange exchange, Schema schema, DOMResult result) throws ValidationException;
+    void handleErrors(Exchange exchange, Schema schema, SAXResult result) throws ValidationException;
 }

@@ -19,15 +19,15 @@ package org.apache.camel.processor.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.validation.Schema;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * A default error handler which just stores all the errors so they can be reported or transformed.
@@ -71,7 +71,7 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
         return errors.isEmpty() && fatalErrors.isEmpty();
     }
 
-    public void handleErrors(Exchange exchange, Schema schema, DOMResult result) throws ValidationException {
+    public void handleErrors(Exchange exchange, Schema schema, SAXResult result) throws ValidationException {
         if (!isValid()) {
             throw new SchemaValidationException(exchange, schema, fatalErrors, errors, warnings);
         }

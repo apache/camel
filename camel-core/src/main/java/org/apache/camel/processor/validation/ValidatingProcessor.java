@@ -22,16 +22,15 @@ import java.net.URL;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.xml.sax.SAXException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.xml.sax.SAXException;
 
 /**
  * A processor which validates the XML version of the inbound message body
@@ -53,7 +52,7 @@ public class ValidatingProcessor implements Processor {
         Schema schema = getSchema();
         Validator validator = schema.newValidator();
 
-        Source source = exchange.getIn().getBody(DOMSource.class);
+        Source source = exchange.getIn().getBody(SAXSource.class);
         if (source == null) {
             throw new NoXmlBodyValidationException(exchange);
         }
@@ -63,7 +62,7 @@ public class ValidatingProcessor implements Processor {
         ValidatorErrorHandler handler = errorHandler.getClass().newInstance();
         validator.setErrorHandler(handler);
 
-        DOMResult result = new DOMResult();
+        SAXResult result = new SAXResult();
         validator.validate(source, result);
 
         handler.handleErrors(exchange, schema, result);
