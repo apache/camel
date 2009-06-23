@@ -58,6 +58,11 @@ public abstract class MessageSupport implements Message {
     }
 
     protected <T> T getBody(Class<T> type, Object body) {
+        // same instance type
+        if (type.isInstance(body)) {
+            return type.cast(body);
+        }
+
         Exchange e = getExchange();
         if (e != null) {
             TypeConverter converter = e.getContext().getTypeConverter();
@@ -70,7 +75,8 @@ public abstract class MessageSupport implements Message {
             if (answer != null) {
                 return answer;
             }
-            // fallback to the message itself
+
+            // fallback to the message itself (e.g. used in camel-http)
             answer = converter.convertTo(type, getExchange(), this);
             if (answer != null) {
                 return answer;
