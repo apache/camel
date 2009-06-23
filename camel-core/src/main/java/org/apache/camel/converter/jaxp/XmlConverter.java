@@ -369,6 +369,15 @@ public class XmlConverter {
     }
 
     @Converter
+    public DOMSource toDOMSource(InputStream is) throws ParserConfigurationException, IOException, SAXException {
+        InputSource source = new InputSource(is);
+        String systemId = source.getSystemId();
+        DocumentBuilder builder = createDocumentBuilder();
+        Document document = builder.parse(source);
+        return new DOMSource(document, systemId);
+    }
+
+    @Converter
     public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilder builder = createDocumentBuilder();
         String systemId = source.getSystemId();
