@@ -113,9 +113,9 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     private void copyProtocolHeaders(Message request, Message response) {
-        if (request.getHeader(HttpConstants.CONTENT_ENCODING) != null) {
-            String contentEncoding = request.getHeader(HttpConstants.CONTENT_ENCODING, String.class);
-            response.setHeader(HttpConstants.CONTENT_ENCODING, contentEncoding);
+        if (request.getHeader(HttpMessage.CONTENT_ENCODING) != null) {
+            String contentEncoding = request.getHeader(HttpMessage.CONTENT_ENCODING, String.class);
+            response.setHeader(HttpMessage.CONTENT_ENCODING, contentEncoding);
         }        
     }
 

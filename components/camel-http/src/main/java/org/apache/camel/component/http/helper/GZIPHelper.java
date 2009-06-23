@@ -24,7 +24,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Message;
-import org.apache.camel.component.http.HttpConstants;
+import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -76,7 +76,7 @@ public final class GZIPHelper {
     }
 
     public static boolean isGzip(Message message) {
-        return isGzip(message.getHeader(HttpConstants.CONTENT_ENCODING, String.class));
+        return isGzip(message.getHeader(HttpMessage.CONTENT_ENCODING, String.class));
     }
 
     public static boolean isGzip(String header) {

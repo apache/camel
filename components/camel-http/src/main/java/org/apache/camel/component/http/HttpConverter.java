@@ -73,7 +73,7 @@ public final class HttpConverter {
         if (request == null) {
             return null;
         }
-        String contentEncoding = request.getHeader(HttpConstants.CONTENT_ENCODING);
+        String contentEncoding = request.getHeader(HttpMessage.CONTENT_ENCODING);
         return GZIPHelper.toGZIPInputStream(contentEncoding, request.getInputStream());
     }
 

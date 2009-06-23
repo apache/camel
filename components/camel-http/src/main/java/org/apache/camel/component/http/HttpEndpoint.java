@@ -84,8 +84,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public Exchange createExchange(HttpServletRequest request, HttpServletResponse response) {
         DefaultExchange exchange = new DefaultExchange(this, ExchangePattern.InOut);
-        exchange.setProperty(HttpConstants.SERVLET_REQUEST, request);
-        exchange.setProperty(HttpConstants.SERVLET_RESPONSE, response);
         exchange.setIn(new HttpMessage(exchange, request));
         return exchange;
     }

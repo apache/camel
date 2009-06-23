@@ -161,7 +161,7 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Header header = method.getRequestHeader(HttpConstants.CONTENT_ENCODING);
+        Header header = method.getRequestHeader(HttpMessage.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
 
         is = GZIPHelper.toGZIPInputStream(contentEncoding, is);
