@@ -235,9 +235,13 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             return null;
         }
 
+        RequestEntity answer = null;
         try {
-            return in.getBody(RequestEntity.class);
+            answer = in.getBody(RequestEntity.class);
         } catch (NoTypeConversionAvailableException ex) {
+            // ignore
+        }
+        if (answer == null) {
             try {
                 String data = in.getBody(String.class);
                 if (data != null) {
@@ -251,7 +255,8 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeCamelException(e);
             }
-        }        
+        }
+        return answer;
     }
 
     public HttpClient getHttpClient() {

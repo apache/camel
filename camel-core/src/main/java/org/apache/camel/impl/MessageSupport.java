@@ -53,6 +53,11 @@ public abstract class MessageSupport implements Message {
     }
 
     protected <T> T getBody(Class<T> type, Object body) {
+        // same instance type
+        if (type.isInstance(body)) {
+            return type.cast(body);
+        }
+
         Exchange e = getExchange();
         if (e != null) {
             CamelContext camelContext = e.getContext();
@@ -64,11 +69,10 @@ public abstract class MessageSupport implements Message {
                 // the StreamCachingInterceptor will attempt to convert the payload to a StremCache for caching purpose
                 // so we get invoked on each node the exchange passes. So this is a little performance optimization
                 // to avoid the excessive exception handling
-                if (body != null && converter instanceof DefaultTypeConverter) {
-                    DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) converter;
+                if (body != null) {
                     // we can only check if there is no converter meaning we have tried to convert it beforehand
                     // and then knows for sure there is no converter possible
-                    tryConvert = !defaultTypeConverter.hasNoConverterFor(type, body.getClass());
+                    tryConvert = !hasNoConverterFor(converter, type, body.getClass());
                 }
                 if (tryConvert) {
                     try {
@@ -81,11 +85,31 @@ public abstract class MessageSupport implements Message {
                         // ignore
                     }
                 }
-                // fallback to the message itself
-                return converter.convertTo(type, this);
+
+                // fallback to the message itself (e.g. used in camel-http)
+                tryConvert = !hasNoConverterFor(converter, type, this.getClass());
+                if (tryConvert) {
+                    try {
+                        return converter.convertTo(type, e, this);
+                    } catch (NoTypeConversionAvailableException ex) {
+                        // ignore
+                    }
+                }
             }
         }
-        return (T)getBody();
+
+        // not possible to convert
+        throw new NoTypeConversionAvailableException(body, type);
+    }
+
+    private boolean hasNoConverterFor(TypeConverter converter, Class toType, Class fromType) {
+        if (converter instanceof DefaultTypeConverter) {
+            DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) converter;
+            // we can only check if there is no converter meaning we have tried to convert it beforehand
+            // and then knows for sure there is no converter possible
+            return defaultTypeConverter.hasNoConverterFor(toType, fromType);
+        }
+        return false;
     }
 
     public void setBody(Object body) {
