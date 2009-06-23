@@ -478,12 +478,17 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         // lets try instantiate the default implementation
         // use the class loading this class from camel-jms to work in OSGi environments as the camel-jms
         // should import the spring-jms jars.
-        Class<?> type = context.getClassResolver().resolveClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
-        if (type == null) {
-            LOG.warn("Could not load class: " + DEFAULT_QUEUE_BROWSE_STRATEGY + " maybe you are on Spring 2.0.x?");
+        if (JmsHelper.isSpring20x()) {
+            // not possible with spring 2.0.x
             return null;
         } else {
-            return ObjectHelper.newInstance(type, QueueBrowseStrategy.class);
+            // lets try instantiate the default implementation
+            Class<?> type = ObjectHelper.loadClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
+            if (type != null) {
+                return ObjectHelper.newInstance(type, QueueBrowseStrategy.class);
+            } else {
+                return null;
+            }
         }
     }
 
