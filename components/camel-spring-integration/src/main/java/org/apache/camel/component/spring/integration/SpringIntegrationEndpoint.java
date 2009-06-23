@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +35,7 @@ import org.springframework.integration.core.MessageChannel;
  */
 public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
     private static final Log LOG = LogFactory.getLog(SpringIntegrationEndpoint.class);
+    
     private String inputChannel;
     private String outputChannel;
     private String defaultChannel;
@@ -68,7 +70,7 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return new SpringIntegrationExchange(this, pattern);
+        return new DefaultExchange(this, pattern);
     }
 
     public void setInputChannel(String input) {

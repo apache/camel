@@ -68,12 +68,6 @@ public class SpringIntegrationMessage extends DefaultMessage {
         }
     }
 
-    @Override
-    public SpringIntegrationExchange getExchange() {
-        return (SpringIntegrationExchange)super.getExchange();
-    }
-
-
     public Object getHeader(String name) {
         if (siMessage != null) {
             return siMessage.getHeaders().get(name);
@@ -100,5 +94,4 @@ public class SpringIntegrationMessage extends DefaultMessage {
     protected Object createBody() {
         return siMessage.getPayload();
     }
-
 }

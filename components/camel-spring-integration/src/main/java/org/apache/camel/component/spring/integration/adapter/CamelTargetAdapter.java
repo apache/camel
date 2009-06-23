@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
-import org.apache.camel.component.spring.integration.SpringIntegrationExchange;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.integration.core.Message;
@@ -74,7 +74,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         } else {
             pattern = ExchangePattern.InOnly;
         }
-        Exchange inExchange = new SpringIntegrationExchange(this, pattern);        
+        Exchange inExchange = new DefaultExchange(getCamelContext(), pattern);        
         SpringIntegrationBinding.storeToCamelMessage(message, inExchange.getIn());
         Exchange outExchange = getCamelTemplate().send(getCamelEndpointUri(), inExchange);
         if (outExchange.getFault() != null) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spring.integration;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -84,7 +85,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
     }
     
     public void handleMessage(org.springframework.integration.core.Message<?> siInMessage) {        
-        SpringIntegrationExchange  exchange = (SpringIntegrationExchange) getEndpoint().createExchange();
+        Exchange  exchange = getEndpoint().createExchange();
         exchange.setIn(new SpringIntegrationMessage(siInMessage));
         try {
             getProcessor().process(exchange);
