@@ -49,14 +49,21 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
 
     private Collection<String> activationNamespaces;
     
-    private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy;
 
     static {
-        URI_PREFIXES.add("camel://");
+        URI_PREFIXES.add("camel://");        
     }
 
     private Bus bus;
     private CamelContext camelContext;
+    
+    public CamelTransportFactory() {
+        CxfHeaderFilterStrategy defaultHeaderFilterStrategy = new CxfHeaderFilterStrategy();
+        // Doesn't filter the camel relates headers by default
+        defaultHeaderFilterStrategy.setOutFilterPattern(null);
+        headerFilterStrategy = defaultHeaderFilterStrategy;
+    }
 
     @Resource(name = "bus")
     public void setBus(Bus b) {
