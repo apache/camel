@@ -184,7 +184,7 @@ public class Main extends MainSupport {
         if (applicationContext == null) {
             applicationContext = createDefaultApplicationContext();
         }
-        LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
+        LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getDisplayName());
         applicationContext.start();
 
         postProcessContext();
@@ -193,7 +193,7 @@ public class Main extends MainSupport {
     protected void doStop() throws Exception {
         super.doStop();
         if (applicationContext != null) {
-            LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
+            LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getDisplayName());
             applicationContext.close();
         }
     }

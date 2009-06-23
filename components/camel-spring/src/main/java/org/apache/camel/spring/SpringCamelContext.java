@@ -219,9 +219,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SpringCamelContext(").append(getName()).append(")");
-        if (applicationContext != null) {
-            sb.append(" with spring id ").append(applicationContext.getId());
-        }
         return sb.toString();
     }
 

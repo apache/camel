@@ -42,7 +42,7 @@ public class ScriptDefinitionParser extends LazyLoadingBeanDefinitionParser {
         if (engine == null) {
             engine = element.getAttribute("language");
         }
-        builder.addConstructorArgValue(engine);
+        builder.addConstructorArg(engine);
         super.doParse(element, parserContext, builder);
         String scriptText = DomUtils.getTextValue(element).trim();
         if (scriptText.length() > 0) {
