@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
@@ -78,7 +79,7 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onNick(IRCUser user, String newNick) {
             if (configuration.isOnNick()) {
-                IrcExchange exchange = endpoint.createOnNickExchange(user, newNick);
+                Exchange exchange = endpoint.createOnNickExchange(user, newNick);
                 try {
                     getProcessor().process(exchange);
                 } catch (Exception e) {
@@ -90,7 +91,7 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onQuit(IRCUser user, String msg) {
             if (configuration.isOnQuit()) {
-                IrcExchange exchange = endpoint.createOnQuitExchange(user, msg);
+                Exchange exchange = endpoint.createOnQuitExchange(user, msg);
                 try {
                     getProcessor().process(exchange);
                 } catch (Exception e) {
@@ -103,7 +104,7 @@ public class IrcConsumer extends DefaultConsumer {
         public void onJoin(String channel, IRCUser user) {
             if (configuration.isOnJoin()) {
                 if (channel.equals(configuration.getTarget())) {
-                    IrcExchange exchange = endpoint.createOnJoinExchange(channel, user);
+                    Exchange exchange = endpoint.createOnJoinExchange(channel, user);
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
@@ -117,7 +118,7 @@ public class IrcConsumer extends DefaultConsumer {
         public void onKick(String channel, IRCUser user, String passiveNick, String msg) {
             if (configuration.isOnKick()) {
                 if (channel.equals(configuration.getTarget())) {
-                    IrcExchange exchange = endpoint.createOnKickExchange(channel, user, passiveNick, msg);
+                    Exchange exchange = endpoint.createOnKickExchange(channel, user, passiveNick, msg);
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
@@ -131,7 +132,7 @@ public class IrcConsumer extends DefaultConsumer {
         public void onMode(String channel, IRCUser user, IRCModeParser modeParser) {
             if (configuration.isOnMode()) {
                 if (channel.equals(configuration.getTarget())) {
-                    IrcExchange exchange = endpoint.createOnModeExchange(channel, user, modeParser);
+                    Exchange exchange = endpoint.createOnModeExchange(channel, user, modeParser);
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
@@ -145,7 +146,7 @@ public class IrcConsumer extends DefaultConsumer {
         public void onPart(String channel, IRCUser user, String msg) {
             if (configuration.isOnPart()) {
                 if (channel.equals(configuration.getTarget())) {
-                    IrcExchange exchange = endpoint.createOnPartExchange(channel, user, msg);
+                    Exchange exchange = endpoint.createOnPartExchange(channel, user, msg);
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
@@ -159,7 +160,7 @@ public class IrcConsumer extends DefaultConsumer {
         public void onTopic(String channel, IRCUser user, String topic) {
             if (configuration.isOnTopic()) {
                 if (channel.equals(configuration.getTarget())) {
-                    IrcExchange exchange = endpoint.createOnTopicExchange(channel, user, topic);
+                    Exchange exchange = endpoint.createOnTopicExchange(channel, user, topic);
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
@@ -173,7 +174,7 @@ public class IrcConsumer extends DefaultConsumer {
         public void onPrivmsg(String target, IRCUser user, String msg) {
             if (configuration.isOnPrivmsg()) {
                 if (target.equals(configuration.getTarget())) {
-                    IrcExchange exchange = endpoint.createOnPrivmsgExchange(target, user, msg);
+                    Exchange exchange = endpoint.createOnPrivmsgExchange(target, user, msg);
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {

@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.irc;
 
-public class IrcBinding {
+import org.apache.camel.Exchange;
 
-    public Object extractBodyFromIrc(IrcExchange exchange, IrcMessage message) {
+public class IrcBinding {
+    public Object extractBodyFromIrc(Exchange exchange, IrcMessage message) {
         String type = message.getMessageType();
         String text = message.getMessage();
         if (text != null) {

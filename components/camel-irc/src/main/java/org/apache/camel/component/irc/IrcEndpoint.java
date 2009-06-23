@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
@@ -44,39 +45,65 @@ public class IrcEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return new IrcExchange(this, pattern, getBinding());
+        DefaultExchange exchange = new DefaultExchange(this, pattern);
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        return exchange;
     }
 
-    public IrcExchange createOnPrivmsgExchange(String target, IRCUser user, String msg) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("PRIVMSG", target, user, msg));
+    public Exchange createOnPrivmsgExchange(String target, IRCUser user, String msg) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("PRIVMSG", target, user, msg));
+        return exchange;
     }
 
-    public IrcExchange createOnNickExchange(IRCUser user, String newNick) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("NICK", user, newNick));
+    public Exchange createOnNickExchange(IRCUser user, String newNick) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("NICK", user, newNick));
+        return exchange;
     }
 
-    public IrcExchange createOnQuitExchange(IRCUser user, String msg) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("QUIT", user, msg));
+    public Exchange createOnQuitExchange(IRCUser user, String msg) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("QUIT", user, msg));
+        return exchange;
     }
 
-    public IrcExchange createOnJoinExchange(String channel, IRCUser user) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("JOIN", channel, user));
+    public Exchange createOnJoinExchange(String channel, IRCUser user) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("JOIN", channel, user));
+        return exchange;
     }
 
-    public IrcExchange createOnKickExchange(String channel, IRCUser user, String whoWasKickedNick, String msg) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("KICK", channel, user, whoWasKickedNick, msg));
+    public Exchange createOnKickExchange(String channel, IRCUser user, String whoWasKickedNick, String msg) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("KICK", channel, user, whoWasKickedNick, msg));
+        return exchange;
     }
 
-    public IrcExchange createOnModeExchange(String channel, IRCUser user, IRCModeParser modeParser) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("MODE", channel, user, modeParser.getLine()));
+    public Exchange createOnModeExchange(String channel, IRCUser user, IRCModeParser modeParser) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("MODE", channel, user, modeParser.getLine()));
+        return exchange;
     }
 
-    public IrcExchange createOnPartExchange(String channel, IRCUser user, String msg) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("PART", channel, user, msg));
+    public Exchange createOnPartExchange(String channel, IRCUser user, String msg) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("PART", channel, user, msg));
+        return exchange;
     }
 
-    public IrcExchange createOnTopicExchange(String channel, IRCUser user, String topic) {
-        return new IrcExchange(this, getExchangePattern(), getBinding(), new IrcMessage("TOPIC", channel, user, topic));
+    public Exchange createOnTopicExchange(String channel, IRCUser user, String topic) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("TOPIC", channel, user, topic));
+        return exchange;
     }
 
     public IrcProducer createProducer() throws Exception {

@@ -16,34 +16,34 @@
  */
 package org.apache.camel.component.irc;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 public class IrcExchange extends DefaultExchange {
-    private IrcBinding binding;
 
     public IrcExchange(IrcEndpoint endpoint, ExchangePattern pattern, IrcBinding binding) {
         super(endpoint, pattern);
-        this.binding = binding;
+        setProperty(Exchange.BINDING, binding);
     }
 
     public IrcExchange(IrcEndpoint endpoint, ExchangePattern pattern, IrcBinding binding, IrcMessage inMessage) {
         this(endpoint, pattern, binding);
+        setProperty(Exchange.BINDING, binding);
         setIn(inMessage);
     }
 
     public IrcExchange(DefaultExchange parent, IrcBinding binding) {
         super(parent);
-        this.binding = binding;
+        setProperty(Exchange.BINDING, binding);
     }
 
     public IrcBinding getBinding() {
-        return binding;
+        return (IrcBinding)getProperty(Exchange.BINDING);
     }
 
     public void setBinding(IrcBinding binding) {
-        this.binding = binding;
+        setProperty(Exchange.BINDING, binding);
     }
 
     @Override

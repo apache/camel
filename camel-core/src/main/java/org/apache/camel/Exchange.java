@@ -97,6 +97,8 @@ public interface Exchange {
     String TRANSACTED    = "CamelTransacted";
     String ROLLBACK_ONLY = "CamelRollbackOnly";
 
+    String BINDING = "CamelBinding";
+    
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *

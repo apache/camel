@@ -18,6 +18,7 @@ package org.apache.camel.component.irc;
 
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 import org.schwering.irc.lib.IRCUser;
@@ -100,15 +101,10 @@ public class IrcMessage extends DefaultMessage {
     }
 
     @Override
-    public IrcExchange getExchange() {
-        return (IrcExchange)super.getExchange();
-    }
-
-    @Override
     protected Object createBody() {
-        IrcExchange ircExchange = getExchange();
-        IrcBinding binding = ircExchange.getBinding();
-        return binding.extractBodyFromIrc(ircExchange, this);
+        Exchange exchange = getExchange();
+        IrcBinding binding = (IrcBinding)exchange.getProperty(Exchange.BINDING);
+        return binding.extractBodyFromIrc(exchange, this);
     }
 
     @Override
