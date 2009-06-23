@@ -19,41 +19,29 @@ package org.apache.camel.itest.jetty;
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
-public class JettyValidatorTest extends ContextTestSupport {
+/**
+ * @version $Revision$
+ */
+public class JettyValidatorStreamTest extends ContextTestSupport {
 
-    public void testValideRequest() throws Exception {
+    public void testValideRequestAsStream() throws Exception {
         InputStream inputStream = HttpClient.class.getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
         String response = HttpClient.send(inputStream);
         assertEquals("The response should be ok", response, "<ok/>");
     }
 
-    public void testInvalideRequest() throws Exception {
-        InputStream inputStream = HttpClient.class.getResourceAsStream("InvalidRequest.xml");
-        assertNotNull("the inputStream should not be null", inputStream);
-        String response = HttpClient.send(inputStream);
-        assertEquals("The response should be error", response, "<error/>");
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
+            @Override
+            public void configure() throws Exception {
                 from("jetty:http://localhost:8192/test")
-                    .convertBodyTo(String.class)
-                    .to("log:in")
-                    .doTry()
-                        .to("validator:OptimizationRequest.xsd")
-                        .transform(constant("<ok/>"))
-                    .doCatch(ValidationException.class)
-                        .transform(constant("<error/>"))
-                    .end()
-                    .to("log:out");
+                    .to("validator:OptimizationRequest.xsd")
+                    .transform(constant("<ok/>"));
             }
         };
     }
-
 }

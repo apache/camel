@@ -27,7 +27,6 @@ import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.util.Properties;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,17 +43,15 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 /**
@@ -110,8 +107,8 @@ public class XmlConverter {
      */
     public void toResult(Source source, Result result) throws TransformerException {
         toResult(source, result, defaultOutputProperties());
-    }   
-    
+    }
+
     /**
      * Converts the given input Source into the required result
      */
@@ -119,15 +116,15 @@ public class XmlConverter {
         if (source == null) {
             return;
         }
-        
+
         Transformer transformer = createTransfomer();
         if (transformer == null) {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
         transformer.setOutputProperties(outputProperties);
         transformer.transform(source, result);
-    } 
-    
+    }
+
     /**
      * Converts the given byte[] to a Source
      */
@@ -366,6 +363,15 @@ public class XmlConverter {
     }
 
     @Converter
+    public DOMSource toDOMSource(InputStream is) throws ParserConfigurationException, IOException, SAXException {
+        InputSource source = new InputSource(is);
+        String systemId = source.getSystemId();
+        DocumentBuilder builder = createDocumentBuilder();
+        Document document = builder.parse(source);
+        return new DOMSource(document, systemId);
+    }
+
+    @Converter
     public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilder builder = createDocumentBuilder();
         String systemId = source.getSystemId();
@@ -421,7 +427,7 @@ public class XmlConverter {
     @Converter
     public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
         DOMSource domSrc = toDOMSource(source);
-        return domSrc != null ? domSrc.getNode() :  null;
+        return domSrc != null ? domSrc.getNode() : null;
     }
 
     /**
@@ -443,10 +449,10 @@ public class XmlConverter {
         // If the node is an document, return the root element
         if (node instanceof Document) {
             return ((Document) node).getDocumentElement();
-        // If the node is an element, just cast it
+            // If the node is an element, just cast it
         } else if (node instanceof Element) {
             return (Element) node;
-        // Other node types are not handled
+            // Other node types are not handled
         } else {
             throw new TransformerException("Unable to convert DOM node to an Element");
         }
@@ -543,19 +549,19 @@ public class XmlConverter {
         // If the node is the document, just cast it
         if (node instanceof Document) {
             return (Document) node;
-        // If the node is an element
+            // If the node is an element
         } else if (node instanceof Element) {
             Element elem = (Element) node;
             // If this is the root element, return its owner document
             if (elem.getOwnerDocument().getDocumentElement() == elem) {
                 return elem.getOwnerDocument();
-            // else, create a new doc and copy the element inside it
+                // else, create a new doc and copy the element inside it
             } else {
                 Document doc = createDocument();
                 doc.appendChild(doc.importNode(node, true));
                 return doc;
             }
-        // other element types are not handled
+            // other element types are not handled
         } else {
             throw new TransformerException("Unable to convert DOM node to a Document");
         }
