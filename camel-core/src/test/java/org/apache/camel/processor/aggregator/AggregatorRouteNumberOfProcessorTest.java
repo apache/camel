@@ -63,8 +63,8 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
                                 context.createProducerTemplate().send("mock:foo", exchange);
                             }
                         })
-                .end()
-                .to("mock:result");
+                        .end()
+                    .to("mock:result");
             }
         });
         context.start();
@@ -109,8 +109,8 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
                                 context.createProducerTemplate().send("mock:foo", exchange);
                             }
                         }).to("mock:agg")
-                .end()
-                .to("mock:result");
+                    .end()
+                    .to("mock:result");
             }
         });
         context.start();

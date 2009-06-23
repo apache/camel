@@ -53,9 +53,9 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
                             return newExchange;
                         }
                     })
-                        .to("mock:foo")
-                .end()
-                .to("mock:result");
+                    .to("mock:foo")
+                    .end()
+                    .to("mock:result");
 
                 from("direct:enrich")
                     .process(new Processor() {
@@ -99,8 +99,8 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
                         }
                     })
                         .to("mock:foo")
-                .end()
-                .to("mock:result");
+                    .end()
+                    .to("mock:result");
 
                 from("direct:enrich")
                     .pipeline("log:a", "log:b")

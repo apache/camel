@@ -61,8 +61,8 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
                                 context.createProducerTemplate().send("mock:foo", exchange);
                             }
                         })
-                .end()
-                .to("mock:result");
+                        .end()
+                    .to("mock:result");
             }
         });
         context.start();
@@ -106,8 +106,8 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
                             }
                         })
                         .to("mock:split")
-                .end()
-                .to("mock:result");
+                    .end()
+                    .to("mock:result");
             }
         });
         context.start();
