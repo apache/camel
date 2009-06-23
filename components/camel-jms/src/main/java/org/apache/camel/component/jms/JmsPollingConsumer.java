@@ -29,10 +29,12 @@ import org.springframework.jms.core.JmsTemplate102;
  */
 public class JmsPollingConsumer extends PollingConsumerSupport<JmsExchange> {
     private JmsOperations template;
+    private final boolean spring20x;
 
     public JmsPollingConsumer(JmsEndpoint endpoint, JmsOperations template) {
         super(endpoint);
         this.template = template;
+        this.spring20x = JmsHelper.isSpring20x();
     }
 
     @Override
@@ -41,11 +43,27 @@ public class JmsPollingConsumer extends PollingConsumerSupport<JmsExchange> {
     }
 
     public JmsExchange receiveNoWait() {
-        return receive(JmsTemplate.RECEIVE_TIMEOUT_NO_WAIT);
+        // spring have changed the sematic of the receive timeout mode
+        // so we need to deterime if running spring 2.0.x or 2.5.x or newer
+        if (spring20x) {
+            // spring 2.0.x
+            return receive(0L);
+        } else {
+            // spring 2.5.x
+            return receive(-1L);
+        }
     }
 
     public JmsExchange receive() {
-        return receive(JmsTemplate.RECEIVE_TIMEOUT_INDEFINITE_WAIT);
+        // spring have changed the sematic of the receive timeout mode
+        // so we need to deterime if running spring 2.0.x or 2.5.x or newer
+        if (spring20x) {
+            // spring 2.0.x
+            return receive(-1L);
+        } else {
+            // spring 2.5.x
+            return receive(0L);
+        }
     }
 
     public JmsExchange receive(long timeout) {

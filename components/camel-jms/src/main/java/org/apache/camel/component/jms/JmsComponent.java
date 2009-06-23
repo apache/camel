@@ -457,14 +457,17 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
      * @return the queue browse strategy or null if it cannot be supported
      */
     protected static QueueBrowseStrategy tryCreateDefaultQueueBrowseStrategy() {
-        // lets try instantiate the default implementation
-        Class<?> type = ObjectHelper.loadClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
-        if (type == null) {
-            LOG.warn("Could not load class: " + DEFAULT_QUEUE_BROWSE_STRATEGY
-                     + " maybe you are on Spring 2.0.x?");
+        if (JmsHelper.isSpring20x()) {
+            // not possible with spring 2.0.x
             return null;
         } else {
-            return (QueueBrowseStrategy)ObjectHelper.newInstance(type);
+            // lets try instantiate the default implementation
+            Class<?> type = ObjectHelper.loadClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
+            if (type != null) {
+                return (QueueBrowseStrategy)ObjectHelper.newInstance(type);
+            } else {
+                return null;
+            }
         }
     }
 
