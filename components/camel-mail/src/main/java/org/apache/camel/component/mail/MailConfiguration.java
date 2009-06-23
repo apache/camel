@@ -110,12 +110,13 @@ public class MailConfiguration implements Cloneable {
         // sets the debug mode of the underlying mail framework
         answer.getSession().setDebug(debugMode);
 
-        if (javaMailProperties != null) {
-            answer.setJavaMailProperties(javaMailProperties);
-        } else {
+        // java mail properties
+        Properties prop = javaMailProperties;
+        if (prop == null) {
             // set default properties if none provided
-            answer.setJavaMailProperties(createJavaMailProperties());
+            prop = createJavaMailProperties();
         }
+        answer.setJavaMailProperties(prop);
 
         if (defaultEncoding != null) {
             answer.setDefaultEncoding(defaultEncoding);
@@ -136,7 +137,7 @@ public class MailConfiguration implements Cloneable {
             answer.setSession(session);
         } else {
             // use our authenticator that does no live user interaction but returns the already configured username and password
-            Session session = Session.getDefaultInstance(answer.getJavaMailProperties(), getAuthenticator());
+            Session session = Session.getDefaultInstance(prop, getAuthenticator());
             answer.setSession(session);
         }
         if (username != null) {
