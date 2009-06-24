@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.CamelContext;
 
 /**
  * @version $Revision$
@@ -24,25 +24,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class OnCompletionAndInterceptGlobalSSEnabledTest extends OnCompletionAndInterceptGlobalTest {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // enabled stream cache
-                context.setStreamCaching(true);
-
-                intercept().to("mock:intercept");
-
-                // define a global on completion that is invoked when the exchage is complete
-                onCompletion().to("log:global").to("mock:sync");
-
-                // START SNIPPET: e1
-                from("direct:start")
-                    .process(new MyProcessor())
-                    .to("mock:result");
-                // END SNIPPET: e1
-            }
-        };
+    protected CamelContext createCamelContext() throws Exception {
+        // enabled stream cache
+        CamelContext context = super.createCamelContext();
+        context.setStreamCaching(true);
+        return context;
     }
 
 }
