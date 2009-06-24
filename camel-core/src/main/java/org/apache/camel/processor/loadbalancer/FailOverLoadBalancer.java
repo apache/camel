@@ -83,8 +83,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         while (shouldFailOver(exchange)) {
             index++;
             if (index < list.size()) {
-                // try again but reset exception first
-                exchange.setException(null);
+                // try again but prepare exchange before we failover
+                prepareExchangeForFailover(exchange);
                 processor = list.get(index);
                 processExchange(processor, exchange);
             } else {
@@ -92,6 +92,21 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                 break;
             }
         }
+    }
+
+    /**
+     * Prepares the exchange for failover
+     *
+     * @param exchange the exchange
+     */
+    protected void prepareExchangeForFailover(Exchange exchange) {
+        exchange.setException(null);
+
+        exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
+        exchange.setProperty(Exchange.FAILURE_HANDLED, null);
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, null);
+        exchange.getIn().removeHeader(Exchange.REDELIVERED);
+        exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
     }
 
     private void processExchange(Processor processor, Exchange exchange) {
