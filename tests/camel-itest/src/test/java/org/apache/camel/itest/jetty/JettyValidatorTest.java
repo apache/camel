@@ -18,12 +18,14 @@ package org.apache.camel.itest.jetty;
 
 import java.io.InputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class JettyValidatorTest extends ContextTestSupport {
+public class JettyValidatorTest extends CamelTestSupport {
 
+    @Test
     public void testValideRequest() throws Exception {
         InputStream inputStream = HttpClient.class.getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
@@ -31,6 +33,7 @@ public class JettyValidatorTest extends ContextTestSupport {
         assertEquals("The response should be ok", response, "<ok/>");
     }
 
+    @Test
     public void testInvalideRequest() throws Exception {
         InputStream inputStream = HttpClient.class.getResourceAsStream("InvalidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);

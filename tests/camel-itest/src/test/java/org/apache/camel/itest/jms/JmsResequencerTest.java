@@ -23,7 +23,6 @@ import javax.naming.Context;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Body;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -31,11 +30,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.config.BatchResequencerConfig;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
+import org.junit.Test;
 
-public class JmsResequencerTest extends ContextTestSupport  {
+public class JmsResequencerTest extends CamelTestSupport  {
     
     private static final transient Log LOG = LogFactory.getLog(JmsResequencerTest.class);
     private ReusableBean b1 = new ReusableBean("myBean1");
@@ -52,16 +54,18 @@ public class JmsResequencerTest extends ContextTestSupport  {
                 Message in = exchange.getIn();
                 in.setBody(body);
                 in.setHeader(headerName, headerValue);
-                in.setHeader("testCase", getName());
+                //in.setHeader("testCase", getName());
                 in.setHeader(Exchange.BEAN_METHOD_NAME, "execute");
             }
         });
     }
     
+    @Test
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {              
         sendAndVerifyMessages("activemq:queue:batch");
     }
     
+    @Test
     public void testSendMessageToStream() throws Exception {
         sendAndVerifyMessages("activemq:queue:stream");
     }
@@ -82,7 +86,8 @@ public class JmsResequencerTest extends ContextTestSupport  {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         
         resultEndpoint = getMockEndpoint("mock:result");

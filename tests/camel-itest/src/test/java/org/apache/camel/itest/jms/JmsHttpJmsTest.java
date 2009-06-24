@@ -19,21 +19,23 @@ package org.apache.camel.itest.jms;
 import javax.naming.Context;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Based on user forum.
  *
  * @version $Revision$
  */
-public class JmsHttpJmsTest extends ContextTestSupport {
+public class JmsHttpJmsTest extends CamelTestSupport {
 
+    @Test
     public void testJmsHttpJms() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

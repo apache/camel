@@ -19,18 +19,20 @@ package org.apache.camel.itest.jms;
 import javax.naming.Context;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JmsJaxbTest extends ContextTestSupport {
+public class JmsJaxbTest extends CamelTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         order.setName("Wine");
@@ -45,6 +47,7 @@ public class JmsJaxbTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUnmarshalError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("<foo/>");
@@ -56,6 +59,7 @@ public class JmsJaxbTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotWine() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         order.setName("Beer");

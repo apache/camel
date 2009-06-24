@@ -24,12 +24,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
-public class JettyFileMulticastTest extends AbstractJUnit38SpringContextTests {
+public class JettyFileMulticastTest extends AbstractJUnit4SpringContextTests {
     
     @Autowired
     protected CamelContext camelContext;
@@ -40,6 +44,7 @@ public class JettyFileMulticastTest extends AbstractJUnit38SpringContextTests {
     @EndpointInject(uri = "mock:fileEndpoint")
     protected MockEndpoint fileEndpoint;
     
+    @Test
     public void testMulticastEndpoint() throws Exception {
         assertNotNull(resultEndpoint);
         assertNotNull(fileEndpoint);

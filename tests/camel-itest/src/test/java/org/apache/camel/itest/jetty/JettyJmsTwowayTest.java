@@ -20,16 +20,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
-public class JettyJmsTwowayTest extends AbstractJUnit38SpringContextTests {
+public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected CamelContext camelContext;
 
+    @Test
     public void testSendingRequest() throws Exception {
         assertNotNull("the camelContext should not be null", camelContext);
         ProducerTemplate template = camelContext.createProducerTemplate();

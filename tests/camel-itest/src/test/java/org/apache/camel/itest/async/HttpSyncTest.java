@@ -18,15 +18,17 @@ package org.apache.camel.itest.async;
 
 import java.util.concurrent.Future;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpSyncTest extends ContextTestSupport {
+public class HttpSyncTest extends CamelTestSupport {
 
+    @Test
     public void testSyncAndSyncAtSameTimeWithHttp() throws Exception {
         // START SNIPPET: e2
         MockEndpoint mock = getMockEndpoint("mock:result");

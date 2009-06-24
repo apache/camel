@@ -22,10 +22,14 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 /**
  * Unit test will look for the spring .xml file with the same class name
  * but postfixed with -config.xml as filename.
@@ -36,7 +40,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  * @version $Revision$
  */
 @ContextConfiguration
-public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTest extends AbstractJUnit38SpringContextTests {
+public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     private ProducerTemplate template;
@@ -52,6 +56,7 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
     private String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
     private String noAccess  = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
+    @Test
     public void test404() throws Exception {
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response
@@ -62,6 +67,7 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
         assertEquals(noAccess, out);
     }
 
+    @Test
     public void testRollback() throws Exception {
         // will rollback forver so we run 3 times or more
         rollback.expectedMinimumMessageCount(3);
@@ -79,6 +85,7 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
         rollback.assertIsSatisfied();
     }
 
+    @Test
     public void testOK() throws Exception {
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
         // will send and wait for a response

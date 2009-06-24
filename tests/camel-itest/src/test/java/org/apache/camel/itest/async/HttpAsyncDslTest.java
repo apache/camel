@@ -19,20 +19,23 @@ package org.apache.camel.itest.async;
 import javax.naming.Context;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.StringDataFormat;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class HttpAsyncDslTest extends ContextTestSupport {
+public class HttpAsyncDslTest extends CamelTestSupport {
 
     private static String order = "";
 
+    @Test
     public void testRequestOnly() throws Exception {
         getMockEndpoint("mock:validate").expectedMessageCount(1);
         // even though its request only the message is still continued being processed
@@ -46,6 +49,7 @@ public class HttpAsyncDslTest extends ContextTestSupport {
         assertEquals("CAB", order);
     }
 
+    @Test
     public void testRequestReply() throws Exception {
         getMockEndpoint("mock:validate").expectedMessageCount(1);
         // even though its request only the message is still continued being processed
@@ -61,7 +65,8 @@ public class HttpAsyncDslTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         order = "";
         super.setUp();
     }

@@ -30,15 +30,18 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Unit testing FTP configured using spring bean
  */
 @ContextConfiguration
-public class SpringFtpEndpointTest extends AbstractJUnit38SpringContextTests {
+public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
     protected FtpServer ftpServer;
 
     @Autowired
@@ -50,6 +53,7 @@ public class SpringFtpEndpointTest extends AbstractJUnit38SpringContextTests {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Test
     public void testFtpEndpointAsSpringBean() throws Exception {
         result.expectedBodiesReceived("Hello World");
 
@@ -58,14 +62,14 @@ public class SpringFtpEndpointTest extends AbstractJUnit38SpringContextTests {
         result.assertIsSatisfied();
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         initFtpServer();
         ftpServer.start();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         ftpServer.stop();
         ftpServer = null;
     }

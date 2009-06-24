@@ -22,18 +22,20 @@ import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * @version $Revision:520964 $
  */
-public class JmsIntegrationTest extends ContextTestSupport {
+public class JmsIntegrationTest extends CamelTestSupport {
     protected CountDownLatch receivedCountDown = new CountDownLatch(1);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testOneWayInJmsOutPojo() throws Exception {
         // Send a message to the JMS endpoint
         template.sendBodyAndHeader("jms:test", "Hello", "cheese", 123);

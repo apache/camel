@@ -20,17 +20,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision:520964 $
  */
-public class JmsPerformanceTest extends ContextTestSupport {
+public class JmsPerformanceTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(JmsPerformanceTest.class);
     protected MyBean myBean = new MyBean();
     protected int messageCount = 1000;
@@ -41,6 +44,7 @@ public class JmsPerformanceTest extends ContextTestSupport {
     protected boolean useLocalBroker = true;
     private int consumedMessageCount;
 
+    @Test
     public void testSendingAndReceivingMessages() throws Exception {
         setExpectedMessageCount(messageCount);
 
@@ -70,7 +74,7 @@ public class JmsPerformanceTest extends ContextTestSupport {
     }
 
     public String getQueueName() {
-        return getName();
+        return "testSendingAndReceivingMessages";
     }
 
     protected void assertExpectedMessagesReceived() throws InterruptedException {
@@ -82,7 +86,8 @@ public class JmsPerformanceTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         if (useLocalBroker) {
             applicationContext = new ClassPathXmlApplicationContext("activemq.xml");
             applicationContext.start();
@@ -92,7 +97,8 @@ public class JmsPerformanceTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         if (applicationContext != null) {
             applicationContext.stop();

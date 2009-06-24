@@ -27,23 +27,30 @@ import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
-public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
+public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     private static final transient Log LOG = LogFactory.getLog(CamelGreeterTest.class);
-
+    
+    private static Endpoint endpoint;
     @Autowired
     protected CamelContext camelContext;
 
     @EndpointInject(uri = "mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
 
-    private Endpoint endpoint;
-
-    protected void setUp() throws Exception {
+    @BeforeClass
+    public static void startServer() throws Exception {
         // Start the Greeter Server
         Object implementor = new GreeterImpl();
         String address = "http://localhost:9000/SoapContext/SoapPort";
@@ -51,13 +58,16 @@ public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
         LOG.info("The WS endpoint is published! ");
     }
 
-    protected void tearDown() throws Exception {
+    @AfterClass
+    public static void stopServer() throws Exception {
         // Shutdown the Greeter Server
         if (endpoint != null) {
             endpoint.stop();
+            endpoint = null;
         }
     }
 
+    @Test
     public void testMocksAreValid() throws Exception {
         assertNotNull(camelContext);
         assertNotNull(resultEndpoint);

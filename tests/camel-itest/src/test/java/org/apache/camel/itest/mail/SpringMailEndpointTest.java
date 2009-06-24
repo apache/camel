@@ -19,22 +19,25 @@ package org.apache.camel.itest.mail;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
 
 /**
  * Unit testing Mail configured using spring bean
  */
 @ContextConfiguration
-public class SpringMailEndpointTest extends AbstractJUnit38SpringContextTests {
+public class SpringMailEndpointTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected ProducerTemplate template;
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
+    @Test
     public void testMailEndpointAsSpringBean() throws Exception {
         Mailbox.clearAll();
 

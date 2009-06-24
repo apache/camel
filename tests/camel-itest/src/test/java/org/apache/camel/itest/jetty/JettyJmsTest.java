@@ -24,12 +24,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
-public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
+public class JettyJmsTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected CamelContext camelContext;
@@ -37,6 +42,7 @@ public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
     @EndpointInject(uri = "mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testMocksAreValidWithTracerEnabled() throws Exception {
         assertNotNull(camelContext);
         Tracer tracer = Tracer.getTracer(camelContext);
@@ -45,6 +51,7 @@ public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
         validMockes();
     }
 
+    @Test
     public void testMocksAreValidWithTracerDisabled() throws Exception {
         assertNotNull(camelContext);
         Tracer tracer = Tracer.getTracer(camelContext);

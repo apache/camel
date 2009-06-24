@@ -18,14 +18,16 @@ package org.apache.camel.itest.jetty;
 
 import java.io.InputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyValidatorStreamTest extends ContextTestSupport {
+public class JettyValidatorStreamTest extends CamelTestSupport {
 
+    @Test
     public void testValideRequestAsStream() throws Exception {
         InputStream inputStream = HttpClient.class.getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);

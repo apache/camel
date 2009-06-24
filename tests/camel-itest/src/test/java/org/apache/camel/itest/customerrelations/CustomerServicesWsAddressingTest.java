@@ -17,10 +17,13 @@
 package org.apache.camel.itest.customerrelations;
 
 import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CustomerServicesWsAddressingTest extends TestCase {
+public class CustomerServicesWsAddressingTest extends Assert {
 
+    @Test
     public void testCustomerService() throws Exception {
         ClassPathXmlApplicationContext serverContext = null;
         ClassPathXmlApplicationContext clientContext = null;

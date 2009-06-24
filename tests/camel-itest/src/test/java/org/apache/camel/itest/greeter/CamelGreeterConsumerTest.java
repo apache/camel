@@ -25,17 +25,23 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
-public class CamelGreeterConsumerTest extends AbstractJUnit38SpringContextTests {
+public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
     private static final transient Log LOG = LogFactory.getLog(CamelGreeterTest.class);
 
     @Autowired
     protected CamelContext camelContext;
 
+    @Test
     public void testMocksAreValid() throws Exception {
         assertNotNull(camelContext);
 

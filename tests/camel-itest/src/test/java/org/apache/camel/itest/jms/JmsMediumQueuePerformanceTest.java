@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.jms;
 
+import org.junit.Test;
+
 /**
  * @version $Revision$
  */
@@ -23,6 +25,7 @@ public class JmsMediumQueuePerformanceTest extends JmsPerformanceTest {
     protected int mediumQueueCount = 1000;
 
     @Override
+    @Test
     public void testSendingAndReceivingMessages() throws Exception {
         int expected = mediumQueueCount + messageCount;
         setExpectedMessageCount(expected);
