@@ -28,7 +28,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
 
-    private static volatile boolean failed;
+    private static volatile boolean hasOut;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -36,7 +36,7 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
     }
 
     public void testOneProcesssor() throws Exception {
-        failed = false;
+        hasOut = false;
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -47,17 +47,15 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
                             if (oldExchange == null) {
                                 return newExchange;
                             }
-                                // should always be in
+                            // should always be in
                             String body = newExchange.getIn().getBody(String.class);
                             assertNotNull(body);
-                            // should not have an out
-                            failed = newExchange.hasOut();
+                            hasOut = newExchange.hasOut();
                             return newExchange;
                         }
-                    }).batchSize(2)
+                    }).batchSize(2).batchTimeout(2000)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertFalse("Should not have out", failed);
                                 String s = exchange.getIn().getBody(String.class);
                                 exchange.getIn().setBody("Hi " + s);
                                 context.createProducerTemplate().send("mock:foo", exchange);
@@ -78,10 +76,12 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
         template.requestBodyAndHeader("direct:start", "Willem", "id", 1);
 
         assertMockEndpointsSatisfied();
+
+        assertFalse("Should not have out", hasOut);
     }
     
     public void testThreeProcesssors() throws Exception {
-        failed = false;
+        hasOut = false;
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -95,15 +95,13 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
                             // should always be in
                             String body = newExchange.getIn().getBody(String.class);
                             assertNotNull(body);
-                            // should not have an out
-                            failed = newExchange.hasOut();
+                            hasOut = newExchange.hasOut();
                             return newExchange;
                         }
-                    }).batchSize(2)
+                    }).batchSize(2).batchTimeout(2000)
                         .to("log:foo")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertFalse("Should not have out", failed);
                                 String s = exchange.getIn().getBody(String.class);
                                 exchange.getIn().setBody("Hi " + s);
                                 context.createProducerTemplate().send("mock:foo", exchange);
@@ -126,7 +124,7 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should not have out", failed);
+        assertFalse("Should not have out", hasOut);
     }
 
 }
