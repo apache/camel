@@ -118,11 +118,16 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
               <forkMode>pertest</forkMode>
-              <excludes>
-                <!-- TODO FIXME ASAP -->
-                <exclude>**/*Test.*</exclude>
-                <exclude>**/*CustomerServicesWsAddressingTest.*</exclude>
-              </excludes>
+               <excludes>
+                    <!-- TODO FIXME ASAP -->
+                    <exclude>**/XXXTest.*</exclude>
+               </excludes>
+               <systemProperties>
+                    <property>
+                    <name>java.util.logging.config.file</name>
+                    <value>${basedir}/target/test-classes/logging.properties</value>
+               	    </property>
+               </systemProperties>             
           </configuration>
       </plugin>
       <plugin>
