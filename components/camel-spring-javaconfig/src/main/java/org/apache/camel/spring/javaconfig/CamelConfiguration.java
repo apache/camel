@@ -19,7 +19,7 @@ package org.apache.camel.spring.javaconfig;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
@@ -55,7 +55,7 @@ public abstract class CamelConfiguration extends ConfigurationSupport {
         SpringCamelContext camelContext = new SpringCamelContext();        
         setupCamelContext(camelContext);
         List<RouteBuilder> routes = routes();
-        for (Routes route : routes) {
+        for (RoutesBuilder route : routes) {
             camelContext.addRoutes(route);
         }        
         return camelContext;
@@ -63,9 +63,7 @@ public abstract class CamelConfiguration extends ConfigurationSupport {
     
     // maybe register the camel component, language here
     public void setupCamelContext(CamelContext camelContext) throws Exception {
-        
     }
-
 
     /**
      * Returns the list of routes to use in this configuration

@@ -22,15 +22,14 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
-
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.guiceyfruit.Injectors;
 
 /**
  * A Guice Module which injects the CamelContext with all available implementations
- * of {@link Routes} which are bound to Guice with an optional {@link Matcher} to filter out the classes required.
+ * of {@link org.apache.camel.RoutesBuilder} which are bound to Guice with an optional {@link Matcher} to filter out the classes required.
  * <p>
- * Or if you would like to specify exactly which {@link Routes} to bind then use the {@link CamelModule} and create a provider
+ * Or if you would like to specify exactly which {@link org.apache.camel.RoutesBuilder} to bind then use the {@link CamelModule} and create a provider
  * method annotated with @Provides and returning Set<Routes> such as
  * <code><pre>
  * public class MyModule extends CamelModule {
@@ -45,7 +44,7 @@ public class CamelModuleWithMatchingRoutes extends CamelModule {
     private final Matcher<Class> matcher;
 
     public CamelModuleWithMatchingRoutes() {
-        this(Matchers.subclassesOf(Routes.class));
+        this(Matchers.subclassesOf(RoutesBuilder.class));
     }
 
     public CamelModuleWithMatchingRoutes(Matcher<Class> matcher) {
@@ -53,7 +52,7 @@ public class CamelModuleWithMatchingRoutes extends CamelModule {
     }
 
     @Provides
-    Set<Routes> routes(Injector injector) {
+    Set<RoutesBuilder> routes(Injector injector) {
         return Injectors.getInstancesOf(injector, matcher);
     }
 }

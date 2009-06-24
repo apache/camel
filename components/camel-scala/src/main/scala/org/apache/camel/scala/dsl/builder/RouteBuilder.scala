@@ -20,7 +20,7 @@ import org.apache.camel.model.{ChoiceDefinition, ProcessorDefinition}
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Policy
 import org.apache.camel.processor.aggregate.AggregationStrategy
-import org.apache.camel.Routes
+import org.apache.camel.RoutesBuilder
 
 import collection.mutable.Stack
 import _root_.scala.reflect.Manifest
@@ -32,7 +32,7 @@ import org.apache.camel.scala.dsl.languages.Languages
 /**
  * Scala RouteBuilder implementation
  */
-class RouteBuilder extends Preamble with DSL with Routes with Languages {
+class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
     override def configure() =  {}
@@ -109,9 +109,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
 
   // implementing the Routes interface to allow RouteBuilder to be discovered by Spring
-  def getRouteList : java.util.List[Route[_ <: org.apache.camel.Exchange]] = builder.getRouteList()
-  def getContext = builder.getContext()
-  def setContext(context: CamelContext) = builder.setContext(context)
+  def addRoutesToCamelContext(context: CamelContext) = builder.addRoutesToCamelContext(context)
   
   val serialization = new org.apache.camel.model.dataformat.SerializationDataFormat
 

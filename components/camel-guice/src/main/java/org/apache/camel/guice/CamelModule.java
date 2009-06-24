@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
-import org.apache.camel.Routes;
 import org.apache.camel.guice.impl.ConsumerInjection;
 import org.apache.camel.guice.impl.EndpointInjector;
 import org.apache.camel.guice.impl.ProduceInjector;
@@ -37,10 +36,10 @@ import org.guiceyfruit.jsr250.Jsr250Module;
  *   Set&lt;Routes&gt; routes(Injector injector) { ... }
  * }
  * </pre></code>
- * If you wish to bind all of the bound {@link Routes} implementations available - maybe with some filter applied - then
+ * If you wish to bind all of the bound {@link org.apache.camel.RoutesBuilder} implementations available - maybe with some filter applied - then
  * please use the {@link org.apache.camel.guice.CamelModuleWithMatchingRoutes}.
  * <p>
- * Otherwise if you wish to list all of the classes of the {@link Routes} implementations then use the
+ * Otherwise if you wish to list all of the classes of the {@link org.apache.camel.RoutesBuilder} implementations then use the
  * {@link org.apache.camel.guice.CamelModuleWithRouteTypes} module instead.
  *
  * @version $Revision$

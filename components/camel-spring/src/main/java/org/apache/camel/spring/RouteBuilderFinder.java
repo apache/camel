@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.commons.logging.Log;
@@ -65,14 +65,14 @@ public class RouteBuilderFinder {
     /**
      * Appends all the {@link RouteBuilder} instances that can be found on the classpath
      */
-    public void appendBuilders(List<Routes> list) throws IllegalAccessException, InstantiationException {
-        Set<Class> classes = resolver.findImplementations(Routes.class, packages);
+    public void appendBuilders(List<RoutesBuilder> list) throws IllegalAccessException, InstantiationException {
+        Set<Class> classes = resolver.findImplementations(RoutesBuilder.class, packages);
         for (Class aClass : classes) {
             if (shouldIgnoreBean(aClass)) {
                 continue;
             }
             if (isValidClass(aClass)) {
-                Routes builder = instantiateBuilder(aClass);
+                RoutesBuilder builder = instantiateBuilder(aClass);
                 if (beanPostProcessor != null) {
                     // Inject the annotated resource
                     beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
@@ -108,7 +108,7 @@ public class RouteBuilderFinder {
     }
 
     @SuppressWarnings("unchecked")
-    protected Routes instantiateBuilder(Class type) throws IllegalAccessException, InstantiationException {
-        return (Routes) camelContext.getInjector().newInstance(type);
+    protected RoutesBuilder instantiateBuilder(Class type) throws IllegalAccessException, InstantiationException {
+        return (RoutesBuilder) camelContext.getInjector().newInstance(type);
     }
 }

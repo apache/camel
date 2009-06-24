@@ -38,7 +38,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
@@ -478,25 +478,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         if (routes != null) {
             this.routes.addAll(routes);
-/*
-            TODO we should have notified the lifecycle strategy via the RouteService
-
-            lifecycleStrategy.onRoutesAdd(routes);
-            if (shouldStartRoutes()) {
-                startRoutes(routes);
-            }
-*/
         }
     }
 
-    public void addRoutes(Routes builder) throws Exception {
-        // lets now add the routes from the builder
-        builder.setContext(this);
-        List<Route> routeList = builder.getRouteList();
+    public void addRoutes(RoutesBuilder builder) throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding routes from: " + builder + " routes: " + routeList);
+            LOG.debug("Adding routes from builder: " + builder);
         }
-        //addRouteCollection(routeList);
+        // lets now add the routes from the builder
+        builder.addRoutesToCamelContext(this);
     }
 
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {

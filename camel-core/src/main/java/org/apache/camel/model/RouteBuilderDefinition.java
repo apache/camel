@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -64,9 +64,9 @@ public class RouteBuilderDefinition extends IdentifiedType {
         return CamelContextHelper.lookup(camelContext, ref, RouteBuilder.class);        
     }
     
-    public Routes createRoutes(CamelContext camelContext) {
+    public RoutesBuilder createRoutes(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext", this);
         ObjectHelper.notNull(ref, "ref", this);
-        return CamelContextHelper.lookup(camelContext, ref, Routes.class);
+        return CamelContextHelper.lookup(camelContext, ref, RoutesBuilder.class);
     }
 }

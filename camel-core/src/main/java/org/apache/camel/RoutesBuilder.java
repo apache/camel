@@ -14,28 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel;
 
-import java.util.List;
-
 /**
- * Routes defined in the camel context.
+ * A routes builder is capable of building routes using the builder and model classes.
+ * <p/>
+ * Eventually the routes is added to a {@link org.apache.camel.CamelContext} where they
+ * run inside.
  */
-public interface Routes {
+public interface RoutesBuilder {
 
     /**
-     * Gets the Camel context used.
+     * Adds the routes from this Route Builder to the CamelContext.
+     *
+     * @param context the Camel context
      */
-    CamelContext getContext();
+    void addRoutesToCamelContext(CamelContext context) throws Exception;
 
-    /**
-     * Sets the Camel context to use.
-     */
-    void setContext(CamelContext context);
-
-    /**
-     * Gets the list of routes currently in the camel context.
-     */
-    List<Route> getRouteList() throws Exception;
 }

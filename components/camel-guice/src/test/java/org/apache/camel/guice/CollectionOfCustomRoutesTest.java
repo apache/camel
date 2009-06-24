@@ -19,8 +19,6 @@ package org.apache.camel.guice;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -29,7 +27,7 @@ import com.google.inject.name.Named;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,19 +39,16 @@ import org.junit.Test;
 public class CollectionOfCustomRoutesTest extends Assert {
 
     public static class MyModule extends CamelModuleWithMatchingRoutes {
-
         @Provides
         @Named("foo")
-        protected Collection<? extends Routes> myRoutes() {
+        protected Collection<? extends RoutesBuilder> myRoutes() {
             return Lists.newArrayList(new MyConfigurableRoute2("direct:a", "direct:b"), new MyConfigurableRoute2("direct:c", "direct:d"));
         }
     }
 
     @Test
     public void testDummy() throws Exception {
-
     }
-
 
     public void xtestGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
@@ -63,8 +58,6 @@ public class CollectionOfCustomRoutesTest extends Assert {
         assertEquals("size of " + list, 2, list.size());
 
         GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
-
     }
-
 
 }

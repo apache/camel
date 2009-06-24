@@ -18,8 +18,6 @@ package org.apache.camel.guice;
 
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -27,12 +25,10 @@ import com.google.inject.internal.Lists;
 import com.google.inject.name.Named;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
-
-
 
 /**
  * Create a collection of routes via a provider method
@@ -46,13 +42,12 @@ public class EndpointInjectionTest extends Assert {
         @Override
         protected void configure() {
             super.configure();
-
             bind(MyBean.class);
         }
 
         @Provides
         @Named("foo")
-        protected Collection<? extends Routes> myRoutes() {
+        protected Collection<? extends RoutesBuilder> myRoutes() {
             return Lists.newArrayList(new MyConfigurableRoute2("direct:a", "direct:b"), new MyConfigurableRoute2("direct:c", "direct:d"));
         }
     }
@@ -71,8 +66,6 @@ public class EndpointInjectionTest extends Assert {
         assertEquals("bean.endpoint.uri", "mock:foo", bean.endpoint.getEndpointUri());
 
         GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
-
     }
-
 
 }

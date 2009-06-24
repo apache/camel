@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
@@ -140,7 +140,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlTransient
     private RouteBuilder routeBuilder;
     @XmlTransient
-    private List<Routes> additionalBuilders = new ArrayList<Routes>();
+    private List<RoutesBuilder> additionalBuilders = new ArrayList<RoutesBuilder>();
     @XmlTransient
     private ApplicationContext applicationContext;
     @XmlTransient
@@ -169,7 +169,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return contextClassLoaderOnStart;
     }
     
-    public List<Routes> getAdditionalBuilders() {
+    public List<RoutesBuilder> getAdditionalBuilders() {
         return additionalBuilders;
     }
 
@@ -760,7 +760,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                     builders.add(builder);
                 } else {
                     // support to get the route here
-                    Routes routes = builderRef.createRoutes(getContext());
+                    RoutesBuilder routes = builderRef.createRoutes(getContext());
                     if (routes != null) {
                         additionalBuilders.add(routes);
                     } else {
@@ -773,7 +773,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // install already configured routes
-        for (Routes routeBuilder : additionalBuilders) {
+        for (RoutesBuilder routeBuilder : additionalBuilders) {
             getContext().addRoutes(routeBuilder);
         }
 

@@ -82,10 +82,10 @@ public abstract class ContextTestSupport extends TestSupport {
                 context.addRoutes(builder);
             }
             startCamelContext();
+            log.debug("Routing Rules are: " + context.getRoutes());
         } else {
-            log.debug("Using route builder from the created context: " + context);
+            log.debug("isUseRouteBuilder() is false");
         }
-        log.debug("Routing Rules are: " + context.getRoutes());
     }
 
     @Override

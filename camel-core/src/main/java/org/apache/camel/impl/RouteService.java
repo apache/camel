@@ -83,7 +83,15 @@ public class RouteService extends ServiceSupport {
 
     protected void doStop() throws Exception {
         camelContext.removeRouteCollection(routes);
-        // TODO should we stop the actual Route objects??
+
+        // there is no lifecycyle for routesRemove
+
+        for (Route route : routes) {
+            List<Service> services = route.getServicesForRoute();
+            for (Service service : services) {
+                stopChildService(service);
+            }
+        }
     }
 
     protected LifecycleStrategy getLifecycleStrategy() {
@@ -95,4 +103,10 @@ public class RouteService extends ServiceSupport {
         service.start();
         addChildService(service);
     }
+
+    protected void stopChildService(Service service) throws Exception {
+        service.stop();
+        removeChildService(service);
+    }
+
 }

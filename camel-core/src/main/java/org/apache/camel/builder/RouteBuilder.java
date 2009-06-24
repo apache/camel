@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -39,7 +39,7 @@ import org.apache.camel.model.RoutesDefinition;
  *
  * @version $Revision$
  */
-public abstract class RouteBuilder extends BuilderSupport implements Routes {
+public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RoutesDefinition routeCollection = new RoutesDefinition();
     private List<Route> routes = new ArrayList<Route>();
@@ -236,12 +236,9 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
         return context;
     }
 
-    /**
-     * Uses {@link org.apache.camel.CamelContext#getRoutes()} to return the routes in the context.
-     */
-    public List<Route> getRouteList() throws Exception {
+    public void addRoutesToCamelContext(CamelContext context) throws Exception {
+        setContext(context);
         checkInitialized();
-        return routes;
     }
 
     @Override
@@ -260,11 +257,11 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
                 setErrorHandlerBuilder(camelContext.getErrorHandlerBuilder());
             }
             configure();
-            populateRoutes(routes);
+            populateRoutes();
         }
     }
 
-    protected void populateRoutes(List<Route> routes) throws Exception {
+    protected void populateRoutes() throws Exception {
         CamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("CamelContext has not been injected!");
@@ -297,7 +294,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      *
      * @throws Exception if the routes could not be created for whatever reason
      */
-    protected void addRoutes(Routes routes) throws Exception {
+    protected void addRoutes(RoutesBuilder routes) throws Exception {
         getContext().addRoutes(routes);
     }
 }

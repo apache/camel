@@ -28,7 +28,7 @@ import com.google.inject.Binding;
 import com.google.inject.Inject;
 
 import org.apache.camel.Route;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -73,9 +73,9 @@ public class GuiceCamelContext extends DefaultCamelContext {
     }
 
     @Inject
-    public void setRouteBuilders(Set<Routes> routeBuilders) throws Exception {
-        for (Routes routeBuilder : routeBuilders) {
-            addRoutes(routeBuilder);
+    public void setRouteBuilders(Set<RoutesBuilder> routeBuilders) throws Exception {
+        for (RoutesBuilder builder : routeBuilders) {
+            addRoutes(builder);
         }
     }
 

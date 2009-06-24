@@ -16,18 +16,15 @@
  */
 package org.apache.camel.spring;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.Routes;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RouteRefCamelContextFactoryBeanTest extends RoutingUsingCamelContextFactoryTest {
     
-    public static class MyRoutes implements Routes {
+    public static class MyRoutes implements RoutesBuilder {
         private RouteBuilder myRouteBuilder;
         
         public MyRoutes() {
@@ -39,18 +36,9 @@ public class RouteRefCamelContextFactoryBeanTest extends RoutingUsingCamelContex
             };
         }
 
-        public CamelContext getContext() {            
-            return myRouteBuilder.getContext();
+        public void addRoutesToCamelContext(CamelContext camelContext) throws Exception {
+            camelContext.addRoutes(myRouteBuilder);
         }
-
-        public List<Route> getRouteList() throws Exception {
-            return myRouteBuilder.getRouteList();
-        }
-
-        public void setContext(CamelContext context) {
-            myRouteBuilder.setContext(context);
-        }
-        
     }
     
     protected AbstractXmlApplicationContext createApplicationContext() {

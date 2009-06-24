@@ -39,6 +39,9 @@ public final class ServiceHelper {
     public static void startService(Object value) throws Exception {
         if (value instanceof Service) {
             Service service = (Service)value;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Starting service: " + service);
+            }
             service.start();
         } else if (value instanceof Collection) {
             startServices((Collection)value);
@@ -61,6 +64,9 @@ public final class ServiceHelper {
         for (Object value : services) {
             if (value instanceof Service) {
                 Service service = (Service)value;
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Starting service: " + service);
+                }
                 service.start();
             }
         }
@@ -75,6 +81,9 @@ public final class ServiceHelper {
             if (value instanceof Service) {
                 Service service = (Service)value;
                 try {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Stopping service: " + service);
+                    }
                     service.stop();
                 } catch (Exception e) {
                     LOG.debug("Caught exception shutting down: " + e, e);
@@ -107,6 +116,9 @@ public final class ServiceHelper {
             if (value instanceof Service) {
                 Service service = (Service)value;
                 try {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Stopping service: " + service);
+                    }
                     service.stop();
                 } catch (Exception e) {
                     LOG.debug("Caught exception shutting down: " + e, e);

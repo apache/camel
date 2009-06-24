@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.model.ProcessInstance;
@@ -139,7 +138,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected void populateRoutes(List<Route> routes) throws Exception {
+    protected void populateRoutes() throws Exception {
 
         // lets add the monitoring service - should there be an easier way??
         if (engine == null) {
@@ -155,8 +154,8 @@ public abstract class ProcessBuilder extends RouteBuilder {
         for (ActivityBuilder builder : activityBuilders) {
             from(builder.getEndpoint()).process(builder.getProcessor());
         }
-        super.populateRoutes(routes);
 
+        super.populateRoutes();
     }
 
     // Implementation methods
