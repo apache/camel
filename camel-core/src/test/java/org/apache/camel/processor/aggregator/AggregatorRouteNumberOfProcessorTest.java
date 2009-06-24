@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -119,8 +120,8 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
         getMockEndpoint("mock:agg").expectedBodiesReceived("Hi Willem");
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hi Willem");
 
-        template.requestBodyAndHeader("direct:start", "Claus", "id", 1);
-        template.requestBodyAndHeader("direct:start", "Willem", "id", 1);
+        template.sendBodyAndHeader("direct:start", ExchangePattern.InOnly, "Claus", "id", 1);
+        template.sendBodyAndHeader("direct:start", ExchangePattern.InOnly, "Willem", "id", 1);
 
         assertMockEndpointsSatisfied();
 
