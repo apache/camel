@@ -103,8 +103,8 @@ public class IrcMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         Exchange exchange = getExchange();
-        IrcBinding binding = (IrcBinding)exchange.getProperty(Exchange.BINDING);
-        return binding.extractBodyFromIrc(exchange, this);
+        IrcBinding binding = exchange != null ? (IrcBinding)exchange.getProperty(Exchange.BINDING) : null;
+        return binding != null ? binding.extractBodyFromIrc(exchange, this) : null;
     }
 
     @Override
