@@ -18,8 +18,7 @@ package org.apache.camel.processor.validation;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.Result;
 import javax.xml.validation.Schema;
 
 import org.xml.sax.SAXException;
@@ -72,7 +71,7 @@ public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
         return errors.isEmpty() && fatalErrors.isEmpty();
     }
 
-    public void handleErrors(Exchange exchange, Schema schema, SAXResult result) throws ValidationException {
+    public void handleErrors(Exchange exchange, Schema schema, Result result) throws ValidationException {
         if (!isValid()) {
             throw new SchemaValidationException(exchange, schema, fatalErrors, errors, warnings);
         }

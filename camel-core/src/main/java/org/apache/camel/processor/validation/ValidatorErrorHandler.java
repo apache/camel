@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.validation;
 
-import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.Result;
 import javax.xml.validation.Schema;
 
 import org.xml.sax.ErrorHandler;
@@ -44,5 +44,5 @@ public interface ValidatorErrorHandler extends ErrorHandler {
      * @param result   the result
      * @throws ValidationException is thrown in case of validatation errors
      */
-    void handleErrors(Exchange exchange, Schema schema, SAXResult result) throws ValidationException;
+    void handleErrors(Exchange exchange, Schema schema, Result result) throws ValidationException;
 }

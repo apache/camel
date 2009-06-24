@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.xml.XMLConstants;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
@@ -48,12 +51,21 @@ public class ValidatingProcessor implements Processor {
     private URL schemaUrl;
     private File schemaFile;
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
+    private boolean useDom;
 
     public void process(Exchange exchange) throws Exception {
         Schema schema = getSchema();
         Validator validator = schema.newValidator();
 
-        Source source = exchange.getIn().getBody(SAXSource.class);
+        Source source;
+        Result result;
+        if (useDom) {
+            source = exchange.getIn().getBody(DOMSource.class);
+            result = new DOMResult();
+        } else {
+            source = exchange.getIn().getBody(SAXSource.class);
+            result = new SAXResult();
+        }
         if (source == null) {
             throw new NoXmlBodyValidationException(exchange);
         }
@@ -63,7 +75,6 @@ public class ValidatingProcessor implements Processor {
         ValidatorErrorHandler handler = errorHandler.getClass().newInstance();
         validator.setErrorHandler(handler);
 
-        SAXResult result = new SAXResult();
         validator.validate(source, result);
 
         handler.handleErrors(exchange, schema, result);
@@ -140,6 +151,20 @@ public class ValidatingProcessor implements Processor {
 
     public void setErrorHandler(ValidatorErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
+    }
+
+    public boolean isUseDom() {
+        return useDom;
+    }
+
+    /**
+     * Sets whether DOMSource and DOMResult should be used, or
+     * SaxSource and SaxResult.
+     *
+     * @param useDom true to use DOM otherwise Sax is used
+     */
+    public void setUseDom(boolean useDom) {
+        this.useDom = useDom;
     }
 
     // Implementation methods
