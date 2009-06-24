@@ -398,10 +398,12 @@ public class JmsBinding {
         }
 
         // TODO: should we throw an exception instead?
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Could not determine specific JmsMessage type to use from body."
+        if (LOG.isWarnEnabled()) {
+            LOG.warn("Cannot determine specific JmsMessage type to use from body class."
                     + " Will use generic JmsMessage."
-                    + (body != null ? (" Body class: " + body.getClass().getCanonicalName()) : ""));
+                    + (body != null ? (" Body class: " + body.getClass().getCanonicalName()) : " Body is null")
+                    + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
+                    + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.");
         }
 
         // return a default message
