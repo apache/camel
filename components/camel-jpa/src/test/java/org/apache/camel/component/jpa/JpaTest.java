@@ -89,6 +89,9 @@ public class JpaTest extends Assert {
             public void process(Exchange e) {
                 LOG.info("Received exchange: " + e.getIn());
                 receivedExchange = e;
+                // should have a JpaTemplate
+                JpaTemplate template = e.getIn().getHeader(JpaConstants.JPA_TEMPLATE, JpaTemplate.class);
+                assertNotNull("Should have a JpaTemplate as header", template);
                 latch.countDown();
             }
         });

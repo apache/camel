@@ -284,6 +284,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
     protected Exchange createExchange(Object result) {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(result);
+        exchange.getIn().setHeader(JpaConstants.JPA_TEMPLATE, endpoint.getTemplate());
         return exchange;
     }
 }

@@ -19,9 +19,9 @@ package org.apache.camel.example.etl;
 import java.util.List;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
@@ -32,24 +32,21 @@ import org.springframework.orm.jpa.JpaTemplate;
 // START SNIPPET: example
 @Converter
 public class CustomerTransformer {
-    private static final transient Log LOG = LogFactory.getLog(CustomerTransformer.class);
-    private JpaTemplate template;
 
-    public CustomerTransformer(JpaTemplate template) {
-        this.template = template;
-    }
+    private static final transient Log LOG = LogFactory.getLog(CustomerTransformer.class);
 
     /**
      * A transformation method to convert a person document into a customer
      * entity
      */
     @Converter
-    public CustomerEntity toCustomer(PersonDocument doc) {
+    public CustomerEntity toCustomer(PersonDocument doc, Exchange exchange) {
+        JpaTemplate template = exchange.getIn().getHeader("CamelJpaTemplate", JpaTemplate.class);
+
         String user = doc.getUser();
-        CustomerEntity customer = findCustomerByName(user);
+        CustomerEntity customer = findCustomerByName(template, user);
 
         // let's convert information from the document into the entity bean
-
         customer.setFirstName(doc.getFirstName());
         customer.setSurname(doc.getLastName());
         customer.setCity(doc.getCity());
@@ -61,7 +58,7 @@ public class CustomerTransformer {
     /**
      * Finds a customer for the given username, or creates and inserts a new one
      */
-    protected CustomerEntity findCustomerByName(String user) {
+    protected CustomerEntity findCustomerByName(JpaTemplate template, String user) {
         List<CustomerEntity> list = template.find("select x from " + CustomerEntity.class.getName() + " x where x.userName = ?1", user);
         if (list.isEmpty()) {
             CustomerEntity answer = new CustomerEntity();
