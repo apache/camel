@@ -43,6 +43,7 @@ public class JpaProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) {
+        exchange.getIn().setHeader(JpaConstants.JPA_TEMPLATE, endpoint.getTemplate());
         final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
             template.execute(new JpaCallback() {
@@ -59,5 +60,6 @@ public class JpaProducer extends DefaultProducer {
                 }
             });
         }
+        exchange.getIn().removeHeader(JpaConstants.JPA_TEMPLATE);
     }
 }

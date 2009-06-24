@@ -259,7 +259,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         } else {
             return new ExpressionAdapter() {
                 public Object evaluate(Exchange exchange) {
-                    exchange.getIn().setHeader(JpaConstants.JPA_TEMPLATE, getTemplate());
                     Object answer = exchange.getIn().getBody(type);
                     if (answer == null) {
                         Object defaultValue = exchange.getIn().getBody();
