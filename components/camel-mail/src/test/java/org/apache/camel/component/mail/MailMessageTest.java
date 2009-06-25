@@ -26,6 +26,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
@@ -44,9 +45,9 @@ public class MailMessageTest extends CamelTestSupport {
     public void testMailMessageHandlesMultipleHeaders() throws Exception {
         mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("foo@localhost"), new InternetAddress("bar@localhost")});
 
-        MailExchange exchange = endpoint.createExchange(mimeMessage);
-        MailMessage in = exchange.getIn();
-
+        Exchange exchange = endpoint.createExchange(mimeMessage);
+        MailMessage in = (MailMessage)exchange.getIn();
+        assertNotNull(in);
         assertEquals("mail body", body, in.getBody());
 
         // need to use iterator as some mail impl returns String[] and others a single String with comma as separator
@@ -68,8 +69,9 @@ public class MailMessageTest extends CamelTestSupport {
     public void testMailMessageHandlesSingleHeader() throws Exception {
         mimeMessage.setRecipients(Message.RecipientType.TO, new Address[] {new InternetAddress("frank@localhost")});
 
-        MailExchange exchange = endpoint.createExchange(mimeMessage);
-        MailMessage in = exchange.getIn();
+        Exchange exchange = endpoint.createExchange(mimeMessage);
+        MailMessage in = (MailMessage)exchange.getIn();
+        assertNotNull(in);
         Object header = in.getHeader("TO");
         String value = assertIsInstanceOf(String.class, header);
         assertEquals("value", "frank@localhost", value);

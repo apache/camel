@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -96,17 +97,24 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return answer;
     }
 
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new MailExchange(this, pattern, getBinding());
-    }
-
-    public MailExchange createExchange(Message message) {
-        return new MailExchange(this, getExchangePattern(), getBinding(), message);
-    }
-
     public boolean isSingleton() {
         return false;
+    }
+    
+    @Override
+    public Exchange createExchange(ExchangePattern pattern) {
+        return createExchange(pattern, null);
+    }
+
+    public Exchange createExchange(Message message) {
+        return createExchange(getExchangePattern(), message);
+    }
+
+    private Exchange createExchange(ExchangePattern pattern, Message message) {
+        Exchange exchange = new DefaultExchange(this, pattern);
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new MailMessage(message));
+        return exchange;
     }
 
     // Properties

@@ -25,6 +25,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.CollectionHelper;
@@ -54,11 +55,6 @@ public class MailMessage extends DefaultMessage {
         } else {
             return "MailMessage: " + getBody();
         }
-    }
-
-    @Override
-    public MailExchange getExchange() {
-        return (MailExchange)super.getExchange();
     }
 
     public MailMessage copy() {
@@ -97,7 +93,8 @@ public class MailMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         if (mailMessage != null) {
-            return getExchange().getBinding().extractBodyFromMail(getExchange(), mailMessage);
+            MailBinding binding = (MailBinding) getExchange().getProperty(Exchange.BINDING);
+            return binding != null ? binding.extractBodyFromMail(getExchange(), mailMessage) : null;
         }
         return null;
     }
@@ -106,7 +103,10 @@ public class MailMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (mailMessage != null) {
             try {
-                map.putAll(getExchange().getBinding().extractHeadersFromMail(mailMessage, getExchange()));
+                MailBinding binding = (MailBinding) getExchange().getProperty(Exchange.BINDING);
+                if (binding != null) {
+                    map.putAll(binding.extractHeadersFromMail(mailMessage, getExchange()));
+                }
             } catch (MessagingException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }

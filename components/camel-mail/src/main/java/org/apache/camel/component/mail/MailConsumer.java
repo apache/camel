@@ -143,7 +143,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
 
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            MailExchange exchange = (MailExchange) exchanges.poll();
+            Exchange exchange = (Exchange)exchanges.poll();
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
@@ -172,7 +172,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         for (int i = 0; i < count; i++) {
             Message message = messages[i];
             if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-                MailExchange exchange = endpoint.createExchange(message);
+                Exchange exchange = endpoint.createExchange(message);
                 answer.add(exchange);
             } else {
                 if (LOG.isDebugEnabled()) {
@@ -187,9 +187,10 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     /**
      * Strategy to process the mail message.
      */
-    protected void processExchange(MailExchange exchange) throws Exception {
+    protected void processExchange(Exchange exchange) throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing message: " + MailUtils.dumpMessage(exchange.getIn().getMessage()));
+            MailMessage msg = (MailMessage) exchange.getIn();
+            LOG.debug("Processing message: " + MailUtils.dumpMessage(msg.getMessage()));
         }
         getProcessor().process(exchange);
     }
@@ -197,8 +198,9 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     /**
      * Strategy to flag the message after being processed.
      */
-    protected void processCommit(MailExchange exchange) throws MessagingException {
-        Message message = exchange.getIn().getMessage();
+    protected void processCommit(Exchange exchange) throws MessagingException {
+        MailMessage msg = (MailMessage) exchange.getIn();
+        Message message = msg.getMessage();
 
         if (endpoint.getConfiguration().isDelete()) {
             LOG.debug("Exchange processed, so flagging message as DELETED");
@@ -212,7 +214,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     /**
      * Strategy when processing the exchange failed.
      */
-    protected void processRollback(MailExchange exchange) throws MessagingException {
+    protected void processRollback(Exchange exchange) throws MessagingException {
         LOG.warn("Exchange failed, so rolling back message status: " + exchange);
     }
 

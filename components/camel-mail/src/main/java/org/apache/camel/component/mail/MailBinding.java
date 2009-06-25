@@ -166,7 +166,7 @@ public class MailBinding {
     /**
      * Extracts the body from the Mail message
      */
-    public Object extractBodyFromMail(MailExchange exchange, Message message) {
+    public Object extractBodyFromMail(Exchange exchange, Message message) {
         try {
             return message.getContent();
         } catch (Exception e) {

@@ -61,15 +61,15 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
         Transport.send(message);
 
         // lets test the receive worked
-        resultEndpoint.assertIsSatisfied();
+        resultEndpoint.assertIsSatisfied(100000);
 
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
 
         org.apache.camel.Message in = exchange.getIn();
         assertNotNull("Should have headers", in.getHeaders());
 
-        MailExchange mailExchange = (MailExchange) exchange;
-        Message inMessage = mailExchange.getIn().getMessage();
+        MailMessage msg = (MailMessage) exchange.getIn();
+        Message inMessage = msg != null ? msg.getMessage() : null;
         assertNotNull("In message has no JavaMail message!", inMessage);
 
         String text = in.getBody(String.class);

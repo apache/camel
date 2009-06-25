@@ -92,6 +92,10 @@ public final class MailUtils {
      * @return a log string with important fields dumped
      */
     public static String dumpMessage(Message message) {
+        if (message == null) {
+            return "null";
+        }
+        
         try {
             StringBuilder sb = new StringBuilder();
 
@@ -132,8 +136,5 @@ public final class MailUtils {
             // ignore the error and just return tostring 
             return message.toString();
         }
-
     }
-
-   
 }
