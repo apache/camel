@@ -135,12 +135,8 @@ public class Pipeline extends MulticastProcessor implements Processor {
 
         // now lets set the input of the next exchange to the output of the
         // previous message if it is not null
-        Message in = answer.getIn();
-        if (previousExchange.hasOut()) {
-            in.copyFrom(previousExchange.getOut());
-        } else {
-            in.copyFrom(previousExchange.getIn());
-        }
+        answer.setIn(previousExchange.hasOut() 
+            ? previousExchange.getOut().copy() : previousExchange.getIn().copy());
         return answer;
     }
 
