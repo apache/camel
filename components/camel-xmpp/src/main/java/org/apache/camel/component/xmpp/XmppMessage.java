@@ -18,6 +18,7 @@ package org.apache.camel.component.xmpp;
 
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 import org.jivesoftware.smack.packet.Message;
@@ -47,11 +48,6 @@ public class XmppMessage extends DefaultMessage {
         }
     }
 
-    @Override
-    public XmppExchange getExchange() {
-        return (XmppExchange)super.getExchange();
-    }
-
     /**
      * Returns the underlying XMPP message
      */
@@ -71,7 +67,10 @@ public class XmppMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         if (xmppMessage != null) {
-            return getExchange().getBinding().extractBodyFromXmpp(getExchange(), xmppMessage);
+            XmppBinding binding = (XmppBinding) getExchange().getProperty(Exchange.BINDING);
+            if (binding != null) {
+                binding.extractBodyFromXmpp(getExchange(), xmppMessage);
+            }
         }
         return null;
     }
@@ -79,7 +78,10 @@ public class XmppMessage extends DefaultMessage {
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (xmppMessage != null) {
-            map.putAll(getExchange().getBinding().extractHeadersFromXmpp(xmppMessage, getExchange()));
+            XmppBinding binding = (XmppBinding) getExchange().getProperty(Exchange.BINDING);
+            if (binding != null) {
+                map.putAll(binding.extractHeadersFromXmpp(xmppMessage, getExchange()));
+            }
         }
     }
 }

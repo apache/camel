@@ -24,6 +24,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -94,13 +95,20 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new XmppExchange(this, pattern, getBinding());
+        return createExchange(pattern, null);
     }
 
-    public XmppExchange createExchange(Message message) {
-        return new XmppExchange(this, getExchangePattern(), getBinding(), message);
+    public Exchange createExchange(Message message) {
+        return createExchange(getExchangePattern(), message);
     }
 
+    private Exchange createExchange(ExchangePattern pattern, Message message) {
+        Exchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new XmppMessage(message));
+        return exchange;
+    }
+    
     @Override
     protected String createEndpointUri() {
         return "xmpp://" + host + ":" + port + "/" + getParticipant() + "?serviceName=" + serviceName;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xmpp;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
@@ -111,7 +112,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             LOG.debug("Recieved XMPP message: " + message.getBody());
         }
 
-        XmppExchange exchange = endpoint.createExchange(message);
+        Exchange exchange = endpoint.createExchange(message);
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {

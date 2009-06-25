@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.packet.Message;
 
 /**
- * A Strategy used to convert between a Camel {@link XmppExchange} and {@link XmppMessage} to and from a
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a
  * XMPP {@link Message}
  *
  * @version $Revision$
@@ -80,7 +80,7 @@ public class XmppBinding {
     /**
      * Extracts the body from the XMPP message
      */
-    public Object extractBodyFromXmpp(XmppExchange exchange, Message message) {
+    public Object extractBodyFromXmpp(Exchange exchange, Message message) {
         return message.getBody();
     }
 

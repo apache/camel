@@ -48,7 +48,7 @@ public class XmppRouteTest extends TestCase {
     protected static boolean enabled;
     protected static String xmppUrl;
     private static final transient Log LOG = LogFactory.getLog(XmppRouteTest.class);
-    protected XmppExchange receivedExchange;
+    protected Exchange receivedExchange;
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint endpoint;
@@ -97,7 +97,7 @@ public class XmppRouteTest extends TestCase {
         assertTrue("Did not receive the message!", received);
 
         assertNotNull(receivedExchange);
-        XmppMessage receivedMessage = receivedExchange.getIn();
+        XmppMessage receivedMessage = (XmppMessage)receivedExchange.getIn();
 
         Assert.assertEquals("cheese header", 123, receivedMessage.getHeader("cheese"));
         Object body = receivedMessage.getBody();
@@ -128,7 +128,7 @@ public class XmppRouteTest extends TestCase {
                     from(uri3).process(new Processor() {
                         public void process(Exchange e) {
                             LOG.info("Received exchange: " + e);
-                            receivedExchange = (XmppExchange) e;
+                            receivedExchange = e;
                             latch.countDown();
                         }
                     });
