@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;
@@ -33,6 +34,9 @@ import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.Test;
 
 /**
@@ -81,6 +85,19 @@ public class HttpRouteTest extends CamelTestSupport {
         String out = template.requestBody("http://localhost:9080/echo", "HelloWorld", String.class);
         assertEquals("Get a wrong output " , "HelloWorld", out);
     }
+    
+    @Test
+    public void testPostParameter() throws Exception {
+        NameValuePair[] data = {new NameValuePair("request", "PostParameter"),
+                                new NameValuePair("others", "bloggs")};
+        HttpClient client = new HttpClient();
+        PostMethod post = new PostMethod("http://localhost:9080/post");
+        post.setRequestBody(data);
+        client.executeMethod(post);
+        InputStream response = post.getResponseBodyAsStream();
+        String out = context.getTypeConverter().convertTo(String.class, response);
+        assertEquals("Get a wrong output " , "PostParameter", out);
+    }
 
     protected void invokeHttpEndpoint() throws IOException {
         template.requestBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
@@ -90,7 +107,7 @@ public class HttpRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // enable strem cache
+                // enable stream cache
                 context.setStreamCaching(true);
 
                 from("jetty:http://localhost:9080/test").to("mock:a");
@@ -121,6 +138,20 @@ public class HttpRouteTest extends CamelTestSupport {
                 from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);
                 
                 from("jetty:http://localhost:9080/echo").process(printProcessor).process(printProcessor);
+                
+                Processor procPostParameters = new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                        String value = req.getParameter("request");                        
+                        if (value != null) {
+                            exchange.getOut().setBody(value);
+                        } else {
+                            exchange.getOut().setBody("Can't get a right parameter");
+                        }
+                    }
+                };
+                
+                from("jetty:http://localhost:9080/post").process(procPostParameters);
             }
         };
     }
