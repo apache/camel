@@ -106,7 +106,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4.3</version>
         <configuration>
           <forkMode>once</forkMode>
           <includes>

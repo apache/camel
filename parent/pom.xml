@@ -72,7 +72,7 @@
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <groovy-version>1.6.3</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
-    <junit-version>4.4</junit-version>
+    <junit-version>4.5</junit-version>
     <saxon-version>9.1.0.1</saxon-version>
     <scala-version>2.7.3</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
