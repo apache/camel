@@ -51,6 +51,9 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
+        // lets parser the parameterMap first to avoid consuming the POST parameters as InputStream
+        request.getParameterMap();
+        
         // lets force a parse of the body and headers
         message.getBody();
         // populate the headers from the request

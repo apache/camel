@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,6 +33,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import org.apache.camel.converter.stream.InputStreamCache;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
+
 
 /**
  * @version $Revision$
@@ -73,6 +80,18 @@ public class HttpRouteTest extends ContextTestSupport {
         assertEquals("<b>Hello World</b>", data);
 
     }
+    
+    public void testPostParameter() throws Exception {
+        NameValuePair[] data = {new NameValuePair("request", "PostParameter"),
+                                new NameValuePair("others", "bloggs")};
+        HttpClient client = new HttpClient();
+        PostMethod post = new PostMethod("http://localhost:9080/post");
+        post.setRequestBody(data);
+        client.executeMethod(post);
+        InputStream response = post.getResponseBodyAsStream();
+        String out = context.getTypeConverter().convertTo(String.class, response);
+        assertEquals("Get a wrong output " , "PostParameter", out);
+    }
 
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
@@ -82,6 +101,7 @@ public class HttpRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+
                 from("jetty:http://localhost:9080/test").to("mock:a");
 
                 Processor proc = new Processor() {
@@ -97,6 +117,20 @@ public class HttpRouteTest extends ContextTestSupport {
                     }
                 };
                 from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);
+                
+                Processor procPostParameters = new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                        String value = req.getParameter("request");                        
+                        if (value != null) {
+                            exchange.getOut().setBody(value);
+                        } else {
+                            exchange.getOut().setBody("Can't get a right parameter");
+                        }
+                    }
+                };
+                
+                from("jetty:http://localhost:9080/post").process(procPostParameters);
             }
         };
     }
