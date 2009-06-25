@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
-
+import org.apache.camel.util.ExchangeHelper;
 import org.schwering.irc.lib.IRCUser;
 
 public class IrcMessage extends DefaultMessage {
@@ -103,7 +103,7 @@ public class IrcMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         Exchange exchange = getExchange();
-        IrcBinding binding = exchange != null ? (IrcBinding)exchange.getProperty(Exchange.BINDING) : null;
+        IrcBinding binding = ExchangeHelper.getBinding(getExchange(), IrcBinding.class);
         return binding != null ? binding.extractBodyFromIrc(exchange, this) : null;
     }
 

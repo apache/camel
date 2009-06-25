@@ -69,6 +69,16 @@ public final class ExchangeHelper {
         return answer;
     }
 
+    /**
+     * Extracts the Exchange.BINDING of the given type or null if not present
+     *
+     * @param exchange the message exchange
+     * @param type the expected binding type
+     * @return the binding object of the given type or null if it could not be found or converted
+     */
+    public static <T> T getBinding(Exchange exchange, Class<T> type) {
+        return exchange != null ? (T) exchange.getProperty(Exchange.BINDING, type) : null;
+    }
 
     /**
      * Attempts to resolve the endpoint for the given value

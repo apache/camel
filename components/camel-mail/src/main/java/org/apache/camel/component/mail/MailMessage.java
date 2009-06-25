@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -93,7 +94,7 @@ public class MailMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         if (mailMessage != null) {
-            MailBinding binding = (MailBinding) getExchange().getProperty(Exchange.BINDING);
+            MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
             return binding != null ? binding.extractBodyFromMail(getExchange(), mailMessage) : null;
         }
         return null;
@@ -103,7 +104,7 @@ public class MailMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (mailMessage != null) {
             try {
-                MailBinding binding = (MailBinding) getExchange().getProperty(Exchange.BINDING);
+                MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
                 if (binding != null) {
                     map.putAll(binding.extractHeadersFromMail(mailMessage, getExchange()));
                 }
