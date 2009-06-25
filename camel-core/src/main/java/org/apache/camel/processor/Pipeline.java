@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -149,12 +148,11 @@ public class Pipeline extends MulticastProcessor implements Processor {
                     LOG.debug("Exchange is marked to stop routing: " + exchange);
                 }
                 return false;
-            } else {
-                return true;
             }
-        } else {
-            return it.hasNext();
         }
+
+        // continue if there are more processors to route
+        return it.hasNext();
     }
 
     @Override
