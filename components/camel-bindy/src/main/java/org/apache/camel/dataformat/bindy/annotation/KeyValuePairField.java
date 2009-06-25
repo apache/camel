@@ -28,6 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  * The precision (optional) reflects the precision to be used with BigDecimal number
  * The required (optional) field allows to define if the field is required or not. This property is
  * not yet used but will be useful in the future with the validation
+ * The position (optional) field is used to order the tags during the creation of the message
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -53,6 +54,14 @@ public @interface KeyValuePairField {
      * @return String
      */
     String pattern() default "";
+    
+    /**
+     * 
+     * Position of the field in the message generated
+     * 
+     * @return int 
+     */
+    int position() default 0;
 
     /**
      * precision of the BigDecimal number to be created

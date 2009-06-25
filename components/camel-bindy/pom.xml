@@ -63,6 +63,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>            
             <scope>test</scope>
+            <version>4.4</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -90,7 +91,9 @@
                     <useFile>true</useFile>
                     <forkMode>pertest</forkMode>
                     <excludes>
-                        <!-- <exclude>**/XXXTest.*</exclude> -->
+                        <!-- <exclude>**/*Csv*Test.*</exclude>
+                        <exclude>**/*Tab*Test.*</exclude>
+                        <exclude>**/*Unmarshall*Test.*</exclude> -->
                     </excludes>
                 </configuration>
             </plugin>

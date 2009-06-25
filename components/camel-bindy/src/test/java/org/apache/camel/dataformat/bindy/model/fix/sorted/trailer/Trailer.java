@@ -14,38 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.util;
+package org.apache.camel.dataformat.bindy.model.fix.sorted.trailer;
 
-import java.lang.annotation.Annotation;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
+import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.Section;
-import org.apache.camel.spi.PackageScanClassResolver;
 
-/**
- * Annotation based loader for model classes with Bindy annotations.
- */
-public class AnnotationModelLoader {
+@Link
+@Section(nber = 3)
+public class Trailer {
 
-    private PackageScanClassResolver resolver;
-    private Set<Class<? extends Annotation>> annotations;
+    @KeyValuePairField(tag = 10, position = 1)
+    // CheckSum
+    private int checkSum;
 
-    public AnnotationModelLoader(PackageScanClassResolver resolver) {
-        this.resolver = resolver;
-
-        annotations = new LinkedHashSet<Class<? extends Annotation>>();
-        annotations.add(CsvRecord.class);
-        annotations.add(Link.class);
-        annotations.add(Message.class);
-        annotations.add(Section.class);
+    public int getCheckSum() {
+        return checkSum;
     }
 
-    public Set<Class> loadModels(String... packageNames) throws Exception {
-        return resolver.findAnnotated(annotations, packageNames);
+    public void setCheckSum(int checkSum) {
+        this.checkSum = checkSum;
+    }
+
+    @Override
+    public String toString() {
+        return "Model : " + Trailer.class.getName() + ", " + this.checkSum;
     }
 
 }

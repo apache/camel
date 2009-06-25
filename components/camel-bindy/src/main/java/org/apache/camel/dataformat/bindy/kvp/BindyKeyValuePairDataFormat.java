@@ -43,14 +43,14 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
     
     private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairDataFormat.class);
     
-    private String packageName;
+    private String[] packageNames;
     private BindyKeyValuePairFactory modelFactory;
 
     public BindyKeyValuePairDataFormat() {
     }
 
-    public BindyKeyValuePairDataFormat(String packageName) {
-        this.packageName = packageName;
+    public BindyKeyValuePairDataFormat(String... packageNames) {
+        this.packageNames = packageNames;
     }
 
     @SuppressWarnings("unchecked")
@@ -142,7 +142,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
      */
     public BindyKeyValuePairFactory getFactory(PackageScanClassResolver resolver) throws Exception {
         if (modelFactory == null) {
-            modelFactory = new BindyKeyValuePairFactory(resolver, this.packageName);
+            modelFactory = new BindyKeyValuePairFactory(resolver, this.packageNames);
         }
         return modelFactory;
     }
@@ -151,12 +151,12 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         this.modelFactory = modelFactory;
     }
 
-    public String getPackageName() {
-        return packageName;
+    public String[] getPackageNames() {
+        return packageNames;
     }
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
+    public void setPackageNames(String... packageNames) {
+        this.packageNames = packageNames;
     }
 
 }

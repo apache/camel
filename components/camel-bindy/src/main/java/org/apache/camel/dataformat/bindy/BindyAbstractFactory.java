@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,102 +31,142 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The BindyAbstractFactory implements what its common to all the 
- * formats supported by camel bindy
+ * The BindyAbstractFactory implements what its common to all the formats
+ * supported by camel bindy
  */
 public abstract class BindyAbstractFactory implements BindyFactory {
-    private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
-    protected Set<Class> models;
-    protected Map<String, Field> mapAnnotedLinkField = new LinkedHashMap<String, Field>();    
-    protected String crlf;
-    
-    private AnnotationModelLoader modelsLoader;
-    
-    private String packageName;
+	private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
+	protected Set<Class> models;
+	protected Map<String, Field> mapAnnotedLinkField = new LinkedHashMap<String, Field>();
+	protected String crlf;
 
-    public BindyAbstractFactory(PackageScanClassResolver resolver, String packageName) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver);
-        this.packageName = packageName;
-        initModel();
-    }
+	private AnnotationModelLoader modelsLoader;
+	private String[] packageNames;
 
-    /**
-     * method uses to initialize the model representing the classes who will
-     * bind the data. This process will scan for classes according to the package
-     * name provided, check the classes and fields annoted.
-     * 
-     * @throws Exception
-     */
-    public void initModel() throws Exception {
+	public BindyAbstractFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
+		this.modelsLoader = new AnnotationModelLoader(resolver);
+		this.packageNames = packageNames;
 
-        // Find classes defined as Model
-        initModelClasses(packageName);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Package(s) name : " + packageNames.toString());
+		}
 
-    }
+		initModel();
+	}
 
-    /**
-     * Find all the classes defined as model
-     */
-    private void initModelClasses(String packageName) throws Exception {
-        models = modelsLoader.loadModels(packageName);
-    }
+	/**
+	 * method uses to initialize the model representing the classes who will
+	 * bind the data. This process will scan for classes according to the
+	 * package name provided, check the classes and fields annoted.
+	 * 
+	 * @throws Exception
+	 */
+	public void initModel() throws Exception {
 
-    /**
-     * Find fields annoted in each class of the model
-     */
-    public abstract void initAnnotedFields() throws Exception;
+		// Find classes defined as Model
+		initModelClasses(this.packageNames);
 
-    public abstract void bind(List<String> data, Map<String, Object> model) throws Exception;
+	}
 
-    public abstract String unbind(Map<String, Object> model) throws Exception;
+	/**
+	 * Find all the classes defined as model
+	 */
+	private void initModelClasses(String... packageNames) throws Exception {
+		models = modelsLoader.loadModels(packageNames);
+	}
 
-    /**
-     * Link objects together (Only 1to1 relation is allowed)
-     */
-    public void link(Map<String, Object> model) throws Exception {
+	/**
+	 * Find fields annoted in each class of the model
+	 */
+	public abstract void initAnnotedFields() throws Exception;
 
-        for (String link : mapAnnotedLinkField.keySet()) {
+	public abstract void bind(List<String> data, Map<String, Object> model) throws Exception;
 
-            Field field = mapAnnotedLinkField.get(link);
-            field.setAccessible(true);
+	public abstract String unbind(Map<String, Object> model) throws Exception;
 
-            // Retrieve linked object
-            String toClassName = field.getType().getName();
-            Object to = model.get(toClassName);
+	/**
+	 * Link objects together (Only 1to1 relation is allowed)
+	 */
+	public void link(Map<String, Object> model) throws Exception {
 
-            ObjectHelper.notNull(to, "No @link annotation has been defined for the oject to link");
-            field.set(model.get(field.getDeclaringClass().getName()), to);
+		for (String link : mapAnnotedLinkField.keySet()) {
 
-        }
-    }
+			Field field = mapAnnotedLinkField.get(link);
+			field.setAccessible(true);
 
-    /**
-     * Factory method generating new instances of the model and adding them to a
-     * HashMap
-     * 
-     * @return Map is a collection of the objects used to bind data from records, messages
-     * @throws Exception can be thrown
-     */
-    public Map<String, Object> factory() throws Exception {
+			// Retrieve linked object
+			String toClassName = field.getType().getName();
+			Object to = model.get(toClassName);
 
-        Map<String, Object> mapModel = new HashMap<String, Object>();
+			ObjectHelper.notNull(to, "No @link annotation has been defined for the oject to link");
+			field.set(model.get(field.getDeclaringClass().getName()), to);
 
-        for (Class<?> cl : models) {
+		}
+	}
 
-            Object obj = ObjectHelper.newInstance(cl);
+	/**
+	 * Factory method generating new instances of the model and adding them to a
+	 * HashMap
+	 * 
+	 * @return Map is a collection of the objects used to bind data from
+	 *         records, messages
+	 * @throws Exception
+	 *             can be thrown
+	 */
+	public Map<String, Object> factory() throws Exception {
 
-            // Add instance of the class to the Map Model
-            mapModel.put(obj.getClass().getName(), obj);
+		Map<String, Object> mapModel = new HashMap<String, Object>();
 
-        }
+		for (Class<?> cl : models) {
 
-        return mapModel;
-    }
-    
-    /**
-     * Find the carriage return set
-     */
-    public String getCarriageReturn() {
-        return crlf;
-    }
+			Object obj = ObjectHelper.newInstance(cl);
+
+			// Add instance of the class to the Map Model
+			mapModel.put(obj.getClass().getName(), obj);
+
+		}
+
+		return mapModel;
+	}
+
+	/**
+	 * Generate a unique key
+	 * 
+	 * @param key1
+	 *            The key of the section number
+	 * @param key2
+	 *            The key of the position of the field
+	 * @return the key generated
+	 */
+	protected static Integer generateKey(Integer key1, Integer key2) {
+		
+		String key2Formated = getNumberFormat().format((long)key2);
+		String keyGenerated = String.valueOf(key1) + key2Formated;
+		
+		return Integer.valueOf(keyGenerated);
+
+	}
+
+	/**
+	 * 
+	 * @return NumberFormat
+	 */
+	private static NumberFormat getNumberFormat() {
+		
+		// Get instance of NumberFormat
+		NumberFormat nf = NumberFormat.getInstance();
+	
+		// set max number of digits to 3 (thousands) 
+		nf.setMaximumIntegerDigits(3);
+		nf.setMinimumIntegerDigits(3);
+		
+		return nf;
+	}
+
+	/**
+	 * Find the carriage return set
+	 */
+	public String getCarriageReturn() {
+		return crlf;
+	}
 }

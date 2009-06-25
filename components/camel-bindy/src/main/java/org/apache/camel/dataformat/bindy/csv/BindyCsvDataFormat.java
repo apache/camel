@@ -55,6 +55,8 @@ public class BindyCsvDataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
     
         BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        ObjectHelper.notNull(factory, "not instantiated");
+        
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
         byte[] bytesCRLF;
      
@@ -73,6 +75,7 @@ public class BindyCsvDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
@@ -87,7 +90,7 @@ public class BindyCsvDataFormat implements DataFormat {
 
         // Retrieve the separator defined to split the record
         String separator = factory.getSeparator();
-        ObjectHelper.notEmpty(separator, "The separator has not been defined in the annotation @Record or not instantiated during initModel.");
+        ObjectHelper.notEmpty(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
         int count = 0;
         try {

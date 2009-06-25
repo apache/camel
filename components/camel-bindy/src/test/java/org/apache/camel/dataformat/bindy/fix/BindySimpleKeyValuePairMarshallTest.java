@@ -52,8 +52,8 @@ public class BindySimpleKeyValuePairMarshallTest extends AbstractJUnit4SpringCon
 
     @Test
     public void testMarshallMessage() throws Exception {
-        resultEndpoint.expectedBodiesReceived(result);
-
+ 
+    	resultEndpoint.expectedBodiesReceived(result);
         template.sendBody(generateModel());
 
         resultEndpoint.assertIsSatisfied();
