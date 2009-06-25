@@ -38,6 +38,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface Consume {
     String uri() default "";
-
     String ref() default "";
+    String context() default "";
 }

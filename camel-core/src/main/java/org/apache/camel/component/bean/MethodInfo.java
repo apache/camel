@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
@@ -45,6 +46,7 @@ import static org.apache.camel.util.ObjectHelper.asString;
 public class MethodInfo {
     private static final transient Log LOG = LogFactory.getLog(MethodInfo.class);
 
+    private CamelContext camelContext;
     private Class type;
     private Method method;
     private final List<ParameterInfo> parameters;
@@ -55,8 +57,9 @@ public class MethodInfo {
     private ExchangePattern pattern = ExchangePattern.InOut;
     private RecipientList recipientList;
 
-    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
+    public MethodInfo(CamelContext camelContext, Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
+        this.camelContext = camelContext;
         this.type = type;
         this.method = method;
         this.parameters = parameters;
@@ -64,14 +67,31 @@ public class MethodInfo {
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.hasHandlerAnnotation = hasHandlerAnnotation;
         this.parametersExpression = createParametersExpression();
+
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
         }
-        if (method.getAnnotation(org.apache.camel.RecipientList.class) != null) {
+
+        if (method.getAnnotation(org.apache.camel.RecipientList.class) != null
+                && matchContext(method.getAnnotation(org.apache.camel.RecipientList.class).context())) {
             recipientList = new RecipientList();
         }
     }
+
+    /**
+     * Does the given context match this camel context
+     */
+    private boolean matchContext(String context) {
+        if (ObjectHelper.isNotEmpty(context)) {
+            if (!camelContext.getName().equals(context)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 
     public String toString() {
         return method.toString();

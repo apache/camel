@@ -40,6 +40,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface Produce {
     String uri() default "";
-
     String ref() default "";
+    String context() default "";
 }

@@ -22,10 +22,15 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  </camelContext>
-  <!-- END SNIPPET: example -->
 
-  <bean id="myConsumer" class="org.apache.camel.spring.example.MyConsumer"/>
+    <camelContext id="camel-1" xmlns="http://camel.apache.org/schema/spring">
+    </camelContext>
+
+    <camelContext id="camel-2" xmlns="http://camel.apache.org/schema/spring">
+    </camelContext>
+
+    <bean id="myCamel1Consumer" class="org.apache.camel.spring.example.MyCamel1Consumer"/>
+    <bean id="myCamel2Consumer" class="org.apache.camel.spring.example.MyCamel2Consumer"/>
+    <bean id="myCamel2RecipeintList" class="org.apache.camel.spring.example.MyCamel2RecipientList"/>
+
 </beans>

@@ -40,4 +40,5 @@ import java.lang.annotation.Target;
 public @interface EndpointInject {
     String uri() default "";
     String name() default "";
+    String context() default "";
 }

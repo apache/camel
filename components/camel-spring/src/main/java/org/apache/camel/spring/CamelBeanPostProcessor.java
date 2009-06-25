@@ -87,8 +87,10 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         if (camelContext == null && applicationContext.containsBean(camelId)) {
             setCamelContext((CamelContext) applicationContext.getBean(camelId));
         }
+
         injectFields(bean);
         injectMethods(bean);
+
         if (bean instanceof CamelContextAware) {
             CamelContextAware contextAware = (CamelContextAware)bean;
             if (camelContext == null) {
@@ -97,6 +99,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                 contextAware.setCamelContext(camelContext);
             }
         }
+
         return bean;
     }
 
@@ -114,6 +117,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             DefaultEndpoint defaultEndpoint = (DefaultEndpoint) bean;
             defaultEndpoint.setEndpointUriIfNotSpecified(beanName);
         }
+
         return bean;
     }
 
@@ -176,12 +180,13 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     protected void injectFields(final Object bean) {
         ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                EndpointInject annotation = field.getAnnotation(EndpointInject.class);
-                if (annotation != null) {
-                    injectField(field, annotation.uri(), annotation.name(), bean);
+                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+                if (endpointInject != null && postProcessor.matchContext(endpointInject.context())) {
+                    injectField(field, endpointInject.uri(), endpointInject.name(), bean);
                 }
+
                 Produce produce = field.getAnnotation(Produce.class);
-                if (produce != null) {
+                if (produce != null && postProcessor.matchContext(produce.context())) {
                     injectField(field, produce.uri(), produce.ref(), bean);
                 }
             }
@@ -203,12 +208,13 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     protected void setterInjection(Method method, Object bean) {
-        EndpointInject annoation = method.getAnnotation(EndpointInject.class);
-        if (annoation != null) {
-            setterInjection(method, bean, annoation.uri(), annoation.name());
+        EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
+        if (endpointInject != null && postProcessor.matchContext(endpointInject.context())) {
+            setterInjection(method, bean, endpointInject.uri(), endpointInject.name());
         }
+
         Produce produce = method.getAnnotation(Produce.class);
-        if (produce != null) {
+        if (produce != null && postProcessor.matchContext(produce.context())) {
             setterInjection(method, bean, produce.uri(), produce.ref());
         }
     }
@@ -230,4 +236,5 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         ObjectHelper.notNull(postProcessor, "postProcessor");
         return postProcessor;
     }
+
 }

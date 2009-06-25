@@ -43,4 +43,5 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface RecipientList {
+    String context() default "";
 }

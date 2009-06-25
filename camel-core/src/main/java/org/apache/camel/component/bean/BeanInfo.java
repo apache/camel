@@ -317,7 +317,7 @@ public class BeanInfo {
         }
 
         // now lets add the method to the repository
-        return new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
+        return new MethodInfo(camelContext, clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
     }
 
     /**
