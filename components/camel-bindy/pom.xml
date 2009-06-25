@@ -63,7 +63,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>            
             <scope>test</scope>
-            <version>4.4</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
