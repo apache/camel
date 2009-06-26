@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RouteNode;
 import org.apache.camel.Service;
-import org.apache.camel.model.InterceptDefinition;
-import org.apache.camel.model.RouteNode;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.UuidGenerator;
@@ -45,7 +45,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private String id;
     private List<Synchronization> synchronizations;
     private List<RouteNode> routeNodes;
-    private Map<InterceptDefinition, AtomicInteger> interceptIndex = new HashMap<InterceptDefinition, AtomicInteger>();
+    private Map<ProcessorDefinition, AtomicInteger> routeIndex = new HashMap<ProcessorDefinition, AtomicInteger>();
     private Object originalInBody;
 
     public DefaultUnitOfWork(Exchange exchange) {
@@ -64,7 +64,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         if (routeNodes != null) {
             routeNodes.clear();
         }
-        interceptIndex.clear();
+        routeIndex.clear();
         originalInBody = null;
     }
 
@@ -148,11 +148,11 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return originalInBody;
     }
 
-    public int getAndIncrement(InterceptDefinition node) {
-        AtomicInteger count = interceptIndex.get(node);
+    public int getAndIncrement(ProcessorDefinition node) {
+        AtomicInteger count = routeIndex.get(node);
         if (count == null) {
             count = new AtomicInteger();
-            interceptIndex.put(node, count);
+            routeIndex.put(node, count);
         }
         return count.getAndIncrement();
     }

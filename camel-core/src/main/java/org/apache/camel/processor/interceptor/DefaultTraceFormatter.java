@@ -19,8 +19,8 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteNode;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
@@ -229,29 +229,11 @@ public class DefaultTraceFormatter implements TraceFormatter {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBreadCrumbID(Exchange exchange) {
-        UnitOfWork unitOfWork = exchange.getUnitOfWork();
-        if (unitOfWork != null) {
-            return unitOfWork.getId();
-        } else {
-            return exchange.getExchangeId();
-        }
+        return exchange.getExchangeId();
     }
 
-    protected String getNodeMessage(RouteNode entry) {
-        Processor processor = entry.getProcessor();
-
-        if (processor == null) {
-            return "";
-        }
-
-        String message;
-        if (processor instanceof Traceable) {
-            Traceable trace = (Traceable) processor;
-            message = trace.getTraceLabel();
-        } else {
-            message = processor.toString();
-        }
-
+    protected String getNodeMessage(RouteNode entry, Exchange exchange) {
+        String message = entry.getLabel(exchange);
         if (nodeLength > 0) {
             return String.format("%1$-" + nodeLength + "." + nodeLength + "s", message);
         } else {
@@ -293,14 +275,14 @@ public class DefaultTraceFormatter implements TraceFormatter {
 
             RouteNode traceFrom = tuow.getSecondLastNode();
             if (traceFrom != null) {
-                from = getNodeMessage(traceFrom);
+                from = getNodeMessage(traceFrom, exchange);
             } else if (exchange.getFromEndpoint() != null) {
                 from = "from(" + exchange.getFromEndpoint().getEndpointUri() + ")";
             }
 
             RouteNode traceTo = tuow.getLastNode();
             if (traceTo != null) {
-                to = getNodeMessage(traceTo);
+                to = getNodeMessage(traceTo, exchange);
             }
         }
 

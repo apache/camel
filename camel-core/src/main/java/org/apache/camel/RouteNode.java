@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel;
 
-import org.apache.camel.Processor;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * Represents a model of a node in the runtime route path.
@@ -38,4 +38,23 @@ public interface RouteNode {
      * @return the definition, is newer <tt>null</tt>
      */
     ProcessorDefinition getProcessorDefinition();
+
+    /**
+     * Gets a label about this node to be used for tracing or tooling etc.
+     *
+     * @param exchange the current exchange
+     * @return  a label for this node
+     */
+    String getLabel(Exchange exchange);
+
+    /**
+     * Whether this node is abstract (no real processor under the cover).
+     * <p/>
+     * Some nodes is abstract that represents intermediate steps for instance with
+     * onException, onCompletion or intercept
+     *
+     * @return whether this node is abstract or not
+     */
+    boolean isAbstract();
+
 }

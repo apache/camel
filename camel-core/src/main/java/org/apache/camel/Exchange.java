@@ -48,6 +48,7 @@ public interface Exchange {
 
     String CHARSET_NAME = "CamelCharsetName";
     String CONTENT_TYPE = "CamelContentType";
+    String CORRELATION_ID = "CamelCorrelationId";
 
     String DATASET_INDEX = "CamelDataSetIndex";
 

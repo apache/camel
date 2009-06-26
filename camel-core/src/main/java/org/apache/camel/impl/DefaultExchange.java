@@ -97,6 +97,8 @@ public class DefaultExchange implements Exchange {
         if (handoverOnCompletion && unitOfWork != null) {
             unitOfWork.handoverSynchronization(copy);
         }
+        // set a correlation id so we can track back the original exchange
+        copy.setProperty(Exchange.CORRELATION_ID, this.getExchangeId());
         return copy;
     }
 

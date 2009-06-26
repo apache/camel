@@ -18,8 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
-import org.apache.camel.model.InterceptDefinition;
-import org.apache.camel.model.RouteNode;
+import org.apache.camel.RouteNode;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * A Unit of work that is also traceable with the
@@ -63,6 +63,6 @@ public interface TraceableUnitOfWork extends UnitOfWork {
      * @param node the intercept node
      * @return the current count
      */
-    int getAndIncrement(InterceptDefinition node);
+    int getAndIncrement(ProcessorDefinition node);
 
 }

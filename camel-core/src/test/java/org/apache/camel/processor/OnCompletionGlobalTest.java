@@ -62,6 +62,8 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 // START SNIPPET: e1
                 // define a global on completion that is invoked when the exchage is complete
                 onCompletion().to("log:global").to("mock:sync");

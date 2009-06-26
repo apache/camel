@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.OnCompletionProcessor;
+import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -71,6 +72,9 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = createOutputsProcessor(routeContext);
+
+        // wrap the on completion route in a unit of work processor
+        childProcessor = new UnitOfWorkProcessor(childProcessor);
 
         Predicate when = null;
         if (onWhen != null) {

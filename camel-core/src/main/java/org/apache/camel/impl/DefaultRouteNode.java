@@ -16,23 +16,32 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteNode;
+import org.apache.camel.processor.Traceable;
 
 /**
- * A default implementation of the {@link org.apache.camel.model.RouteNode}
+ * A default implementation of the {@link org.apache.camel.RouteNode}
  *
  * @version $Revision$
  */
 public class DefaultRouteNode implements RouteNode {
 
+    private Expression expression;
     private Processor processor;
     private ProcessorDefinition processorDefinition;
 
-    public DefaultRouteNode(Processor processor, ProcessorDefinition processorDefinition) {
+    public DefaultRouteNode(ProcessorDefinition processorDefinition, Processor processor) {
         this.processor = processor;
         this.processorDefinition = processorDefinition;
+    }
+
+    public DefaultRouteNode(ProcessorDefinition processorDefinition, Expression expression) {
+        this.processorDefinition = processorDefinition;
+        this.expression = expression;
     }
 
     public Processor getProcessor() {
@@ -41,6 +50,27 @@ public class DefaultRouteNode implements RouteNode {
 
     public ProcessorDefinition getProcessorDefinition() {
         return processorDefinition;
+    }
+
+    public String getLabel(Exchange exchange) {
+        if (expression != null) {
+            return expression.evaluate(exchange, String.class);
+        }
+
+        if (processor != null) {
+            if (processor instanceof Traceable) {
+                Traceable trace = (Traceable) processor;
+                return trace.getTraceLabel();
+            }
+            processor.toString();
+        }
+
+        // default then to definition
+        return processorDefinition.getLabel();
+    }
+
+    public boolean isAbstract() {
+        return processor == null;
     }
 
     @Override

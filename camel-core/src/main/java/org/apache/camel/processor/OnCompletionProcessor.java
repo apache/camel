@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public class OnCompletionProcessor extends ServiceSupport implements Processor {
+public class OnCompletionProcessor extends ServiceSupport implements Processor, Traceable {
 
     private static final transient Log LOG = LogFactory.getLog(OnCompletionProcessor.class);
     private ExecutorService executorService;
@@ -168,5 +168,9 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor {
     @Override
     public String toString() {
         return "OnCompletionProcessor[" + processor + "]";
+    }
+
+    public String getTraceLabel() {
+        return "OnCompletion";
     }
 }
