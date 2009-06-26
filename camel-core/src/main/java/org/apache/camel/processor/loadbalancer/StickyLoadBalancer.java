@@ -120,4 +120,9 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
         }
         return hashCode;
     }
+
+    public String toString() {
+        return "StickyLoadBalancer";
+    }
+
 }

@@ -120,4 +120,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
     }
 
+    public String toString() {
+        return "FailoverLoadBalancer";
+    }
+
 }

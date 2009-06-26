@@ -33,7 +33,7 @@ import org.apache.camel.util.ExpressionListComparator;
  *
  * @version $Revision$
  */
-public class Resequencer extends BatchProcessor {
+public class Resequencer extends BatchProcessor implements Traceable {
 
     public Resequencer(Processor processor, Expression expression) {
         this(processor, createSet(expression));
@@ -50,6 +50,10 @@ public class Resequencer extends BatchProcessor {
     @Override
     public String toString() {
         return "Resequencer[to: " + getProcessor() + "]";
+    }
+
+    public String getTraceLabel() {
+        return "Resequence";
     }
 
     // Implementation methods

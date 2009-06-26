@@ -54,6 +54,10 @@ public class SortProcessor implements Processor {
         }
     }
 
+    public String toString() {
+        return "Sort[" + expression + "]";
+    }
+
 }
 
 

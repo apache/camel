@@ -25,7 +25,7 @@ import org.apache.camel.RollbackExchangeException;
  *
  * @version $Revision$
  */
-public class RollbackProcessor implements Processor {
+public class RollbackProcessor implements Processor, Traceable {
 
     private String message;
 
@@ -49,5 +49,9 @@ public class RollbackProcessor implements Processor {
         } else {
             return "Rollback";
         }
+    }
+
+    public String getTraceLabel() {
+        return "Rollback";
     }
 }

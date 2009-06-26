@@ -51,4 +51,8 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
         return exchange.copy();
     }
 
+    public String toString() {
+        return "TopicLoadBalancer";
+    }
+
 }

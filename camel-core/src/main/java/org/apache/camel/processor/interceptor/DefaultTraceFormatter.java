@@ -18,6 +18,8 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.processor.Traceable;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
@@ -34,7 +36,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showExchangeId;
     private boolean showShortExchangeId;
     private boolean showExchangePattern = true;
-    private boolean showProperties = true;
+    private boolean showProperties;
     private boolean showHeaders = true;
     private boolean showBody = true;
     private boolean showBodyType = true;
@@ -234,8 +236,15 @@ public class DefaultTraceFormatter implements TraceFormatter {
         }
     }
 
-    protected String getNodeMessage(ProcessorDefinition node) {
-        String message = node.getShortName() + "(" + node.getLabel() + ")";
+    protected String getNodeMessage(Processor processor) {
+        String message;
+        if (processor instanceof Traceable) {
+            Traceable trace = (Traceable) processor;
+            message = trace.getTraceLabel();
+        } else {
+            message = processor.toString();
+        }
+
         if (nodeLength > 0) {
             return String.format("%1$-" + nodeLength + "." + nodeLength + "s", message);
         } else {
@@ -271,18 +280,21 @@ public class DefaultTraceFormatter implements TraceFormatter {
 
         // compute from and to
         String from = "";
+        String to = "";
         if (showNode && exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            ProcessorDefinition prev = tuow.getLastInterceptedNode();
-            if (prev != null) {
-                from = getNodeMessage(prev);
+
+            Processor fromProcessor = tuow.getSecondLastInterceptedProcessor();
+            if (fromProcessor != null) {
+                from = getNodeMessage(fromProcessor);
             } else if (exchange.getFromEndpoint() != null) {
-                from = exchange.getFromEndpoint().getEndpointUri();
+                from = "from(" + exchange.getFromEndpoint().getEndpointUri() + ")";
             }
-        }
-        String to = "";
-        if (showNode) {
-            to = getNodeMessage(currentNode);
+
+            Processor toProcessor = tuow.getLastInterceptedProcessor();
+            if (toProcessor != null) {
+                to = getNodeMessage(toProcessor);
+            }
         }
 
         // assemble result with and without the to/from

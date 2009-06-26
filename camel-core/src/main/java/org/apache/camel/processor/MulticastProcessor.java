@@ -49,7 +49,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @see Pipeline
  * @version $Revision$
  */
-public class MulticastProcessor extends ServiceSupport implements Processor, Navigate {
+public class MulticastProcessor extends ServiceSupport implements Processor, Navigate, Traceable {
 
     private static final transient Log LOG = LogFactory.getLog(MulticastProcessor.class);
 
@@ -110,6 +110,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     @Override
     public String toString() {
         return "Multicast[" + getProcessors() + "]";
+    }
+
+    public String getTraceLabel() {
+        return "Multicast";
     }
 
     public void process(Exchange exchange) throws Exception {

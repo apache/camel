@@ -53,4 +53,9 @@ public class MarshalProcessor implements Processor {
         byte[] data = buffer.toByteArray();
         out.setBody(data);
     }
+
+    @Override
+    public String toString() {
+        return "Marshal[" + dataFormat + "]";
+    }
 }

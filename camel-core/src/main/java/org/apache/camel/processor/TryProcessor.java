@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class TryProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
+public class TryProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
     private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);
 
     private final Processor tryProcessor;
@@ -49,6 +49,10 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
     public String toString() {
         String finallyText = (finallyProcessor == null) ? "" : " Finally {" + finallyProcessor + "}";
         return "Try {" + tryProcessor + "} " + catchClauses + finallyText;
+    }
+
+    public String getTraceLabel() {
+        return "Try";
     }
 
     public void process(Exchange exchange) throws Exception {

@@ -33,6 +33,6 @@ public class StopProcessor implements Processor {
 
     @Override
     public String toString() {
-        return "StopProcessor";
+        return "Stop";
     }
 }

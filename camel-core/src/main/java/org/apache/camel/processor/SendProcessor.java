@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class SendProcessor extends ServiceSupport implements Processor {
+public class SendProcessor extends ServiceSupport implements Processor, Traceable {
     protected static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
     protected ProducerCache producerCache;
     protected Endpoint destination;
@@ -52,6 +52,10 @@ public class SendProcessor extends ServiceSupport implements Processor {
     @Override
     public String toString() {
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
+    }
+
+    public String getTraceLabel() {
+        return destination.getEndpointUri();
     }
 
     public void process(final Exchange exchange) throws Exception {

@@ -37,4 +37,8 @@ public class RandomLoadBalancer extends QueueLoadBalancer {
             }
         }
     }
+
+    public String toString() {
+        return "RandomLoadBalancer";
+    }
 }

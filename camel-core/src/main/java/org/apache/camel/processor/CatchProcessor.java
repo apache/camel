@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class CatchProcessor extends DelegateProcessor {
+public class CatchProcessor extends DelegateProcessor implements Traceable {
     private final List<Class> exceptions;
     private final Predicate onWhen;
     private final Predicate handled;
@@ -44,6 +44,10 @@ public class CatchProcessor extends DelegateProcessor {
     @Override
     public String toString() {
         return "Catch[" + exceptions + " -> " + getProcessor() + "]";
+    }
+
+    public String getTraceLabel() {
+        return "Catch";
     }
 
     /**

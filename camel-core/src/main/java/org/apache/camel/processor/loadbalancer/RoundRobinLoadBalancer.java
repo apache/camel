@@ -36,4 +36,9 @@ public class RoundRobinLoadBalancer extends QueueLoadBalancer {
         }
         return processors.get(counter);
     }
+
+    public String toString() {
+        return "RoundRobinLoadBalancer";
+    }
+
 }

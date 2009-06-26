@@ -67,7 +67,7 @@ public class WireTapProcessor extends SendProcessor {
 
     @Override
     public String toString() {
-        return "wireTap(" + destination.getEndpointUri() + ")";
+        return "WireTap[" + destination.getEndpointUri() + "]";
     }
 
     public void process(Exchange exchange) throws Exception {

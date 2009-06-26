@@ -21,6 +21,8 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.processor.Traceable;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.MessageHelper;
@@ -59,8 +61,8 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
         // need to use defensive copies to avoid Exchange altering after the point of interception
         this.timestamp = timestamp;
         this.fromEndpointUri = exchange.getFromEndpoint() != null ? exchange.getFromEndpoint().getEndpointUri() : null;
-        this.previousNode = extractPreviousNode(exchange);
-        this.toNode = extractNode(toNode);
+        this.previousNode = extractFromNode(exchange);
+        this.toNode = extractToNode(exchange);
         this.exchangeId = exchange.getExchangeId();
         this.shortExchangeId = extractShortExchangeId(exchange);
         this.exchangePattern = exchange.getPattern().toString();
@@ -79,19 +81,32 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     // Implementation
     //---------------------------------------------------------------
-    private String extractNode(ProcessorDefinition node) {
-        return node.getShortName() + "(" + node.getLabel() + ")";
+    private String extractTraceLabel(Processor processor) {
+        if (processor instanceof Traceable) {
+            Traceable trace = (Traceable) processor;
+            return trace.getTraceLabel();
+        }
+        return processor.toString();
     }
 
     private String extractShortExchangeId(Exchange exchange) {
         return exchange.getExchangeId().substring(exchange.getExchangeId().indexOf("/") + 1);
     }
 
-    private String extractPreviousNode(Exchange exchange) {
+    private String extractFromNode(Exchange exchange) {
         if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            ProcessorDefinition last = tuow.getLastInterceptedNode();
-            return last != null ? extractNode(last) : null;
+            Processor last = tuow.getSecondLastInterceptedProcessor();
+            return last != null ? extractTraceLabel(last) : null;
+        }
+        return null;
+    }
+
+    private String extractToNode(Exchange exchange) {
+        if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
+            TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+            Processor last = tuow.getLastInterceptedProcessor();
+            return last != null ? extractTraceLabel(last) : null;
         }
         return null;
     }

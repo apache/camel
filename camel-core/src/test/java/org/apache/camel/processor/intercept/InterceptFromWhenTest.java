@@ -49,6 +49,8 @@ public class InterceptFromWhenTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 interceptFrom().when(toPredicate(simple("${body} contains 'Goofy'"))).to("mock:goofy").stop();
 
                 from("direct:start").to("mock:end");

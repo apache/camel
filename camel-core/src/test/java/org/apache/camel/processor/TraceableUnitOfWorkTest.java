@@ -33,7 +33,7 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
 
     public void testSendingSomeMessages() throws Exception {
         Object out = template.requestBody("direct:start", "Hello London");
-        assertEquals("Failed at: bean:bar", out);
+        assertEquals("Failed at: sendTo(Endpoint[bean:bar])", out);
     }
 
     @Override
@@ -72,12 +72,16 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
 
             // get the list of intercepted nodes
-            List<ProcessorDefinition> list = tuow.getInterceptedNodes();
+            List<Processor> list = tuow.getInterceptedProcessors();
             // get the 2nd last as the last is me (MyErrorProcessor)
-            ProcessorDefinition last = list.get(list.size() - 2);
+            Processor last = list.get(list.size() - 2);
 
             // set error message
-            exchange.getFault().setBody("Failed at: " + last.getLabel());
+            exchange.getFault().setBody("Failed at: " + last.toString());
+        }
+
+        public String toString() {
+            return "MyErrorProcessor";
         }
     }
     // END SNIPPET: e2

@@ -36,4 +36,8 @@ public class ThrowExceptionProcessor implements Processor {
         exchange.setException(exception);
     }
 
+    public String toString() {
+        return "ThrowException";
+    }
+
 }

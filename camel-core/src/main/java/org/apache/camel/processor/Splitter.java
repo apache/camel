@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,7 +41,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @version $Revision$
  */
-public class Splitter extends MulticastProcessor implements Processor {
+public class Splitter extends MulticastProcessor implements Processor, Traceable {
     private final Expression expression;
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
@@ -61,6 +60,11 @@ public class Splitter extends MulticastProcessor implements Processor {
     @Override
     public String toString() {
         return "Splitter[on: " + expression + " to: " + getProcessors().iterator().next() + " aggregate: " + getAggregationStrategy() + "]";
+    }
+
+    @Override
+    public String getTraceLabel() {
+        return "Split[" + expression + "]";
     }
 
     @Override

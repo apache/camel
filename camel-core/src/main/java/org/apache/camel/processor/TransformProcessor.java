@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 /**
  * A processor which sets the body on the OUT message with an expression
  */
-public class TransformProcessor extends DelegateProcessor {
+public class TransformProcessor extends DelegateProcessor implements Traceable {
     private final Expression expression;
 
     public TransformProcessor(Expression expression) {
@@ -49,5 +49,9 @@ public class TransformProcessor extends DelegateProcessor {
     @Override
     public String toString() {
         return "Transform(" + expression + (processor != null ? "," + processor : "") + ")";
+    }
+
+    public String getTraceLabel() {
+        return "Transform[" + expression + "]";
     }
 }

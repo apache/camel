@@ -35,6 +35,8 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 // START SNIPPET: e1
                 // we intercept by endpoint, that means that whenever an exchange is about to be sent to
                 // this endpoint, its intercepted and routed with this detour route beforehand
@@ -99,6 +101,8 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 // START SNIPPET: e3
                 // since we use the skipSendToOriginalEndpoint() we instruct Camel to skip
                 // sending the exchange to the original intended destination after the intercept

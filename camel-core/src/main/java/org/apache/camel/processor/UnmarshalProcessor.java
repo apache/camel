@@ -56,4 +56,9 @@ public class UnmarshalProcessor implements Processor {
             }
         }
     }
+
+    public String toString() {
+        return "Unmarshal[" + dataFormat + "]";
+    }
+
 }

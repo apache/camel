@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class LoopProcessor extends DelegateProcessor {
+public class LoopProcessor extends DelegateProcessor implements Traceable {
     private static final Log LOG = LogFactory.getLog(LoopProcessor.class);
 
     private final Expression expression;
@@ -58,6 +58,10 @@ public class LoopProcessor extends DelegateProcessor {
     @Override
     public String toString() {
         return "Loop[for: " + expression + " times do: " + getProcessor() + "]";
+    }
+
+    public String getTraceLabel() {
+        return "Loop[" + expression + "]";
     }
 
     public Expression getExpression() {

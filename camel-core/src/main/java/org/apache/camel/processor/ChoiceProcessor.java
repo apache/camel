@@ -33,7 +33,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @version $Revision$
  */
-public class ChoiceProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
+public class ChoiceProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
     private final List<FilterProcessor> filters;
     private final Processor otherwise;
 
@@ -78,6 +78,10 @@ public class ChoiceProcessor extends ServiceSupport implements Processor, Naviga
         }
         builder.append("}");
         return builder.toString();
+    }
+
+    public String getTraceLabel() {
+        return "Choice";
     }
 
     public List<FilterProcessor> getFilters() {

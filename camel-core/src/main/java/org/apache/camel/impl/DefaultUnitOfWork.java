@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Service;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.UuidGenerator;
@@ -40,7 +40,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
 
     private String id;
     private List<Synchronization> synchronizations;
-    private List<ProcessorDefinition> routeList;
+    private List<Processor> processorList;
     private Object originalInBody;
 
     public DefaultUnitOfWork(Exchange exchange) {
@@ -57,11 +57,10 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
             synchronizations.clear();
             synchronizations = null;
         }
-        if (routeList != null) {
-            routeList.clear();
-            routeList = null;
+        if (processorList != null) {
+            processorList.clear();
+            processorList = null;
         }
-
         originalInBody = null;
     }
 
@@ -116,22 +115,29 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return id;
     }
 
-    public synchronized void addInterceptedNode(ProcessorDefinition node) {
-        if (routeList == null) {
-            routeList = new ArrayList<ProcessorDefinition>();
+    public void addInterceptedProcessor(Processor processor) {
+        if (processorList == null) {
+            processorList = new ArrayList<Processor>();
         }
-        routeList.add(node);
+        processorList.add(processor);
     }
 
-    public synchronized ProcessorDefinition getLastInterceptedNode() {
-        if (routeList == null || routeList.isEmpty()) {
+    public Processor getLastInterceptedProcessor() {
+        if (processorList == null || processorList.isEmpty()) {
             return null;
         }
-        return routeList.get(routeList.size() - 1);
+        return processorList.get(processorList.size() - 1);
     }
 
-    public List<ProcessorDefinition> getInterceptedNodes() {
-        return Collections.unmodifiableList(routeList);
+    public Processor getSecondLastInterceptedProcessor() {
+        if (processorList == null || processorList.isEmpty() || processorList.size() == 1) {
+            return null;
+        }
+        return processorList.get(processorList.size() - 2);
+    }
+
+    public List<Processor> getInterceptedProcessors() {
+        return Collections.unmodifiableList(processorList);
     }
 
     public Object getOriginalInBody() {

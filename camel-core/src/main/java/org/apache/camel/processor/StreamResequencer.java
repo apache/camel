@@ -58,7 +58,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @see ResequencerEngine
  */
-public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor, Navigate<Processor> {
+public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor, Navigate<Processor>, Traceable {
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     
@@ -131,6 +131,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     @Override
     public String toString() {
         return "StreamResequencer[to: " + processor + "]";
+    }
+
+    public String getTraceLabel() {
+        return "StreamResequence";
     }
 
     @Override

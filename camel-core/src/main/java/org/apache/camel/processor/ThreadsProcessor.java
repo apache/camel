@@ -115,4 +115,8 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         }
     }
 
+    public String toString() {
+        return "Threads";
+    }
+
 }

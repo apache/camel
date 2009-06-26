@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
  * 
  * @version $Revision$
  */
-public class Delayer extends DelayProcessorSupport {
+public class Delayer extends DelayProcessorSupport implements Traceable {
     private final Expression delay;
 
     public Delayer(Processor processor, Expression delay) {
@@ -38,6 +38,10 @@ public class Delayer extends DelayProcessorSupport {
     @Override
     public String toString() {
         return "Delayer[" + delay + " to: " + getProcessor() + "]";
+    }
+
+    public String getTraceLabel() {
+        return "Delayer[" + delay + "]";
     }
 
     // Implementation methods

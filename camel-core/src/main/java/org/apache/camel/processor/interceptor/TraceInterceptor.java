@@ -27,6 +27,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
+import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.TraceableUnitOfWork;
@@ -100,14 +102,15 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         try {
             // before
             if (shouldLog) {
-                logExchange(exchange);
-                traceExchange(exchange);
 
                 // if traceable then register this as the previous node, now it has been logged
                 if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
                     TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-                    tuow.addInterceptedNode(node);
+                    tuow.addInterceptedProcessor(super.getProcessor());
                 }
+
+                logExchange(exchange);
+                traceExchange(exchange);
             }
 
             // process the exchange

@@ -41,15 +41,19 @@ import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
  *
  * @version $Revision$
  */
-public class Aggregator extends BatchProcessor {
+public class Aggregator extends BatchProcessor implements Traceable {
+
+    private Expression correlationExpression;
 
     public Aggregator(Processor processor, Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         this(processor, new DefaultAggregationCollection(correlationExpression, aggregationStrategy));
+        this.correlationExpression = correlationExpression;
     }
 
     public Aggregator(Processor processor, Expression correlationExpression, AggregationStrategy aggregationStrategy,
                       Predicate aggregationCompletedPredicate) {
         this(processor, new PredicateAggregationCollection(correlationExpression, aggregationStrategy, aggregationCompletedPredicate));
+        this.correlationExpression = correlationExpression;
     }
 
     public Aggregator(Processor processor, AggregationCollection collection) {
@@ -61,4 +65,7 @@ public class Aggregator extends BatchProcessor {
         return "Aggregator[to: " + getProcessor() + "]";
     }
 
+    public String getTraceLabel() {
+        return "Aggregate[" + correlationExpression + "]";
+    }
 }

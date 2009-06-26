@@ -63,6 +63,8 @@ public class JoinRoutesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                context.setTracing(true);
+
                 from("direct:a").choice()
                         .when(header("foo").isEqualTo("bar")).to("direct:b")
                         .when(header("foo").isEqualTo("cheese")).to("direct:c")

@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class FilterProcessor extends DelegateProcessor {
+public class FilterProcessor extends DelegateProcessor implements Traceable {
     private static final Log LOG = LogFactory.getLog(FilterProcessor.class);
     private final Predicate predicate;
 
@@ -52,6 +52,10 @@ public class FilterProcessor extends DelegateProcessor {
     @Override
     public String toString() {
         return "Filter[if: " + predicate + " do: " + getProcessor() + "]";
+    }
+
+    public String getTraceLabel() {
+        return "Filter[if: " + predicate + "]";
     }
 
     public Predicate getPredicate() {

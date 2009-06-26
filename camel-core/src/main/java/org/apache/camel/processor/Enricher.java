@@ -146,6 +146,11 @@ public class Enricher extends ServiceSupport implements Processor {
         return new CopyAggregationStrategy();
     }
 
+    @Override
+    public String toString() {
+        return "Enrich[" + producer.getEndpoint().getEndpointUri() + "]";
+    }
+
     protected void doStart() throws Exception {
         producer.start();
     }

@@ -16,30 +16,21 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
+/**
+ * Traceable processors allowing easeir tracing using constructed labels to help identify the processor
+ * and where its defined in the route model.
+ *
+ * @version $Revision$
+ */
+public interface Traceable {
 
-public class ExchangePatternProcessor implements Processor {
-    private ExchangePattern exchangePattern = ExchangePattern.InOnly;
-    
-    public ExchangePatternProcessor() {
-    }
-    
-    public ExchangePatternProcessor(ExchangePattern ep) {
-        setExchangePattern(ep);
-    }
-    
-    public void setExchangePattern(ExchangePattern ep) {
-        exchangePattern = ep;
-    }
-   
-    public void process(Exchange exchange) throws Exception {
-        exchange.setPattern(exchangePattern);        
-    }
+    /**
+     * Gets the trace label used for logging when tracing is enabled.
+     * <p/>
+     * The lable should be short and precise.
+     *
+     * @return  the label
+     */
+    public String getTraceLabel();
 
-    @Override
-    public String toString() {
-        return "SetExchangePattern[" + exchangePattern + "]";
-    }
 }

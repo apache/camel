@@ -88,6 +88,8 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 errorHandler(deadLetterChannel("mock:error"));
 
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).to("mock:tech");

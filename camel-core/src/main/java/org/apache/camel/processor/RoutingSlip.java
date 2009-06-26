@@ -27,8 +27,7 @@ import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -36,8 +35,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on the value of a message header.
  */
-public class RoutingSlip extends ServiceSupport implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
+public class RoutingSlip extends ServiceSupport implements Processor, Traceable {
     private ProducerCache producerCache;
     private final String header;
     private final String uriDelimiter;
@@ -57,6 +55,10 @@ public class RoutingSlip extends ServiceSupport implements Processor {
     @Override
     public String toString() {
         return "RoutingSlip[header=" + header + " uriDelimiter=" + uriDelimiter + "]";
+    }
+
+    public String getTraceLabel() {
+        return "RoutingSlip[" + header + "]";
     }
 
     public void process(Exchange exchange) throws Exception {

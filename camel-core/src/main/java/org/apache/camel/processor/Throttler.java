@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
  * 
  * @version $Revision$
  */
-public class Throttler extends DelayProcessorSupport {
+public class Throttler extends DelayProcessorSupport implements Traceable {
     private long maximumRequestsPerPeriod;
     private long timePeriodMillis;
     private TimeSlot slot;
@@ -49,6 +49,10 @@ public class Throttler extends DelayProcessorSupport {
     public String toString() {
         return "Throttler[requests: " + maximumRequestsPerPeriod + " per: " + timePeriodMillis + " (ms) to: "
                + getProcessor() + "]";
+    }
+
+    public String getTraceLabel() {
+        return "Throttle[" + maximumRequestsPerPeriod + " per: " + timePeriodMillis + "]";
     }
 
     // Properties
@@ -97,10 +101,10 @@ public class Throttler extends DelayProcessorSupport {
         slot.assign();
         return slot;
     }
-    
+
     /*
-     * A time slot is capable of handling a number of exchanges within a certain period of time.
-     */
+    * A time slot is capable of handling a number of exchanges within a certain period of time.
+    */
     protected class TimeSlot {
         
         private long capacity = Throttler.this.maximumRequestsPerPeriod;

@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class Pipeline extends MulticastProcessor implements Processor {
+public class Pipeline extends MulticastProcessor implements Processor, Traceable {
     private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
 
     public Pipeline(Collection<Processor> processors) {
@@ -160,4 +160,8 @@ public class Pipeline extends MulticastProcessor implements Processor {
         return "Pipeline" + getProcessors();
     }
 
+    @Override
+    public String getTraceLabel() {
+        return "Pipeline";
+    }
 }
