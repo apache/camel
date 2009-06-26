@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -23,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 
 /**
  * @version $Revision$
@@ -65,6 +67,18 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testRegistry() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Registry");
+        template.sendBody("direct:e", "Hello");
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testCamelContext() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("CamelContext");
+        template.sendBody("direct:f", "Hello");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -81,6 +95,10 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
                 from("direct:c").to("mock:foo");
 
                 from("direct:d").beanRef("foo", "withTypeConverter").to("mock:result");
+
+                from("direct:e").beanRef("foo", "withRegistry").to("mock:result");
+
+                from("direct:f").beanRef("foo", "withCamelContext").to("mock:result");
             }
         };
     }
@@ -112,6 +130,22 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
             assertEquals("Hello", body);
             assertEquals(new Integer(123), converter.convertTo(Integer.class, "123"));
             return "TypeConverter";
+        }
+
+        public String withRegistry(String body, Registry registry) {
+            assertNotNull(body);
+            assertNotNull(registry);
+            assertNotNull(registry.lookup("foo"));
+            assertEquals("Hello", body);
+            return "Registry";
+        }
+
+        public String withCamelContext(String body, CamelContext camel) {
+            assertNotNull(body);
+            assertNotNull(camel);
+            assertNotNull(camel.getRegistry().lookup("foo"));
+            assertEquals("Hello", body);
+            return "CamelContext";
         }
 
     }

@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.builder.ExpressionBuilder;
 
 /**
@@ -53,6 +55,8 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
         addParameterMapping(Message.class, ExpressionBuilder.inMessageExpression());
         addParameterMapping(Exception.class, ExpressionBuilder.exchangeExceptionExpression());
         addParameterMapping(TypeConverter.class, ExpressionBuilder.typeConverterExpression());
+        addParameterMapping(Registry.class, ExpressionBuilder.registryExpression());
+        addParameterMapping(CamelContext.class, ExpressionBuilder.camelContextExpression());
     }
 
 }

@@ -219,6 +219,42 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the {@link org.apache.camel.spi.Registry}
+     *
+     * @return an expression object which will return the registry
+     */
+    public static Expression registryExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getContext().getRegistry();
+            }
+
+            @Override
+            public String toString() {
+                return "registry";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the {@link org.apache.camel.CamelContext}
+     *
+     * @return an expression object which will return the camel context
+     */
+    public static Expression camelContextExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getContext();
+            }
+
+            @Override
+            public String toString() {
+                return "camelContext";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for an exception message set on the exchange
      *
      * @see <tt>Exchange.getException().getMessage()</tt>
