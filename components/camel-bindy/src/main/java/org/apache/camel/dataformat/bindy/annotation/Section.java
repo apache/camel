@@ -1,5 +1,3 @@
-package org.apache.camel.dataformat.bindy.annotation;
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -17,6 +15,8 @@ package org.apache.camel.dataformat.bindy.annotation;
  * limitations under the License.
  */
 
+package org.apache.camel.dataformat.bindy.annotation;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -30,11 +30,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Section {
 
-	/**
-	 * 	 * N° of the section
-	 * 
-	 * @return 
-	 */
-	int nber();
-
+    /**
+     * Number of the section
+     * 
+     * @return 
+     */
+    int number();
 }

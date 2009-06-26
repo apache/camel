@@ -27,8 +27,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
-import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
+import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.trailer.Trailer;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.commons.logging.Log;
@@ -43,78 +43,77 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairSortedMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleKeyValuePairSortedMarshallTest extends AbstractJUnit4SpringContextTests {
 
-	private static final transient Log LOG = LogFactory.getLog(BindySimpleKeyValuePairSortedMarshallTest.class);
+    private static final transient Log LOG = LogFactory.getLog(BindySimpleKeyValuePairSortedMarshallTest.class);
 
-	private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-	private String result = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
+    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private String result = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
 
-	@Produce(uri = "direct:start")
-	private ProducerTemplate template;
+    @Produce(uri = "direct:start")
+    private ProducerTemplate template;
 
-	@EndpointInject(uri = "mock:result")
-	private MockEndpoint resultEndpoint;
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint resultEndpoint;
 
-	@Test
-	public void testMarshallMessage() {
+    @Test
+    public void testMarshallMessage() {
 
-		resultEndpoint.expectedBodiesReceived(result);
-		template.sendBody(generateModel());
+        resultEndpoint.expectedBodiesReceived(result);
+        template.sendBody(generateModel());
 
-		try {
-			resultEndpoint.assertIsSatisfied();
-		} catch (InterruptedException e) {
-			LOG.error("Unit test error : ", e);
-		}
-	}
+        try {
+            resultEndpoint.assertIsSatisfied();
+        } catch (InterruptedException e) {
+            LOG.error("Unit test error : ", e);
+        }
+    }
 
-	public List<Map<String, Object>> generateModel() {
-		Map<String, Object> modelObjects = new HashMap<String, Object>();
+    public List<Map<String, Object>> generateModel() {
+        Map<String, Object> modelObjects = new HashMap<String, Object>();
 
-		Header header = new Header();
-		header.setBeginString("FIX 4.1");
-		header.setBodyLength(20);
-		header.setMsgSeqNum(1);
-		header.setMsgType("0");
-		header.setSendCompId("INVMGR");
-		header.setTargetCompId("BRKR");
+        Header header = new Header();
+        header.setBeginString("FIX 4.1");
+        header.setBodyLength(20);
+        header.setMsgSeqNum(1);
+        header.setMsgType("0");
+        header.setSendCompId("INVMGR");
+        header.setTargetCompId("BRKR");
 
-		Trailer trailer = new Trailer();
-		trailer.setCheckSum(220);
+        Trailer trailer = new Trailer();
+        trailer.setCheckSum(220);
 
-		Order order = new Order();
-		order.setAccount("BE.CHM.001");
-		order.setClOrdId("CHM0001-01");
-		order.setIDSource("4");
-		order.setSecurityId("BE0001245678");
-		order.setSide("1");
-		order.setText("this is a camel - bindy test");
+        Order order = new Order();
+        order.setAccount("BE.CHM.001");
+        order.setClOrdId("CHM0001-01");
+        order.setIDSource("4");
+        order.setSecurityId("BE0001245678");
+        order.setSide("1");
+        order.setText("this is a camel - bindy test");
 
-		order.setHeader(header);
-		order.setTrailer(trailer);
+        order.setHeader(header);
+        order.setTrailer(trailer);
 
-		modelObjects.put(order.getClass().getName(), order);
-		modelObjects.put(header.getClass().getName(), header);
-		modelObjects.put(trailer.getClass().getName(), trailer);
+        modelObjects.put(order.getClass().getName(), order);
+        modelObjects.put(header.getClass().getName(), header);
+        modelObjects.put(trailer.getClass().getName(), trailer);
 
-		models.add(modelObjects);
+        models.add(modelObjects);
+        return models;
+    }
 
-		return models;
-	}
+    @Configuration
+    public static class ContextConfig extends SingleRouteCamelConfiguration {
+        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat(
+            "org.apache.camel.dataformat.bindy.model.fix.sorted");
 
-	@Configuration
-	public static class ContextConfig extends SingleRouteCamelConfiguration {
-		BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat(
-				"org.apache.camel.dataformat.bindy.model.fix.sorted");
-
-		@Override
-		@Bean
-		public RouteBuilder route() {
-			return new RouteBuilder() {
-				@Override
-				public void configure() {
-					from("direct:start").marshal(camelDataFormat).to("mock:result");
-				}
-			};
-		}
-	}
+        @Override
+        @Bean
+        public RouteBuilder route() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:start").marshal(camelDataFormat).to("mock:result");
+                }
+            };
+        }
+    }
 }

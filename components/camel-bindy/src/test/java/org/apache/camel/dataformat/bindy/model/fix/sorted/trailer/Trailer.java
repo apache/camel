@@ -22,7 +22,7 @@ import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 
 @Link
-@Section(nber = 3)
+@Section(number = 3)
 public class Trailer {
 
     @KeyValuePairField(tag = 10, position = 1)

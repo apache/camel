@@ -52,8 +52,7 @@ public class BindySimpleKeyValuePairMarshallTest extends AbstractJUnit4SpringCon
 
     @Test
     public void testMarshallMessage() throws Exception {
- 
-    	resultEndpoint.expectedBodiesReceived(result);
+        resultEndpoint.expectedBodiesReceived(result);
         template.sendBody(generateModel());
 
         resultEndpoint.assertIsSatisfied();
@@ -89,7 +88,6 @@ public class BindySimpleKeyValuePairMarshallTest extends AbstractJUnit4SpringCon
         modelObjects.put(trailer.getClass().getName(), trailer);
  
         models.add(modelObjects);
-
         return models;
     }
 

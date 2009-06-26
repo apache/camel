@@ -22,7 +22,7 @@ import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 
 @Link
-@Section(nber = 1)
+@Section(number = 1)
 public class Header {
 
     @KeyValuePairField(tag = 8, position = 1) // Message Header

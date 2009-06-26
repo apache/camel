@@ -54,7 +54,7 @@ public class BindySimpleKeyValuePairTabMarshallTest extends AbstractJUnit4Spring
     @Test
     public void testMarshallMessage() throws Exception {
  
-    	resultEndpoint.expectedBodiesReceived(result);
+        resultEndpoint.expectedBodiesReceived(result);
         template.sendBody(generateModel());
 
         resultEndpoint.assertIsSatisfied();
