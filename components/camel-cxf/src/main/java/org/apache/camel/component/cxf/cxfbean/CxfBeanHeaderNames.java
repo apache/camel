@@ -16,17 +16,11 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
-import org.apache.camel.Exchange;
-
 /**
  * @version $Revision$
  */
 public interface CxfBeanHeaderNames {
     
-    String VERB = Exchange.HTTP_METHOD;
-    String CONTENT_TYPE = Exchange.CONTENT_TYPE;
-    String CHARACTER_ENCODING = Exchange.HTTP_CHARACTER_ENCODING;
-    String PATH = Exchange.HTTP_PATH;
     String BASE_PATH = "CamelCxfBeanRequestBasePath";
 
 }

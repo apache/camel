@@ -79,7 +79,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
     }
 
     protected String getPath(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(CxfBeanHeaderNames.PATH, String.class);
+        String answer = camelMessage.getHeader(Exchange.HTTP_PATH, String.class);
         return answer;
     }
     
@@ -94,12 +94,12 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
     }
 
     protected String getVerb(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(CxfBeanHeaderNames.VERB, String.class);
+        String answer = camelMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         return answer;
     }
 
     protected String getCharacterEncoding(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(CxfBeanHeaderNames.CHARACTER_ENCODING, String.class);
+        String answer = camelMessage.getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
         if (answer == null) {
             answer = camelMessage.getHeader(Exchange.CHARSET_NAME, String.class);
         }
@@ -108,7 +108,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
     }
 
     protected String getRequestContentType(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(CxfBeanHeaderNames.CONTENT_TYPE, String.class);
+        String answer = camelMessage.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (answer != null) {
             return answer;
         }        
