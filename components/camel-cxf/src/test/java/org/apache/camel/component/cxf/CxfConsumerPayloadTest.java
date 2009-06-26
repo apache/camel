@@ -46,6 +46,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerTest {
             + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
             + "</ns1:echoBooleanResponse>";
 
+    // START SNIPPET: payload
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -69,5 +70,6 @@ public class CxfConsumerPayloadTest extends CxfConsumerTest {
             }
         };
     }
+    // END SNIPPET: payload
 
 }
