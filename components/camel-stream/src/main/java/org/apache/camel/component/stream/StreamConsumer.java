@@ -19,6 +19,7 @@ package org.apache.camel.component.stream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -80,9 +81,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     @Override
     public void doStop() throws Exception {
         // important: do not close the stream as it will close the standard system.in etc.
-        executor.shutdownNow();
-        executor = null;
-        super.doStop();
+    	ObjectHelper.notNull(executor, "Executor");
+    	executor.shutdownNow();
+   		executor = null;
+   		super.doStop();
     }
 
     public void run() {
@@ -189,12 +191,22 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private InputStream resolveStreamFromFile() throws IOException {
         String fileName = endpoint.getFileName();
         ObjectHelper.notEmpty(fileName, "fileName");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("About to read from file: " + fileName);
-        }
+        
+        FileInputStream fileStream;
 
         File file = new File(fileName);
-        return new FileInputStream(file);
+
+        if (LOG.isDebugEnabled()) {
+        	LOG.debug("File to be scanned : " + file.getName() + ", path : " + file.getAbsolutePath());
+        }
+
+        if ( file.canRead() ) {
+            	fileStream = new FileInputStream(file);
+        } else {
+        	throw new IllegalArgumentException(INVALID_URI);
+        }
+
+        return fileStream;
     }
 
     private void validateUri(String uri) throws IllegalArgumentException {
