@@ -197,11 +197,7 @@ public class DefaultExchange implements Exchange {
     }
 
     public Message getOut() {
-        if (out == null) {
-            out = createOutMessage();
-            configureMessage(out);
-        }
-        return out;
+        return getOut(true);
     }
 
     public boolean hasOut() {
@@ -210,7 +206,8 @@ public class DefaultExchange implements Exchange {
 
     public Message getOut(boolean lazyCreate) {
         if (out == null && lazyCreate) {
-            out = createOutMessage();
+            out = (in != null && in instanceof MessageSupport)
+                ? ((MessageSupport)in).newInstance() : createOutMessage();
             configureMessage(out);
         }
         return out;
@@ -261,21 +258,18 @@ public class DefaultExchange implements Exchange {
         this.fromEndpoint = fromEndpoint;
     }
 
-    public Message getFault() {
-        if (fault == null) {
-            fault = createFaultMessage();
-            configureMessage(fault);
-        }
-        return fault;
-    }
-
     public boolean hasFault() {
         return fault != null;
     }
 
+    public Message getFault() {
+        return getFault(true);
+    }
+
     public Message getFault(boolean lazyCreate) {
         if (fault == null && lazyCreate) {
-            fault = createFaultMessage();
+            fault = (in != null && in instanceof MessageSupport)
+                ? ((MessageSupport)in).newInstance() : createFaultMessage();
             configureMessage(fault);
         }
         return fault;

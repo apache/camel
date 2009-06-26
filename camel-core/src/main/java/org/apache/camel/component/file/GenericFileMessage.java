@@ -39,7 +39,7 @@ public class GenericFileMessage<T> extends DefaultMessage {
 
     @Override
     protected Object createBody() {
-        return file.getBody();
+        return file != null ? file.getBody() : super.createBody();
     }
 
     public GenericFile<T> getGenericFile() {
@@ -51,8 +51,8 @@ public class GenericFileMessage<T> extends DefaultMessage {
     }
 
     @Override
-    public GenericFileMessage newInstance() {
-        return new GenericFileMessage();
+    public GenericFileMessage<T> newInstance() {
+        return new GenericFileMessage<T>();
     }
 
     @Override
