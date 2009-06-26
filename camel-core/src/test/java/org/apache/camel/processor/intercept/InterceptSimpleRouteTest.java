@@ -41,10 +41,12 @@ public class InterceptSimpleRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 intercept().to("mock:intercepted");
 
                 from("direct:start")
-                    .to("mock:foo", "mock:bar", "mock:result");
+                    .to("mock:foo").to("mock:bar").to("mock:result");
             }
         };
     }

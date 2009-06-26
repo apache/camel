@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.TraceableUnitOfWork;
 
 /**
@@ -52,7 +51,7 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
                 // must enable tracer to trace the route path taken during runtime
-                context.addInterceptStrategy(new Tracer());
+                context.setTracing(true);
 
                 // let our my error processor handle all exceptions
                 onException(Exception.class).handled(true).process(new MyErrorProcessor());
