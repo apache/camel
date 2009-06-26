@@ -469,4 +469,17 @@ public interface CamelContext extends Service {
      * @param cache whether stream caching is enabled or not
      */
     void setStreamCaching(Boolean cache);
+
+    /**
+     * Sets whether tracing is enabled or not (default is disabled).
+     * <p/>
+     * Will use the default trace formatter.
+     * <p/>
+     * Use {@link this#addInterceptStrategy(org.apache.camel.spi.InterceptStrategy)} if you
+     * want to add a custom {@link org.apache.camel.processor.interceptor.Tracer} where you
+     * can custome the tracing options and formatting as you like.
+     *
+     * @param tracing whether tracing is enabled or not.
+     */
+    void setTracing(Boolean tracing);
 }

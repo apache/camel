@@ -754,6 +754,22 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.streamCache = cache;
     }
 
+    public void setTracing(Boolean tracing) {
+        // look if alredy enabled
+        Tracer tracer = Tracer.getTracer(this);
+        if (tracing && tracer == null) {
+            // not already enabled
+            addInterceptStrategy(new Tracer());
+        } else if (tracer != null) {
+            // disable existing tracer
+            for (InterceptStrategy strategy : interceptStrategies) {
+                if (strategy instanceof Tracer) {
+                    interceptStrategies.remove(strategy);
+                }
+            }
+        }
+    }
+
     /**
      * Returns true if handle fault has been enabled
      */

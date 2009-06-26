@@ -78,6 +78,10 @@ public abstract class DataSetSupport implements DataSet {
         if (reportCount <= 0) {
             reportCount = getSize() / 5;
         }
+        // report cannot be 0 then default to the size
+        if (reportCount == 0) {
+            reportCount = getSize();
+        }
         return reportCount;
     }
 

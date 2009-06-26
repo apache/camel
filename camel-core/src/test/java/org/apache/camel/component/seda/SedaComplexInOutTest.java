@@ -18,7 +18,6 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * @version $Revision$
@@ -31,7 +30,6 @@ public class SedaComplexInOutTest extends ContextTestSupport {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-
         assertMockEndpointsSatisfied();
     }
 
@@ -40,7 +38,7 @@ public class SedaComplexInOutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                getContext().addInterceptStrategy(new Tracer());
+                getContext().setTracing(true);
 
                 from("direct:start").to("seda:a");
 

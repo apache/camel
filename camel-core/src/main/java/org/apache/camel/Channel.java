@@ -109,6 +109,8 @@ public interface Channel extends Processor, Navigate<Processor> {
 
     /**
      * Gets the defintion of the next processor
+     *
+     * @return the processor definition
      */
     ProcessorDefinition getProcessorDefinition();
 

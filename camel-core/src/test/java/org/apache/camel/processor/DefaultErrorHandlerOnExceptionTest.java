@@ -52,7 +52,9 @@ public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).handled(true).to("mock:boom");
+                context.setTracing(true);
+
+                onException(IllegalArgumentException.class).handled(true).to("log:boom").to("mock:boom");
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

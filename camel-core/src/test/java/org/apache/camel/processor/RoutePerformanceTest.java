@@ -76,7 +76,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("dataset:foo").to("direct:start");
 
-                from("direct:start").to("direct:a", "direct:b", "direct:c");
+                from("direct:start").to("log:a?level=OFF", "log:b?level=OFF", "direct:c");
                 from("direct:c")
                     .choice()
                         .when().header("foo").to("mock:results", "dataset:foo")

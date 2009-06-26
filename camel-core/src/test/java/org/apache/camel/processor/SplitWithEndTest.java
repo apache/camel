@@ -48,10 +48,10 @@ public class SplitWithEndTest extends ContextTestSupport {
     }
 
     public void testSplit() throws Exception {
-        getMockEndpoint("mock:start").expectedBodiesReceived("Hello,World");
-        getMockEndpoint("mock:last").expectedBodiesReceived("last hi Hello@hi World");
+        getMockEndpoint("mock:start").expectedBodiesReceived("Hello,World,Moon");
+        getMockEndpoint("mock:last").expectedBodiesReceived("last hi Hello@hi World@hi Moon");
 
-        template.sendBody("direct:start", "Hello,World");
+        template.sendBody("direct:start", "Hello,World,Moon");
 
         assertMockEndpointsSatisfied();
     }
@@ -62,6 +62,8 @@ public class SplitWithEndTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+
                 MySplitBean bean = new MySplitBean();
 
                 from("direct:start")
@@ -78,7 +80,7 @@ public class SplitWithEndTest extends ContextTestSupport {
                                     return newExchange;
                                 }
                             })
-                        .bean(bean, "hi").to("mock:split")
+                        .bean(bean, "hi").to("mock:split").to("log:foo")
                     .end()
                     .transform(body().prepend("last "))
                     .to("mock:last");
