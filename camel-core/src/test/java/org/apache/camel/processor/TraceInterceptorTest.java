@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * @version $Revision$
@@ -36,9 +35,8 @@ public class TraceInterceptorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // add tracer as an interceptor so it will log the exchange executions at runtime
-                // this can aid us to understand/see how the exchanges is routed etc.
-                getContext().addInterceptStrategy(new Tracer());
+                // enable tracing
+                getContext().setTracing(true);
 
                 from("direct:start").
                         process(new Processor() {
