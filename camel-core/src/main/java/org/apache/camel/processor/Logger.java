@@ -144,6 +144,45 @@ public class Logger implements Processor {
         }
     }
 
+    public void process(Exchange exchange, String message) {
+        switch (level) {
+        case DEBUG:
+            if (log.isDebugEnabled()) {
+                log.debug(logMessage(exchange, message));
+            }
+            break;
+        case ERROR:
+            if (log.isErrorEnabled()) {
+                log.error(logMessage(exchange, message));
+            }
+            break;
+        case FATAL:
+            if (log.isFatalEnabled()) {
+                log.fatal(logMessage(exchange, message));
+            }
+            break;
+        case INFO:
+            if (log.isInfoEnabled()) {
+                log.info(logMessage(exchange, message));
+            }
+            break;
+        case TRACE:
+            if (log.isTraceEnabled()) {
+                log.trace(logMessage(exchange, message));
+            }
+            break;
+        case WARN:
+            if (log.isWarnEnabled()) {
+                log.warn(logMessage(exchange, message));
+            }
+            break;
+        case OFF:
+            break;
+        default:
+            log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange, message));
+        }
+    }
+
     public void log(String message, LoggingLevel loggingLevel) {
         LoggingLevel oldLogLevel = getLevel();
         setLevel(loggingLevel);
@@ -238,6 +277,10 @@ public class Logger implements Processor {
 
     protected Object logMessage(Exchange exchange) {
         return formatter.format(exchange);
+    }
+
+    protected Object logMessage(Exchange exchange, String message) {
+        return formatter.format(exchange) + message;
     }
 
     public Log getLog() {

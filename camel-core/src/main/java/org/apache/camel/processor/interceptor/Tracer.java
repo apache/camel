@@ -40,6 +40,7 @@ public class Tracer implements InterceptStrategy {
     private Predicate traceFilter;
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
+    private boolean logStackTrace;
     private boolean traceOutExchanges;
     private String destinationUri;
     private Endpoint destination;
@@ -133,6 +134,17 @@ public class Tracer implements InterceptStrategy {
      */
     public void setTraceExceptions(boolean traceExceptions) {
         this.traceExceptions = traceExceptions;
+    }
+
+    public boolean isLogStackTrace() {
+        return logStackTrace;
+    }
+
+    /**
+     * Sets whether thrown exception stacktrace should be traced, if disabled then only the exception message is logged
+     */
+    public void setLogStackTrace(boolean logStackTrace) {
+        this.logStackTrace = logStackTrace;
     }
 
     public String getLogName() {

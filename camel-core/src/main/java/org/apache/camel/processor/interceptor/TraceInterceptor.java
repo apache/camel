@@ -210,7 +210,11 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     protected void logException(Exchange exchange, Throwable throwable) {
         if (tracer.isTraceExceptions()) {
-            logger.process(exchange, throwable);
+            if (tracer.isLogStackTrace()) {
+                logger.process(exchange, throwable);
+            } else {
+                logger.process(exchange, ", Exception: " + throwable.toString());
+            }
         }
     }
 
