@@ -24,11 +24,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultRouteNode;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
-import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.TraceableUnitOfWork;
@@ -106,11 +107,59 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                 // if traceable then register this as the previous node, now it has been logged
                 if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
                     TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-                    tuow.addInterceptedProcessor(super.getProcessor());
+
+                    // special for on exception so we can see it in the trace logs
+                    if (node instanceof OnExceptionDefinition) {
+                        Processor pseudo = new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                            }
+
+                            public String toString() {
+                                String name = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName();
+                                return "onException[" + name + "]";
+                            }
+                        };
+                        tuow.addTraced(new DefaultRouteNode(pseudo, node));
+
+                        // log and trace the processor that was onException so we can see it
+                        logExchange(exchange);
+                        traceExchange(exchange);
+                    }
+
+                    // register the processor that was traced
+                    tuow.addTraced(new DefaultRouteNode(super.getProcessor(), node));
                 }
 
+                // TODO: just a little more to avoid logging the last intercepted step
+
+                // log and trace the processor
                 logExchange(exchange);
                 traceExchange(exchange);
+
+                // some nodes need extra work to trace it
+                if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
+                    TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+
+                    // special for intercept() as we would like to trace the processor that was intercepted
+                    // as well, otherwise we only see the intercepted route, but we need the both to be logged/traced
+                    if (node instanceof InterceptDefinition) {
+
+                        // get the intercepted processor from the definition
+                        // we need to use the UoW to have its own index of how far we got into the list
+                        // of intercepted processors the intercept definition holds as the intercept
+                        // definition is a single object that is shared by concurrent thread being routed
+                        // so each exchange has its own private counter
+                        InterceptDefinition intercept = (InterceptDefinition) node;
+                        Processor last = intercept.getInterceptedProcessor(tuow.getAndIncrement(intercept));
+                        if (last != null) {
+                            tuow.addTraced(new DefaultRouteNode(last, node));
+
+                            // log and trace the processor that was intercepted so we can see it
+                            logExchange(exchange);
+                            traceExchange(exchange);
+                        }
+                    }
+                }
             }
 
             // process the exchange

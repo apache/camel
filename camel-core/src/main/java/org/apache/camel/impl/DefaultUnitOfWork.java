@@ -18,11 +18,15 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Service;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.RouteNode;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.UuidGenerator;
@@ -40,7 +44,8 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
 
     private String id;
     private List<Synchronization> synchronizations;
-    private List<Processor> processorList;
+    private List<RouteNode> routeNodes;
+    private Map<InterceptDefinition, AtomicInteger> interceptIndex = new HashMap<InterceptDefinition, AtomicInteger>();
     private Object originalInBody;
 
     public DefaultUnitOfWork(Exchange exchange) {
@@ -55,12 +60,11 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
             synchronizations.clear();
-            synchronizations = null;
         }
-        if (processorList != null) {
-            processorList.clear();
-            processorList = null;
+        if (routeNodes != null) {
+            routeNodes.clear();
         }
+        interceptIndex.clear();
         originalInBody = null;
     }
 
@@ -115,32 +119,42 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return id;
     }
 
-    public void addInterceptedProcessor(Processor processor) {
-        if (processorList == null) {
-            processorList = new ArrayList<Processor>();
+    public void addTraced(RouteNode entry) {
+        if (routeNodes == null) {
+            routeNodes = new ArrayList<RouteNode>();
         }
-        processorList.add(processor);
+        routeNodes.add(entry);
     }
 
-    public Processor getLastInterceptedProcessor() {
-        if (processorList == null || processorList.isEmpty()) {
+    public RouteNode getLastNode() {
+        if (routeNodes == null || routeNodes.isEmpty()) {
             return null;
         }
-        return processorList.get(processorList.size() - 1);
+        return routeNodes.get(routeNodes.size() - 1);
     }
 
-    public Processor getSecondLastInterceptedProcessor() {
-        if (processorList == null || processorList.isEmpty() || processorList.size() == 1) {
+    public RouteNode getSecondLastNode() {
+        if (routeNodes == null || routeNodes.isEmpty() || routeNodes.size() == 1) {
             return null;
         }
-        return processorList.get(processorList.size() - 2);
+        return routeNodes.get(routeNodes.size() - 2);
     }
 
-    public List<Processor> getInterceptedProcessors() {
-        return Collections.unmodifiableList(processorList);
+    public List<RouteNode> getNodes() {
+        return Collections.unmodifiableList(routeNodes);
     }
 
     public Object getOriginalInBody() {
         return originalInBody;
     }
+
+    public int getAndIncrement(InterceptDefinition node) {
+        AtomicInteger count = interceptIndex.get(node);
+        if (count == null) {
+            count = new AtomicInteger();
+            interceptIndex.put(node, count);
+        }
+        return count.getAndIncrement();
+    }
+
 }

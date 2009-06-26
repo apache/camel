@@ -43,6 +43,9 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlTransient
     protected Processor output;
 
+    @XmlTransient
+    protected final List<Processor> intercepted = new ArrayList<Processor>();
+
     public InterceptDefinition() {
     }
 
@@ -68,14 +71,20 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
 
         // add the output as a intercept strategy to the route context so its invoked on each processing step
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {
+            private Processor interceptedTarget;
+
             public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
                 // prefer next target over taget as next target is the real target
-                Processor processor = nextTarget != null ? nextTarget : target;
-                if (processor != null) {
+                interceptedTarget = nextTarget != null ? nextTarget : target;
+
+                // remember the target that was intercepted
+                intercepted.add(interceptedTarget);
+
+                if (interceptedTarget != null) {
                     // wrap in a pipeline so we continue routing to the next
                     List<Processor> list = new ArrayList<Processor>(2);
                     list.add(output);
-                    list.add(processor);
+                    list.add(interceptedTarget);
                     return new Pipeline(list);
                 } else {
                     return output;
@@ -84,7 +93,7 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
 
             @Override
             public String toString() {
-                return "intercept[" + output + "]";
+                return "intercept[" +  (interceptedTarget != null ? interceptedTarget : output) + "]";
             }
         });
 
@@ -130,6 +139,15 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
             ProcessorDefinition keep = outputs.get(0);
             clearOutput();
             outputs.add(keep);
+        }
+    }
+
+    public Processor getInterceptedProcessor(int index) {
+        // avoid out of bounds
+        if (index <= intercepted.size() - 1) {
+            return intercepted.get(index);
+        } else {
+            return null;
         }
     }
 

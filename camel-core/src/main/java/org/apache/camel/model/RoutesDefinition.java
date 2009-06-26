@@ -255,7 +255,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
      */
     public InterceptDefinition intercept() {
         InterceptDefinition answer = new InterceptDefinition();
-        getIntercepts().add(answer);
+        getIntercepts().add(0, answer);
         return answer;
     }
 

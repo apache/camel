@@ -14,24 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.issues;
+package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Testing routes having multiple from in the same route.
+ * @version $Revision$
  */
-public class MultipleFromTest extends ContextTestSupport {
+public class DualInterceptSimpleRouteTest extends ContextTestSupport {
 
-    public void testMultipleFrom() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Hello World", "Bye World");
+    public void testDualIntercept() throws Exception {
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        getMockEndpoint("mock:intercepted").expectedMessageCount(6);
+        getMockEndpoint("mock:a").expectedMessageCount(3);
+        getMockEndpoint("mock:b").expectedMessageCount(3);
 
         template.sendBody("direct:start", "Hello World");
-        template.sendBody("seda:in", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
@@ -39,10 +41,19 @@ public class MultipleFromTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("direct:start", "seda:in").to("mock:result");
+                context.setTracing(true);
+
+                // it should genereally be avoid to have dual interceptors as its a bit confusing
+                // but you can do it anyway
+                intercept().to("mock:intercepted");
+
+                intercept().to("mock:a").to("mock:b");
+
+                from("direct:start")
+                    .to("mock:foo").to("mock:bar").to("mock:result");
             }
         };
     }
-    
 }

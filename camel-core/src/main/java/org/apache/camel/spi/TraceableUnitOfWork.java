@@ -18,7 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
-import org.apache.camel.Processor;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.RouteNode;
 
 /**
  * A Unit of work that is also traceable with the
@@ -30,26 +31,38 @@ import org.apache.camel.Processor;
 public interface TraceableUnitOfWork extends UnitOfWork {
 
     /**
-     * Adds the given processor that was intercepted
+     * Adds the entry that was intercepted
      *
-     * @param processor the processor
+     * @param entry the entry
      */
-    void addInterceptedProcessor(Processor processor);
+    void addTraced(RouteNode entry);
 
     /**
-     * Gets the last intercepted processor, is <tt>null</tt> if no last exists.
+     * Gets the last node, is <tt>null</tt> if no last exists.
      */
-    Processor getLastInterceptedProcessor();
+    RouteNode getLastNode();
 
     /**
-     * Gets the 2nd last intercepted processor, is <tt>null</tt> if no last exists.
+     * Gets the 2nd last node, is <tt>null</tt> if no last exists.
      */
-    Processor getSecondLastInterceptedProcessor();
+    RouteNode getSecondLastNode();
 
     /**
-     * Gets the current list of intercepted processors, representing the route path the
-     * current {@link org.apache.camel.Exchange} has taken.
+     * Gets the current list of nodes, representing the route path the
+     * current {@link org.apache.camel.Exchange} has currently taken.
      */
-    List<Processor> getInterceptedProcessors();
+    List<RouteNode> getNodes();
+
+    /**
+     * A private counter that increments, is used to as book keeping how far this
+     * exchange have been intercepted by the general intercept().
+     * <p/>
+     * We need this special book keeping to keep correct order when dealing
+     * with concurrent exchanges being routed in the same route path.
+     *
+     * @param node the intercept node
+     * @return the current count
+     */
+    int getAndIncrement(InterceptDefinition node);
 
 }

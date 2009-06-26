@@ -22,8 +22,9 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.Traceable;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteNode;
+import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.MessageHelper;
 
@@ -81,7 +82,8 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     // Implementation
     //---------------------------------------------------------------
-    private String extractTraceLabel(Processor processor) {
+    private String extractTraceLabel(RouteNode entry) {
+        Processor processor = entry.getProcessor();
         if (processor instanceof Traceable) {
             Traceable trace = (Traceable) processor;
             return trace.getTraceLabel();
@@ -96,7 +98,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private String extractFromNode(Exchange exchange) {
         if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            Processor last = tuow.getSecondLastInterceptedProcessor();
+            RouteNode last = tuow.getSecondLastNode();
             return last != null ? extractTraceLabel(last) : null;
         }
         return null;
@@ -105,7 +107,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private String extractToNode(Exchange exchange) {
         if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            Processor last = tuow.getLastInterceptedProcessor();
+            RouteNode last = tuow.getLastNode();
             return last != null ? extractTraceLabel(last) : null;
         }
         return null;

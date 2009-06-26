@@ -14,23 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.model;
+
+import org.apache.camel.Processor;
 
 /**
- * Traceable processors allowing easeir tracing using constructed labels to help identify the processor
- * and where its defined in the route model.
+ * Represents a model of a node in the runtime route path.
  *
  * @version $Revision$
  */
-public interface Traceable {
+public interface RouteNode {
 
     /**
-     * Gets the trace label used for logging when tracing is enabled.
-     * <p/>
-     * The lable should be short and precise.
+     * Gets the actual processor this node represents.
      *
-     * @return  the label
+     * @return the processor, can be <tt>null</tt> in special cases such as an intercepted node
      */
-    String getTraceLabel();
+    Processor getProcessor();
 
+    /**
+     * Gets the model definition that represents this node
+     *
+     * @return the definition, is newer <tt>null</tt>
+     */
+    ProcessorDefinition getProcessorDefinition();
 }

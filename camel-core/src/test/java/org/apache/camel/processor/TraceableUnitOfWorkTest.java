@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteNode;
 import org.apache.camel.spi.TraceableUnitOfWork;
 
 /**
@@ -72,9 +72,9 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
 
             // get the list of intercepted nodes
-            List<Processor> list = tuow.getInterceptedProcessors();
-            // get the 2nd last as the last is me (MyErrorProcessor)
-            Processor last = list.get(list.size() - 2);
+            List<RouteNode> list = tuow.getNodes();
+            // get the 3rd last as its the bean
+            Processor last = list.get(list.size() - 3).getProcessor();
 
             // set error message
             exchange.getFault().setBody("Failed at: " + last.toString());
