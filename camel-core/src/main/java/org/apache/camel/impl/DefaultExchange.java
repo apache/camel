@@ -185,7 +185,7 @@ public class DefaultExchange implements Exchange {
 
     public Message getIn() {
         if (in == null) {
-            in = createInMessage();
+            in = new DefaultMessage();
             configureMessage(in);
         }
         return in;
@@ -207,7 +207,7 @@ public class DefaultExchange implements Exchange {
     public Message getOut(boolean lazyCreate) {
         if (out == null && lazyCreate) {
             out = (in != null && in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : createOutMessage();
+                ? ((MessageSupport)in).newInstance() : new DefaultMessage();
             configureMessage(out);
         }
         return out;
@@ -269,7 +269,7 @@ public class DefaultExchange implements Exchange {
     public Message getFault(boolean lazyCreate) {
         if (fault == null && lazyCreate) {
             fault = (in != null && in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : createFaultMessage();
+                ? ((MessageSupport)in).newInstance() : new DefaultMessage();
             configureMessage(fault);
         }
         return fault;
@@ -348,27 +348,6 @@ public class DefaultExchange implements Exchange {
     }
 
     /**
-     * Factory method used to lazily create the IN message
-     */
-    protected Message createInMessage() {
-        return new DefaultMessage();
-    }
-
-    /**
-     * Factory method to lazily create the OUT message
-     */
-    protected Message createOutMessage() {
-        return new DefaultMessage();
-    }
-
-    /**
-     * Factory method to lazily create the FAULT message
-     */
-    protected Message createFaultMessage() {
-        return new DefaultMessage();
-    }
-
-    /**
      * Configures the message after it has been set on the exchange
      */
     protected void configureMessage(Message message) {
@@ -388,5 +367,4 @@ public class DefaultExchange implements Exchange {
         }
         return answer;
     }
-
 }
