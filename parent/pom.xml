@@ -94,6 +94,10 @@
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
     <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.exclude.dependencies>true</camel.osgi.exclude.dependencies>
+
+    <!-- encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <dependencyManagement>
