@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,19 +52,19 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        RemoteFileExchange exchange = (RemoteFileExchange) mock.getExchanges().get(0);
+        GenericFileExchange exchange = (GenericFileExchange) mock.getExchanges().get(0);
         RemoteFile file = (RemoteFile) exchange.getGenericFile();
         assertDirectoryEquals("multidir/bye.txt", file.getAbsoluteFilePath());
         assertDirectoryEquals("bye.txt", file.getRelativeFilePath());
         assertEquals("bye.txt", file.getFileName());
 
-        exchange = (RemoteFileExchange) mock.getExchanges().get(1);
+        exchange = (GenericFileExchange) mock.getExchanges().get(1);
         file = (RemoteFile) exchange.getGenericFile();
         assertDirectoryEquals("multidir/sub/hello.txt", file.getAbsoluteFilePath());
         assertDirectoryEquals("sub/hello.txt", file.getRelativeFilePath());
         assertEquals("hello.txt", file.getFileName());
 
-        exchange = (RemoteFileExchange) mock.getExchanges().get(2);
+        exchange = (GenericFileExchange) mock.getExchanges().get(2);
         file = (RemoteFile) exchange.getGenericFile();
         assertDirectoryEquals("multidir/sub/sub2/godday.txt", file.getAbsoluteFilePath());
         assertDirectoryEquals("sub/sub2/godday.txt", file.getRelativeFilePath());
@@ -77,5 +78,4 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

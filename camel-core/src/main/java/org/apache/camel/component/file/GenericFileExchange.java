@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.PollingConsumerAware;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultExchange;
@@ -40,29 +41,9 @@ public class GenericFileExchange<T> extends DefaultExchange implements PollingCo
     }
 
     protected void populateHeaders(GenericFile<T> file) {
-        if (file != null) {
-            getIn().setHeader(Exchange.FILE_NAME_ONLY, file.getFileNameOnly());
-            getIn().setHeader(Exchange.FILE_NAME, file.getFileName());
-            getIn().setHeader("CamelFileAbsolute", file.isAbsolute());
-            getIn().setHeader("CamelFileAbsolutePath", file.getAbsoluteFilePath());
-
-            if (file.isAbsolute()) {
-                getIn().setHeader(Exchange.FILE_PATH, file.getAbsoluteFilePath());
-            } else {
-                // we must normalize path according to protocol if we build our own paths
-                String path = file.normalizePathToProtocol(file.getEndpointPath() + File.separator + file.getRelativeFilePath());
-                getIn().setHeader(Exchange.FILE_PATH, path);
-            }
-
-            getIn().setHeader("CamelFileRelativePath", file.getRelativeFilePath());
-            getIn().setHeader(Exchange.FILE_PARENT, file.getParent());
-
-            if (file.getFileLength() > 0) {
-                getIn().setHeader("CamelFileLength", file.getFileLength());
-            }
-            if (file.getLastModified() > 0) {
-                getIn().setHeader("CamelFileLastModified", new Date(file.getLastModified()));
-            }
+        Message message = getIn();
+        if (file != null && message instanceof GenericFileMessage) {
+            file.populateHeaders((GenericFileMessage<T>)message);
         }
     }
 

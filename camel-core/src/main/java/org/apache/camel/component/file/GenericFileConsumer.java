@@ -73,7 +73,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         }
 
         // sort using build in sorters that is expression based
-        // first we need to convert to RemoteFileExchange objects so we can sort
+        // first we need to convert to GenericFileExchange objects so we can sort
         // using expressions
         LinkedList<GenericFileExchange> exchanges = new LinkedList<GenericFileExchange>();
         for (GenericFile<T> file : files) {

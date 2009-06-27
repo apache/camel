@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
@@ -28,6 +29,18 @@ import org.apache.camel.util.ObjectHelper;
 public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
 
     private String hostname;
+
+    /**
+     * Populates the {@link GenericFileMessage} relevant headers
+     *
+     * @param message the message to populate with headers
+     */
+    public void populateHeaders(GenericFileMessage<T> message) {
+        if (message != null) {
+            super.populateHeaders(message);
+            message.setHeader("CamelFileHost", getHostname());
+        }
+    }
 
     public String getHostname() {
         return hostname;
@@ -84,5 +97,4 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         // strip leading / for FTP protocol to avoid files with absolute paths
         return FileUtil.stripLeadingSeparator(path);
     }
-
 }

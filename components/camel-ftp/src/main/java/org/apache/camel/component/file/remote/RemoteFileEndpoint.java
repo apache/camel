@@ -39,14 +39,14 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     @Override
-    public GenericFileExchange createExchange() {
-        return new RemoteFileExchange(this);
+    public GenericFileExchange<T> createExchange() {
+        return new GenericFileExchange<T>(this);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public GenericFileExchange<T> createExchange(GenericFile<T> file) {
-        RemoteFileExchange answer = new RemoteFileExchange<T>(this);
+        GenericFileExchange<T> answer = new GenericFileExchange<T>(this);
         answer.setGenericFile(file);
         return answer;
     }

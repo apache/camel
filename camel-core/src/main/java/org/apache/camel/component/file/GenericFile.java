@@ -18,7 +18,9 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Date;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -78,6 +80,38 @@ public class GenericFile<T> implements Cloneable, Serializable {
         result.setBody(source.getBody());
         result.setBinding(source.getBinding());
         return result;
+    }
+
+    /**
+     * Populates the {@link GenericFileMessage} relevant headers
+     *
+     * @param message the message to populate with headers
+     */
+    public void populateHeaders(GenericFileMessage<T> message) {
+        if (message != null) {
+            message.setHeader(Exchange.FILE_NAME_ONLY, getFileNameOnly());
+            message.setHeader(Exchange.FILE_NAME, getFileName());
+            message.setHeader("CamelFileAbsolute", isAbsolute());
+            message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
+    
+            if (isAbsolute()) {
+                message.setHeader(Exchange.FILE_PATH, getAbsoluteFilePath());
+            } else {
+                // we must normalize path according to protocol if we build our own paths
+                String path = normalizePathToProtocol(getEndpointPath() + File.separator + getRelativeFilePath());
+                message.setHeader(Exchange.FILE_PATH, path);
+            }
+    
+            message.setHeader("CamelFileRelativePath", getRelativeFilePath());
+            message.setHeader(Exchange.FILE_PARENT, getParent());
+    
+            if (getFileLength() > 0) {
+                message.setHeader("CamelFileLength", getFileLength());
+            }
+            if (getLastModified() > 0) {
+                message.setHeader("CamelFileLastModified", new Date(getLastModified()));
+            }
+        }
     }
     
     protected boolean isAbsolute(String name) {
