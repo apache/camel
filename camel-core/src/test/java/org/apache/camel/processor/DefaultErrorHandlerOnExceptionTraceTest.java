@@ -21,30 +21,60 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.interceptor.TraceEventMessage;
+import org.apache.camel.processor.interceptor.Tracer;
 
 /**
- * Default error handler test
+ * Default error handler test with trace
  *
  * @version $Revision$
  */
-public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
+public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport {
 
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:trace").expectedMessageCount(2);
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+
+        TraceEventMessage msg1 = getMockEndpoint("mock:trace").getReceivedExchanges().get(0).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg2 = getMockEndpoint("mock:trace").getReceivedExchanges().get(1).getIn().getBody(TraceEventMessage.class);
+
+        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+
+        assertTrue(msg2.getPreviousNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+        assertEquals("mock:result", msg2.getToNode());
     }
 
     public void testWithError() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:boom");
         mock.expectedMessageCount(1);
+        getMockEndpoint("mock:trace").expectedMessageCount(4);
 
         template.sendBody("direct:start", "Kabom");
 
         assertMockEndpointsSatisfied();
+
+        TraceEventMessage msg1 = getMockEndpoint("mock:trace").getReceivedExchanges().get(0).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg2 = getMockEndpoint("mock:trace").getReceivedExchanges().get(1).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg3 = getMockEndpoint("mock:trace").getReceivedExchanges().get(2).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg4 = getMockEndpoint("mock:trace").getReceivedExchanges().get(3).getIn().getBody(TraceEventMessage.class);
+
+        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+
+        assertTrue(msg2.getPreviousNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+        assertEquals("OnException[IllegalArgumentException]", msg2.getToNode());
+
+        assertEquals("OnException[IllegalArgumentException]", msg3.getPreviousNode());
+        assertEquals("log:boom", msg3.getToNode());
+
+        assertEquals("log:boom", msg4.getPreviousNode());
+        assertEquals("mock:boom", msg4.getToNode());
     }
 
     @Override
@@ -52,6 +82,10 @@ public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                Tracer tracer = new Tracer();
+                tracer.setDestinationUri("mock:trace");
+                context.addInterceptStrategy(tracer);
+
                 onException(IllegalArgumentException.class).handled(true).to("log:boom").to("mock:boom");
 
                 from("direct:start").process(new Processor() {
