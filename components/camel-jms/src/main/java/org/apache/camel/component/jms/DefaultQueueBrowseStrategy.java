@@ -46,7 +46,7 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
                 Enumeration iter = browser.getEnumeration();
                 while (iter.hasMoreElements()) {
                     Message message = (Message) iter.nextElement();
-                    JmsExchange exchange = endpoint.createExchange(message);
+                    Exchange exchange = endpoint.createExchange(message);
                     answer.add(exchange);
                 }
                 return answer;

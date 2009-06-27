@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ExchangeHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
@@ -80,13 +81,16 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
 
     protected void assertCorrectBytesReceived() {
         Exchange exchange = endpoint.getReceivedExchanges().get(0);
-        JmsExchange jmsExchange = assertIsInstanceOf(JmsExchange.class, exchange);
+        // This should be a JMS Exchange
+        assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
+        JmsMessage in = (JmsMessage) exchange.getIn();
+        assertNotNull(in);
+        
         byte[] bytes = exchange.getIn().getBody(byte[].class);
-
         log.info("Received bytes: " + Arrays.toString(bytes));
 
         assertNotNull("Should have received a bytes message!", bytes);
-        assertIsInstanceOf(BytesMessage.class, jmsExchange.getInMessage());
+        assertIsInstanceOf(BytesMessage.class, in.getJmsMessage());
         assertEquals("Wrong byte 1", 1, bytes[0]);
         assertEquals("Wrong payload lentght", 3, bytes.length);
     }

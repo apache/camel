@@ -300,7 +300,8 @@ public class JmsProducer extends DefaultProducer {
             } else if (destinationName != null) {
                 getInOnlyTemplate().send(destinationName, messageCreator);
             } else  {
-                throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
+                throw new IllegalArgumentException("Neither destination nor "
+                    + "destinationName are specified on this endpoint: " + endpoint);
             }
 
             setMessageId(exchange);
@@ -308,17 +309,16 @@ public class JmsProducer extends DefaultProducer {
     }
 
     protected void setMessageId(Exchange exchange) {
-        if (!(exchange instanceof JmsExchange)) {
-            return;
-        }
-        try {
-            JmsExchange jmsExchange = JmsExchange.class.cast(exchange);
-            if (jmsExchange.hasOut()) {
-                JmsMessage out = jmsExchange.getOut();
-                out.setMessageId(out.getJmsMessage().getJMSMessageID());
+        if (exchange.hasOut()) {
+            JmsMessage out = (JmsMessage) exchange.getOut();
+            try {
+                if (out != null) {
+                    out.setMessageId(out.getJmsMessage().getJMSMessageID());
+                }
+            } catch (JMSException e) {
+                LOG.warn("Unable to retrieve JMSMessageID from outgoing "
+                    + "JMS Message and set it into Camel's MessageId", e);
             }
-        } catch (JMSException e) {
-            LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and set it into Camel's MessageId", e);
         }
     }
 

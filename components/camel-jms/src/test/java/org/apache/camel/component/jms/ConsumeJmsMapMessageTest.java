@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ExchangeHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
@@ -64,13 +65,16 @@ public class ConsumeJmsMapMessageTest extends CamelTestSupport {
 
     protected void assertCorrectMapReceived() {
         Exchange exchange = endpoint.getReceivedExchanges().get(0);
-        JmsExchange jmsExchange = assertIsInstanceOf(JmsExchange.class, exchange);
+        // This should be a JMS Exchange
+        assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
+        JmsMessage in = (JmsMessage) exchange.getIn();
+        assertNotNull(in);
+        
         Map map = exchange.getIn().getBody(Map.class);
-
         log.info("Received map: " + map);
 
         assertNotNull("Should have received a map message!", map);
-        assertIsInstanceOf(MapMessage.class, jmsExchange.getInMessage());
+        assertIsInstanceOf(MapMessage.class, in.getJmsMessage());
         assertEquals("map.foo", "abc", map.get("foo"));
         assertEquals("map.bar", "xyz", map.get("bar"));
         assertEquals("map.size", 2, map.size());

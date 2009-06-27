@@ -26,10 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.JmsExchange;
+import org.apache.camel.component.jms.JmsBinding;
+import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ExchangeHelper;
 import org.junit.Test;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
@@ -81,8 +83,10 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
                 from("activemq:test.a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // lets set the custom JMS headers using the JMS API
-                        JmsExchange jmsExchange = assertIsInstanceOf(JmsExchange.class, exchange);
-                        Message inMessage = jmsExchange.getInMessage();
+                        assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
+                        JmsMessage in = (JmsMessage) exchange.getIn();
+                        assertNotNull(in);
+                        Message inMessage = in.getJmsMessage();
                         inMessage.setJMSReplyTo(replyQueue);
                         inMessage.setJMSCorrelationID(correlationID);
                         inMessage.setJMSType(messageType);

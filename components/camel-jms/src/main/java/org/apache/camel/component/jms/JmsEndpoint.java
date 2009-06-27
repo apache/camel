@@ -33,6 +33,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.springframework.core.task.TaskExecutor;
@@ -195,11 +196,15 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new JmsExchange(this, pattern, getBinding());
+        Exchange exchange = new DefaultExchange(this, pattern);
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        return exchange;
     }
 
-    public JmsExchange createExchange(Message message) {
-        return new JmsExchange(this, getExchangePattern(), getBinding(), message);
+    public Exchange createExchange(Message message) {
+        Exchange exchange = createExchange(getExchangePattern());
+        exchange.setIn(new JmsMessage(message));
+        return exchange;
     }
 
     /**

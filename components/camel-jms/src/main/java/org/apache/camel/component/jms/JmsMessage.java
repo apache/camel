@@ -18,15 +18,16 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.Map;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -89,13 +90,8 @@ public class JmsMessage extends DefaultMessage {
 
     public JmsBinding getBinding() {
         if (binding == null) {
-            Exchange exchange = getExchange();
-            if (exchange instanceof JmsExchange) {
-                JmsExchange jmsExchange = (JmsExchange) exchange;
-                return jmsExchange.getBinding();
-            } else {
-                return new JmsBinding();
-            }
+            JmsBinding b = ExchangeHelper.getBinding(getExchange(), JmsBinding.class);
+            return b != null ? b : new JmsBinding();
         }
         return binding;
     }

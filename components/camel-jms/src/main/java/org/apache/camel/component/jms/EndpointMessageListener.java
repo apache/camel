@@ -22,9 +22,11 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.commons.logging.Log;
@@ -69,7 +71,7 @@ public class EndpointMessageListener implements MessageListener {
         RuntimeCamelException rce = null;
         try {
             Destination replyDestination = getReplyToDestination(message);
-            final JmsExchange exchange = createExchange(message, replyDestination);
+            final Exchange exchange = createExchange(message, replyDestination);
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();
             }
@@ -102,12 +104,12 @@ public class EndpointMessageListener implements MessageListener {
                     }
                 } else if (exchange.getFault().getBody() != null) {
                     // a fault occurred while processing
-                    body = exchange.getFault();
+                    body = (JmsMessage) exchange.getFault();
                     sendReply = true;
                 }
             } else if (exchange.hasOut()) {
                 // process OK so get the reply
-                body = exchange.getOut();
+                body = (JmsMessage) exchange.getOut();
                 sendReply = true;
             }
 
@@ -133,8 +135,11 @@ public class EndpointMessageListener implements MessageListener {
         LOG.trace("onMessage END");
     }
 
-    public JmsExchange createExchange(Message message, Destination replyDestination) {
-        JmsExchange exchange = new JmsExchange(endpoint, endpoint.getExchangePattern(), getBinding(), message);
+    public Exchange createExchange(Message message, Destination replyDestination) {
+        Exchange exchange = new DefaultExchange(endpoint, endpoint.getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new JmsMessage(message));
+
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
             exchange.setProperty(JmsConstants.JMS_REPLY_DESTINATION, replyDestination);
@@ -223,7 +228,7 @@ public class EndpointMessageListener implements MessageListener {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected void sendReply(Destination replyDestination, final Message message, final JmsExchange exchange,
+    protected void sendReply(Destination replyDestination, final Message message, final Exchange exchange,
                              final JmsMessage out, final Exception cause) {
         if (replyDestination == null) {
             if (LOG.isDebugEnabled()) {

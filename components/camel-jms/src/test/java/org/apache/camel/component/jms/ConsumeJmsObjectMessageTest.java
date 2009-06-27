@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ExchangeHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
@@ -78,8 +79,11 @@ public class ConsumeJmsObjectMessageTest extends CamelTestSupport {
 
     protected void assertCorrectObjectReceived() {
         Exchange exchange = endpoint.getReceivedExchanges().get(0);
-        JmsExchange jmsExchange = assertIsInstanceOf(JmsExchange.class, exchange);
-        assertIsInstanceOf(ObjectMessage.class, jmsExchange.getInMessage());
+        // This should be a JMS Exchange
+        assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
+        JmsMessage in = (JmsMessage) exchange.getIn();
+        assertNotNull(in);
+        assertIsInstanceOf(ObjectMessage.class, in.getJmsMessage());
 
         MyUser user = exchange.getIn().getBody(MyUser.class);
         assertEquals("Claus", user.getName());

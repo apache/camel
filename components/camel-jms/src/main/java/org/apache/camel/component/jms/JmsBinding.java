@@ -58,7 +58,7 @@ import static org.apache.camel.component.jms.JmsMessageType.Object;
 import static org.apache.camel.component.jms.JmsMessageType.Text;
 
 /**
- * A Strategy used to convert between a Camel {@link JmsExchange} and {@link JmsMessage}
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link JmsMessage}
  * to and from a JMS {@link Message}
  *
  * @version $Revision$
