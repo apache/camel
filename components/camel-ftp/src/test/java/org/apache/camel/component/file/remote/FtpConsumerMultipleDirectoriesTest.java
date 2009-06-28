@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFileExchange;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,20 +53,23 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GenericFileExchange exchange = (GenericFileExchange) mock.getExchanges().get(0);
-        RemoteFile file = (RemoteFile) exchange.getGenericFile();
+        Exchange exchange = mock.getExchanges().get(0);
+        RemoteFile file = (RemoteFile) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        assertNotNull(file);
         assertDirectoryEquals("multidir/bye.txt", file.getAbsoluteFilePath());
         assertDirectoryEquals("bye.txt", file.getRelativeFilePath());
         assertEquals("bye.txt", file.getFileName());
 
-        exchange = (GenericFileExchange) mock.getExchanges().get(1);
-        file = (RemoteFile) exchange.getGenericFile();
+        exchange = mock.getExchanges().get(1);
+        file = (RemoteFile) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        assertNotNull(file);
         assertDirectoryEquals("multidir/sub/hello.txt", file.getAbsoluteFilePath());
         assertDirectoryEquals("sub/hello.txt", file.getRelativeFilePath());
         assertEquals("hello.txt", file.getFileName());
 
-        exchange = (GenericFileExchange) mock.getExchanges().get(2);
-        file = (RemoteFile) exchange.getGenericFile();
+        exchange = mock.getExchanges().get(2);
+        file = (RemoteFile) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        assertNotNull(file);
         assertDirectoryEquals("multidir/sub/sub2/godday.txt", file.getAbsoluteFilePath());
         assertDirectoryEquals("sub/sub2/godday.txt", file.getRelativeFilePath());
         assertEquals("godday.txt", file.getFileName());

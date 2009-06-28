@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFileExchange;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,8 +54,9 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GenericFileExchange exchange = (GenericFileExchange) mock.getExchanges().get(0);
-        RemoteFile file = (RemoteFile) exchange.getGenericFile();
+        Exchange exchange = mock.getExchanges().get(0);
+        RemoteFile file = (RemoteFile) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        assertNotNull(file);
         assertEquals("hello.txt", file.getAbsoluteFilePath());
         assertEquals("hello.txt", file.getRelativeFilePath());
         assertEquals("hello.txt", file.getFileName());

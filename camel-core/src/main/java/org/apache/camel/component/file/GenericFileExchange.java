@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.PollingConsumerAware;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultExchange;
 
 public class GenericFileExchange<T> extends DefaultExchange implements PollingConsumerAware {
-
-    private GenericFile<T> file;
 
     public GenericFileExchange(Endpoint fromEndpoint) {
         super(fromEndpoint);
@@ -40,33 +35,34 @@ public class GenericFileExchange<T> extends DefaultExchange implements PollingCo
         setGenericFile(file);
     }
 
-    protected void populateHeaders(GenericFile<T> file) {
-        Message message = getIn();
-        if (file != null && message instanceof GenericFileMessage) {
-            file.populateHeaders((GenericFileMessage<T>)message);
-        }
-    }
-
     public GenericFile<T> getGenericFile() {
-        return file;
+        return (GenericFile<T>) getProperty(FileComponent.FILE_EXCHANGE_FILE);
     }
 
     public void setGenericFile(GenericFile<T> file) {
-        this.file = file;
-        setIn(new GenericFileMessage<T>(file));
-        populateHeaders(file);
+        setProperty(FileComponent.FILE_EXCHANGE_FILE, file);
+        GenericFileMessage<T> in = new GenericFileMessage<T>(file);
+        setIn(in);
+        if (file != null) {
+            file.populateHeaders(in);
+        }
     }
 
     public Exchange newInstance() {
-        return new GenericFileExchange<T>(this, file);
+        return new GenericFileExchange<T>(this, getGenericFile());
     }
 
     public void exchangePolled(Exchange exchange) {
-        try {
-            // load content into memory
-            file.getBinding().loadContent(exchange, file);
-        } catch (IOException e) {
-            throw new RuntimeExchangeException("Cannot load content of file: " + file.getAbsoluteFilePath(), exchange, e);
+        GenericFile<T> file = getGenericFile();
+        if (file != null)
+        {
+            try {
+                // load content into memory
+                file.getBinding().loadContent(exchange, file);
+            } catch (IOException e) {
+                throw new RuntimeExchangeException("Cannot load content of file: " 
+                    + file.getAbsoluteFilePath(), exchange, e);
+            }
         }
     }
 }

@@ -25,6 +25,11 @@ import java.util.Map;
 public class FileComponent extends GenericFileComponent<File> {
 
     /**
+     * GenericFile property on Camel Exchanges.
+     */
+    public static final String FILE_EXCHANGE_FILE = "CamelFileExchangeFile";
+    
+    /**
      * Default camel lock filename postfix
      */
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
