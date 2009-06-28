@@ -150,10 +150,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
     }
 
-    public void setGenericFileProcessStrategy(GenericFileProcessStrategy<T> genericFileProcessStrategy) {
-        this.processStrategy = genericFileProcessStrategy;
-    }
-
     public boolean isNoop() {
         return noop;
     }

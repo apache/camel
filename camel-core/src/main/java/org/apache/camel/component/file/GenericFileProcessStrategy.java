@@ -17,7 +17,7 @@
 package org.apache.camel.component.file;
 
 /**
- * Represents a strategy for marking that a remote file is processed.
+ * Represents a pluggable strategy when processing files.
  */
 public interface GenericFileProcessStrategy<T> {
 

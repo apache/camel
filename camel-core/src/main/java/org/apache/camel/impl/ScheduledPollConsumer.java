@@ -22,6 +22,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.PollingConsumerPollStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
@@ -44,6 +45,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay;
+    private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
 
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -75,10 +77,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Starting to poll: " + this.getEndpoint());
                 }
+                pollStrategy.begin(this, getEndpoint());
                 poll();
+                pollStrategy.commit(this, getEndpoint());
             }
         } catch (Exception e) {
-            LOG.warn("An exception occurred while polling: " + this.getEndpoint() + ": " + e.getMessage(), e);
+            try {
+                pollStrategy.rollback(this, getEndpoint(), e);
+            } catch (Exception re) {
+                throw ObjectHelper.wrapRuntimeCamelException(re);
+            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -118,6 +126,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     public void setUseFixedDelay(boolean useFixedDelay) {
         this.useFixedDelay = useFixedDelay;
+    }
+
+    public PollingConsumerPollStrategy getPollStrategy() {
+        return pollStrategy;
+    }
+
+    public void setPollStrategy(PollingConsumerPollStrategy pollStrategy) {
+        this.pollStrategy = pollStrategy;
     }
 
     // Implementation methods

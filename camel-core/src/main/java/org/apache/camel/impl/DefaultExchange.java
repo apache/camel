@@ -153,6 +153,13 @@ public class DefaultExchange implements Exchange {
 
     public <T> T getProperty(String name, Class<T> type) {
         Object value = getProperty(name);
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+
         return ExchangeHelper.convertToType(this, type, value);
     }
 

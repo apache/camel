@@ -20,7 +20,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 

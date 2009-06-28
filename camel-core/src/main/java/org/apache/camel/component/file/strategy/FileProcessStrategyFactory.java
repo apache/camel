@@ -48,7 +48,7 @@ public final class FileProcessStrategyFactory {
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
         } else if (moveExpression != null || preMoveExpression != null) {
-            FileRenameProcessStrategy<File> strategy = new FileRenameProcessStrategy<File>();
+            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (moveExpression != null) {
                 GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
@@ -63,7 +63,7 @@ public final class FileProcessStrategyFactory {
             return strategy;
         } else {
             // default strategy will move files in a .camel/ subfolder where the file was consumed
-            FileRenameProcessStrategy<File> strategy = new FileRenameProcessStrategy<File>();
+            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             // use context to lookup language to let it be loose coupled
             Language language = context.resolveLanguage("file");

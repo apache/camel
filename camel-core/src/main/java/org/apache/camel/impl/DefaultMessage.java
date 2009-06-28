@@ -44,8 +44,19 @@ public class DefaultMessage extends MessageSupport {
 
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+
         Exchange e = getExchange();
-        return e.getContext().getTypeConverter().convertTo(type, e, value);
+        if (e != null) {
+            return e.getContext().getTypeConverter().convertTo(type, e, value);
+        } else {
+            return (T) value;
+        }
     }
 
     public void setHeader(String name, Object value) {

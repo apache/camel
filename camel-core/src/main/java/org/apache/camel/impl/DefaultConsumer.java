@@ -21,6 +21,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A default consumer useful for implementation inheritance.
@@ -28,6 +30,7 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer {
+    private final transient Log log = LogFactory.getLog(getClass());
     private final Endpoint endpoint;
     private final Processor processor;
     private ExceptionHandler exceptionHandler;
@@ -62,10 +65,16 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
     }
 
     protected void doStop() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping consumer: " + this);
+        }
         ServiceHelper.stopServices(processor);
     }
 
     protected void doStart() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Starting consumer: " + this);
+        }
         ServiceHelper.startServices(processor);
     }
 

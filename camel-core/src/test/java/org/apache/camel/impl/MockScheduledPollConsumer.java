@@ -44,4 +44,9 @@ public class MockScheduledPollConsumer extends ScheduledPollConsumer {
     public void setExceptionToThrowOnPoll(Exception exceptionToThrowOnPoll) {
         this.exceptionToThrowOnPoll = exceptionToThrowOnPoll;
     }
+
+    @Override
+    public String toString() {
+        return "MockScheduled";
+    }
 }

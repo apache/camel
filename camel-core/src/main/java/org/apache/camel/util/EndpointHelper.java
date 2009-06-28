@@ -16,8 +16,11 @@
  */
 package org.apache.camel.util;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
@@ -111,6 +114,61 @@ public final class EndpointHelper {
         
         // no match
         return false;
+    }
+
+    /**
+     * Sets the regular properties on the given bean
+     *
+     * @param context the camel context
+     * @param bean the bean
+     * @param parameters parameters
+     * @throws Exception is thrown if setting property fails
+     */
+    public static void setProperties(CamelContext context, Object bean, Map parameters) throws Exception {
+        IntrospectionSupport.setProperties(context.getTypeConverter(), bean, parameters);
+    }
+
+    /**
+     * Sets the reference properties on the given bean
+     * <p/>
+     * This is convention over configuration, setting all reference parameters (using {@link #isReferenceParameter(String)}
+     * by looking it up in registry and setting it on the bean if possible.
+     *
+     * @param context the camel context
+     * @param bean the bean
+     * @param parameters parameters
+     * @throws Exception is thrown if setting property fails
+     */
+    public static void setReferenceProperties(CamelContext context, Object bean, Map parameters) throws Exception {
+        Iterator it = parameters.keySet().iterator();
+        while (it.hasNext()) {
+            Object key = it.next();
+            String value = (String) parameters.get(key);
+            if (isReferenceParameter(value)) {
+                Object ref = context.getRegistry().lookup(value.substring(1));
+                String name = key.toString();
+                if (ref != null) {
+                    boolean hit = IntrospectionSupport.setProperty(context.getTypeConverter(), bean, name, ref);
+                    if (hit) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Configued property: " + name + " on bean: " + bean + " with value: " + ref);
+                        }
+                        // must remove as its a valid option and we could configure it
+                        it.remove();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Is the given parameter a reference parameter (starting with a # char)
+     *
+     * @param parameter the parameter
+     * @return <tt>true</tt> if its a reference parameter
+     */
+    public static boolean isReferenceParameter(String parameter) {
+        return parameter != null && parameter.startsWith("#");
     }
 
 }

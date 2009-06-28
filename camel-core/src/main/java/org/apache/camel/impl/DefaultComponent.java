@@ -31,6 +31,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -209,43 +210,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     protected void setProperties(Object bean, Map parameters) throws Exception {        
         // set reference properties first as they use # syntax that fools the regular properties setter
-        setReferenceProperties(bean, parameters);
-        IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);      
-    }
-
-    /**
-     * Sets the reference properties on the given bean
-     * <p/>
-     * This is convention over configuration, setting all reference parameters (using {@link #isReferenceParameter(String)}
-     * by looking it up in registry and setting it on the bean if possible.
-     */
-    protected void setReferenceProperties(Object bean, Map parameters) throws Exception {
-        Iterator it = parameters.keySet().iterator();
-        while (it.hasNext()) {
-            Object key = it.next();
-            String value = (String) parameters.get(key);
-            if (isReferenceParameter(value)) {
-                Object ref = lookup(value.substring(1));
-                String name = key.toString();
-                if (ref != null) {
-                    boolean hit = IntrospectionSupport.setProperty(getCamelContext().getTypeConverter(), bean, name, ref);
-                    if (hit) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Configued property: " + name + " on bean: " + bean + " with value: " + ref);
-                        }
-                        // must remove as its a valid option and we could configure it
-                        it.remove();
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Is the given parameter a reference parameter (starting with a # char)
-     */
-    protected boolean isReferenceParameter(String parameter) {
-        return parameter != null && parameter.startsWith("#");
+        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
+        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
     }
 
     /**

@@ -47,7 +47,7 @@ public final class GenericFileProcessStrategyFactory {
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
         } else if (moveExpression != null || preMoveExpression != null) {
-            FileRenameProcessStrategy strategy = new FileRenameProcessStrategy();
+            GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (moveExpression != null) {
                 GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();

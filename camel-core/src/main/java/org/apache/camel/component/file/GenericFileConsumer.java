@@ -120,8 +120,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             // process the current exchange
             processExchange(exchange);
-            
-            
         }
         
         // remove the file from the in progress list in case the batch was limited by max messages per poll
@@ -130,7 +128,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             String key = exchange.getGenericFile().getFileName();
             endpoint.getInProgressRepository().remove(key);
         }
-        
     }
 
     /**
@@ -166,7 +163,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             boolean begin = processStrategy.begin(operations, endpoint, exchange, exchange.getGenericFile());
             if (!begin) {
-                log.warn(endpoint + " cannot begin processing file: " + exchange.getGenericFile());
+                log.debug(endpoint + " cannot begin processing file: " + exchange.getGenericFile());
                 // remove file from the in progress list as its no longer in progress
                 endpoint.getInProgressRepository().remove(exchange.getGenericFile().getFileName());
                 return;

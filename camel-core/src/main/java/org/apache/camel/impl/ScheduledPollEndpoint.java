@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -58,7 +59,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     protected void configureConsumer(Consumer consumer) throws Exception {
         if (consumerProperties != null) {
-            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), consumer, consumerProperties);
+            // set reference properties first as they use # syntax that fools the regular properties setter
+            EndpointHelper.setReferenceProperties(getCamelContext(), consumer, consumerProperties);
+            EndpointHelper.setProperties(getCamelContext(), consumer, consumerProperties);
             if (!this.isLenientProperties() && consumerProperties.size() > 0) {
                 throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + consumerProperties.size()
                     + " parameters that couldn't be set on the endpoint consumer."
@@ -84,7 +87,8 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object delay = options.remove("delay");
         Object timeUnit = options.remove("timeUnit");
         Object useFixedDelay = options.remove("useFixedDelay");
-        if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null) {
+        Object pollStrategy = options.remove("pollStrategy");
+        if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null) {
             if (consumerProperties == null) {
                 consumerProperties = new HashMap();
             }
@@ -99,6 +103,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
             if (useFixedDelay != null) {
                 consumerProperties.put("useFixedDelay", useFixedDelay);
+            }
+            if (pollStrategy != null) {
+                consumerProperties.put("pollStrategy", pollStrategy);
             }
         }
     }

@@ -58,7 +58,8 @@ public abstract class MessageSupport implements Message {
     }
 
     protected <T> T getBody(Class<T> type, Object body) {
-        // same instance type
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
         if (type.isInstance(body)) {
             return type.cast(body);
         }
@@ -88,6 +89,12 @@ public abstract class MessageSupport implements Message {
     }
 
     public <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException {
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(body)) {
+            return type.cast(body);
+        }
+
         Exchange e = getExchange();
         if (e != null) {
             TypeConverter converter = e.getContext().getTypeConverter();
