@@ -18,7 +18,7 @@
   under the License.
 -->
 <profiles version="8">
-<profile name="ActiveMQ Java Conventions" version="8">
+<profile name="Camel Java Conventions" version="8">
 <setting id="org.eclipse.jdt.core.formatter.align_type_members_on_columns" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_allocation_expression" value="18"/>
 <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_enum_constant" value="16"/>

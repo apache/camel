@@ -38,8 +38,8 @@
 
 
             <xsl:choose>
-                <xsl:when test="not(check-configuration/@name='ActiveMQ Checks')">
-                    <check-configuration name="ActiveMQ Checks" type="external" description="">
+                <xsl:when test="not(check-configuration/@name='Camel Checks')">
+                    <check-configuration name="Camel Checks" type="external" description="">
                         <xsl:attribute name="location"><xsl:value-of select="$checkstyleconfig"/></xsl:attribute>
                     </check-configuration>
                 </xsl:when>
