@@ -88,7 +88,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         out = template.requestBodyAndHeader("direct:inout", "Hello", "foo", "bar", Integer.class);
         assertEquals(new Integer(123), out);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         out = template.requestBodyAndHeaders("direct:inout", "Hello", headers, Integer.class);
         assertEquals(new Integer(123), out);
 
@@ -100,7 +100,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         out = template.requestBodyAndHeader(endpoint, "Hello", "foo", "bar", Integer.class);
         assertEquals(new Integer(123), out);
 
-        headers = new HashMap();
+        headers = new HashMap<String, Object>();
         out = template.requestBodyAndHeaders(endpoint, "Hello", headers, Integer.class);
         assertEquals(new Integer(123), out);
     }

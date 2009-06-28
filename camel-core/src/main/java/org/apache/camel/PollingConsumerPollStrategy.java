@@ -33,7 +33,7 @@ public interface PollingConsumerPollStrategy {
      * @param consumer the consumer
      * @param endpoint the endpoint being consumed
      */
-    public void begin(Consumer consumer, Endpoint endpoint);
+    void begin(Consumer consumer, Endpoint endpoint);
 
     /**
      * Called when poll is completed sucesfully
@@ -41,7 +41,7 @@ public interface PollingConsumerPollStrategy {
      * @param consumer the consumer
      * @param endpoint the endpoint being consumed
      */
-    public void commit(Consumer consumer, Endpoint endpoint);
+    void commit(Consumer consumer, Endpoint endpoint);
 
     /**
      * Called when poll failed
@@ -51,6 +51,6 @@ public interface PollingConsumerPollStrategy {
      * @param cause the caused exception
      * @throws Exception can be used to rethrow the caused exception
      */
-    public void rollback(Consumer consumer, Endpoint endpoint, Exception cause) throws Exception;
+    void rollback(Consumer consumer, Endpoint endpoint, Exception cause) throws Exception;
 
 }

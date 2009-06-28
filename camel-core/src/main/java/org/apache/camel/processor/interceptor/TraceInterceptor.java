@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -178,15 +179,14 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return formatter;
     }
 
+    
     // Implementation methods
     //-------------------------------------------------------------------------
-
     protected boolean beforeOnException(OnExceptionDefinition onException, TraceableUnitOfWork tuow, Exchange exchange) throws Exception {
         // lets see if this is the first time for this exception
         int index = tuow.getAndIncrement(node);
         if (index == 0) {
-            // yes its first time then do some special to log and trace the start of onException
-            Expression exp = new Expression() {
+            class OnExceptionExpression implements Expression {
                 @SuppressWarnings("unchecked")
                 public Object evaluate(Exchange exchange, Class type) {
                     String label = "OnException";
@@ -195,11 +195,16 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                     }
                     return exchange.getContext().getTypeConverter().convertTo(type, label);
                 }
-            };
+                
+            }
+            // yes its first time then do some special to log and trace the
+            // start of onException
+            Expression exp = new OnExceptionExpression(); 
+              
             // add our pesudo node
             tuow.addTraced(new DefaultRouteNode(node, exp));
 
-            // log and trace the processor that was onException so we can see it imeddiately
+            // log and trace the processor that was onException so we can see immediately
             logExchange(exchange);
             traceExchange(exchange);
         }
@@ -208,6 +213,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         tuow.addTraced(new DefaultRouteNode(node, super.getProcessor()));
         return true;
     }
+    
 
     protected boolean beforeOnCompletion(OnCompletionDefinition onCompletion, TraceableUnitOfWork tuow, Exchange exchange) throws Exception {
         // we should only trace when we do the actual onCompletion
@@ -220,19 +226,20 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
         if (exchange.getProperty(Exchange.ON_COMPLETION) != null) {
             // if ON_COMPLETION is not null then we are actually doing the onCompletion routing
-
+            
             // we should trace the onCompletion route and we want a start log of the onCompletion
             // step so get the index and see if its 0 then we can add our speical log
             int index = tuow.getAndIncrement(node);
             if (index == 0) {
-                // yes its first time then do some special to log and trace the start of onCompletion
-                Expression exp = new Expression() {
+                class OnCompletionExpression implements Expression {
                     @SuppressWarnings("unchecked")
                     public Object evaluate(Exchange exchange, Class type) {
                         String label = "OnCompletion[" + exchange.getProperty(Exchange.CORRELATION_ID) + "]";
                         return exchange.getContext().getTypeConverter().convertTo(type, label);
                     }
-                };
+                }
+                // yes its first time then do some special to log and trace the start of onCompletion
+                Expression exp = new OnCompletionExpression();
                 // add the onCompletion and then the processor that is invoked nest
                 tuow.addTraced(new DefaultRouteNode(node, exp));
                 tuow.addTraced(new DefaultRouteNode(node, super.getProcessor()));
