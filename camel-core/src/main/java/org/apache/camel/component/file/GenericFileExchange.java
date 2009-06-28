@@ -54,15 +54,15 @@ public class GenericFileExchange<T> extends DefaultExchange implements PollingCo
 
     public void exchangePolled(Exchange exchange) {
         GenericFile<T> file = getGenericFile();
-        if (file != null)
-        {
+        if (file != null) {
             try {
                 // load content into memory
                 file.getBinding().loadContent(exchange, file);
             } catch (IOException e) {
-                throw new RuntimeExchangeException("Cannot load content of file: " 
-                    + file.getAbsoluteFilePath(), exchange, e);
+                throw new RuntimeExchangeException("Cannot load content of file: "
+                        + file.getAbsoluteFilePath(), exchange, e);
             }
         }
     }
+
 }

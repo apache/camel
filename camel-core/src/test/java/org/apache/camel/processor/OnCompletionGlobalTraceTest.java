@@ -22,15 +22,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.interceptor.TraceEventMessage;
+import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * @version $Revision$
  */
-public class OnCompletionGlobalTest extends ContextTestSupport {
+public class OnCompletionGlobalTraceTest extends ContextTestSupport {
 
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
+        getMockEndpoint("mock:trace").expectedMessageCount(4);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -38,11 +41,29 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+
+        TraceEventMessage msg1 = getMockEndpoint("mock:trace").getReceivedExchanges().get(0).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg2 = getMockEndpoint("mock:trace").getReceivedExchanges().get(1).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg3 = getMockEndpoint("mock:trace").getReceivedExchanges().get(2).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg4 = getMockEndpoint("mock:trace").getReceivedExchanges().get(3).getIn().getBody(TraceEventMessage.class);
+
+        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.OnCompletionGlobalTraceTest"));
+
+        assertTrue(msg2.getPreviousNode().startsWith("org.apache.camel.processor.OnCompletionGlobalTraceTest"));
+        assertEquals("mock:result", msg2.getToNode());
+
+        assertTrue(msg3.getPreviousNode().startsWith("OnCompletion"));
+        assertEquals("log:global", msg3.getToNode());
+
+        assertEquals("log:global", msg4.getPreviousNode());
+        assertEquals("mock:sync", msg4.getToNode());
     }
 
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:sync").expectedMessageCount(1);
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
+        getMockEndpoint("mock:trace").expectedMessageCount(3);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -55,6 +76,19 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+
+        TraceEventMessage msg1 = getMockEndpoint("mock:trace").getReceivedExchanges().get(0).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg2 = getMockEndpoint("mock:trace").getReceivedExchanges().get(1).getIn().getBody(TraceEventMessage.class);
+        TraceEventMessage msg3 = getMockEndpoint("mock:trace").getReceivedExchanges().get(2).getIn().getBody(TraceEventMessage.class);
+
+        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.OnCompletionGlobalTraceTest"));
+
+        assertTrue(msg2.getPreviousNode().startsWith("OnCompletion"));
+        assertEquals("log:global", msg2.getToNode());
+
+        assertEquals("log:global", msg3.getPreviousNode());
+        assertEquals("mock:sync", msg3.getToNode());
     }
 
     @Override
@@ -62,6 +96,10 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                Tracer tracer = new Tracer();
+                tracer.setDestinationUri("mock:trace");
+                context.addInterceptStrategy(tracer);
+
                 // START SNIPPET: e1
                 // define a global on completion that is invoked when the exchage is complete
                 onCompletion().to("log:global").to("mock:sync");

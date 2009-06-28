@@ -187,7 +187,8 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         if (index == 0) {
             // yes its first time then do some special to log and trace the start of onException
             Expression exp = new Expression() {
-                public <T> T evaluate(Exchange exchange, Class<T> type) {
+                @SuppressWarnings("unchecked")
+                public Object evaluate(Exchange exchange, Class type) {
                     String label = "OnException";
                     if (exchange.getProperty(Exchange.EXCEPTION_CAUGHT) != null) {
                         label += "[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
@@ -226,7 +227,8 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             if (index == 0) {
                 // yes its first time then do some special to log and trace the start of onCompletion
                 Expression exp = new Expression() {
-                    public <T> T evaluate(Exchange exchange, Class<T> type) {
+                    @SuppressWarnings("unchecked")
+                    public Object evaluate(Exchange exchange, Class type) {
                         String label = "OnCompletion[" + exchange.getProperty(Exchange.CORRELATION_ID) + "]";
                         return exchange.getContext().getTypeConverter().convertTo(type, label);
                     }

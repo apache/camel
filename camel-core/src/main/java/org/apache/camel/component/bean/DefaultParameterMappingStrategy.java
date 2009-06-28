@@ -19,13 +19,13 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.spi.Registry;
 
 /**
  * Represents the strategy used to figure out how to map a message exchange to a POJO method invocation
