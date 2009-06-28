@@ -76,8 +76,8 @@ public class ScanStreamFileWithFilterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("stream:file?fileName=./target/stream/scanstreamfile.txt&scanStream=true&scanStreamDelay=100")
-                .filter(body().contains("Hello Boy"))
-                .to("mock:result");
+                    .filter(body().contains("Hello Boy"))
+                    .to("mock:result");
             }
         };
     }

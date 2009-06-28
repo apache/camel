@@ -82,10 +82,10 @@ public class RouteWithErrorHandlerTest extends ContextTestSupport {
 
                 from("direct:start")
                     .unmarshal(jaxb)
-                .choice()
-                    .when().method(RouteWithErrorHandlerTest.class, "isWine").to("mock:wine")
-                    .otherwise().throwException(new InvalidOrderException("We only like wine"))
-                .end();
+                    .choice()
+                        .when().method(RouteWithErrorHandlerTest.class, "isWine").to("mock:wine")
+                        .otherwise().throwException(new InvalidOrderException("We only like wine"))
+                    .end();
             }
         };
     }

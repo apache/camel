@@ -80,11 +80,12 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     public void doStop() throws Exception {
-        // important: do not close the stream as it will close the standard system.in etc.
-    	ObjectHelper.notNull(executor, "Executor");
-    	executor.shutdownNow();
-   		executor = null;
-   		super.doStop();
+        // important: do not close the stream as it will close the standard
+        // system.in etc.
+        ObjectHelper.notNull(executor, "Executor");
+        executor.shutdownNow();
+        executor = null;
+        super.doStop();
     }
 
     public void run() {
@@ -197,13 +198,13 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         File file = new File(fileName);
 
         if (LOG.isDebugEnabled()) {
-        	LOG.debug("File to be scanned : " + file.getName() + ", path : " + file.getAbsolutePath());
+            LOG.debug("File to be scanned : " + file.getName() + ", path : " + file.getAbsolutePath());
         }
 
-        if ( file.canRead() ) {
-            	fileStream = new FileInputStream(file);
+        if (file.canRead()) {
+            fileStream = new FileInputStream(file);
         } else {
-        	throw new IllegalArgumentException(INVALID_URI);
+            throw new IllegalArgumentException(INVALID_URI);
         }
 
         return fileStream;
