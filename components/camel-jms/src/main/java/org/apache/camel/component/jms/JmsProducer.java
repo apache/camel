@@ -142,6 +142,16 @@ public class JmsProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
+        if (exchange.getPattern().isOutCapable()) {
+            // in out requires a bit more work than in only
+            processInOut(exchange);
+        } else {
+            // in only
+            processInOnly(exchange);
+        }
+    }
+
+    protected void processInOut(final Exchange exchange) {
         final org.apache.camel.Message in = exchange.getIn();
 
         String destinationName = endpoint.getDestinationName();
@@ -149,163 +159,174 @@ public class JmsProducer extends DefaultProducer {
         if (destination == null) {
             destination = endpoint.getDestination();
         }
-        if (exchange.getPattern().isOutCapable()) {
 
-            testAndSetRequestor();
+        testAndSetRequestor();
 
-            // note due to JMS transaction semantics we cannot use a single transaction
-            // for sending the request and receiving the response
-            final Destination replyTo = requestor.getReplyTo();
+        // note due to JMS transaction semantics we cannot use a single transaction
+        // for sending the request and receiving the response
+        final Destination replyTo = requestor.getReplyTo();
 
-            if (replyTo == null) {
-                throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
-            }
+        if (replyTo == null) {
+            throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
+        }
 
-            final boolean msgIdAsCorrId = endpoint.getConfiguration().isUseMessageIDAsCorrelationID();
-            String correlationId = in.getHeader("JMSCorrelationID", String.class);
+        final boolean msgIdAsCorrId = endpoint.getConfiguration().isUseMessageIDAsCorrelationID();
+        String correlationId = in.getHeader("JMSCorrelationID", String.class);
 
-            if (correlationId == null && !msgIdAsCorrId) {
-                in.setHeader("JMSCorrelationID", getUuidGenerator().generateId());
-            }
+        if (correlationId == null && !msgIdAsCorrId) {
+            in.setHeader("JMSCorrelationID", getUuidGenerator().generateId());
+        }
 
-            final ValueHolder<FutureTask> futureHolder = new ValueHolder<FutureTask>();
-            final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
+        final ValueHolder<FutureTask> futureHolder = new ValueHolder<FutureTask>();
+        final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
-            MessageCreator messageCreator = new MessageCreator() {
-                public Message createMessage(Session session) throws JMSException {
-                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
-                    message.setJMSReplyTo(replyTo);
-                    requestor.setReplyToSelectorHeader(in, message);
+        MessageCreator messageCreator = new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+                message.setJMSReplyTo(replyTo);
+                requestor.setReplyToSelectorHeader(in, message);
 
-                    FutureTask future;
-                    future = (!msgIdAsCorrId)
-                            ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
-                            : requestor.getReceiveFuture(callback);
+                FutureTask future;
+                future = (!msgIdAsCorrId)
+                        ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
+                        : requestor.getReceiveFuture(callback);
 
-                    futureHolder.set(future);
+                futureHolder.set(future);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(endpoint + " sending JMS message: " + message);
-                    }
-                    return message;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(endpoint + " sending JMS message: " + message);
                 }
-            };
+                return message;
+            }
+        };
 
-            CamelJmsTemplate template = null;
-            CamelJmsTeemplate102 template102 = null;
-            if (endpoint.isUseVersion102()) {
-                template102 = (CamelJmsTeemplate102)getInOutTemplate();
+        CamelJmsTemplate template = null;
+        CamelJmsTeemplate102 template102 = null;
+        if (endpoint.isUseVersion102()) {
+            template102 = (CamelJmsTeemplate102)getInOutTemplate();
+        } else {
+            template = (CamelJmsTemplate)getInOutTemplate();
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using JMS API " + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
+        }
+
+        if (destinationName != null) {
+            if (template != null) {
+                template.send(destinationName, messageCreator, callback);
             } else {
-                template = (CamelJmsTemplate)getInOutTemplate();
+                template102.send(destinationName, messageCreator, callback);
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using JMS API " + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
-            }
-
-            if (destinationName != null) {
-                if (template != null) {
-                    template.send(destinationName, messageCreator, callback);
-                } else {
-                    template102.send(destinationName, messageCreator, callback);
-                }
-            } else if (destination != null) {
-                if (template != null) {
-                    template.send(destination, messageCreator, callback);
-                } else {
-                    template102.send(destination, messageCreator, callback);
-                }
+        } else if (destination != null) {
+            if (template != null) {
+                template.send(destination, messageCreator, callback);
             } else {
-                throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
-            }
-
-            setMessageId(exchange);
-
-            // lets wait and return the response
-            long requestTimeout = endpoint.getConfiguration().getRequestTimeout();
-            try {
-                Message message = null;
-                try {
-                    if (requestTimeout < 0) {
-                        message = (Message)futureHolder.get().get();
-                    } else {
-                        message = (Message)futureHolder.get().get(requestTimeout, TimeUnit.MILLISECONDS);
-                    }
-                } catch (InterruptedException e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Future interupted: " + e, e);
-                    }
-                } catch (TimeoutException e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Future timed out: " + e, e);
-                    }
-                }
-                if (message != null) {
-                    // the response can be an exception
-                    JmsMessage response = new JmsMessage(message, endpoint.getBinding());
-                    Object body = response.getBody();
-
-                    if (endpoint.isTransferException() && body instanceof Exception) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Reply recieved. Setting reply as Exception: " + body);
-                        }
-                        // we got an exception back and endpoint was configued to transfer exception
-                        // therefore set response as exception
-                        exchange.setException((Exception) body);
-                    } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Reply recieved. Setting reply as OUT message: " + body);
-                        }
-                        // regular response
-                        exchange.setOut(response);
-                    }
-
-                    // correlation
-                    if (correlationId != null) {
-                        message.setJMSCorrelationID(correlationId);
-                        exchange.getOut().setHeader("JMSCorrelationID", correlationId);
-                    }
-                } else {
-                    // no response, so lets set a timed out exception
-                    exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));
-                }
-            } catch (Exception e) {
-                exchange.setException(e);
+                template102.send(destination, messageCreator, callback);
             }
         } else {
-            // we must honor these special flags to preverse QoS 
-            if (!endpoint.isPreserveMessageQos() && !endpoint.isExplicitQosEnabled()) {
-                Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
-                if (replyTo != null) {
-                    // we are routing an existing JmsMessage, origin from another JMS endpoint
-                    // then we need to remove the existing JMSReplyTo
-                    // as we are not out capable and thus do not expect a reply, and therefore
-                    // the consumer of this message we send should not return a reply
-                    String to = destinationName != null ? destinationName : "" + destination;
-                    LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable with JMSReplyTo: " + replyTo + " to destination: " + to + " for Exchange: " + exchange);
-                    exchange.getIn().setHeader("JMSReplyTo", null);
-                }
-            }
-
-            MessageCreator messageCreator = new MessageCreator() {
-                public Message createMessage(Session session) throws JMSException {
-                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(endpoint + " sending JMS message: " + message);
-                    }
-                    return message;
-                }
-            };
-            if (destination != null) {
-                getInOnlyTemplate().send(destination, messageCreator);
-            } else if (destinationName != null) {
-                getInOnlyTemplate().send(destinationName, messageCreator);
-            } else  {
-                throw new IllegalArgumentException("Neither destination nor "
-                    + "destinationName are specified on this endpoint: " + endpoint);
-            }
-
-            setMessageId(exchange);
+            throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
         }
+
+        setMessageId(exchange);
+
+        // lets wait and return the response
+        long requestTimeout = endpoint.getConfiguration().getRequestTimeout();
+        try {
+            Message message = null;
+            try {
+                if (requestTimeout < 0) {
+                    message = (Message)futureHolder.get().get();
+                } else {
+                    message = (Message)futureHolder.get().get(requestTimeout, TimeUnit.MILLISECONDS);
+                }
+            } catch (InterruptedException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Future interrupted: " + e, e);
+                }
+            } catch (TimeoutException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Future timed out: " + e, e);
+                }
+            }
+            if (message != null) {
+                // the response can be an exception
+                JmsMessage response = new JmsMessage(message, endpoint.getBinding());
+                Object body = response.getBody();
+
+                if (endpoint.isTransferException() && body instanceof Exception) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Reply recieved. Setting reply as Exception: " + body);
+                    }
+                    // we got an exception back and endpoint was configued to transfer exception
+                    // therefore set response as exception
+                    exchange.setException((Exception) body);
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Reply recieved. Setting reply as OUT message: " + body);
+                    }
+                    // regular response
+                    exchange.setOut(response);
+                }
+
+                // correlation
+                if (correlationId != null) {
+                    message.setJMSCorrelationID(correlationId);
+                    exchange.getOut().setHeader("JMSCorrelationID", correlationId);
+                }
+            } else {
+                // no response, so lets set a timed out exception
+                exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+    }
+
+    protected void processInOnly(final Exchange exchange) {
+        final org.apache.camel.Message in = exchange.getIn();
+
+        String destinationName = endpoint.getDestinationName();
+        Destination destination = exchange.getProperty(JmsConstants.JMS_DESTINATION, Destination.class);
+        if (destination == null) {
+            destination = endpoint.getDestination();
+        }
+
+        // we must honor these special flags to preverse QoS
+        if (!endpoint.isPreserveMessageQos() && !endpoint.isExplicitQosEnabled()) {
+            Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
+            if (replyTo != null) {
+                // we are routing an existing JmsMessage, origin from another JMS endpoint
+                // then we need to remove the existing JMSReplyTo
+                // as we are not out capable and thus do not expect a reply, and therefore
+                // the consumer of this message we send should not return a reply
+                String to = destinationName != null ? destinationName : "" + destination;
+                LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable with JMSReplyTo: " + replyTo + " to destination: " + to + " for Exchange: " + exchange);
+                exchange.getIn().setHeader("JMSReplyTo", null);
+            }
+        }
+
+        MessageCreator messageCreator = new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(endpoint + " sending JMS message: " + message);
+                }
+
+                return message;
+            }
+        };
+        
+        if (destination != null) {
+            getInOnlyTemplate().send(destination, messageCreator);
+        } else if (destinationName != null) {
+            getInOnlyTemplate().send(destinationName, messageCreator);
+        } else  {
+            throw new IllegalArgumentException("Neither destination nor "
+                    + "destinationName are specified on this endpoint: " + endpoint);
+        }
+
+        setMessageId(exchange);
     }
 
     protected void setMessageId(Exchange exchange) {

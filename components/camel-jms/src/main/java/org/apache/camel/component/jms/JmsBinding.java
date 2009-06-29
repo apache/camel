@@ -265,9 +265,9 @@ public class JmsBinding {
                 jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
-            } else if (LOG.isDebugEnabled()) {
+            } else if (LOG.isTraceEnabled()) {
                 // The following properties are set by the MessageProducer:
-                // JMSDeliveryMode, JMSDestination, JMSExpiration, JMSPriorit
+                // JMSDeliveryMode, JMSDestination, JMSExpiration, JMSPriority
                 // The following are set on the underlying JMS provider:
                 // JMSMessageID, JMSTimestamp, JMSRedelivered
                 // log at trace level to not spam log
