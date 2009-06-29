@@ -143,7 +143,8 @@ public final class EndpointHelper {
         Iterator it = parameters.keySet().iterator();
         while (it.hasNext()) {
             Object key = it.next();
-            String value = (String) parameters.get(key);
+            Object v = parameters.get(key);
+            String value = v != null ? v.toString() : null;
             if (isReferenceParameter(value)) {
                 Object ref = context.getRegistry().lookup(value.substring(1));
                 String name = key.toString();
