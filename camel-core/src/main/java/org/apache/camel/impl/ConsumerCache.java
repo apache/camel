@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -24,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +36,15 @@ import org.apache.commons.logging.LogFactory;
 public class ConsumerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ConsumerCache.class);
 
-    private final Map<String, PollingConsumer> consumers = new HashMap<String, PollingConsumer>();
+    private final Map<String, PollingConsumer> consumers;
+
+    public ConsumerCache() {
+        this.consumers = new LRUCache<String, PollingConsumer>(1000);
+    }
+
+    public ConsumerCache(Map<String, PollingConsumer> cache) {
+        this.consumers = cache;
+    }
 
     public synchronized PollingConsumer getConsumer(Endpoint endpoint) {
         String key = endpoint.getEndpointUri();

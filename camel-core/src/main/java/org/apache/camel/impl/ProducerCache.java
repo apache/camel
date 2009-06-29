@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -28,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,13 +41,19 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class ProducerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
-    private final Map<String, Producer> producers = new HashMap<String, Producer>();
+    private final Map<String, Producer> producers;
     private final ServicePool<Endpoint, Producer> pool;
 
     // TODO: Have easy configuration of pooling in Camel
 
     public ProducerCache(ServicePool<Endpoint, Producer> producerServicePool) {
         this.pool = producerServicePool;
+        this.producers = new LRUCache<String, Producer>(1000);
+    }
+
+    public ProducerCache(ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
+        this.pool = producerServicePool;
+        this.producers = cache;
     }
 
     public Producer getProducer(Endpoint endpoint) {
