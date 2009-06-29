@@ -27,6 +27,7 @@ import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -426,7 +427,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         // jms header strategy
         String strategy = getAndRemoveParameter(parameters, "jmsKeyFormatStrategy", String.class);
         if (strategy != null) {
-            if (isReferenceParameter(strategy)) {
+            if (EndpointHelper.isReferenceParameter(strategy)) {
                 String key = strategy.substring(1);
                 endpoint.setJmsKeyFormatStrategy(lookup(key, JmsKeyFormatStrategy.class));
             } else {
@@ -445,7 +446,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
         return endpoint;
-    }
+    }   
 
     /**
      * A strategy method allowing the URI destination to be translated into the
