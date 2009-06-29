@@ -20,7 +20,6 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
@@ -28,10 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class DataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
 
-    public void test() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:results");
-        endpoint.expectedMessageCount((int) dataSet.getSize());
-
+    public void testDataSet() throws Exception {
+        // data set will itself set its assertions so we should just
+        // assert that all mocks is ok
         assertMockEndpointsSatisfied();
     }
 
@@ -46,9 +44,7 @@ public class DataSetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("dataset:foo").multicast().
-                        to("mock:results").
-                        to("direct:foo");
+                from("dataset:foo").to("direct:foo");
 
                 from("direct:foo").to("dataset:foo");
             }
