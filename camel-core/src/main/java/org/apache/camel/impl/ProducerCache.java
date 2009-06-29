@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -27,6 +26,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +42,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class ProducerCache<E extends Exchange> extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
-    private Map<String, Producer<E>> producers = new HashMap<String, Producer<E>>();
+    private Map<String, Producer<E>> producers = new LRUCache<String, Producer<E>>(1000);
 
     public synchronized Producer<E> getProducer(Endpoint<E> endpoint) {
         String key = endpoint.getEndpointUri();
