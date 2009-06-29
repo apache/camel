@@ -30,10 +30,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 public class PipelineConcurrentTest extends ContextTestSupport {
 
-    private String uri = "seda:in?size=10000&concurrentConsumers=10";
+    private String uri = "seda:in?size=2000&concurrentConsumers=10";
 
     public void testConcurrentPipeline() throws Exception {
-        int total = 10000;
+        int total = 2000;
         final int group = total / 20;
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
