@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,16 +101,16 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
         boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);
 
+        // whether we should trace it or not, some nodes should be skipped as they are abstract
+        // intermedidate steps for instance related to on completion
+        boolean trace = true;
+
         // okay this is a regular exchange being routed we might need to log and trace
         try {
             // before
             if (shouldLog) {
 
-                // whether we should trace it or not, some nodes should be skipped as they are abstract
-                // intermedidate steps for instance related to on completion
-                boolean trace = true;
-
-                // if traceable then register this as the previous node, now it has been logged
+                // register route path taken if TraceableUnitOfWork unit of work
                 if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
                     TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
 
@@ -126,22 +125,22 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                         tuow.addTraced(new DefaultRouteNode(node, super.getProcessor()));
                     }
                 }
+            }
 
-                // log and trace the processor
-                if (trace) {
-                    logExchange(exchange);
-                    traceExchange(exchange);
-                }
+            // log and trace the processor
+            if (trace) {
+                logExchange(exchange);
+                traceExchange(exchange);
+            }
 
-                // some nodes need extra work to trace it
-                if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
-                    TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+            // some nodes need extra work to trace it
+            if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
+                TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
 
-                    if (node instanceof InterceptDefinition) {
-                        // special for intercept() as we would like to trace the processor that was intercepted
-                        // as well, otherwise we only see the intercepted route, but we need the both to be logged/traced
-                        afterIntercept((InterceptDefinition) node, tuow, exchange);
-                    }
+                if (node instanceof InterceptDefinition) {
+                    // special for intercept() as we would like to trace the processor that was intercepted
+                    // as well, otherwise we only see the intercepted route, but we need the both to be logged/traced
+                    afterIntercept((InterceptDefinition) node, tuow, exchange);
                 }
             }
 

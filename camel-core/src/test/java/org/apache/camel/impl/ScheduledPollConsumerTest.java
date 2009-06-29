@@ -24,7 +24,9 @@ import org.apache.camel.PollingConsumerPollStrategy;
 public class ScheduledPollConsumerTest extends ContextTestSupport {
 
     private static boolean rollback;
-    
+    private static int counter;
+    private static String event = "";
+
     public void testExceptionOnPollAndCanStartAgain() throws Exception {
 
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
@@ -37,11 +39,11 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
             public void commit(Consumer consumer, Endpoint endpoint) {
             }
 
-            public void rollback(Consumer consumer, Endpoint endpoint, Exception e) throws Exception {
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
                 if (e == expectedException) {
                     rollback = true;
                 }
-
+                return false;
             }
         });
 
@@ -64,6 +66,43 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         assertEquals("Should not have rollback", false, rollback);
     }
     
+    public void testRetryAtMostThreeTimes() throws Exception {
+        counter = 0;
+        event = "";
+
+        final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+
+        consumer.setPollStrategy(new PollingConsumerPollStrategy() {
+            public void begin(Consumer consumer, Endpoint endpoint) {
+            }
+
+            public void commit(Consumer consumer, Endpoint endpoint) {
+                event += "commit";
+            }
+
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+                event += "rollback";
+                counter++;
+                if (retryCounter < 3) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        consumer.setUseFixedDelay(true);
+        consumer.setDelay(60000);
+        consumer.start();
+        // poll that throws an exception
+        consumer.run();
+        consumer.stop();
+
+        // 3 retries + 1 last failed attempt when we give up
+        assertEquals(4, counter);
+        assertEquals("rollbackrollbackrollbackrollback", event);
+    }
+
     public void testNoExceptionOnPoll() throws Exception {
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(null);
         consumer.start();

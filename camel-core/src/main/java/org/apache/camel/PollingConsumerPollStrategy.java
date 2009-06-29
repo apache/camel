@@ -20,7 +20,7 @@ package org.apache.camel;
  * Strategy for a {@link org.apache.camel.PollingConsumer} when polling an {@link org.apache.camel.Endpoint}.
  * <p/>
  * This pluggable strategy allows to plugin different implementations what to do, most noticeable what to
- * do in case the polling goes wrong. This can be handled in the {@link #rollback(Consumer, Endpoint, Exception) rollback}
+ * do in case the polling goes wrong. This can be handled in the {@link #rollback(Consumer, Endpoint, int, Exception) rollback}
  * method.
  *
  * @version $Revision$
@@ -36,7 +36,7 @@ public interface PollingConsumerPollStrategy {
     void begin(Consumer consumer, Endpoint endpoint);
 
     /**
-     * Called when poll is completed sucesfully
+     * Called when poll is completed successfully
      *
      * @param consumer the consumer
      * @param endpoint the endpoint being consumed
@@ -48,9 +48,14 @@ public interface PollingConsumerPollStrategy {
      *
      * @param consumer the consumer
      * @param endpoint the endpoint being consumed
+     * @param retryCounter current retry attempt, starting from 0.
      * @param cause the caused exception
-     * @throws Exception can be used to rethrow the caused exception
+     * @throws Exception can be used to rethrow the caused exception. Notice that thrown an exception will
+     *         terminate the scheduler and thus Camel will not trigger again. So if you want to let the scheduler
+     *         to continue to run then do <b>not</b> throw any exception from this method.
+     * @return whether to retry immediately or not. Return <tt>false</tt> to ignore the problem,
+     *         <tt>true</tt> to try immediately again
      */
-    void rollback(Consumer consumer, Endpoint endpoint, Exception cause) throws Exception;
+    boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception;
 
 }

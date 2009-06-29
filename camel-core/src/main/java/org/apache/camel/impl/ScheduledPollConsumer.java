@@ -72,20 +72,41 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * Invoked whenever we should be polled
      */
     public void run() {
-        try {
-            if (isRunAllowed()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Starting to poll: " + this.getEndpoint());
-                }
-                pollStrategy.begin(this, getEndpoint());
-                poll();
-                pollStrategy.commit(this, getEndpoint());
-            }
-        } catch (Exception e) {
+        int retryCounter = -1;
+        boolean done = false;
+
+        while (!done) {
             try {
-                pollStrategy.rollback(this, getEndpoint(), e);
-            } catch (Exception re) {
-                throw ObjectHelper.wrapRuntimeCamelException(re);
+                // eager assume we are done
+                done = true;
+                if (isRunAllowed()) {
+
+                    if (retryCounter == -1) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Starting to poll: " + this.getEndpoint());
+                        }
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Retrying attempt " + retryCounter + " to poll: " + this.getEndpoint());
+                            }
+                        }
+                    }
+
+                    pollStrategy.begin(this, getEndpoint());
+                    retryCounter++;
+                    poll();
+                    pollStrategy.commit(this, getEndpoint());
+                }
+            } catch (Exception e) {
+                try {
+                    boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
+                    if (retry) {
+                        done = false;
+                    }
+                } catch (Exception re) {
+                    throw ObjectHelper.wrapRuntimeCamelException(re);
+                }
             }
         }
 

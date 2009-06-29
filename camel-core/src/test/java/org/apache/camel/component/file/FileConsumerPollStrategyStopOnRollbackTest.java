@@ -91,12 +91,13 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
             event += "commit";
         }
 
-        public void rollback(Consumer consumer, Endpoint endpoint, Exception cause) throws Exception {
+        public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             if (cause.getMessage().equals("Damn I cannot do this")) {
                 event += "rollback";
                 // stop consumer as it does not work
                 consumer.stop();
             }
+            return false;
         }
     }
 

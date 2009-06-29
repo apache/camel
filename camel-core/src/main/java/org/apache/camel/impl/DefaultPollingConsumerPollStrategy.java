@@ -39,8 +39,10 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
         // noop
     }
 
-    public void rollback(Consumer consumer, Endpoint endpoint, Exception e) throws Exception {
+    public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
         LOG.warn("Consumer " + consumer +  " could not poll endpoint: " + endpoint.getEndpointUri() + " caused by: " + e.getMessage(), e);
+        // we do not want to retry
+        return false;
     }
 
 }

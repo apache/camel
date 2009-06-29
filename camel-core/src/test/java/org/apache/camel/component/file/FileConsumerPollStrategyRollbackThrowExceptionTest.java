@@ -24,16 +24,16 @@ import org.apache.camel.PollingConsumerPollStrategy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Unit test for poll strategy
  */
-public class FileConsumerPollStrategyTest extends ContextTestSupport {
+public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextTestSupport {
 
-    private static int counter;
     private static String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll";
+    private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -49,16 +49,17 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
-    public void testFirstPollRollbackThenCommit() throws Exception {
+    public void testRollbackThrowException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(0);
+
+        // let it run for a little while since we rethrow the excpetion the consumer
+        // will stop scheduling and not poll anymore
+        Thread.sleep(2000);
 
         assertMockEndpointsSatisfied();
 
-        // give poll strategy a bit time to signal commit
-        Thread.sleep(50);
-
-        assertEquals("rollbackcommit", event);
+        assertEquals("rollback", event);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -72,10 +73,16 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public void begin(Consumer consumer, Endpoint endpoint) {
-            if (counter++ == 0) {
-                // simulate an error on first poll
-                throw new IllegalArgumentException("Damn I cannot do this");
+            // start consumer as we simualte the fail in begin
+            // and thus before camel lazy start it itself
+            try {
+                consumer.start();
+            } catch (Exception e) {
+                ObjectHelper.wrapRuntimeCamelException(e);
             }
+
+            // simulate an error on first poll
+            throw new IllegalArgumentException("Damn I cannot do this");
         }
 
         public void commit(Consumer consumer, Endpoint endpoint) {
@@ -83,10 +90,8 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
         }
 
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
-            if (cause.getMessage().equals("Damn I cannot do this")) {
-                event += "rollback";
-            }
-            return false;
+            event += "rollback";
+            throw cause;
         }
     }
 
