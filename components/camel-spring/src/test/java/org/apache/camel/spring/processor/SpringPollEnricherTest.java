@@ -14,21 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.enricher;
+package org.apache.camel.spring.processor;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.enricher.PollEnricherTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SampleAggregator implements AggregationStrategy {
+public class SpringPollEnricherTest extends PollEnricherTest {
 
-    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        if (newExchange == null) {
-            return oldExchange;
-        }
-        Object oldBody = oldExchange.getIn().getBody();
-        Object newBody = newExchange.getIn().getBody();
-        oldExchange.getIn().setBody(oldBody + ":" + newBody);
-        return oldExchange;
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/pollEnricher.xml");
     }
-    
+
 }

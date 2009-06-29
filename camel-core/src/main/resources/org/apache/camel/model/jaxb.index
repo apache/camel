@@ -45,6 +45,7 @@ OtherwiseDefinition
 PackageScanDefinition
 PipelineDefinition
 PolicyDefinition
+PollEnrichDefinition
 ProcessDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
