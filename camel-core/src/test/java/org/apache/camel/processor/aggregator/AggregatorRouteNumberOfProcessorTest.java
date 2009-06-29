@@ -73,8 +73,8 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hi Willem");
 
-        template.requestBodyAndHeader("direct:start", "Claus", "id", 1);
-        template.requestBodyAndHeader("direct:start", "Willem", "id", 1);
+        template.sendBodyAndHeader("direct:start", "Claus", "id", 1);
+        template.sendBodyAndHeader("direct:start", "Willem", "id", 1);
 
         assertMockEndpointsSatisfied();
 
@@ -120,8 +120,8 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
         getMockEndpoint("mock:agg").expectedBodiesReceived("Hi Willem");
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hi Willem");
 
-        template.sendBodyAndHeader("direct:start", ExchangePattern.InOnly, "Claus", "id", 1);
-        template.sendBodyAndHeader("direct:start", ExchangePattern.InOnly, "Willem", "id", 1);
+        template.sendBodyAndHeader("direct:start", "Claus", "id", 1);
+        template.sendBodyAndHeader("direct:start", "Willem", "id", 1);
 
         assertMockEndpointsSatisfied();
 
