@@ -871,54 +871,104 @@
     </dependencies>
   </dependencyManagement>
 
+  <build>
+    <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <configuration>
+                        <buildcommands>
+                            <java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
+                            <java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
+                            <!--java.lang.String>net.sourceforge.pmd.eclipse.plugin.pmdBuilder</java.lang.String-->
+                        </buildcommands>
+                        <projectnatures>
+                            <nature>org.eclipse.jdt.core.javanature</nature>
+                            <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+                            <!--nature>net.sourceforge.pmd.eclipse.plugin.pmdNature</nature-->
+                        </projectnatures>
+                        <additionalConfig>
+                            <file>
+                                <name>.checkstyle</name>
+                                <location>/camel-eclipse-checkstyle</location>
+                            </file>
+                            <!--file>
+                                <name>.pmd</name>
+                                <location>/cxf-eclipse-pmd</location>
+                            </file>
+                            <file>
+                                <name>.ruleset</name>
+                                <location>/cxf-pmd-ruleset.xml</location-->
+       
+                        </additionalConfig>
+                    </configuration>
+                </plugin>
+                
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-checkstyle-plugin</artifactId>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.camel</groupId>
+					<artifactId>camel-buildtools</artifactId>
+					<version>${project.version}</version>						
+				</dependency>
+			</dependencies>
+			<executions>
+				<execution>
+					<id>validate</id>
+					<phase>validate</phase>
+					<configuration>
+						<configLocation>camel-checkstyle.xml</configLocation>
+						<consoleOutput>true</consoleOutput>
+						<failsOnError>true</failsOnError>
+						<linkXRef>false</linkXRef>
+						<suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
+						<sourceDirectory>${basedir}/src</sourceDirectory>
+						<excludes>**/archetype-resources/**/*.java</excludes>
+					</configuration>
+					<goals>
+						<goal>checkstyle</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+           </plugins>
+        </pluginManagement>
+      <defaultGoal>install</defaultGoal>
+  </build>
+  <reporting>
+         <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.2</version>
+            <configuration>
+              <formats>
+                <format>html</format>
+              </formats>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+          </plugin>
+        </plugins>
+    </reporting> 
   <profiles>
     <profile>
 	  <id>nochecks</id>
+          <activation>
+		<activeByDefault>true</activeByDefault>
+	  </activation>
 	  <properties>
 		<!--  pmd.skip>true</pmd.skip-->
 		<checkstyle.skip>true</checkstyle.skip>
 	  </properties>
     </profile>
-
-   <profile>
-	<!-- default profile enables checkstyle and Xlint stuff -->
-	<id>sourcecheck</id>
-	<activation>
-		<activeByDefault>true</activeByDefault>
-	</activation>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.camel</groupId>
-						<artifactId>camel-buildtools</artifactId>
-						<version>${project.version}</version>						
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>validate</id>
-						<phase>validate</phase>
-						<configuration>
-							<configLocation>camel-checkstyle.xml</configLocation>
-							<consoleOutput>true</consoleOutput>
-							<failsOnError>true</failsOnError>
-							<linkXRef>false</linkXRef>
-							<suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
-							<sourceDirectory>${basedir}/src</sourceDirectory>
-							<excludes>**/archetype-resources/**/*.java</excludes>
-						</configuration>
-						<goals>
-							<goal>checkstyle</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	   </build>
+    <profile>
+	<id>sourcecheck</id>       
     </profile>
   </profiles>
 </project>

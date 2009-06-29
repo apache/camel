@@ -18,7 +18,7 @@
   under the License.
 -->
 <checkstyle-configurations file-format-version="5.0.0">
-    <check-configuration name="ActiveMQ Checks" location="@CHECKSTYLE_CONFIG_FILE@" type="external" description="">
+    <check-configuration name="Camel Checks" location="@CHECKSTYLE_CONFIG_FILE@" type="external" description="">
         <property name="apache.header.file" value="@APACHE_HEADER_FILE@"/>
     </check-configuration>
 </checkstyle-configurations>
