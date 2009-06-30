@@ -35,9 +35,9 @@ import com.jcraft.jsch.UserInfo;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
@@ -277,7 +277,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public boolean retrieveFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+    public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
             return retrieveFileToFileInLocalWorkDirectory(name, exchange);
@@ -287,9 +287,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    private boolean retrieveFileToStreamInBody(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+    private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         try {
-            GenericFile<ChannelSftp.LsEntry> target = exchange.getGenericFile();
+            GenericFile<ChannelSftp.LsEntry> target = 
+                (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             OutputStream os = new ByteArrayOutputStream();
             target.setBody(os);
             channel.get(name, os);
@@ -299,13 +301,16 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    private boolean retrieveFileToFileInLocalWorkDirectory(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+    private boolean retrieveFileToFileInLocalWorkDirectory(String name, Exchange exchange) throws GenericFileOperationFailedException {
         File temp;
         File local = new File(endpoint.getLocalWorkDirectory());
         OutputStream os;
+        GenericFile<ChannelSftp.LsEntry> file = 
+            (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        ObjectHelper.notNull(file, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
         try {
             // use relative filename in local work directory
-            String relativeName = exchange.getGenericFile().getRelativeFilePath();
+            String relativeName = file.getRelativeFilePath();
 
             temp = new File(local, relativeName + ".inprogress");
             local = new File(local, relativeName);
@@ -335,16 +340,13 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             // set header with the path to the local work file
             exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
-
-
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
 
         try {
-            GenericFile<ChannelSftp.LsEntry> target = exchange.getGenericFile();
             // store the java.io.File handle as the body
-            target.setBody(local);
+            file.setBody(local);
             channel.get(name, os);
 
             // rename temp to local after we have retrieved the data
@@ -360,7 +362,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         return true;
     }
 
-    public boolean storeFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
         // if an existing file already exsists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
             boolean existFile = existFile(name);
