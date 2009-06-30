@@ -26,7 +26,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.PredicateAssertHelper;
 
 /**
@@ -50,9 +49,8 @@ public class CustomDataSetTest extends ContextTestSupport {
     };
 
     public void testUsingCustomDataSet() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:results");
-        endpoint.expectedMessageCount((int) dataSet.getSize());
-
+        // data set will itself set its assertions so we should just
+        // assert that all mocks is ok
         assertMockEndpointsSatisfied();
     }
 
@@ -67,9 +65,7 @@ public class CustomDataSetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("dataset:foo").multicast().
-                        to("mock:results").
-                        to("direct:foo");
+                from("dataset:foo").to("direct:foo");
 
                 from("direct:foo").to("dataset:foo");
             }
