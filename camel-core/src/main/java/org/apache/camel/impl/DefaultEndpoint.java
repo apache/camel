@@ -92,6 +92,21 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         return endpointUri;
     }
 
+    public String getEndpointKey() {
+        if (isLenientProperties()) {
+            // only use the endpoint uri without parameters as the properties is lenient
+            String uri = getEndpointUri();
+            if (uri.indexOf("?") != -1) {
+                return ObjectHelper.before(uri, "?");
+            } else {
+                return uri;
+            }
+        } else {
+            // use the full endpoint uri
+            return getEndpointUri();
+        }
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -224,5 +239,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         // default should be false for most components
         return false;
     }
+
+
 
 }

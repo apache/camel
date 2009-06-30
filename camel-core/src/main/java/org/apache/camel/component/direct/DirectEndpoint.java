@@ -51,23 +51,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new DefaultConsumer(this, processor) {
-            @Override
-            public void start() throws Exception {
-                if (!allowMultipleConsumers && !consumers.isEmpty()) {
-                    throw new IllegalStateException("Endpoint " + getEndpointUri() + " only allows 1 active consumer but you attempted to start a 2nd consumer.");
-                }
-
-                consumers.add(this);
-                super.start();
-            }
-
-            @Override
-            public void stop() throws Exception {
-                super.stop();
-                consumers.remove(this);
-            }
-        };
+        return new DirectConsumer(this, processor);
     }
 
     public boolean isAllowMultipleConsumers() {

@@ -70,6 +70,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.SystemHelper;
@@ -90,7 +91,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private static int nameSuffix;
     private boolean routeDefinitionInitiated;
     private String name;  
-    private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
+    private final Map<String, Endpoint> endpoints = new LRUCache<String, Endpoint>(1000);
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;

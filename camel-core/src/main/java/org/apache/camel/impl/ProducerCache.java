@@ -217,4 +217,14 @@ public class ProducerCache extends ServiceSupport {
     protected void doStart() throws Exception {
         ServiceHelper.startServices(pool);
     }
+
+    /**
+     * Returns the current size of the producer cache
+     *
+     * @return the current size
+     */
+    int size() {
+        return producers.size();
+    }
+
 }

@@ -67,6 +67,10 @@ public class InterceptSendToEndpoint implements Endpoint {
         return delegate.getEndpointUri();
     }
 
+    public String getEndpointKey() {
+        return delegate.getEndpointKey();
+    }
+
     public Exchange createExchange() {
         return delegate.createExchange();
     }

@@ -70,6 +70,10 @@ public class CxfSoapEndpoint implements Endpoint, HeaderFilterStrategyAware {
         return endpoint.getEndpointUri();
     }
 
+    public String getEndpointKey() {
+        return endpoint.getEndpointUri();
+    }
+
     public Exchange createExchange() {
         return endpoint.createExchange();
     }
@@ -168,6 +172,7 @@ public class CxfSoapEndpoint implements Endpoint, HeaderFilterStrategyAware {
         headerFilterStrategy = strategy;
         
     }
+
     public boolean isLenientProperties() {
         return false;
     }

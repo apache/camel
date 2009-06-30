@@ -92,7 +92,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ExecutorService executorService, boolean streaming) {
         notNull(processors, "processors");
-        // TODO: end() does not work correctly with Splitter
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.isParallelProcessing = parallelProcessing;

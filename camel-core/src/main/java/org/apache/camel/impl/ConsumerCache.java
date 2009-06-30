@@ -69,7 +69,7 @@ public class ConsumerCache extends ServiceSupport {
                 consumers.put(key, answer);
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Consumer for endpoint: " + key + " is not singleton and thus not added to producer cache");
+                    LOG.debug("Consumer for endpoint: " + key + " is not singleton and thus not added to consumer cache");
                 }
             }
         }
@@ -109,6 +109,15 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     protected void doStart() throws Exception {
+    }
+
+    /**
+     * Returns the current size of the consumer cache
+     *
+     * @return the current size
+     */
+    int size() {
+        return consumers.size();
     }
 
 }

@@ -48,7 +48,7 @@ public class CamelNamingStrategy {
     public static final String TYPE_ROUTE = "routes";
 
     protected String domainName;
-    protected String hostName = "locahost";
+    protected String hostName = "localhost";
 
     public CamelNamingStrategy() {
         this("org.apache.camel");
@@ -111,7 +111,7 @@ public class CamelNamingStrategy {
         } else {
             return null;
         }
-        
+
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -192,11 +192,16 @@ public class CamelNamingStrategy {
     }
 
     protected String getEndpointId(Endpoint ep) {
-        String uri = ep.getEndpointUri();
-        int pos = uri.indexOf('?');
-        String id = (pos == -1) ? uri : uri.substring(0, pos);
-        id += "?id=0x" + Integer.toHexString(ep.hashCode());
-        return id;
+        if (ep.isSingleton()) {
+            return ep.getEndpointKey();
+        } else {
+            // non singleton then add hashcoded id
+            String uri = ep.getEndpointKey();
+            int pos = uri.indexOf('?');
+            String id = (pos == -1) ? uri : uri.substring(0, pos);
+            id += "?id=0x" + Integer.toHexString(ep.hashCode());
+            return id;
+        }
     }
 
     /**

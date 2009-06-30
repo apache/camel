@@ -33,11 +33,28 @@ public interface Endpoint extends IsSingleton {
 
     /**
      * Returns the string representation of the endpoint URI
+     *
+     * @return the endpoint URI
      */
     String getEndpointUri();
 
     /**
+     * Returns a string key of this endpoint.
+     * <p/>
+     * This key is used by {@link org.apache.camel.spi.LifecycleStrategy} when registering endpoint.
+     * This allows to register different instances of endpoints with the same key.
+     * <p/>
+     * For JMX mbeans this allows us to use the same JMX Mbean for all endpoints that are logical
+     * the same but have different parameters. For instance the http endpoint.
+     *
+     * @return the endpoint key
+     */
+    String getEndpointKey();
+
+    /**
      * Create a new exchange for communicating with this endpoint
+     *
+     * @return a new exchange
      */
     Exchange createExchange();
 
@@ -47,6 +64,7 @@ public interface Endpoint extends IsSingleton {
      * to be an {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut} exchange
      *
      * @param pattern the message exchange pattern for the exchange
+     * @return a new exchange
      */
     Exchange createExchange(ExchangePattern pattern);
 
@@ -54,7 +72,8 @@ public interface Endpoint extends IsSingleton {
      * Creates a new exchange for communicating with this exchange using the
      * given exchange to pre-populate the values of the headers and messages
      *
-     * @param exchange given exchange to use for pre-polulate
+     * @param exchange given exchange to use for pre-populate
+     * @return a new exchange
      */
     Exchange createExchange(Exchange exchange);
 
@@ -128,6 +147,8 @@ public interface Endpoint extends IsSingleton {
      * dynamic URI options appended that is targeted for an external system.
      * <p/>
      * Most endpoints is configured to be <b>not</b> lenient.
+     *
+     * @return whether properties is lenient or not
      */
     boolean isLenientProperties();
 }
