@@ -27,8 +27,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.cxf.helpers.IOUtils;
-import org.apache.cxf.io.CachedOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +111,24 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         try {
             assertEquals(200, httpclient.executeMethod(post));
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
+                    post.getResponseBodyAsString());
+        } finally {
+            post.releaseConnection();
+        }
+
+    }
+    
+    @Test
+    public void testPostConsumerUniqueResponseCode() throws Exception {
+        PostMethod post = new PostMethod("http://localhost:9000/customerservice/customersUniqueResponseCode");
+        post.addRequestHeader("Accept" , "text/xml");
+        RequestEntity entity = new StringRequestEntity(POST_REQUEST, "text/xml", "ISO-8859-1");
+        post.setRequestEntity(entity);
+        HttpClient httpclient = new HttpClient();
+
+        try {
+            assertEquals(301, httpclient.executeMethod(post));
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
                     post.getResponseBodyAsString());
         } finally {
             post.releaseConnection();

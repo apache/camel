@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.CxfSoapBinding;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 
 /**
@@ -76,6 +80,49 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
         // TODO propagate security context
 
         return answer;
+    }
+    
+    public void propagateResponseHeadersToCamel(Message cxfMessage, Exchange exchange,
+                                                HeaderFilterStrategy strategy) {
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Propagating response headers from CXF message " + cxfMessage);
+        }
+        
+        if (strategy == null) {
+            return;
+        }
+
+        Map<String, Object> camelHeaders = exchange.getOut().getHeaders();
+        
+        Map<String, List<String>> cxfHeaders =
+            CastUtils.cast((Map)cxfMessage.get(Message.PROTOCOL_HEADERS));
+                      
+        if (cxfHeaders != null) {
+            for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
+                if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                    camelHeaders.put(entry.getKey(), entry.getValue().get(0));
+                    
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Populate header from CXF header=" + entry.getKey() + " value="
+                                + entry.getValue());
+                    }
+                }
+            }
+        }
+
+        
+        // propagate HTTP RESPONSE_CODE
+        String key = Message.RESPONSE_CODE;
+        Object value = cxfMessage.get(key);
+        if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
+            camelHeaders.put(Exchange.HTTP_RESPONSE_CODE, value);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Populate header from CXF header=" + key + " value=" + value
+                          + " as " + Exchange.HTTP_RESPONSE_CODE);
+            } 
+        }
+        
     }
 
     protected String getPath(org.apache.camel.Message camelMessage) {

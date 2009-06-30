@@ -36,4 +36,15 @@ public interface CxfBeanBinding {
     Message createCxfMessageFromCamelExchange(Exchange camelExchange, 
             HeaderFilterStrategy headerFilterStrategy);
 
+    /**
+     * Given a CXF out/response Message, this method propagates response headers to a 
+     * Camel exchange.
+     * 
+     * @param cxfMessage
+     * @param camelExchange
+     * @param headerFilterStrategy
+     */
+    void propagateResponseHeadersToCamel(Message cxfMessage, Exchange camelExchange,
+                                         HeaderFilterStrategy headerFilterStrategy);
+
 }

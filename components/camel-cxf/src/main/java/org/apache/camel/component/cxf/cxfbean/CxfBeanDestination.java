@@ -25,6 +25,7 @@ import org.apache.camel.component.cxf.transport.CamelDestination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.ConduitInitiator;
@@ -82,6 +83,12 @@ public class CxfBeanDestination extends CamelDestination implements Processor {
         // Handling the incoming message
         // The response message will be send back by the outgoing chain
         incomingObserver.onMessage(cxfMessage);
+    }
+    
+    @Override
+    protected void propagateResponseHeadersToCamel(Message outMessage, Exchange camelExchange) {
+        endpoint.getCxfBeanBinding().propagateResponseHeadersToCamel(outMessage, camelExchange,
+                                                                     endpoint.getHeaderFilterStrategy());
     }
 
 }

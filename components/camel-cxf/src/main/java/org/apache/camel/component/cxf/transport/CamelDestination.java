@@ -248,6 +248,14 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         return conduitInitiator;
     }
 
+    /**
+     * @param outMessage
+     * @param camelExchange
+     */
+    protected void propagateResponseHeadersToCamel(Message outMessage, Exchange camelExchange) {
+        CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, 
+                                            camelExchange.getOut().getHeaders(), camelExchange);            
+    }
 
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
@@ -261,8 +269,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         private void commitOutputMessage() throws IOException {
             Exchange camelExchange = (Exchange)outMessage.get(CxfConstants.CAMEL_EXCHANGE);
             
-            CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, 
-                                                camelExchange.getOut().getHeaders(), camelExchange);
+            propagateResponseHeadersToCamel(outMessage, camelExchange);
+            
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
             camelExchange.getOut().setBody(outputStream.getBytes());
             getLogger().log(Level.FINE, "send the response message: " + outputStream);

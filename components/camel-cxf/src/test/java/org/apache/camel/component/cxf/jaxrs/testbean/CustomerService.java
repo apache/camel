@@ -72,8 +72,18 @@ public class CustomerService {
         customer.setId(++currentId);
 
         customers.put(customer.getId(), customer);
-
+        
         return Response.ok(customer).build();
+    }
+    
+    @POST
+    @Path("/customersUniqueResponseCode/")
+    public Response addCustomerUniqueResponseCode(Customer customer) {
+        customer.setId(++currentId);
+
+        customers.put(customer.getId(), customer);
+        
+        return Response.status(301).entity(customer).build();
     }
 
     @DELETE
