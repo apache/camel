@@ -301,7 +301,9 @@ public class JmsProducer extends DefaultProducer {
                 // as we are not out capable and thus do not expect a reply, and therefore
                 // the consumer of this message we send should not return a reply
                 String to = destinationName != null ? destinationName : "" + destination;
-                LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable with JMSReplyTo: " + replyTo + " to destination: " + to + " for Exchange: " + exchange);
+                LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable with JMSReplyTo: " + replyTo
+                        + " for destination: " + to + ". Use preserveMessageQos=true to force Camel to keep the JMSReplyTo."
+                        + " Exchange: " + exchange);
                 exchange.getIn().setHeader("JMSReplyTo", null);
             }
         }
