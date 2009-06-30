@@ -47,7 +47,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     @SuppressWarnings("unchecked")
     public GenericFileExchange<T> createExchange(GenericFile<T> file) {
         GenericFileExchange<T> answer = new GenericFileExchange<T>(this);
-        answer.setGenericFile(file);
+        if (file != null) {
+            file.bindToExchange(answer);
+        }
         return answer;
     }
 
