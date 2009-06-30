@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -32,9 +33,20 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class SedaComponent extends DefaultComponent<Exchange> {
 
-    public BlockingQueue<Exchange> createQueue(String uri, Map parameters) {
+    private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
+
+    public synchronized BlockingQueue<Exchange> createQueue(String uri, Map parameters) {
+        String key = getQueueKey(uri);
+
+        if (queues.containsKey(key)) {
+            return queues.get(key);
+        }
+
+        // create queue
         int size = getAndRemoveParameter(parameters, "size", Integer.class, 1000);
-        return new LinkedBlockingQueue<Exchange>(size);
+        BlockingQueue<Exchange> queue = new LinkedBlockingQueue<Exchange>(size);
+        queues.put(key, queue);
+        return queue;
     }
 
     @Override
@@ -42,4 +54,19 @@ public class SedaComponent extends DefaultComponent<Exchange> {
         int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, 1);
         return new SedaEndpoint(uri, this, createQueue(uri, parameters), consumers);
     }
+
+    protected String getQueueKey(String uri) {
+        if (uri.contains("?")) {
+            // strip parameters
+            uri = uri.substring(0, uri.indexOf("?"));
+        }
+        return uri;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        queues.clear();
+        super.doStop();
+    }
+
 }
