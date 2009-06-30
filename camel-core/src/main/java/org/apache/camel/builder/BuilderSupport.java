@@ -110,6 +110,12 @@ public abstract class BuilderSupport {
         return Builder.faultBodyAs(type);
     }
 
+    /**
+     * Returns a value builder for the given property
+     */
+    public ValueBuilder property(String name) {
+        return Builder.property(name);
+    }  
 
     /**
      * Returns a value builder for the given system property

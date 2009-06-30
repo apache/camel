@@ -105,6 +105,14 @@ public final class Builder {
     }
 
     /**
+     * Returns a predicate and value builder for properties on an exchange
+     */
+    public static ValueBuilder property(String name) {
+        Expression expression = ExpressionBuilder.propertyExpression(name);
+        return new ValueBuilder(expression);
+    }
+    
+    /**
      * Returns an expression for the given system property
      */
     public static <E extends Exchange> ValueBuilder<E> systemProperty(final String name) {
