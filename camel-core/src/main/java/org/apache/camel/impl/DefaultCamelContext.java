@@ -58,6 +58,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.SystemHelper;
@@ -78,7 +79,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private static int nameSuffix;
     private boolean routeDefinitionInitiated;
     private String name;
-    private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
+    private final Map<String, Endpoint> endpoints = new LRUCache<String, Endpoint>(1000);
     private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
     private List<Service> servicesToClose = new ArrayList<Service>();

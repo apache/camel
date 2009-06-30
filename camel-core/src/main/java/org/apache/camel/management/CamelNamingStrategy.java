@@ -189,7 +189,12 @@ public class CamelNamingStrategy {
         String uri = ep.getEndpointUri();
         int pos = uri.indexOf('?');
         String id = (pos == -1) ? uri : uri.substring(0, pos);
-        id += "?id=0x" + Integer.toHexString(ep.hashCode());
+
+        // if non singleton then add hashcode
+        if (!ep.isSingleton()) {
+            id += "?id=0x" + Integer.toHexString(ep.hashCode());
+        }
+
         return id;
     }
 
