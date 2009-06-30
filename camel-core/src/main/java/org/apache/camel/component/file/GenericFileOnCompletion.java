@@ -68,7 +68,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
         // after processing
-        final GenericFile<T> file = exchange.getGenericFile();
+        final GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         boolean failed = exchange.isFailed();
 
         if (log.isDebugEnabled()) {

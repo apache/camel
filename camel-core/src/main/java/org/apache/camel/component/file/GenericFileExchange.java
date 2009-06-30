@@ -41,6 +41,7 @@ public class GenericFileExchange<T> extends DefaultExchange {
     }
 
     public Exchange newInstance() {
-        return new GenericFileExchange<T>(this, getGenericFile());
+        GenericFile<T> file = (GenericFile<T>) getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        return new GenericFileExchange<T>(this, file);
     }
 }

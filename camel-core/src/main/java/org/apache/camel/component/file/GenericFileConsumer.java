@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -112,7 +113,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
             // use poll to remove the head so it does not consume memory even after we have processed it
-            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.poll();
+            Exchange exchange = (Exchange) exchanges.poll();
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
@@ -124,9 +125,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         
         // remove the file from the in progress list in case the batch was limited by max messages per poll
         for (int index = 0; index < exchanges.size() && isRunAllowed(); index++) {
-            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.poll();
-            String key = exchange.getGenericFile().getFileName();
-            endpoint.getInProgressRepository().remove(key);
+            Exchange exchange = (Exchange) exchanges.poll();
+            GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            if (file != null) {
+                endpoint.getInProgressRepository().remove(file.getFileName());
+            }
         }
     }
 
@@ -153,25 +156,25 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      *
      * @param exchange the exchange
      */
-    protected void processExchange(final GenericFileExchange<T> exchange) {
+    protected void processExchange(final Exchange exchange) {
+        final GenericFile<T> target = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         if (log.isTraceEnabled()) {
-            log.trace("Processing remote file: " + exchange.getGenericFile());
+            log.trace("Processing remote file: " + target);
         }
 
         try {
             final GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
-            boolean begin = processStrategy.begin(operations, endpoint, exchange, exchange.getGenericFile());
+            boolean begin = processStrategy.begin(operations, endpoint, exchange, target);
             if (!begin) {
-                log.debug(endpoint + " cannot begin processing file: " + exchange.getGenericFile());
+                log.debug(endpoint + " cannot begin processing file: " + target);
                 // remove file from the in progress list as its no longer in progress
-                endpoint.getInProgressRepository().remove(exchange.getGenericFile().getFileName());
+                endpoint.getInProgressRepository().remove(target.getFileName());
                 return;
             }
 
             // must use file from exchange as it can be updated due the
             // preMoveNamePrefix/preMoveNamePostfix options
-            final GenericFile<T> target = exchange.getGenericFile();
             // must use full name when downloading so we have the correct path
             final String name = target.getAbsoluteFilePath();
 
