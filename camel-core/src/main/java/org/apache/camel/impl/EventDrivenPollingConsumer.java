@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumerAware;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExceptionHandler;
@@ -80,10 +79,6 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (exchange instanceof PollingConsumerAware) {
-            // callback that this exchange has been polled
-            ((PollingConsumerAware)exchange).exchangePolled(exchange);
-        }
         queue.offer(exchange);
     }
 

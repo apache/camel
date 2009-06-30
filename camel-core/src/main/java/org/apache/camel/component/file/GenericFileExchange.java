@@ -20,11 +20,10 @@ import java.io.IOException;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumerAware;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultExchange;
 
-public class GenericFileExchange<T> extends DefaultExchange implements PollingConsumerAware {
+public class GenericFileExchange<T> extends DefaultExchange {
 
     public GenericFileExchange(Endpoint fromEndpoint) {
         super(fromEndpoint);
@@ -51,18 +50,4 @@ public class GenericFileExchange<T> extends DefaultExchange implements PollingCo
     public Exchange newInstance() {
         return new GenericFileExchange<T>(this, getGenericFile());
     }
-
-    public void exchangePolled(Exchange exchange) {
-        GenericFile<T> file = getGenericFile();
-        if (file != null) {
-            try {
-                // load content into memory
-                file.getBinding().loadContent(exchange, file);
-            } catch (IOException e) {
-                throw new RuntimeExchangeException("Cannot load content of file: "
-                        + file.getAbsoluteFilePath(), exchange, e);
-            }
-        }
-    }
-
 }
