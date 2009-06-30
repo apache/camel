@@ -74,7 +74,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
-
+        
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
@@ -87,7 +87,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         Scanner scanner = new Scanner(in);
 
         // Retrieve the pair separator defined to split the record
-        ObjectHelper.notEmpty(factory.getPairSeparator(), "The separator has not been defined in the annotation @Message.");
+        ObjectHelper.notNull(factory.getPairSeparator(), "The pair separator property of the annotation @Message");
         String separator = factory.getPairSeparator();
 
         int count = 0;
@@ -107,7 +107,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
                     LOG.debug("Counter " + count++ + " : content : " + line);
                 }
                 
-                // Create POJO where CSV data will be stored
+                // Create POJO
                 model = factory.factory();
 
                 // Split the message according to the pair separator defined in
