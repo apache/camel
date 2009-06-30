@@ -75,7 +75,7 @@ public class JmsInOutIssueTest extends ContextTestSupport {
                 from("activemq:queue:in").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("Should be InOut", ExchangePattern.InOut, exchange.getPattern());
-                        assertNotNull("There should be a reply destination", exchange.getProperty(JmsConstants.JMS_REPLY_DESTINATION));
+                        assertNotNull("There should be a reply destination", exchange.getIn().getHeader(JmsConstants.JMS_REPLY_DESTINATION));
 
                         exchange.getOut().setBody("Bye World");
                     }

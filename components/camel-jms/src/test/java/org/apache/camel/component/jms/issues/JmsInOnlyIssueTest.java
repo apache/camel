@@ -98,7 +98,7 @@ public class JmsInOnlyIssueTest extends ContextTestSupport {
                 from("activemq:queue:in").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("Should be InOnly", ExchangePattern.InOnly, exchange.getPattern());
-                        assertNull("There should NOT be a reply destination", exchange.getProperty(JmsConstants.JMS_REPLY_DESTINATION));
+                        assertNull("There should NOT be a reply destination", exchange.getIn().getHeader(JmsConstants.JMS_REPLY_DESTINATION));
 
                         exchange.getIn().setBody("Bye World");
                     }
