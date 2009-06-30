@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
     @Override
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // must invoke super
         super.commit(operations, endpoint, exchange, file);
 
@@ -34,5 +34,4 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             throw new GenericFileOperationFailedException("Cannot delete file: " + file);
         }
     }
-
 }

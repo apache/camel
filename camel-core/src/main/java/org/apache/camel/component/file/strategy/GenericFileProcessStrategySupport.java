@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
@@ -32,7 +31,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
     protected final transient Log log = LogFactory.getLog(getClass());
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
 
-    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // is we use excluse read then acquire the exclusive read (waiting until we got it)
         if (exclusiveReadLockStrategy != null) {
             boolean lock = exclusiveReadLockStrategy.acquireExclusiveReadLock(operations, file, exchange);
@@ -45,7 +44,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         return true;
     }
 
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
@@ -53,7 +52,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         deleteLocalWorkFile(exchange);
     }
 
-    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
@@ -69,7 +68,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
 
-    private void deleteLocalWorkFile(GenericFileExchange<T> exchange) {
+    private void deleteLocalWorkFile(Exchange exchange) {
         // delete local work file, if it was used (eg by ftp component)
         File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
         if (local != null && local.exists()) {

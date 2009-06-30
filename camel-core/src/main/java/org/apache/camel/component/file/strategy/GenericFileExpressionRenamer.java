@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.util.ObjectHelper;
 
 public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
@@ -31,7 +31,7 @@ public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
         this.expression = expression;
     }
 
-    public GenericFile<T> renameFile(GenericFileExchange<T> exchange, GenericFile<T> file) {
+    public GenericFile<T> renameFile(Exchange exchange, GenericFile<T> file) {
         ObjectHelper.notNull(expression, "expression");
 
         String newName = expression.evaluate(exchange, String.class);

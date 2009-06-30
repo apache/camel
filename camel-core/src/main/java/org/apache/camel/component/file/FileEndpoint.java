@@ -83,7 +83,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     public GenericFileExchange<File> createExchange(GenericFile<File> file) {
         GenericFileExchange<File> exchange = new GenericFileExchange<File>(this);
-        exchange.setGenericFile(file);
+        if (file != null) {
+            file.bindToExchange(exchange);
+        }
         return exchange;
     }
 

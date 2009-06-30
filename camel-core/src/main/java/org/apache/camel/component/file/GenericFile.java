@@ -83,6 +83,16 @@ public class GenericFile<T> implements Cloneable, Serializable {
     }
 
     /**
+     * Bind this GenericFile to an Exchange
+     */
+    public void bindToExchange(Exchange exchange) {
+        exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);
+        GenericFileMessage<T> in = new GenericFileMessage<T>(this);
+        exchange.setIn(in);
+        populateHeaders(in);
+    }
+
+    /**
      * Populates the {@link GenericFileMessage} relevant headers
      *
      * @param message the message to populate with headers
@@ -307,5 +317,4 @@ public class GenericFile<T> implements Cloneable, Serializable {
     public String toString() {
         return "GenericFile[" + (absolute ? absoluteFilePath : relativeFilePath) + "]";
     }
-
 }

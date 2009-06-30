@@ -487,5 +487,4 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         Language language = getCamelContext().resolveLanguage("file");
         return language.createExpression(expression);
     }
-
 }

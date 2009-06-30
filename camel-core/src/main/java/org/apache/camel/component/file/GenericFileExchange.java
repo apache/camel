@@ -31,20 +31,13 @@ public class GenericFileExchange<T> extends DefaultExchange {
 
     public GenericFileExchange(DefaultExchange parent, GenericFile<T> file) {
         super(parent);
-        setGenericFile(file);
+        if (file != null) {
+            file.bindToExchange(this);
+        }
     }
 
     public GenericFile<T> getGenericFile() {
         return (GenericFile<T>) getProperty(FileComponent.FILE_EXCHANGE_FILE);
-    }
-
-    public void setGenericFile(GenericFile<T> file) {
-        setProperty(FileComponent.FILE_EXCHANGE_FILE, file);
-        GenericFileMessage<T> in = new GenericFileMessage<T>(file);
-        setIn(in);
-        if (file != null) {
-            file.populateHeaders(in);
-        }
     }
 
     public Exchange newInstance() {

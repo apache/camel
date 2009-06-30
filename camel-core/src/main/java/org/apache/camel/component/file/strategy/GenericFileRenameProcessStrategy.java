@@ -18,9 +18,9 @@ package org.apache.camel.component.file.strategy;
 
 import java.io.IOException;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
@@ -32,7 +32,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // must invoke super
         boolean result = super.begin(operations, endpoint, exchange, file);
         if (!result) {
@@ -42,14 +42,16 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         if (beginRenamer != null) {
             GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
             GenericFile<T> to = renameFile(operations, file, newName);
-            exchange.setGenericFile(to);
+            if (to != null) {
+                to.bindToExchange(exchange);
+            }
         }
 
         return true;
     }
 
     @Override
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // must invoke super
         super.commit(operations, endpoint, exchange, file);
 
