@@ -51,6 +51,17 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             throw new IllegalArgumentException("Only directory is supported. Endpoint must be configured with a valid starting directory: " + file);
         }
 
+        // auto create starting directory if needed
+        if (!file.exists() && !file.isDirectory()) {
+            if (isAutoCreate()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Creating non existing starting directory: " + file);
+                }
+                boolean absolute = file.isAbsolute();
+                operations.buildDirectory(file.getPath(), absolute);
+            }
+        }
+
         FileConsumer result = new FileConsumer(this, processor, operations);
 
         if (isDelete() && getMove() != null) {
