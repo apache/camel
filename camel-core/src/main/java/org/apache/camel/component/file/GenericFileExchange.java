@@ -16,31 +16,12 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.IOException;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultExchange;
 
 public class GenericFileExchange<T> extends DefaultExchange {
 
     public GenericFileExchange(Endpoint fromEndpoint) {
         super(fromEndpoint);
-    }
-
-    public GenericFileExchange(DefaultExchange parent, GenericFile<T> file) {
-        super(parent);
-        if (file != null) {
-            file.bindToExchange(this);
-        }
-    }
-
-    public GenericFile<T> getGenericFile() {
-        return (GenericFile<T>) getProperty(FileComponent.FILE_EXCHANGE_FILE);
-    }
-
-    public Exchange newInstance() {
-        return new GenericFileExchange<T>(this, getGenericFile());
     }
 }

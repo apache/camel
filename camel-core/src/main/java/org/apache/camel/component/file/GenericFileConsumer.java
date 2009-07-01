@@ -124,8 +124,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         
         // remove the file from the in progress list in case the batch was limited by max messages per poll
         for (int index = 0; index < exchanges.size() && isRunAllowed(); index++) {
-            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.poll();
-            String key = exchange.getGenericFile().getFileName();
+            Exchange exchange = (Exchange) exchanges.poll();
+            GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            String key = file.getFileName();
             endpoint.getInProgressRepository().remove(key);
         }
     }
@@ -153,25 +154,26 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      *
      * @param exchange the exchange
      */
-    protected void processExchange(final GenericFileExchange<T> exchange) {
+    protected void processExchange(final Exchange exchange) {
+        GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         if (log.isTraceEnabled()) {
-            log.trace("Processing remote file: " + exchange.getGenericFile());
+            log.trace("Processing remote file: " + file);
         }
 
         try {
             final GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
-            boolean begin = processStrategy.begin(operations, endpoint, exchange, exchange.getGenericFile());
+            boolean begin = processStrategy.begin(operations, endpoint, exchange, file);
             if (!begin) {
-                log.debug(endpoint + " cannot begin processing file: " + exchange.getGenericFile());
+                log.debug(endpoint + " cannot begin processing file: " + file);
                 // remove file from the in progress list as its no longer in progress
-                endpoint.getInProgressRepository().remove(exchange.getGenericFile().getFileName());
+                endpoint.getInProgressRepository().remove(file.getFileName());
                 return;
             }
 
             // must use file from exchange as it can be updated due the
             // preMoveNamePrefix/preMoveNamePostfix options
-            final GenericFile<T> target = exchange.getGenericFile();
+            final GenericFile<T> target = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             // must use full name when downloading so we have the correct path
             final String name = target.getAbsoluteFilePath();
 
@@ -200,7 +202,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         } catch (Exception e) {
             handleException(e);
         }
-
     }
 
     /**
