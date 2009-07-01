@@ -31,20 +31,23 @@ public class Order {
 
     @Link
     private Client client;
+    
+    @Link
+    private Security security;
 
-    @DataField(pos = 4)
-    private String isinCode;
+	@DataField(pos = 6)
+    private String orderType;
 
-    @DataField(name = "Name", pos = 5)
-    private String instrumentName;
+	@DataField(name = "Name", pos = 7)
+    private String instrumentType;
 
-    @DataField(pos = 6, precision = 2)
+    @DataField(pos = 8, precision = 2)
     private BigDecimal amount;
 
-    @DataField(pos = 7)
+    @DataField(pos = 9)
     private String currency;
 
-    @DataField(pos = 8, pattern = "dd-MM-yyyy")
+    @DataField(pos = 10, pattern = "dd-MM-yyyy")
     private Date orderDate;
 
     public int getOrderNr() {
@@ -61,22 +64,6 @@ public class Order {
 
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    public String getIsinCode() {
-        return isinCode;
-    }
-
-    public void setIsinCode(String code) {
-        isinCode = code;
-    }
-
-    public String getInstrumentName() {
-        return instrumentName;
-    }
-
-    public void setInstrumentName(String instrumentName) {
-        this.instrumentName = instrumentName;
     }
 
     public BigDecimal getAmount() {
@@ -102,16 +89,40 @@ public class Order {
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
+    
+    public Security getSecurity() {
+		return security;
+	}
+
+	public void setSecurity(Security security) {
+		this.security = security;
+	}
+	
+    public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
+	}
 
     @Override
     public String toString() {
         return "Model : " + Order.class.getName() + " : "
-            + String.valueOf(this.getOrderNr()) + ", " 
-            + String.valueOf(this.getAmount()) + ", "
-            + String.valueOf(this.getIsinCode()) + ", "
-            + String.valueOf(this.getInstrumentName()) + ", "
-            + String.valueOf(this.getCurrency()) + ", "
-            + String.valueOf(this.getClient()) + ","
-            + String.valueOf(this.getOrderDate());
+            + String.valueOf(this.orderNr) + ", " 
+            + String.valueOf(this.amount) + ", "
+            + String.valueOf(this.instrumentType) + ", "
+            + String.valueOf(this.orderType) + ", "
+            + String.valueOf(this.currency) + ", "
+            + String.valueOf(this.client) + ","
+            + String.valueOf(this.orderDate);
     }
 }

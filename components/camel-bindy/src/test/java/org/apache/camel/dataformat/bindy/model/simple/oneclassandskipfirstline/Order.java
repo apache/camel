@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.model.simple.oneclassandskipfirstline;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
@@ -24,110 +25,132 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 @CsvRecord(separator = ",", skipFirstLine = true)
 public class Order {
 
-    @DataField(pos = 0)
-    private int orderNr;
+	@DataField(pos = 0)
+	private int orderNr;
 
-    @DataField(pos = 1)
-    private String clientNr;
+	@DataField(pos = 1)
+	private String clientNr;
 
-    @DataField(pos = 2)
-    private String firstName;
+	@DataField(pos = 2)
+	private String firstName;
 
-    @DataField(pos = 3)
-    private String lastName;
+	@DataField(pos = 3)
+	private String lastName;
 
-    @DataField(pos = 4)
-    private String isinCode;
+	@DataField(pos = 4)
+	private String instrumentCode;
 
-    @DataField(name = "Name", pos = 5)
-    private String instrumentName;
+	@DataField(pos = 5)
+	private String instrumentNumber;
 
-    @DataField(pos = 6)
-    private String amount;
+	@DataField(pos = 6)
+	private String orderType;
 
-    @DataField(pos = 7)
-    private String currency;
+	@DataField(name = "Name", pos = 7)
+	private String instrumentType;
 
-    @DataField(pos = 8, pattern = "dd-MM-yyyy")
-    private Date orderDate;
+	@DataField(pos = 8, precision = 2)
+	private BigDecimal amount;
 
-    public String getClientNr() {
-        return clientNr;
-    }
+	@DataField(pos = 9)
+	private String currency;
 
-    public void setClientNr(String clientNr) {
-        this.clientNr = clientNr;
-    }
+	@DataField(pos = 10, pattern = "dd-MM-yyyy")
+	private Date orderDate;
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public int getOrderNr() {
+		return orderNr;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setOrderNr(int orderNr) {
+		this.orderNr = orderNr;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getClientNr() {
+		return clientNr;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setClientNr(String clientNr) {
+		this.clientNr = clientNr;
+	}
 
-    public int getOrderNr() {
-        return orderNr;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setOrderNr(int orderNr) {
-        this.orderNr = orderNr;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getIsinCode() {
-        return isinCode;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setIsinCode(String code) {
-        isinCode = code;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getInstrumentName() {
-        return instrumentName;
-    }
+	public String getInstrumentCode() {
+		return instrumentCode;
+	}
 
-    public void setInstrumentName(String instrumentName) {
-        this.instrumentName = instrumentName;
-    }
+	public void setInstrumentCode(String instrumentCode) {
+		this.instrumentCode = instrumentCode;
+	}
 
-    public String getAmount() {
-        return amount;
-    }
+	public String getInstrumentNumber() {
+		return instrumentNumber;
+	}
 
-    public void setAmount(String amount) {
-        this.amount = amount;
-    }
+	public void setInstrumentNumber(String instrumentNumber) {
+		this.instrumentNumber = instrumentNumber;
+	}
 
-    public String getCurrency() {
-        return currency;
-    }
+	public String getOrderType() {
+		return orderType;
+	}
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
 
-    public Date getOrderDate() {
-        return orderDate;
-    }
+	public String getInstrumentType() {
+		return instrumentType;
+	}
 
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
+	}
 
-    @Override
-    public String toString() {
-        return ("Model : " + Order.class.getName() + " : " + this.getOrderNr() + ", " + this.getAmount() + ", " + this.getIsinCode() + ", " + this.getInstrumentName() + ", " + this
-            .getCurrency())
-               + ", " + this.getClientNr() + ", " + this.getFirstName() + ", " + this.getLastName() + ", " + this.getOrderDate();
-    }
+	public BigDecimal getAmount() {
+		return amount;
+	}
 
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public Date getOrderDate() {
+		return orderDate;
+	}
+
+	public void setOrderDate(Date orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	@Override
+	public String toString() {
+		return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+				+ String.valueOf(this.amount) + ", " + this.instrumentCode + ", " + this.instrumentNumber + ", "
+				+ this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", "
+				+ this.lastName + ", " + String.valueOf(this.orderDate);
+	}
 }

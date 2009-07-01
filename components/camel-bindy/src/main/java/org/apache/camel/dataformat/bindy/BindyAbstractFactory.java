@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +38,8 @@ import org.apache.commons.logging.LogFactory;
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
     protected Set<Class> models;
-    protected Map<String, Field> mapAnnotatedLinkField = new LinkedHashMap<String, Field>();
+    protected Map<String, List<Field>> annotedLinkFields = new LinkedHashMap<String, List<Field>>();
+    protected List<Field> linkFields = new ArrayList<Field>();
     protected String crlf;
 
     private AnnotationModelLoader modelsLoader;
@@ -83,19 +85,28 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     public abstract String unbind(Map<String, Object> model) throws Exception;
 
     /**
-     * Link objects together (Only 1to1 relation is allowed)
+     * Link objects together
      */
     public void link(Map<String, Object> model) throws Exception {
-        for (String link : mapAnnotatedLinkField.keySet()) {
-            Field field = mapAnnotatedLinkField.get(link);
-            field.setAccessible(true);
+    	
+    	// Iterate class by class
+    	for (String link : annotedLinkFields.keySet()) {
+            List<Field> linkFields = annotedLinkFields.get(link);
+            
+            // Iterate through Link fields list
+            for (Field field : linkFields) {
+            	
+            	// Change protection for private field
+                field.setAccessible(true);
 
-            // Retrieve linked object
-            String toClassName = field.getType().getName();
-            Object to = model.get(toClassName);
+                // Retrieve linked object
+                String toClassName = field.getType().getName();
+                Object to = model.get(toClassName);
 
-            ObjectHelper.notNull(to, "No @link annotation has been defined for the oject to link");
-            field.set(model.get(field.getDeclaringClass().getName()), to);
+                ObjectHelper.notNull(to, "No @link annotation has been defined for the oject to link");
+                field.set(model.get(field.getDeclaringClass().getName()), to);
+            	
+            }
         }
     }
 

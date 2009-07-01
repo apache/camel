@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Client;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
+import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Security;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,9 +32,10 @@ public class AnnotationModuleLoaderTest extends Assert {
         AnnotationModelLoader loader = new AnnotationModelLoader(new DefaultPackageScanClassResolver());
         Set<Class> classes = loader.loadModels("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
         assertNotNull("The find classes should not be null ", classes);
-        assertEquals("There should have 2 classes", 2, classes.size());
+        assertEquals("There should have 3 classes", 3, classes.size());
         assertTrue(classes.contains(Client.class));
         assertTrue(classes.contains(Order.class));
+        assertTrue(classes.contains(Security.class));
     }
     
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -45,8 +46,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairFactory.class);
 
-    private Map<Integer, KeyValuePairField> mapKeyValuePairField = new LinkedHashMap<Integer, KeyValuePairField>();
-    private Map<Integer, Field> mapAnnotedField = new LinkedHashMap<Integer, Field>();
+    private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<Integer, KeyValuePairField>();
+    private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
 
     private String keyValuePairSeparator;
@@ -82,6 +83,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     public void initAnnotedFields() {
 
         for (Class<?> cl : models) {
+        	
+        	List<Field> linkFields = new ArrayList<Field>();
 
             for (Field field : cl.getDeclaredFields()) {
                 KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
@@ -90,8 +93,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         LOG.debug("Key declared in the class : " + cl.getName() + ", key : " + keyValuePairField.tag()
                                 + ", Field : " + keyValuePairField.toString());
                     }
-                    mapKeyValuePairField.put(keyValuePairField.tag(), keyValuePairField);
-                    mapAnnotedField.put(keyValuePairField.tag(), field);
+                    keyValuePairFields.put(keyValuePairField.tag(), keyValuePairField);
+                    annotedFields.put(keyValuePairField.tag(), field);
                 }
 
                 Link linkField = field.getAnnotation(Link.class);
@@ -100,8 +103,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Class linked  : " + cl.getName() + ", Field" + field.toString());
                     }
-                    mapAnnotatedLinkField.put(cl.getName(), field);
+                    linkFields.add( field );
                 }
+            }
+            
+            if (! linkFields.isEmpty() ) {
+            	annotedLinkFields.put(cl.getName(), linkFields);
             }
 
         }
@@ -132,10 +139,10 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     LOG.debug("Key : " + tag + ", value : " + value);
                 }
 
-                KeyValuePairField keyValuePairField = mapKeyValuePairField.get(tag);
+                KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
                 ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag);
 
-                Field field = mapAnnotedField.get(tag);
+                Field field = annotedFields.get(tag);
                 field.setAccessible(true);
 
                 if (LOG.isDebugEnabled()) {
@@ -159,8 +166,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         StringBuilder builder = new StringBuilder();
 
-        Map<Integer, KeyValuePairField> keyValuePairFields = new TreeMap<Integer, KeyValuePairField>(mapKeyValuePairField);
-        Iterator<Integer> it = keyValuePairFields.keySet().iterator();
+        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>(keyValuePairFields);
+        Iterator<Integer> it = keyValuePairFieldsSorted.keySet().iterator();
         
         // Map containing the OUT position of the field
         // The key is double and is created using the position of the field and 
@@ -180,11 +187,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         while (it.hasNext()) {
 
-            KeyValuePairField keyValuePairField = mapKeyValuePairField.get(it.next());
+            KeyValuePairField keyValuePairField = keyValuePairFieldsSorted.get(it.next());
             ObjectHelper.notNull(keyValuePairField, "KeyValuePair is null !");
 
             // Retrieve the field
-            Field field = mapAnnotedField.get(keyValuePairField.tag());
+            Field field = annotedFields.get(keyValuePairField.tag());
             // Change accessibility to allow to read protected/private fields
             field.setAccessible(true);
 

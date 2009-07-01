@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -44,8 +45,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     private static final transient Log LOG = LogFactory.getLog(BindyCsvFactory.class);
 
-    private Map<Integer, DataField> mapDataField = new LinkedHashMap<Integer, DataField>();
-    private Map<Integer, Field> mapAnnotedField = new LinkedHashMap<Integer, Field>();
+    private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
+    private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
 
     private String separator;
@@ -80,6 +81,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public void initAnnotedFields() {
 
         for (Class<?> cl : models) {
+        	
+        	List<Field> linkFields = new ArrayList<Field>();
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Class retrieved : " + cl.getName());
@@ -92,8 +95,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         LOG.debug("Position defined in the class : " + cl.getName() + ", position : " + dataField.pos()
                                 + ", Field : " + dataField.toString());
                     }
-                    mapDataField.put(dataField.pos(), dataField);
-                    mapAnnotedField.put(dataField.pos(), field);
+                    dataFields.put(dataField.pos(), dataField);
+                    annotedFields.put(dataField.pos(), field);
                 }
 
                 Link linkField = field.getAnnotation(Link.class);
@@ -102,8 +105,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Class linked  : " + cl.getName() + ", Field" + field.toString());
                     }
-                    mapAnnotatedLinkField.put(cl.getName(), field);
+                    linkFields.add( field );
                 }
+
+            }
+            
+            
+            if (! linkFields.isEmpty() ) {
+            	annotedLinkFields.put(cl.getName(), linkFields);
             }
         }
     }
@@ -120,9 +129,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             if (!data.get(pos).equals("")) {
 
-                DataField dataField = mapDataField.get(pos);
+                DataField dataField = dataFields.get(pos);
                 ObjectHelper.notNull(dataField, "No position defined for the field positoned : " + pos);
-                Field field = mapAnnotedField.get(pos);
+                Field field = annotedFields.get(pos);
                 field.setAccessible(true);
 
                 if (LOG.isDebugEnabled()) {
@@ -143,8 +152,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         StringBuilder builder = new StringBuilder();
 
-        Map<Integer, DataField> dataFields = new TreeMap<Integer, DataField>(mapDataField);
-        Iterator<Integer> it = dataFields.keySet().iterator();
+        Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
+        Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
         
         // Map containing the OUT position of the field
         // The key is double and is created using the position of the field and 
@@ -163,10 +172,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         while (it.hasNext()) {
 
-            DataField dataField = mapDataField.get(it.next());
+            DataField dataField = dataFieldsSorted.get(it.next());
 
             // Retrieve the field
-            Field field = mapAnnotedField.get(dataField.pos());
+            Field field = annotedFields.get(dataField.pos());
             // Change accessibility to allow to read protected/private fields
             field.setAccessible(true);
 

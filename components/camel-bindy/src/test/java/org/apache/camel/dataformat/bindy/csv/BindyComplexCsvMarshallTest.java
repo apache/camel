@@ -31,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Client;
 import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
+import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Security;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
@@ -43,7 +44,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTests {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    private String result = "10,A1,Julia,Roberts,BE123456789,Belgium Ventage 10/12,150,USD,14-01-2009\r\n";
+    private String result = "10,A1,Julia,Roberts,ISIN,LU123456789,BUY,Share,150,USD,14-01-2009\r\n";
 
     @Produce(uri = "direct:start")
     private ProducerTemplate template;
@@ -66,8 +67,8 @@ public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTest
         Order order = new Order();
         order.setOrderNr(10);
         order.setAmount(new BigDecimal("150"));
-        order.setIsinCode("BE123456789");
-        order.setInstrumentName("Belgium Ventage 10/12");
+        order.setOrderType("BUY");
+        order.setInstrumentType("Share");
         order.setCurrency("USD");
 
         Calendar calendar = new GregorianCalendar();
@@ -80,9 +81,16 @@ public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTest
         client.setLastName("Roberts");
 
         order.setClient(client);
+        
+        Security security = new Security();
+        security.setInstrumentCode("ISIN");
+        security.setInstrumentNumber("LU123456789");
+        
+        order.setSecurity(security);        
 
         model.put(order.getClass().getName(), order);
         model.put(client.getClass().getName(), client);
+        model.put(security.getClass().getName(), security);
 
         models.add(0, model);
 
