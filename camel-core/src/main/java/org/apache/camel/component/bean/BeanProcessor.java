@@ -107,31 +107,15 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             throw new IllegalStateException(
                 "No method invocation could be created, no maching method could be found on: " + bean);
         } else {
-            // set method name if not explict given
+            // set method name if not explicit given
             if (method == null) {
                 method = invocation.getMethod().getName();
             }
         }
-
+   
+        Object value = null;
         try {
-            Object value = invocation.proceed();
-            if (value != null) {
-                if (exchange.getPattern().isOutCapable()) {
-                    // force out creating if not already created (as its lazy)
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Setting bean invocation result on the OUT message: " + value);
-                    }
-                    exchange.getOut().setBody(value);
-                    // propagate headers
-                    exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                } else {
-                    // if not out then set it on the in
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Setting bean invocation result on the IN message: " + value);
-                    }
-                    exchange.getIn().setBody(value);
-                }
-            }
+            value = invocation.proceed();
         } catch (InvocationTargetException e) {
             // lets unwrap the exception
             Throwable throwable = e.getCause();
@@ -145,6 +129,24 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         } finally {
             if (isExplicitMethod) {
                 in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
+            }
+        }
+        
+        if (value != null) {
+            if (exchange.getPattern().isOutCapable()) {
+                // force out creating if not already created (as its lazy)
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting bean invocation result on the OUT message: " + value);
+                }
+                exchange.getOut().setBody(value);
+                // propagate headers
+                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+            } else {
+                // if not out then set it on the in
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting bean invocation result on the IN message: " + value);
+                }
+                exchange.getIn().setBody(value);
             }
         }
     }

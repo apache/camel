@@ -20,6 +20,8 @@ import javax.naming.Context;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
@@ -34,8 +36,30 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     public void testEcho() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("echo Hello World");
-
+        
         template.sendBody("direct:echo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+        assertNull("There should no Bean_METHOD_NAME header",
+                   mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME));
+    }
+    
+    public void testEchoWithMethodHeaderHi() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("echo Hello World");
+        mock.expectedHeaderReceived(Exchange.BEAN_METHOD_NAME, "hi");
+
+        template.sendBodyAndHeader("direct:echo", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    public void testMixedBeanEndpoints() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("hi echo Hello World");
+        mock.expectedHeaderReceived(Exchange.BEAN_METHOD_NAME, "hi");
+
+        template.sendBodyAndHeader("direct:mixed", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
 
         assertMockEndpointsSatisfied();
     }
@@ -87,6 +111,8 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                 from("direct:echo").beanRef("myBean", "echo").to("mock:result");
 
                 from("direct:hi").beanRef("myBean", "hi").to("mock:result");
+                
+                from("direct:mixed").beanRef("myBean", "echo").beanRef("myBean", "hi").to("mock:result");
 
                 from("direct:fail").beanRef("myBean").to("mock:result");
 
