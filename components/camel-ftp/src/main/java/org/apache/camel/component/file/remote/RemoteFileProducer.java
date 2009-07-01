@@ -49,15 +49,15 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
-        GenericFileExchange remoteExchange = (GenericFileExchange) getEndpoint().createExchange(exchange);
-        processExchange(remoteExchange);
+        Exchange remoteExchange = getEndpoint().createExchange(exchange);
+        processExchange((GenericFileExchange<T>)remoteExchange);
         ExchangeHelper.copyResults(exchange, remoteExchange);
     }
 
     /**
      * The file could not be written. We need to disconnect from the remote server.
      */
-    protected void handleFailedWrite(GenericFileExchange<T> exchange, Exception exception) throws Exception {
+    protected void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll

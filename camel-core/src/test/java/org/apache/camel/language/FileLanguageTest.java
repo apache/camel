@@ -28,7 +28,6 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.FileLanguage;
 
@@ -120,7 +119,7 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 
-        GenericFileExchange<File> answer = endpoint.createExchange(gf);
+        Exchange answer = endpoint.createExchange(gf);
         endpoint.configureMessage(gf, answer.getIn());
 
         Calendar cal = GregorianCalendar.getInstance();

@@ -18,8 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import java.util.Comparator;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.util.ObjectHelper;
 
@@ -94,7 +94,7 @@ public final class DefaultRemoteFileSorter {
      * @param reverse    true to reverse order
      * @return the comparator
      */
-    public static Comparator<GenericFileExchange> sortByFileLanguage(final String expression, final boolean reverse) {
+    public static Comparator<Exchange> sortByFileLanguage(final String expression, final boolean reverse) {
         return sortByFileLanguage(expression, reverse, false, null);
     }
 
@@ -106,8 +106,8 @@ public final class DefaultRemoteFileSorter {
      * @param ignoreCase ignore case if comparing strings
      * @return the comparator
      */
-    public static Comparator<GenericFileExchange> sortByFileLanguage(final String expression, final boolean reverse,
-                                                                    final boolean ignoreCase) {
+    public static Comparator<Exchange> sortByFileLanguage(
+        final String expression, final boolean reverse, final boolean ignoreCase) {
         return sortByFileLanguage(expression, reverse, ignoreCase, null);
     }
 
@@ -120,12 +120,12 @@ public final class DefaultRemoteFileSorter {
      * @param nested     nested comparator for sub group sorting, can be null
      * @return the comparator
      */
-    public static Comparator<GenericFileExchange> sortByFileLanguage(
+    public static Comparator<Exchange> sortByFileLanguage(
         final String expression, final boolean reverse,
-        final boolean ignoreCase, final Comparator<GenericFileExchange> nested) {
+        final boolean ignoreCase, final Comparator<Exchange> nested) {
         
-        return new Comparator<GenericFileExchange>() {
-            public int compare(GenericFileExchange o1, GenericFileExchange o2) {
+        return new Comparator<Exchange>() {
+            public int compare(Exchange o1, Exchange o2) {
                 final Expression exp = FileLanguage.file(expression);
                 Object result1 = exp.evaluate(o1, Object.class);
                 Object result2 = exp.evaluate(o2, Object.class);

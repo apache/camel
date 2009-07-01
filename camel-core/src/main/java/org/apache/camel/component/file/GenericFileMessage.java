@@ -32,12 +32,6 @@ public class GenericFileMessage<T> extends DefaultMessage {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public GenericFileExchange<T> getExchange() {
-        return (GenericFileExchange<T>) super.getExchange();
-    }
-
-    @Override
     protected Object createBody() {
         return file != null ? file.getBody() : super.createBody();
     }
