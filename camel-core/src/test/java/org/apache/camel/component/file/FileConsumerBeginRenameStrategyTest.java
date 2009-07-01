@@ -73,8 +73,9 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
                 from("file://target/reports?preMove=../inprogress/${file:name}&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;
-                                assertTrue(fe.getGenericFile().getRelativeFilePath().indexOf("inprogress") > -1);
+                                GenericFile<File> file = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                                assertNotNull(file);
+                                assertTrue(file.getRelativeFilePath().indexOf("inprogress") > -1);
                             }
                         })
                         .to("mock:report");
