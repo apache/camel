@@ -130,12 +130,12 @@ public class FileOperations implements GenericFileOperations<File> {
         return null;
     }
 
-    public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean retrieveFile(String name, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
         // noop as we use type converters to read the body content for java.io.File
         return true;
     }
 
-    public boolean storeFile(String fileName, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String fileName, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 
         File file = new File(fileName);
@@ -267,4 +267,5 @@ public class FileOperations implements GenericFileOperations<File> {
         }
         return out;
     }
+
 }

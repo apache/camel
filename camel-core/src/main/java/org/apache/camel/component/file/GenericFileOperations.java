@@ -18,8 +18,6 @@ package org.apache.camel.component.file;
 
 import java.util.List;
 
-import org.apache.camel.Exchange;
-
 public interface GenericFileOperations<T> {
 
     /**
@@ -67,7 +65,7 @@ public interface GenericFileOperations<T> {
      * @return true if file has been retrieved, false if not
      * @throws GenericFileOperationFailedException can be thrown
      */
-    boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException;
+    boolean retrieveFile(String name, GenericFileExchange<T> exchange) throws GenericFileOperationFailedException;
 
     /**
      * Stores the content as a new remote file (upload)
@@ -77,7 +75,7 @@ public interface GenericFileOperations<T> {
      * @return true if the file was stored, false if not
      * @throws GenericFileOperationFailedException can be thrown
      */
-    boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException;
+    boolean storeFile(String name, GenericFileExchange<T> exchange) throws GenericFileOperationFailedException;
 
     /**
      * Gets the current remote directory
