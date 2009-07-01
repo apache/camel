@@ -31,7 +31,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTeemplate102;
+import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate102;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
@@ -159,6 +159,10 @@ public class JmsProducer extends DefaultProducer {
         if (destination == null) {
             destination = endpoint.getDestination();
         }
+        if (destination != null) {
+            // prefer to use destination over destination name
+            destinationName = null;
+        }
 
         testAndSetRequestor();
 
@@ -192,41 +196,13 @@ public class JmsProducer extends DefaultProducer {
                         : requestor.getReceiveFuture(callback);
 
                 futureHolder.set(future);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " sending JMS message: " + message);
-                }
                 return message;
             }
         };
 
-        CamelJmsTemplate template = null;
-        CamelJmsTeemplate102 template102 = null;
-        if (endpoint.isUseVersion102()) {
-            template102 = (CamelJmsTeemplate102)getInOutTemplate();
-        } else {
-            template = (CamelJmsTemplate)getInOutTemplate();
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Using JMS API " + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
-        }
+        doSend(true, destinationName, destination, messageCreator, callback);
 
-        if (destinationName != null) {
-            if (template != null) {
-                template.send(destinationName, messageCreator, callback);
-            } else {
-                template102.send(destinationName, messageCreator, callback);
-            }
-        } else if (destination != null) {
-            if (template != null) {
-                template.send(destination, messageCreator, callback);
-            } else {
-                template102.send(destination, messageCreator, callback);
-            }
-        } else {
-            throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
-        }
-
+        // after sending then set the OUT message id to the JMSMessageID so its identical
         setMessageId(exchange);
 
         // lets wait and return the response
@@ -291,6 +267,10 @@ public class JmsProducer extends DefaultProducer {
         if (destination == null) {
             destination = endpoint.getDestination();
         }
+        if (destination != null) {
+            // prefer to use destination over destination name
+            destinationName = null;
+        }
 
         // we must honor these special flags to preverse QoS
         if (!endpoint.isPreserveMessageQos() && !endpoint.isExplicitQosEnabled()) {
@@ -310,25 +290,72 @@ public class JmsProducer extends DefaultProducer {
 
         MessageCreator messageCreator = new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " sending JMS message: " + message);
-                }
-
-                return message;
+                return endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
             }
         };
-        
-        if (destination != null) {
-            getInOnlyTemplate().send(destination, messageCreator);
-        } else if (destinationName != null) {
-            getInOnlyTemplate().send(destinationName, messageCreator);
-        } else  {
-            throw new IllegalArgumentException("Neither destination nor "
-                    + "destinationName are specified on this endpoint: " + endpoint);
+
+        doSend(false, destinationName, destination, messageCreator, null);
+
+        // after sending then set the OUT message id to the JMSMessageID so its identical
+        setMessageId(exchange);
+    }
+
+    /**
+     * Sends the message using the JmsTemplate.
+     *
+     * @param inOut  use inOut or inOnly template
+     * @param destinationName the destination name
+     * @param destination     the destination (if no name provided)
+     * @param messageCreator  the creator to create the javax.jms.Message to send
+     * @param callback        optional callback for inOut messages
+     */
+    protected void doSend(boolean inOut, String destinationName, Destination destination,
+                          MessageCreator messageCreator, DeferredMessageSentCallback callback) {
+
+        CamelJmsTemplate template = null;
+        CamelJmsTemplate102 template102 = null;
+        if (endpoint.isUseVersion102()) {
+            template102 = (JmsConfiguration.CamelJmsTemplate102) (inOut ? getInOutTemplate() : getInOnlyTemplate());
+        } else {
+            template = (CamelJmsTemplate) (inOut ? getInOutTemplate() : getInOnlyTemplate());
         }
 
-        setMessageId(exchange);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using JMS API " + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
+        }
+
+        // destination should be preferred
+        if (destination != null) {
+            if (inOut) {
+                if (template != null) {
+                    template.send(destination, messageCreator, callback);
+                } else if (template102 != null) {
+                    template102.send(destination, messageCreator, callback);
+                }
+            } else {
+                if (template != null) {
+                    template.send(destination, messageCreator);
+                } else if (template102 != null) {
+                    template102.send(destination, messageCreator);
+                }
+            }
+        } else if (destinationName != null) {
+            if (inOut) {
+                if (template != null) {
+                    template.send(destinationName, messageCreator, callback);
+                } else if (template102 != null) {
+                    template102.send(destinationName, messageCreator, callback);
+                }
+            } else {
+                if (template != null) {
+                    template.send(destinationName, messageCreator);
+                } else if (template102 != null) {
+                    template102.send(destinationName, messageCreator);
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
+        }
     }
 
     protected void setMessageId(Exchange exchange) {
@@ -377,4 +404,5 @@ public class JmsProducer extends DefaultProducer {
     public void setUuidGenerator(UuidGenerator uuidGenerator) {
         this.uuidGenerator = uuidGenerator;
     }
+
 }

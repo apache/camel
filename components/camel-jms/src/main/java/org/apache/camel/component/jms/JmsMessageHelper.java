@@ -72,4 +72,23 @@ public final class JmsMessageHelper {
         return answer;
     }
 
+    /**
+     * Tests whether a given property with the name exists
+     *
+     * @param jmsMessage the JMS message
+     * @param name       name of the property to test if exists
+     * @return <tt>true</tt> if the property exists, <tt>false</tt> if not.
+     * @throws JMSException can be thrown
+     */
+    public static boolean hasProperty(Message jmsMessage, String name) throws JMSException {
+        Enumeration en = jmsMessage.getPropertyNames();
+        while (en.hasMoreElements()) {
+            String key = (String) en.nextElement();
+            if (name.equals(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

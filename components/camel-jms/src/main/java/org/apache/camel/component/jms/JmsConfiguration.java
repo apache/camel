@@ -22,7 +22,6 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
-import javax.jms.QueueSender;
 import javax.jms.Session;
 import javax.jms.TopicPublisher;
 
@@ -189,6 +188,25 @@ public class JmsConfiguration implements Cloneable {
             }, false);
         }
 
+        public void send(final String destinationName,
+                         final MessageCreator messageCreator) throws JmsException {
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    Destination destination = resolveDestinationName(session, destinationName);
+                    return doSendToDestination(destination, messageCreator, null, session);
+                }
+            }, false);
+        }
+
+        public void send(final Destination destination,
+                         final MessageCreator messageCreator) throws JmsException {
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    return doSendToDestination(destination, messageCreator, null, session);
+                }
+            }, false);
+        }
+
         private Object doSendToDestination(final Destination destination,
                                            final MessageCreator messageCreator,
                                            final MessageSentCallback callback,
@@ -199,9 +217,6 @@ public class JmsConfiguration implements Cloneable {
             Message message = null;
             try {
                 message = messageCreator.createMessage(session);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Sending created message: " + message);
-                }
                 doSend(producer, message);
                 // Check commit - avoid commit call within a JTA transaction.
                 if (session.getTransacted() && isSessionLocallyTransacted(session)) {
@@ -227,23 +242,50 @@ public class JmsConfiguration implements Cloneable {
                 long ttl = message.getJMSExpiration();
                 if (ttl != 0) {
                     ttl = ttl - System.currentTimeMillis();
-                    // Message had expired.. so set the ttl as small as
-                    // possible
+                    // Message had expired.. so set the ttl as small as possible
                     if (ttl <= 0) {
                         ttl = 1;
                     }
                 }
-                producer.send(message, message.getJMSDeliveryMode(), message.getJMSPriority(), ttl);
+
+                int priority = message.getJMSPriority();
+                if (priority <= 0) {
+                    // use prioriry from endpoint if not provided on message
+                    priority = this.getPriority();
+                }
+
+                // if a delivery mode was set as a JMS header then we have used a temporary
+                // property to store it - CamelJMSDeliveryMode. Otherwise we could not keep
+                // track whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
+                // if it was set or not, so we can never tell if end user provided it in a header
+                int deliveryMode;
+                if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
+                    deliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
+                    // remove the temporary propery
+                    JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
+                } else {
+                    deliveryMode = this.getDeliveryMode();
+                }
+
+                // need to log just before so the message is 100% correct when logged
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
+                }
+                producer.send(message, deliveryMode, priority, ttl);
             } else {
+                // need to log just before so the message is 100% correct when logged
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
+                }
                 super.doSend(producer, message);
             }
         }
     }
 
-    public static class CamelJmsTeemplate102 extends JmsTemplate102 {
+    public static class CamelJmsTemplate102 extends JmsTemplate102 {
         private JmsConfiguration config;
 
-        public CamelJmsTeemplate102(JmsConfiguration config, ConnectionFactory connectionFactory, boolean pubSubDomain) {
+        public CamelJmsTemplate102(JmsConfiguration config, ConnectionFactory connectionFactory, boolean pubSubDomain) {
             super(connectionFactory, pubSubDomain);
             this.config = config;
         }
@@ -269,6 +311,25 @@ public class JmsConfiguration implements Cloneable {
             }, false);
         }
 
+        public void send(final String destinationName,
+                         final MessageCreator messageCreator) throws JmsException {
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    Destination destination = resolveDestinationName(session, destinationName);
+                    return doSendToDestination(destination, messageCreator, null, session);
+                }
+            }, false);
+        }
+
+        public void send(final Destination destination,
+                         final MessageCreator messageCreator) throws JmsException {
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    return doSendToDestination(destination, messageCreator, null, session);
+                }
+            }, false);
+        }
+
         private Object doSendToDestination(final Destination destination,
                                            final MessageCreator messageCreator,
                                            final MessageSentCallback callback,
@@ -279,7 +340,7 @@ public class JmsConfiguration implements Cloneable {
             try {
                 message = messageCreator.createMessage(session);
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Sending created message: " + message);
+                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
                 }
                 doSend(producer, message);
                 // Check commit - avoid commit call within a JTA transaction.
@@ -306,20 +367,45 @@ public class JmsConfiguration implements Cloneable {
                 long ttl = message.getJMSExpiration();
                 if (ttl != 0) {
                     ttl = ttl - System.currentTimeMillis();
-                    // Message had expired.. so set the ttl as small as
-                    // possible
+                    // Message had expired.. so set the ttl as small as possible
                     if (ttl <= 0) {
                         ttl = 1;
                     }
                 }
-                if (isPubSubDomain()) {
-                    ((TopicPublisher) producer).publish(message, message.getJMSDeliveryMode(),
-                            message.getJMSPriority(), ttl);
+
+                int priority = message.getJMSPriority();
+                if (priority <= 0) {
+                    // use prioriry from endpoint if not provided on message
+                    priority = this.getPriority();
+                }
+
+                // if a delivery mode was set as a JMS header then we have used a temporary
+                // property to store it - CamelJMSDeliveryMode. Otherwise we could not keep
+                // track whether it was set or not as getJMSDeliveryMode() will default return 1 regardless
+                // if it was set or not, so we can never tell if end user provided it in a header
+                int deliveryMode;
+                if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
+                    deliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
+                    // remove the temporary propery
+                    JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
                 } else {
-                    ((QueueSender) producer).send(message, message.getJMSDeliveryMode(),
-                            message.getJMSPriority(), ttl);
+                    deliveryMode = this.getDeliveryMode();
+                }
+
+                // need to log just before so the message is 100% correct when logged
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
+                }
+                if (isPubSubDomain()) {
+                    ((TopicPublisher) producer).publish(message, deliveryMode, priority, ttl);
+                } else {
+                    producer.send(message, deliveryMode, priority, ttl);
                 }
             } else {
+                // need to log just before so the message is 100% correct when logged
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
+                }
                 super.doSend(producer, message);
             }
         }
@@ -327,8 +413,7 @@ public class JmsConfiguration implements Cloneable {
 
 
     /**
-     * Creates a {@link JmsOperations} object used for request/response using a request
-     * timeout value
+     * Creates a {@link JmsOperations} object used for request/response using a request timeout value
      */
     public JmsOperations createInOutTemplate(JmsEndpoint endpoint, boolean pubSubDomain, String destination, long requestTimeout) {
         JmsOperations answer = createInOnlyTemplate(endpoint, pubSubDomain, destination);
@@ -368,7 +453,7 @@ public class JmsConfiguration implements Cloneable {
         ConnectionFactory factory = getTemplateConnectionFactory();
 
         JmsTemplate template = useVersion102
-                ? new CamelJmsTeemplate102(this, factory, pubSubDomain)
+                ? new CamelJmsTemplate102(this, factory, pubSubDomain)
                 : new CamelJmsTemplate(this, factory);
 
         template.setPubSubDomain(pubSubDomain);

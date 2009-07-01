@@ -265,9 +265,17 @@ public class JmsBinding {
                 jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
+            } else if (headerName.equals("JMSPriority")) {
+                jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
+            } else if (headerName.equals("JMSDeliveryMode")) {
+                Integer deliveryMode = ExchangeHelper.convertToType(exchange, Integer.class, headerValue);
+                jmsMessage.setJMSDeliveryMode(deliveryMode);
+                jmsMessage.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, deliveryMode);
+            } else if (headerName.equals("JMSExpiration")) {
+                jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
             } else if (LOG.isTraceEnabled()) {
                 // The following properties are set by the MessageProducer:
-                // JMSDeliveryMode, JMSDestination, JMSExpiration, JMSPriority
+                // JMSDestination
                 // The following are set on the underlying JMS provider:
                 // JMSMessageID, JMSTimestamp, JMSRedelivered
                 // log at trace level to not spam log
@@ -326,8 +334,8 @@ public class JmsBinding {
     }
 
     protected Message createJmsMessage(Exception cause, Session session) throws JMSException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using JmsMessageType: " + Object);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using JmsMessageType: " + Object);
         }
         return session.createObjectMessage(cause);
     }
@@ -337,8 +345,8 @@ public class JmsBinding {
 
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Option transferExchange=true so we use JmsMessageType: Object");
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
             }
             Serializable holder = DefaultExchangeHolder.marshal(exchange);
             return session.createObjectMessage(holder);
@@ -366,8 +374,8 @@ public class JmsBinding {
 
         // create the JmsMessage based on the type
         if (type != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using JmsMessageType: " + type);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using JmsMessageType: " + type);
             }
 
             switch (type) {
