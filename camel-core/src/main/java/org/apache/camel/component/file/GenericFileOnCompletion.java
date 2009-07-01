@@ -45,12 +45,12 @@ public class GenericFileOnCompletion<T> implements Synchronization {
 
     @SuppressWarnings("unchecked")
     public void onComplete(Exchange exchange) {
-        onCompletion((GenericFileExchange<T>) exchange);
+        onCompletion(exchange);
     }
 
     @SuppressWarnings("unchecked")
     public void onFailure(Exchange exchange) {
-        onCompletion((GenericFileExchange<T>) exchange);
+        onCompletion(exchange);
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -64,11 +64,11 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         this.exceptionHandler = exceptionHandler;
     }
 
-    protected void onCompletion(GenericFileExchange<T> exchange) {
+    protected void onCompletion(Exchange exchange) {
         GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
         // after processing
-        final GenericFile<T> file = exchange.getGenericFile();
+        final GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         boolean failed = exchange.isFailed();
 
         if (log.isDebugEnabled()) {
@@ -107,7 +107,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      */
     @SuppressWarnings("unchecked")
     protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
-                                         GenericFileExchange<T> exchange, GenericFile<T> file) {
+                                         Exchange exchange, GenericFile<T> file) {
         if (endpoint.isIdempotent()) {
             // only add to idempotent repository if we could process the file
             // only use the filename as the key as the file could be moved into a done folder
@@ -132,7 +132,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      * @param file            the file processed
      */
     protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
-                                           GenericFileExchange<T> exchange, GenericFile<T> file) {
+                                           Exchange exchange, GenericFile<T> file) {
         if (log.isWarnEnabled()) {
             log.warn("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
         }

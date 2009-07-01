@@ -53,7 +53,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
-        GenericFileExchange<T> fileExchange = (GenericFileExchange<T>) endpoint.createExchange(exchange);
+        Exchange fileExchange = endpoint.createExchange(exchange);
         processExchange(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
     }
@@ -64,7 +64,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * @param exchange fileExchange
      * @throws Exception is thrown if some error
      */
-    protected void processExchange(GenericFileExchange<T> exchange) throws Exception {
+    protected void processExchange(Exchange exchange) throws Exception {
         if (log.isTraceEnabled()) {
             log.trace("Processing " + exchange);
         }
@@ -109,7 +109,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * If we fail writing out a file, we will call this method. This hook is
      * provided to disconnect from servers or clean up files we created (if needed).
      */
-    protected void handleFailedWrite(GenericFileExchange<T> exchange, Exception exception) throws Exception {
+    protected void handleFailedWrite(Exchange exchange, Exception exception) throws Exception {
         throw exception;
     }
 
@@ -119,7 +119,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected void preWriteCheck() throws Exception {
     }
 
-    protected void writeFile(GenericFileExchange<T> exchange, String fileName) throws GenericFileOperationFailedException {
+    protected void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
             // build directory if auto create is enabled

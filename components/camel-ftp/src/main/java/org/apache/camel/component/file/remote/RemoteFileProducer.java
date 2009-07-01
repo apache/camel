@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.ExchangeHelper;
@@ -50,7 +49,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Exchange remoteExchange = getEndpoint().createExchange(exchange);
-        processExchange((GenericFileExchange<T>)remoteExchange);
+        processExchange(remoteExchange);
         ExchangeHelper.copyResults(exchange, remoteExchange);
     }
 
