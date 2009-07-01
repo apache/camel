@@ -35,6 +35,13 @@ public class FileComponent extends GenericFileComponent<File> {
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        // the starting directory must be a static (not containing dynamic expressions)
+        if (remaining.indexOf("${") != -1) {
+            throw new IllegalArgumentException("Invalid directory: " + remaining
+                    + ". Dynamic expressions with ${ } placeholders is not allowed."
+                    + " Use the fileName option to set the dynamic expression.");
+        }
+
         File file = new File(remaining);
 
         FileEndpoint result = new FileEndpoint(uri, this);
