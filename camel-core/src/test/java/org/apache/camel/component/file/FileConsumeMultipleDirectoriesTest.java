@@ -45,18 +45,21 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GenericFileExchange<File> exchange = (GenericFileExchange<File>) mock.getExchanges().get(0);
-        File file = exchange.getGenericFile().getFile();
+        Exchange exchange =  mock.getExchanges().get(0);
+        GenericFile<File> gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        File file = gf.getFile();
         assertDirectoryEquals("target/multidir/bye.txt", file.getPath());
         assertEquals("bye.txt", file.getName());
 
-        exchange = (GenericFileExchange<File>) mock.getExchanges().get(1);
-        file = exchange.getGenericFile().getFile();
+        exchange =  mock.getExchanges().get(1);
+        gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        file = gf.getFile();
         assertDirectoryEquals("target/multidir/sub/hello.txt", file.getPath());
         assertEquals("hello.txt", file.getName());
 
-        exchange = (GenericFileExchange<File>) mock.getExchanges().get(2);
-        file = exchange.getGenericFile().getFile();
+        exchange =  mock.getExchanges().get(2);
+        gf = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        file = gf.getFile();
         assertDirectoryEquals("target/multidir/sub/sub2/godday.txt", file.getPath());
         assertEquals("godday.txt", file.getName());
     }
