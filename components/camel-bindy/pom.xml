@@ -92,7 +92,9 @@
                     <excludes>
                         <!-- <exclude>**/*Csv*Test.*</exclude>
                         <exclude>**/*Tab*Test.*</exclude>
+                        <exclude>**/*UnmarshallTest.*</exclude> -->
                         <exclude>**/*Unmarshall*Test.*</exclude> -->
+                        <exclude>**/*Marshall*Test.*</exclude> -->
                     </excludes>
                 </configuration>
             </plugin>

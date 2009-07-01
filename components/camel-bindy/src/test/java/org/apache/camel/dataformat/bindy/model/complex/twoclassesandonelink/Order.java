@@ -35,10 +35,10 @@ public class Order {
     @Link
     private Security security;
 
-	@DataField(pos = 6)
+    @DataField(pos = 6)
     private String orderType;
 
-	@DataField(name = "Name", pos = 7)
+    @DataField(name = "Name", pos = 7)
     private String instrumentType;
 
     @DataField(pos = 8, precision = 2)
