@@ -184,7 +184,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean retrieveFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
             return retrieveFileToFileInLocalWorkDirectory(name, exchange);
@@ -194,7 +194,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    private boolean retrieveFileToStreamInBody(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
         OutputStream os = null;
         try {
             os = new ByteArrayOutputStream();
@@ -209,7 +209,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    private boolean retrieveFileToFileInLocalWorkDirectory(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    private boolean retrieveFileToFileInLocalWorkDirectory(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
         File temp;        
         File local = new File(FileUtil.normalizePath(endpoint.getLocalWorkDirectory()));
         OutputStream os;
@@ -275,7 +275,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         return result;
     }
 
-    public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
 
         // if an existing file already exsists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
