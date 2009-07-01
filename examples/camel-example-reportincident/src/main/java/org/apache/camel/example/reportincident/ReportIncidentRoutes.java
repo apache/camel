@@ -56,7 +56,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
             .convertBodyTo(InputReportIncident.class)
             // then set the file name using the FilenameGenerator bean
             .setHeader(Exchange.FILE_NAME, BeanLanguage.bean(FilenameGenerator.class, "generateFilename"))
-            // and create the mail body using velocity templating
+            // and create the mail body using velocity template
             .to("velocity:MailBody.vm")
             // and store the file
             .to("file://target/subfolder")

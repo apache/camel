@@ -23,7 +23,7 @@ public class ReportIncidentRoutesSpringTest extends ReportIncidentRoutesTest {
     private ClassPathXmlApplicationContext applicationContext;
     
     protected void startCamel() throws Exception {
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
+        applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
         camel = SpringCamelContext.springCamelContext(applicationContext);        
         camel.start();
     }
