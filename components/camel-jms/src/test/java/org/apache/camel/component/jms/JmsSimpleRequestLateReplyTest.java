@@ -101,7 +101,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
             }
 
             LOG.debug("Sending late reply");
-            // use some dummt queue as we override this with the property: JmsConstants.JMS_DESTINATION 
+            // use some dummy queue as we override this with the property: JmsConstants.JMS_DESTINATION
             template.send("activemq:dummy", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOnly);

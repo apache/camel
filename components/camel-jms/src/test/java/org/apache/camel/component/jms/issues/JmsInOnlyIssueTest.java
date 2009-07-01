@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -26,14 +23,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class JmsInOnlyIssueTest extends ContextTestSupport {
 
+    @Test
     public void testInOnlyWithSendBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -43,6 +41,7 @@ public class JmsInOnlyIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInOnlyWithAsyncSendBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -55,6 +54,7 @@ public class JmsInOnlyIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInOnlyWithSendExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -69,6 +69,7 @@ public class JmsInOnlyIssueTest extends ContextTestSupport {
         assertFalse("Should not have OUT", out.hasOut());
     }
 
+    @Test
     public void testInOnlyWithAsyncSendExchange() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -97,9 +98,6 @@ public class JmsInOnlyIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("activemq:queue:in").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals("Should be InOnly", ExchangePattern.InOnly, exchange.getPattern());
-                        assertNull("There should NOT be a reply destination", exchange.getIn().getHeader(JmsConstants.JMS_REPLY_DESTINATION));
-
                         exchange.getIn().setBody("Bye World");
                     }
                 }).to("mock:result");
