@@ -205,6 +205,10 @@ public class ExpressionDefinition implements Expression, Predicate {
         this.expressionValue = expressionValue;
     }
 
+    public ExpressionDefinition getExpressionType() {
+        return expressionType;
+    }
+
     /**
      * Returns some descriptive text to describe this node
      */
