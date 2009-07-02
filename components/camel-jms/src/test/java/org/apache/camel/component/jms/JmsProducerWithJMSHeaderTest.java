@@ -89,11 +89,11 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        long ttl = System.currentTimeMillis() + 2000;
+        long ttl = System.currentTimeMillis() + 5000;
         template.sendBodyAndHeader("activemq:queue:bar?preserveMessageQos=true", "Hello World", "JMSExpiration", ttl);
 
         // sleep just a little
-        Thread.sleep(500);
+        Thread.sleep(2000);
 
         Exchange bar = consumer.receiveNoWait("activemq:queue:bar");
         assertNotNull("Should be a message on queue", bar);
@@ -224,6 +224,41 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
         assertEquals("queue://foo", mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
     }
 
+    @Test
+    public void testInOutJMSDestination() throws Exception {
+        Destination queue = new ActiveMQQueue("reply");
+
+        String reply = (String) template.requestBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION, queue);
+        assertEquals("Bye World", reply);
+    }
+
+    @Test
+    public void testInOutJMSDestinationName() throws Exception {
+        String reply = (String) template.requestBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION_NAME, "reply");
+        assertEquals("Bye World", reply);
+    }
+
+    @Test
+    public void testInOnlyRouteJMSDestinationName() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                from("activemq:queue:a").to("activemq:queue:b");
+                from("activemq:queue:b").to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        mock.message(0).header("JMSDestination").isNotNull();
+
+        template.sendBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION_NAME, "a");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("queue://b", mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -239,6 +274,9 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo").to("mock:result");
+
+                from("activemq:queue:reply").transform(constant("Bye World"));
+
             }
         };
     }
