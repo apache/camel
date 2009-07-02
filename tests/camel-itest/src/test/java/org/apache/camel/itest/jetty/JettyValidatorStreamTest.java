@@ -29,9 +29,10 @@ public class JettyValidatorStreamTest extends CamelTestSupport {
 
     @Test
     public void testValideRequestAsStream() throws Exception {
-        InputStream inputStream = HttpClient.class.getResourceAsStream("ValidRequest.xml");
+        InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
-        String response = HttpClient.send(inputStream);
+
+        String response = template.requestBody("http://localhost:8192/test", inputStream, String.class);
         assertEquals("The response should be ok", response, "<ok/>");
     }
 
