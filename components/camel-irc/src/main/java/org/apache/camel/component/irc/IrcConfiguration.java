@@ -19,6 +19,7 @@ package org.apache.camel.component.irc;
 import java.net.URI;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 
 public class IrcConfiguration implements Cloneable {
     private String target;
@@ -89,8 +90,15 @@ public class IrcConfiguration implements Cloneable {
             throw new RuntimeCamelException("The IRC channel name is required but not configured");
         }
 
-        setTarget("#" + uri.getFragment());
-    }
+        String channel = uri.getFragment();
+
+        if ( channel.contains("?")) {
+            //Need to strip off the query string from this fragment
+            channel = ObjectHelper.before(uri.getFragment(), "?");
+        }
+
+        setTarget("#" + channel);
+}
 
     public String getHostname() {
         return hostname;
