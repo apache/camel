@@ -21,25 +21,34 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 
 @Link
 public class Security {
-    @DataField(pos = 1)
-    private String instrumentCode;
 
-    @DataField(pos = 2)
+    @DataField(pos = 5)
     private String instrumentNumber;
 
-    public String getInstrumentCode() {
-        return instrumentCode;
-    }
-
-    public void setInstrumentCode(String instrumentCode) {
-        this.instrumentCode = instrumentCode;
-    }
-
+	@DataField(pos = 4)
+    private String instrumentCode;
+	
     public String getInstrumentNumber() {
-        return instrumentNumber;
+		return instrumentNumber;
+	}
+
+	public void setInstrumentNumber(String instrumentNumber) {
+		this.instrumentNumber = instrumentNumber;
+	}
+
+	public String getInstrumentCode() {
+		return instrumentCode;
+	}
+
+	public void setInstrumentCode(String instrumentCode) {
+		this.instrumentCode = instrumentCode;
+	}
+
+    @Override
+    public String toString() {
+        return "Model : " + Security.class.getName() + " : "
+            + this.instrumentNumber + ", "
+            + this.instrumentCode;
     }
 
-    public void setInstrumentNumber(String instrumentNumber) {
-        this.instrumentNumber = instrumentNumber;
-    }
 }
