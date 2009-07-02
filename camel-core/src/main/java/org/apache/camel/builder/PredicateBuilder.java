@@ -338,6 +338,58 @@ public final class PredicateBuilder {
         };
     }
 
+    public static Predicate startsWith(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+                String leftStr = exchange.getContext().getTypeConverter().convertTo(String.class, leftValue);
+                String rightStr = exchange.getContext().getTypeConverter().convertTo(String.class, rightValue);
+                if (leftStr != null && rightStr != null) {
+                    return leftStr.startsWith(rightStr);
+                } else {
+                    return false;
+                }
+            }
+
+            protected String getOperationText() {
+                return "startsWith";
+            }
+        };
+    }
+
+    public static Predicate endsWith(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+                String leftStr = exchange.getContext().getTypeConverter().convertTo(String.class, leftValue);
+                String rightStr = exchange.getContext().getTypeConverter().convertTo(String.class, rightValue);
+                if (leftStr != null && rightStr != null) {
+                    return leftStr.endsWith(rightStr);
+                } else {
+                    return false;
+                }
+            }
+
+            protected String getOperationText() {
+                return "endsWith";
+            }
+        };
+    }
+
     /**
      * Returns a predicate which is true if the expression matches the given
      * regular expression

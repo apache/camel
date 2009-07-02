@@ -42,14 +42,13 @@ public class FaultRetryRouteTest extends ContextTestSupport {
     };
 
     public void testSuccessfulRetry() throws Exception {
-        // TODO: See CAMEL-1551
-//        a.expectedBodiesReceived("in");
-//        b.expectedBodiesReceived("in");
-//        error.expectedMessageCount(0);
+        a.expectedBodiesReceived("in");
+        b.expectedBodiesReceived("in");
+        error.expectedMessageCount(0);
 
-//        template.sendBody("direct:start", "in");
+        template.sendBody("direct:start", "in");
 
-//        MockEndpoint.assertIsSatisfied(a, b, error);
+        MockEndpoint.assertIsSatisfied(a, b, error);
     }
 
     @Override

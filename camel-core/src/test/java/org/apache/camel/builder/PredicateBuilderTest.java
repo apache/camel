@@ -82,6 +82,38 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(header("name").in("Hiram", "Jonathan", "James", "Claus"));
     }
 
+    public void testStartsWith() throws Exception {
+        assertMatches(header("name").startsWith("J"));
+        assertMatches(header("name").startsWith("James"));
+        assertDoesNotMatch(header("name").startsWith("C"));
+
+        assertMatches(header("size").startsWith("1"));
+        assertMatches(header("size").startsWith("10"));
+        assertDoesNotMatch(header("size").startsWith("99"));
+        assertDoesNotMatch(header("size").startsWith("9"));
+
+        assertMatches(header("size").startsWith(1));
+        assertMatches(header("size").startsWith(10));
+        assertDoesNotMatch(header("size").startsWith(99));
+        assertDoesNotMatch(header("size").startsWith(9));
+    }
+
+    public void testEndsWith() throws Exception {
+        assertMatches(header("name").endsWith("mes"));
+        assertMatches(header("name").endsWith("James"));
+        assertDoesNotMatch(header("name").endsWith("world"));
+
+        assertMatches(header("size").endsWith("0"));
+        assertMatches(header("size").endsWith("10"));
+        assertDoesNotMatch(header("size").endsWith("99"));
+        assertDoesNotMatch(header("size").endsWith("9"));
+
+        assertMatches(header("size").endsWith(0));
+        assertMatches(header("size").endsWith(10));
+        assertDoesNotMatch(header("size").endsWith(99));
+        assertDoesNotMatch(header("size").endsWith(9));
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

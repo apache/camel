@@ -113,6 +113,16 @@ public class ValueBuilder implements Expression {
         return onNewPredicate(PredicateBuilder.in(predicates));
     }
 
+    public Predicate startsWith(Object value) {
+        Expression right = asExpression(value);
+        return onNewPredicate(PredicateBuilder.startsWith(expression, right));
+    }
+
+    public Predicate endsWith(Object value) {
+        Expression right = asExpression(value);
+        return onNewPredicate(PredicateBuilder.endsWith(expression, right));
+    }
+
     /**
      * Create a predicate that the left hand expression contains the value of
      * the right hand expression

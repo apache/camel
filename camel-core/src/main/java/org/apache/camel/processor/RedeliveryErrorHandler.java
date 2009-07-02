@@ -39,9 +39,6 @@ import org.apache.camel.util.ServiceHelper;
  */
 public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements Processor {
 
-    // TODO: support onException being able to use other onException to route they exceptions
-    // (hard one to get working, has not been supported before)
-
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final Processor output;
