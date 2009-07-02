@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.util.Comparator;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
@@ -96,7 +97,7 @@ public final class GenericFileDefaultSorter {
      * @param reverse    true to reverse order
      * @return the comparator
      */
-    public static Comparator<GenericFileExchange> sortByFileLanguage(
+    public static Comparator<Exchange> sortByFileLanguage(
             CamelContext context, String expression, boolean reverse) {
         return sortByFileLanguage(context, expression, reverse, false, null);
     }
@@ -110,7 +111,7 @@ public final class GenericFileDefaultSorter {
      * @param ignoreCase ignore case if comparing strings
      * @return the comparator
      */
-    public static Comparator<GenericFileExchange> sortByFileLanguage(
+    public static Comparator<Exchange> sortByFileLanguage(
             CamelContext context, String expression, boolean reverse, boolean ignoreCase) {
         return sortByFileLanguage(context, expression, reverse, ignoreCase, null);
     }
@@ -125,11 +126,11 @@ public final class GenericFileDefaultSorter {
      * @param nested     nested comparator for sub group sorting, can be null
      * @return the comparator
      */
-    public static Comparator<GenericFileExchange> sortByFileLanguage(
+    public static Comparator<Exchange> sortByFileLanguage(
             final CamelContext context, final String expression, final boolean reverse,
-            final boolean ignoreCase, final Comparator<GenericFileExchange> nested) {
-        return new Comparator<GenericFileExchange>() {
-            public int compare(GenericFileExchange o1, GenericFileExchange o2) {
+            final boolean ignoreCase, final Comparator<Exchange> nested) {
+        return new Comparator<Exchange>() {
+            public int compare(Exchange o1, Exchange o2) {
                 Language language = context.resolveLanguage("file");
                 final Expression exp = language.createExpression(expression);
                 Object result1 = exp.evaluate(o1, Object.class);

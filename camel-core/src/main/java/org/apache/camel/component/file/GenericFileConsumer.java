@@ -72,12 +72,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             Collections.sort(files, endpoint.getSorter());
         }
 
-        // sort using build in sorters that is expression based
-        // first we need to convert to GenericFileExchange objects so we can sort
-        // using expressions
-        LinkedList<GenericFileExchange> exchanges = new LinkedList<GenericFileExchange>();
+        // sort using build in sorters so we can use expressions
+        LinkedList<Exchange> exchanges = new LinkedList<Exchange>();
         for (GenericFile<T> file : files) {
-            GenericFileExchange<T> exchange = endpoint.createExchange(file);
+            Exchange exchange = endpoint.createExchange(file);
             endpoint.configureMessage(file, exchange.getIn());
             exchanges.add(exchange);
         }
@@ -112,7 +110,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
             // use poll to remove the head so it does not consume memory even after we have processed it
-            GenericFileExchange<T> exchange = (GenericFileExchange<T>) exchanges.poll();
+            Exchange exchange = (Exchange) exchanges.poll();
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);

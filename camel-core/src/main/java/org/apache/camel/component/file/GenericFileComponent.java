@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -57,7 +58,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
             // we support nested sort groups so they should be chained
             String[] groups = sortBy.split(";");
             Iterator<String> it = ObjectHelper.createIterator(groups);
-            Comparator<GenericFileExchange> comparator = createSortByComparator(it);
+            Comparator<Exchange> comparator = createSortByComparator(it);
             endpoint.setSortBy(comparator);
         }
         setProperties(endpoint.getConfiguration(), parameters);
@@ -93,9 +94,9 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
      * Helper to create a sort comparator
      *
      * @param it iterator
-     * @return Comparator<GenericFileExchange>
+     * @return Comparator<Exchange>
      */
-    private Comparator<GenericFileExchange> createSortByComparator(Iterator<String> it) {
+    private Comparator<Exchange> createSortByComparator(Iterator<String> it) {
         if (!it.hasNext()) {
             return null;
         }
@@ -111,7 +112,8 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         ObjectHelper.notEmpty(reminder, "sortBy expression", this);
 
         // recursive add nested sorters
-        return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), reminder, reverse, ignoreCase, createSortByComparator(it));
+        return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), 
+            reminder, reverse, ignoreCase, createSortByComparator(it));
     }
 
 }

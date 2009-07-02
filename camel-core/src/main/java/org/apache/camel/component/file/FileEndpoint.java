@@ -19,7 +19,9 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.Component;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.ObjectHelper;
 
@@ -92,16 +94,16 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return new GenericFileProducer<File>(this, operations);
     }
 
-    public GenericFileExchange<File> createExchange(GenericFile<File> file) {
-        GenericFileExchange<File> exchange = new GenericFileExchange<File>(this);
+    public Exchange createExchange(GenericFile<File> file) {
+        Exchange exchange = new DefaultExchange(this);
         if (file != null) {
             file.bindToExchange(exchange);
         }
         return exchange;
     }
 
-    public GenericFileExchange createExchange() {
-        return new GenericFileExchange(this);
+    public Exchange createExchange() {
+        return new DefaultExchange(this);
     }
 
     public File getFile() {

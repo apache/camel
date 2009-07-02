@@ -73,7 +73,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected IdempotentRepository idempotentRepository;
     protected GenericFileFilter<T> filter;
     protected Comparator<GenericFile<T>> sorter;
-    protected Comparator<GenericFileExchange> sortBy;
+    protected Comparator<Exchange> sortBy;
     protected String readLock = "none";
     protected long readLockTimeout;
     protected GenericFileExclusiveReadLockStrategy exclusiveReadLockStrategy;
@@ -93,7 +93,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public abstract GenericFileProducer<T> createProducer() throws Exception;
 
-    public abstract GenericFileExchange<T> createExchange(GenericFile<T> file);
+    public abstract Exchange createExchange(GenericFile<T> file);
 
     public abstract String getScheme();
     
@@ -280,11 +280,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.sorter = sorter;
     }
 
-    public Comparator<GenericFileExchange> getSortBy() {
+    public Comparator<Exchange> getSortBy() {
         return sortBy;
     }
 
-    public void setSortBy(Comparator<GenericFileExchange> sortBy) {
+    public void setSortBy(Comparator<Exchange> sortBy) {
         this.sortBy = sortBy;
     }
 
