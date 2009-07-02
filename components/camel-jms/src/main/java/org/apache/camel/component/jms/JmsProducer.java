@@ -239,7 +239,7 @@ public class JmsProducer extends DefaultProducer {
 
                 if (endpoint.isTransferException() && body instanceof Exception) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Reply recieved. Setting reply as Exception: " + body);
+                        LOG.debug("Reply recieved. Setting reply an Exception: " + body);
                     }
                     // we got an exception back and endpoint was configued to transfer exception
                     // therefore set response as exception
@@ -337,7 +337,8 @@ public class JmsProducer extends DefaultProducer {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Using JMS API " + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
+            LOG.trace("Using " + (inOut ? "inOut" : "inOnly") + " jms template to send with API "
+                    + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
         }
 
         // destination should be preferred

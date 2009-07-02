@@ -7,13 +7,13 @@
 		http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://activemq.apache.org/schema/core
-			http://activemq.apache.org/schema/core/activemq-core-5.3-SNAPSHOT.xsd
+			http://activemq.apache.org/schema/core/activemq-core.xsd
 	">
 
     <amq:broker brokerName="myBroker"
                 id="broker"
                 useJmx="true"
-                persistent="true"
+                persistent="false"
                 start="true"
                 dataDirectory="target/data">
 

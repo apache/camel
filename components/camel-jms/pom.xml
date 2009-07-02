@@ -117,6 +117,12 @@
       </exclusions>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jencks</groupId>
+      <artifactId>jencks-amqpool</artifactId>
+      <version>2.1</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>commons-logging</groupId>

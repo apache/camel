@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -27,7 +30,8 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public class JmsSendToAlotOfDestinationWithSameEndpointTest extends SpringTestSupport {
 
-    private static String URI = "activemq:queue:foo";
+    private static final transient Log LOG = LogFactory.getLog(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
+    private static String URI = "activemq:queue:foo?autoStartup=false";
 
     public int getExpectedRouteCount() {
         return 0;
@@ -35,18 +39,25 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends SpringTestSu
 
     @Test
     public void testSendToAlotOfMessageToQueues() throws Exception {
-        int size = 100;
+        int size = 1000;
+
+        LOG.info("About to send " + size + " messages");
 
         for (int i = 0; i < size; i++) {
             // use the same endpoint but provide a header with the dynamic queue we send to
             // this allows us to reuse endpoints and not create a new endpoint for each and every jms queue
             // we send to
-            template.sendBodyAndHeader(URI, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME, "foo" + i);
+            Thread.sleep(50);
+            if (i > 0 && i % 50 == 0) {
+                LOG.info("Send " + i + " messages so far");
+            }
+            template.sendBodyAndHeader(URI, ExchangePattern.InOnly, "Hello " + i, JmsConstants.JMS_DESTINATION_NAME, "foo" + i);
         }
 
+        LOG.info("Send complete use jconsole to view");
+
         // now we should be able to poll a message from each queue
-//        System.out.println(size + " messages sent, use jconsole to look");
-//        Thread.sleep(99999999);
+        // Thread.sleep(99999999);
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {
