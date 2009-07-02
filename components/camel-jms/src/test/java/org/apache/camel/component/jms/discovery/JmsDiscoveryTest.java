@@ -38,7 +38,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
     @Test
     public void testDiscovery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(3);
+        mock.expectedMessageCount(3);
 
         assertMockEndpointsSatisfied();
 
@@ -69,11 +69,11 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // lets setup the heartbeats
-                from("bean:service1?method=status?initialDelay=100&exchangePattern=InOnly").to("activemq:topic:registry.heartbeats");
-                from("bean:service2?method=status?initialDelay=125&exchangePattern=InOnly").to("activemq:topic:registry.heartbeats");
-                from("bean:service3?method=status?initialDelay=150&exchangePattern=InOnly").to("activemq:topic:registry.heartbeats");
+                from("bean:service1?method=status").inOnly().to("activemq:topic:registry.heartbeats");
+                from("bean:service2?method=status").inOnly().to("activemq:topic:registry.heartbeats");
+                from("bean:service3?method=status").inOnly().to("activemq:topic:registry.heartbeats");
 
-                from("activemq:topic:registry.heartbeats?cacheLevelName=CACHE_CONSUMER").to("bean:registry?method=onEvent", "mock:result");
+                from("activemq:topic:registry.heartbeats").to("bean:registry?method=onEvent", "mock:result");
             }
         };
     }

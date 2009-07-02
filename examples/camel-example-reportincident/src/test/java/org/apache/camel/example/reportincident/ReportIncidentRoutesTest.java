@@ -84,8 +84,6 @@ public class ReportIncidentRoutesTest extends TestCase {
 
         // assert mail box
         assertEquals("Should have got 1 mail", 1, inbox.size());
-        assertTrue(" We should get the email address from the mail ",
-                   ((String)inbox.get(0).getContent()).indexOf("- email: davsclaus@apache.org") > 0);
 
         // stop camel
         stopCamel();

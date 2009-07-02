@@ -25,8 +25,8 @@
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="file://src/test/data?noop=true&amp;idempotent=true&amp;recursive=true&amp;consumer.initialDelay=2000"/>
-        <to uri="test:file://src/test/data?noop=true&amp;idempotent=true&amp;recursive=true&amp;consumer.initialDelay=2000"/>
+      <from uri="file://src/test/data?noop=true&amp;readLock=none&amp;initialDelay=5000"/>
+        <to uri="test:file://src/test/data?noop=true&amp;readLock=none&amp;initialDelay=5000"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
