@@ -146,6 +146,14 @@ public class JmsProducer extends DefaultProducer {
     public void process(final Exchange exchange) {
         final org.apache.camel.Message in = exchange.getIn();
 
+        String destinationName = in.getHeader("CamelJmsDestinationName", String.class);
+        if (destinationName == null) {
+            destinationName = endpoint.getDestination();
+        } else {
+            // remove to not propagate header
+            in.removeHeader("CamelJmsDestinationName");
+        }
+
         if (exchange.getPattern().isOutCapable()) {
 
             testAndSetRequestor();
@@ -169,7 +177,7 @@ public class JmsProducer extends DefaultProducer {
             final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
             final CamelJmsTemplate template = (CamelJmsTemplate)getInOutTemplate();
-            template.send(endpoint.getDestination(), new MessageCreator() {
+            template.send(destinationName, new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
                     message.setJMSReplyTo(replyTo);
@@ -237,7 +245,7 @@ public class JmsProducer extends DefaultProducer {
                 }
             }
 
-            getInOnlyTemplate().send(endpoint.getDestination(), new MessageCreator() {
+            getInOnlyTemplate().send(destinationName, new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
                     if (LOG.isDebugEnabled()) {
