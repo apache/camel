@@ -25,7 +25,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.jms.core.JmsTemplate;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
@@ -75,8 +74,8 @@ public class JmsCustomJMSReplyToIssueTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("Hello World");
-                        // use our custom JMSReplyTo to decide where the reply should be sent
-                        exchange.getOut().setHeader(JmsConstants.JMS_REPLY_DESTINATION, "myReplyQueue");
+                        // set the JMSReplyTo to force sending the reply here
+                        exchange.getOut().setHeader("JMSReplyTo", "myReplyQueue");
                     }
                 // must preserve QoS so Camel will send JMSReplyTo even if message is inOnly
                 }).to("activemq:queue:in?preserveMessageQos=true");

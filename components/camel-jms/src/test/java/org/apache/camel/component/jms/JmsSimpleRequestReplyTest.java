@@ -71,8 +71,7 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
                 from("activemq:queue:hello").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody("Bye World");
-                        // the reply destination is set as a property on the exchange while we process it
-                        assertNotNull(exchange.getProperty(JmsConstants.JMS_REPLY_DESTINATION));
+                        assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                     }
                 }).to("mock:result");
             }

@@ -154,8 +154,16 @@ public class JmsProducer extends DefaultProducer {
     protected void processInOut(final Exchange exchange) {
         final org.apache.camel.Message in = exchange.getIn();
 
-        String destinationName = endpoint.getDestinationName();
-        Destination destination = exchange.getProperty(JmsConstants.JMS_DESTINATION, Destination.class);
+        String destinationName = in.getHeader(JmsConstants.JMS_DESTINATION_NAME, String.class);
+        // remove the header so it wont be propagated
+        in.removeHeader(JmsConstants.JMS_DESTINATION_NAME);
+        if (destinationName == null) {
+            destinationName = endpoint.getDestinationName();
+        }
+
+        Destination destination = in.getHeader(JmsConstants.JMS_DESTINATION, Destination.class);
+        // remove the header so it wont be propagated
+        in.removeHeader(JmsConstants.JMS_DESTINATION);
         if (destination == null) {
             destination = endpoint.getDestination();
         }
@@ -262,8 +270,16 @@ public class JmsProducer extends DefaultProducer {
     protected void processInOnly(final Exchange exchange) {
         final org.apache.camel.Message in = exchange.getIn();
 
-        String destinationName = endpoint.getDestinationName();
-        Destination destination = exchange.getProperty(JmsConstants.JMS_DESTINATION, Destination.class);
+        String destinationName = in.getHeader(JmsConstants.JMS_DESTINATION_NAME, String.class);
+        // remove the header so it wont be propagated
+        in.removeHeader(JmsConstants.JMS_DESTINATION_NAME);
+        if (destinationName == null) {
+            destinationName = endpoint.getDestinationName();
+        }
+
+        Destination destination = in.getHeader(JmsConstants.JMS_DESTINATION, Destination.class);
+        // remove the header so it wont be propagated
+        in.removeHeader(JmsConstants.JMS_DESTINATION);
         if (destination == null) {
             destination = endpoint.getDestination();
         }

@@ -199,13 +199,25 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
     @Test
     public void testInOnlyJMSDestination() throws Exception {
         Destination queue = new ActiveMQQueue("foo");
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSDestination").isNotNull();
 
-        // must use a property for JMSDestination to send it somewhere else
-        template.sendBodyAndProperty("activemq:queue:bar", "Hello World", "JMSDestination", queue);
+        template.sendBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION, queue);
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("queue://foo", mock.getReceivedExchanges().get(0).getIn().getHeader("JMSDestination", Destination.class).toString());
+    }
+
+    @Test
+    public void testInOnlyJMSDestinationName() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSDestination").isNotNull();
+
+        template.sendBodyAndHeader("activemq:queue:bar", "Hello World", JmsConstants.JMS_DESTINATION_NAME, "foo");
 
         assertMockEndpointsSatisfied();
 

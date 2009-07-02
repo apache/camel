@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://activemq.apache.org/schema/core
+			http://activemq.apache.org/schema/core/activemq-core-5.3-SNAPSHOT.xsd
+	">
+
+    <amq:broker brokerName="myBroker"
+                id="broker"
+                useJmx="true"
+                persistent="true"
+                start="true"
+                dataDirectory="target/data">
+
+        <amq:destinationPolicy>
+            <amq:policyMap>
+                <amq:policyEntries>
+                    <amq:policyEntry queue=">"
+                                     minimumMessageSize="1"
+                                     optimizedDispatch="true"
+                                     lazyDispatch="false"
+                                     producerFlowControl="false"
+                                     memoryLimit="500 kb"
+                                     strictOrderDispatch="true">
+                        <amq:dispatchPolicy>
+                            <amq:strictOrderDispatchPolicy/>
+                        </amq:dispatchPolicy>
+                        <amq:subscriptionRecoveryPolicy>
+                            <amq:timedSubscriptionRecoveryPolicy recoverDuration="360000"/>
+                        </amq:subscriptionRecoveryPolicy>
+                    </amq:policyEntry>
+                </amq:policyEntries>
+            </amq:policyMap>
+        </amq:destinationPolicy>
+
+        <amq:transportConnectors>
+            <amq:transportConnector uri="tcp://localhost:61616"/>
+        </amq:transportConnectors>
+
+    </amq:broker>
+
+</beans>

@@ -105,10 +105,10 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
             template.send("activemq:dummy", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOnly);
-                    exchange.setProperty(JmsConstants.JMS_DESTINATION, replyDestination);
-                    
+
                     Message in = exchange.getIn();
                     in.setBody(expectedBody);
+                    in.setHeader(JmsConstants.JMS_DESTINATION, replyDestination);
                     in.setHeader("JMSCorrelationID", cid);
                 }
             });
@@ -170,7 +170,7 @@ public class JmsSimpleRequestLateReplyTest extends CamelTestSupport {
                         Message in = exchange.getIn();
                         assertEquals("Hello World", in.getBody());
 
-                        replyDestination = in.getHeader(JmsConstants.JMS_REPLY_DESTINATION, Destination.class);
+                        replyDestination = in.getHeader("JMSReplyTo", Destination.class);
                         cid = in.getHeader("JMSCorrelationID", String.class);
 
                         LOG.debug("ReplyDestination: " + replyDestination);

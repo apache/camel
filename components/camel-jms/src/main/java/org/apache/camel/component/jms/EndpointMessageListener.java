@@ -142,7 +142,6 @@ public class EndpointMessageListener implements MessageListener {
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
-            exchange.setProperty(JmsConstants.JMS_REPLY_DESTINATION, replyDestination);
             // only change pattern if not already out capable
             if (!exchange.getPattern().isOutCapable()) {
                 exchange.setPattern(ExchangePattern.InOut);
