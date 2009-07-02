@@ -130,7 +130,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (!data.get(pos).equals("")) {
 
                 DataField dataField = dataFields.get(pos);
-                ObjectHelper.notNull(dataField, "No position defined for the field positoned : " + pos);
+                ObjectHelper.notNull(dataField, "No position defined for the field");
                 Field field = annotedFields.get(pos);
                 field.setAccessible(true);
 
@@ -139,10 +139,20 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 }
 
                 Format<?> format;
+                
+                // Get pattern defined for the field
                 String pattern = dataField.pattern();
-
+                
+                // Create format object to format the field 
                 format = FormatFactory.getFormat(field.getType(), pattern, dataField.precision());
-                field.set(model.get(field.getDeclaringClass().getName()), format.parse(data.get(pos)));
+                
+                // field object to be set
+                Object modelField = model.get(field.getDeclaringClass().getName());
+                
+                // format the data received
+                Object value = format.parse(data.get(pos));
+                
+                field.set(modelField, value );
             }
             pos++;
         }
@@ -179,37 +189,60 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             // Change accessibility to allow to read protected/private fields
             field.setAccessible(true);
 
-            // Retrieve the format associated to the type
-            Format format = FormatFactory.getFormat(field.getType(), dataField.pattern(), dataField.precision());
+            // Retrieve the format, pattern and precision associated to the type
+            Class type = field.getType();
+            String pattern = dataField.pattern();
+            int precision = dataField.precision();
             
-            // Get object to be formatted
-            Object obj = model.get(field.getDeclaringClass().getName());
+            // Create format
+            Format format = FormatFactory.getFormat(type, pattern, precision);
             
-            if (obj != null) {
+            // Get field from model
+            Object modelField = model.get(field.getDeclaringClass().getName());
+            
+            if (modelField != null) {
 
                 if (this.isMessageOrdered()) {
 
                     // Generate a key using the number of the section
                     // and the position of the field
-                    Integer key1 = sections.get(obj.getClass().getName());
+                    Integer key1 = sections.get(modelField.getClass().getName());
                     Integer key2 = dataField.position();
                     Integer keyGenerated = generateKey(key1, key2);
                     
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
                     }                    
+                    
+                    // Get field value
+                    Object value = field.get(modelField);
+                    
+                    // Add value to the list if not null
+					if (value != null) {
+						
+						// Format field value
+						String valueFormated = format.format(value);
+						
+						// Add the content to the TreeMap according to the position defined
+						positions.put(keyGenerated, valueFormated);
 
-                    // Add the content to the TreeMap according to the position defined
-                    String value = format.format(field.get(obj));
-                    positions.put(keyGenerated, value);
-            
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Positions size : " + positions.size());
-                    }
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("Positions size : " + positions.size());
+						}
+					}
                 } else {
-                    // Convert the content to a String and append it to the builder
-                    builder.append(format.format(field.get(obj)));
-                    if (it.hasNext()) {
+                    // Get field value
+                    Object value = field.get(modelField);
+                    
+                    // Add value to the list if not null
+					if (value != null) {
+						
+						// Format field value
+						String valueFormated = format.format(value);
+						builder.append( valueFormated );
+					}
+                    
+                	if (it.hasNext()) {
                         builder.append(separator);
                     }
                 }

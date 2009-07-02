@@ -133,10 +133,10 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 String[] keyValuePair = data.get(pos).split(this.getKeyValuePairSeparator());
 
                 int tag = Integer.parseInt(keyValuePair[0]);
-                String value = keyValuePair[1];
+                String keyValue = keyValuePair[1];
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Key : " + tag + ", value : " + value);
+                    LOG.debug("Key : " + tag + ", value : " + keyValue);
                 }
 
                 KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
@@ -146,14 +146,25 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 field.setAccessible(true);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Tag : " + tag + ", Data : " + value + ", Field type : " + field.getType());
+                    LOG.debug("Tag : " + tag + ", Data : " + keyValue + ", Field type : " + field.getType());
                 }
 
                 Format<?> format;
+                
+                // Get pattern defined for the field
                 String pattern = keyValuePairField.pattern();
-
+                
+                // Create format object to format the field 
                 format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
-                field.set(model.get(field.getDeclaringClass().getName()), format.parse(value));
+                
+                // field object to be set
+                Object modelField = model.get(field.getDeclaringClass().getName());
+                
+                // format the value of the key received
+                Object value = format.parse( keyValue );
+                
+                
+                field.set( modelField , value );
 
             }
 
@@ -187,59 +198,84 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         while (it.hasNext()) {
 
-            KeyValuePairField keyValuePairField = keyValuePairFieldsSorted.get(it.next());
-            ObjectHelper.notNull(keyValuePairField, "KeyValuePair is null !");
+			KeyValuePairField keyValuePairField = keyValuePairFieldsSorted.get(it.next());
+			ObjectHelper.notNull(keyValuePairField, "KeyValuePair is null !");
 
-            // Retrieve the field
-            Field field = annotedFields.get(keyValuePairField.tag());
-            // Change accessibility to allow to read protected/private fields
-            field.setAccessible(true);
+			// Retrieve the field
+			Field field = annotedFields.get(keyValuePairField.tag());
+			// Change accessibility to allow to read protected/private fields
+			field.setAccessible(true);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Tag : " + keyValuePairField.tag() + ", Field type : " + field.getType() + ", class : " + field.getDeclaringClass().getName());
-            }
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Tag : " + keyValuePairField.tag() + ", Field type : " + field.getType() + ", class : "
+						+ field.getDeclaringClass().getName());
+			}
 
-            // Retrieve the format associated to the type
-            Format format;
-            String pattern = keyValuePairField.pattern();
-            format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
+			// Retrieve the format, pattern and precision associated to the type
+			Class type = field.getType();
+			String pattern = keyValuePairField.pattern();
+			int precision = keyValuePairField.precision();
 
-            // Get object to be formatted
-            Object obj = model.get(field.getDeclaringClass().getName());
-            
-            if (obj != null) {
-                if (this.isMessageOrdered()) {
-                    // Generate a key using the number of the section
-                    // and the position of the field
-                    Integer key1 = sections.get(obj.getClass().getName());
-                    Integer key2 = keyValuePairField.position();
-                    Integer keyGenerated = generateKey(key1, key2);
-                    
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
-                    }                    
+			// Create format
+			Format format = FormatFactory.getFormat(type, pattern, precision);
 
-                    // Add the content to the TreeMap according to the position defined
-                    String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + format.format(field.get(obj));
-                    positions.put(keyGenerated, value);
+			// Get object to be formatted
+			Object obj = model.get(field.getDeclaringClass().getName());
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Positions size : " + positions.size());
-                    }
-                } else {
-                    // Convert the content to a String and append it to the
-                    // builder
-                    // Add the tag followed by its key value pair separator
-                    // the data and finish by the pair separator
-                    String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + format.format(field.get(obj)) + separator;
-                    builder.append(value);
-                    
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value added : " + keyValuePairField.tag() + this.getKeyValuePairSeparator()
-                            + format.format(field.get(obj)) + separator);
-                    }
-                }
-            }
+			if (obj != null) {
+
+				// Get field value
+				Object keyValue = field.get(obj);
+
+				if (this.isMessageOrdered()) {
+					// Generate a key using the number of the section
+					// and the position of the field
+					Integer key1 = sections.get(obj.getClass().getName());
+					Integer key2 = keyValuePairField.position();
+					Integer keyGenerated = generateKey(key1, key2);
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
+					}
+
+					// Add value to the list if not null
+					if (keyValue != null) {
+
+						// Format field value
+						String valueFormated = format.format(keyValue);
+
+						// Create the key value string
+						String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormated;
+
+						// Add the content to the TreeMap according to the
+						// position defined
+						positions.put(keyGenerated, value);
+
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("Positions size : " + positions.size());
+						}
+					}
+				} else {
+
+					// Add value to the list if not null
+					if (keyValue != null) {
+
+						// Format field value
+						String valueFormated = format.format(keyValue);
+
+						// Create the key value string
+						String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormated + separator;
+
+						// Add content to the stringBuilder
+						builder.append(value);
+
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("Value added : " + keyValuePairField.tag() + this.getKeyValuePairSeparator()
+									+ valueFormated + separator);
+						}
+					}
+				}
+			}
         }
 
         // Iterate through the list to generate
