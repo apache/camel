@@ -18,10 +18,10 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class JettyWithXPathChoiceTest extends CamelTestSupport {
     protected MockEndpoint x;
@@ -39,14 +39,14 @@ public class JettyWithXPathChoiceTest extends CamelTestSupport {
 
         x.reset();
         y.reset();
-        z.reset();        
-        
+        z.reset();
+
         body = "<two/>";
         expectsMessageCount(0, x, z);
-        
+
         sendBody(body);
 
-        assertMockEndpointsSatisfied();    
+        assertMockEndpointsSatisfied();
     }
 
     private void sendBody(String body) {
@@ -66,14 +66,15 @@ public class JettyWithXPathChoiceTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").redeliverDelay(0));
+                from("jetty:http://localhost:9080/myworld")
+                    // use stream caching
+                    .streamCaching()
+                    .choice()
+                        .when().xpath("/one").to("mock:x")
+                        .when().xpath("/two").to("mock:y")
+                        .otherwise().to("mock:z")
+                    .end();
 
-                // Need a convertBodyTo processor here or we may get an error
-                // that we are at the end of the stream
-                from("jetty:http://localhost:9080/myworld").choice()
-                  .when().xpath("/one").to("mock:x")
-                  .when().xpath("/two").to("mock:y")
-                  .otherwise().to("mock:z");
             }
         };
     }

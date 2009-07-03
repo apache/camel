@@ -46,15 +46,18 @@ public interface Exchange {
     String BEAN_HOLDER                = "CamelBeanHolder";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
 
-    String CHARSET_NAME = "CamelCharsetName";
-    String CONTENT_TYPE = "CamelContentType";
-    String CORRELATION_ID = "CamelCorrelationId";
+    String BINDING = "CamelBinding";
+
+    String CHARSET_NAME     = "CamelCharsetName";
+    String CONTENT_ENCODING = "Content-Encoding";
+    String CONTENT_TYPE     = "Content-Type";
+    String CORRELATION_ID   = "CamelCorrelationId";
 
     String DATASET_INDEX = "CamelDataSetIndex";
 
-    String EXCEPTION_CAUGHT  = "CamelExceptionCaught";
+    String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
-    String FAILURE_HANDLED   = "CamelFailureHandled";
+    String FAILURE_HANDLED      = "CamelFailureHandled";
 
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
@@ -98,8 +101,6 @@ public interface Exchange {
     String TRANSACTED    = "CamelTransacted";
     String ROLLBACK_ONLY = "CamelRollbackOnly";
 
-    String BINDING = "CamelBinding";
-    
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *

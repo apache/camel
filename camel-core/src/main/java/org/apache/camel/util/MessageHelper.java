@@ -100,15 +100,17 @@ public final class MessageHelper {
     }
     
     /**
-     * Returns the MIME content type on the message or null if one is not defined
+     * Returns the MIME content type on the message or <tt>null</tt> if none defined
      */
     public static String getContentType(Message message) {        
-        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
-        if (contentType == null) {
-            // fallback with the Content-Type
-            contentType = message.getHeader("Content-Type", String.class);
-        }
-        return contentType;
+        return message.getHeader(Exchange.CONTENT_TYPE, String.class);
+    }
+
+    /**
+     * Returns the MIME content encoding on the message or <tt>null</tt> if none defined
+     */
+    public static String getContentEncoding(Message message) {
+        return message.getHeader(Exchange.CONTENT_ENCODING, String.class);
     }
 
     /**

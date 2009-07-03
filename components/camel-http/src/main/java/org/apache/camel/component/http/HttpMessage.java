@@ -28,8 +28,7 @@ import org.apache.camel.impl.DefaultMessage;
  * @version $Revision$
  */
 public class HttpMessage extends DefaultMessage {
-    public static final String CONTENT_ENCODING = "Content-Encoding";
-    
+
     private HttpServletRequest request;
 
     public HttpMessage(Exchange exchange, HttpServletRequest request) {

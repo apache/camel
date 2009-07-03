@@ -62,14 +62,14 @@ public class RequestEntityConverter {
     private RequestEntity asRequestEntity(InputStream in, Exchange exchange) throws IOException {
         return new InputStreamRequestEntity(
                 GZIPHelper.toGZIPInputStream(
-                        exchange.getIn().getHeader(HttpMessage.CONTENT_ENCODING, String.class),
+                        exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class),
                         in), ExchangeHelper.getContentType(exchange));
     }
 
     private RequestEntity asRequestEntity(byte[] data, Exchange exchange) throws Exception {
         return new InputStreamRequestEntity(
             GZIPHelper.toGZIPInputStream(
-                    exchange.getIn().getHeader(HttpMessage.CONTENT_ENCODING, String.class),
+                    exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class),
                     data), ExchangeHelper.getContentType(exchange));
     }
 }

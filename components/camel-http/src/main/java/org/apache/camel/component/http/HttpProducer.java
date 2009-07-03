@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -161,7 +160,7 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Header header = method.getRequestHeader(HttpMessage.CONTENT_ENCODING);
+        Header header = method.getRequestHeader(Exchange.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
 
         is = GZIPHelper.toGZIPInputStream(contentEncoding, is);

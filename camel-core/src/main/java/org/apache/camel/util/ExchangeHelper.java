@@ -350,6 +350,13 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Returns the MIME content encoding on the input message or null if one is not defined
+     */
+    public static String getContentEncoding(Exchange exchange) {
+        return MessageHelper.getContentEncoding(exchange.getIn());
+    }
+
+    /**
      * Performs a lookup in the registry of the mandatory bean name and throws an exception if it could not be found
      */
     public static Object lookupMandatoryBean(Exchange exchange, String name) {

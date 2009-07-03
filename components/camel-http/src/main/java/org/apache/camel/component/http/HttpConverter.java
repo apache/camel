@@ -23,6 +23,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.http.helper.GZIPHelper;
 
 /**
@@ -73,7 +74,7 @@ public final class HttpConverter {
         if (request == null) {
             return null;
         }
-        String contentEncoding = request.getHeader(HttpMessage.CONTENT_ENCODING);
+        String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING);
         return GZIPHelper.toGZIPInputStream(contentEncoding, request.getInputStream());
     }
 

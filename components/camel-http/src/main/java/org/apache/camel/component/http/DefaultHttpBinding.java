@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,9 +114,9 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     private void copyProtocolHeaders(Message request, Message response) {
-        if (request.getHeader(HttpMessage.CONTENT_ENCODING) != null) {
-            String contentEncoding = request.getHeader(HttpMessage.CONTENT_ENCODING, String.class);
-            response.setHeader(HttpMessage.CONTENT_ENCODING, contentEncoding);
+        if (request.getHeader(Exchange.CONTENT_ENCODING) != null) {
+            String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING, String.class);
+            response.setHeader(Exchange.CONTENT_ENCODING, contentEncoding);
         }        
     }
 
