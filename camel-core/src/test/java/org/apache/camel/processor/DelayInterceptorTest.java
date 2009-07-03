@@ -36,7 +36,7 @@ public class DelayInterceptorTest extends ContextTestSupport {
         }
         long delta = System.currentTimeMillis() - start;
         assertTrue("Should be slower to run: " + delta, delta > 4000);
-        assertTrue("Should not take that long to run: " + delta, delta < 9000);
+        assertTrue("Should not take that long to run: " + delta, delta < 15000);
     }
 
     @Override
