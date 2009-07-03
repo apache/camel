@@ -32,7 +32,7 @@ public class IrcRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "Message One";
     protected String body2 = "Message Two";
-    private boolean sentMessages;
+    private boolean sentMessages;    
 
     @Test
     public void testIrcMessages() throws Exception {
@@ -45,12 +45,12 @@ public class IrcRouteTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
-    }
-
+    }   
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("irc://camel-con@irc.codehaus.org:6667/#camel-test?nickname=camel-con").
+                from(fromUri()).
                         choice().
                         when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("mock:result").
                         when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
@@ -64,6 +64,14 @@ public class IrcRouteTest extends CamelTestSupport {
         };
     }
 
+    protected String sendUri() {
+        return "irc://camel-prd@irc.codehaus.org:6667/#camel-test?nickname=camel-prd";
+    }
+
+    protected String fromUri() {
+        return "irc://camel-con@irc.codehaus.org:6667/#camel-test?nickname=camel-con";
+    }    
+    
     /**
      * Lets send messages once the consumer has joined
      */
@@ -72,10 +80,9 @@ public class IrcRouteTest extends CamelTestSupport {
             sentMessages = true;
 
             // now the consumer has joined, lets send some messages
-            String sendUri = "irc://camel-prd@irc.codehaus.org:6667/#camel-test?nickname=camel-prd";
 
-            template.sendBody(sendUri, body1);
-            template.sendBody(sendUri, body2);
+            template.sendBody(sendUri(), body1);
+            template.sendBody(sendUri(), body2);
         }
     }
 }
