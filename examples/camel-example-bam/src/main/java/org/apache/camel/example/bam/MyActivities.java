@@ -32,6 +32,9 @@ import static org.apache.camel.util.Time.seconds;
 // START SNIPPET: demo
 public class MyActivities extends ProcessBuilder {
 
+    public MyActivities() {
+    }
+
     public MyActivities(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
         super(jpaTemplate, transactionTemplate);
     }

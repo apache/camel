@@ -95,7 +95,8 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
         // sleep just a little
         Thread.sleep(2000);
 
-        Exchange bar = consumer.receiveNoWait("activemq:queue:bar");
+        // use timeout in case running on slow box
+        Exchange bar = consumer.receive("activemq:queue:bar", 10000);
         assertNotNull("Should be a message on queue", bar);
 
         template.send("activemq:queue:foo", bar);
@@ -112,7 +113,7 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
         template.sendBodyAndHeader("activemq:queue:bar?preserveMessageQos=true", "Hello World", "JMSExpiration", ttl);
 
         // sleep more so the message is expired
-        Thread.sleep(3000);
+        Thread.sleep(5000);
 
         Exchange bar = consumer.receiveNoWait("activemq:queue:bar");
         assertNull("Should NOT be a message on queue", bar);
@@ -175,7 +176,7 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
         template.sendBodyAndHeaders("activemq:queue:bar?preserveMessageQos=true", "Hello World", headers);
 
         // sleep more so the message is expired
-        Thread.sleep(3000);
+        Thread.sleep(5000);
 
         Exchange bar = consumer.receiveNoWait("activemq:queue:bar");
         assertNull("Should NOT be a message on queue", bar);

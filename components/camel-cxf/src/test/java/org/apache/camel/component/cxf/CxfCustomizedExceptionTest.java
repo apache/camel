@@ -30,7 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.io.IOUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapFault;
@@ -127,7 +127,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         OutputStream out = urlConnection.getOutputStream();
         // copy the message out
         InputStream is = this.getClass().getResourceAsStream("SimpleSoapRequest.xml");
-        IOUtils.copy(is, out);
+        IOHelper.copy(is, out);
         out.flush();
         is.close();
         // check the response code        

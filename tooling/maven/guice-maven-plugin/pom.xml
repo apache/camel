@@ -87,11 +87,5 @@
       <artifactId>commons-logging</artifactId>
     </dependency>
 
-    <!-- TODO: do we need all these? -->
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-    </dependency>
-	
   </dependencies>
 </project>

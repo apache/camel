@@ -500,6 +500,9 @@
         <artifactId>commons-logging</artifactId>
         <version>${commons-logging-version}</version>
       </dependency>
+
+      <!-- TODO not needed as parent dependency -->
+<!--
       <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
@@ -520,6 +523,7 @@
         <artifactId>commons-io</artifactId>
         <version>${commons-io-version}</version>
       </dependency>
+-->
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>

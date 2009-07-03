@@ -22,6 +22,8 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -29,7 +31,6 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.io.IOUtils;
 
 /**
  * A polling HTTP consumer which by default performs a GET
@@ -64,10 +65,10 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
             LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
             InputStream is = method.getResponseBodyAsStream();
             try {
-                IOUtils.copy(is, bos);
+                IOHelper.copy(is, bos);
                 bos.flush();
             } finally {
-                is.close();
+                ObjectHelper.close(is, "input stream", null);
             }
             Message message = exchange.getIn();
             message.setBody(bos.createInputStream());

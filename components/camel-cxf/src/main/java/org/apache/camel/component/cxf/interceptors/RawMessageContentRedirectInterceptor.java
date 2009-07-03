@@ -20,13 +20,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 
 public class RawMessageContentRedirectInterceptor extends AbstractPhaseInterceptor<Message> {
+
     public RawMessageContentRedirectInterceptor() {
         super(Phase.WRITE);
     }
@@ -47,11 +49,12 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         OutputStream os = message.getContent(OutputStream.class);
 
         try {
-            IOUtils.copy(is, os);
-            is.close();
-            os.flush();
+            IOHelper.copy(is, os);
         } catch (Exception e) {
             throw new Fault(e);
+        } finally {
+            ObjectHelper.close(is, "input stream", null);
+            ObjectHelper.close(os, "output stream", null);
         }
     }
 }

@@ -30,6 +30,7 @@ import org.apache.camel.bam.processor.JpaBamProcessor;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -45,13 +46,16 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public abstract class ProcessBuilder extends RouteBuilder {
     private static int processCounter;
     private JpaTemplate jpaTemplate;
-    private final TransactionTemplate transactionTemplate;
-    private final String processName;
+    private TransactionTemplate transactionTemplate;
+    private String processName;
     private List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
     private Class entityType = ProcessInstance.class;
     private ProcessRules processRules = new ProcessRules();
     private ProcessDefinition processDefinition;
     private ActivityMonitorEngine engine;
+
+    protected ProcessBuilder() {
+    }
 
     protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
         this(jpaTemplate, transactionTemplate, createProcessName());
@@ -117,6 +121,10 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return transactionTemplate;
     }
 
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
+
     public ProcessRules getProcessRules() {
         return processRules;
     }
@@ -139,6 +147,8 @@ public abstract class ProcessBuilder extends RouteBuilder {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void populateRoutes() throws Exception {
+        ObjectHelper.notNull(getJpaTemplate(), "jpaTemplate", this);
+        ObjectHelper.notNull(getTransactionTemplate(), "transactionTemplate", this);
 
         // lets add the monitoring service - should there be an easier way??
         if (engine == null) {

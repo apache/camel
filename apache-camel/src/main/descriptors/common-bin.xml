@@ -111,18 +111,12 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
-        <include>${pom.groupId}:apache-activemq</include>
-        <include>commons-beanutils:commons-beanutils</include>
-        <include>commons-collections:commons-collections</include>
         <include>commons-httpclient:commons-httpclient</include>
-        <include>commons-dbcp:commons-dbcp</include>
-        <include>commons-pool:commons-pool</include>
         <include>log4j:log4j</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.0_spec</include>
         <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-jacc_1.0_spec</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec</include>
-        <include>org.apache.xbean:xbean-spring</include>        
       </includes>
     </dependencySet>
   </dependencySets>

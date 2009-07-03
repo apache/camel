@@ -50,13 +50,6 @@
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
       <version>${httpclient-version}</version>
-      <optional>false</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <optional>false</optional>
     </dependency>
 
     <!-- testing -->

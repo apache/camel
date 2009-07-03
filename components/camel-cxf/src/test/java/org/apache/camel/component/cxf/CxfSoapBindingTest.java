@@ -28,7 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.commons.io.IOUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
@@ -78,7 +78,7 @@ public class CxfSoapBindingTest extends Assert {
     private String toString(InputStream is) throws IOException {
         StringBuilder out = new StringBuilder();
         CachedOutputStream os = new CachedOutputStream();
-        IOUtils.copy(is, os);
+        IOHelper.copy(is, os);
         is.close();
         os.writeCacheTo(out);
         return out.toString();

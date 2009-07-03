@@ -24,36 +24,41 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <package>org.apache.camel.example.bam</package>
-  </camelContext>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <routeBuilder ref="activities"/>
+    </camelContext>
 
+    <!-- the builder with our activities -->
+    <bean id="activities" class="org.apache.camel.example.bam.MyActivities">
+        <property name="jpaTemplate" ref="jpaTemplate"/>
+        <property name="transactionTemplate" ref="transactionTemplate"/>
+    </bean>
 
-  <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-    <property name="transactionManager">
-      <bean class="org.springframework.orm.jpa.JpaTransactionManager">
+    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager">
+            <bean class="org.springframework.orm.jpa.JpaTransactionManager">
+                <property name="entityManagerFactory" ref="entityManagerFactory"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
-      </bean>
-    </property>
-  </bean>
+    </bean>
 
-  <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
-    <property name="entityManagerFactory" ref="entityManagerFactory"/>
-  </bean>
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="bam"/>
+    </bean>
 
-  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-    <property name="persistenceUnitName" value="bam"/>
-  </bean>
-
-  <!-- let's show a simple UI to browse the database -->
-  <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
-    <property name="main" value="org.hsqldb.util.DatabaseManagerSwing"/>
-    <property name="args">
-      <list>
-        <value>--url</value>
-        <value>jdbc:hsqldb:mem:camel_bam</value>
-      </list>
-    </property>
-    <property name="delay" value="1000"/>
-  </bean>
+    <!-- let's show a simple UI to browse the database -->
+    <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
+        <property name="main" value="org.hsqldb.util.DatabaseManagerSwing"/>
+        <property name="args">
+            <list>
+                <value>--url</value>
+                <value>jdbc:hsqldb:mem:camel_bam</value>
+            </list>
+        </property>
+        <property name="delay" value="1000"/>
+    </bean>
 </beans>

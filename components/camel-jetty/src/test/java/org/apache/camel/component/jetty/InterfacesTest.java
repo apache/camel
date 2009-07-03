@@ -25,7 +25,6 @@ import java.util.Enumeration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 public class InterfacesTest extends CamelTestSupport {
@@ -60,17 +59,17 @@ public class InterfacesTest extends CamelTestSupport {
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
         
         URL localUrl = new URL("http://localhost:4567/testRoute");
-        String localResponse = IOUtils.toString(localUrl.openStream());
+        String localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local", localResponse);
 
         // 127.0.0.1 is an alias of localhost so should work
         localUrl = new URL("http://127.0.0.1:4568/testRoute");
-        localResponse = IOUtils.toString(localUrl.openStream());
+        localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local-differentPort", localResponse);
         
         if (remoteInterfaceAddress != null) {
             URL url = new URL("http://" + remoteInterfaceAddress + ":4567/testRoute");
-            String remoteResponse = IOUtils.toString(url.openStream());
+            String remoteResponse = context.getTypeConverter().convertTo(String.class, url.openStream());
             assertEquals("remote", remoteResponse);
         }
         
@@ -83,12 +82,12 @@ public class InterfacesTest extends CamelTestSupport {
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
         
         URL localUrl = new URL("http://localhost:4569/allInterfaces");
-        String localResponse = IOUtils.toString(localUrl.openStream());
+        String localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("allInterfaces", localResponse);
         
         if (remoteInterfaceAddress != null) {
             URL url = new URL("http://" + remoteInterfaceAddress + ":4569/allInterfaces");
-            String remoteResponse = IOUtils.toString(url.openStream());
+            String remoteResponse = context.getTypeConverter().convertTo(String.class, url.openStream());
             assertEquals("allInterfaces", remoteResponse);
         }
         
