@@ -75,7 +75,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 // set the Http method
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                 // set the relative path
-                inMessage.setHeader(Exchange.HTTP_RELATIVE_PATH, "/customerservice/customers/123");                
+                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");                
                 // Specify the response class , cxfrs will use InputStream as the response object type 
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
                 // since we use the Get method, so we don't need to set the message body
