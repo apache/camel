@@ -86,12 +86,10 @@ public class RouteService extends ServiceSupport {
 
         // there is no lifecycyle for routesRemove
 
-        for (Route route : routes) {
-            List<Service> services = route.getServicesForRoute();
-            for (Service service : services) {
-                stopChildService(service);
-            }
-        }
+        // do not stop child services as in doStart
+        // as route.getServicesForRoute() will restart
+        // already stopped services, so we end up starting
+        // stuff when we stop.
     }
 
     protected LifecycleStrategy getLifecycleStrategy() {
