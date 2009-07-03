@@ -41,13 +41,13 @@ import org.apache.commons.logging.LogFactory;
 public class BindyCsvDataFormat implements DataFormat {
     private static final transient Log LOG = LogFactory.getLog(BindyCsvDataFormat.class);
     
-    private String packageName;
+    private String[] packageName;
     private BindyCsvFactory modelFactory;
 
     public BindyCsvDataFormat() {
     }
 
-    public BindyCsvDataFormat(String packageName) {
+    public BindyCsvDataFormat(String... packageName) {
         this.packageName = packageName;
     }
 
@@ -159,11 +159,11 @@ public class BindyCsvDataFormat implements DataFormat {
         this.modelFactory = modelFactory;
     }
 
-    public String getPackageName() {
+    public String[] getPackageName() {
         return packageName;
     }
 
-    public void setPackageName(String packageName) {
+    public void setPackageName(String[] packageName) {
         this.packageName = packageName;
     }
 
