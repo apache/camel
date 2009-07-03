@@ -83,15 +83,15 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     public void initAnnotedFields() {
 
         for (Class<?> cl : models) {
-        	
-        	List<Field> linkFields = new ArrayList<Field>();
+
+            List<Field> linkFields = new ArrayList<Field>();
 
             for (Field field : cl.getDeclaredFields()) {
                 KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
                 if (keyValuePairField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key declared in the class : " + cl.getName() + ", key : " + keyValuePairField.tag()
-                                + ", Field : " + keyValuePairField.toString());
+                        LOG.debug("Key declared in the class : " + cl.getName() + ", key : "
+                                  + keyValuePairField.tag() + ", Field : " + keyValuePairField.toString());
                     }
                     keyValuePairFields.put(keyValuePairField.tag(), keyValuePairField);
                     annotedFields.put(keyValuePairField.tag(), field);
@@ -103,12 +103,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Class linked  : " + cl.getName() + ", Field" + field.toString());
                     }
-                    linkFields.add( field );
+                    linkFields.add(field);
                 }
             }
-            
-            if (! linkFields.isEmpty() ) {
-            	annotedLinkFields.put(cl.getName(), linkFields);
+
+            if (!linkFields.isEmpty()) {
+                annotedLinkFields.put(cl.getName(), linkFields);
             }
 
         }
@@ -129,7 +129,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 // Separate the key from its value
                 // e.g 8=FIX 4.1 --> key = 8 and Value = FIX 4.1
                 ObjectHelper.notNull(this.keyValuePairSeparator,
-                        "Key Value Pair not defined in the @Message annotation");
+                                     "Key Value Pair not defined in the @Message annotation");
                 String[] keyValuePair = data.get(pos).split(this.getKeyValuePairSeparator());
 
                 int tag = Integer.parseInt(keyValuePair[0]);
@@ -150,21 +150,20 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 }
 
                 Format<?> format;
-                
+
                 // Get pattern defined for the field
                 String pattern = keyValuePairField.pattern();
-                
-                // Create format object to format the field 
+
+                // Create format object to format the field
                 format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
-                
+
                 // field object to be set
                 Object modelField = model.get(field.getDeclaringClass().getName());
-                
+
                 // format the value of the key received
-                Object value = format.parse( keyValue );
-                
-                
-                field.set( modelField , value );
+                Object value = format.parse(keyValue);
+
+                field.set(modelField, value);
 
             }
 
@@ -198,84 +197,87 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         while (it.hasNext()) {
 
-			KeyValuePairField keyValuePairField = keyValuePairFieldsSorted.get(it.next());
-			ObjectHelper.notNull(keyValuePairField, "KeyValuePair is null !");
+            KeyValuePairField keyValuePairField = keyValuePairFieldsSorted.get(it.next());
+            ObjectHelper.notNull(keyValuePairField, "KeyValuePair is null !");
 
-			// Retrieve the field
-			Field field = annotedFields.get(keyValuePairField.tag());
-			// Change accessibility to allow to read protected/private fields
-			field.setAccessible(true);
+            // Retrieve the field
+            Field field = annotedFields.get(keyValuePairField.tag());
+            // Change accessibility to allow to read protected/private fields
+            field.setAccessible(true);
 
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Tag : " + keyValuePairField.tag() + ", Field type : " + field.getType() + ", class : "
-						+ field.getDeclaringClass().getName());
-			}
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Tag : " + keyValuePairField.tag() + ", Field type : " + field.getType()
+                          + ", class : " + field.getDeclaringClass().getName());
+            }
 
-			// Retrieve the format, pattern and precision associated to the type
-			Class type = field.getType();
-			String pattern = keyValuePairField.pattern();
-			int precision = keyValuePairField.precision();
+            // Retrieve the format, pattern and precision associated to the type
+            Class type = field.getType();
+            String pattern = keyValuePairField.pattern();
+            int precision = keyValuePairField.precision();
 
-			// Create format
-			Format format = FormatFactory.getFormat(type, pattern, precision);
+            // Create format
+            Format format = FormatFactory.getFormat(type, pattern, precision);
 
-			// Get object to be formatted
-			Object obj = model.get(field.getDeclaringClass().getName());
+            // Get object to be formatted
+            Object obj = model.get(field.getDeclaringClass().getName());
 
-			if (obj != null) {
+            if (obj != null) {
 
-				// Get field value
-				Object keyValue = field.get(obj);
+                // Get field value
+                Object keyValue = field.get(obj);
 
-				if (this.isMessageOrdered()) {
-					// Generate a key using the number of the section
-					// and the position of the field
-					Integer key1 = sections.get(obj.getClass().getName());
-					Integer key2 = keyValuePairField.position();
-					Integer keyGenerated = generateKey(key1, key2);
+                if (this.isMessageOrdered()) {
+                    // Generate a key using the number of the section
+                    // and the position of the field
+                    Integer key1 = sections.get(obj.getClass().getName());
+                    Integer key2 = keyValuePairField.position();
+                    Integer keyGenerated = generateKey(key1, key2);
 
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
-					}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : "
+                                  + key1);
+                    }
 
-					// Add value to the list if not null
-					if (keyValue != null) {
+                    // Add value to the list if not null
+                    if (keyValue != null) {
 
-						// Format field value
-						String valueFormated = format.format(keyValue);
+                        // Format field value
+                        String valueFormated = format.format(keyValue);
 
-						// Create the key value string
-						String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormated;
+                        // Create the key value string
+                        String value = keyValuePairField.tag() + this.getKeyValuePairSeparator()
+                                       + valueFormated;
 
-						// Add the content to the TreeMap according to the
-						// position defined
-						positions.put(keyGenerated, value);
+                        // Add the content to the TreeMap according to the
+                        // position defined
+                        positions.put(keyGenerated, value);
 
-						if (LOG.isDebugEnabled()) {
-							LOG.debug("Positions size : " + positions.size());
-						}
-					}
-				} else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Positions size : " + positions.size());
+                        }
+                    }
+                } else {
 
-					// Add value to the list if not null
-					if (keyValue != null) {
+                    // Add value to the list if not null
+                    if (keyValue != null) {
 
-						// Format field value
-						String valueFormated = format.format(keyValue);
+                        // Format field value
+                        String valueFormated = format.format(keyValue);
 
-						// Create the key value string
-						String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormated + separator;
+                        // Create the key value string
+                        String value = keyValuePairField.tag() + this.getKeyValuePairSeparator()
+                                       + valueFormated + separator;
 
-						// Add content to the stringBuilder
-						builder.append(value);
+                        // Add content to the stringBuilder
+                        builder.append(value);
 
-						if (LOG.isDebugEnabled()) {
-							LOG.debug("Value added : " + keyValuePairField.tag() + this.getKeyValuePairSeparator()
-									+ valueFormated + separator);
-						}
-					}
-				}
-			}
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Value added : " + keyValuePairField.tag()
+                                      + this.getKeyValuePairSeparator() + valueFormated + separator);
+                        }
+                    }
+                }
+            }
         }
 
         // Iterate through the list to generate

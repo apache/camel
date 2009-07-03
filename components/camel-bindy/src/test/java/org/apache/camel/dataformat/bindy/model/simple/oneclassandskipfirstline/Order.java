@@ -25,132 +25,132 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 @CsvRecord(separator = ",", skipFirstLine = true)
 public class Order {
 
-	@DataField(pos = 0)
-	private int orderNr;
+    @DataField(pos = 0)
+    private int orderNr;
 
-	@DataField(pos = 1)
-	private String clientNr;
+    @DataField(pos = 1)
+    private String clientNr;
 
-	@DataField(pos = 2)
-	private String firstName;
+    @DataField(pos = 2)
+    private String firstName;
 
-	@DataField(pos = 3)
-	private String lastName;
+    @DataField(pos = 3)
+    private String lastName;
 
-	@DataField(pos = 4)
-	private String instrumentCode;
+    @DataField(pos = 4)
+    private String instrumentCode;
 
-	@DataField(pos = 5)
-	private String instrumentNumber;
+    @DataField(pos = 5)
+    private String instrumentNumber;
 
-	@DataField(pos = 6)
-	private String orderType;
+    @DataField(pos = 6)
+    private String orderType;
 
-	@DataField(name = "Name", pos = 7)
-	private String instrumentType;
+    @DataField(name = "Name", pos = 7)
+    private String instrumentType;
 
-	@DataField(pos = 8, precision = 2)
-	private BigDecimal amount;
+    @DataField(pos = 8, precision = 2)
+    private BigDecimal amount;
 
-	@DataField(pos = 9)
-	private String currency;
+    @DataField(pos = 9)
+    private String currency;
 
-	@DataField(pos = 10, pattern = "dd-MM-yyyy")
-	private Date orderDate;
+    @DataField(pos = 10, pattern = "dd-MM-yyyy")
+    private Date orderDate;
 
-	public int getOrderNr() {
-		return orderNr;
-	}
+    public int getOrderNr() {
+        return orderNr;
+    }
 
-	public void setOrderNr(int orderNr) {
-		this.orderNr = orderNr;
-	}
+    public void setOrderNr(int orderNr) {
+        this.orderNr = orderNr;
+    }
 
-	public String getClientNr() {
-		return clientNr;
-	}
+    public String getClientNr() {
+        return clientNr;
+    }
 
-	public void setClientNr(String clientNr) {
-		this.clientNr = clientNr;
-	}
+    public void setClientNr(String clientNr) {
+        this.clientNr = clientNr;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getInstrumentCode() {
-		return instrumentCode;
-	}
+    public String getInstrumentCode() {
+        return instrumentCode;
+    }
 
-	public void setInstrumentCode(String instrumentCode) {
-		this.instrumentCode = instrumentCode;
-	}
+    public void setInstrumentCode(String instrumentCode) {
+        this.instrumentCode = instrumentCode;
+    }
 
-	public String getInstrumentNumber() {
-		return instrumentNumber;
-	}
+    public String getInstrumentNumber() {
+        return instrumentNumber;
+    }
 
-	public void setInstrumentNumber(String instrumentNumber) {
-		this.instrumentNumber = instrumentNumber;
-	}
+    public void setInstrumentNumber(String instrumentNumber) {
+        this.instrumentNumber = instrumentNumber;
+    }
 
-	public String getOrderType() {
-		return orderType;
-	}
+    public String getOrderType() {
+        return orderType;
+    }
 
-	public void setOrderType(String orderType) {
-		this.orderType = orderType;
-	}
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+    }
 
-	public String getInstrumentType() {
-		return instrumentType;
-	}
+    public String getInstrumentType() {
+        return instrumentType;
+    }
 
-	public void setInstrumentType(String instrumentType) {
-		this.instrumentType = instrumentType;
-	}
+    public void setInstrumentType(String instrumentType) {
+        this.instrumentType = instrumentType;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public String getCurrency() {
-		return currency;
-	}
+    public String getCurrency() {
+        return currency;
+    }
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
-	public Date getOrderDate() {
-		return orderDate;
-	}
+    public Date getOrderDate() {
+        return orderDate;
+    }
 
-	public void setOrderDate(Date orderDate) {
-		this.orderDate = orderDate;
-	}
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
 
-	@Override
-	public String toString() {
-		return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-				+ String.valueOf(this.amount) + ", " + this.instrumentCode + ", " + this.instrumentNumber + ", "
-				+ this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", "
-				+ this.lastName + ", " + String.valueOf(this.orderDate);
-	}
+    @Override
+    public String toString() {
+        return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+               + String.valueOf(this.amount) + ", " + this.instrumentCode + ", " + this.instrumentNumber
+               + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+               + this.firstName + ", " + this.lastName + ", " + String.valueOf(this.orderDate);
+    }
 }

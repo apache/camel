@@ -25,30 +25,29 @@ public class Security {
     @DataField(pos = 5)
     private String instrumentNumber;
 
-	@DataField(pos = 4)
+    @DataField(pos = 4)
     private String instrumentCode;
-	
+
     public String getInstrumentNumber() {
-		return instrumentNumber;
-	}
+        return instrumentNumber;
+    }
 
-	public void setInstrumentNumber(String instrumentNumber) {
-		this.instrumentNumber = instrumentNumber;
-	}
+    public void setInstrumentNumber(String instrumentNumber) {
+        this.instrumentNumber = instrumentNumber;
+    }
 
-	public String getInstrumentCode() {
-		return instrumentCode;
-	}
+    public String getInstrumentCode() {
+        return instrumentCode;
+    }
 
-	public void setInstrumentCode(String instrumentCode) {
-		this.instrumentCode = instrumentCode;
-	}
+    public void setInstrumentCode(String instrumentCode) {
+        this.instrumentCode = instrumentCode;
+    }
 
     @Override
     public String toString() {
-        return "Model : " + Security.class.getName() + " : "
-            + this.instrumentNumber + ", "
-            + this.instrumentCode;
+        return "Model : " + Security.class.getName() + " : " + this.instrumentNumber + ", "
+               + this.instrumentCode;
     }
 
 }

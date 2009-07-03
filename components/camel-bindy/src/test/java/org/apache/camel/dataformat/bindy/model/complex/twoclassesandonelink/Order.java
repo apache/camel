@@ -91,28 +91,28 @@ public class Order {
     }
     
     public Security getSecurity() {
-		return security;
-	}
+        return security;
+    }
 
-	public void setSecurity(Security security) {
-		this.security = security;
-	}
-	
+    public void setSecurity(Security security) {
+        this.security = security;
+    }
+
     public String getOrderType() {
-		return orderType;
-	}
+        return orderType;
+    }
 
-	public void setOrderType(String orderType) {
-		this.orderType = orderType;
-	}
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+    }
 
-	public String getInstrumentType() {
-		return instrumentType;
-	}
+    public String getInstrumentType() {
+        return instrumentType;
+    }
 
-	public void setInstrumentType(String instrumentType) {
-		this.instrumentType = instrumentType;
-	}
+    public void setInstrumentType(String instrumentType) {
+        this.instrumentType = instrumentType;
+    }
 
     @Override
     public String toString() {

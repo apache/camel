@@ -81,8 +81,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public void initAnnotedFields() {
 
         for (Class<?> cl : models) {
-        	
-        	List<Field> linkFields = new ArrayList<Field>();
+
+            List<Field> linkFields = new ArrayList<Field>();
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Class retrieved : " + cl.getName());
@@ -92,8 +92,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class : " + cl.getName() + ", position : " + dataField.pos()
-                                + ", Field : " + dataField.toString());
+                        LOG.debug("Position defined in the class : " + cl.getName() + ", position : "
+                                  + dataField.pos() + ", Field : " + dataField.toString());
                     }
                     dataFields.put(dataField.pos(), dataField);
                     annotedFields.put(dataField.pos(), field);
@@ -105,14 +105,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Class linked  : " + cl.getName() + ", Field" + field.toString());
                     }
-                    linkFields.add( field );
+                    linkFields.add(field);
                 }
 
             }
-            
-            
-            if (! linkFields.isEmpty() ) {
-            	annotedLinkFields.put(cl.getName(), linkFields);
+
+            if (!linkFields.isEmpty()) {
+                annotedLinkFields.put(cl.getName(), linkFields);
             }
         }
     }
@@ -152,7 +151,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // format the data received
                 Object value = format.parse(data.get(pos));
                 
-                field.set(modelField, value );
+                field.set(modelField, value);
             }
             pos++;
         }
@@ -218,31 +217,32 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Object value = field.get(modelField);
                     
                     // Add value to the list if not null
-					if (value != null) {
-						
-						// Format field value
-						String valueFormated = format.format(value);
-						
-						// Add the content to the TreeMap according to the position defined
-						positions.put(keyGenerated, valueFormated);
+                    if (value != null) {
 
-						if (LOG.isDebugEnabled()) {
-							LOG.debug("Positions size : " + positions.size());
-						}
-					}
+                        // Format field value
+                        String valueFormated = format.format(value);
+
+                        // Add the content to the TreeMap according to the
+                        // position defined
+                        positions.put(keyGenerated, valueFormated);
+
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Positions size : " + positions.size());
+                        }
+                    }
                 } else {
                     // Get field value
                     Object value = field.get(modelField);
-                    
+
                     // Add value to the list if not null
-					if (value != null) {
-						
-						// Format field value
-						String valueFormated = format.format(value);
-						builder.append( valueFormated );
-					}
-                    
-                	if (it.hasNext()) {
+                    if (value != null) {
+
+                        // Format field value
+                        String valueFormated = format.format(value);
+                        builder.append(valueFormated);
+                    }
+
+                    if (it.hasNext()) {
                         builder.append(separator);
                     }
                 }

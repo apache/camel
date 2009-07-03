@@ -88,15 +88,15 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * Link objects together
      */
     public void link(Map<String, Object> model) throws Exception {
-    	
-    	// Iterate class by class
-    	for (String link : annotedLinkFields.keySet()) {
+
+        // Iterate class by class
+        for (String link : annotedLinkFields.keySet()) {
             List<Field> linkFields = annotedLinkFields.get(link);
-            
+
             // Iterate through Link fields list
             for (Field field : linkFields) {
-            	
-            	// Change protection for private field
+
+                // Change protection for private field
                 field.setAccessible(true);
 
                 // Retrieve linked object
@@ -105,7 +105,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
                 ObjectHelper.notNull(to, "No @link annotation has been defined for the oject to link");
                 field.set(model.get(field.getDeclaringClass().getName()), to);
-            	
+
             }
         }
     }
