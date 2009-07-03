@@ -45,6 +45,8 @@ public interface CxfConstants {
     String CAMEL_CXF_RS_USING_HTTP_API = "CamelCxfRsUsingHttpAPI";
     String CAMEL_CXF_RS_VAR_VALUES = "CamelCxfRsVarValues";
     String CAMEL_CXF_RS_RESPONSE_CLASS = "CamelCxfRsResponseClass";
+    String CAMEL_CXF_RS_METHOD = "CamelCxfRsMethod";
+    String CAMEL_CXF_RS_OPERATION_RESOURCE_INFO_STACK = "CamelCxfRsOperationResourceInfoStack";
 }
 
 

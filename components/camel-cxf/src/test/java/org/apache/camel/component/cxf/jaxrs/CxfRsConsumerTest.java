@@ -71,6 +71,8 @@ public class CxfRsConsumerTest extends CamelTestSupport {
 
         InputStream in = url.openStream();
         assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}", CxfUtils.getStringFromInputStream(in));
+       
     }
+        
 
 }

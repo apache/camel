@@ -127,7 +127,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         HttpClient httpclient = new HttpClient();
 
         try {
-            assertEquals(301, httpclient.executeMethod(post));
+            assertEquals(201, httpclient.executeMethod(post));
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
                     post.getResponseBodyAsString());
         } finally {

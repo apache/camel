@@ -17,6 +17,8 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.logging.Level;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -24,6 +26,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
+import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Exchange;
 
 public class CxfRsInvoker extends JAXRSInvoker {
@@ -39,7 +42,12 @@ public class CxfRsInvoker extends JAXRSInvoker {
     protected Object performInvocation(Exchange cxfExchange, final Object serviceObject, Method method,
                                        Object[] paramArray) throws Exception {
         paramArray = insertExchange(method, paramArray, cxfExchange);
-        
+        OperationResourceInfo ori = cxfExchange.get(OperationResourceInfo.class);        
+        if (ori.isSubResourceLocator()) {
+            // don't delegate the sub resource locator call to camel processor
+            return method.invoke(serviceObject, paramArray);
+        }
+       
         ExchangePattern ep = ExchangePattern.InOut;
         if (method.getReturnType() == Void.class) {
             ep = ExchangePattern.InOnly;

@@ -22,12 +22,20 @@ import java.net.URL;
 
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.Assert.assertEquals;
+
 public class CxfRsRouterTest extends CamelSpringTestSupport {
+    private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
+    private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {        
@@ -40,8 +48,64 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
 
         InputStream in = url.openStream();
         assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
-        // TODO we need to support the subResourceLocator
-                
+    }
+    
+    @Test
+    public void testGetSubResource() throws Exception {
+        URL url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
+        InputStream in = url.openStream();
+        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
+    }
+    
+    @Test
+    public void testPutConsumer() throws Exception {
+        PutMethod put = new PutMethod("http://localhost:9000/customerservice/customers");
+        RequestEntity entity = new StringRequestEntity(PUT_REQUEST, "text/xml", "ISO-8859-1");
+        put.setRequestEntity(entity);
+        HttpClient httpclient = new HttpClient();
+
+        try {
+            assertEquals(200, httpclient.executeMethod(put));
+            assertEquals("", put.getResponseBodyAsString());
+        } finally {
+            put.releaseConnection();
+        }
+    }
+    
+    @Test
+    public void testPostConsumer() throws Exception {
+        PostMethod post = new PostMethod("http://localhost:9000/customerservice/customers");
+        post.addRequestHeader("Accept" , "text/xml");
+        RequestEntity entity = new StringRequestEntity(POST_REQUEST, "text/xml", "ISO-8859-1");
+        post.setRequestEntity(entity);
+        HttpClient httpclient = new HttpClient();
+
+        try {
+            assertEquals(200, httpclient.executeMethod(post));
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
+                    post.getResponseBodyAsString());
+        } finally {
+            post.releaseConnection();
+        }
+
+    }
+    
+    @Test
+    public void testPostConsumerUniqueResponseCode() throws Exception {
+        PostMethod post = new PostMethod("http://localhost:9000/customerservice/customersUniqueResponseCode");
+        post.addRequestHeader("Accept" , "text/xml");
+        RequestEntity entity = new StringRequestEntity(POST_REQUEST, "text/xml", "ISO-8859-1");
+        post.setRequestEntity(entity);
+        HttpClient httpclient = new HttpClient();
+
+        try {
+            assertEquals(201, httpclient.executeMethod(post));
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
+                    post.getResponseBodyAsString());
+        } finally {
+            post.releaseConnection();
+        }
+
     }
 
 }

@@ -18,12 +18,23 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.cxf.jaxrs.interceptor.JAXRSInInterceptor;
+import org.apache.cxf.jaxrs.model.MethodInvocationInfo;
+import org.apache.cxf.jaxrs.model.OperationResourceInfo;
+import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
+import org.apache.cxf.jaxrs.model.URITemplate;
 
 public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAware {
     private HeaderFilterStrategy headerFilterStrategy;
@@ -33,6 +44,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         if (camelExchange.isFailed()) {
             throw camelExchange.getException();
         }
+        
         return camelExchange.getOut().getBody();
     }
 
@@ -44,6 +56,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         org.apache.cxf.message.Message cxfMessage = cxfExchange.getInMessage();
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.REQUEST_URI, Exchange.HTTP_URI);
+                
+        copyMessageHeader(cxfMessage, camelMessage, JAXRSInInterceptor.RELATIVE_PATH, Exchange.HTTP_RELATIVE_PATH);
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, Exchange.HTTP_METHOD);
         
@@ -56,8 +70,15 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.QUERY_STRING, Exchange.HTTP_QUERY);
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, Exchange.ACCEPT_CONTENT_TYPE);
-                
+        
+        camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, method.getReturnType());
+               
+        copyOperationResourceInfoStack(cxfMessage, camelMessage);
+        
         camelMessage.setHeader(CxfConstants.OPERATION_NAME, method.getName());
+        
+        camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_METHOD, method);
+        
         camelMessage.setBody(paramArray);        
     }
 
@@ -70,10 +91,21 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         headerFilterStrategy = strategy;        
     }
     
-    private void copyMessageHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, String cxfKey, String camelKey) {
+    protected void copyMessageHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, String cxfKey, String camelKey) {
         if (cxfMessage.get(cxfKey) != null) {
             camelMessage.setHeader(camelKey, cxfMessage.get(cxfKey));
         }
+    }
+    
+    protected void copyOperationResourceInfoStack(org.apache.cxf.message.Message cxfMessage, Message camelMessage) {
+        OperationResourceInfoStack stack = cxfMessage.get(OperationResourceInfoStack.class);
+        if (stack != null) {
+            // make a copy of the operation resource info for looking up the sub resource location
+            OperationResourceInfoStack copyStack = (OperationResourceInfoStack)stack.clone();
+            camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_OPERATION_RESOURCE_INFO_STACK, copyStack);
+                        
+        }
+      
     }
 
 }

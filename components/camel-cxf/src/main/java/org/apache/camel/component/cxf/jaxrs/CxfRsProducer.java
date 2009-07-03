@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
@@ -32,6 +31,7 @@ import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.message.MessageContentsList;
 
 /**
  * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
@@ -58,26 +58,41 @@ public class CxfRsProducer extends DefaultProducer {
     }
     
     @SuppressWarnings("unchecked")
-    private void invokeHttpClient(Exchange exchange) {
+    protected void invokeHttpClient(Exchange exchange) {
         Message inMessage = exchange.getIn();       
         WebClient client = cfb.createWebClient();
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class); 
-        Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
-        String path = inMessage.getHeader(Exchange.HTTP_RELATIVE_PATH, String.class);
-        client.path(path);
-        Object body = inMessage.getBody();
-        Object response = null;
+        Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);        
+        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+       
+        if (path != null) {
+            client.path(path);
+        } 
+        Object body = null;
+        if (!"GET".equals(httpMethod)) {
+            // need to check the request object
+            body = checkRequestObject(inMessage.getBody());            
+        }
+        
+        /*String acceptContentType = inMessage.getHeader(Exchange.ACCEPT_CONTENT_TYPE, String.class);
+        if (acceptContentType != null) {            
+            client.accept(acceptContentType);            
+        }*/
+        Object response = null;        
         if (responseClass == null) {
             response = client.invoke(httpMethod, body, InputStream.class);
+        } else if (responseClass.equals(Response.class)) {
+            response = client.invoke(httpMethod, body);
         } else {
             response = client.invoke(httpMethod, body, responseClass);
         }
+       
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setBody(response);
         }
     }
 
-    private void invokeProxyClient(Exchange exchange) throws Exception {
+    protected void invokeProxyClient(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
         Object[] varValues = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_VAR_VALUES, Object[].class);
         String methodName = inMessage.getHeader(CxfConstants.OPERATION_NAME, String.class);
@@ -94,6 +109,7 @@ public class CxfRsProducer extends DefaultProducer {
         // get the method
         Method method = findRightMethod(sfb.getResourceClasses(), methodName, getParameterTypes(parameters));
         // Will send out the message to
+        // Need to deal with the sub resource class
         Object response = method.invoke(target, parameters);
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setBody(response);
@@ -116,6 +132,19 @@ public class CxfRsProducer extends DefaultProducer {
         }
         throw new NoSuchMethodException("Can find the method " + methodName 
             + "withe these parameter " + arrayToString(parameterTypes));
+    }
+    
+    private Object checkRequestObject(Object request) {
+        if (request != null) {
+            if (request instanceof MessageContentsList) {
+                request = ((MessageContentsList)request).get(0);
+            } else if (request instanceof List) {
+                request = ((List)request).get(0);
+            } else if (request.getClass().isArray()) {
+                request = ((Object[])request)[0];
+            }
+        }
+        return request;
     }
     
     private Class[] getParameterTypes(Object[] objects) {

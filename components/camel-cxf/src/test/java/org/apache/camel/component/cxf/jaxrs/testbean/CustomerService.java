@@ -83,7 +83,7 @@ public class CustomerService {
 
         customers.put(customer.getId(), customer);
         
-        return Response.status(301).entity(customer).build();
+        return Response.status(201).entity(customer).build();
     }
 
     @DELETE
