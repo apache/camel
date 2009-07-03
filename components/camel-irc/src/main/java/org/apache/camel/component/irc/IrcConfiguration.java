@@ -22,6 +22,9 @@ import java.util.Arrays;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 
+import org.schwering.irc.lib.ssl.SSLTrustManager;
+import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
+
 public class IrcConfiguration implements Cloneable {
     private String target;
     private String hostname;
@@ -29,6 +32,9 @@ public class IrcConfiguration implements Cloneable {
     private String nickname;
     private String realname;
     private String username;
+    private String trustManagerClass;
+    private SSLTrustManager trustManager;
+    private boolean usingSSL = false;
     private boolean persistent = true;
     private boolean colors = true;
     private boolean onNick = true;
@@ -77,10 +83,16 @@ public class IrcConfiguration implements Cloneable {
         // fix provided URI and handle that we can use # to indicate the IRC room
 
         String fixedUri = uri.toString();
-        if (!fixedUri.startsWith("irc://")) {
+
+        if (fixedUri.startsWith("ircs://")) {
+            setUsingSSL(true);
+            setTrustManager(new SSLDefaultTrustManager());
+            setTrustManagerClass(getTrustManager().getClass().getName());
+        } else if (!fixedUri.startsWith("irc://")) {
             fixedUri = fixedUri.replace("irc:", "irc://");
-            uri = uri.resolve(fixedUri);
         }
+
+        uri = uri.resolve(fixedUri);
 
         setNickname(uri.getUserInfo());
         setUsername(uri.getUserInfo());
@@ -99,7 +111,35 @@ public class IrcConfiguration implements Cloneable {
         }
 
         setTarget("#" + channel);
-}
+    }
+
+    public void setTrustManagerClass(String trustManagerClass)
+    {
+        this.trustManagerClass = trustManagerClass;
+    }
+
+    public String getTrustManagerClass()
+    {
+        return trustManagerClass;
+    }
+
+    public void setTrustManager(SSLTrustManager trustManager)
+    {
+        this.trustManager = trustManager;
+    }
+
+    public SSLTrustManager getTrustManager()
+    {
+        return trustManager;
+    }
+
+    public boolean getUsingSSL() {
+        return usingSSL;
+    }
+
+    private void setUsingSSL(boolean usingSSL) {
+        this.usingSSL = usingSSL;
+    }
 
     public String getHostname() {
         return hostname;

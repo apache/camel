@@ -28,7 +28,7 @@ import org.schwering.irc.lib.IRCUser;
 
 public class IrcConsumer extends DefaultConsumer {
     private static final transient Log LOG = LogFactory.getLog(IrcConsumer.class);
-    
+
     private final IrcConfiguration configuration;
     private final IrcEndpoint endpoint;
     private final IRCConnection connection;
@@ -60,7 +60,7 @@ public class IrcConsumer extends DefaultConsumer {
         connection.addIRCEventListener(listener);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Joining: " + target);
+            LOG.debug("Joining: " + target + " using " + connection.getClass().getName());
         }
         connection.doJoin(target);
     }

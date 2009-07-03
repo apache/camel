@@ -27,6 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
 
+import org.schwering.irc.lib.ssl.SSLIRCConnection;
+import org.schwering.irc.lib.ssl.SSLTrustManager;
+
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  *
@@ -75,13 +78,35 @@ public class IrcComponent extends DefaultComponent {
     }
 
     protected IRCConnection createConnection(IrcConfiguration configuration) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
-                    + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
-        }
+        IRCConnection conn = null;
 
-        final IRCConnection conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
-                                                     configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+        if ( configuration.getUsingSSL() ) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating SSL Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
+                        + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
+            }
+            SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
+                                                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+            try {
+                configuration.setTrustManager((SSLTrustManager)Class.forName(configuration.getTrustManagerClass()).newInstance());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using trust manager: " + configuration.getTrustManager().getClass().getName());
+                }
+            } catch (Exception e) {
+                LOG.warn("Using default trust manager: " + configuration.getTrustManager().getClass().getName());
+            }
+            sconn.addTrustManager(configuration.getTrustManager());
+            conn = sconn;
+
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
+                        + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
+            }
+
+            conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
+                                                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+        }
         conn.setEncoding("UTF-8");
         conn.setColors(configuration.isColors());
         conn.setPong(true);
