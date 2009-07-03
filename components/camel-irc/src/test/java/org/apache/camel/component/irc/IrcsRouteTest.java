@@ -16,42 +16,20 @@
  */
 package org.apache.camel.component.irc;
 
-import java.security.cert.X509Certificate;
-
-import javax.naming.Context;
-
-import org.apache.camel.util.jndi.JndiContext;
-import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
-
 public class IrcsRouteTest extends IrcRouteTest {
 
     // TODO This test is disabled until we can find a public SSL enabled IRC 
     // server to test against. To use this you'll need to change the server 
     // information below and the username/password. 
-    
-    @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myCustomManager", new SSLDefaultTrustManager() {@Override
-        public boolean isTrusted(X509Certificate[] chain) {
-            return true;
-        }
-        @Override
-            public String toString() {             
-                return "MyCustomManager!";
-            }
-        });
-        return answer;
-    }   
-    
+
     @Override
     protected String sendUri() {
-        return "ircs://camel-prd@irc.codehaus.org:6667/%23camel-test?trustManager=#myCustomManager";
+        return "ircs://camel-prd@irc.codehaus.org:6667/#camel-test?nickname=camel-prd&password=blah";
     }
 
     @Override    
     protected String fromUri() {
-        return "ircs://camel-con@irc.codehaus.org:6667/%23camel-test?trustManager=#myCustomManager";
+        return "ircs://camel-con@irc.codehaus.org:6667/#camel-test?nickname=camel-con&password=blah";
     }    
 
 }
