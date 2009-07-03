@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.IOConverter;
 
 /**
  * @version $Revision$
@@ -27,10 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class JettyValidatorStreamTest extends ContextTestSupport {
 
     public void testValideRequestAsStream() throws Exception {
-        InputStream inputStream = HttpClient.class.getResourceAsStream("ValidRequest.xml");
+        InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
-        String response = HttpClient.send(inputStream);
-        assertEquals("The response should be ok", response, "<ok/>");
+
+        InputStream response = (InputStream) template.requestBody("http://localhost:8192/test", inputStream);
+        assertEquals("The response should be ok", IOConverter.toString(response), "<ok/>");
     }
 
     @Override

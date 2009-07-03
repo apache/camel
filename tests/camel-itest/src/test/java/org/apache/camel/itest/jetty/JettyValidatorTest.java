@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.jetty;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -26,21 +27,25 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.IOConverter;
 
 public class JettyValidatorTest extends ContextTestSupport {
 
     public void testValideRequest() throws Exception {
-        InputStream inputStream = HttpClient.class.getResourceAsStream("ValidRequest.xml");
+        InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
-        String response = HttpClient.send(inputStream);
-        assertEquals("The response should be ok", response, "<ok/>");
+
+        InputStream response = (InputStream) template.requestBody("http://localhost:8192/test", inputStream);
+
+        assertEquals("The response should be ok", IOConverter.toString(response), "<ok/>");
     }
 
     public void testInvalideRequest() throws Exception {
-        InputStream inputStream = HttpClient.class.getResourceAsStream("InvalidRequest.xml");
+        InputStream inputStream = this.getClass().getResourceAsStream("InvalidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
-        String response = HttpClient.send(inputStream);
-        assertEquals("The response should be error", response, "<error/>");
+
+        InputStream response = (InputStream) template.requestBody("http://localhost:8192/test", inputStream);
+        assertEquals("The response should be error", IOConverter.toString(response), "<error/>");
     }
 
     @Override
