@@ -16,6 +16,8 @@
 ## ------------------------------------------------------------------------
 ArtixDSContentType
 ArtixDSDataFormat
+BindyDataFormat
+BindyType
 CsvDataFormat
 DataFormatsDefinition
 FlatpackDataFormat
@@ -23,6 +25,7 @@ GzipDataFormat
 HL7DataFormat
 JaxbDataFormat
 JsonDataFormat
+JsonLibrary
 RssDataFormat
 SerializationDataFormat
 StringDataFormat

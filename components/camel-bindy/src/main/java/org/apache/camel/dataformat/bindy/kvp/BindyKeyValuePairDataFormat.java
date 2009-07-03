@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
@@ -43,14 +42,14 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
     
     private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairDataFormat.class);
     
-    private String[] packageNames;
+    private String[] packages;
     private BindyKeyValuePairFactory modelFactory;
 
     public BindyKeyValuePairDataFormat() {
     }
 
-    public BindyKeyValuePairDataFormat(String... packageNames) {
-        this.packageNames = packageNames;
+    public BindyKeyValuePairDataFormat(String... packages) {
+        this.packages = packages;
     }
 
     @SuppressWarnings("unchecked")
@@ -142,7 +141,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
      */
     public BindyKeyValuePairFactory getFactory(PackageScanClassResolver resolver) throws Exception {
         if (modelFactory == null) {
-            modelFactory = new BindyKeyValuePairFactory(resolver, this.packageNames);
+            modelFactory = new BindyKeyValuePairFactory(resolver, this.packages);
         }
         return modelFactory;
     }
@@ -151,12 +150,12 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         this.modelFactory = modelFactory;
     }
 
-    public String[] getPackageNames() {
-        return packageNames;
+    public String[] getPackages() {
+        return packages;
     }
 
-    public void setPackageNames(String... packageNames) {
-        this.packageNames = packageNames;
+    public void setPackages(String... packages) {
+        this.packages = packages;
     }
 
 }

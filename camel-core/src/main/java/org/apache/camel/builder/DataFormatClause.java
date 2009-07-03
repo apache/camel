@@ -24,6 +24,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
+import org.apache.camel.model.dataformat.BindyDataFormat;
+import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -99,6 +101,19 @@ public class DataFormatClause<T extends ProcessorDefinition> {
      */
     public T artixDS(ArtixDSContentType contentType) {
         return dataFormat(new ArtixDSDataFormat(contentType));
+    }
+
+    /**
+     * Uses the Bindy data format
+     *
+     * @param type the type of bindy data format to use
+     * @param packages packages to scan for Bindy annotated POJO classes
+     */
+    public T bindy(BindyType type,  String... packages) {
+        BindyDataFormat bindy = new BindyDataFormat();
+        bindy.setType(type);
+        bindy.setPackages(packages);
+        return dataFormat(bindy);
     }
 
     /**

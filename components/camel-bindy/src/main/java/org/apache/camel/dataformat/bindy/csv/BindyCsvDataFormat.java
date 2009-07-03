@@ -41,14 +41,14 @@ import org.apache.commons.logging.LogFactory;
 public class BindyCsvDataFormat implements DataFormat {
     private static final transient Log LOG = LogFactory.getLog(BindyCsvDataFormat.class);
     
-    private String[] packageName;
+    private String[] packages;
     private BindyCsvFactory modelFactory;
 
     public BindyCsvDataFormat() {
     }
 
-    public BindyCsvDataFormat(String... packageName) {
-        this.packageName = packageName;
+    public BindyCsvDataFormat(String... packages) {
+        this.packages = packages;
     }
 
     @SuppressWarnings("unchecked")
@@ -150,7 +150,7 @@ public class BindyCsvDataFormat implements DataFormat {
      */
     public BindyCsvFactory getFactory(PackageScanClassResolver resolver) throws Exception {
         if (modelFactory == null) {
-            modelFactory = new BindyCsvFactory(resolver, packageName);
+            modelFactory = new BindyCsvFactory(resolver, packages);
         }
         return modelFactory;
     }
@@ -159,12 +159,12 @@ public class BindyCsvDataFormat implements DataFormat {
         this.modelFactory = modelFactory;
     }
 
-    public String[] getPackageName() {
-        return packageName;
+    public String[] getPackages() {
+        return packages;
     }
 
-    public void setPackageName(String[] packageName) {
-        this.packageName = packageName;
+    public void setPackages(String[] packages) {
+        this.packages = packages;
     }
 
 }
