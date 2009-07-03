@@ -32,8 +32,7 @@ public class IrcConfiguration implements Cloneable {
     private String nickname;
     private String realname;
     private String username;
-    private String trustManagerClass;
-    private SSLTrustManager trustManager;
+    private SSLTrustManager trustManager = new SSLDefaultTrustManager();
     private boolean usingSSL = false;
     private boolean persistent = true;
     private boolean colors = true;
@@ -46,7 +45,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean onTopic = true;
     private boolean onPrivmsg = true;
     private int[] ports = {6667, 6668, 6669};
-
+    
     public IrcConfiguration() {
     }
 
@@ -81,13 +80,13 @@ public class IrcConfiguration implements Cloneable {
 
     public void configure(URI uri) {
         // fix provided URI and handle that we can use # to indicate the IRC room
-
         String fixedUri = uri.toString();
 
-        if (fixedUri.startsWith("ircs://")) {
+        if (fixedUri.startsWith("ircs")) {
             setUsingSSL(true);
-            setTrustManager(new SSLDefaultTrustManager());
-            setTrustManagerClass(getTrustManager().getClass().getName());
+            if (!fixedUri.startsWith("ircs://")) {
+                fixedUri = fixedUri.replace("ircs:", "ircs://");
+            }
         } else if (!fixedUri.startsWith("irc://")) {
             fixedUri = fixedUri.replace("irc:", "irc://");
         }
@@ -111,16 +110,6 @@ public class IrcConfiguration implements Cloneable {
         }
 
         setTarget("#" + channel);
-    }
-
-    public void setTrustManagerClass(String trustManagerClass)
-    {
-        this.trustManagerClass = trustManagerClass;
-    }
-
-    public String getTrustManagerClass()
-    {
-        return trustManagerClass;
     }
 
     public void setTrustManager(SSLTrustManager trustManager)

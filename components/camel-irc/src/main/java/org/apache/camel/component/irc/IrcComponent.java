@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
 
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
-import org.schwering.irc.lib.ssl.SSLTrustManager;
 
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
@@ -87,14 +86,7 @@ public class IrcComponent extends DefaultComponent {
             }
             SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                                                          configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
-            try {
-                configuration.setTrustManager((SSLTrustManager)Class.forName(configuration.getTrustManagerClass()).newInstance());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using trust manager: " + configuration.getTrustManager().getClass().getName());
-                }
-            } catch (Exception e) {
-                LOG.warn("Using default trust manager: " + configuration.getTrustManager().getClass().getName());
-            }
+
             sconn.addTrustManager(configuration.getTrustManager());
             conn = sconn;
 
