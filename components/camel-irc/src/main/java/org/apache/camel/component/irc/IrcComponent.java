@@ -55,7 +55,7 @@ public class IrcComponent extends DefaultComponent {
     protected IrcEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // lets make sure we copy the configuration as each endpoint can customize its own version
         IrcConfiguration config = getConfiguration().copy();
-        config.configure(new URI(uri));
+        config.configure(uri);
 
         IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
         setProperties(endpoint.getConfiguration(), parameters);

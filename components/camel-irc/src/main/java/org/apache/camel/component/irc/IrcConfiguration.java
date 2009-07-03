@@ -17,6 +17,7 @@
 package org.apache.camel.component.irc;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import org.apache.camel.RuntimeCamelException;
@@ -78,20 +79,22 @@ public class IrcConfiguration implements Cloneable {
         return hostname + ":" + nickname;
     }
 
-    public void configure(URI uri) {
+    public void configure(String uriStr) throws URISyntaxException {
         // fix provided URI and handle that we can use # to indicate the IRC room
-        String fixedUri = uri.toString();
-
-        if (fixedUri.startsWith("ircs")) {
+        if (uriStr.startsWith("ircs")) {
             setUsingSSL(true);
-            if (!fixedUri.startsWith("ircs://")) {
-                fixedUri = fixedUri.replace("ircs:", "ircs://");
+            if (!uriStr.startsWith("ircs://")) {
+                uriStr = uriStr.replace("ircs:", "ircs://");
             }
-        } else if (!fixedUri.startsWith("irc://")) {
-            fixedUri = fixedUri.replace("irc:", "irc://");
+        } else if (!uriStr.startsWith("irc://")) {
+            uriStr = uriStr.replace("irc:", "irc://");
         }
-
-        uri = uri.resolve(fixedUri);
+        
+        if (uriStr.contains("?")) {
+            uriStr = ObjectHelper.before(uriStr, "?");
+        }
+        
+        URI uri = new URI(uriStr);
 
         setNickname(uri.getUserInfo());
         setUsername(uri.getUserInfo());
@@ -103,11 +106,6 @@ public class IrcConfiguration implements Cloneable {
         }
 
         String channel = uri.getFragment();
-
-        if ( channel.contains("?")) {
-            //Need to strip off the query string from this fragment
-            channel = ObjectHelper.before(uri.getFragment(), "?");
-        }
 
         setTarget("#" + channel);
     }
