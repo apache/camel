@@ -99,22 +99,6 @@
           </archive>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.dstovall</groupId>
-        <artifactId>onejar-maven-plugin</artifactId>
-        <version>1.4.1</version>
-        <executions>
-          <execution>
-          <configuration>
-            <attachToBuild>true</attachToBuild>
-            <classifier>onejar</classifier>
-          </configuration>
-          <goals>
-            <goal>one-jar</goal>
-          </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
 
   </build>
