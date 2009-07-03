@@ -89,7 +89,7 @@ public class JmsConfiguration implements Cloneable {
     private TaskExecutor taskExecutor;
     private boolean pubSubNoLocal;
     private int concurrentConsumers = 1;
-    private int maxMessagesPerTask = 1;
+    private int maxMessagesPerTask = -1;
     private int cacheLevel = -1;
     private String cacheLevelName;
     private long recoveryInterval = -1;
