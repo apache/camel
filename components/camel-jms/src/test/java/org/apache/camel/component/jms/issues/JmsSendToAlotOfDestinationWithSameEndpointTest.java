@@ -31,7 +31,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 public class JmsSendToAlotOfDestinationWithSameEndpointTest extends SpringTestSupport {
 
     private static final transient Log LOG = LogFactory.getLog(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
-    private static String URI = "activemq:queue:foo?autoStartup=false";
+    private static final String URI = "activemq:queue:foo?autoStartup=false";
 
     public int getExpectedRouteCount() {
         return 0;
@@ -62,7 +62,7 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends SpringTestSu
 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(new String[]{"classpath:org/apache/camel/component/jms/issues/broker.xml",
-                "classpath:org/apache/camel/component/jms/issues/camelBrokerClient.xml"});
+            "classpath:org/apache/camel/component/jms/issues/camelBrokerClient.xml"});
     }
 
 }
