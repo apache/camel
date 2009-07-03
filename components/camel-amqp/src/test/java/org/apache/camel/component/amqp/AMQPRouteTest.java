@@ -62,7 +62,12 @@ public class AMQPRouteTest extends CamelTestSupport {
 
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
-        sendExchange(expectedBody);        
+        sendExchange(expectedBody);
+        
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            // send the message twice to walk around the AMQP's drop first message issue on Windows box
+            sendExchange(expectedBody);
+        }
 
         resultEndpoint.assertIsSatisfied();
     }
