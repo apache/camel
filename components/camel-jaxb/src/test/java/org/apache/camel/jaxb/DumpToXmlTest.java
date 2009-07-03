@@ -44,6 +44,10 @@ public class DumpToXmlTest extends ContextTestSupport {
         // assert dump file exists
         File file = new File("target/camel/dump");
         file = file.getAbsoluteFile();
+        if (!file.exists()) {
+            // sleep a while for the slower box
+            Thread.sleep(5000);
+        }
         assertTrue("The dump folder should exists", file.exists());
         assertEquals("There should be 2 dumped files", 2, file.list().length);
     }
