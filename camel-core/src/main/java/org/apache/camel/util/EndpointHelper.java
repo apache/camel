@@ -18,7 +18,13 @@ package org.apache.camel.util;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.regex.PatternSyntaxException;
+import java.net.URISyntaxException;
+import java.net.URI;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -93,6 +99,29 @@ public final class EndpointHelper {
      * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
     public static boolean matchEndpoint(String uri, String pattern) {
+        // we need to test with and without scheme separators (//)
+        if (uri.indexOf("://") != -1) {
+            // try without :// also
+            String scheme = ObjectHelper.before(uri, "://");
+            String path = ObjectHelper.after(uri, "://");
+            if (doMatchEndpoint(scheme + ":" + path, pattern)) {
+                return true;
+            }
+        } else {
+            // try with :// also
+            String scheme = ObjectHelper.before(uri, ":");
+            String path = ObjectHelper.after(uri, ":");
+            if (doMatchEndpoint(scheme + "://" + path, pattern)) {
+                return true;
+            }
+        }
+
+        // and fallback to test with the uri as is
+        return doMatchEndpoint(uri, pattern);
+    }
+
+
+    private static boolean doMatchEndpoint(String uri, String pattern) {
         if (uri.equals(pattern)) {
             // excact match
             return true;

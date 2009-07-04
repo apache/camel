@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * URI utilities.
@@ -112,7 +114,8 @@ public final class URISupport {
     @SuppressWarnings("unchecked")
     public static Map parseQuery(String uri) throws URISyntaxException {
         try {
-            Map rc = new HashMap();
+            // use a linked map so the parameters is in the same order
+            Map rc = new LinkedHashMap();
             if (uri != null) {
                 String[] parameters = uri.split("&");
                 for (String parameter : parameters) {
@@ -333,6 +336,65 @@ public final class URISupport {
             result = open == closed;
         }
         return result;
+    }
+
+    /**
+     * Normalizes the uri by reordering the parameters so they are sorted and thus
+     * we can use the uris for endpoint matching.
+     *
+     * @param uri the uri
+     * @return the normalized uri
+     * @throws URISyntaxException in thrown if the uri syntax is invalid
+     */
+    @SuppressWarnings("unchecked")
+    public static String normalizeUri(String uri) throws URISyntaxException {
+
+        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
+        String path = u.getSchemeSpecificPart();
+        String scheme = u.getScheme();
+
+        // not possible to normalize
+        if (scheme == null || path == null) {
+            return uri;
+        }
+
+        // lets trim off any query arguments
+        if (path.startsWith("//")) {
+            path = path.substring(2);
+        }
+        int idx = path.indexOf('?');
+        if (idx > 0) {
+            path = path.substring(0, idx);
+        }
+
+        // in case there are parameters we should reorder them
+        Map parameters = URISupport.parseParameters(u);
+        if (parameters.isEmpty()) {
+            // no parameters then just return
+            return buildUri(scheme, path, null);
+        } else {
+            // reorder parameters a..z
+            List<String> keys = new ArrayList<String>(parameters.keySet());
+            Collections.sort(keys);
+
+            Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
+            for (String key : keys) {
+                sorted.put(key, parameters.get(key));
+            }
+
+            // build uri object with sorted parameters
+            String query = URISupport.createQueryString(sorted);
+            return buildUri(scheme, path, query);
+        }
+    }
+
+    private static String buildUri(String scheme, String path, String query) {
+        // http scheme should have //
+        if (scheme.startsWith("http")) {
+            return scheme + "://" + path + (query != null ? "?" + query : "");
+        }
+        // the order should not as we really dont use them for other types of components
+        return scheme + ":" + path + (query != null ? "?" + query : "");
     }
    
 }

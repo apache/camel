@@ -23,7 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.concurrent.Callable;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.naming.Context;
 
@@ -74,6 +78,8 @@ import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.SystemHelper;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -359,6 +365,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public Endpoint getEndpoint(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
 
+        // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
+        try {
+            uri = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Getting endpoint with uri: " + uri);
+        }
+
         Endpoint answer;
         String scheme = null;
         synchronized (endpoints) {
@@ -406,7 +423,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         return answer;
     }
-
+    
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
 
