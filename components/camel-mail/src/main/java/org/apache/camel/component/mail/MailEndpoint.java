@@ -60,7 +60,11 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        JavaMailSender sender = configuration.createJavaMailSender();
+        JavaMailSender sender = configuration.getJavaMailSender();
+        if (sender == null) {
+            // use default mail sender
+            sender = configuration.createJavaMailSender();
+        }
         return createProducer(sender);
     }
 
@@ -77,6 +81,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
                 + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
         }
 
+        // must use java mail sender impl as we need to get hold of a mail session
         JavaMailSenderImpl sender = configuration.createJavaMailSender();
         return createConsumer(processor, sender);
     }

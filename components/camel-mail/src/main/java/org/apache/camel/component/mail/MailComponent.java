@@ -77,6 +77,7 @@ public class MailComponent extends DefaultComponent {
         return endpoint;
     }
 
+    @SuppressWarnings("unchecked")
     private void configureAdditionalJavaMailProperties(MailConfiguration config, Map parameters) {
         // we cannot remove while iterating, as we will get a modification exception
         Set toRemove = new HashSet();

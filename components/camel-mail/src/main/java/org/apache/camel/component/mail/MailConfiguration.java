@@ -26,6 +26,7 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
 import org.apache.camel.RuntimeCamelException;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
@@ -35,6 +36,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class MailConfiguration implements Cloneable {   
 
+    private JavaMailSender javaMailSender;
     private Properties javaMailProperties;
     private Properties additionalJavaMailProperties;
     private String protocol;
@@ -209,6 +211,14 @@ public class MailConfiguration implements Cloneable {
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public JavaMailSender getJavaMailSender() {
+        return javaMailSender;
+    }
+
+    public void setJavaMailSender(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     public String getDefaultEncoding() {
         return defaultEncoding;
