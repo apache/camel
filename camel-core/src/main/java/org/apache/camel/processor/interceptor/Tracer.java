@@ -175,7 +175,7 @@ public class Tracer implements InterceptStrategy {
     }
 
     /**
-     * Sets an optional destination to send the traced Exchange wrapped in a {@link TraceEventExchange}.
+     * Sets an optional destination to send the traced Exchange.
      * <p/>
      * Can be used to store tracing as files, in a database or whatever. The routing of the Exchange
      * will happen synchronously and the original route will first continue when this destination routing

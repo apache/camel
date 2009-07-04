@@ -85,10 +85,10 @@ public interface Exchange {
 
     String ON_COMPLETION = "CamelOnCompletion";
 
-    String ROUTE_STOP = "CamelRouteStop";
-
+    String ROUTE_STOP         = "CamelRouteStop";
     String REDELIVERED        = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
+    String ROLLBACK_ONLY      = "CamelRollbackOnly";
 
     String SPLIT_INDEX = "CamelSplitIndex";
     String SPLIT_SIZE  = "CamelSplitSize";
@@ -98,8 +98,12 @@ public interface Exchange {
     String TIMER_PERIOD     = "CamelTimerPeriod";
     String TIMER_TIME       = "CamelTimerTime";
 
-    String TRANSACTED    = "CamelTransacted";
-    String ROLLBACK_ONLY = "CamelRollbackOnly";
+    String TRANSACTED = "CamelTransacted";
+
+    String TRACE_EVENT           = "CamelTraceEvent";
+    String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
+    String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
+    String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

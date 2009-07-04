@@ -18,6 +18,7 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -129,11 +130,10 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
     class MyTraveAssertProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            TraceEventExchange event = (TraceEventExchange) exchange;
-            assertNotNull(event);
-            assertEquals(event.getExchangeId(), exchange.getExchangeId());
-            assertNotNull(event.getNodeId());
-            assertNotNull(event.getTimestamp());
+            String nodeId = exchange.getProperty("CamelTraceEventNodeId", String.class);
+            Date timestamp = exchange.getProperty("CamelTraceEventTimestamp", Date.class);
+            assertNotNull(nodeId);
+            assertNotNull(timestamp);
 
             // take a snapshot at current time for assertion later
             // after mock assertions in unit test method

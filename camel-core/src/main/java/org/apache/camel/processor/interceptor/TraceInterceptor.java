@@ -26,6 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultRouteNode;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -49,7 +50,6 @@ import org.apache.commons.logging.LogFactory;
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
     private static final transient Log LOG = LogFactory.getLog(TraceInterceptor.class);
     private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.JpaTraceEventMessage";
-    private static final String TRACE_EVENT = "CamelTraceEvent";
     private Logger logger;
     private Producer traceEventProducer;
     private final ProcessorDefinition node;
@@ -93,7 +93,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     public void process(final Exchange exchange) throws Exception {
         // interceptor will also trace routes supposed only for TraceEvents so we need to skip
         // logging TraceEvents to avoid infinite looping
-        if (exchange instanceof TraceEventExchange || exchange.getProperty(TRACE_EVENT, Boolean.class) != null) {
+        if (exchange.getProperty(Exchange.TRACE_EVENT, Boolean.class) != null) {
             // but we must still process to allow routing of TraceEvents to eg a JPA endpoint
             super.process(exchange);
             return;
@@ -285,14 +285,17 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     protected void traceExchange(Exchange exchange) throws Exception {
         // should we send a trace event to an optional destination?
         if (tracer.getDestination() != null || tracer.getDestinationUri() != null) {
-            // create event and add it as a property on the original exchange
-            TraceEventExchange event = new TraceEventExchange(exchange);
-            Date timestamp = new Date();
-            event.setNodeId(node.getId());
-            event.setTimestamp(timestamp);
-            event.setTracedExchange(exchange);
 
-            // create event message to send in body
+            // create event exchange and add event information
+            Date timestamp = new Date();
+            Exchange event = new DefaultExchange(exchange);
+            event.setProperty(Exchange.TRACE_EVENT_NODE_ID, node.getId());
+            event.setProperty(Exchange.TRACE_EVENT_TIMESTAMP, timestamp);
+            // keep a reference to the original exchange in case its needed
+            event.setProperty(Exchange.TRACE_EVENT_EXCHANGE, exchange);
+
+            // create event message to sent as in body containing event information such as
+            // from node, to node, etc.
             TraceEventMessage msg = new DefaultTraceEventMessage(timestamp, node, exchange);
 
             // should we use ordinary or jpa objects
@@ -327,13 +330,13 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             // marker property to indicate its a tracing event being routed in case
             // new Exchange instances is created during trace routing so we can check
             // for this marker when interceptor also kickins in during routing of trace events
-            event.setProperty(TRACE_EVENT, Boolean.TRUE);
+            event.setProperty(Exchange.TRACE_EVENT, Boolean.TRUE);
             try {
                 // process the trace route
                 getTraceEventProducer(exchange).process(event);
             } catch (Exception e) {
                 // log and ignore this as the original Exchange should be allowed to continue
-                LOG.error("Error processing TraceEventExchange (original Exchange will be continued): " + event, e);
+                LOG.error("Error processing trace event (original Exchange will continue): " + event, e);
             }
         }
     }
