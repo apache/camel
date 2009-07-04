@@ -23,11 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.concurrent.Callable;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.naming.Context;
 
@@ -79,7 +75,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.SystemHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
