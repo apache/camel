@@ -16,11 +16,12 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.GroupedExchange;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -44,8 +45,8 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange out = result.getExchanges().get(0);
-        assertTrue(out instanceof GroupedExchange);
-        GroupedExchange grouped = (GroupedExchange)out;
+        List<Exchange> grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+
         assertEquals(5, grouped.size());
 
         assertEquals("100", grouped.get(0).getIn().getBody(String.class));

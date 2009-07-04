@@ -38,7 +38,7 @@ import org.apache.camel.util.UuidGenerator;
  *
  * @version $Revision$
  */
-public class DefaultExchange implements Exchange {
+public final class DefaultExchange implements Exchange {
 
     private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
     protected final CamelContext context;
