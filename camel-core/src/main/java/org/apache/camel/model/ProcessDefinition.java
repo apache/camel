@@ -61,7 +61,7 @@ public class ProcessDefinition extends OutputDefinition<ProcessorDefinition> {
     @Override
     public String getLabel() {
         if (ref != null) {
-            return "ref: " + ref;
+            return "ref:" + ref;
         } else if (processor != null) {
             return processor.toString();
         } else {

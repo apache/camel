@@ -873,8 +873,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void start() throws Exception {
         super.start();
-        
-        LOG.debug("Starting routes");
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting routes");
+        }
         // the context is now considered started (i.e. isStarted() == true))
         // starting routes is done after, not during context startup
         synchronized (this) {
@@ -882,7 +884,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 routeService.start();
             }
         }
-        LOG.debug("Started routes");
+        if (LOG.isDebugEnabled()) {
+            for (int i = 0; i < getRoutes().size(); i++) {
+                LOG.debug("Route " + i + ": " + getRoutes().get(i));
+            }
+            LOG.debug("Started routes");
+        }
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }

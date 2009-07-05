@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
 
@@ -30,6 +31,13 @@ import org.apache.camel.processor.interceptor.Tracer;
  * @version $Revision$
  */
 public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myProcessor", new MyProcessor());
+        return jndi;
+    }
 
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -44,9 +52,9 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
         TraceEventMessage msg2 = getMockEndpoint("mock:trace").getReceivedExchanges().get(1).getIn().getBody(TraceEventMessage.class);
 
         assertEquals("direct:start", msg1.getFromEndpointUri());
-        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+        assertEquals("ref:myProcessor", msg1.getToNode());
 
-        assertTrue(msg2.getPreviousNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+        assertEquals("ref:myProcessor", msg2.getPreviousNode());
         assertEquals("mock:result", msg2.getToNode());
     }
 
@@ -65,9 +73,9 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
         TraceEventMessage msg4 = getMockEndpoint("mock:trace").getReceivedExchanges().get(3).getIn().getBody(TraceEventMessage.class);
 
         assertEquals("direct:start", msg1.getFromEndpointUri());
-        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+        assertEquals("ref:myProcessor", msg1.getToNode());
 
-        assertTrue(msg2.getPreviousNode().startsWith("org.apache.camel.processor.DefaultErrorHandlerOnExceptionTraceTest"));
+        assertEquals("ref:myProcessor", msg2.getPreviousNode());
         assertEquals("OnException[IllegalArgumentException]", msg2.getToNode());
 
         assertEquals("OnException[IllegalArgumentException]", msg3.getPreviousNode());
@@ -88,16 +96,19 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
 
                 onException(IllegalArgumentException.class).handled(true).to("log:boom").to("mock:boom");
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kabom".equals(body)) {
-                            throw new IllegalArgumentException("Boom");
-                        }
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("direct:start").processRef("myProcessor").to("mock:result");
             }
         };
+    }
+
+    public static class MyProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            String body = exchange.getIn().getBody(String.class);
+            if ("Kabom".equals(body)) {
+                throw new IllegalArgumentException("Boom");
+            }
+            exchange.getIn().setBody("Bye World");
+        }
     }
 }

@@ -130,8 +130,8 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
     class MyTraveAssertProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            String nodeId = exchange.getProperty("CamelTraceEventNodeId", String.class);
-            Date timestamp = exchange.getProperty("CamelTraceEventTimestamp", Date.class);
+            String nodeId = exchange.getProperty(Exchange.TRACE_EVENT_NODE_ID, String.class);
+            Date timestamp = exchange.getProperty(Exchange.TRACE_EVENT_TIMESTAMP, Date.class);
             assertNotNull(nodeId);
             assertNotNull(timestamp);
 

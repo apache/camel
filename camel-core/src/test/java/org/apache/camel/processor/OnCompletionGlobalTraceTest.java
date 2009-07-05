@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
 
@@ -29,6 +30,13 @@ import org.apache.camel.processor.interceptor.Tracer;
  * @version $Revision$
  */
 public class OnCompletionGlobalTraceTest extends ContextTestSupport {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myProcessor", new MyProcessor());
+        return jndi;
+    }
 
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("Bye World");
@@ -48,9 +56,9 @@ public class OnCompletionGlobalTraceTest extends ContextTestSupport {
         TraceEventMessage msg4 = getMockEndpoint("mock:trace").getReceivedExchanges().get(3).getIn().getBody(TraceEventMessage.class);
 
         assertEquals("direct:start", msg1.getFromEndpointUri());
-        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.OnCompletionGlobalTraceTest"));
+        assertEquals("ref:myProcessor", msg1.getToNode());
 
-        assertTrue(msg2.getPreviousNode().startsWith("org.apache.camel.processor.OnCompletionGlobalTraceTest"));
+        assertEquals("ref:myProcessor", msg2.getPreviousNode());
         assertEquals("mock:result", msg2.getToNode());
 
         assertTrue(msg3.getPreviousNode().startsWith("OnCompletion"));
@@ -82,7 +90,7 @@ public class OnCompletionGlobalTraceTest extends ContextTestSupport {
         TraceEventMessage msg3 = getMockEndpoint("mock:trace").getReceivedExchanges().get(2).getIn().getBody(TraceEventMessage.class);
 
         assertEquals("direct:start", msg1.getFromEndpointUri());
-        assertTrue(msg1.getToNode().startsWith("org.apache.camel.processor.OnCompletionGlobalTraceTest"));
+        assertEquals("ref:myProcessor", msg1.getToNode());
 
         assertTrue(msg2.getPreviousNode().startsWith("OnCompletion"));
         assertEquals("log:global", msg2.getToNode());
@@ -105,7 +113,7 @@ public class OnCompletionGlobalTraceTest extends ContextTestSupport {
                 onCompletion().to("log:global").to("mock:sync");
 
                 from("direct:start")
-                    .process(new MyProcessor())
+                    .processRef("myProcessor")
                     .to("mock:result");
                 // END SNIPPET: e1
             }

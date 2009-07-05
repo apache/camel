@@ -17,10 +17,10 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.intercept.InterceptSimpleRouteTest;
+import org.apache.camel.processor.intercept.InterceptSimpleRouteTraceTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SpringInterceptSimpleRouteTest extends InterceptSimpleRouteTest {
+public class SpringInterceptSimpleRouteTraceTest extends InterceptSimpleRouteTraceTest {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -28,7 +28,7 @@ public class SpringInterceptSimpleRouteTest extends InterceptSimpleRouteTest {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringInterceptSimpleRouteTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringInterceptSimpleRouteTraceTest.xml");
     }
 
 }
