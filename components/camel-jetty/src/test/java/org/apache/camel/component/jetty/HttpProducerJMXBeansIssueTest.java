@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class HttpProducerJMXBeansIssueTest extends ContextTestSupport {
 
-private static final Log LOG = LogFactory.getLog(HttpProducerJMXBeansIssueTest.class);
+    private static final Log LOG = LogFactory.getLog(HttpProducerJMXBeansIssueTest.class);
 
     @Override
     public void setUp() throws Exception {

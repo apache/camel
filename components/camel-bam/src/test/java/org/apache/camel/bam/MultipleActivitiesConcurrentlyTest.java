@@ -57,5 +57,12 @@ public class MultipleActivitiesConcurrentlyTest extends MultipleProcessesTest {
         errorTimeout = 5;
 
         super.setUp();
+
+        // Pause to make sure everything is set up. 
+        try {
+            Thread.sleep(8000);
+        } catch (InterruptedException ex) {
+            // ignore.
+        }
     }
 }

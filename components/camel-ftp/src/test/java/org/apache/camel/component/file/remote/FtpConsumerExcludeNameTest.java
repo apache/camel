@@ -30,7 +30,7 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
     private String ftpUrl = "ftp://admin@localhost:" + port + "/excludename?password=admin"
         + "&consumer.excludedNamePrefix=secret&consumer.excludedNamePostfix=xml";
 
-    public void testExludePreAndPostfixes() throws Exception {
+    public void testExcludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceived("Reports", "Reports");

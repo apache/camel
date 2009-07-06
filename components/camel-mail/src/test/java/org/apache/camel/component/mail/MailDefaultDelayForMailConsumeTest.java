@@ -29,19 +29,21 @@ public class MailDefaultDelayForMailConsumeTest extends ContextTestSupport {
         template.sendBody("smtp://bond@localhost", "Hello London");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London");
-        // first poll should happend immediately
-        mock.setResultWaitTime(2000L);
+        // first poll should happen immediately
+        mock.setResultWaitTime(4 * 1000L);
         mock.assertIsSatisfied();
 
         long start = System.currentTimeMillis();
         mock.reset();
         template.sendBody("smtp://bond@localhost", "Hello Paris");
         mock.expectedBodiesReceived("Hello Paris");
-        // poll next mail and that is should be done within the default delay + 2 sec slack
-        mock.setResultWaitTime(MailConsumer.DEFAULT_CONSUMER_DELAY + 2000L);
+        // poll next mail and that should be done within the default delay + 3 sec slack
+        mock.setResultWaitTime(MailConsumer.DEFAULT_CONSUMER_DELAY + 4 * 1000L);
         mock.assertIsSatisfied();
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Camel should not default poll the mailbox to often", delta > MailConsumer.DEFAULT_CONSUMER_DELAY - 1000L);
+        assertTrue("Camel should not default poll the mailbox to often. delta: "
+            + delta + " > " + (MailConsumer.DEFAULT_CONSUMER_DELAY - 4 * 1000L),
+            delta > MailConsumer.DEFAULT_CONSUMER_DELAY - 3 * 1000L);
     }
 
 

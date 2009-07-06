@@ -34,7 +34,7 @@ public class ThrottlerTest extends ContextTestSupport {
     public void testSendLotsOfMessagesButOnly3GetThrough() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(3);
-        resultEndpoint.setResultWaitTime(1000);
+        resultEndpoint.setResultWaitTime(2 * 1000);
 
         for (int i = 0; i < messageCount; i++) {
             template.sendBody("seda:a", "<message>" + i + "</message>");

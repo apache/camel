@@ -38,6 +38,11 @@ public class AMQPRouteTest extends ContextTestSupport {
 
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            // ignore.
+        } 
         sendExchange(expectedBody);
         if (System.getProperty("os.name").startsWith("Windows")) {
             // send the message twice to walk around the AMQP's drop first message issue on Windows box

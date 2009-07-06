@@ -69,7 +69,19 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to " + remoteServer());
             }
-            loggedIn = FtpUtils.connect(client, endpoint.getConfiguration());
+
+            try {
+                loggedIn = FtpUtils.connect(client, endpoint.getConfiguration());
+            } catch (java.net.ConnectException ce) {
+                // Wait a bit to make sure we have something to connect to and
+                // try once more. 
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ie) {
+                    // ignore.
+                }
+                loggedIn = FtpUtils.connect(client, endpoint.getConfiguration());
+            }
             if (!loggedIn) {
                 return;
             }

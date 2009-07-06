@@ -75,7 +75,7 @@ public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
         template.sendBodyAndHeader("jms:requestQueue", "Willem", CxfConstants.OPERATION_NAME, "greetMe");
 
         // Sleep a while and wait for the message whole processing
-        Thread.sleep(4000);
+        Thread.sleep(8000);
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
