@@ -42,6 +42,7 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory("./res/home/regexp");
         super.setUp();
         prepareFtpServer();
     }
