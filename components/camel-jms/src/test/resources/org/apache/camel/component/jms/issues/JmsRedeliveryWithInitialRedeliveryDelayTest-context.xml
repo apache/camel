@@ -40,6 +40,8 @@
     <bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
         <property name="redeliveryPolicy" ref="myRedeliveryPolicyConfig"/>
+        <!-- disable handled to allow unit test to look at the number of redelivery attempts made -->
+        <property name="handled" value="false"/>
     </bean>
 
     <bean id="myFailureProcessor" class="org.apache.camel.spring.config.MyFailureProcessor"/>
