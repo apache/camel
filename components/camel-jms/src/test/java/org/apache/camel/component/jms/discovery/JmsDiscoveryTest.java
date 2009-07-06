@@ -18,7 +18,6 @@ package org.apache.camel.component.jms.discovery;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
@@ -26,6 +25,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
@@ -35,16 +35,13 @@ public class JmsDiscoveryTest extends ContextTestSupport {
     protected MyRegistry registry = new MyRegistry();
 
     public void testDiscovery() throws Exception {
-        // lets wait to see if we get 3 services
-        for (int i = 0; i < 15; i++) {
-            Thread.sleep(1000);
-            if (registry.getServices().size() == 3) {
-                break;
-            }
-        }
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(3);
+
+        assertMockEndpointsSatisfied();
 
         Map<String, Map> map = new HashMap<String, Map>(registry.getServices());
-        assertEquals("Size of map: " + map, 3, map.size());
+        assertTrue("There should be 3 or more, was: " + map.size(), map.size() >= 3);
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -74,7 +71,7 @@ public class JmsDiscoveryTest extends ContextTestSupport {
                 from("bean:service2?method=status").to("activemq:topic:registry.heartbeats");
                 from("bean:service3?method=status").to("activemq:topic:registry.heartbeats");
 
-                from("activemq:topic:registry.heartbeats?cacheLevelName=CACHE_CONSUMER").to("bean:registry?method=onEvent");
+                from("activemq:topic:registry.heartbeats").to("bean:registry?method=onEvent", "mock:result");
             }
         };
     }
