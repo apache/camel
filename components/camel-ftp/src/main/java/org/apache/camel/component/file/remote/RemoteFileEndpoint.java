@@ -30,6 +30,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
+    private int maximumReconnectAttempts = 3;
+    private long reconnectDelay = 1000;
+
     public RemoteFileEndpoint() {
         // no args constructor for spring bean endpoint configuration
     }
@@ -139,4 +142,19 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         return name.startsWith("/");
     }
 
+    public int getMaximumReconnectAttempts() {
+        return maximumReconnectAttempts;
+    }
+
+    public void setMaximumReconnectAttempts(int maximumReconnectAttempts) {
+        this.maximumReconnectAttempts = maximumReconnectAttempts;
+    }
+
+    public long getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    public void setReconnectDelay(long reconnectDelay) {
+        this.reconnectDelay = reconnectDelay;
+    }
 }

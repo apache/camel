@@ -52,37 +52,63 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final transient Log LOG = LogFactory.getLog(SftpOperations.class);
-    private GenericFileEndpoint endpoint;
+    private RemoteFileEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
-        this.endpoint = endpoint;
+        this.endpoint = (RemoteFileEndpoint) endpoint;
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
-        try {
-            if (isConnected()) {
-                // already connected
-                return true;
-            }
-            if (channel == null || !channel.isConnected()) {
-                if (session == null || !session.isConnected()) {
-                    LOG.trace("Session isn't connected, trying to recreate and connect.");
-                    session = createSession(configuration);
-                    session.connect();
-                }
-                LOG.trace("Channel isn't connected, trying to recreate and connect.");
-                channel = (ChannelSftp) session.openChannel("sftp");
-                channel.connect();
-                LOG.info("Connected to " + configuration.remoteServerInformation());
-            }
-
+        if (isConnected()) {
+            // already connected
             return true;
-
-        } catch (JSchException e) {
-            throw new GenericFileOperationFailedException("Cannot connect to " + configuration.remoteServerInformation(), e);
         }
+
+        boolean connected = false;
+        int attempt = 0;
+
+        while (!connected) {
+            try {
+                if (LOG.isTraceEnabled() && attempt > 0) {
+                    LOG.trace("Reconnect attempt #" + attempt + " connecting to + " + configuration.remoteServerInformation());
+                }
+
+                if (channel == null || !channel.isConnected()) {
+                    if (session == null || !session.isConnected()) {
+                        LOG.trace("Session isn't connected, trying to recreate and connect.");
+                        session = createSession(configuration);
+                        session.connect();
+                    }
+                    LOG.trace("Channel isn't connected, trying to recreate and connect.");
+                    channel = (ChannelSftp) session.openChannel("sftp");
+                    channel.connect();
+                    LOG.info("Connected to " + configuration.remoteServerInformation());
+                }
+
+                // yes we could connect
+                connected = true;
+            } catch (Exception e) {
+                GenericFileOperationFailedException failed = new GenericFileOperationFailedException("Cannot connect to " + configuration.remoteServerInformation(), e);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Could not connect due: " + failed.getMessage());
+                }
+                attempt++;
+                if (attempt > endpoint.getMaximumReconnectAttempts()) {
+                    throw failed;
+                }
+                if (endpoint.getReconnectDelay() > 0) {
+                    try {
+                        Thread.sleep(endpoint.getReconnectDelay());
+                    } catch (InterruptedException e1) {
+                        // ignore
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     protected Session createSession(final RemoteFileConfiguration configuration) throws JSchException {

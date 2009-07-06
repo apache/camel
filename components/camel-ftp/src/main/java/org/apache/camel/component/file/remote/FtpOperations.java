@@ -45,7 +45,7 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
     private static final transient Log LOG = LogFactory.getLog(FtpOperations.class);
     private final FTPClient client;
-    private GenericFileEndpoint endpoint;
+    private RemoteFileEndpoint endpoint;
 
     public FtpOperations() {
         this.client = new FTPClient();
@@ -56,19 +56,19 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
-        this.endpoint = endpoint;
+        this.endpoint = (RemoteFileEndpoint) endpoint;
     }
 
-    public boolean connect(RemoteFileConfiguration config) throws GenericFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Connecting using FTPClient: " + client);
         }
 
-        String host = config.getHost();
-        int port = config.getPort();
-        String username = config.getUsername();
+        String host = configuration.getHost();
+        int port = configuration.getPort();
+        String username = configuration.getUsername();
 
-        FtpConfiguration ftpConfig = (FtpConfiguration) config;
+        FtpConfiguration ftpConfig = (FtpConfiguration) configuration;
 
         if (ftpConfig.getFtpClientConfig() != null) {
             LOG.trace("Configuring FTPClient with config: " + ftpConfig.getFtpClientConfig());
@@ -76,16 +76,41 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Connecting to " + config.remoteServerInformation());
+            LOG.trace("Connecting to " + configuration.remoteServerInformation());
         }
-        try {
-            client.connect(host, port);
-        } catch (IOException e) {
-            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+
+        boolean connected = false;
+        int attempt = 0;
+
+        while (!connected) {
+            try {
+                if (LOG.isTraceEnabled() && attempt > 0) {
+                    LOG.trace("Reconnect attempt #" + attempt + " connecting to + " + configuration.remoteServerInformation());
+                }
+                client.connect(host, port);
+                // yes we could connect
+                connected = true;
+            } catch (Exception e) {
+                GenericFileOperationFailedException failed = new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Could not connect due: " + failed.getMessage());
+                }
+                attempt++;
+                if (attempt > endpoint.getMaximumReconnectAttempts()) {
+                    throw failed;
+                }
+                if (endpoint.getReconnectDelay() > 0) {
+                    try {
+                        Thread.sleep(endpoint.getReconnectDelay());
+                    } catch (InterruptedException e1) {
+                        // ignore
+                    }
+                }
+            }
         }
 
         // must enter passive mode directly after connect
-        if (config.isPassiveMode()) {
+        if (configuration.isPassiveMode()) {
             LOG.trace("Using passive mode connections");
             client.enterLocalPassiveMode();
         }
@@ -94,9 +119,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             boolean login;
             if (username != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Attempting to login user: " + username + " using password: " + config.getPassword());
+                    LOG.trace("Attempting to login user: " + username + " using password: " + configuration.getPassword());
                 }
-                login = client.login(username, config.getPassword());
+                login = client.login(username, configuration.getPassword());
             } else {
                 LOG.trace("Attempting to login anonymous");
                 login = client.login("anonymous", null);
@@ -107,7 +132,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             if (!login) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString());
             }
-            client.setFileType(config.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
+            client.setFileType(configuration.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
