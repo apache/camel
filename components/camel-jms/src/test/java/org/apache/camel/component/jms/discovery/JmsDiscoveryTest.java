@@ -38,7 +38,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
     @Test
     public void testDiscovery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
+        mock.expectedMinimumMessageCount(3);
 
         assertMockEndpointsSatisfied();
 
