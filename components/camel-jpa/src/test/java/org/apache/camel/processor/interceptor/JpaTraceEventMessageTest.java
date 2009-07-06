@@ -83,8 +83,8 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
         
         JpaTraceEventMessage db = (JpaTraceEventMessage) list.get(0);
         assertNotNull(db.getId());
-        assertEquals("direct:start", db.getFromEndpointUri());
-        assertEquals("mock:result", db.getToNode());
+        assertEquals("direct://start", db.getFromEndpointUri());
+        assertEquals("mock://result", db.getToNode());
     }
 
     protected void cleanupRepository() {

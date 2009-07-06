@@ -32,7 +32,7 @@ public class MinaComponentTest extends ContextTestSupport {
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             assertTrue("Should be an IAE exception", e.getCause() instanceof IllegalArgumentException);
-            assertEquals("Unrecognised MINA protocol: xxx for uri: mina:xxx://localhost:8080", e.getCause().getMessage());
+            assertEquals("Unrecognised MINA protocol: xxx for uri: mina://xxx://localhost:8080", e.getCause().getMessage());
         }
     }
 
@@ -43,7 +43,7 @@ public class MinaComponentTest extends ContextTestSupport {
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             assertTrue("Should be an IAE exception", e.getCause() instanceof IllegalArgumentException);
-            assertEquals("Unrecognised MINA protocol: null for uri: mina:tcp//localhost:8080", e.getCause().getMessage());
+            assertEquals("Unrecognised MINA protocol: null for uri: mina://tcp//localhost:8080", e.getCause().getMessage());
         }
     }
 

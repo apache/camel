@@ -28,21 +28,22 @@ import javax.xml.ws.WebServiceException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.endpoint.ServerImpl;
-import org.apache.cxf.jaxws.EndpointImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstTest extends CamelSpringTestSupport {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeans.xml");
@@ -57,15 +58,6 @@ public class CxfWsdlFirstTest extends CamelSpringTestSupport {
         Object implementor = new PersonImpl();
         String address = "http://localhost:9000/PersonService/";
         Endpoint.publish(address, implementor);
-    }
-
-    
-
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-            }
-        };
     }
 
     @Test
@@ -113,7 +105,6 @@ public class CxfWsdlFirstTest extends CamelSpringTestSupport {
         assertEquals(7, toHandler.getGetHeadersCount());
         assertEquals(8, toHandler.getMessageCount());
         assertEquals(6, toHandler.getFaultCount());
-
     }
 
     @Test

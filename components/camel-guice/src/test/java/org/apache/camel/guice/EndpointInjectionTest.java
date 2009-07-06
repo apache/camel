@@ -63,7 +63,7 @@ public class EndpointInjectionTest extends Assert {
 
         MyBean bean = injector.getInstance(MyBean.class);
         assertNotNull("bean.endpoint", bean.endpoint);
-        assertEquals("bean.endpoint.uri", "mock:foo", bean.endpoint.getEndpointUri());
+        assertEquals("bean.endpoint.uri", "mock://foo", bean.endpoint.getEndpointUri());
 
         GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
     }

@@ -25,12 +25,10 @@ import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
-
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -90,8 +88,6 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
         assertEquals(8, toHandler.getGetHeadersCount());
         assertEquals(10, toHandler.getMessageCount());
         assertEquals(6, toHandler.getFaultCount());
-
     }
-    
 
 }
