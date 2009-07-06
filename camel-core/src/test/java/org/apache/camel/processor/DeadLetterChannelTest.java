@@ -50,8 +50,9 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         failUntilAttempt = 5;
 
         deadEndpoint.expectedBodiesReceived(body);
-        deadEndpoint.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
-        deadEndpoint.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+        // no traces of redelivery as the dead letter channel will handle the exception when moving the DLQ
+        deadEndpoint.message(0).header(Exchange.REDELIVERED).isNull();
+        deadEndpoint.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
         successEndpoint.expectedMessageCount(0);
 
         sendBody("direct:start", body);

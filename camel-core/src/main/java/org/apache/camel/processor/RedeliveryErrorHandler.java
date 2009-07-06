@@ -295,9 +295,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // clear exception as we let the failure processor handle it
         exchange.setException(null);
 
-        // must decrement the redelivery counter as we didn't process the redelivery but is
-        // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
-        decrementRedeliveryCounter(exchange);
+        if (data.handledPredicate != null && data.handledPredicate.matches(exchange)) {
+            // its handled then remove traces of redelivery attempted
+            exchange.getIn().removeHeader(Exchange.REDELIVERED);
+            exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+        } else {
+            // must decrement the redelivery counter as we didn't process the redelivery but is
+            // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
+            decrementRedeliveryCounter(exchange);
+        }
+
         // reset cached streams so they can be read again
         MessageHelper.resetStreamCache(exchange.getIn());
 

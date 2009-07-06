@@ -94,8 +94,9 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:dead");
         mock.expectedMessageCount(1);
-        mock.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+        // no traces of redelivery as the dead letter channel will handle the exception when moving the DLQ
+        mock.message(0).header(Exchange.REDELIVERED).isNull();
+        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
 
         template.requestBody("direct:in", "Hello World");
 

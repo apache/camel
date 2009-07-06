@@ -41,8 +41,9 @@ public class DeadLetterChannelRedeliveryConfigTest extends AbstractJUnit38Spring
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
 
         dead.expectedBodiesReceived("Hello World");
-        dead.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        dead.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
+        // no traces of redelivery headers as DLC handles the exception when moving to DLQ
+        dead.message(0).header(Exchange.REDELIVERED).isNull();
+        dead.message(0).header(Exchange.REDELIVERY_COUNTER).isNull();
         result.expectedMessageCount(0);
 
         template.sendBody("direct:in", "Hello World");

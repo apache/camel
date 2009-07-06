@@ -94,8 +94,11 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // we use handled(false) to instruct DLC to not handle the exception and therefore
+                // we can assert the number of redeliver attempts to see if that works correct
+
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0))
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0).handled(false))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
@@ -104,7 +107,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
                     });
 
                 from("direct:no")
-                    .errorHandler(deadLetterChannel("mock:no").maximumRedeliveries(0))
+                    .errorHandler(deadLetterChannel("mock:no").maximumRedeliveries(0).handled(false))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
@@ -113,7 +116,7 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
                     });
 
                 from("direct:one")
-                    .errorHandler(deadLetterChannel("mock:one").maximumRedeliveries(1).redeliverDelay(0))
+                    .errorHandler(deadLetterChannel("mock:one").maximumRedeliveries(1).redeliverDelay(0).handled(false))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
