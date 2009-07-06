@@ -49,7 +49,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         navigateRoute(nav, sb);
 
         // output the Java DSL
-        assertEquals("from(\"direct:start\").loadBalance().random().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")", sb.toString());
+        assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")", sb.toString());
     }
 
     public void testNavigateRouteAsJavaDSL() throws Exception {
@@ -66,7 +66,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         navigateDefinition(route, sb);
 
         // output the Java DSL
-        assertEquals("from(\"direct:start\").loadBalance().random().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")", sb.toString());
+        assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")", sb.toString());
     }
 
     private void navigateRoute(Navigate<Processor> nav, StringBuilder sb) {

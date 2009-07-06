@@ -33,7 +33,7 @@ public class ProcessorTypeConfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown IllegalArgumentException");
         } catch (IllegalArgumentException e) {
-            assertEquals("registry entry called hello must be specified on: process[ref: hello]", e.getMessage());
+            assertEquals("registry entry called hello must be specified on: process[ref:hello]", e.getMessage());
         }
     }
 

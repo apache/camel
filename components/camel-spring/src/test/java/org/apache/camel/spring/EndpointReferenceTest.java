@@ -34,11 +34,11 @@ public class EndpointReferenceTest extends SpringTestSupport {
     public void testEndpointConfiguration() throws Exception {
         Endpoint endpoint = getMandatoryBean(Endpoint.class, "endpoint1");
 
-        assertEquals("endpoint URI", "direct:start", endpoint.getEndpointUri());
+        assertEquals("endpoint URI", "direct://start", endpoint.getEndpointUri());
 
         DummyBean dummyBean = getMandatoryBean(DummyBean.class, "mybean");
         assertNotNull("The bean should have an endpoint injected", dummyBean.getEndpoint());
-        assertEquals("endpoint URI", "direct:start", dummyBean.getEndpoint().getEndpointUri());
+        assertEquals("endpoint URI", "direct://start", dummyBean.getEndpoint().getEndpointUri());
 
         log.debug("Found dummy bean: " + dummyBean);
 

@@ -50,7 +50,7 @@ public class ThrowExceptionDefinition extends ProcessorDefinition<ThrowException
 
     @Override
     public String toString() {
-        return "ThrowException[" + (exception != null ? exception.getClass().getCanonicalName() : "ref: " + ref) + "]";
+        return "ThrowException[" + (exception != null ? exception.getClass().getCanonicalName() : "ref:" + ref) + "]";
     }
 
     @Override

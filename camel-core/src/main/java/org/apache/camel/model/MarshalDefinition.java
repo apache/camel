@@ -83,7 +83,7 @@ public class MarshalDefinition extends OutputDefinition<ProcessorDefinition> {
         if (dataFormatType != null) {
             return "Marshal[" + dataFormatType + "]";
         } else {
-            return "Marshal[ref: " + ref + "]";
+            return "Marshal[ref:" + ref + "]";
         }
     }
 

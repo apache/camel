@@ -78,7 +78,7 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
             Processor processor = consumerRoute.getProcessor();
             assertNotNull(processor);
 
-            assertEndpointUri(key, "seda:test.c");
+            assertEndpointUri(key, "seda://test.c");
         }
     }
     

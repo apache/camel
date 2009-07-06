@@ -54,7 +54,7 @@ public class ProcessDefinition extends OutputDefinition<ProcessorDefinition> {
     @Override
     public String toString() {
         return "process["
-                + ((ref != null) ? "ref: " + ref : processor)
+                + ((ref != null) ? "ref:" + ref : processor)
                 + "]";
     }
 

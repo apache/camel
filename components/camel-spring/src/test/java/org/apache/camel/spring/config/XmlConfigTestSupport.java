@@ -44,7 +44,7 @@ public class XmlConfigTestSupport extends TestSupport {
             List<FromDefinition> inputs = route.getInputs();
             assertEquals("Number of inputs", 1, inputs.size());
             FromDefinition fromType = inputs.get(0);
-            assertEquals("from URI", "seda:test.a", fromType.getEndpoint().getEndpointUri());
+            assertEquals("from URI", "seda://test.a", fromType.getEndpoint().getEndpointUri());
 
             List<ProcessorDefinition> outputs = route.getOutputs();
             assertEquals("Number of outputs", 1, outputs.size());

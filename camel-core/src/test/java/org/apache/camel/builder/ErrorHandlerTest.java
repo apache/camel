@@ -52,7 +52,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
@@ -103,7 +103,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
@@ -131,7 +131,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
@@ -159,7 +159,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 

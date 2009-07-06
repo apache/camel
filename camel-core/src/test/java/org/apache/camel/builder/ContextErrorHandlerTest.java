@@ -71,7 +71,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();

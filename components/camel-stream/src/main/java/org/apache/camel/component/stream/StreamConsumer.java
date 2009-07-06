@@ -222,6 +222,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         }
 
         this.uri = t[0].trim();
+        if (this.uri.startsWith("//")) {
+            this.uri = this.uri.substring(2);
+        }
+        
         if (!TYPES_LIST.contains(this.uri)) {
             throw new IllegalArgumentException(INVALID_URI);
         }

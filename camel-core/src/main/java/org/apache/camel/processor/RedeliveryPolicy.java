@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * The default values are:
  * <ul>
- *   <li>maximumRedeliveries = 5</li>
+ *   <li>maximumRedeliveries = 0</li>
  *   <li>redeliverDelay = 1000L (the initial delay)</li>
  *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
  *   <li>backOffMultiplier = 2</li>
@@ -75,7 +75,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
 
     protected long redeliverDelay = 1000L;
-    protected int maximumRedeliveries = 5;
+    protected int maximumRedeliveries = 0;
     protected long maximumRedeliveryDelay = 60 * 1000L;
     protected double backOffMultiplier = 2;
     protected boolean useExponentialBackOff;

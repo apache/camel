@@ -55,17 +55,17 @@ public class OnCompletionGlobalTraceTest extends ContextTestSupport {
         TraceEventMessage msg3 = getMockEndpoint("mock:trace").getReceivedExchanges().get(2).getIn().getBody(TraceEventMessage.class);
         TraceEventMessage msg4 = getMockEndpoint("mock:trace").getReceivedExchanges().get(3).getIn().getBody(TraceEventMessage.class);
 
-        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertEquals("direct://start", msg1.getFromEndpointUri());
         assertEquals("ref:myProcessor", msg1.getToNode());
 
         assertEquals("ref:myProcessor", msg2.getPreviousNode());
-        assertEquals("mock:result", msg2.getToNode());
+        assertEquals("mock://result", msg2.getToNode());
 
         assertTrue(msg3.getPreviousNode().startsWith("OnCompletion"));
-        assertEquals("log:global", msg3.getToNode());
+        assertEquals("log://global", msg3.getToNode());
 
-        assertEquals("log:global", msg4.getPreviousNode());
-        assertEquals("mock:sync", msg4.getToNode());
+        assertEquals("log://global", msg4.getPreviousNode());
+        assertEquals("mock://sync", msg4.getToNode());
     }
 
     public void testSynchronizeFailure() throws Exception {
@@ -89,14 +89,14 @@ public class OnCompletionGlobalTraceTest extends ContextTestSupport {
         TraceEventMessage msg2 = getMockEndpoint("mock:trace").getReceivedExchanges().get(1).getIn().getBody(TraceEventMessage.class);
         TraceEventMessage msg3 = getMockEndpoint("mock:trace").getReceivedExchanges().get(2).getIn().getBody(TraceEventMessage.class);
 
-        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertEquals("direct://start", msg1.getFromEndpointUri());
         assertEquals("ref:myProcessor", msg1.getToNode());
 
         assertTrue(msg2.getPreviousNode().startsWith("OnCompletion"));
-        assertEquals("log:global", msg2.getToNode());
+        assertEquals("log://global", msg2.getToNode());
 
-        assertEquals("log:global", msg3.getPreviousNode());
-        assertEquals("mock:sync", msg3.getToNode());
+        assertEquals("log://global", msg3.getPreviousNode());
+        assertEquals("mock://sync", msg3.getToNode());
     }
 
     @Override

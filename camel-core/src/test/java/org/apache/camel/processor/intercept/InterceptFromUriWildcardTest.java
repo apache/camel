@@ -36,7 +36,7 @@ public class InterceptFromUriWildcardTest extends ContextTestSupport {
 
     public void testInterceptFoo() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(1);
-        getMockEndpoint("mock:intercept").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "seda:foo");
+        getMockEndpoint("mock:intercept").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "seda://foo");
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("seda:foo", "Hello World");

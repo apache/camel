@@ -65,7 +65,7 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
     @Override
     public String getLabel() {
         if (ref != null) {
-            return "ref: " + ref;
+            return "ref:" + ref;
         } else if (policy != null) {
             return policy.toString();
         } else {
@@ -121,7 +121,7 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
         if (policy != null) {
             return policy.toString();
         } else {
-            return "ref: " + ref;
+            return "ref:" + ref;
         }
     }
 

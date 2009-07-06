@@ -27,8 +27,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class StreamComponent extends DefaultComponent {
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new StreamEndpoint(uri, this);
     }
 }

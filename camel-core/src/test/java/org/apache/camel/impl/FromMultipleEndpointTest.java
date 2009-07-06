@@ -42,11 +42,11 @@ public class FromMultipleEndpointTest extends ContextTestSupport {
 
         Exchange exchange = list.get(0);
         Endpoint fromEndpoint = exchange.getFromEndpoint();
-        assertEquals("fromEndpoint URI", "direct:foo", fromEndpoint.getEndpointUri());
+        assertEquals("fromEndpoint URI", "direct://foo", fromEndpoint.getEndpointUri());
 
         exchange = list.get(1);
         fromEndpoint = exchange.getFromEndpoint();
-        assertEquals("fromEndpoint URI", "seda:bar", fromEndpoint.getEndpointUri());
+        assertEquals("fromEndpoint URI", "seda://bar", fromEndpoint.getEndpointUri());
     }
 
     @Override

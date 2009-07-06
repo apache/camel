@@ -389,12 +389,8 @@ public final class URISupport {
     }
 
     private static String buildUri(String scheme, String path, String query) {
-        // http scheme should have //
-        if (scheme.startsWith("http")) {
-            return scheme + "://" + path + (query != null ? "?" + query : "");
-        }
-        // the order should not as we really dont use them for other types of components
-        return scheme + ":" + path + (query != null ? "?" + query : "");
+        // must include :// to do a correct URI all components can work with
+        return scheme + "://" + path + (query != null ? "?" + query : "");
     }
    
 }

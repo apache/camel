@@ -217,7 +217,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         if (loadBalancerType != null) {
             return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + "]";
         } else {
-            return "LoadBalanceType[ref: " + ref + ", " + getOutputs() + "]";
+            return "LoadBalanceType[ref:" + ref + ", " + getOutputs() + "]";
         }
     }
 

@@ -41,6 +41,9 @@ public class TestComponent extends DefaultComponent {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
         String path = u.getSchemeSpecificPart();
+        if (path.startsWith("//")) {
+            path = path.substring(2);
+        }
 
         return createEndpoint(uri, path, new HashMap());
     }

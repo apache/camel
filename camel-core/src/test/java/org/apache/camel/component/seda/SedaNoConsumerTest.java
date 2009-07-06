@@ -35,7 +35,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
             template.requestBody("direct:start", "Hello World");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("Cannot send to endpoint: seda:foo as no consumers is registered."));
+            assertTrue(e.getCause().getMessage().startsWith("Cannot send to endpoint: seda://foo as no consumers is registered."));
         }
     }
 

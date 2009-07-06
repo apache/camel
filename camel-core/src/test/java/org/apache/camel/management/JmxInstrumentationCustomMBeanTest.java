@@ -66,7 +66,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
         ObjectName dynamicallyGeneratedObjName = s.iterator().next();
 
-        assertEquals("direct:start", mbsc.getAttribute(dynamicallyGeneratedObjName, "Uri"));
+        assertEquals("direct://start", mbsc.getAttribute(dynamicallyGeneratedObjName, "Uri"));
     }
 
     public void testCounters() throws Exception {

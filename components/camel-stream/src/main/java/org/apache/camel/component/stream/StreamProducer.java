@@ -49,8 +49,7 @@ public class StreamProducer extends DefaultProducer {
     private StreamEndpoint endpoint;
     private String uri;
 
-    public StreamProducer(StreamEndpoint endpoint, String uri)
-        throws Exception {
+    public StreamProducer(StreamEndpoint endpoint, String uri) throws Exception {
         super(endpoint);
         this.endpoint = endpoint;
         validateUri(uri);
@@ -153,6 +152,9 @@ public class StreamProducer extends DefaultProducer {
             throw new IllegalArgumentException(INVALID_URI);
         }
         this.uri = t[0].trim();
+        if (this.uri.startsWith("//")) {
+            this.uri = this.uri.substring(2);
+        }
 
         if (!TYPES_LIST.contains(this.uri)) {
             throw new IllegalArgumentException(INVALID_URI);

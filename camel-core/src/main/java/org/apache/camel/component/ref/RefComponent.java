@@ -35,6 +35,9 @@ public class RefComponent extends DefaultComponent {
         if (index >= 0) {
             name = uri.substring(index + 1);
         }
+        if (name.startsWith("//")) {
+            name = name.substring(2);
+        }
         return lookupEndpoint(name, parameters);
     }
 

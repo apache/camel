@@ -46,8 +46,8 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
         assertNotSame("Should not be same Exchange", e1, e2);
 
         // should have different from endpoint
-        assertEquals("direct:start", e1.getFromEndpoint().getEndpointUri());
-        assertEquals("direct:foo", e2.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://foo", e2.getFromEndpoint().getEndpointUri());
     }
 
     public void testFireAndForgetUsingProcessor() throws Exception {
@@ -68,8 +68,8 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
         assertNotSame("Should not be same Exchange", e1, e2);
 
         // should have different from endpoint
-        assertEquals("direct:start2", e1.getFromEndpoint().getEndpointUri());
-        assertEquals("direct:foo", e2.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start2", e1.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://foo", e2.getFromEndpoint().getEndpointUri());
     }
 
     // START SNIPPET: e1

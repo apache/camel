@@ -51,11 +51,11 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
         TraceEventMessage msg1 = getMockEndpoint("mock:trace").getReceivedExchanges().get(0).getIn().getBody(TraceEventMessage.class);
         TraceEventMessage msg2 = getMockEndpoint("mock:trace").getReceivedExchanges().get(1).getIn().getBody(TraceEventMessage.class);
 
-        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertEquals("direct://start", msg1.getFromEndpointUri());
         assertEquals("ref:myProcessor", msg1.getToNode());
 
         assertEquals("ref:myProcessor", msg2.getPreviousNode());
-        assertEquals("mock:result", msg2.getToNode());
+        assertEquals("mock://result", msg2.getToNode());
     }
 
     public void testWithError() throws Exception {
@@ -72,17 +72,17 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
         TraceEventMessage msg3 = getMockEndpoint("mock:trace").getReceivedExchanges().get(2).getIn().getBody(TraceEventMessage.class);
         TraceEventMessage msg4 = getMockEndpoint("mock:trace").getReceivedExchanges().get(3).getIn().getBody(TraceEventMessage.class);
 
-        assertEquals("direct:start", msg1.getFromEndpointUri());
+        assertEquals("direct://start", msg1.getFromEndpointUri());
         assertEquals("ref:myProcessor", msg1.getToNode());
 
         assertEquals("ref:myProcessor", msg2.getPreviousNode());
         assertEquals("OnException[IllegalArgumentException]", msg2.getToNode());
 
         assertEquals("OnException[IllegalArgumentException]", msg3.getPreviousNode());
-        assertEquals("log:boom", msg3.getToNode());
+        assertEquals("log://boom", msg3.getToNode());
 
-        assertEquals("log:boom", msg4.getPreviousNode());
-        assertEquals("mock:boom", msg4.getToNode());
+        assertEquals("log://boom", msg4.getPreviousNode());
+        assertEquals("mock://boom", msg4.getToNode());
     }
 
     @Override

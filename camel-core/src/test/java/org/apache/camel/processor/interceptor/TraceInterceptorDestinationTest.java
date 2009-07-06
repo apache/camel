@@ -42,14 +42,14 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:traced");
         mock.expectedMessageCount(8);
         // should be in our CSV format (defined in bottom of this class)
-        mock.message(0).body().regex("^direct:start;.*;.*;Hello London");
-        mock.message(1).body().regex("^direct:start;.*;.*;Hello World");
-        mock.message(2).body().regex("^direct:start;.*;.*;Goodday World");
-        mock.message(3).body().regex("^direct:start;.*;.*;Bye World");
-        mock.message(4).body().regex("^direct:foo;.*;.*;Hello Copenhagen");
-        mock.message(5).body().regex("^direct:foo;.*;.*;Foo World");
-        mock.message(6).body().regex("^direct:foo;.*;.*;Hello Beijing");
-        mock.message(7).body().regex("^direct:foo;.*;.*;Foo World");
+        mock.message(0).body().regex("^direct://start;.*;.*;Hello London");
+        mock.message(1).body().regex("^direct://start;.*;.*;Hello World");
+        mock.message(2).body().regex("^direct://start;.*;.*;Goodday World");
+        mock.message(3).body().regex("^direct://start;.*;.*;Bye World");
+        mock.message(4).body().regex("^direct://foo;.*;.*;Hello Copenhagen");
+        mock.message(5).body().regex("^direct://foo;.*;.*;Foo World");
+        mock.message(6).body().regex("^direct://foo;.*;.*;Hello Beijing");
+        mock.message(7).body().regex("^direct://foo;.*;.*;Foo World");
 
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
         template.sendBody("direct:foo", "Hello Copenhagen");

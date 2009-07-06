@@ -63,7 +63,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                 // we configure our Dead Letter Channel to invoke
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
-                errorHandler(deadLetterChannel("mock:error")
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5)
                         .onRedelivery(new MyRedeliverPrcessor())
                         // setting delay to zero is just to make unit teting faster
                         .redeliverDelay(0L));

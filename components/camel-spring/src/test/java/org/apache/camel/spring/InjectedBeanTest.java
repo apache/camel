@@ -35,8 +35,8 @@ public class InjectedBeanTest extends SpringTestSupport {
         log.info("getFieldInjectedCamelTemplate()    = " + bean.getFieldInjectedCamelTemplate());
         log.info("getPropertyInjectedCamelTemplate() = " + bean.getPropertyInjectedCamelTemplate());
 
-        assertEndpointUri(bean.getFieldInjectedEndpoint(), "direct:fieldInjectedEndpoint");
-        assertEndpointUri(bean.getPropertyInjectedEndpoint(), "direct:namedEndpoint1");
+        assertEndpointUri(bean.getFieldInjectedEndpoint(), "direct://fieldInjectedEndpoint");
+        assertEndpointUri(bean.getPropertyInjectedEndpoint(), "direct://namedEndpoint1");
 
         assertNotNull("No Producer injected for getFieldInjectedProducer()", bean.getFieldInjectedProducer());
         assertNotNull("No Producer injected for getPropertyInjectedProducer()", bean.getPropertyInjectedProducer());

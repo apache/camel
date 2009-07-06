@@ -168,7 +168,7 @@ public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
             if (method != null) {
                 methodText = " method: " + method;
             }
-            return "ref: " + ref + methodText;
+            return "ref:" + ref + methodText;
         } else if (bean != null) {
             return bean.toString();
         } else if (beanType != null) {

@@ -45,23 +45,23 @@ public class InterceptSimpleRouteTraceTest extends ContextTestSupport {
         TraceEventMessage msg5 = getMockEndpoint("mock:trace").getReceivedExchanges().get(4).getIn().getBody(TraceEventMessage.class);
         TraceEventMessage msg6 = getMockEndpoint("mock:trace").getReceivedExchanges().get(5).getIn().getBody(TraceEventMessage.class);
 
-        assertEquals("direct:start", msg1.getFromEndpointUri());
-        assertEquals("mock:intercepted", msg1.getToNode());
+        assertEquals("direct://start", msg1.getFromEndpointUri());
+        assertEquals("mock://intercepted", msg1.getToNode());
 
-        assertEquals("mock:intercepted", msg2.getPreviousNode());
-        assertEquals("mock:foo", msg2.getToNode());
+        assertEquals("mock://intercepted", msg2.getPreviousNode());
+        assertEquals("mock://foo", msg2.getToNode());
 
-        assertEquals("mock:foo", msg3.getPreviousNode());
-        assertEquals("mock:intercepted", msg3.getToNode());
+        assertEquals("mock://foo", msg3.getPreviousNode());
+        assertEquals("mock://intercepted", msg3.getToNode());
 
-        assertEquals("mock:intercepted", msg4.getPreviousNode());
-        assertEquals("mock:bar", msg4.getToNode());
+        assertEquals("mock://intercepted", msg4.getPreviousNode());
+        assertEquals("mock://bar", msg4.getToNode());
 
-        assertEquals("mock:bar", msg5.getPreviousNode());
-        assertEquals("mock:intercepted", msg5.getToNode());
+        assertEquals("mock://bar", msg5.getPreviousNode());
+        assertEquals("mock://intercepted", msg5.getToNode());
 
-        assertEquals("mock:intercepted", msg6.getPreviousNode());
-        assertEquals("mock:result", msg6.getToNode());
+        assertEquals("mock://intercepted", msg6.getPreviousNode());
+        assertEquals("mock://result", msg6.getToNode());
     }
 
     @Override

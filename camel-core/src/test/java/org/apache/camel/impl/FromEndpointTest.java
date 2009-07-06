@@ -42,7 +42,7 @@ public class FromEndpointTest extends ContextTestSupport {
         Exchange exchange = list.get(0);
         Endpoint fromEndpoint = exchange.getFromEndpoint();
         assertNotNull("exchange.fromEndpoint() is null!", fromEndpoint);
-        assertEquals("fromEndpoint URI", "direct:start", fromEndpoint.getEndpointUri());
+        assertEquals("fromEndpoint URI", "direct://start", fromEndpoint.getEndpointUri());
     }
 
     @Override
