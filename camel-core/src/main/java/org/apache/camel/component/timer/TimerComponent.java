@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -53,6 +55,23 @@ public class TimerComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
+
+        // convert time from String to a java.util.Date using the supported patterns
+        String time = getAndRemoveParameter(parameters, "time", String.class);
+        String pattern = getAndRemoveParameter(parameters, "pattern", String.class);
+        if (time != null) {
+            SimpleDateFormat sdf;
+            if (pattern != null) {
+                sdf = new SimpleDateFormat(pattern);
+            } else if (time.contains("T")) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            } else {
+                sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            }
+            Date date = sdf.parse(time);
+            answer.setTime(date);
+        }
+
         setProperties(answer, parameters);
         return answer;
     }
