@@ -92,13 +92,13 @@ public class IrcConfiguration implements Cloneable {
 
         String channel = uri.getFragment();
 
-        if ( channel.contains("?")) {
+        if (channel.contains("?")) {
             //Need to strip off the query string from this fragment
             channel = ObjectHelper.before(uri.getFragment(), "?");
         }
 
         setTarget("#" + channel);
-}
+    }
 
     public String getHostname() {
         return hostname;
