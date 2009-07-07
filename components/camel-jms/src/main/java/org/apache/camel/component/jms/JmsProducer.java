@@ -218,6 +218,9 @@ public class JmsProducer extends DefaultProducer {
         try {
             Message message = null;
             try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Message sent, now waiting for reply at: " + replyTo.toString());
+                }
                 if (requestTimeout < 0) {
                     message = (Message)futureHolder.get().get();
                 } else {
