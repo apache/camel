@@ -37,7 +37,7 @@ public class JmsAnotherCustomJMSReplyToTest extends ContextTestSupport {
     private ActiveMQComponent amq;
     private static String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
 
-    public void testCustomJMSReplyToInOut() throws Exception {
+    public void testCustomJMSReplyToInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("My name is Arnio");
 
