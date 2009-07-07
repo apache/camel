@@ -75,7 +75,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
 
     protected long redeliverDelay = 1000L;
-    protected int maximumRedeliveries = 0;
+    protected int maximumRedeliveries;
     protected long maximumRedeliveryDelay = 60 * 1000L;
     protected double backOffMultiplier = 2;
     protected boolean useExponentialBackOff;

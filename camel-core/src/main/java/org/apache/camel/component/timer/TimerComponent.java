@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.timer;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
-import java.util.Date;
-import java.text.SimpleDateFormat;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;

@@ -24,8 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SendDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 

@@ -18,13 +18,7 @@ package org.apache.camel.util;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.regex.PatternSyntaxException;
-import java.net.URISyntaxException;
-import java.net.URI;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
