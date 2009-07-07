@@ -58,13 +58,20 @@ public class AMQPRouteTest extends CamelTestSupport {
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
 
-        resultEndpoint.expectedBodiesReceived(expectedBody);
+        boolean windows = System.getProperty("os.name").startsWith("Windows");
+
+        if (windows) {
+            // it could sometimes send it twice so we expect at least 1 msg
+            resultEndpoint.expectedMinimumMessageCount(1);
+        } else {
+            resultEndpoint.expectedBodiesReceived(expectedBody);
+        }
 
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         sendExchange(expectedBody);
         
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (windows) {
             // send the message twice to walk around the AMQP's drop first message issue on Windows box
             sendExchange(expectedBody);
         }
