@@ -121,8 +121,10 @@ public class HttpRouteTest extends ContextTestSupport {
                 Processor procPostParameters = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                        String value = req.getParameter("request");                        
+                        String value = req.getParameter("request");
+                        String requestValue = exchange.getIn().getHeader("request", String.class);
                         if (value != null) {
+                            assertEquals("We should get the same request header value from message", value, requestValue);
                             exchange.getOut().setBody(value);
                         } else {
                             exchange.getOut().setBody("Can't get a right parameter");
