@@ -17,10 +17,6 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.io.RandomAccessFile;
-import java.nio.channels.Channel;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.FileComponent;
@@ -28,7 +24,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -48,37 +43,30 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             LOG.trace("Locking the file: " + file + " using the lock file name: " + lockFileName);
         }
 
-        FileChannel channel = new RandomAccessFile(lockFileName, "rw").getChannel();
-        FileLock lock = channel.lock();
-        if (lock != null) {
+        // create a plain file as marker filer for locking (do not use FileLock)
+        File lock = new File(lockFileName);
+        boolean acquired = lock.createNewFile();
+        if (acquired) {
             exchange.setProperty("CamelFileLock", lock);
             exchange.setProperty("CamelFileLockName", lockFileName);
-            return true;
-        } else {
-            return false;
         }
+
+        return acquired;
     }
 
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
-        FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLock", FileLock.class);
+
+        File lock = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLock", File.class);
         String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLockName", String.class);
-        Channel channel = lock.channel();
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Unlocking file: " + lockFileName);
         }
-        try {
-            lock.release();
-        } finally {
-            // must close channel
-            ObjectHelper.close(channel, "Closing channel", LOG);
-            
-            File lockfile = new File(lockFileName);
-            boolean deleted = lockfile.delete();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Lock file: " + lockFileName + " was deleted: " + deleted);
-            }
+
+        boolean deleted = lock.delete();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Lock file: " + lockFileName + " was deleted: " + deleted);
         }
     }
 
