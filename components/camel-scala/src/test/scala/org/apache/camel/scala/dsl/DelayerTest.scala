@@ -30,7 +30,7 @@ class DelayerTest extends ScalaTestSupport {
     "mock:a" assert()
     //messages should only arrive after waiting a while 
     "mock:a" expect { _.count = 1 }
-    "mock:a" expect { _.setResultWaitTime(1500)}
+    "mock:a" expect { _.setResultWaitTime(2500)}
     "mock:a" assert();
   }
   
@@ -42,7 +42,7 @@ class DelayerTest extends ScalaTestSupport {
     "mock:c" assert()
     //messages should only arrive after waiting a while 
     "mock:c" expect { _.count = 1 }
-    "mock:c" expect { _.setResultWaitTime(1500)}
+    "mock:c" expect { _.setResultWaitTime(2500)}
     "mock:b" assert()
     "mock:c" assert()
   }    
