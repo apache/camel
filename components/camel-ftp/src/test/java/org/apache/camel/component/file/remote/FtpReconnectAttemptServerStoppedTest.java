@@ -30,6 +30,12 @@ public class FtpReconnectAttemptServerStoppedTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/reconnect?password=admin&maximumReconnectAttempts=2&reconnectDelay=500";
     }
 
+    @Override
+    public void setUp() throws Exception {
+        deleteDirectory("./res/home/reconnect");
+        super.setUp();
+    }
+
     @Test
     public void testFromFileToFtp() throws Exception {
         // put a file in the folder (do not use ftp as we then will connect)

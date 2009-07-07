@@ -38,12 +38,15 @@ public class JmsDiscoveryTest extends CamelTestSupport {
     @Test
     public void testDiscovery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(3);
+        mock.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
 
+        // sleep a little
+        Thread.sleep(1000);
+
         Map<String, Map> map = new HashMap<String, Map>(registry.getServices());
-        assertTrue("There should be 3 or more, was: " + map.size(), map.size() >= 3);
+        assertTrue("There should be 1 or more, was: " + map.size(), map.size() >= 1);
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -59,8 +62,6 @@ public class JmsDiscoveryTest extends CamelTestSupport {
     protected Context createJndiContext() throws Exception {
         Context context = super.createJndiContext();
         context.bind("service1", new MyService("service1"));
-        context.bind("service2", new MyService("service2"));
-        context.bind("service3", new MyService("service3"));
         context.bind("registry", registry);
         return context;
     }
@@ -69,9 +70,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // lets setup the heartbeats
-                from("bean:service1?method=status").inOnly().to("activemq:topic:registry.heartbeats");
-                from("bean:service2?method=status").inOnly().to("activemq:topic:registry.heartbeats");
-                from("bean:service3?method=status").inOnly().to("activemq:topic:registry.heartbeats");
+                from("bean:service1?method=status").to("activemq:topic:registry.heartbeats");
 
                 from("activemq:topic:registry.heartbeats").to("bean:registry?method=onEvent", "mock:result");
             }

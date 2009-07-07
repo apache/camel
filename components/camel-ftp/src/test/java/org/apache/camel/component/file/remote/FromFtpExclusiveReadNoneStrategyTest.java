@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
 
-    private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadRenameStrategyTest.class);
+    private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadNoneStrategyTest.class);
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin"
