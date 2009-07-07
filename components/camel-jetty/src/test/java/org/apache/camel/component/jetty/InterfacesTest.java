@@ -28,7 +28,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class InterfacesTest extends CamelTestSupport {
-    
+    private static boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
     private String remoteInterfaceAddress;
    
     
@@ -61,14 +61,17 @@ public class InterfacesTest extends CamelTestSupport {
         URL localUrl = new URL("http://localhost:4567/testRoute");
         String localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local", localResponse);
-
-        // 127.0.0.1 is an alias of localhost so should work
-        localUrl = new URL("http://127.0.0.1:4568/testRoute");
+       
+        if (!isMacOS) {
+            localUrl = new URL("http://127.0.0.1:4568/testRoute");
+        } else {
+            localUrl = new URL("http://localhost:4568/testRoute");
+        }
         localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local-differentPort", localResponse);
         
-        if (remoteInterfaceAddress != null) {
-            URL url = new URL("http://" + remoteInterfaceAddress + ":4567/testRoute");
+        if (remoteInterfaceAddress != null) {            
+            URL url = new URL("http://" + remoteInterfaceAddress + ":4560/testRoute");
             String remoteResponse = context.getTypeConverter().convertTo(String.class, url.openStream());
             assertEquals("remote", remoteResponse);
         }
@@ -109,7 +112,7 @@ public class InterfacesTest extends CamelTestSupport {
                     .to("mock:endpoint");
                 
                 if (remoteInterfaceAddress != null) {
-                    from("jetty:http://" + remoteInterfaceAddress + ":4567/testRoute")
+                    from("jetty:http://" + remoteInterfaceAddress + ":4560/testRoute")
                         .setBody().constant("remote")
                         .to("mock:endpoint");
                 }
