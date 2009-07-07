@@ -17,10 +17,9 @@
 package org.apache.camel.dataformat.bindy.fix;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
+import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;

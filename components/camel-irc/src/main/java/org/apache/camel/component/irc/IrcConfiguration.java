@@ -22,9 +22,8 @@ import java.util.Arrays;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
-
-import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
+import org.schwering.irc.lib.ssl.SSLTrustManager;
 
 public class IrcConfiguration implements Cloneable {
     private String target;
@@ -34,7 +33,7 @@ public class IrcConfiguration implements Cloneable {
     private String realname;
     private String username;
     private SSLTrustManager trustManager = new SSLDefaultTrustManager();
-    private boolean usingSSL = false;
+    private boolean usingSSL;
     private boolean persistent = true;
     private boolean colors = true;
     private boolean onNick = true;
@@ -110,13 +109,11 @@ public class IrcConfiguration implements Cloneable {
         setTarget("#" + channel);
     }
 
-    public void setTrustManager(SSLTrustManager trustManager)
-    {
+    public void setTrustManager(SSLTrustManager trustManager) {
         this.trustManager = trustManager;
     }
 
-    public SSLTrustManager getTrustManager()
-    {
+    public SSLTrustManager getTrustManager() {
         return trustManager;
     }
 

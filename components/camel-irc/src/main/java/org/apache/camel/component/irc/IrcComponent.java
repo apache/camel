@@ -79,7 +79,7 @@ public class IrcComponent extends DefaultComponent {
     protected IRCConnection createConnection(IrcConfiguration configuration) {
         IRCConnection conn = null;
 
-        if ( configuration.getUsingSSL() ) {
+        if (configuration.getUsingSSL()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating SSL Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
                         + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
