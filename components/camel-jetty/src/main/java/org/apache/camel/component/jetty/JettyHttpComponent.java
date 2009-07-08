@@ -49,13 +49,25 @@ import org.mortbay.jetty.servlet.SessionHandler;
  * @version $Revision$
  */
 public class JettyHttpComponent extends HttpComponent {
+    
+    protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
+   
+    private static final transient Log LOG = LogFactory.getLog(JettyHttpComponent.class);
+    private static final String JETTY_SSL_KEYSTORE = "jetty.ssl.keystore";
+    
+    protected String sslKeyPassword;
+    protected String sslPassword;
+    protected String sslKeystore;
+    protected SslSocketConnector sslSocketConnector;
 
     class ConnectorRef {
+        Server server;
         Connector connector;
         CamelServlet servlet;
         int refCount;
 
-        public ConnectorRef(Connector connector, CamelServlet servlet) {
+        public ConnectorRef(Server server, Connector connector, CamelServlet servlet) {
+            this.server = server;
             this.connector = connector;
             this.servlet = servlet;
             increment();
@@ -70,14 +82,11 @@ public class JettyHttpComponent extends HttpComponent {
         }
     }
     
-    private static final transient Log LOG = LogFactory.getLog(JettyHttpComponent.class);
     
-    protected Server server;
-    protected final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
-    protected String sslKeyPassword;
-    protected String sslPassword;
-    protected String sslKeystore;
-    protected SslSocketConnector sslSocketConnector;
+    /*static {
+        // create the Server static object;
+       
+    }*/
 
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
@@ -111,8 +120,8 @@ public class JettyHttpComponent extends HttpComponent {
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint)consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
 
-        synchronized (connectors) {
-            ConnectorRef connectorRef = connectors.get(connectorKey);
+        synchronized (CONNECTORS) {
+            ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef == null) {
                 Connector connector;
                 if ("https".equals(endpoint.getProtocol())) {
@@ -125,27 +134,28 @@ public class JettyHttpComponent extends HttpComponent {
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
                     LOG.warn("You use localhost interface! It means that no external connections will be available. Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
-                getServer().addConnector(connector);
+                Server server = createServer();
+                server.addConnector(connector);
 
-                connectorRef = new ConnectorRef(connector, createServletForConnector(connector, endpoint.getHandlers()));
+                connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers()));
                 connector.start();
                 
-                connectors.put(connectorKey, connectorRef);
+                CONNECTORS.put(connectorKey, connectorRef);
                 
             } else {
                 // ref track the connector
                 connectorRef.increment();
             }
             // check the session support
-            if (endpoint.isSessionSupport()) {
-                enableSessionSupport();
+            if (endpoint.isSessionSupport()) {                
+                enableSessionSupport(connectorRef.server);
             }
             connectorRef.servlet.connect(consumer);
         }
     }
 
-    private void enableSessionSupport() throws Exception {
-        Context context = (Context)getServer().getChildHandlerByClass(Context.class);
+    private void enableSessionSupport(Server server) throws Exception {
+        Context context = (Context)server.getChildHandlerByClass(Context.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
             context.setSessionHandler(sessionHandler);
@@ -168,14 +178,15 @@ public class JettyHttpComponent extends HttpComponent {
         HttpEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
         
-        synchronized (connectors) {
-            ConnectorRef connectorRef = connectors.get(connectorKey);
+        synchronized (CONNECTORS) {
+            ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef != null) {
                 connectorRef.servlet.disconnect(consumer);
                 if (connectorRef.decrement() == 0) {
-                    getServer().removeConnector(connectorRef.connector);
+                    connectorRef.server.removeConnector(connectorRef.connector);
                     connectorRef.connector.stop();
-                    connectors.remove(connectorKey);
+                    connectorRef.server.stop();
+                    CONNECTORS.remove(connectorKey);
                 }
             }
         }
@@ -187,18 +198,7 @@ public class JettyHttpComponent extends HttpComponent {
 
     // Properties
     // -------------------------------------------------------------------------
-
-    public Server getServer() throws Exception {
-        if (server == null) {
-            server = createServer();
-        }
-        return server;
-    }
-
-    public void setServer(Server server) {
-        this.server = server;
-    }
-
+       
     public String getSslKeyPassword() {
         return sslKeyPassword;
     }
@@ -241,9 +241,9 @@ public class JettyHttpComponent extends HttpComponent {
         sslSocketConnector = connector;
     }
 
-    protected CamelServlet createServletForConnector(Connector connector, String handlerNames) throws Exception {
+
+    protected CamelServlet createServletForConnector(Server server, Connector connector, String handlerNames) throws Exception {
         CamelServlet camelServlet = new CamelContinuationServlet();
-        
         Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});
 
@@ -267,29 +267,13 @@ public class JettyHttpComponent extends HttpComponent {
     
     // Implementation methods
     // -------------------------------------------------------------------------
-
     protected Server createServer() throws Exception {
         Server server = new Server();
         ContextHandlerCollection collection = new ContextHandlerCollection();
         collection.setServer(server);
         server.addHandler(collection);
         server.start();
-
         return server;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        for (ConnectorRef connectorRef : connectors.values()) {
-            connectorRef.connector.stop();            
-        }
-        connectors.clear();
-
-        if (server != null) {
-            server.stop();
-        }
-        
-        super.doStop();
     }
    
     private Handler getHandler(String handlerName) {
