@@ -57,8 +57,9 @@ public class SpringHttpsRouteTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         restoreSystemProperties();
         super.tearDown();
-        JettyHttpComponent component = context.getComponent("jetty", JettyHttpComponent.class);
-        component.stop();    
+        JettyHttpComponent component = context.getComponent("jetty", JettyHttpComponent.class);        
+        context.stop();
+        component.stop();
     }
 
     private void setSystemProp(String key, String value) {
