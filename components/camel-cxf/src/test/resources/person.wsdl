@@ -103,6 +103,9 @@
     	<wsdl:port binding="tns:PersonSOAPBinding" name="soap">
            <soap:address location="http://localhost:8092/PersonService/" />
        </wsdl:port>
+       <wsdl:port binding="tns:PersonSOAPBinding" name="soap2">
+           <soap:address location="http://localhost:8093/PersonService/" />
+       </wsdl:port>
    </wsdl:service>
 
 </wsdl:definitions>

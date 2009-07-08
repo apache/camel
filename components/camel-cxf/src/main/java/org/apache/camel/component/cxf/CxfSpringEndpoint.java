@@ -105,8 +105,11 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     Client createClient() throws Exception {
         
         // get service class
-        Class<?> cls = getSEIClass();        
-        ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
+        Class<?> cls = getSEIClass();    
+        
+        if (getDataFormat().equals(DataFormat.POJO)) { 
+            ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
+        }
 
         // create client factory bean
         ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
@@ -132,6 +135,10 @@ public class CxfSpringEndpoint extends CxfEndpoint {
             factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
         }
         
+        if (cls == null) {
+            return (Client)factoryBean.create();
+        }
+        
         return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
     }
 
@@ -143,14 +150,20 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     ServerFactoryBean createServerFactoryBean() throws Exception  {
         
         // get service class
-        Class<?> cls = getSEIClass();        
-        ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
+        Class<?> cls = getSEIClass();                
                 
         // create server factory bean
         // Shouldn't use CxfEndpointUtils.getServerFactoryBean(cls) as it is for
         // CxfSoapComponent
         ServerFactoryBean answer = null;
-        if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
+
+        if (cls == null) {
+            if (!getDataFormat().equals(DataFormat.POJO)) {
+                answer = new ServerFactoryBean(new WSDLServiceFactoryBean());
+            } else {
+                ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
+            }
+        } else if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             answer = new JaxWsServerFactoryBean();
         } else {
             answer = new ServerFactoryBean();
