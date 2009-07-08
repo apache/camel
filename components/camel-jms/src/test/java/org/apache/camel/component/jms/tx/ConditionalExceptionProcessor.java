@@ -23,8 +23,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Conditionally throws exception causing a rollback
- *
- * @author Kevin Ross
  */
 public class ConditionalExceptionProcessor implements Processor {
 

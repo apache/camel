@@ -21,8 +21,6 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 /**
  * The name space handler Spring Integration Camel Adapter
  *
- * @author Willem Jiang
- *
  * @version $Revision$
  */
 public class NamespaceHandler extends NamespaceHandlerSupport {

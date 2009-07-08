@@ -54,8 +54,6 @@ import java.util.Timer;
  * <i>ready-for-delivery</i>.
  * <p>
  *
- * @author Martin Krasser
- *
  * @version $Revision$
  */
 public class ResequencerEngine<E> {

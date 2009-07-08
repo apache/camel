@@ -31,8 +31,6 @@ import org.apache.camel.Expression;
  *    ...resequencer(header(&quot;seqnum&quot;)).stream()...
  * </pre>
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  */
 public class DefaultExchangeComparator implements ExpressionResultComparator<Exchange> {

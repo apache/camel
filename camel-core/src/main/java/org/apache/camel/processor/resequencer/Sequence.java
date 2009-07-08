@@ -24,8 +24,6 @@ import java.util.TreeSet;
  * Successors and predecessors are calculated by using a
  * {@link SequenceElementComparator}.
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  */
 public class Sequence<E> extends TreeSet<E> {

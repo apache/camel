@@ -27,7 +27,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 
 /**
  * Parser for the &lt;camelSource/&gt; element
- * @author Willem Jiang
  *
  * @version $Revision$
  */

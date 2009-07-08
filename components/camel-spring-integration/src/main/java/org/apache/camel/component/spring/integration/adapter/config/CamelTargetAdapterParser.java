@@ -30,7 +30,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * Parser for the &lt;camelTarget/&gt; element
- * @author Willem Jiang
  *
  * @version $Revision$
  */

@@ -35,8 +35,6 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  * http://activemq.apache.org/camel/transactional-client.html and Martin
  * Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
- *
- * @author Kevin Ross
  */
 public abstract class AbstractTransactionTest extends ContextTestSupport {
 

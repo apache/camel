@@ -60,9 +60,6 @@ import org.apache.http.util.EncodingUtils;
  *
  * <p>This service handler should be used only when dealing with HTTP messages
  * that are known to be limited in length</p>
- *
- * @author <a href="mailto:oleg at ural.ru">Oleg Kalnichevski</a>
- *
  */
 public class BufferingHttpServiceHandler extends NHttpServiceHandlerBase
                                          implements NHttpServiceHandler {

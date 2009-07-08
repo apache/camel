@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @author Albert Moraal
  * @version $Revision$
  */
 public class DirectoryCreateIssueTest extends TestSupport {

@@ -25,8 +25,6 @@ import org.apache.camel.Expression;
  * A {@link SequenceElementComparator} that compares {@link Exchange}s based on
  * the result of an expression evaluation.
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  */
 public interface ExpressionResultComparator<E extends Exchange> extends SequenceElementComparator<E> {

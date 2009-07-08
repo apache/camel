@@ -25,10 +25,6 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * @author martin.gilday
- *
- */
 public class StatefulQuartzRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 

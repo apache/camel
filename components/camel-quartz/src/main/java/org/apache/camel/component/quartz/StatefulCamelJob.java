@@ -24,10 +24,6 @@ import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 import org.quartz.StatefulJob;
 
-/**
- * @author martin.gilday
- *
- */
 public class StatefulCamelJob implements StatefulJob {
 
     /* (non-Javadoc)

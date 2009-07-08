@@ -19,8 +19,6 @@ package org.apache.camel.processor.resequencer;
 /**
  * Implemented by classes that handle timeout notifications.
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  */
 public interface TimeoutHandler {

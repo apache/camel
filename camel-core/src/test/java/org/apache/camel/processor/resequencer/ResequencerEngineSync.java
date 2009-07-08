@@ -22,8 +22,6 @@ package org.apache.camel.processor.resequencer;
  * changes performed by different threads in unit tests. This facade is <i>not</i>
  * needed in {@link ResequencerEngine} applications because it is expected that
  * resequencing is performed by a single thread.
- * 
- * @author Martin Krasser
  */
 public class ResequencerEngineSync<E> {
 

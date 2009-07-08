@@ -73,8 +73,6 @@ import org.apache.commons.logging.LogFactory;
  * resolver.find(new CustomTest(), pkg2);
  * collection&lt;ActionBean&gt; beans = resolver.getClasses();
  * </pre>
- *
- * @author Tim Fennell
  */
 public class ResolverUtil<T> {
     protected final transient Log log = LogFactory.getLog(getClass());

@@ -49,8 +49,6 @@ import org.apache.camel.util.ServiceHelper;
  * <code>endpoint</code>. Resequencing work and the delivery of messages to
  * the next <code>processor</code> is done within the single polling thread.
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  * 
  * @see ResequencerEngine

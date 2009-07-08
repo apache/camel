@@ -21,8 +21,6 @@ package org.apache.camel.processor.resequencer;
  * another {@link SequenceElementComparator} instance for comparing elements
  * contained by {@link Element} instances.
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  */
 class ElementComparator<E> implements SequenceElementComparator<Element<E>> {

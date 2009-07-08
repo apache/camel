@@ -51,8 +51,6 @@ import org.apache.camel.processor.Resequencer;
  *         new BatchResequencerConfig(300, 400L)).to(&quot;mock:result&quot;)
  * </pre>
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  */
 @XmlRootElement

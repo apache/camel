@@ -26,7 +26,6 @@ import org.apache.camel.model.IdentifiedType;
 
 /**
  * The JAXB type class for the configuration of jmxAgent
- * @author Willem Jiang
  *
  * @version $Revision$
  */

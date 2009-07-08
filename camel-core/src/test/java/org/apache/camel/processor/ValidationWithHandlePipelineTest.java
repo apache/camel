@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 
 /**
  * The handle catch clause has a pipeline processing the exception.
- *
- * @author <a href="mailto:nsandhu">nsandhu</a>
- *
  */
 public class ValidationWithHandlePipelineTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {
