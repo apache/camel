@@ -37,8 +37,6 @@ import org.springframework.integration.message.MessageHandler;
  * A CamelContext will be injected into CameSourceAdapter which will
  * let Spring Integration channel talk to the CamelContext certain endpoint
  *
- * @author Willem Jiang
- *
  * @version $Revision$
  */
 public class CamelSourceAdapter extends AbstractCamelAdapter implements InitializingBean, DisposableBean {

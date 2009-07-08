@@ -22,7 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
- * @author Albert Moraal
  * @version $Revision$
  */
 public class NullBodyTest extends ContextTestSupport {

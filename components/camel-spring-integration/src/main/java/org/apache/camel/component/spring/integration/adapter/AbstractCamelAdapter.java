@@ -24,8 +24,6 @@ import org.apache.camel.Endpoint;
 /**
  * The Abstract class for the Spring Integration Camel Adapter
  *
- * @author Willem Jiang
- *
  * @version $Revision$
  */
 public abstract class AbstractCamelAdapter {

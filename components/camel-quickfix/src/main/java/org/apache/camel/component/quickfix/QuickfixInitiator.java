@@ -33,8 +33,6 @@ import quickfix.SocketInitiator;
  * QuickfixInitiator is the endpoint for QuickFIX/J's initiator instance, e.g.
  * FIX client. The class is referenced in
  * META-INF/services/org/apache/camel/quickfix-client
- * 
- * @author Anton Arhipov
  */
 public class QuickfixInitiator extends DefaultComponent {
     private static final Log LOG = org.apache.commons.logging.LogFactory.getLog(QuickfixInitiatorEndpoint.class);

@@ -30,8 +30,6 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  * NOTE: had to split into separate test classes as I was unable to fully tear
  * down and isolate the test cases, I'm not sure why, but as soon as we know the
  * Transaction classes can be joined into one.
- *
- * @author Kevin Ross
  */
 public class XMLQueueToQueueTransactionTest extends AbstractTransactionTest {
 

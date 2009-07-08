@@ -32,7 +32,6 @@ import quickfix.UnsupportedMessageType;
 /**
  * QuickfixApplication is the root for application logic.
  *
- * @author Anton Arhipov
  * @see quickfix.Application
  */
 public class QuickfixApplication implements Application {

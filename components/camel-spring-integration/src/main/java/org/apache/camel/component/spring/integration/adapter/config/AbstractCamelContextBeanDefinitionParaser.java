@@ -34,8 +34,6 @@ import org.springframework.util.StringUtils;
 /**
  * This BeanDefinition paraser help to inject the camel context into the beans
  *
- * @author Willem Jiang
- *
  * @version $Revision$
  */
 public class AbstractCamelContextBeanDefinitionParaser extends AbstractSingleBeanDefinitionParser {

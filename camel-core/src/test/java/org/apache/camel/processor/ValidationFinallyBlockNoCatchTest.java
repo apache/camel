@@ -23,8 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * No catch blocks but handle all should work
- *
- * @author <a href="mailto:nsandhu@raleys.com">nsandhu</a>
  */
 public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     protected Processor validator = new MyValidator();

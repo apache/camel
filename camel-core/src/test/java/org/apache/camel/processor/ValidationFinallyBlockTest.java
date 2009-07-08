@@ -25,8 +25,6 @@ import org.apache.camel.model.TryDefinition;
 
 /**
  * Test finallyBlock
- *
- * @author <a href="mailto:nsandhu@raleys.com">nsandhu</a>
  */
 public class ValidationFinallyBlockTest extends ContextTestSupport {
     protected Processor validator = new MyValidator();

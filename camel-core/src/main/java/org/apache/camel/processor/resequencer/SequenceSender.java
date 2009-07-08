@@ -21,8 +21,6 @@ package org.apache.camel.processor.resequencer;
   * {@link ResequencerEngine#deliverNext()} methods to send out re-ordered
   * elements.
   *
-  * @author Martin Krasser
-  *
   * @version $Revision$
   */
 public interface SequenceSender<E> {

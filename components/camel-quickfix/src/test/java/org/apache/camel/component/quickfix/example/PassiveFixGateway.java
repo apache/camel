@@ -22,7 +22,6 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @author Anton Arhipov
  *         <p/>
  *         To use this example, start Banzai and Executor applications from
  *         Quickfix distribution. The PassiveFixGateway example is intended to

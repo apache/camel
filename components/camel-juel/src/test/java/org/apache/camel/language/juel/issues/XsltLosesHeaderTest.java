@@ -29,7 +29,6 @@ import org.apache.camel.converter.jaxp.StringSource;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
- * @author Arjan Moraal
  * @version $Revision$
  */
 public class XsltLosesHeaderTest extends ContextTestSupport {

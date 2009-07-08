@@ -35,8 +35,6 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  * http://camel.apache.org/transactional-client.html and Martin
  * Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
- *
- * @author Kevin Ross
  */
 public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 

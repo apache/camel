@@ -22,9 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 
-/**
- * @author Anton Arhipov
- */
 public class QuickfixProcessor implements Processor {
 
     private static final Log LOG = LogFactory.getLog(QuickfixProcessor.class);

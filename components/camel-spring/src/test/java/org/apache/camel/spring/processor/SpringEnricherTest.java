@@ -22,9 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @author Martin Krasser
- */
 public class SpringEnricherTest extends ContextTestSupport {
 
     private MockEndpoint mock;

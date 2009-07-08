@@ -30,8 +30,6 @@ import quickfix.Message;
  * QuickfixProducer is intended to be used as an initiator instance.
  * <p/>
  * The initiator will send the FIX messages to the configured acceptors via session object.
- *
- * @author Anton Arhipov
  */
 public class QuickfixProducer extends DefaultProducer {
 

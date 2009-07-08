@@ -170,8 +170,6 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
     /**
      * Holds the state of the decoding process
-     * 
-     * @author Christian Ohr
      */
     private static class DecoderState {
         int posStart;
@@ -187,5 +185,4 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
             posEnd = 0;
         }
     }
-
 }

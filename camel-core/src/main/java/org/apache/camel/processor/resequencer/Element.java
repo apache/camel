@@ -20,8 +20,6 @@ package org.apache.camel.processor.resequencer;
  * A container for objects to be resequenced. This container can be scheduled
  * for timing out. Non-scheduled objects or already timed-out objects are ready
  * for being released by the {@link ResequencerEngine}.
- * 
- * @author Martin Krasser
  */
 class Element<E> implements TimeoutHandler {
 

@@ -25,8 +25,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * QuickfixConsumer is intended to consume the FIX messages
- *
- * @author Anton Arhipov
  */
 public class QuickfixConsumer extends DefaultConsumer {
     private static final Log LOG = LogFactory.getLog(QuickfixConsumer.class);

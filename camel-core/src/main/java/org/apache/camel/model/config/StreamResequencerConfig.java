@@ -48,8 +48,6 @@ import org.apache.camel.processor.resequencer.ExpressionResultComparator;
  *         new StreamResequencerConfig(300, 400L)).to(&quot;mock:result&quot;)
  * </pre>
  * 
- * @author Martin Krasser
- * 
  * @version $Revision$
  */
 @XmlRootElement

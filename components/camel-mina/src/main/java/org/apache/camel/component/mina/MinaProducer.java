@@ -178,8 +178,6 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
     /**
      * Handles response from session writes
-     *
-     * @author <a href="mailto:karajdaar@gmail.com">nsandhu</a>
      */
     private final class ResponseHandler extends IoHandlerAdapter {
         private MinaEndpoint endpoint;
