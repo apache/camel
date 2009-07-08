@@ -101,7 +101,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     }
 
     /**
-     * Template method used to exclude {@link org.apache.camel.Routes} from the test time context
+     * Template method used to exclude {@link org.apache.camel.Route} from the test time context
      * route scanning
      *
      * @return Class[] the classes to be excluded from test time context route scanning
@@ -112,7 +112,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     }
 
     /**
-     * Template method used to exclude a {@link org.apache.camel.Routes} from the test camel context
+     * Template method used to exclude a {@link org.apache.camel.Route} from the test camel context
      */
     protected Class excludeRoute() {
         return null;

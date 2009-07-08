@@ -18,6 +18,7 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Injector;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -27,13 +28,15 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class SpringInjector implements Injector {
     private final ConfigurableApplicationContext applicationContext;
+    private int autowireMode = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
+    private boolean dependencyCheck;
 
     public SpringInjector(ConfigurableApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     public <T> T newInstance(Class<T> type) {
-        Object value = applicationContext.getBeanFactory().createBean(type);
+        Object value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
         return type.cast(value);
     }
 
@@ -47,4 +50,19 @@ public class SpringInjector implements Injector {
         return newInstance(type);
     }
 
+    public int getAutowireMode() {
+        return autowireMode;
+    }
+
+    public void setAutowireMode(int autowireMode) {
+        this.autowireMode = autowireMode;
+    }
+
+    public boolean isDependencyCheck() {
+        return dependencyCheck;
+    }
+
+    public void setDependencyCheck(boolean dependencyCheck) {
+        this.dependencyCheck = dependencyCheck;
+    }
 }
