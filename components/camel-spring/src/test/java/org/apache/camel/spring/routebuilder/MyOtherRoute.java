@@ -28,7 +28,6 @@ public class MyOtherRoute extends SpringRouteBuilder implements CamelContextAwar
     private CamelContext ctx;
 
     public void configure() throws Exception {
-        System.out.println(getContext());
         from("direct:b").to("mock:b");
     }
 
