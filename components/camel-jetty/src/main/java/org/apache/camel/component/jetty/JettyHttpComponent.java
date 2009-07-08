@@ -296,11 +296,5 @@ public class JettyHttpComponent extends HttpComponent {
         server.start();
         return server;
     }
-    
-    @Override
-    protected void doStop() throws Exception {
-        System.out.println("Connector's size " + CONNECTORS.size());
-        super.doStop();
-    }
    
 }

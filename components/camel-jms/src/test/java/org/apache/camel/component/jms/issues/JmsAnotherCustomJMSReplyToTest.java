@@ -33,9 +33,9 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  * @version $Revision$
  */
 public class JmsAnotherCustomJMSReplyToTest extends ContextTestSupport {
-
+    private static final String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
     private ActiveMQComponent amq;
-    private static String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
+    
 
     public void testCustomJMSReplyToInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
