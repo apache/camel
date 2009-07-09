@@ -102,10 +102,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return exchange;
     }
 
-    public Exchange createExchange() {
-        return new DefaultExchange(this);
-    }
-
     public File getFile() {
         return file;
     }

@@ -242,9 +242,11 @@ public interface Exchange {
     Message getFault(boolean lazyCreate);
 
     /**
-     * Removes the fault message.
+     * Sets the fault message
+     *
+     * @param fault the fault message
      */
-    void removeFault();
+    void setFault(Message fault);
 
     /**
      * Returns the exception associated with this exchange

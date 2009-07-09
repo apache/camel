@@ -165,8 +165,7 @@ public class PollEnricher extends ServiceSupport implements Processor {
      * @return created exchange.
      */
     protected Exchange createResourceExchange(Exchange source, ExchangePattern pattern) {
-        DefaultExchange target = new DefaultExchange(source.getContext());
-        target.copyFrom(source);
+        Exchange target = source.copy();
         target.setPattern(pattern);
         return target;
     }

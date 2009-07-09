@@ -51,7 +51,7 @@ public class FileConsumeAsyncTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // give a little time for on completion to delete the file
-        Thread.sleep(100);
+        Thread.sleep(1000);
         assertFalse("File should been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
     }
 
