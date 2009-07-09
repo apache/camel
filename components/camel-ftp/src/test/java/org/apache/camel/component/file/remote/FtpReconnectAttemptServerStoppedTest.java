@@ -27,7 +27,7 @@ import org.junit.Test;
 public class FtpReconnectAttemptServerStoppedTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/reconnect?password=admin&maximumReconnectAttempts=2&reconnectDelay=500";
+        return "ftp://admin@localhost:" + getPort() + "/reconnect?password=admin&maximumReconnectAttempts=2&reconnectDelay=500&delete=true";
     }
 
     @Override
@@ -52,11 +52,11 @@ public class FtpReconnectAttemptServerStoppedTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // resume the server so we can connect
-        ftpServer.resume();
-
         mock.reset();
         mock.expectedMessageCount(1);
+
+        // resume the server so we can connect
+        ftpServer.resume();
 
         assertMockEndpointsSatisfied();
     }
