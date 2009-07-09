@@ -39,7 +39,11 @@ public class RollbackProcessor implements Processor, Traceable {
     public void process(Exchange exchange) throws Exception {
         // mark the exchange for rollback
         exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
-        exchange.setException(new RollbackExchangeException(message, exchange));
+        if (message != null) {
+            exchange.setException(new RollbackExchangeException(message, exchange));
+        } else {
+            exchange.setException(new RollbackExchangeException(exchange));
+        }
     }
 
     @Override
