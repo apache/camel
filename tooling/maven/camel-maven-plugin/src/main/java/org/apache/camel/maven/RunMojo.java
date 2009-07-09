@@ -145,15 +145,6 @@ public class RunMojo extends AbstractExecMojo {
     private List pluginDependencies;
 
     /**
-     * Whether to enable the debugger or not
-     *
-     * @parameter expression="${camel.debug}"
-     *            default-value="false"
-     * @required
-     */
-    private boolean debug;
-
-    /**
      * Whether to enable the tracer or not
      *
      * @parameter expression="${camel.trace}"
@@ -355,9 +346,6 @@ public class RunMojo extends AbstractExecMojo {
         if (dotDir != null && useDot) {
             args.add("-o");
             args.add(dotDir);
-        }
-        if (debug) {
-            args.add("-x");
         }
         if (trace) {
             args.add("-t");

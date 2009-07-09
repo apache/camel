@@ -33,7 +33,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.view.RouteDotGenerator;
@@ -53,7 +52,6 @@ public abstract class MainSupport extends ServiceSupport {
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;    
     private String routesOutputFile;
     private boolean aggregateDot;
-    private boolean debug;
     private boolean trace;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     private final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
@@ -93,11 +91,6 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
 
-        addOption(new Option("x", "debug", "Enables the debugger") {
-            protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-                enableDebug();
-            }
-        });
         addOption(new Option("t", "trace", "Enables tracing") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 enableTrace();
@@ -223,20 +216,15 @@ public abstract class MainSupport extends ServiceSupport {
         return aggregateDot;
     }
 
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public void enableDebug() {
-        this.debug = true;
-    }
-
     public boolean isTrace() {
         return trace;
     }
 
     public void enableTrace() {
         this.trace = true;
+        for (CamelContext context : camelContexts) {
+            context.setTracing(true);
+        }
     }
 
     public void setRoutesOutputFile(String routesOutputFile) {
@@ -245,22 +233,6 @@ public abstract class MainSupport extends ServiceSupport {
 
     public String getRoutesOutputFile() {
         return routesOutputFile;
-    }
-
-    /**
-     * Returns the currently active debugger if one is enabled
-     *
-     * @return the current debugger or null if none is active
-     * @see #enableDebug()
-     */
-    public Debugger getDebugger() {
-        for (CamelContext camelContext : camelContexts) {
-            Debugger debugger = Debugger.getDebugger(camelContext);
-            if (debugger != null) {
-                return debugger;
-            }
-        }
-        return null;
     }
 
     protected void doStop() throws Exception {

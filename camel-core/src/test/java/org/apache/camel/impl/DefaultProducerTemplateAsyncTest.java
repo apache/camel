@@ -51,8 +51,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Exchange result = future.get();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result.getOut().getBody());
+        assertTrue("Should take longer than: " + delta, delta > 250);
 
         assertMockEndpointsSatisfied();
     }
@@ -72,8 +72,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Exchange result = future.get();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result.getOut().getBody());
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     public void testRequestAsyncBody() throws Exception {
@@ -88,8 +88,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String result = template.extractFutureBody(future, String.class);
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     public void testRequestAsyncBodyType() throws Exception {
@@ -104,8 +104,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String result = future.get();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     public void testRequestAsyncBodyAndHeader() throws Exception {
@@ -126,8 +126,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     public void testRequestAsyncBodyAndHeaderType() throws Exception {
@@ -148,8 +148,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     public void testRequestAsyncBodyAndHeaders() throws Exception {
@@ -174,8 +174,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     public void testRequestAsyncBodyAndHeadersType() throws Exception {
@@ -200,8 +200,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     public void testRequestAsyncErrorWhenProcessing() throws Exception {
@@ -268,8 +268,8 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
         assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
     @Override
@@ -278,11 +278,11 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .delay(250)
+                    .delay(400)
                     .transform(body().append(" World")).to("mock:result");
 
                 from("direct:error")
-                    .delay(250)
+                    .delay(400)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             throw new IllegalArgumentException("Damn forced by unit test");

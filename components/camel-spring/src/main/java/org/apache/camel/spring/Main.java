@@ -115,18 +115,6 @@ public class Main extends MainSupport {
         Runtime.getRuntime().addShutdownHook(interceptor);
     }
 
-    @Override
-    public void enableDebug() {
-        super.enableDebug();
-        setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/debug.xml");
-    }
-
-    @Override
-    public void enableTrace() {
-        super.enableTrace();
-        setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/trace.xml");
-    }
-
     // Properties
     // -------------------------------------------------------------------------
     public AbstractApplicationContext getApplicationContext() {
@@ -203,10 +191,10 @@ public class Main extends MainSupport {
         if (names != null && names.length > 0) {
             return (ProducerTemplate) getApplicationContext().getBean(names[0], ProducerTemplate.class);
         }
-        for (CamelContext camelContext : getCamelContexts()) {
-            return camelContext.createProducerTemplate();
+        if (getCamelContexts().isEmpty()) {
+            throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");
         }
-        throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");
+        return getCamelContexts().get(0).createProducerTemplate();
     }
 
     protected AbstractApplicationContext createDefaultApplicationContext() {

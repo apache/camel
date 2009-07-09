@@ -51,7 +51,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
-import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -207,12 +206,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (registry != null) {
             LOG.info("Using custom Registry: " + registry);
             getContext().setRegistry(registry);
-        }
-
-        Debugger debugger = getBeanForType(Debugger.class);
-        if (debugger != null) {
-            LOG.info("Using custom Debugger: " + debugger);
-            getContext().addInterceptStrategy(debugger);
         }
 
         Tracer tracer = getBeanForType(Tracer.class);
