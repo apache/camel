@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * An interceptor strategy for debugging and tracing routes
  *
+ * @deprecated will be removed in Camel 2.0
  * @version $Revision$
  */
 public class Debugger implements InterceptStrategy {

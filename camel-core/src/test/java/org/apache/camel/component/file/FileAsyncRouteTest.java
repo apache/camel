@@ -54,25 +54,24 @@ public class FileAsyncRouteTest extends ContextTestSupport {
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(expectedBody);
-        result.setResultWaitTime(5000);
 
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
         // Wait till the exchange is delivered to the processor
-        assertTrue("Async processor received exchange", receivedLatch.await(5, TimeUnit.SECONDS));
+        assertTrue("Async processor received exchange", receivedLatch.await(10, TimeUnit.SECONDS));
         File file = this.file.get();
         
         // The file consumer support async processing of the exchange,
         // so the file should not get deleted until the exchange
         // finishes being asynchronously processed.
-        Thread.sleep(1000);
+        Thread.sleep(1500);
         assertTrue("File should exist", file.exists());
 
         // Release the async processing thread so that the exchange completes
         // and the file
         // gets deleted.
         processingLatch.countDown();
-        Thread.sleep(1000);
+        Thread.sleep(1500);
         assertFalse("File should not exist", file.exists());
 
         result.assertIsSatisfied();

@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 /**
  * Represents an exception that occurred when processing an exchange
  *
+ * @deprecated will be removed in Camel 2.0
  * @version $Revision$
  */
 public class ExceptionEvent {

@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.Exchange;
 
 /**
+ * @deprecated will be removed in Camel 2.0
  * @version $Revision$
  */
 public class Breakpoint {
