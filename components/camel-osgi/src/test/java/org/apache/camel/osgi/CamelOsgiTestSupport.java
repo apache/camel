@@ -16,7 +16,6 @@
  */
 package org.apache.camel.osgi;
 
-import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +25,7 @@ import org.springframework.osgi.mock.MockBundleContext;
 
 public class CamelOsgiTestSupport extends Assert {
     private Activator testActivator;
-    private MockBundleContext bundleContext = new MockBundleContext();
+    private MockBundleContext bundleContext = new CamelMockBundleContext();
     private OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(bundleContext);
     private MockBundle bundle = new CamelMockBundle();
     

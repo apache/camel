@@ -18,10 +18,13 @@ package org.apache.camel.osgi;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -54,6 +57,7 @@ public class CamelContextFactory implements BundleContextAware {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Using OSGI resolvers");
             }
+            updateRegistry(context);
             LOG.debug("Using OsgiFactoryFinderResolver");
             context.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
             LOG.debug("Using OsgiPackageScanClassResolver");
@@ -64,11 +68,21 @@ public class CamelContextFactory implements BundleContextAware {
             context.setLanguageResolver(new OsgiLanguageResolver());
             addOsgiAnnotationTypeConverterLoader(context, bundleContext);            
         } else {
-            // TODO: should we not thrown an excpetion to not allow it to startup
+            // TODO: should we not thrown an exception to not allow it to startup
             LOG.warn("BundleContext not set, cannot run in OSGI container");
         }
         
         return context;
+    }
+    
+    protected void updateRegistry(DefaultCamelContext context) {
+        ObjectHelper.notNull(bundleContext, "BundleContext");
+        LOG.debug("Setting the OSGi ServiceRegistry");
+        OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
+        CompositeRegistry compositeRegistry = new CompositeRegistry();
+        compositeRegistry.addRegistry(osgiServiceRegistry);
+        compositeRegistry.addRegistry(context.getRegistry());
+        context.setRegistry(compositeRegistry);        
     }
     
     protected void addOsgiAnnotationTypeConverterLoader(DefaultCamelContext context, BundleContext bundleContext) {

@@ -22,10 +22,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
@@ -56,6 +59,7 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Using OSGI resolvers");
             }
+            updateRegistry(context);
             LOG.debug("Using OsgiFactoryFinderResolver");
             context.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
             LOG.debug("Using OsgiPackageScanClassResolver");
@@ -73,6 +77,16 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
         return context;
     }    
     
+    protected void updateRegistry(DefaultCamelContext context) {
+        ObjectHelper.notNull(bundleContext, "BundleContext");
+        LOG.debug("Setting the OSGi ServiceRegistry");
+        OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
+        CompositeRegistry compositeRegistry = new CompositeRegistry();
+        compositeRegistry.addRegistry(osgiServiceRegistry);
+        compositeRegistry.addRegistry(context.getRegistry());
+        context.setRegistry(compositeRegistry);        
+    }
+
     protected void addOsgiAnnotationTypeConverterLoader(SpringCamelContext context) {
         LOG.debug("Using OsgiAnnotationTypeConverterLoader");
 
