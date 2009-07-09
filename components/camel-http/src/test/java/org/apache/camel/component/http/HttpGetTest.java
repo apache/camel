@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class HttpGetTest extends ContextTestSupport {
     protected String expectedText = "activemq";
-
+    
     public void testHttpGet() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
@@ -48,13 +48,18 @@ public class HttpGetTest extends ContextTestSupport {
         Map<String, Object> headers = in.getHeaders();
 
         log.debug("Headers: " + headers);
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        checkHeaders(headers);       
 
         String body = in.getBody(String.class);
 
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);
         assertTrue("body should contain: " + expectedText, body.contains(expectedText));
+    }
+
+    protected void checkHeaders(Map<String, Object> headers) {
+        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        
     }
 
     @Override

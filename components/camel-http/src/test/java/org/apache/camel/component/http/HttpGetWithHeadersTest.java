@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 
 public class HttpGetWithHeadersTest extends HttpGetTest {
@@ -25,6 +27,7 @@ public class HttpGetWithHeadersTest extends HttpGetTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
+                    .setHeader("TestHeader", constant("test"))
                     .setHeader("Content-Length", constant(0))
                     .setHeader("Accept-Language", constant("pl"))
                     .to("http://www.google.com/search")
@@ -38,6 +41,11 @@ public class HttpGetWithHeadersTest extends HttpGetTest {
         // "Szukaj" is "Search" in polish language
         expectedText = "Szukaj";
         super.setUp();
+    }
+    
+    protected void checkHeaders(Map<String, Object> headers) {
+        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        assertEquals("Should get the TestHeader", "test", headers.get("TestHeader"));
     }
 
 }
