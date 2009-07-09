@@ -97,7 +97,7 @@ public class HttpProducer extends DefaultProducer {
     protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
         Message answer = exchange.getOut();
 
-        //answer.setHeaders(in.getHeaders());
+        answer.setHeaders(in.getHeaders());
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
         answer.setBody(extractResponseBody(method, exchange));
 
