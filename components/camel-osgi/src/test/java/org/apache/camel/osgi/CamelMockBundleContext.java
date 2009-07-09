@@ -14,34 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.osgi;
 
-import junit.framework.TestCase;
-import org.osgi.framework.BundleContext;
-import org.springframework.osgi.mock.MockBundle;
+import org.apache.camel.osgi.test.MyService;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 import org.springframework.osgi.mock.MockBundleContext;
 
-public class CamelOsgiTestSupport extends TestCase {
-    private Activator testActivator;
-    private MockBundleContext bundleContext = new CamelMockBundleContext();
-    private MockBundle bundle = new CamelMockBundle();
+/**
+ * 
+ */
+public class CamelMockBundleContext extends MockBundleContext {
     
-    public void setUp() throws Exception {        
-        bundleContext.setBundle(bundle);
-        testActivator = new Activator();
-        testActivator.start(bundleContext);
-    }
-    
-    public void tearDown() throws Exception {
-        testActivator.stop(bundleContext);
-    }
-    
-    public Activator getActivator() {
-        return testActivator;
-    }
-    
-    public BundleContext getBundleContext() {
-        return bundleContext;
+    public Object getService(ServiceReference reference) {        
+        String[] classNames = (String[]) reference.getProperty(Constants.OBJECTCLASS);
+        System.out.println("The class name is " + classNames[0]);
+        if (classNames[0].equals("org.apache.camel.osgi.test.MyService")) {
+            return new MyService();
+        } else {
+            return null;
+        }    
     }
 
 }
