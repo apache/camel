@@ -29,7 +29,7 @@ public class QuartzCronRouteTest extends CamelTestSupport {
     @Test
     public void testQuartzCronRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
+        mock.expectedMinimumMessageCount(3);
 
         assertMockEndpointsSatisfied();
     }
