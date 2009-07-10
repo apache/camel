@@ -321,7 +321,7 @@ public interface Exchange {
      *
      * @param handoverOnCompletion whether the on completion callbacks should be handed over to the new copy.
      */
-    Exchange newCopy(boolean handoverOnCompletion);
+    Exchange copy(boolean handoverOnCompletion);
 
     /**
      * Copies the data into this exchange from the given exchange

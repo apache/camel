@@ -89,7 +89,7 @@ public final class DefaultExchange implements Exchange {
         return exchange;
     }
 
-    public Exchange newCopy(boolean handoverOnCompletion) {
+    public Exchange copy(boolean handoverOnCompletion) {
         Exchange copy = copy();
         // do not share the unit of work
         copy.setUnitOfWork(null);

@@ -41,7 +41,7 @@ public class SedaProducer extends CollectionProducer {
     public void process(final Exchange exchange) throws Exception {
         // use a new copy of the exchange to route async and handover the on completion to the new copy
         // so its the new copy that performs the on completion callback when its done
-        Exchange copy = exchange.newCopy(true);
+        Exchange copy = exchange.copy(true);
         // set a new from endpoint to be the seda queue
         copy.setFromEndpoint(endpoint);
 
