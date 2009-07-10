@@ -46,7 +46,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final RedeliveryPolicy redeliveryPolicy;
     protected final Predicate handledPolicy;
     protected final Logger logger;
-    protected final boolean useOriginalBodyPolicy;
+    protected final boolean useOriginalMessagePolicy;
 
     protected class RedeliveryData {
         int redeliveryCounter;
@@ -59,12 +59,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Processor failureProcessor;
         Processor onRedeliveryProcessor = redeliveryProcessor;
         Predicate handledPredicate = handledPolicy;
-        boolean useOriginalInBody = useOriginalBodyPolicy;
+        boolean useOriginalInMessage = useOriginalMessagePolicy;
     }
 
     public RedeliveryErrorHandler(Processor output, Logger logger, Processor redeliveryProcessor,
                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, Processor deadLetter,
-                                  String deadLetterUri, boolean useOriginalBodyPolicy) {
+                                  String deadLetterUri, boolean useOriginalMessagePolicy) {
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
         this.output = output;
@@ -72,7 +72,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.logger = logger;
         this.deadLetterUri = deadLetterUri;
         this.handledPolicy = handledPolicy;
-        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
+        this.useOriginalMessagePolicy = useOriginalMessagePolicy;
     }
 
     public boolean supportTransacted() {
@@ -243,7 +243,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
             data.retryUntilPredicate = exceptionPolicy.getRetryUntilPolicy();
-            data.useOriginalInBody = exceptionPolicy.getUseOriginalBodyPolicy();
+            data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy();
 
             // route specific failure handler?
             Processor processor = exceptionPolicy.getErrorHandler();
@@ -310,13 +310,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         if (processor != null) {
             // prepare original IN body if it should be moved instead of current body
-            if (data.useOriginalInBody) {
+            if (data.useOriginalInMessage) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Using the original IN body instead of the current IN body");
+                    log.trace("Using the original IN message instead of current");
                 }
 
-                Object original = exchange.getUnitOfWork().getOriginalInBody();
-                exchange.getIn().setBody(original);
+                Message original = exchange.getUnitOfWork().getOriginalInMessage();
+                exchange.setIn(original);
             }
 
             if (log.isTraceEnabled()) {

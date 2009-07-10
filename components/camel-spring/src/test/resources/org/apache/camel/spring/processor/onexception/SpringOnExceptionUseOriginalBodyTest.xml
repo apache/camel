@@ -44,7 +44,7 @@
 
     <camelContext errorHandlerRef="deadLetter" xmlns="http://camel.apache.org/schema/spring">
 
-        <onException useOriginalBody="true">
+        <onException useOriginalMessage="true">
             <exception>java.lang.IllegalArgumentException</exception>
             <redeliveryPolicy maximumRedeliveries="2"/>
             <handled><constant>true</constant></handled>

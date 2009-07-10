@@ -55,7 +55,7 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // will use original
                 ErrorHandlerBuilder a = deadLetterChannel("mock:a")
-                    .maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).useOriginalBody().handled(true);
+                    .maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).useOriginalMessage().handled(true);
 
                 // will NOT use original
                 ErrorHandlerBuilder b = deadLetterChannel("mock:b")

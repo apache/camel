@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.RouteNode;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
@@ -46,10 +47,17 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private List<Synchronization> synchronizations;
     private List<RouteNode> routeNodes;
     private Map<ProcessorDefinition, AtomicInteger> routeIndex = new HashMap<ProcessorDefinition, AtomicInteger>();
-    private Object originalInBody;
+    private Message originalInMessage;
 
     public DefaultUnitOfWork(Exchange exchange) {
-        this.originalInBody = exchange.getIn().getBody();
+        // special for JmsMessage as it can cause it to loose headers later. Yeah JMS suchs
+        if (exchange.getIn().getClass().getSimpleName().equals("JmsMessage")) {
+            this.originalInMessage = new DefaultMessage();
+            this.originalInMessage.setBody(exchange.getIn().getBody());
+            // cannot copy headers with a JmsMessage as the underlying javax.jms.Message object goes nuts 
+        } else {
+            this.originalInMessage = exchange.getIn().copy();
+        }
     }
 
     public void start() throws Exception {
@@ -65,7 +73,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
             routeNodes.clear();
         }
         routeIndex.clear();
-        originalInBody = null;
+        originalInMessage = null;
     }
 
     public synchronized void addSynchronization(Synchronization synchronization) {
@@ -144,8 +152,8 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return Collections.unmodifiableList(routeNodes);
     }
 
-    public Object getOriginalInBody() {
-        return originalInBody;
+    public Message getOriginalInMessage() {
+        return originalInMessage;
     }
 
     public int getAndIncrement(ProcessorDefinition node) {

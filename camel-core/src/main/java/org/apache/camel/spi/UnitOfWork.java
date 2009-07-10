@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 
 /**
  * An object representing the unit of work processing an {@link Exchange}
@@ -67,9 +68,9 @@ public interface UnitOfWork {
     String getId();
 
     /**
-     * Gets the original IN body this Unit of Work was started with.
+     * Gets the original IN {@link Message} this Unit of Work was started with.
      *
-     * @return the original IN body
+     * @return the original IN {@link Message}
      */
-    Object getOriginalInBody();
+    Message getOriginalInMessage();
 }

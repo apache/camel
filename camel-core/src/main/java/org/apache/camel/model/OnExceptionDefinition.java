@@ -65,8 +65,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     private ExpressionSubElementDefinition handled;
     @XmlAttribute(name = "onRedeliveryRef", required = false)
     private String onRedeliveryRef;
-    @XmlAttribute(name = "useOriginalBody", required = false)
-    private Boolean useOriginalBodyPolicy = Boolean.FALSE;
+    @XmlAttribute(name = "useOriginalMessage", required = false)
+    private Boolean useOriginalMessagePolicy = Boolean.FALSE;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
@@ -387,7 +387,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @return the builder
      */
     public OnExceptionDefinition useOriginalBody() {
-        setUseOriginalBodyPolicy(Boolean.TRUE);
+        setUseOriginalMessagePolicy(Boolean.TRUE);
         return this;
     }
 
@@ -498,12 +498,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         this.onRedeliveryRef = onRedeliveryRef;
     }
 
-    public Boolean getUseOriginalBodyPolicy() {
-        return useOriginalBodyPolicy;
+    public Boolean getUseOriginalMessagePolicy() {
+        return useOriginalMessagePolicy;
     }
 
-    public void setUseOriginalBodyPolicy(Boolean useOriginalBodyPolicy) {
-        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
+    public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
+        this.useOriginalMessagePolicy = useOriginalMessagePolicy;
     }
 
     // Implementation methods

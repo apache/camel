@@ -30,14 +30,14 @@
 
     <camelContext errorHandlerRef="deadLetter" xmlns="http://camel.apache.org/schema/spring">
 
-        <onException useOriginalBody="true">
+        <onException useOriginalMessage="true">
             <exception>org.apache.camel.processor.onexception.MyTechnicalException</exception>
             <redeliveryPolicy maximumRedeliveries="0" logStackTrace="false"/>
             <handled><constant>true</constant></handled>
             <to uri="mock:tech"/>
         </onException>
 
-        <onException useOriginalBody="true">
+        <onException useOriginalMessage="true">
             <exception>org.apache.camel.processor.onexception.MyFunctionalException</exception>
             <redeliveryPolicy maximumRedeliveries="0" logStackTrace="false"/>
             <handled><constant>true</constant></handled>

@@ -54,7 +54,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DeadLetterChannel answer = new DeadLetterChannel(processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
                 getHandledPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(),
-                isUseOriginalBody());
+                isUseOriginalMessage());
         // configure error handler before we can use it
         configure(answer);
         return answer;
