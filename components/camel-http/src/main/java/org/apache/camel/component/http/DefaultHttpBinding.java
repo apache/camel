@@ -59,19 +59,25 @@ public class DefaultHttpBinding implements HttpBinding {
         // populate the headers from the request
         Map<String, Object> headers = message.getHeaders();
         
+        String contentType = "";
         //apply the headerFilterStrategy
         Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();
             Object value = request.getHeader(name);
+            // mapping the content-type 
+            if (name.toLowerCase().equals("content-type")) {
+                contentType = (String) value;
+            }
             if (headerFilterStrategy != null
                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
                 headers.put(name, value);
             }
         }
 
-        //if the request method is Get, we also populate the http request parameters
-        if (parameterMap.size() > 0) {
+        //we populate the http request parameters for GET and POST 
+        String method = request.getMethod();
+        if (method.equalsIgnoreCase("GET") || (method.equalsIgnoreCase("POST") && contentType.equalsIgnoreCase("application/x-www-form-urlencoded"))) {
             names = request.getParameterNames();
             while (names.hasMoreElements()) {
                 String name = (String)names.nextElement();

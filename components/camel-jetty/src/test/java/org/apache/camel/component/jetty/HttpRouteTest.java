@@ -38,12 +38,15 @@ import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 
 /**
  * @version $Revision$
  */
 public class HttpRouteTest extends ContextTestSupport {
+    protected static final String POST_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "
+        + "<test>Hello World</test>"; 
     protected String expectedBody = "<hello>world!</hello>";
 
     public void testEndpoint() throws Exception {
@@ -92,6 +95,17 @@ public class HttpRouteTest extends ContextTestSupport {
         String out = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("Get a wrong output " , "PostParameter", out);
     }
+    
+    public void testPostXMLMessage() throws Exception {
+        HttpClient client = new HttpClient();
+        PostMethod post = new PostMethod("http://localhost:9080/postxml");
+        StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
+        post.setRequestEntity(entity);
+        client.executeMethod(post);
+        InputStream response = post.getResponseBodyAsStream();
+        String out = context.getTypeConverter().convertTo(String.class, response);
+        assertEquals("Get a wrong output " , "OK", out);
+    }
 
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
@@ -119,7 +133,7 @@ public class HttpRouteTest extends ContextTestSupport {
                 from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);
                 
                 Processor procPostParameters = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) throws Exception {                        
                         HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
                         String value = req.getParameter("request");
                         String requestValue = exchange.getIn().getHeader("request", String.class);
@@ -133,7 +147,20 @@ public class HttpRouteTest extends ContextTestSupport {
                 };
                 
                 from("jetty:http://localhost:9080/post").process(procPostParameters);
+                
+                from("jetty:http://localhost:9080/postxml").process(new Processor() {
+
+                    public void process(Exchange exchange) throws Exception {
+                        String value = exchange.getIn().getBody(String.class);                        
+                        assertEquals("The response message is wrong", value, POST_MESSAGE);
+                        exchange.getOut().setBody("OK");
+                    }
+                    
+                });
+                
             }
         };
     }
 }
+
+

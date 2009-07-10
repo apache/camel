@@ -83,11 +83,6 @@ public class JettyHttpComponent extends HttpComponent {
     }
     
     
-    /*static {
-        // create the Server static object;
-       
-    }*/
-
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         uri = uri.startsWith("jetty:") ? remaining : uri;
