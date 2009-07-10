@@ -60,6 +60,7 @@ public class DefaultHttpBinding implements HttpBinding {
         // populate the headers from the request
         Map<String, Object> headers = message.getHeaders();
         
+        String contentType = "";
         //apply the headerFilterStrategy
         Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
@@ -68,6 +69,7 @@ public class DefaultHttpBinding implements HttpBinding {
             // mapping the content-type 
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
+                contentType = (String) value;                
             }
             if (headerFilterStrategy != null
                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
@@ -75,8 +77,9 @@ public class DefaultHttpBinding implements HttpBinding {
             }
         }
 
-        //we populate the http request parameters for GET and POST etc method
-        if (parameterMap.size() > 0) {
+        //we populate the http request parameters for GET and POST 
+        String method = request.getMethod();
+        if (method.equalsIgnoreCase("GET") || (method.equalsIgnoreCase("POST") && contentType.equalsIgnoreCase("application/x-www-form-urlencoded"))) {
             names = request.getParameterNames();
             while (names.hasMoreElements()) {
                 String name = (String)names.nextElement();
