@@ -68,6 +68,11 @@ public class SetHeaderDefinition extends ExpressionNode {
     }
 
     @Override
+    public String getLabel() {
+        return "setHeader[" + getHeaderName() + "]";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(headerName, "headerName");
         Expression expr = getExpression().createExpression(routeContext);

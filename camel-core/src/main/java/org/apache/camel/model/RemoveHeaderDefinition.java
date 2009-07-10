@@ -53,6 +53,11 @@ public class RemoveHeaderDefinition extends OutputDefinition<ProcessorDefinition
     }
 
     @Override
+    public String getLabel() {
+        return "removeHeader[" + getHeaderName() + "]";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getHeaderName(), "headerName", this);
         return ProcessorBuilder.removeHeader(getHeaderName());

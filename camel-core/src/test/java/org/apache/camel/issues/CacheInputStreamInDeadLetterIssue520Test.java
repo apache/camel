@@ -73,6 +73,7 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
 
                 // 0 delay for faster unit test
                 errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).redeliverDelay(0));
+
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         count++;
