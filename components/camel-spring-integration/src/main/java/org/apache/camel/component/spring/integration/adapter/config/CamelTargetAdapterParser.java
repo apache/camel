@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.integration.adapter.config;
-
-import org.apache.camel.component.spring.integration.adapter.CamelTargetAdapter;
 import org.w3c.dom.Element;
+import org.apache.camel.component.spring.integration.adapter.CamelTargetAdapter;
+
 
 /**
  * Parser for the &lt;camelTarget/&gt; element

@@ -16,35 +16,36 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.Callable;
-import javax.jms.TextMessage;
+import java.util.concurrent.Executors;
+
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.JMSException;
+import javax.jms.TextMessage;
 
+import org.apache.activemq.camel.component.ActiveMQComponent;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.activemq.camel.component.ActiveMQComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
+import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
  * 
  * @version $Revision$
  */
 public class JmsJMSReplyToEndpointUsingInOutTest extends ContextTestSupport {
-
+    private static final String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
     private ActiveMQComponent amq;
-    private static String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
+    
 
     public void testCustomJMSReplyToInOut() throws Exception {
 

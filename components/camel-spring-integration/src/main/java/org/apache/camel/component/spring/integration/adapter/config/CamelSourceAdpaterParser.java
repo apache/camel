@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.spring.integration.adapter.config;
 
-import org.apache.camel.component.spring.integration.adapter.CamelSourceAdapter;
 import org.w3c.dom.Element;
+import org.apache.camel.component.spring.integration.adapter.CamelSourceAdapter;
+
 
 /**
  * Parser for the &lt;camelSource/&gt; element
