@@ -77,20 +77,23 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
 
             // check for error if so we should break out
             boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(nextExchange);
-            if (nextExchange.isFailed() || exceptionHandled) {
+            if (nextExchange.isFailed() || nextExchange.isRollbackOnly() ||  exceptionHandled) {
                 // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
                 // by the error handler. It's still an exception, the exchange still failed.
                 if (LOG.isDebugEnabled()) {
                     StringBuilder sb = new StringBuilder();
                     sb.append("Message exchange has failed so breaking out of pipeline: ").append(nextExchange);
+                    if (nextExchange.isRollbackOnly()) {
+                        sb.append(" Marked as rollback only.");
+                    }
                     if (nextExchange.getException() != null) {
-                        sb.append(" exception: ").append(nextExchange.getException());
+                        sb.append(" Exception: ").append(nextExchange.getException());
                     }
                     if (nextExchange.hasFault()) {
-                        sb.append(" fault: ").append(nextExchange.getFault());
+                        sb.append(" Fault: ").append(nextExchange.getFault());
                     }
                     if (exceptionHandled) {
-                        sb.append(" handled by the error handler");
+                        sb.append(" Handled by the error handler.");
                     }
                     LOG.debug(sb.toString());
                 }

@@ -167,6 +167,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             // the exception back by rehtrowing it. We cannot mark it on the exchange as Camel
             // uses copies of exchanges in its pipeline and the data isnt copied back in case
             // when an exception occured
+            // TODO: revist if/when we avoid doing the copying in the pipeline
             return new TransactedRuntimeCamelException(exception, true);
         }
     }

@@ -33,6 +33,8 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
     private int size = 10000;
     private SimpleDataSet dataSet = new SimpleDataSet(size);
+    // do not collect exchanges to go as fast as we can
+    private String uri = "mock:results?collectMaximumExchanges=0";
 
     public void testPerformance() throws Exception {
         if (!canRunOnThisPlatform()) {
@@ -41,7 +43,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
         long start = System.currentTimeMillis();
 
-        MockEndpoint endpoint = getMockEndpoint("mock:results");
+        MockEndpoint endpoint = getMockEndpoint(uri);
         endpoint.expectedMessageCount((int) dataSet.getSize());
         endpoint.expectedHeaderReceived("foo", 123);
 
@@ -79,8 +81,8 @@ public class RoutePerformanceTest extends ContextTestSupport {
                 from("direct:start").to("log:a?level=OFF", "log:b?level=OFF", "direct:c");
                 from("direct:c")
                     .choice()
-                        .when().header("foo").to("mock:results", "dataset:foo")
-                        .otherwise().to("mock:results", "dataset:foo")
+                        .when().header("foo").to(uri, "dataset:foo")
+                        .otherwise().to(uri, "dataset:foo")
                     .end();
             }
         };

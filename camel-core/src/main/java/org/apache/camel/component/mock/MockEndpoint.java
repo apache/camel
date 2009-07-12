@@ -81,6 +81,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private Object propertyValue;
     private Object actualProperty;
     private Processor reporter;
+    private int collectMaximumExchanges = -1;
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -678,7 +679,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     public int getReceivedCounter() {
-        return getReceivedExchanges().size();
+        return counter;
     }
 
     public List<Exchange> getReceivedExchanges() {
@@ -767,6 +768,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         this.reporter = reporter;
     }
 
+    public int getCollectMaximumExchanges() {
+        return collectMaximumExchanges;
+    }
+
+    public void setCollectMaximumExchanges(int collectMaximumExchanges) {
+        this.collectMaximumExchanges = collectMaximumExchanges;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     private void init() {
@@ -783,6 +792,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expectedMinimumCount = -1;
         expectedBodyValues = null;
         actualBodyValues = new ArrayList();
+        collectMaximumExchanges = -1;
     }
 
     protected synchronized void onExchange(Exchange exchange) {
@@ -828,7 +838,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         LOG.debug(getEndpointUri() + " >>>> " + (++counter) + " : " + exchange + " with body: " + actualBody);
 
-        receivedExchanges.add(exchange);
+        // only collect if needed
+        if (collectMaximumExchanges == -1 || counter < collectMaximumExchanges) {
+            receivedExchanges.add(exchange);
+        }
 
         Processor processor = processors.get(getReceivedCounter()) != null
                 ? processors.get(getReceivedCounter()) : defaultProcessor;
