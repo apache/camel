@@ -43,7 +43,7 @@ public class AxisReportIncidentServiceTest extends TestCase {
         // add a listener on port 8080 on localhost (127.0.0.1)
         Connector connector = new SelectChannelConnector();
         connector.setPort(9080);
-        connector.setHost("127.0.0.1");
+        connector.setHost("localhost");
         server.addConnector(connector);
 
         // add our web context path
