@@ -56,8 +56,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         org.apache.cxf.message.Message cxfMessage = cxfExchange.getInMessage();
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.REQUEST_URI, Exchange.HTTP_URI);
-                
-        copyMessageHeader(cxfMessage, camelMessage, JAXRSInInterceptor.RELATIVE_PATH, Exchange.HTTP_RELATIVE_PATH);
         
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, Exchange.HTTP_METHOD);
         

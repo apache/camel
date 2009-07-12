@@ -66,12 +66,16 @@ public class CamelServlet extends HttpServlet {
             consumer.getBinding().writeResponse(exchange, response);
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServletException(e);
         }
     }
 
     protected HttpConsumer resolve(HttpServletRequest request) {
         String path = request.getPathInfo();
+        if (path == null) {
+            return null;
+        }
         HttpConsumer answer = consumers.get(path);
                
         if (answer == null && matchOnUriPrefix) {

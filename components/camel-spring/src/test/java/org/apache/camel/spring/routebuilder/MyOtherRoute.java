@@ -16,9 +16,9 @@
  */
 package org.apache.camel.spring.routebuilder;
 
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.spring.SpringRouteBuilder;
 
 /**
  * @version $Revision$

@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty;
+package org.apache.camel.component.servlet;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -26,26 +25,33 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpPollingConsumer;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
-import org.mortbay.jetty.Handler;
 
-/**
- * @version $Revision$
- */
-public class JettyHttpEndpoint extends HttpEndpoint {
-
-    private boolean sessionSupport;
-    private List<Handler> handlers;
-
-    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL, HttpClientParams clientParams,
-                             HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(uri, component, httpURL, clientParams, httpConnectionManager, clientConfigurer);
+public class ServletEndpoint extends HttpEndpoint {
+    private String servletName;
+    
+    public ServletEndpoint() {
+        super();
     }
-
+    
+    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params
+                           , HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+        super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
+    }
+    
+    public void setServletName(String name) {
+        servletName = name;
+    }
+    
+    public String getServletName() {
+        return servletName;
+    }
+    
     @Override
     public Producer createProducer() throws Exception {
         return super.createProducer();
@@ -54,21 +60,6 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new HttpConsumer(this, processor);
-    }   
-
-    public void setSessionSupport(boolean support) {
-        sessionSupport = support;
     }
 
-    public boolean isSessionSupport() {
-        return sessionSupport;
-    }
-
-    public List<Handler> getHandlers() {
-        return handlers;
-    }
-
-    public void setHandlers(List<Handler> handlers) {
-        this.handlers = handlers;
-    }
 }

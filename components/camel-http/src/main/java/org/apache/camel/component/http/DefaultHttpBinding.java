@@ -94,6 +94,8 @@ public class DefaultHttpBinding implements HttpBinding {
         // store the method and query and other info in headers
         headers.put(Exchange.HTTP_METHOD, request.getMethod());
         headers.put(Exchange.HTTP_QUERY, request.getQueryString());
+        headers.put(Exchange.HTTP_URL, request.getRequestURL());
+        headers.put(Exchange.HTTP_URI, request.getRequestURI());
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
         headers.put(Exchange.HTTP_CHARACTER_ENCODING, request.getCharacterEncoding());
