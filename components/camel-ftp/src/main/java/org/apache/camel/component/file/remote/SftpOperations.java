@@ -391,7 +391,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
-            boolean existFile = existFile(name);
+            boolean existFile = existsFile(name);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
                 if (LOG.isTraceEnabled()) {
@@ -419,7 +419,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    private boolean existFile(String name) {
+    public boolean existsFile(String name) throws GenericFileOperationFailedException {
         // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
         if (directory == null) {
@@ -439,6 +439,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
-    }
+    }   
 
 }
