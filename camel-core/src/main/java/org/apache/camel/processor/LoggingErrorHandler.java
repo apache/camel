@@ -132,6 +132,8 @@ public class LoggingErrorHandler extends ErrorHandlerSupport {
                 log.warn(logMessage(exchange, e), e);
             }
             break;
+        case OFF:
+            break;
         default:
             log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange, e), e);
         }

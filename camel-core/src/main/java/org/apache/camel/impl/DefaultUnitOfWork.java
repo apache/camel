@@ -50,6 +50,8 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private Message originalInMessage;
 
     public DefaultUnitOfWork(Exchange exchange) {
+        // TODO: optimize to only copy original message if enabled to do so in the route
+
         // special for JmsMessage as it can cause it to loose headers later. Yeah JMS suchs
         if (exchange.getIn().getClass().getSimpleName().equals("JmsMessage")) {
             this.originalInMessage = new DefaultMessage();

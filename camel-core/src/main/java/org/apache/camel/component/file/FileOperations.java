@@ -62,6 +62,11 @@ public class FileOperations implements GenericFileOperations<File> {
         return file.renameTo(target);
     }
 
+    public boolean existsFile(String name) throws GenericFileOperationFailedException {
+        File file = new File(name);
+        return file.exists();
+    }
+
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");       
 

@@ -29,9 +29,35 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         // must invoke super
         super.commit(operations, endpoint, exchange, file);
 
-        boolean deleted = operations.deleteFile(file.getAbsoluteFilePath());
+        int retries = 3;
+        boolean deleted = false;
+
+        while (retries > 0 && !deleted) {
+            retries--;
+
+            if (operations.deleteFile(file.getAbsoluteFilePath())) {
+                // file is deleted
+                deleted = true;
+                break;
+            }
+
+            // some OS can report false when deleting but the file is still deleted
+            // use exists to check instead
+            boolean exits = operations.existsFile(file.getAbsoluteFilePath());
+            if (!exits) {
+                deleted = true;
+            } else {
+                if (log.isTraceEnabled()) {
+                    log.trace("File was not deleted at this attempt will try again in 1 sec.: " + file);
+                }
+                // sleep a bit and try again
+                Thread.sleep(1000);
+            }
+        }
+
         if (!deleted) {
             throw new GenericFileOperationFailedException("Cannot delete file: " + file);
         }
     }
+
 }

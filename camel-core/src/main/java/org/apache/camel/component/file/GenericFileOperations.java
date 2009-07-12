@@ -39,6 +39,15 @@ public interface GenericFileOperations<T> {
     boolean deleteFile(String name) throws GenericFileOperationFailedException;
 
     /**
+     * Determines whether the files exists or not
+     *
+     * @param name name of the file
+     * @return true if exists, false if not
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    boolean existsFile(String name) throws GenericFileOperationFailedException;
+
+    /**
      * Renames the file
      *
      * @param from original name

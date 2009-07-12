@@ -121,7 +121,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         }
         
         // remove the file from the in progress list in case the batch was limited by max messages per poll
-        for (int index = 0; index < exchanges.size() && isRunAllowed(); index++) {
+        while (exchanges.size() > 0) {
             Exchange exchange = (Exchange) exchanges.poll();
             GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             String key = file.getFileName();
