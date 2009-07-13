@@ -382,7 +382,7 @@ public class JmsProducer extends DefaultProducer {
         if (exchange.hasOut()) {
             JmsMessage out = (JmsMessage) exchange.getOut();
             try {
-                if (out != null) {
+                if (out != null && out.getJmsMessage() != null) {
                     out.setMessageId(out.getJmsMessage().getJMSMessageID());
                 }
             } catch (JMSException e) {
