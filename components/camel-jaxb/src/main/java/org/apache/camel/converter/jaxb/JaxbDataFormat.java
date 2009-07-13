@@ -56,7 +56,9 @@ public class JaxbDataFormat implements DataFormat {
         try {
             // must create a new instance of marshaller as its not thred safe
             Marshaller marshaller = getContext().createMarshaller();
-
+            if (isPrettyPrint()) {
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            } 
             // exchange take precedense over encoding option
             String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charset == null) {
