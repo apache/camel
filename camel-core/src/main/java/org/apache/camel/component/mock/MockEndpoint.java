@@ -679,7 +679,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     public int getReceivedCounter() {
-        return counter;
+        return receivedExchanges.size();
     }
 
     public List<Exchange> getReceivedExchanges() {
@@ -836,12 +836,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
         }
 
-        LOG.debug(getEndpointUri() + " >>>> " + (++counter) + " : " + exchange + " with body: " + actualBody);
-
-        // only collect if needed
-        if (collectMaximumExchanges == -1 || counter < collectMaximumExchanges) {
-            receivedExchanges.add(exchange);
+        ++counter;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(getEndpointUri() + " >>>> " + (counter) + " : " + exchange + " with body: " + actualBody);
         }
+
+        receivedExchanges.add(exchange);
 
         Processor processor = processors.get(getReceivedCounter()) != null
                 ? processors.get(getReceivedCounter()) : defaultProcessor;

@@ -33,8 +33,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
     private int size = 10000;
     private SimpleDataSet dataSet = new SimpleDataSet(size);
-    // do not collect exchanges to go as fast as we can
-    private String uri = "mock:results?collectMaximumExchanges=0";
+    private String uri = "mock:results";
 
     public void testPerformance() throws Exception {
         if (!canRunOnThisPlatform()) {
