@@ -17,28 +17,60 @@
 package org.apache.camel.example;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
+import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.spi.DataFormat;
 
 /**
  * @version $Revision$
  */
 public class DataFormatTest extends ContextTestSupport {
+    
+    private MockEndpoint resultEndpoint;
+    
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+    }
 
     public void testMarshalThenUnmarshalBean() throws Exception {
+        
         PurchaseOrder bean = new PurchaseOrder();
         bean.setName("Beer");
         bean.setAmount(23);
         bean.setPrice(2.5);
-
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+       
         resultEndpoint.expectedBodiesReceived(bean);
 
         template.sendBody("direct:start", bean);
 
         resultEndpoint.assertIsSatisfied();
+    }
+    
+    public void testMarshalPrettyPrint() throws Exception {
+        PersonType person = new PersonType();
+        person.setFirstName("Willem");
+        person.setLastName("Jiang");
+        resultEndpoint.expectedMessageCount(1);
+        
+        template.sendBody("direct:prettyPrint", person);
+        
+        resultEndpoint.assertIsSatisfied();
+        
+        Exchange exchange = resultEndpoint.getExchanges().get(0);
+        
+        String result = exchange.getIn().getBody(String.class);
+        assertNotNull("The result should not be null", result);
+        int indexPerson = result.indexOf("<Person>");
+        int indexFirstName = result.indexOf("<firstName>");
+
+        assertTrue("we should find the <Person>", indexPerson > 0);
+        assertTrue("we should find the <firstName>", indexFirstName > 0);
+        assertTrue("There should some sapce between <Person> and <firstName>", indexFirstName - indexPerson > 8);
     }
 
 
@@ -46,14 +78,20 @@ public class DataFormatTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                DataFormat jaxb = new JaxbDataFormat("org.apache.camel.example");
-
+                JaxbDataFormat example = new JaxbDataFormat("org.apache.camel.example");
+                JaxbDataFormat person = new JaxbDataFormat("org.apache.camel.foo.bar");
+                person.setPrettyPrint(true);
+                
                 from("direct:start").
-                        marshal(jaxb).
+                        marshal(example).
                         to("direct:marshalled");
 
                 from("direct:marshalled").
-                        unmarshal(jaxb).
+                        unmarshal(example).
+                        to("mock:result");
+                
+                from("direct:prettyPrint").
+                        marshal(person).
                         to("mock:result");
             }
         };
