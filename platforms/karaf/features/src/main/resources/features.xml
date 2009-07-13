@@ -53,8 +53,7 @@
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxws_2.1_spec/${geronimo-jaxws-spec-version}</bundle>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/${wsdl4j-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.0/${</bundle>
-    <bundle>mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata-bundle-version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata-spec-version}</bundle>
     <bundle>mvn:org.apache.cxf/cxf-bundle/${cxf-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-spring</feature>
