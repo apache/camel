@@ -47,7 +47,7 @@
 
     <!-- START SNIPPET: e5 -->
     <!-- the audit store endpoint is configued as file based -->
-    <camel:endpoint id="AuditStore" uri="file://target/store?append=false"/>
+    <camel:endpoint id="AuditStore" uri="file://target/store"/>
     <!-- END SNIPPET: e5 -->
 
 </beans>
