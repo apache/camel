@@ -27,7 +27,7 @@
         <route>
             <from uri="direct:start"/>
             <marshal>
-                <jaxb prettyPrint="true" encoding="iso-8859-1" contextPath="org.apache.camel.example"/>
+                <jaxb prettyPrint="false" encoding="iso-8859-1" contextPath="org.apache.camel.example"/>
             </marshal>
             <to uri="mock:result"/>
         </route>
