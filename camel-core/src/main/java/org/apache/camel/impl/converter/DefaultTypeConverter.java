@@ -126,6 +126,12 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         for (TypeConverter fallback : fallbackConverters) {
             T rc = fallback.convertTo(type, exchange, value);
             if (rc != null) {
+                // add it as a known type converter since we found a fallback that could do it
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Adding fallback type converter as a known type converter to convert from: "
+                        + type.getCanonicalName() + " to: " + value.getClass().getCanonicalName());
+                }
+                addTypeConverter(type, value.getClass(), fallback);
                 return rc;
             }
         }
