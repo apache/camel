@@ -31,6 +31,7 @@
          <to uri="direct:y"/>
          <to uri="direct:z"/>
       </multicast>
+      <to uri="mock:result"/>
     </route>
 
     <route>
@@ -40,6 +41,7 @@
          <to uri="direct:y"/>
          <to uri="direct:z"/>
       </multicast>
+      <to uri="mock:result"/>
     </route>
 
     <route>
