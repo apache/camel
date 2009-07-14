@@ -321,10 +321,33 @@ public final class ObjectHelper {
                 }
             };
         } else if (value instanceof String) {
-            Scanner scanner = new Scanner((String)value);
-            // use comma as delimiter for String values
-            scanner.useDelimiter(",");
-            return scanner;
+            final String s = (String) value;
+
+            // this code is optimized to only use a Scanner if needed, eg there is a delimiter
+
+            if (s.contains(",")) {
+                // use a scanner if it contains the delimtor
+                Scanner scanner = new Scanner((String)value);
+                scanner.useDelimiter(",");
+                return scanner;
+            } else {
+                // use a plain iterator that returns the value as is as there are only a single value
+                return new Iterator<String>() {
+                    int idx = -1;
+
+                    public boolean hasNext() {
+                        return ++idx == 0;
+                    }
+
+                    public String next() {
+                        return s;
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
         } else {
             return Collections.singletonList(value).iterator();
         }

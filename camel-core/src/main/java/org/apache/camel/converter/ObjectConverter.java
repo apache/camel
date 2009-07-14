@@ -207,6 +207,19 @@ public final class ObjectConverter {
         }
     }
 
+    @Converter
+    public static String toString(Integer value) {
+        return value.toString();
+    }
 
+    @Converter
+    public static String toString(Long value) {
+        return value.toString();
+    }
+
+    @Converter
+    public static String toString(Boolean value) {
+        return value.toString();
+    }
 
 }
