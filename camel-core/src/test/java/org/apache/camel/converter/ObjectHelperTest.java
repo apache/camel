@@ -59,4 +59,29 @@ public class ObjectHelperTest extends TestCase {
         assertTrue(ObjectHelper.isNotEmpty(new Object()));
     }
 
+    public void testIteratorWithComma() {
+        Iterator it = ObjectHelper.createIterator("Claus,Jonathan");
+        assertEquals("Claus", it.next());
+        assertEquals("Jonathan", it.next());
+        assertEquals(false, it.hasNext());
+    }
+
+    public void testIteratorWithOtherDelimiter() {
+        Iterator it = ObjectHelper.createIterator("Claus#Jonathan", "#");
+        assertEquals("Claus", it.next());
+        assertEquals("Jonathan", it.next());
+        assertEquals(false, it.hasNext());
+    }
+
+    public void testIteratorEmpty() {
+        Iterator it = ObjectHelper.createIterator("");
+        assertEquals(false, it.hasNext());
+
+        it = ObjectHelper.createIterator("    ");
+        assertEquals(false, it.hasNext());
+
+        it = ObjectHelper.createIterator(null);
+        assertEquals(false, it.hasNext());
+    }
+
 }

@@ -479,7 +479,8 @@ public final class ObjectHelper {
                     int idx = -1;
 
                     public boolean hasNext() {
-                        return ++idx == 0;
+                        // empty string should not be regarded as having next
+                        return ++idx == 0 && ObjectHelper.isNotEmpty(s);
                     }
 
                     public String next() {
