@@ -286,8 +286,11 @@ public final class URISupport {
                     String key = (String) o;
                     String value = (String) options.get(key);
                     rc.append(URLEncoder.encode(key, "UTF-8"));
-                    rc.append("=");
-                    rc.append(URLEncoder.encode(value, "UTF-8"));
+                    // only append if value is not null
+                    if (value != null) {
+                        rc.append("=");
+                        rc.append(URLEncoder.encode(value, "UTF-8"));
+                    }
                 }
                 return rc.toString();
             } else {

@@ -85,4 +85,9 @@ public class URISupportTest extends ContextTestSupport {
         assertTrue("Should have //", out2.startsWith("http://"));
     }
 
+    public void testNormalizeUriWhereParamererIsFaulty() throws Exception {
+        String out = URISupport.normalizeUri("stream:uri?file:///d:/temp/data/log/quickfix.log&scanStream=true");
+        assertNotNull(out);
+    }
+
 }
