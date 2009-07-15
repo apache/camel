@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd 
     ">
 
-    <!-- SNIPPET START: e1 -->
+    <!-- START SNIPPET: e1 -->
     <bean id="traceFormatter" class="org.apache.camel.processor.interceptor.DefaultTraceFormatter">
         <property name="showBody" value="true"/>
         <property name="showBodyType" value="false"/>
@@ -36,6 +36,6 @@
             <to uri="mock:result"/>
         </route>
     </camelContext>
-    <!-- SNIPPET END: e1 -->
+    <!-- END SNIPPET: e1 -->
 
 </beans>

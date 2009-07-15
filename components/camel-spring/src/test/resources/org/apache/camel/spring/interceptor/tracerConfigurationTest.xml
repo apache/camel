@@ -22,7 +22,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd 
     ">
 
-    <!-- SNIPPET START: e1 -->
+    <!-- START SNIPPET: e1 -->
     <!-- we can configure the tracer by defining the tracer bean and set the properties as we like -->
     <!-- the id name can be anything its the class that must be org.apache.camel.processor.interceptor.Tracer -->
     <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
@@ -38,6 +38,6 @@
             <to uri="mock:result"/>
         </route>
     </camelContext>
-    <!-- SNIPPET END: e1 -->
+    <!-- END SNIPPET: e1 -->
 
 </beans>
