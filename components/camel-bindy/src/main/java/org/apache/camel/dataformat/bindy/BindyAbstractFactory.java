@@ -17,14 +17,34 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.dataformat.bindy.format.BigDecimalFormat;
+import org.apache.camel.dataformat.bindy.format.BigIntegerFormat;
+import org.apache.camel.dataformat.bindy.format.ByteFormat;
+import org.apache.camel.dataformat.bindy.format.BytePatternFormat;
+import org.apache.camel.dataformat.bindy.format.CharacterFormat;
+import org.apache.camel.dataformat.bindy.format.DatePatternFormat;
+import org.apache.camel.dataformat.bindy.format.DoubleFormat;
+import org.apache.camel.dataformat.bindy.format.DoublePatternFormat;
+import org.apache.camel.dataformat.bindy.format.FloatFormat;
+import org.apache.camel.dataformat.bindy.format.FloatPatternFormat;
+import org.apache.camel.dataformat.bindy.format.IntegerFormat;
+import org.apache.camel.dataformat.bindy.format.IntegerPatternFormat;
+import org.apache.camel.dataformat.bindy.format.LongFormat;
+import org.apache.camel.dataformat.bindy.format.LongPatternFormat;
+import org.apache.camel.dataformat.bindy.format.ShortFormat;
+import org.apache.camel.dataformat.bindy.format.ShortPatternFormat;
+import org.apache.camel.dataformat.bindy.format.StringFormat;
 import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -161,6 +181,36 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         nf.setMinimumIntegerDigits(3);
         
         return nf;
+    }
+    
+    public static Object getDefaultValueforPrimitive(Class<?> clazz) throws Exception {
+        if (clazz == byte.class || clazz == Byte.class) {
+            return Byte.MIN_VALUE;
+        } else if (clazz == short.class || clazz == Short.class) {
+            return Short.MIN_VALUE;
+        } else if (clazz == int.class || clazz == Integer.class) {
+            return Integer.MIN_VALUE;
+        } else if (clazz == long.class || clazz == Long.class) {
+            return Long.MIN_VALUE;
+        } else if (clazz == float.class || clazz == Float.class) {
+            return Float.MIN_VALUE;
+        } else if (clazz == double.class || clazz == Double.class) {
+            return Double.MIN_VALUE;
+        } else if (clazz == BigDecimal.class) {
+            return BigDecimal.ZERO;
+        } else if (clazz == BigInteger.class) {
+            return BigInteger.ZERO;
+        } else if (clazz == String.class) {
+            return null;
+        } else if (clazz == Date.class) {
+            return null;
+        } else if (clazz == char.class || clazz == Character.class) {
+            return null;
+        } else if (clazz == boolean.class || clazz == Boolean.class) {
+        	return false;
+        } else {
+            throw new IllegalArgumentException("Can not find type corresponding : " + clazz.getCanonicalName());
+        }
     }
 
     /**

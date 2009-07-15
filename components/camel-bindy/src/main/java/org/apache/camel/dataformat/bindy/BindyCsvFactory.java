@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.jar.JarException;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
@@ -48,6 +49,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
+    private int numberOptionalFields = 0;
+    private int numberMandatoryFields = 0;
+    private int totalFields = 0;
 
     private String separator;
     private boolean skipFirstLine;
@@ -95,6 +99,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         LOG.debug("Position defined in the class : " + cl.getName() + ", position : "
                                   + dataField.pos() + ", Field : " + dataField.toString());
                     }
+                    
+                    if ( dataField.required() ) {
+                    	++numberMandatoryFields;
+                    } else {
+                    	++numberOptionalFields;
+                    }
+                    
                     dataFields.put(dataField.pos(), dataField);
                     annotedFields.put(dataField.pos(), field);
                 }
@@ -113,13 +124,75 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (!linkFields.isEmpty()) {
                 annotedLinkFields.put(cl.getName(), linkFields);
             }
+            
+            totalFields = numberMandatoryFields + numberOptionalFields;
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Number of optional fields : " + numberOptionalFields);
+                LOG.debug("Number of mandatory fields : " + numberMandatoryFields);
+                LOG.debug("Total : " + totalFields);
+            }  
+            
         }
     }
 
-    public void bind(List<String> data, Map<String, Object> model) throws Exception {
+    public void bind(List<String> tokens, Map<String, Object> model) throws Exception {
 
         int pos = 0;
-        while (pos < data.size()) {
+        int counterMandatoryFields = 0;
+ 
+        for (String data : tokens) {
+        	
+        	// Get DataField from model
+            DataField dataField = dataFields.get(pos);
+            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data);
+            
+            if ( dataField.required()) {
+            	// Increment counter of mandatory fields
+            	++counterMandatoryFields;
+            	
+            	// Check if content of the field is empty
+            	// This is not possible for mandatory fields
+            	if ( data.equals("")) {
+            		throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty !");
+            	}
+            }
+            
+            // Get Field to be setted
+            Field field = annotedFields.get(pos);
+            field.setAccessible(true);
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Pos : " + pos + ", Data : " + data + ", Field type : " + field.getType());
+            }
+            
+            Format<?> format;
+            
+            // Get pattern defined for the field
+            String pattern = dataField.pattern();
+            
+            // Create format object to format the field 
+            format = FormatFactory.getFormat(field.getType(), pattern, dataField.precision());
+            
+            // field object to be set
+            Object modelField = model.get(field.getDeclaringClass().getName());
+            
+            // format the data received
+            Object value = null;
+            
+            if ( ! data.equals("") ) {
+            	value = format.parse( data );
+            } else   {
+            	value = getDefaultValueforPrimitive(field.getType());
+            }
+            
+            field.set(modelField, value);
+            
+            ++pos;            
+            
+        }
+        
+/*        while (pos < data.size()) {
 
             // Set the field with the data received
             // Only when no empty line is provided
@@ -130,9 +203,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 DataField dataField = dataFields.get(pos);
                 ObjectHelper.notNull(dataField, "No position defined for the field");
+                
+                if ( dataField.required()) {
+                	++counterMandatoryFields;
+                }
+                
                 Field field = annotedFields.get(pos);
                 field.setAccessible(true);
-
+                
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Pos : " + pos + ", Data : " + data.get(pos) + ", Field type : " + field.getType());
                 }
@@ -153,8 +231,23 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 
                 field.set(modelField, value);
             }
-            pos++;
+
+            ++pos;
+        }*/
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Counter mandatory fields : " + counterMandatoryFields);
         }
+        
+     
+        if ( pos < totalFields ) {
+        	throw new IllegalArgumentException("Some fields are missing (optional or mandatory) !!");
+        }
+        
+        if ( counterMandatoryFields < numberMandatoryFields) {
+        	throw new IllegalArgumentException("Some mandatory fields are missing !!");
+        }
+        
     }
 
     public String unbind(Map<String, Object> model) throws Exception {

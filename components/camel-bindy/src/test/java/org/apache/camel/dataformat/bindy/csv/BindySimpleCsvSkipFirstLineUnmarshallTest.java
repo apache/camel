@@ -17,6 +17,8 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
@@ -29,11 +31,31 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvSkipFirstLineUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleCsvSkipFirstLineUnmarshallTest extends AbstractJUnit4SpringContextTests {
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint resultEndpoint;
+	
+	private String record = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n" +
+	"01,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n" +
+    "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n" +
+    "03,A2,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009\r\n" +
+    "04,A3,Michel,Dupond,,,BUY,,2500,USD,08-01-2009\r\n" +
+    "05,A4,Annie,Dutronc,ISIN,BE12345678,,,1500,EUR,08-01-2009\r\n" +
+    "06,A5,André,Rieux,ISIN,XD12345678,SELL,Share,,USD,08-01-2009\r\n" +
+    "07,A6,Mylène,Farmer,ISIN,BE12345678,BUY,1500,,,08-01-2009\r\n" +
+    "08,A7,Eva,Longoria,ISIN,XD12345678,SELL,Share,2500,USD,\r\n" +
+    ",,,D,,BE12345678,SELL,,,,08-01-2009\r\n" +
+    ",,,D,ISIN,BE12345678,,,,,08-01-2009\r\n" +
+    ",,,D,ISIN,LU123456789,,,,,\r\n" +
+    "10,A8,Pauline,M,ISIN,XD12345678,SELL,Share,2500,USD,08-01-2009\r\n" +
+    "10,A9,Pauline,M,ISIN,XD12345678,BUY,Share,2500.45,USD,08-01-2009";
+
+	@EndpointInject(uri = "mock:result")
+	private MockEndpoint resultEndpoint;
+
+	@Produce(uri = "direct:start")
+	protected ProducerTemplate template;
 
     @Test
     public void testUnMarshallMessage() throws Exception {
+    	template.sendBody(record);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -48,7 +70,10 @@ public class BindySimpleCsvSkipFirstLineUnmarshallTest extends AbstractJUnit4Spr
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("file://src/test/data2?noop=true").unmarshal(camelDataFormat).to("mock:result");
+                    //from("file://src/test/data2")
+                	from("direct:start")
+                    .unmarshal(camelDataFormat)
+                    .to("mock:result");
                 }
             };
         }

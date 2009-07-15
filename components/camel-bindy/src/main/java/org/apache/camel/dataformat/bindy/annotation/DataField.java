@@ -29,6 +29,7 @@ import java.lang.annotation.RetentionPolicy;
  * The length (optional) allows to define for fixed length message the size of the data's block
  * The precision(optional) reflects the precision to be used with BigDecimal number
  * The position (optional) identify the position of the field in the CSV generated
+ * The required (optional) property identifies a field which is mandatory.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -77,5 +78,13 @@ public @interface DataField {
      * @return int 
      */
     int position() default 0;
+    
+    /**
+     * 
+     * Indicates if the field is mandatory
+     * 
+     * @return boolean
+     */
+    boolean required() default false;
 
 }

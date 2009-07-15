@@ -119,24 +119,44 @@ public class BindyCsvDataFormat implements DataFormat {
 
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
-                List<String> result = Arrays.asList(line.split(separator));
+                String[] tokens = line.split(separator, -1);
+                List<String> result = Arrays.asList(tokens);
                 
-                // Bind data from CSV record with model classes
-                factory.bind(result, model);
-
-                // Link objects together
-                factory.link(model);
-
-                // Add objects graph to the list
-                models.add(model);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Graph of objects created : " + model);
+                if ( result.size() == 0 || result.isEmpty() ) {
+                	throw new java.lang.IllegalArgumentException("No records have been defined in the CSV !");
                 }
 
-            }
+                if ( result.size() > 0 ) {
+                	
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Size of the record splitted : " + result.size());
+                    }
+                	
+                    // Bind data from CSV record with model classes
+                    factory.bind(result, model);
 
-            return models;
+                    // Link objects together
+                    factory.link(model);
+
+                    // Add objects graph to the list
+                    models.add(model);
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Graph of objects created : " + model);
+                    }
+                	
+                }
+ 
+
+            }
+            
+            // Test if models list is empty or not
+            // If this is the case (correspond to an empty stream, ...)
+            if ( models.size() == 0 ) {
+            	throw new java.lang.Exception("No records have been defined in the CSV !");
+        	} else {
+        		return models;
+        	}
 
         } finally {
             scanner.close();
