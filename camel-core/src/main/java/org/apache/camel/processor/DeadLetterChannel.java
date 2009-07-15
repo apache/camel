@@ -318,6 +318,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         // must decrement the redelivery counter as we didn't process the redelivery but is
         // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
         decrementRedeliveryCounter(exchange);
+        
+        // reset cached streams so they can be read again
+        MessageHelper.resetStreamCache(exchange.getIn());
 
         AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
         boolean sync = afp.process(exchange, new AsyncCallback() {
