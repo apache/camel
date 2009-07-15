@@ -16,7 +16,7 @@
   <description>Camel servlet transport support</description>
   
   <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.servelt.*</camel.osgi.export.pkg>
+      <camel.osgi.export.pkg>org.apache.camel.component.servlet.*</camel.osgi.export.pkg>
   </properties>
     
   <dependencies>

@@ -32,7 +32,8 @@
   <description>Performs OSGi compliance integration tests</description>
 
   <properties>
-    <pax-exam-version>0.5.0</pax-exam-version>    
+    <pax-exam-version>0.6.0</pax-exam-version>
+    <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
   </properties>
 
   <repositories>
@@ -49,6 +50,10 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </repository>
+    <repository>
+      <id>aqute.biz</id>
+      <url>http://www.aqute.biz/repo</url>
     </repository>
   </repositories>
 
@@ -87,7 +92,19 @@
       <version>${pax-exam-version}</version>
       <scope>test</scope>
     </dependency>
-
+	<dependency>
+		<groupId>org.ops4j.pax.swissbox</groupId>
+		<artifactId>pax-swissbox-tinybundles</artifactId>
+		<version>1.0.0</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.osgi</groupId>
+		<artifactId>org.osgi.compendium</artifactId>
+		<version>4.0.1</version>
+		<scope>compile</scope>
+		<optional>true</optional>
+	</dependency> 
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
@@ -104,13 +121,16 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-osgi</artifactId>
-      <version>${version}</version>
       <scope>test</scope>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <version>${version}</version>
+      <artifactId>camel-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>      
       <scope>test</scope>
     </dependency>
     <dependency>
