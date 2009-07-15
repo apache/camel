@@ -67,6 +67,8 @@
   <feature name='camel-http' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/${commons-codec-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle>mvn:org.mortbay.jetty/servlet-api/${servlet-api-2.5-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http/${pom.version}</bundle>
   </feature>
@@ -81,6 +83,11 @@
     <bundle>mvn:org.mortbay.jetty/jetty/${jetty-version}</bundle>
     <feature version='${pom.version}'>camel-http</feature>
     <bundle>mvn:org.apache.camel/camel-jetty/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-servlet' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-http</feature>
+    <bundle>mvn:org.mortbay.jetty/servlet-api/${servlet-api-2.5-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-servlet/${pom.version}</bundle>
   </feature>
   <feature name='camel-jms' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
