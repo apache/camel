@@ -838,7 +838,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         ++counter;
         if (LOG.isDebugEnabled()) {
-            LOG.debug(getEndpointUri() + " >>>> " + (counter) + " : " + exchange + " with body: " + actualBody);
+            LOG.debug(getEndpointUri() + " >>>> " + counter + " : " + exchange + " with body: " + actualBody);
         }
 
         receivedExchanges.add(exchange);
