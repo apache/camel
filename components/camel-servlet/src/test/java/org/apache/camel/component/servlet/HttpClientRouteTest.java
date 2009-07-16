@@ -59,6 +59,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
+                // START SNIPPET: route
                 from("servlet:///hello").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
@@ -71,6 +72,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 });
+                // END SNIPPET: route
             }
         };
     }    

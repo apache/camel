@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.osgi.servlet.support;
-
+// START SNIPPET: activator
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -50,7 +50,7 @@ public final class ServletActivator implements BundleActivator {
                 final Dictionary initParams = new Hashtable();
                 initParams.put("matchOnUriPrefix", "false");
                 initParams.put("servlet-name", "camelServlet");
-                httpService.registerServlet("/camel", // alias
+                httpService.registerServlet("/camel/services", // alias
                     (Servlet)new CamelHttpTransportServlet(), // register servlet
                     initParams, // init params
                     httpContext // http context
@@ -71,3 +71,4 @@ public final class ServletActivator implements BundleActivator {
     }
 
 }
+// END SNIPPET: activator

@@ -22,7 +22,7 @@
   specific language governing permissions and limitations
   under the License.
 -->
-    
+<!-- START SNIPPET: web -->    
 <web-app>
 
   <servlet>
@@ -42,5 +42,5 @@
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
 
-
 </web-app>
+<!-- END SNIPPET: web -->

@@ -30,7 +30,7 @@
   
    <camelContext xmlns="http://camel.apache.org/schema/spring">
      <camel:route>
-       <camel:from uri="servlet:///services"/>
+       <camel:from uri="servlet:///hello"/>
        <camel:process ref="servletProcessor"/>
      </camel:route>
    </camelContext>
