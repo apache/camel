@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
@@ -24,19 +27,21 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class SedaNoConsumerTest extends ContextTestSupport {
+public class SedaTimeoutTest extends ContextTestSupport {
 
-    public void testInOnly() throws Exception {
-        // no problem for in only as we do not expect a reply
-        template.sendBody("direct:start", "Hello World");
+    public void testSedaNoTineout() throws Exception {
+        Future<String> out = template.asyncRequestBody("seda:foo", "World", String.class);
+        assertEquals("Bye World", out.get());
     }
 
-    public void testInOut() throws Exception {
+    public void testSedaTineout() throws Exception {
+        Future<String> out = template.asyncRequestBody("seda:foo?timeout=1000", "World", String.class);
         try {
-            template.requestBody("direct:start", "Hello World");
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
+            out.get();
+            fail("Should have thrown an exception");
+        } catch (ExecutionException e) {
+            assertIsInstanceOf(CamelExecutionException.class, e.getCause());
+            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
         }
     }
 
@@ -45,7 +50,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("seda:foo?timeout=1000");
+                from("seda:foo").to("mock:before").delay(3000).transform(body().prepend("Bye ")).to("mock:result");
             }
         };
     }

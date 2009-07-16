@@ -18,8 +18,10 @@ package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
@@ -30,11 +32,13 @@ import org.apache.camel.util.ExchangeHelper;
 public class SedaProducer extends CollectionProducer {
     private final SedaEndpoint endpoint;
     private final WaitForTaskToComplete waitForTaskToComplete;
+    private final long timeout;
 
-    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete) {
+    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete, long timeout) {
         super(endpoint, queue);
         this.endpoint = endpoint;
         this.waitForTaskToComplete = waitForTaskToComplete;
+        this.timeout = timeout;
     }
 
     @Override
@@ -53,14 +57,6 @@ public class SedaProducer extends CollectionProducer {
         if (wait == WaitForTaskToComplete.Always
             || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
 
-            // only check for if there is a consumer if its the seda endpoint where we exepect a consumer in the same
-            // camel context. If you use the vm component the consumer could be in another camel context.
-            // for seda we want to check that a consumer exists otherwise we end up waiting forever for the response.
-            if (endpoint.getEndpointUri().startsWith("seda") && endpoint.getConsumers().isEmpty()) {
-                throw new IllegalStateException("Cannot send to endpoint: " + endpoint.getEndpointUri() + " as no consumers is registered."
-                    + " With no consumers we end up waiting forever for the reply, as there are no consumers to process our exchange: " + exchange);
-            }
-
             // latch that waits until we are complete
             final CountDownLatch latch = new CountDownLatch(1);
 
@@ -78,7 +74,11 @@ public class SedaProducer extends CollectionProducer {
             });
 
             queue.add(copy);
-            latch.await();
+            // lets see if we can get the task done before the timeout
+            boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
+            if (!done) {
+                exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+            }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
             queue.add(copy);
