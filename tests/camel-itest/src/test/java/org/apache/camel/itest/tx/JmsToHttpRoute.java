@@ -53,8 +53,9 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
 
         from(data)
             // send a request to http and get the response
-            .to("http://localhost:8080/sender")
-            // convert the response to String so we can work with it
+            .to("http://localhost:9091/sender")
+            // convert the response to String so we can work with it and avoid streams only be readable once
+            // as the http component will return data as a stream
             .convertBodyTo(String.class)
             // do a choice if the response is okay or not
             .choice()
@@ -74,8 +75,8 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
             .end();
 
         // this is our http route that will fail the first 2 attempts
-        // before it sends a ok response
-        from("jetty:http://localhost:8080/sender").process(new Processor() {
+        // before it sends an ok response
+        from("jetty:http://localhost:9091/sender").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 if (counter++ < 2) {
                     exchange.getOut().setBody(nok);

@@ -32,7 +32,7 @@
 
    <camelContext id="dest_context" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
-            <from uri="jetty:http://localhost:9090/GreeterContext/GreeterPort"/>
+            <from uri="jetty:http://localhost:9091/GreeterContext/GreeterPort"/>
             <loadBalance ref="roundRobinRef">
               <to uri="direct:EndpointA"/>
               <to uri="direct:EndpointB"/>

@@ -88,7 +88,7 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
 
     protected void startTargetCxfService() {
         Object impl = new HeaderTesterImpl();
-        String address = "http://localhost:9090/HeaderService/";
+        String address = "http://localhost:9091/HeaderService/";
         EndpointImpl endpoint = (EndpointImpl) Endpoint.publish(address, impl);
         relayServer = endpoint.getServer();
         

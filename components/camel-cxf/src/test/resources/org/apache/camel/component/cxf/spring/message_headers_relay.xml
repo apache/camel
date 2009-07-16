@@ -50,7 +50,7 @@
 
 
   <cxf:cxfEndpoint id="serviceRelayEndpoint" 
-                   address="http://localhost:9090/HeaderService/"
+                   address="http://localhost:9091/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortRelay"
                    serviceName="tns:HeaderService"
