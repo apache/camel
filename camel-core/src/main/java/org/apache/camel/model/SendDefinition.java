@@ -46,6 +46,13 @@ public class SendDefinition<Type extends ProcessorDefinition> extends ProcessorD
     @XmlTransient
     protected Endpoint endpoint;
 
+    public SendDefinition() {
+    }
+
+    public SendDefinition(String uri) {
+        this.uri = uri;
+    }
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);

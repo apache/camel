@@ -36,9 +36,9 @@ import org.apache.commons.logging.LogFactory;
 public class TryProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
     private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);
 
-    private final Processor tryProcessor;
-    private final List<CatchProcessor> catchClauses;
-    private final Processor finallyProcessor;
+    protected final Processor tryProcessor;
+    protected final List<CatchProcessor> catchClauses;
+    protected final Processor finallyProcessor;
 
     public TryProcessor(Processor tryProcessor, List<CatchProcessor> catchClauses, Processor finallyProcessor) {
         this.tryProcessor = tryProcessor;
@@ -48,7 +48,7 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
 
     public String toString() {
         String finallyText = (finallyProcessor == null) ? "" : " Finally {" + finallyProcessor + "}";
-        return "Try {" + tryProcessor + "} " + catchClauses + finallyText;
+        return "Try {" + tryProcessor + "} " + (catchClauses != null ? catchClauses : "") + finallyText;
     }
 
     public String getTraceLabel() {
@@ -93,6 +93,10 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
     }
 
     protected void handleException(Exchange exchange, Throwable e) throws Exception {
+        if (catchClauses == null) {
+            return;
+        }
+
         for (CatchProcessor catchClause : catchClauses) {
             if (catchClause.catches(exchange, e)) {
                 if (LOG.isTraceEnabled()) {

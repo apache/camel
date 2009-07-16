@@ -709,6 +709,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
+     * Wraps the sub route using AOP allowing you to do before and after work (AOP around).
+     *
+     * @return the builder
+     */
+    public AOPDefinition aop() {
+        AOPDefinition answer = new AOPDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * Ends the current block
      *
      * @return the builder
