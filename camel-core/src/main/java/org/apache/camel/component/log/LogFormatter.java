@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.log;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
@@ -34,6 +37,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showBody = true;
     private boolean showOut;
     private boolean showException;
+    private boolean showStackTrace;
     private boolean showAll;
     private boolean multiline;
     private int maxChars;
@@ -76,7 +80,13 @@ public class LogFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append('\n');
             }
-            sb.append(", Exception:").append(exchange.getException().getMessage());
+            sb.append(", ExceptionType:").append(exchange.getException().getClass().getCanonicalName());
+            sb.append(", ExceptionMessage:").append(exchange.getException().getMessage());
+            if (showAll || showStackTrace) {
+                StringWriter sw = new StringWriter();
+                exchange.getException().printStackTrace(new PrintWriter(sw));
+                sb.append(", StackTrace:").append(sw.toString());
+            }
         }
 
         if (showAll || showOut) {
@@ -194,6 +204,14 @@ public class LogFormatter implements ExchangeFormatter {
 
     public void setShowException(boolean showException) {
         this.showException = showException;
+    }
+
+    public boolean isShowStackTrace() {
+        return showStackTrace;
+    }
+
+    public void setShowStackTrace(boolean showStackTrace) {
+        this.showStackTrace = showStackTrace;
     }
 
     public boolean isMultiline() {
