@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.model.simple.oneclass;
+package org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,19 +22,19 @@ import java.util.Date;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-@CsvRecord(separator = ",")
+@CsvRecord(separator = ",", skipFirstLine = true)
 public class Order {
 
     @DataField(pos = 0)
     private int orderNr;
 
-    @DataField(pos = 1)
+    @DataField(pos = 1, required = true)
     private String clientNr;
 
-    @DataField(pos = 2)
+    @DataField(pos = 2, required = true)
     private String firstName;
 
-    @DataField(pos = 3)
+    @DataField(pos = 3, required = true)
     private String lastName;
 
     @DataField(pos = 4)
