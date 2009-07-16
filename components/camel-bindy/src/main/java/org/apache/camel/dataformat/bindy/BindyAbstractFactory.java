@@ -207,7 +207,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         } else if (clazz == char.class || clazz == Character.class) {
             return null;
         } else if (clazz == boolean.class || clazz == Boolean.class) {
-        	return false;
+            return false;
         } else {
             throw new IllegalArgumentException("Can not find type corresponding : " + clazz.getCanonicalName());
         }

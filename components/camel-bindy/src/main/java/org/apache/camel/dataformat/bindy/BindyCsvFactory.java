@@ -49,9 +49,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
-    private int numberOptionalFields = 0;
-    private int numberMandatoryFields = 0;
-    private int totalFields = 0;
+    private int numberOptionalFields;
+    private int numberMandatoryFields;
+    private int totalFields;
 
     private String separator;
     private boolean skipFirstLine;
@@ -100,10 +100,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                                   + dataField.pos() + ", Field : " + dataField.toString());
                     }
                     
-                    if ( dataField.required() ) {
-                    	++numberMandatoryFields;
+                    if (dataField.required()) {
+                        ++numberMandatoryFields;
                     } else {
-                    	++numberOptionalFields;
+                        ++numberOptionalFields;
                     }
                     
                     dataFields.put(dataField.pos(), dataField);
@@ -142,20 +142,21 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         int counterMandatoryFields = 0;
  
         for (String data : tokens) {
-        	
-        	// Get DataField from model
+        
+            // Get DataField from model
             DataField dataField = dataFields.get(pos);
             ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data);
             
-            if ( dataField.required()) {
-            	// Increment counter of mandatory fields
-            	++counterMandatoryFields;
-            	
-            	// Check if content of the field is empty
-            	// This is not possible for mandatory fields
-            	if ( data.equals("")) {
-            		throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty !");
-            	}
+            if (dataField.required()) {
+                // Increment counter of mandatory fields
+                ++counterMandatoryFields;
+
+                // Check if content of the field is empty
+                // This is not possible for mandatory fields
+                if (data.equals("")) {
+                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos
+                                                       + " is empty !");
+                }
             }
             
             // Get Field to be setted
@@ -180,10 +181,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             // format the data received
             Object value = null;
             
-            if ( ! data.equals("") ) {
-            	value = format.parse( data );
-            } else   {
-            	value = getDefaultValueforPrimitive(field.getType());
+            if (!data.equals("")) {
+                value = format.parse(data);
+            } else {
+                value = getDefaultValueforPrimitive(field.getType());
             }
             
             field.set(modelField, value);
@@ -205,7 +206,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 ObjectHelper.notNull(dataField, "No position defined for the field");
                 
                 if ( dataField.required()) {
-                	++counterMandatoryFields;
+                    ++counterMandatoryFields;
                 }
                 
                 Field field = annotedFields.get(pos);
@@ -240,12 +241,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
         
      
-        if ( pos < totalFields ) {
-        	throw new IllegalArgumentException("Some fields are missing (optional or mandatory) !!");
+        if (pos < totalFields) {
+            throw new IllegalArgumentException("Some fields are missing (optional or mandatory) !!");
         }
-        
-        if ( counterMandatoryFields < numberMandatoryFields) {
-        	throw new IllegalArgumentException("Some mandatory fields are missing !!");
+
+        if (counterMandatoryFields < numberMandatoryFields) {
+            throw new IllegalArgumentException("Some mandatory fields are missing !!");
         }
         
     }

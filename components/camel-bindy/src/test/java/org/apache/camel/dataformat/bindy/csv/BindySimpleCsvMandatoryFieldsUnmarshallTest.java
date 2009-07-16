@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import static org.junit.Assert.fail;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -36,100 +34,106 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
 
+import static org.junit.Assert.fail;
+
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvMandatoryFieldsUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4SpringContextTests {
-	
-	private static final transient Log LOG = LogFactory.getLog(BindySimpleCsvMandatoryFieldsUnmarshallTest.class);
-	
-	String header = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
-	String record1 = "";
-	String record2 = ",,blabla,,,,,,,,";
-	String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,";
-	String record4 = "1,A1,Charles,,ISIN,LU123456789,,,,,";
-	String record5 = ",,,,,,,,,,";
+
+    private static final transient Log LOG = LogFactory
+        .getLog(BindySimpleCsvMandatoryFieldsUnmarshallTest.class);
 
     @EndpointInject(uri = "mock:result1")
     protected MockEndpoint resultEndpoint1;
-    
+
     @EndpointInject(uri = "mock:result2")
     protected MockEndpoint resultEndpoint2;
-    
+
     @Produce(uri = "direct:start1")
     protected ProducerTemplate template1;
-    
+
     @Produce(uri = "direct:start2")
     protected ProducerTemplate template2;
+  
+    String header = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
+    String record1 = "";
+    String record2 = ",,blabla,,,,,,,,";
+    String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,";
+    String record4 = "1,A1,Charles,,ISIN,LU123456789,,,,,";
+    String record5 = ",,,,,,,,,,";
 
     @DirtiesContext
     @Test
     public void testEmptyRecord() throws Exception {
-    	resultEndpoint1.expectedMessageCount(0);
-    	
-    	try {
-    		template1.sendBody(record1);
+        resultEndpoint1.expectedMessageCount(0);
+
+        try {
+            template1.sendBody(record1);
             fail("Should have thrown an exception");
-    	} catch (CamelExecutionException e) {
-    	   // Assert.isInstanceOf(java.lang.IllegalArgumentException.class, e.getCause());
-    		 Assert.isInstanceOf(Exception.class, e.getCause());
-    	  // LOG.info(">> Error : " + e);
-    	}
-    	
+        } catch (CamelExecutionException e) {
+            // Assert.isInstanceOf(java.lang.IllegalArgumentException.class,
+            // e.getCause());
+            Assert.isInstanceOf(Exception.class, e.getCause());
+            // LOG.info(">> Error : " + e);
+        }
+
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testEmptyFields() throws Exception {
-    	resultEndpoint1.expectedMessageCount(1);
-   		template1.sendBody(record2);
-    	
+        resultEndpoint1.expectedMessageCount(1);
+        template1.sendBody(record2);
+
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testOneOptionalField() throws Exception {
-    	resultEndpoint1.expectedMessageCount(1);
-    	
-    	template1.sendBody(record2);
+        resultEndpoint1.expectedMessageCount(1);
+
+        template1.sendBody(record2);
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testSeveralOptionalField() throws Exception {
-    	resultEndpoint1.expectedMessageCount(1);
-    	
-    	template1.sendBody(record3);
+        resultEndpoint1.expectedMessageCount(1);
+
+        template1.sendBody(record3);
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testMandatoryFields() throws Exception {
-    	resultEndpoint2.expectedMessageCount(1);
-    	
-    	template2.sendBody(header + record3);
+        resultEndpoint2.expectedMessageCount(1);
+
+        template2.sendBody(header + record3);
         resultEndpoint2.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testMissingMandatoryFields() throws Exception {
-    	resultEndpoint2.expectedMessageCount(1);
-    	
-    	try {
-    		template2.sendBody(header + record4);
-    		resultEndpoint2.assertIsSatisfied();
-    	} catch (CamelExecutionException e) {
-      	  //LOG.info(">> Error : " + e);
-      	}
+        resultEndpoint2.expectedMessageCount(1);
+
+        try {
+            template2.sendBody(header + record4);
+            resultEndpoint2.assertIsSatisfied();
+        } catch (CamelExecutionException e) {
+            // LOG.info(">> Error : " + e);
+        }
     }
-    
+
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyCsvDataFormat formatOptional = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
-        BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory");
+        BindyCsvDataFormat formatOptional = 
+            new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+        BindyCsvDataFormat formatMandatory =
+            new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory");
 
         @Override
         @Bean
@@ -137,12 +141,12 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                	try {
-                		from("direct:start1").unmarshal(formatOptional).to("mock:result1");
-                		from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
-                	} catch (Exception e) {
-                		//
-                	}
+                    try {
+                        from("direct:start1").unmarshal(formatOptional).to("mock:result1");
+                        from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
+                    } catch (Exception e) {
+                        //
+                    }
                 }
             };
         }
