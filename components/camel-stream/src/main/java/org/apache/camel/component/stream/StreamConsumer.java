@@ -19,7 +19,6 @@ package org.apache.camel.component.stream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -82,9 +81,10 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     public void doStop() throws Exception {
         // important: do not close the stream as it will close the standard
         // system.in etc.
-        ObjectHelper.notNull(executor, "Executor");
-        executor.shutdownNow();
-        executor = null;
+        if (executor != null) {
+            executor.shutdownNow();
+            executor = null;
+        }
         super.doStop();
     }
 
