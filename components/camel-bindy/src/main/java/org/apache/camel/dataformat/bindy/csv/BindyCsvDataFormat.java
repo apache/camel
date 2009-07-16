@@ -132,12 +132,12 @@ public class BindyCsvDataFormat implements DataFormat {
                         LOG.debug("Size of the record splitted : " + result.size());
                     }
 
-                    // Bind data from CSV record with model classes
-                    factory.bind(result, model);
+                   	// Bind data from CSV record with model classes
+                   	factory.bind(result, model);
 
-                    // Link objects together
-                    factory.link(model);
-
+                   	// Link objects together
+                   	factory.link(model);
+                    	
                     // Add objects graph to the list
                     models.add(model);
 
@@ -152,7 +152,7 @@ public class BindyCsvDataFormat implements DataFormat {
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
-                throw new java.lang.Exception("No records have been defined in the CSV !");
+                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV !");
             } else {
                 return models;
             }

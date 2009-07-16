@@ -55,12 +55,13 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     protected ProducerTemplate template2;
   
     String header = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
-    String record1 = "";
-    String record2 = ",,blabla,,,,,,,,";
-    String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,";
-    String record4 = "1,A1,Charles,,ISIN,LU123456789,,,,,";
-    String record5 = ",,,,,,,,,,";
-
+    String record1 = ""; // empty records
+    String record2 = ",,blabla,,,,,,,,"; // optional fields
+    String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,"; // mandatory fields present (A1, Charles, Moulliard)
+    String record4 = "1,A1,Charles,,ISIN,LU123456789,,,,,"; // mandatory field missing
+    String record5 = ",,,,,,,,,,"; // record with no data
+    String record6 = ",,,,,,,,,,,,,,"; // too much data in the record (only 11 are accepted by the model
+    
     @DirtiesContext
     @Test
     public void testEmptyRecord() throws Exception {
@@ -70,8 +71,6 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
             template1.sendBody(record1);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            // Assert.isInstanceOf(java.lang.IllegalArgumentException.class,
-            // e.getCause());
             Assert.isInstanceOf(Exception.class, e.getCause());
             // LOG.info(">> Error : " + e);
         }
@@ -99,13 +98,29 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
 
     @DirtiesContext
     @Test
-    public void testSeveralOptionalField() throws Exception {
+    public void testSeveralOptionalFields() throws Exception {
         resultEndpoint1.expectedMessageCount(1);
 
         template1.sendBody(record3);
         resultEndpoint1.assertIsSatisfied();
     }
+    
+    @DirtiesContext
+    @Test
+    public void testTooMuchFields() throws Exception {
+        resultEndpoint1.expectedMessageCount(0);
+        
+        try {
+            template1.sendBody(record6);
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            // expected
+            Assert.isInstanceOf(IllegalArgumentException.class, e.getCause());
+        }
 
+        resultEndpoint1.assertIsSatisfied();
+    }
+    
     @DirtiesContext
     @Test
     public void testMandatoryFields() throws Exception {
@@ -141,12 +156,8 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    try {
                         from("direct:start1").unmarshal(formatOptional).to("mock:result1");
                         from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
-                    } catch (Exception e) {
-                        //
-                    }
                 }
             };
         }
