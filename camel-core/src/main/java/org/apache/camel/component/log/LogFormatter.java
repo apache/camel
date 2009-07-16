@@ -37,6 +37,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showBody = true;
     private boolean showOut;
     private boolean showException;
+    private boolean showCaughtException;
     private boolean showStackTrace;
     private boolean showAll;
     private boolean multiline;
@@ -76,16 +77,34 @@ public class LogFormatter implements ExchangeFormatter {
             }
             sb.append(", Body:").append(getBodyAsString(in));
         }
-        if (exchange.getException() != null && (showAll || showException)) {
-            if (multiline) {
-                sb.append('\n');
+
+        if (showAll || showException || showCaughtException) {
+
+            // try exception on exchange first
+            Exception exception = exchange.getException();
+            boolean caught = false;
+            if (showCaughtException && exception == null) {
+                // fallback to caught exception
+                exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                caught = true;
             }
-            sb.append(", ExceptionType:").append(exchange.getException().getClass().getCanonicalName());
-            sb.append(", ExceptionMessage:").append(exchange.getException().getMessage());
-            if (showAll || showStackTrace) {
-                StringWriter sw = new StringWriter();
-                exchange.getException().printStackTrace(new PrintWriter(sw));
-                sb.append(", StackTrace:").append(sw.toString());
+
+            if (exception != null) {
+                if (multiline) {
+                    sb.append('\n');
+                }
+                if (caught) {
+                    sb.append(", CaughtExceptionType:").append(exception.getClass().getCanonicalName());
+                    sb.append(", CaughtExceptionMessage:").append(exception.getMessage());
+                } else {
+                    sb.append(", ExceptionType:").append(exception.getClass().getCanonicalName());
+                    sb.append(", ExceptionMessage:").append(exception.getMessage());
+                }
+                if (showAll || showStackTrace) {
+                    StringWriter sw = new StringWriter();
+                    exception.printStackTrace(new PrintWriter(sw));
+                    sb.append(", StackTrace:").append(sw.toString());
+                }
             }
         }
 
@@ -212,6 +231,14 @@ public class LogFormatter implements ExchangeFormatter {
 
     public void setShowStackTrace(boolean showStackTrace) {
         this.showStackTrace = showStackTrace;
+    }
+
+    public boolean isShowCaughtException() {
+        return showCaughtException;
+    }
+
+    public void setShowCaughtException(boolean showCaughtException) {
+        this.showCaughtException = showCaughtException;
     }
 
     public boolean isMultiline() {

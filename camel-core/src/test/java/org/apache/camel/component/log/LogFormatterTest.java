@@ -92,11 +92,35 @@ public class LogFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    public void testSendCaughtExchangeWithException() throws Exception {
+        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody("Hello World");
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new IllegalArgumentException("I am caught"));
+
+        Producer producer = endpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
+    }
+
     public void testSendExchangeWithExceptionAndStackTrace() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showException=true&showStackTrace=true");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         exchange.setException(new IllegalArgumentException("Damn"));
+
+        Producer producer = endpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
+    }
+
+    public void testSendCaughtExchangeWithExceptionAndStackTrace() throws Exception {
+        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&showStackTrace=true");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody("Hello World");
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new IllegalArgumentException("I am caught"));
 
         Producer producer = endpoint.createProducer();
         producer.start();
