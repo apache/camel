@@ -83,7 +83,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     public void setUp() throws Exception {        
         template = context.createProducerTemplate();
 
-        relayEndpoint = Endpoint.publish("http://localhost:9090/HeaderService/", new HeaderTesterImpl());
+        relayEndpoint = Endpoint.publish("http://localhost:9091/HeaderService/", new HeaderTesterImpl());
         noRelayEndpoint = Endpoint.publish("http://localhost:7070/HeaderService/", new HeaderTesterImpl(false));
     }
 

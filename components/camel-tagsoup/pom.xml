@@ -64,4 +64,43 @@
     </dependency>
   </dependencies>
 
+  <!--
+    The default xalan TransformerFactory when using the ibm jdk is
+    org.apache.xalan.processor.TransformerFactoryImpl which seems
+    to add in duplicate namespace declarations, causing the tests
+    to fail.  To work around this issue when we detect we are using
+    the ibm jdk, we set the TransformerFactory system property to
+    use the xsltc TransformerFactory as this allows the tests to pass
+    and this is the factory which is used by the sun jdk by default.
+  -->
+  <profiles>
+    <profile>
+      <id>ibmjdk</id>
+      <activation>
+        <property>
+          <name>java.vendor</name>
+          <value>IBM Corporation</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <childDelegation>false</childDelegation>
+              <useFile>true</useFile>
+              <failIfNoTests>false</failIfNoTests>
+              <systemProperties>
+                <property>
+                  <name>javax.xml.transform.TransformerFactory</name>
+                  <value>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>

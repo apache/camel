@@ -40,7 +40,7 @@ import org.junit.Test;
 
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
-    protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:9090/jaxws-mtom/hello";
+    protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:9091/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloImpl";        
 

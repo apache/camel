@@ -98,7 +98,7 @@ under the License.
 
     <wsdl:service name="HelloService">
 	<wsdl:port name="HelloPort" binding="tns:HelloBinding">
-	    <soap:address location="http://localhost:9090/jaxws-mtom/hello"></soap:address>
+	    <soap:address location="http://localhost:9091/jaxws-mtom/hello"></soap:address>
 	</wsdl:port>
     </wsdl:service>
 

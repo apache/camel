@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 
 public class CometdProducerConsumerInteractiveMain {
 
-    private static final String URI = "cometd://127.0.0.1:9090/service/test?resourceBase=./src/test/resources/webapp&"
+    private static final String URI = "cometd://127.0.0.1:9091/service/test?resourceBase=./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private static final String URIS = "cometds://127.0.0.1:9443/service/test?resourceBase=./src/test/resources/webapp&"
