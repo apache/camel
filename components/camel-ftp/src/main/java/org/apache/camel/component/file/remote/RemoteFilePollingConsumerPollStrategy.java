@@ -14,35 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.PollingConsumerPollStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.impl.DefaultPollingConsumerPollStrategy;
 
 /**
- * A default implementation that just logs a <tt>WARN</tt> level log in case of rollback.
+ * Remote file consumer polling strategy that attempts to help recovering from lost connections.
  *
  * @version $Revision$
  */
-public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollStrategy {
+public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsumerPollStrategy {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
-
-    public void begin(Consumer consumer, Endpoint endpoint) {
-        // noop
-    }
-
-    public void commit(Consumer consumer, Endpoint endpoint) {
-        // noop
-    }
-
+    @Override
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
-        log.warn("Consumer " + consumer +  " could not poll endpoint: " + endpoint.getEndpointUri() + " caused by: " + e.getMessage(), e);
-        // we do not want to retry
-        return false;
+        // disconnect from the server to force it to re login at next poll to recover
+        RemoteFileConsumer rfc = (RemoteFileConsumer) consumer;
+        log.warn("Trying to recover by disconnecting from remote server forcing a re-connect at next poll: " + rfc.remoteServer());
+        rfc.disconnect();
+        return super.rollback(consumer, endpoint, retryCounter, e);
     }
 
 }

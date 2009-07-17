@@ -30,6 +30,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations) {
         super(endpoint, processor, operations);
+        this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
     protected boolean prePollCheck() throws Exception {
@@ -45,12 +46,17 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        disconnect();
+    }
 
+    protected void disconnect() {
         // disconnect when stopping
         try {
             if (((RemoteFileOperations) operations).isConnected()) {
                 loggedIn = false;
-                log.debug("Disconnecting from: " + remoteServer());
+                if (log.isDebugEnabled()) {
+                    log.debug("Disconnecting from: " + remoteServer());
+                }
                 ((RemoteFileOperations) operations).disconnect();
             }
         } catch (GenericFileOperationFailedException e) {

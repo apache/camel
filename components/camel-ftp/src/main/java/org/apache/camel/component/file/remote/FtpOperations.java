@@ -38,6 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 
 /**
  * FTP remote file operations
@@ -88,10 +89,24 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     LOG.trace("Reconnect attempt #" + attempt + " connecting to + " + configuration.remoteServerInformation());
                 }
                 client.connect(host, port);
-                // yes we could connect
-                connected = true;
+                // must check reply code if we are connected
+                int reply = client.getReplyCode();
+
+                if (FTPReply.isPositiveCompletion(reply)) {
+                    // yes we could connect
+                    connected = true;
+                } else {
+                    // throw an exception to force the retry logic in the catch exception block
+                    throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Server refused connection");
+                }
             } catch (Exception e) {
-                GenericFileOperationFailedException failed = new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+                GenericFileOperationFailedException failed;
+                if (e instanceof GenericFileOperationFailedException) {
+                    failed = (GenericFileOperationFailedException) e;
+                } else {
+                    failed = new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+                }
+
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Could not connect due: " + failed.getMessage());
                 }
@@ -102,7 +117,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 if (endpoint.getReconnectDelay() > 0) {
                     try {
                         Thread.sleep(endpoint.getReconnectDelay());
-                    } catch (InterruptedException e1) {
+                    } catch (InterruptedException ie) {
                         // ignore
                     }
                 }
@@ -145,10 +160,17 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void disconnect() throws GenericFileOperationFailedException {
+        // logout before disconnecting
         try {
-            client.disconnect();
+            client.logout();
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        } finally {
+            try {
+                client.disconnect();
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            }
         }
     }
 
