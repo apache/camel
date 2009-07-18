@@ -24,7 +24,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.NamespacePrefix;
-import org.apache.camel.language.XPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -54,7 +53,7 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
             Object value = ObjectHelper.invokeMethod(method, annotation);
             return (NamespacePrefix[])value;
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot determine the annotation: " + annotation + " as it does not have an namespaces() method");
+            throw new IllegalArgumentException("Cannot determine the annotation: " + annotation + " as it does not have an namespaces() method", e);
         }        
     }
 }

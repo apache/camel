@@ -86,7 +86,7 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
  *
  * @version $Revision$
  */
-public class DefaultCamelContext extends ServiceSupport implements CamelContext, Service {
+public class DefaultCamelContext extends ServiceSupport implements CamelContext {
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
     private static int nameSuffix;
@@ -120,13 +120,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private FactoryFinder defaultFactoryFinder;
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
-    private ClassResolver classResolver;
+    private ClassResolver classResolver = new DefaultClassResolver();
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we have 6 x 100 producers in total
     private ServicePool<Endpoint, Producer> producerServicePool = new DefaultProducerServicePool(100);
 
     public DefaultCamelContext() {
+        super();
         name = NAME_PREFIX + ++nameSuffix;
 
         if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
@@ -153,20 +154,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
-        if (classResolver == null) {
-            classResolver = new DefaultClassResolver();
+        // use WebSphere specific resolver if running on WebSphere
+        if (WebSpherePacakageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
+            LOG.info("Using WebSphere specific PackageScanClassResolver");
+            packageScanClassResolver = new WebSpherePacakageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
+        } else {
+            packageScanClassResolver = new DefaultPackageScanClassResolver();
         }
 
-        if (packageScanClassResolver == null) {
-            // use WebSphere specific resolver if running on WebSphere
-            if (WebSpherePacakageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
-                LOG.info("Using WebSphere specific PackageScanClassResolver");
-                packageScanClassResolver = new WebSpherePacakageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
-            } else {
-                packageScanClassResolver = new DefaultPackageScanClassResolver();
-            }
-
-        }
     }
 
     /**

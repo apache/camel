@@ -302,17 +302,9 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             if (tracer.isUseJpa()) {
                 LOG.trace("Using class: " + JPA_TRACE_EVENT_MESSAGE + " for tracing event messages");
 
-                // load the jpa event class
-                synchronized (this) {
-                    if (jpaTraceEventMessageClass == null) {
-                        jpaTraceEventMessageClass = exchange.getContext().getClassResolver().resolveClass(JPA_TRACE_EVENT_MESSAGE);
-                        if (jpaTraceEventMessageClass == null) {
-                            throw new IllegalArgumentException("Cannot find class: " + JPA_TRACE_EVENT_MESSAGE
-                                    + ". Make sure camel-jpa.jar is in the classpath.");
-                        }
-                    }
-                }
-
+                // load the jpa event message class
+                loadJpaTraceEventMessageClass(exchange);
+                // create a new instance of the event message class
                 Object jpa = ObjectHelper.newInstance(jpaTraceEventMessageClass);
 
                 // copy options from event to jpa
@@ -337,6 +329,16 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             } catch (Exception e) {
                 // log and ignore this as the original Exchange should be allowed to continue
                 LOG.error("Error processing trace event (original Exchange will continue): " + event, e);
+            }
+        }
+    }
+
+    private synchronized void loadJpaTraceEventMessageClass(Exchange exchange) {
+        if (jpaTraceEventMessageClass == null) {
+            jpaTraceEventMessageClass = exchange.getContext().getClassResolver().resolveClass(JPA_TRACE_EVENT_MESSAGE);
+            if (jpaTraceEventMessageClass == null) {
+                throw new IllegalArgumentException("Cannot find class: " + JPA_TRACE_EVENT_MESSAGE
+                        + ". Make sure camel-jpa.jar is in the classpath.");
             }
         }
     }

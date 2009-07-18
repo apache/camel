@@ -258,7 +258,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     results.add(createConstantExpression(expression, pivot, idx));
                 }
                 pivot = idx + 2;
-                int endIdx = expression.indexOf("}", pivot);
+                int endIdx = expression.indexOf('}', pivot);
                 if (endIdx < 0) {
                     throw new IllegalArgumentException("Expecting } but found end of string for simple expression: " + expression);
                 }

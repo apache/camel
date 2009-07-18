@@ -141,22 +141,25 @@ public final class IntrospectionSupport {
         return type.getMethod("get" + ObjectHelper.capitalize(propertyName));
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean setProperties(Object target, Map properties, String optionPrefix) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
-        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
-            String name = (String)iter.next();
+        for (Iterator<Map.Entry> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = it.next();
+            String name = entry.getKey().toString();
             if (name.startsWith(optionPrefix)) {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
                 if (setProperty(target, name, value)) {
-                    iter.remove();
+                    it.remove();
                     rc = true;
                 }
             }
         }
+
         return rc;
     }
 
@@ -166,13 +169,14 @@ public final class IntrospectionSupport {
 
         HashMap rc = new LinkedHashMap(properties.size());
 
-        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
-            String name = (String)iter.next();
+        for (Iterator<Map.Entry> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = it.next();
+            String name = entry.getKey().toString();
             if (name.startsWith(optionPrefix)) {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
                 rc.put(name, value);
-                iter.remove();
+                it.remove();
             }
         }
 
@@ -387,7 +391,7 @@ public final class IntrospectionSupport {
 
     public static String simpleName(Class clazz) {
         String name = clazz.getName();
-        int p = name.lastIndexOf(".");
+        int p = name.lastIndexOf('.');
         if (p >= 0) {
             name = name.substring(p + 1);
         }

@@ -263,7 +263,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
             id = getBreadCrumbID(exchange).toString();
             if (showShortExchangeId) {
                 // skip hostname for short exchange id
-                id = id.substring(id.indexOf("/") + 1);
+                id = id.substring(id.indexOf('/') + 1);
             }
         }
 

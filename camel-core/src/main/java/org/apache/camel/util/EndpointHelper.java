@@ -162,13 +162,15 @@ public final class EndpointHelper {
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
      */
+    @SuppressWarnings("unchecked")
     public static void setReferenceProperties(CamelContext context, Object bean, Map parameters) throws Exception {
-        Iterator it = parameters.keySet().iterator();
+        Iterator<Map.Entry> it = parameters.entrySet().iterator();
         while (it.hasNext()) {
-            Object key = it.next();
-            Object v = parameters.get(key);
+            Map.Entry entry = it.next();
+            Object key = entry.getKey();
+            Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
-            if (isReferenceParameter(value)) {
+            if (value != null && isReferenceParameter(value)) {
                 Object ref = context.getRegistry().lookup(value.substring(1));
                 String name = key.toString();
                 if (ref != null) {

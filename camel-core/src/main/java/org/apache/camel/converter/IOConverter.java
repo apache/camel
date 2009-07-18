@@ -42,14 +42,12 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
-import java.nio.CharBuffer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -140,11 +138,10 @@ public final class IOConverter {
     @Converter
     public static InputStream toInputStrean(DOMSource source) throws TransformerException, IOException {
         XmlConverter xmlConverter = createXmlConverter();
-        ByteArrayInputStream bais = new ByteArrayInputStream(xmlConverter.toString(source).getBytes());
-        return bais;
+        return new ByteArrayInputStream(xmlConverter.toString(source).getBytes());
     }
 
-    private static XmlConverter createXmlConverter() {
+    private static synchronized XmlConverter createXmlConverter() {
         if (xmlConverter == null) {
             xmlConverter = new XmlConverter();
         }

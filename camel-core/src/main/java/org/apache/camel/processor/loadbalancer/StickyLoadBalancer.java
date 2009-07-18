@@ -39,6 +39,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     private final Map<Object, Processor> stickyMap = new HashMap<Object, Processor>();
 
     public StickyLoadBalancer() {
+        super();
         this.loadBalancer = new RoundRobinLoadBalancer();
     }
 
@@ -47,15 +48,8 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     }
 
     public StickyLoadBalancer(Expression correlationExpression, QueueLoadBalancer loadBalancer) {
+        super();
         this.correlationExpression = correlationExpression;
-        this.loadBalancer = loadBalancer;
-    }
-
-    public void setCorrelationExpression(Expression correlationExpression) {
-        this.correlationExpression = correlationExpression;
-    }
-
-    public void setLoadBalancer(QueueLoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 

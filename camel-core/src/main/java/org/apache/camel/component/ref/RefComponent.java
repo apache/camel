@@ -30,7 +30,7 @@ public class RefComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // lets remove the scheme from the URI
-        int index = uri.indexOf(":");
+        int index = uri.indexOf(':');
         String name = uri;
         if (index >= 0) {
             name = uri.substring(index + 1);

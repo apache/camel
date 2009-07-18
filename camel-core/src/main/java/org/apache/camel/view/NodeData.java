@@ -169,7 +169,7 @@ public class NodeData {
     }
 
     protected String removeQueryString(String text) {
-        int idx = text.indexOf("?");
+        int idx = text.indexOf('?');
         if (idx <= 0) {
             return text;
         } else {

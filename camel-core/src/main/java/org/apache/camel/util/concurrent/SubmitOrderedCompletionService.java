@@ -63,15 +63,13 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
 
         public long getDelay(TimeUnit unit) {
             // if the answer is 0 then this task is ready to be taken
-            long answer = id - index.get();
-            return answer;
+            return id - index.get();
         }
 
         @SuppressWarnings("unchecked")
         public int compareTo(Delayed o) {
             SubmitOrderFutureTask other = (SubmitOrderFutureTask) o;
-            int answer = (int) (this.id - other.id);
-            return answer;
+            return (int) (this.id - other.id);
         }
 
         @Override

@@ -16,20 +16,11 @@
  */
 package org.apache.camel.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * File utilities
@@ -47,7 +38,7 @@ public final class FileUtil {
      */
     public static String normalizePath(String path) {
         // special handling for Windows where we need to convert / to \\
-        if (path != null && System.getProperty("os.name").startsWith("Windows") && path.indexOf("/") >= 0) {
+        if (path != null && System.getProperty("os.name").startsWith("Windows") && path.indexOf('/') >= 0) {
             return path.replace('/', '\\');
         }
         return path;
@@ -201,114 +192,6 @@ public final class FileUtil {
         }
         return result;
     }
-    
-    public static String getStringFromFile(File location) {
-        InputStream is = null;
-        String result = null;
-
-        try {
-            is = new FileInputStream(location);
-            result = normalizeCRLF(is);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    //do nothing
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public static String normalizeCRLF(InputStream instream) {
-        BufferedReader in = new BufferedReader(new InputStreamReader(instream));
-        StringBuffer result = new StringBuffer();
-        String line = null;
-
-        try {
-            line = in.readLine();
-            while (line != null) {
-                String[] tok = line.split("\\s");
-
-                for (int x = 0; x < tok.length; x++) {
-                    String token = tok[x];
-                    result.append("  " + token);
-                }
-                line = in.readLine();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        String rtn = result.toString();
-
-        rtn = ignoreTokens(rtn, "<!--", "-->");
-        rtn = ignoreTokens(rtn, "/*", "*/");
-        return rtn;
-    }
-    
-    private static String ignoreTokens(final String contents, 
-                                       final String startToken, final String endToken) {
-        String rtn = contents;
-        int headerIndexStart = rtn.indexOf(startToken);
-        int headerIndexEnd = rtn.indexOf(endToken);
-        if (headerIndexStart != -1 && headerIndexEnd != -1 && headerIndexStart < headerIndexEnd) {
-            rtn = rtn.substring(0, headerIndexStart - 1)
-                + rtn.substring(headerIndexEnd + endToken.length() + 1);
-        }
-        return rtn;
-    }
-
-    public static List<File> getFiles(File dir, final String pattern) {
-        return getFiles(dir, pattern, null);
-    }
-    public static List<File> getFilesRecurse(File dir, final String pattern) {
-        return getFilesRecurse(dir, pattern, null);
-    }
-
-    public static List<File> getFiles(File dir, final String pattern, File exclude) {
-        return getFilesRecurse(dir, Pattern.compile(pattern), exclude, false, new ArrayList<File>());
-    }
-    public static List<File> getFilesRecurse(File dir, final String pattern, File exclude) {
-        return getFilesRecurse(dir, Pattern.compile(pattern), exclude, true, new ArrayList<File>());    
-    }
-    private static List<File> getFilesRecurse(File dir, 
-                                              Pattern pattern,
-                                              File exclude, boolean rec,
-                                              List<File> fileList) {
-        for (File file : dir.listFiles()) {
-            if (file.equals(exclude)) {
-                continue;
-            }
-            if (file.isDirectory() && rec) {
-                getFilesRecurse(file, pattern, exclude, rec, fileList);
-            } else {
-                Matcher m = pattern.matcher(file.getName());
-                if (m.matches()) {
-                    fileList.add(file);                                
-                }
-            }
-        }
-        return fileList;
-    }
-
-    public static List<String> readLines(File file) throws Exception {
-        if (!file.exists()) {
-            return new ArrayList<String>();
-        }
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        List<String> results = new ArrayList<String>();
-        String line = reader.readLine();
-        while (line != null) {
-            results.add(line);
-            line = reader.readLine();
-        }
-        return results;
-    }
 
     /**
      * Strip any leading separators
@@ -343,7 +226,7 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        int pos = name.lastIndexOf("/");
+        int pos = name.lastIndexOf('/');
         if (pos == -1) {
             pos = name.lastIndexOf(File.separator);
         }
@@ -360,7 +243,7 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        int pos = name.lastIndexOf("/");
+        int pos = name.lastIndexOf('/');
         if (pos == -1) {
             pos = name.lastIndexOf(File.separator);
         }

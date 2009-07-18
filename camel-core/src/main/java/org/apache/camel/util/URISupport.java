@@ -33,7 +33,9 @@ import java.util.Map;
  * @version $Revision$
  */
 public final class URISupport {
-    
+
+    private static final String CHARSET = "UTF-8";
+
     private URISupport() {
         // Helper class
     }
@@ -120,8 +122,8 @@ public final class URISupport {
                 for (String parameter : parameters) {
                     int p = parameter.indexOf("=");
                     if (p >= 0) {
-                        String name = URLDecoder.decode(parameter.substring(0, p), "UTF-8");
-                        String value = URLDecoder.decode(parameter.substring(p + 1), "UTF-8");
+                        String name = URLDecoder.decode(parameter.substring(0, p), CHARSET);
+                        String value = URLDecoder.decode(parameter.substring(p + 1), CHARSET);
                         rc.put(name, value);
                     } else {
                         rc.put(parameter, null);
@@ -188,7 +190,7 @@ public final class URISupport {
         }
 
         int p;
-        int intialParen = ssp.indexOf("(");
+        int intialParen = ssp.indexOf('(');
         if (intialParen == 0) {
             rc.host = ssp.substring(0, intialParen);
             p = rc.host.indexOf("/");
@@ -196,7 +198,7 @@ public final class URISupport {
                 rc.path = rc.host.substring(p);
                 rc.host = rc.host.substring(0, p);
             }
-            p = ssp.lastIndexOf(")");
+            p = ssp.lastIndexOf(')');
             componentString = ssp.substring(intialParen + 1, p);
             params = ssp.substring(p + 1).trim();
         } else {
@@ -210,7 +212,7 @@ public final class URISupport {
             rc.components[i] = new URI(components[i].trim());
         }
 
-        p = params.indexOf("?");
+        p = params.indexOf('?');
         if (p >= 0) {
             if (p > 0) {
                 rc.path = stripPrefix(params.substring(0, p), "/");
@@ -285,11 +287,11 @@ public final class URISupport {
 
                     String key = (String) o;
                     String value = (String) options.get(key);
-                    rc.append(URLEncoder.encode(key, "UTF-8"));
+                    rc.append(URLEncoder.encode(key, CHARSET));
                     // only append if value is not null
                     if (value != null) {
                         rc.append("=");
-                        rc.append(URLEncoder.encode(value, "UTF-8"));
+                        rc.append(URLEncoder.encode(value, CHARSET));
                     }
                 }
                 return rc.toString();

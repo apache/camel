@@ -96,7 +96,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         if (isLenientProperties()) {
             // only use the endpoint uri without parameters as the properties is lenient
             String uri = getEndpointUri();
-            if (uri.indexOf("?") != -1) {
+            if (uri.indexOf('?') != -1) {
                 return ObjectHelper.before(uri, "?");
             } else {
                 return uri;

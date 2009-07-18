@@ -60,7 +60,7 @@ public class SedaComponent extends DefaultComponent {
     protected String getQueueKey(String uri) {
         if (uri.contains("?")) {
             // strip parameters
-            uri = uri.substring(0, uri.indexOf("?"));
+            uri = uri.substring(0, uri.indexOf('?'));
         }
         return uri;
     }
