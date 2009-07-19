@@ -61,7 +61,7 @@ public class EndpointLink {
         this.uri = endpoint.getEndpointUri();
         this.href = createHref(key);
     }
-    
+
     public String getHref() {
         return href;
     }
@@ -79,8 +79,10 @@ public class EndpointLink {
     }
 
     protected String createHref(String uri) {
-        // TODO how to encode as a href?
-        return "/endpoints/" + uri;
+        // must not include :// in endpoint link
+        // TODO: might need to use org.apache.camel.util.UnsafeUriCharactersEncoder to safely encode URI for the web
+        String href = uri.contains("://") ? uri.replace("://", ":") : uri;
+        return "/endpoints/" + href;
     }
 
 }
