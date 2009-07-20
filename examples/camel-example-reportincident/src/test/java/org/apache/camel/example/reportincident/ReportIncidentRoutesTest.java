@@ -20,12 +20,15 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test of our routes
  */
-public class ReportIncidentRoutesTest extends TestCase {
+public class ReportIncidentRoutesTest {
 
     // should be the same address as we have in our route
     private static final String URL = "http://localhost:9080/camel-example-reportincident/webservices/incident";
@@ -52,10 +55,18 @@ public class ReportIncidentRoutesTest extends TestCase {
         return (ReportIncidentEndpoint) factory.create();
     }
 
+    @Test
     public void testRendportIncident() throws Exception {
         // start camel
         startCamel();
 
+        runTest();
+
+        // stop camel
+        stopCamel();
+    }
+    
+    protected void runTest() throws Exception {
         // assert mailbox is empty before starting
         Mailbox inbox = Mailbox.get("incident@mycompany.com");
         inbox.clear();
@@ -84,8 +95,5 @@ public class ReportIncidentRoutesTest extends TestCase {
 
         // assert mail box
         assertEquals("Should have got 1 mail", 1, inbox.size());
-
-        // stop camel
-        stopCamel();
     }
 }

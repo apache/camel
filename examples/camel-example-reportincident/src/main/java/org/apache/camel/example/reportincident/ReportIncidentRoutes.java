@@ -48,7 +48,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
         }
         String cxfEndpoint = cxfEndpointAddress
                 + "?serviceClass=org.apache.camel.example.reportincident.ReportIncidentEndpoint"
-                + "&wsdlURL=report_incident.wsdl";
+                + "&wsdlURL=etc/report_incident.wsdl";
 
         // first part from the webservice -> file backup
         from(cxfEndpoint)
@@ -57,7 +57,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
             // then set the file name using the FilenameGenerator bean
             .setHeader(Exchange.FILE_NAME, BeanLanguage.bean(FilenameGenerator.class, "generateFilename"))
             // and create the mail body using velocity template
-            .to("velocity:MailBody.vm")
+            .to("velocity:etc/MailBody.vm")
             // and store the file
             .to("file://target/subfolder")
             // return OK as response

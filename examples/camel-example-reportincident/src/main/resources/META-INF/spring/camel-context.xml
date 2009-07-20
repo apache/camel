@@ -31,7 +31,7 @@
 
  <cxf:cxfEndpoint id="reportIncident"
                      address="http://localhost:9080/camel-example-reportincident/webservices/incident"
-                     wsdlURL="report_incident.wsdl"
+                     wsdlURL="etc/report_incident.wsdl"
                      serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint">
  </cxf:cxfEndpoint>
  
@@ -46,7 +46,7 @@
 	    <camel:setHeader headerName="CamelFileName">
           	<camel:method bean="filenameGenerator" method="generateFilename" />
         </camel:setHeader>		
-        <camel:to uri="velocity:MailBody.vm"/>        
+        <camel:to uri="velocity:etc/MailBody.vm"/>        
         <camel:to uri="file://target/subfolder"/>		
 		<camel:transform>
 			<camel:method bean="myBean" method="getOK" />

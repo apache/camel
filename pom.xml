@@ -97,10 +97,10 @@
     <module>parent</module>
     <module>camel-core</module>
     <module>components</module>
-    <module>examples</module>
     <module>platforms</module>
     <module>tooling</module>
     <module>tests</module>
+    <module>examples</module>
     <module>apache-camel</module>
   </modules>
 

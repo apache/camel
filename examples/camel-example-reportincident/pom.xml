@@ -31,89 +31,157 @@
         and send as emails to a backing system
     </description>
     <packaging>war</packaging>
+    
+    <repositories>
+    <repository>
+      <id>ops4j.releases</id>
+      <url>http://repository.ops4j.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>ops4j.snapshots</id>
+      <url>http://repository.ops4j.org/mvn-snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>aqute.biz</id>
+      <url>http://www.aqute.biz/repo</url>
+    </repository>
+  </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>ops4j.releases</id>
+      <url>http://repository.ops4j.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+   </pluginRepositories>
+
+	<properties>
+		<pax-exam-version>0.6.0</pax-exam-version>
+		<pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>
+	</properties>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-velocity</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-mail</artifactId>
+		</dependency>
+
+		<!-- cxf -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-core</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+
+		<!-- regular http transport -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+
+		<!-- logging -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+
+		<!-- cxf web container for unit testing -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-jetty</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam</artifactId>
+			<version>${pax-exam-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-junit</artifactId>
+			<version>${pax-exam-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-container-default</artifactId>
+			<version>${pax-exam-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-junit-extender-impl</artifactId>
+			<version>${pax-exam-version}</version>
+			<scope>test</scope>
+		</dependency>
+	    <dependency>
+		   <groupId>org.ops4j.pax.swissbox</groupId>
+		   <artifactId>pax-swissbox-tinybundles</artifactId>
+		   <version>1.0.0</version>
+		   <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cxf</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-velocity</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mail</artifactId>
-        </dependency>
-
-        <!-- cxf -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-core</artifactId>
-            <version>${cxf-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>${cxf-version}</version>
-        </dependency>
-
-        <!-- regular http transport -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId>
-            <version>${cxf-version}</version>
-        </dependency>       
-
-        <!-- logging -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
-        </dependency>
-
-        <!-- cxf web container for unit testing -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http-jetty</artifactId>
-            <version>${cxf-version}</version>            
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- unit testing mail using mock -->
-        <dependency>
-            <groupId>org.jvnet.mock-javamail</groupId>
-            <artifactId>mock-javamail</artifactId>
-            <version>1.7</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-
-    </dependencies>
+		<dependency>
+			<groupId>org.apache.camel.karaf</groupId>
+			<artifactId>features</artifactId>
+			<version>${version}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-osgi</artifactId>
+			<scope>test</scope>
+		</dependency>
+	    <dependency>
+		    <groupId>org.apache.camel.tests</groupId>
+		    <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
+		    <scope>test</scope>
+	    </dependency>
+	</dependencies>
 
     <build>
         <plugins>
@@ -127,7 +195,20 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
-
+            
+	        <plugin>
+	            <groupId>org.apache.servicemix.tooling</groupId>
+	            <artifactId>depends-maven-plugin</artifactId>
+	            <executions>
+		            <execution>
+			            <id>generate-depends-file</id>
+			            <goals>
+				            <goal>generate-depends-file</goal>
+			            </goals>
+	                </execution>
+	            </executions>
+            </plugin>
+ 
             <!-- CXF wsdl2java generator, will plugin to the compile goal -->
             <plugin>
                 <groupId>org.apache.cxf</groupId>
@@ -141,7 +222,7 @@
                             <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/report_incident.wsdl</wsdl>
+                                    <wsdl>${basedir}/src/main/resources/etc/report_incident.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
@@ -166,6 +247,16 @@
                    </connectors>                   
                 </configuration>
             </plugin>
+
+	        <plugin>
+		         <artifactId>maven-surefire-plugin</artifactId>
+		         <configuration>
+			        <excludes>
+				      <!-- TODO: temporary disable unit test to let TC not hang -->
+				      <exclude>**/*OSGiTest.*</exclude>
+			        </excludes>
+		         </configuration>
+	         </plugin>
 
         </plugins>
     </build>

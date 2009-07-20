@@ -128,6 +128,21 @@
       <artifactId>camel-servlet</artifactId>
       <scope>test</scope>
     </dependency>
+	<dependency>
+	  <groupId>org.apache.camel.tests</groupId>
+	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
+	  <scope>test</scope>
+    </dependency>
+	<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>      
+      <scope>test</scope>
+    </dependency>
+	<dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>      
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>      
