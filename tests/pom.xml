@@ -31,6 +31,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>test-bundles</module>
     <module>camel-itest</module>
     <module>camel-itest-osgi</module>
     <module>camel-itest-spring-2.0</module>
