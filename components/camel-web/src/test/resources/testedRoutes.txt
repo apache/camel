@@ -1,0 +1,87 @@
+#########################simple#########################
+from("direct:start").to("mock:result")
+from("direct:start").to("bean:checkLuggage", "mock:testCheckpoint", "bean:dataEnricher", "mock:result")
+#########################aggregate#########################
+from("direct:start").aggregate(header("cheese")).to("mock:result")
+#from("direct:start").aggregate().xpath("/stockQuote/@symbol", String.class).batchSize(5).to("mock:result")
+#from("direct:start").aggregate().xpath("name(/stockQuote[@symbol='APACHE'])", String.class).batchSize(5).to("mock:result")
+#########################convertBody#########################
+from("direct:start").convertBodyTo(Integer.class).to("mock:result")
+from("direct:start").convertBodyTo(byte[].class, "iso-8859-1").to("mock:result")
+#########################choice#########################
+from("direct:start").choice().when().method("controlBean", "isDetour").to("mock:detour").end().to("mock:result")
+from("direct:start").choice().when(header("username").isNotNull()).to("mock:god").when(header("admin").isEqualTo("true")).to("mock:admin").otherwise().to("mock:guest").end()
+from("direct:start").split().body().choice().when().method("orderItemHelper", "isWidget").to("bean:widgetInventory", "seda:aggregate").otherwise().to("bean:gadgetInventory", "seda:aggregate")
+#from("direct:start").choice().when().xpath("$foo = 'bar'").to("mock:x").when().xpath("$foo = 'cheese'").to("mock:y").otherwise().to("mock:z").end().to("mock:end")
+#from("direct:start").choice().when().xpath("\$foo = 'bar'").to("mock:x").when().xpath("\$foo = 'cheese'").to("mock:y").otherwise().to("mock:z").end().to("mock:end")
+#from("direct:start").to("mock:start").choice().when(body().contains("Hello")).bean(bean, "echo").to("mock:echo").when(body().contains("Bye")).to("direct:bye").to("mock:bye").otherwise().bean(bean, "other").to("mock:other").end().transform(body().prepend("last ")).to("mock:last")
+#########################claimCheck#########################
+from("direct:start").to("bean:checkLuggage", "mock:testCheckpoint", "bean:dataEnricher", "mock:result")
+#########################delay#########################
+from("direct:start").delay(1000).to("mock:result")
+from("direct:start").delay(header("MyDelay")).to("mock:result")
+from("direct:start").delay().header("MyDelay").to("mock:result")
+#########################detour#########################
+from("direct:start").choice().when().method("controlBean", "isDetour").to("mock:detour").end().to("mock:result")
+#########################deadLetter/errorHandler#########################
+errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0).handled(false));from("direct:start").to("mock:result")
+errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(3).redeliverDelay(5000));from("direct:start").to("mock:result")
+errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from("direct:start").to("mock:result")
+#errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(4).loggingLevel(LoggingLevel.DEBUG));from("direct:start").to("mock:result")
+#########################enricher#########################
+from("direct:start").setBody(body().append(" World!")).to("mock:result")
+#########################filter#########################
+from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result")
+from("direct:start").filter(body().contains("World")).to("mock:result")
+#########################loadBalance#########################
+from("direct:start").loadBalance().random().to("mock:x", "mock:y", "mock:z")
+#from("direct:start").loadBalance().failover(IOException.class).to("direct:x", "direct:y") // No getExceptions method for FailOverLoadBalancer
+#########################loop#########################
+from("direct:start").loop(8).to("mock:result")
+from("direct:start").loop(header("loop")).to("mock:result")
+from("direct:start").loop().xpath("/hello/@times").to("mock:result")
+from("direct:start").loop(2).to("mock:result").end().to("mock:last")
+#########################normalizer#########################
+from("direct:start").choice().when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").when().xpath("/customer").to("bean:normalizer?method=customerToPerson").end().to("mock:result")
+#########################pipeline#########################
+from("direct:start").pipeline("direct:x", "direct:y", "direct:z", "mock:result")
+from("direct:start").pipeline("bean:foo?method=hi", "bean:foo?method=kabom").to("mock:result")
+#########################recipientList#########################
+from("direct:start").recipientList(header("recipientListHeader").tokenize(","))
+#########################resequencer#########################
+#from("direct:start").resequence(body()).to("mock:result")  // No getExceptionList method for ResequenceDefinition
+#from("direct:start").resequencer(body()).to("mock:result") // No getExceptionList method for ResequenceDefinition
+#########################routingSlip#########################
+from("direct:start").routingSlip("headerName")
+from("direct:start").routingSlip("aRoutingSlipHeader", "#")
+#########################setBody/setHeader#########################
+from("direct:start").delay(1000).setBody().constant("Tapped").to("mock:result", "mock:tap")
+#from("direct:start").unmarshal().string().setHeader("foo").xpath("/person[@name='James']/@city", String.class).to("mock:result")
+#########################sort#########################
+from("direct:start").sort(body().tokenize(",")).to("bean:MyServiceBean.processLine")
+#from("direct:start").sort(body().tokenize("\n")).to("bean:MyServiceBean.processLine")
+#########################split#########################
+#from("direct:start").split(body().tokenize(",")).streaming().to("mock:result")
+#from("direct:start").split(body(String.class).tokenize("\n")).to("mock:result")
+#from("direct:start").split().method("mySplitterBean", "splitBody").to("mock:result")
+#from("direct:start").split(xpath("//foo/bar")).convertBodyTo(String.class).to("mock:result")
+#########################throttle#########################
+from("direct:start").throttle(100).to("mock:result")
+from("direct:start").throttle(3).timePeriodMillis(10000).to("mock:result")
+#from("direct:start").throttle(1).timePeriodMillis(INTERVAL).to("mock:result")
+#########################transform#########################
+from("direct:start").transform().constant("London").to("mock:result")
+from("direct:start").transform(body().append(" World!")).to("mock:result")
+from("direct:start").transform(sendTo("direct:foo")).to("mock:result")
+#from("activemq:SomeQueue").beanRef("myTransformerBean", "myMethodName").to("mqseries:AnotherQueue")
+#########################validation#########################
+#########################xpath#########################
+from("direct:start").filter().xpath("/person[@name='James']").to("mock:result")
+#from("direct:start").choice().when().xpath("/body[@id='a']").setHeader("name", constant("a")).to("mock:x").when().xpath("/body[@id='b']").to("mock:y").otherwise().to("mock:z")
+#########################wireTap#########################
+from("direct:start").to("log:foo").wireTap("direct:tap").to("mock:result")
+from("direct:start").delay(1000).setBody().constant("Tapped").to("mock:result", "mock:tap")
+#from("direct:start").wireTap("direct:foo", constant("Bye World")).to("mock:result")
+#########################others#########################
+from("direct:start").marshal().serialization().to("direct:marshalled")
+from("direct:start").unmarshal().serialization().to("mock:result")

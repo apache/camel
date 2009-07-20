@@ -30,8 +30,9 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.view.RouteDotGenerator;
 
 /**
- * The active routes in Camel which are used to implement one or more
- * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
+ * The active routes in Camel which are used to implement one or more <a
+ * href="http://camel.apache.org/enterprise-integration-patterns.html"
+ * >Enterprise Integration Paterns</a>
  *
  * @version $Revision$
  */
@@ -57,8 +58,9 @@ public class RoutesResource extends CamelChildResourceSupport {
     }
 
     /**
-     * Returns the Graphviz DOT <a href="http://camel.apache.org/visualisation.html">Visualisation</a>
-     * of the current Camel routes
+     * Returns the Graphviz DOT <a
+     * href="http://camel.apache.org/visualisation.html">Visualisation</a> of
+     * the current Camel routes
      */
     @GET
     @Produces(Constants.DOT_MIMETYPE)
@@ -81,9 +83,20 @@ public class RoutesResource extends CamelChildResourceSupport {
         return null;
     }
 
+    /**
+     * Looks up an individual route with specified language
+     */
+    @Path("{id}/{language}")
+    public RouteResource getRoute(@PathParam("id") String id, @PathParam("language") String language) {
+        RouteResource routeResource = getRoute(id);
+        if (routeResource != null) {
+            routeResource.setLanguage(language);
+        }
+        return routeResource;
+    }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public List<RouteDefinition> getRoutes() {
         return getRouteDefinitions().getRoutes();
     }

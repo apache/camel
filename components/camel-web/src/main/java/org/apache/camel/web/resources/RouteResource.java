@@ -16,6 +16,10 @@
  */
 package org.apache.camel.web.resources;
 
+import com.sun.jersey.api.representation.Form;
+import com.sun.jersey.api.view.Viewable;
+import groovy.lang.GroovyClassLoader;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,16 +44,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.api.view.Viewable;
-import groovy.lang.GroovyClassLoader;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.ruby.RubyCamel;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
+import org.apache.camel.web.util.GroovyRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jruby.Main;
@@ -73,12 +75,6 @@ public class RouteResource extends CamelChildResourceSupport {
 
     // what language is used to define this route
     private String language = LANGUAGE_XML;
-  
-    // the route configuration: when language is Xml, the routeDefinition is
-    // null; when language is Groovy/Scala/Ruby, the routeDefinition contains
-    // the route definition class. It must be initialized because RouteResource
-    // is stateless.
-    private String routeDefinition = "";
 
     public RouteResource(RoutesResource routesResource, RouteDefinition route) {
         super(routesResource.getContextResource());
@@ -111,25 +107,21 @@ public class RouteResource extends CamelChildResourceSupport {
     }
 
     /**
-     * Returns the language
-     */
-    public String getLanguage() {
-        return language;
-    }
-
-    /**
      * Returns the content of the route definition class
      */
     public String getRouteDefinition() {
-        if (language.equals(LANGUAGE_XML)) {
+        if (language.equalsIgnoreCase(LANGUAGE_XML)) {
             try {
                 return getRouteXml();
             } catch (JAXBException e) {
-                // e.printStackTrace();
                 return "Error on marshal the route definition!";
             }
+        } else if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
+            StringBuilder buffer = new StringBuilder();
+            new GroovyRenderer().renderRoute(buffer, route);
+            return GroovyRenderer.header + buffer.toString() + GroovyRenderer.footer;
         } else {
-            return routeDefinition;
+            return "Unsupported language!";
         }
     }
 
@@ -163,12 +155,20 @@ public class RouteResource extends CamelChildResourceSupport {
      * Allows a routes builder to be updated
      */
     public void postRoutes(RouteBuilder builder) throws Exception {
-        // remove current route
-        DefaultCamelContext camelContext = (DefaultCamelContext)getCamelContext();
-        camelContext.removeRouteDefinition(id);
+        // add the route builder into a temporary camel context
+        CamelContext tempContext = new DefaultCamelContext();
+        tempContext.addRoutes(builder);
+        // get all the added routes and add them into current context
+        List<RouteDefinition> routeDefinitions = tempContext.getRouteDefinitions();
+        for (int i = 0; i < routeDefinitions.size(); i++) {
+            RouteDefinition routeDefinition = routeDefinitions.get(i);
+            // set id only for the first route
+            if (i == 0)
+                routeDefinition.setId(id);
 
-        // lets install the updated routes
-        camelContext.addRoutes(builder);
+            // add or update the route
+            getCamelContext().addRouteDefinitions(Collections.singletonList(routeDefinition));
+        }
     }
 
     /**
@@ -234,11 +234,11 @@ public class RouteResource extends CamelChildResourceSupport {
     private Response parseGroovy(String route) {
         try {
             // store the route definition
-            File file = storeRoute(route, LANGUAGE_GROOVY);
+            // File file = storeRoute(route, LANGUAGE_GROOVY);
 
             // load the definition class into a RouteBuilder instance
             GroovyClassLoader classLoader = new GroovyClassLoader();
-            Class clazz = classLoader.parseClass(file);
+            Class clazz = classLoader.parseClass(route);
             RouteBuilder builder = (RouteBuilder)clazz.newInstance();
             LOG.info("Loaded builder: " + builder);
 
@@ -338,6 +338,27 @@ public class RouteResource extends CamelChildResourceSupport {
         fw.flush();
         fw.close();
         return file;
+    }
+
+    /**
+     * Returns the language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
+            this.language = LANGUAGE_GROOVY;
+        } else if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
+            this.language = LANGUAGE_GROOVY;
+        } else if (language.equalsIgnoreCase(LANGUAGE_RUBY)) {
+            this.language = LANGUAGE_RUBY;
+        } else if (language.equalsIgnoreCase(LANGUAGE_SCALA)) {
+            this.language = LANGUAGE_SCALA;
+        } else {
+            this.language = LANGUAGE_XML;
+        }
     }
 
     /**

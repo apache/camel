@@ -14,13 +14,18 @@
 <table>
 	<tr>
 		<td>
-		<h2>Edit ${it.route.id}</h2>
+		<h2>Edit ${it.route.id} in ${it.language}</h2>
 		</td>
-		<td><input type="submit" value="Save">&nbsp; as &nbsp;<select id="language" name="language">
-			<option value="Xml" selected>XML</option>
-			<option value="Groovy">Groovy</option>
-			<option value="Ruby">Ruby</option>
-			<option value="Scala">Scala</option>
+		<td><input type="submit" value="Save">&nbsp; as &nbsp;<select
+			id="language" name="language">
+			<option value="Xml"
+				<c:if test="${it.language eq 'Xml'}">selected</c:if>>Xml</option>
+			<option value="Groovy"
+				<c:if test="${it.language eq 'Groovy'}">selected</c:if>>Groovy</option>
+			<option value="Ruby"
+				<c:if test="${it.language eq 'Ruby'}">selected</c:if>>Ruby</option>
+			<option value="Scala"
+				<c:if test="${it.language eq 'Scala'}">selected</c:if>>Scala</option>
 		</select></td>
 	</tr>
 	<tr>
