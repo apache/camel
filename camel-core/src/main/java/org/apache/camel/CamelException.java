@@ -22,6 +22,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class CamelException extends Exception {
+    private static final long serialVersionUID = -8721487434390572630L;
 
     public CamelException() {
     }

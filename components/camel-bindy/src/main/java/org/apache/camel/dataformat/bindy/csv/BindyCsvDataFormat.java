@@ -132,12 +132,12 @@ public class BindyCsvDataFormat implements DataFormat {
                         LOG.debug("Size of the record splitted : " + result.size());
                     }
 
-                   	// Bind data from CSV record with model classes
-                   	factory.bind(result, model);
+                    // Bind data from CSV record with model classes
+                    factory.bind(result, model);
 
-                   	// Link objects together
-                   	factory.link(model);
-                    	
+                    // Link objects together
+                    factory.link(model);
+
                     // Add objects graph to the list
                     models.add(model);
 

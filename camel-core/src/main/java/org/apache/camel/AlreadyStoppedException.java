@@ -22,6 +22,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class AlreadyStoppedException extends CamelException {
+    private static final long serialVersionUID = -8721487434390572639L;
 
     public AlreadyStoppedException() {
         super("Already stopped");

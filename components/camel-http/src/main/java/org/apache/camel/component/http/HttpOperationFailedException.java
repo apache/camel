@@ -23,7 +23,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.StatusLine;
 
-public class HttpOperationFailedException extends CamelException {    
+public class HttpOperationFailedException extends CamelException {
+    private static final long serialVersionUID = -8721487434390572633L;
     private final String redirectLocation;
     private final int statusCode;
     private final StatusLine statusLine;

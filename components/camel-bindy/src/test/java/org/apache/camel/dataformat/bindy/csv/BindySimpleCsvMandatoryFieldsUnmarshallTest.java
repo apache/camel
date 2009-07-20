@@ -156,8 +156,8 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                        from("direct:start1").unmarshal(formatOptional).to("mock:result1");
-                        from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
+                    from("direct:start1").unmarshal(formatOptional).to("mock:result1");
+                    from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
                 }
             };
         }
