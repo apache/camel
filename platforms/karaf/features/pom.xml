@@ -51,9 +51,11 @@
       <commons-net-version>2.0</commons-net-version>
       <flatpack-bundle-version>3.1.1_1</flatpack-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
-      <geronimo-jaxws-spec-version>1.1.2</geronimo-jaxws-spec-version>
+      <geronimo-jaxws-spec-version>1.0</geronimo-jaxws-spec-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
+      <geronimo-javamail-1.4-version>1.6_1</geronimo-javamail-1.4-version>
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
+      <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
       <hamcrest-bundle-version>1.2-dev1_1</hamcrest-bundle-version>
       <ibatis-bundle-version>2.3.4.726_1</ibatis-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
@@ -84,12 +86,13 @@
       <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
       <velocity-bundle-version>1.6.2_1</velocity-bundle-version>
       <xmlbeans-bundle-version>2.4.0_2</xmlbeans-bundle-version>
-      <xmlschema-version>1.4.4</xmlschema-version>
+      <xmlschema-version>1.4.5</xmlschema-version>
       <xmlsec-bundle-version>1.3.0_1</xmlsec-bundle-version>
       <xmlresolver-bundle-version>1.2_1</xmlresolver-bundle-version>
       <xpp3-bundle-version>1.1.4c_1</xpp3-bundle-version>
       <xstream-bundle-version>1.3_1</xstream-bundle-version>
       <werken-xpath-bundle-version>0.9.4_1</werken-xpath-bundle-version>
+      <woodstox-bundle-version>3.2.7_1</woodstox-bundle-version>
       <wsdl4j-bundle-version>1.6.1_1</wsdl4j-bundle-version>
     </properties>
 
