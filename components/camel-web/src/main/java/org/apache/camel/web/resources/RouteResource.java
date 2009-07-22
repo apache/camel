@@ -184,9 +184,15 @@ public class RouteResource extends CamelChildResourceSupport {
         // TODO replace the Form class with an injected bean?
         String language = formData.getFirst("language", String.class);
         String body = formData.getFirst("route", String.class);
+        String edited = formData.getFirst("edited", String.class);
+
+        if (edited.equals("false")) {
+            return Response.seeOther(new URI("/routes")).build();
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("new Route is: " + body);
         }
+        
         LOG.info(body);
         if (body == null) {
             error = "No Route submitted!";

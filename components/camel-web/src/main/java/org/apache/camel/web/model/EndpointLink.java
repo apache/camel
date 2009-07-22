@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.web.util.UriCharactersEncoder;
 
 /**
  * @version $Revision$
@@ -81,8 +82,7 @@ public class EndpointLink {
     protected String createHref(String uri) {
         // must not include :// in endpoint link
         // TODO: might need to use org.apache.camel.util.UnsafeUriCharactersEncoder to safely encode URI for the web
-        String href = uri.contains("://") ? uri.replace("://", ":") : uri;
-        return "/endpoints/" + href;
+        return "/endpoints/" + UriCharactersEncoder.encode(uri);
     }
 
 }

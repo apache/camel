@@ -30,8 +30,9 @@
 	</tr>
 	<tr>
 		<td colspan="2"><textarea id="route" name="route"
+			onchange="dojo.byId('edited').value = true;"
 			style="width: 800px; height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px;">${it.routeDefinition}</textarea>
-		</td>
+		<input id="edited" name="edited" type="hidden" value="false" /></td>
 	</tr>
 </table>
 
