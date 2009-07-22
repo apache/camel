@@ -94,21 +94,21 @@ public final class CxfBinding {
             answer = new MessageImpl();
         }
         org.apache.camel.Message in = exchange.getIn();
-
+      
         // Check the body if the POJO parameter list first
-        try {
-            List body = in.getBody(List.class);
+        Object body = in.getBody();
+        if (body instanceof List) {
             // just set the operation's parameter
             answer.setContent(List.class, body);
             CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
-        } catch (NoTypeConversionAvailableException ex) {
+        } else {
             // CXF uses StAX which is based on the stream API to parse the XML,
             // so the CXF transport is also based on the stream API.
             // And the interceptors are also based on the stream API,
             // so let's use an InputStream to host the CXF on wire message.
             try {
-                InputStream body = in.getBody(InputStream.class);
-                answer.setContent(InputStream.class, body);
+                InputStream is = in.getBody(InputStream.class);
+                answer.setContent(InputStream.class, is);
             } catch (NoTypeConversionAvailableException ex2) {
                 // ignore
             }
