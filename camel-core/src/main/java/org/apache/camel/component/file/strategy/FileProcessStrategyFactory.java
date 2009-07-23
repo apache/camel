@@ -99,6 +99,13 @@ public final class FileProcessStrategyFactory {
                     readLockStrategy.setTimeout(timeout);
                 }
                 return readLockStrategy;
+            } else if ("changed".equals(readLock)) {
+                GenericFileExclusiveReadLockStrategy readLockStrategy = new FileChangedExclusiveReadLockStrategy();
+                Long timeout = (Long) params.get("readLockTimeout");
+                if (timeout != null) {
+                    readLockStrategy.setTimeout(timeout);
+                }
+                return readLockStrategy;
             } else if ("markerFile".equals(readLock)) {
                 return new MarkerFileExclusiveReadLockStrategy();
             }
