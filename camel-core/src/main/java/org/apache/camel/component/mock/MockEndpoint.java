@@ -38,6 +38,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionClause;
@@ -319,12 +320,27 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             public void run() {
                 assertTrue("No header with name " + headerName + " found.", actualHeader != null);
 
-                Object actualValue = getCamelContext().getTypeConverter().convertTo(actualHeader.getClass(), headerValue);
-                assertEquals("Header of message", actualValue, actualHeader);
+                Object actualValue;
+                if (actualHeader instanceof Expression) {
+                    actualValue = ((Expression)actualHeader).evaluate(mostRecentExchange(), headerValue.getClass());
+                } else if (actualHeader instanceof Predicate) {
+                    actualValue = ((Predicate)actualHeader).matches(mostRecentExchange());
+                } else {                    
+                    actualValue = getCamelContext().getTypeConverter().convertTo(headerValue.getClass(), actualHeader);
+                    assertTrue("There is no type conversion possible from " + actualHeader.getClass().getName() 
+                            + " to " + headerValue.getClass().getName(), actualValue != null);
+                }
+                assertEquals("Header of message", headerValue, actualValue);
             }
+
+
         });
     }
 
+    private Exchange mostRecentExchange() {
+        return receivedExchanges.get(receivedExchanges.size() - 1);
+    }
+    
     /**
      * Adds an expectation that the given property name & value are received by this endpoint
      */

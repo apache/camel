@@ -102,7 +102,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
      */
     public void setBatchSize(int batchSize) {
         // setting batch size to 0 or negative is like disabling it, so we set it as the max value
-        // as the code logic is dependt on a batch size having 1..n value
+        // as the code logic is dependent on a batch size having 1..n value
         if (batchSize <= 0) {
             LOG.debug("Disabling batch size, will only be triggered by timeout");
             this.batchSize = Integer.MAX_VALUE;

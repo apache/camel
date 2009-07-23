@@ -72,7 +72,7 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
             LOG.trace("Evaluated expression: " + correlationExpression + " as correlation key: " + correlationKey);
         }
 
-        // TODO: correlationKey evalutated to null should be skipped by default
+        // TODO: correlationKey evaluated to null should be skipped by default
 
         Exchange oldExchange = aggregated.get(correlationKey);
         Exchange newExchange = exchange;
