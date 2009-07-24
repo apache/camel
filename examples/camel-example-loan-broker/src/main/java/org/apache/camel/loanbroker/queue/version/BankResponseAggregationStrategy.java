@@ -43,13 +43,10 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
 
         Message oldMessage;
         Message newMessage;
-        if (aggregatingOutMessage) {
-            oldMessage = oldExchange.getOut();
-            newMessage = newExchange.getOut();
-        } else {
-            oldMessage = oldExchange.getIn();
-            newMessage = newExchange.getIn();
-        }
+       
+        oldMessage = oldExchange.getIn();
+        newMessage = newExchange.getIn();
+
         Double oldRate = oldMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
         Double newRate = newMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
 

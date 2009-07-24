@@ -96,7 +96,7 @@ public class LoanBroker extends RouteBuilder {
         // CreditAgency will get the request from parallelLoanRequestQueue
         from("jms:queue2:parallelLoanRequestQueue").process(new CreditAgency())
             // Set the aggregation strategy for aggregating the out message            
-            .multicast(new BankResponseAggregationStrategy().setAggregatingOutMessage(true))
+            .multicast(new BankResponseAggregationStrategy())
                 // Send out the request to three different banks in parallel
                 .parallelProcessing().to("jms:queue2:bank1", "jms:queue2:bank2", "jms:queue2:bank3");
         
