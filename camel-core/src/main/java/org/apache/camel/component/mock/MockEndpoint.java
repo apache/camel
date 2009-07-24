@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mock;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,7 +72,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private int expectedMinimumCount;
     private List expectedBodyValues;
     private List actualBodyValues;
-    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private String headerName;
     private Object headerValue;
     private Object actualHeader;
@@ -162,14 +159,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     public List<Exchange> getExchanges() {
         return getReceivedExchanges();
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
