@@ -21,8 +21,9 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.util.SimpleRouteBuilder;
+import org.apache.camel.spring.example.MyProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,13 +35,13 @@ public class MainTest extends TestCase {
 
     public void testMain() throws Exception {
         // lets make a simple route
-        SimpleRouteBuilder builder = new SimpleRouteBuilder();
-        builder.setFromUri("file://src/test/data?noop=true");
-        builder.setBeanClass("org.apache.camel.spring.example.MyProcessor");
-        builder.setToUri("mock:results");
-
         Main main = new Main();
-        main.addRouteBuilder(builder);
+        main.addRouteBuilder(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file://src/test/data?noop=true").process(new MyProcessor()).to("mock:results");
+            }
+        });
         main.start();
 
         List<CamelContext> contextList = main.getCamelContexts();
