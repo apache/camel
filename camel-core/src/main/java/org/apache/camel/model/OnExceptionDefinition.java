@@ -286,7 +286,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param collisionAvoidancePercent  the percentage
      * @return the builder
      */
-    public OnExceptionDefinition collisionAvoidancePercent(short collisionAvoidancePercent) {
+    public OnExceptionDefinition collisionAvoidancePercent(double collisionAvoidancePercent) {
         getOrCreateRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }

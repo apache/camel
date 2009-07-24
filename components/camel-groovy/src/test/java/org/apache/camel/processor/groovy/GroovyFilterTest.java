@@ -17,24 +17,23 @@
 package org.apache.camel.processor.groovy;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.NoRouteBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.XPathFilterTest;
 import org.apache.camel.spring.SpringCamelContext;
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
 public class GroovyFilterTest extends XPathFilterTest {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/processor/groovy/groovyFilter.xml"));
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return NoRouteBuilder.getInstance();
-    }
 }

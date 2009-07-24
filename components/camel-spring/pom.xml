@@ -217,18 +217,6 @@
             </goals>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>xsddoc</groupId>
-            <artifactId>maven-xsddoc-plugin</artifactId>
-            <version>1.0</version>
-          </dependency>
-          <dependency>
-            <groupId>xsddoc</groupId>
-            <artifactId>xsddoc</artifactId>
-            <version>1.0</version>
-          </dependency>
-        </dependencies>
       </plugin>
 
       <!-- generate the attached tests jar -->

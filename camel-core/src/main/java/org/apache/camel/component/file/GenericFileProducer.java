@@ -117,6 +117,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * Perform any actions that need to occur before we write such as connecting to an FTP server etc.
      */
     protected void preWriteCheck() throws Exception {
+        // nothing needed to check
     }
 
     protected void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {

@@ -34,12 +34,12 @@ public class ManagedEndpoint {
     }
 
     @ManagedAttribute(description = "Endpoint Uri")
-    public String getUri() throws Exception {
+    public String getUri() {
         return endpoint.getEndpointUri();
     }
 
     @ManagedAttribute(description = "Singleton")
-    public boolean getSingleton() throws Exception {
+    public boolean isSingleton() {
         return endpoint.isSingleton();
     }
 }

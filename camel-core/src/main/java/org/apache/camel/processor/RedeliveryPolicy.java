@@ -344,8 +344,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         this.backOffMultiplier = backOffMultiplier;
     }
 
-    public short getCollisionAvoidancePercent() {
-        return (short)Math.round(collisionAvoidanceFactor * 100);
+    public long getCollisionAvoidancePercent() {
+        return Math.round(collisionAvoidanceFactor * 100);
     }
 
     /**

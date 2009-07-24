@@ -36,8 +36,8 @@ public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
 
         String newName = expression.evaluate(exchange, String.class);
 
-        // clone and change the name
-        GenericFile<T> result = file.clone();
+        // make a copy as result and change its file name
+        GenericFile<T> result = file.copyFrom(file);
         result.changeFileName(newName);
         return result;
     }

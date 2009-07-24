@@ -104,15 +104,6 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
-     * A strategy method populate the initial set of headers on an inbound
-     * message from an underlying binding
-     *
-     * @param map is the empty header map to populate
-     */
-    protected void populateInitialHeaders(Map<String, Object> map) {
-    }
-
-    /**
      * A factory method to lazily create the attachments to make it easy to
      * create efficient Message implementations which only construct and
      * populate the Map on demand
@@ -126,12 +117,23 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
+     * A strategy method populate the initial set of headers on an inbound
+     * message from an underlying binding
+     *
+     * @param map is the empty header map to populate
+     */
+    protected void populateInitialHeaders(Map<String, Object> map) {
+        // do nothing by default
+    }
+
+    /**
      * A strategy method populate the initial set of attachments on an inbound
      * message from an underlying binding
      *
      * @param map is the empty attachment map to populate
      */
     protected void populateInitialAttachments(Map<String, DataHandler> map) {
+        // do nothing by default
     }
 
     public void addAttachment(String id, DataHandler content) {

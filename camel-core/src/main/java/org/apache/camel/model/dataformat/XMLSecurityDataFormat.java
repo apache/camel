@@ -76,7 +76,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
             setProperty(dataFormat, "secureTag", "");
         }
 
-        setProperty(dataFormat, "secureTagContents", getSecureTagContents());
+        setProperty(dataFormat, "secureTagContents", isSecureTagContents());
 
         if (passPhrase != null) {
             setProperty(dataFormat, "passPhrase", getPassPhrase());
@@ -116,10 +116,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     }
 
     public boolean isSecureTagContents() {
-        return secureTagContents;
-    }
-
-    public boolean getSecureTagContents() {
         return secureTagContents;
     }
 

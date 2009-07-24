@@ -71,7 +71,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
-    public DefaultErrorHandlerBuilder collisionAvoidancePercent(short collisionAvoidancePercent) {
+    public DefaultErrorHandlerBuilder collisionAvoidancePercent(double collisionAvoidancePercent) {
         getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }

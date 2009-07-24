@@ -18,7 +18,6 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -27,7 +26,7 @@ import org.apache.camel.util.IOHelper;
 /**
  * File binding with the {@link java.io.File} type.
  */
-public class FileBinding implements GenericFileBinding<File>, Serializable {
+public class FileBinding implements GenericFileBinding<File> {
 
     private File body;
     private byte[] content;

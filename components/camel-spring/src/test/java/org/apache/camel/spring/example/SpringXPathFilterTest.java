@@ -17,8 +17,6 @@
 package org.apache.camel.spring.example;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.NoRouteBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.XPathFilterTest;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,13 +25,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class SpringXPathFilterTest extends XPathFilterTest {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"));
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return NoRouteBuilder.getInstance();
-    }
 }

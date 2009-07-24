@@ -18,8 +18,6 @@ package org.apache.camel.builder.script.example;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ScriptTestHelper;
-import org.apache.camel.builder.NoRouteBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.XPathFilterTest;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -28,6 +26,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class AnyLanguageFilterTest extends XPathFilterTest {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Override
     public void testSendMatchingMessage() throws Exception {
@@ -52,8 +55,4 @@ public class AnyLanguageFilterTest extends XPathFilterTest {
         return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/anyLanguageFilter.xml"));
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return NoRouteBuilder.getInstance();
-    }
 }

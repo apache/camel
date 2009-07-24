@@ -42,8 +42,8 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         // since its a Generic file we cannot use java.nio to get a RW lock
         String newName = file.getFileName() + ".camelExclusiveReadLock";
 
-        // clone and change the name
-        GenericFile<T> newFile = file.clone();
+        // make a copy as result and change its file name
+        GenericFile<T> newFile = file.copyFrom(file);
         newFile.changeFileName(newName);
 
         long start = System.currentTimeMillis();

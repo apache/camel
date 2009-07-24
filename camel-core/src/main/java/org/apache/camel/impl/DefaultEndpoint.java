@@ -61,6 +61,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     }
 
     protected DefaultEndpoint() {
+        super();
     }
 
     public int hashCode() {
@@ -212,6 +213,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     }
 
     public void configureProperties(Map options) {
+        // do nothing by default
     }
 
     /**
@@ -239,7 +241,5 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         // default should be false for most components
         return false;
     }
-
-
 
 }

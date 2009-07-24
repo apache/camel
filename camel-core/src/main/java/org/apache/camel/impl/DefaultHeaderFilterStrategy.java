@@ -181,7 +181,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         lowerCase = value;
     }
     
-    public boolean getAllowNullValues() {
+    public boolean isAllowNullValues() {
         return allowNullValues;
     }
     

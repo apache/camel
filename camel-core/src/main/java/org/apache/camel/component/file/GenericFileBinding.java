@@ -17,13 +17,14 @@
 package org.apache.camel.component.file;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.camel.Exchange;
 
 /**
  * Binding between the generic file and the body content.
  */
-public interface GenericFileBinding<T> {
+public interface GenericFileBinding<T> extends Serializable {
 
     /**
      * Gets the body of the file
