@@ -17,6 +17,8 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -61,5 +63,32 @@ public class ValueBuilderTest extends ContextTestSupport {
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testMatches() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.message(0).body().matches(new Expression() {
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                String body = exchange.getIn().getBody(String.class);
+                Boolean answer = body.contains("Camel");
+                return type.cast(answer);
+            }
+        });
+
+        template.sendBody("direct:start", "Camel rocks");
+        mock.assertIsSatisfied();
+
+        // send in a false test
+        mock.reset();
+        template.sendBody("direct:start", "Hello World");
+        mock.assertIsNotSatisfied();
     }
 }

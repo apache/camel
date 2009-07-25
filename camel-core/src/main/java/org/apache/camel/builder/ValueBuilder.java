@@ -52,6 +52,10 @@ public class ValueBuilder implements Expression {
     // Predicate builders
     // -------------------------------------------------------------------------
 
+    public Predicate matches(Expression expression) {
+        return onNewPredicate(PredicateBuilder.toPredicate(expression));
+    }
+
     public Predicate isNotEqualTo(Object value) {
         Expression right = asExpression(value);
         return onNewPredicate(PredicateBuilder.isNotEqualTo(expression, right));
