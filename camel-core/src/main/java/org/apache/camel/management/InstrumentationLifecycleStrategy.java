@@ -32,6 +32,9 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.OnCompletionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
@@ -253,30 +256,40 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // instrument the route endpoint
         final Endpoint endpoint = routeContext.getEndpoint();
 
-        // only needed to register on the first output as all rotues will pass through this one
-        ProcessorDefinition out = routeContext.getRoute().getOutputs().get(0);
+        // register route on the first suitable output
+        ProcessorDefinition out = null;
+        for (ProcessorDefinition processor : routeContext.getRoute().getOutputs()) {
+            // skip processors that should not be registered
+            if (!registerProcessor(processor)) {
+                continue;
+            }
+            out = processor;
+            break;
+        }
 
         // add an intercept strategy that counts when the route sends to any of its outputs
-        out.addInterceptStrategy(new InterceptStrategy() {
-            public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
-                if (registeredRoutes.containsKey(endpoint)) {
-                    // do not double wrap
-                    return target;
+        if (out != null) {
+            out.addInterceptStrategy(new InterceptStrategy() {
+                public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
+                    if (registeredRoutes.containsKey(endpoint)) {
+                        // do not double wrap
+                        return target;
+                    }
+                    InstrumentationProcessor wrapper = new InstrumentationProcessor(null);
+                    wrapper.setType(processorDefinition.getShortName());
+                    wrapper.setProcessor(target);
+
+                    // register our wrapper
+                    registeredRoutes.put(endpoint, wrapper);
+
+                    return wrapper;
                 }
-                InstrumentationProcessor wrapper = new InstrumentationProcessor(null);
-                wrapper.setType(processorDefinition.getShortName());
-                wrapper.setProcessor(target);
 
-                // register our wrapper
-                registeredRoutes.put(endpoint, wrapper);
-
-                return wrapper;
-            }
-
-            public String toString() {
-                return "Instrument";
-            }
-        });
+                public String toString() {
+                    return "Instrument";
+                }
+            });
+        }
 
     }
 
@@ -290,6 +303,19 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 // only register if the processor have an explicy id assigned
                 return processor.hasCustomIdAssigned();
             }
+        }
+
+        // skip on exception
+        if (processor instanceof OnExceptionDefinition) {
+            return false;
+        }
+        // skip on completion
+        if (processor instanceof OnCompletionDefinition) {
+            return false;
+        }
+        // skip intercept
+        if (processor instanceof InterceptDefinition) {
+            return false;
         }
 
         // fallback to always register it
