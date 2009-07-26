@@ -30,7 +30,7 @@ import java.nio.charset.Charset;
 public final class IOHelper {
     
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
-    private static final Charset UTF8_CHARSET = Charset.forName("utf-8");
+    private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
     private IOHelper() {
         //Utility Class
@@ -81,8 +81,7 @@ public final class IOHelper {
         return copy(input, output, DEFAULT_BUFFER_SIZE);
     }
     
-    public static int copy(final InputStream input, final OutputStream output, int bufferSize)
-        throws IOException {
+    public static int copy(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
         int avail = input.available();
         if (avail > 262144) {
             avail = 262144;
@@ -90,9 +89,9 @@ public final class IOHelper {
         if (avail > bufferSize) {
             bufferSize = avail;
         }
+
         final byte[] buffer = new byte[bufferSize];
-        int n = 0;
-        n = input.read(buffer);
+        int n = input.read(buffer);
         int total = 0;
         while (-1 != n) {
             output.write(buffer, 0, n);
@@ -110,5 +109,6 @@ public final class IOHelper {
     
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
         copy(input, output, bufferSize);
+        input.close();
     }
 }

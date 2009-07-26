@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,7 @@ import org.apache.camel.util.IOHelper;
  * This output stream will store the content into a File if the stream context size is exceed the
  * THRESHOLD which's default value is 64K. The temp file will store in the temp directory, you 
  * can configure it by setting the TEMP_DIR property. If you don't set the TEMP_DIR property,
- * it will choice the directory which is set by the system property of "java.io.tmpdir".
+ * it will choose the directory which is set by the system property of "java.io.tmpdir".
  * You can get a cached input stream of this stream. The temp file which is created with this 
  * output stream will be deleted when you close this output stream or the cached inputStream.
  */
