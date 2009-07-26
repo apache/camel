@@ -115,32 +115,31 @@ public class CachedOutputStream extends OutputStream {
 
     public void write(byte[] b, int off, int len) throws IOException {
         this.totalLength += len;
-        if (inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+        if (threshold > 0 && inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
             pageToFileStream();
         }
         currentStream.write(b, off, len);
-        flush();
     }
 
     public void write(byte[] b) throws IOException {
         this.totalLength += b.length;
-        if (inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+        if (threshold > 0 && inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
             pageToFileStream();
         }
         currentStream.write(b);
-        flush();
     }
 
     public void write(int b) throws IOException {
         this.totalLength++;
-        if (inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+        if (threshold > 0 && inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
             pageToFileStream();
         }
         currentStream.write(b);
-        flush();
     }
 
     public InputStream getInputStream() throws IOException {
+        flush();
+
         if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 return new ByteArrayInputStream(((ByteArrayOutputStream) currentStream).toByteArray());
@@ -158,6 +157,8 @@ public class CachedOutputStream extends OutputStream {
 
 
     public StreamCache getStreamCache() throws IOException {
+        flush();
+
         if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 return new InputStreamCache(((ByteArrayOutputStream) currentStream).toByteArray());
@@ -174,6 +175,8 @@ public class CachedOutputStream extends OutputStream {
     }
 
     private void pageToFileStream() throws IOException {
+        flush();
+
         ByteArrayOutputStream bout = (ByteArrayOutputStream)currentStream;
         if (outputDir == null) {
             tempFile = FileUtil.createTempFile("cos", ".tmp");

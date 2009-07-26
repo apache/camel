@@ -248,7 +248,7 @@ public final class FileUtil {
                                    + " to an existing directory");
         }
 
-        // why do we create another tmp folder
+        // create a sub folder with a random number
         Random ran = new Random();
         int x = ran.nextInt(1000000);
 
