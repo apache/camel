@@ -39,7 +39,7 @@ public class StreamSourceCache extends StreamSource implements StreamCache {
     public StreamSourceCache(StreamSource source, Exchange exchange) throws IOException {
         if (source.getInputStream() != null) {
             // set up CachedOutputStream with the properties
-            CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
+            CachedOutputStream cos = new CachedOutputStream(exchange);
             IOHelper.copyAndCloseInput(source.getInputStream(), cos);
             streamCache = cos.getStreamCache();
             readCache = null;

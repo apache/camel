@@ -76,6 +76,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
             // since the stream is closed you delete the temp file
             // reset will not work any more
             cache.reset();
+            exchange.getUnitOfWork().done(exchange);
             fail("except the exception here");
         } catch (Exception exception) {
             // do nothing

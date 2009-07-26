@@ -32,9 +32,6 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
     private CachedOutputStream cachedOutputStream;
     private File file;
 
-    public FileInputStreamCache() {
-    }
-
     public FileInputStreamCache(File file, CachedOutputStream cos) throws FileNotFoundException {
         this.file = file;
         this.cachedOutputStream = cos;

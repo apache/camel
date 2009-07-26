@@ -64,8 +64,7 @@ public class StreamCacheConverter {
 
     @Converter
     public StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
-        // set up CachedOutputStream with the properties
-        CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
+        CachedOutputStream cos = new CachedOutputStream(exchange);
         IOHelper.copyAndCloseInput(stream, cos);
         return cos.getStreamCache();
     }

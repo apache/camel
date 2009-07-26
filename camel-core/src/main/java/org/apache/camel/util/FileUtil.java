@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Stack;
 
 /**
@@ -44,53 +45,9 @@ public final class FileUtil {
         return path;
     }
     
-    private static synchronized File getDefaultTempDir() {
-        if (defaultTempDir != null
-            && defaultTempDir.exists()) {
-            return defaultTempDir;
-        }
-        
-        String s = null;
-        try {
-            s = System.getProperty(FileUtil.class.getName() + ".TempDirectory");
-        } catch (SecurityException e) {
-            //Ignorable, we'll use the default
-        }
-        if (s == null) {
-            int x = (int)(Math.random() * 1000000);
-            s = System.getProperty("java.io.tmpdir");
-            File checkExists = new File(s);
-            if (!checkExists.exists()) {
-                throw new RuntimeException("The directory " 
-                                       + checkExists.getAbsolutePath() 
-                                       + " does not exist, please set java.io.tempdir"
-                                       + " to an existing directory");
-            }
-            File f = new File(s, "camel-tmp-" + x);
-            while (!f.mkdir()) {
-                x = (int)(Math.random() * 1000000);
-                f = new File(s, "camel-tmp-" + x);
-            }
-            defaultTempDir = f;
-            Thread hook = new Thread() {
-                @Override
-                public void run() {
-                    removeDir(defaultTempDir);
-                }
-            };
-            Runtime.getRuntime().addShutdownHook(hook);            
-        } else {
-            //assume someone outside of us will manage the directory
-            File f = new File(s);
-            f.mkdirs();
-            defaultTempDir = f;
-        }
-        return defaultTempDir;
-    }
-
     public static void mkDir(File dir) {
         if (dir == null) {
-            throw new RuntimeException("dir attribute is required");
+            throw new IllegalArgumentException("dir attribute is required");
         }
 
         if (dir.isFile()) {
@@ -130,8 +87,7 @@ public final class FileUtil {
         if (list == null) {
             list = new String[0];
         }
-        for (int i = 0; i < list.length; i++) {
-            String s = list[i];
+        for (String s : list) {
             File f = new File(d, s);
             if (f.isDirectory()) {
                 removeDir(f);
@@ -164,15 +120,11 @@ public final class FileUtil {
     }
 
     public static File createTempFile(String prefix, String suffix) throws IOException {
-        return createTempFile(prefix, suffix, null, false);
+        return createTempFile(prefix, suffix, null);
     }
-    
-    public static File createTempFile(String prefix, String suffix, File parentDir,
-                               boolean deleteOnExit) throws IOException {
-        File result = null;
-        File parent = (parentDir == null)
-            ? getDefaultTempDir()
-            : parentDir;
+
+    public static File createTempFile(String prefix, String suffix, File parentDir) throws IOException {
+        File parent = (parentDir == null) ? getDefaultTempDir() : parentDir;
             
         if (suffix == null) {
             suffix = ".tmp";
@@ -182,15 +134,11 @@ public final class FileUtil {
         } else if (prefix.length() < 3) {
             prefix = prefix + "camel";
         }
-        result = File.createTempFile(prefix, suffix, parent);
 
-        //if parentDir is null, we're in our default dir
-        //which will get completely wiped on exit from our exit
-        //hook.  No need to set deleteOnExit() which leaks memory.
-        if (deleteOnExit && parentDir != null) {
-            result.deleteOnExit();
-        }
-        return result;
+        // create parent folder
+        parent.mkdirs();
+
+        return File.createTempFile(prefix, suffix, parent);
     }
 
     /**
@@ -284,6 +232,44 @@ public final class FileUtil {
         }
 
         return sb.toString();
+    }
+
+    private static synchronized File getDefaultTempDir() {
+        if (defaultTempDir != null && defaultTempDir.exists()) {
+            return defaultTempDir;
+        }
+
+        String s = System.getProperty("java.io.tmpdir");
+        File checkExists = new File(s);
+        if (!checkExists.exists()) {
+            throw new RuntimeException("The directory "
+                                   + checkExists.getAbsolutePath()
+                                   + " does not exist, please set java.io.tempdir"
+                                   + " to an existing directory");
+        }
+
+        // why do we create another tmp folder
+        Random ran = new Random();
+        int x = ran.nextInt(1000000);
+
+        File f = new File(s, "camel-tmp-" + x);
+        while (!f.mkdir()) {
+            x = ran.nextInt(1000000);
+            f = new File(s, "camel-tmp-" + x);
+        }
+
+        defaultTempDir = f;
+
+        // create shutdown hook to remove the temp dir
+        Thread hook = new Thread() {
+            @Override
+            public void run() {
+                removeDir(defaultTempDir);
+            }
+        };
+        Runtime.getRuntime().addShutdownHook(hook);
+
+        return defaultTempDir;
     }
 
 }

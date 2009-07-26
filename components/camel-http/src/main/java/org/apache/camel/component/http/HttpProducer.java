@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -119,20 +120,27 @@ public class HttpProducer extends DefaultProducer {
         HttpOperationFailedException exception;
         Header[] headers = method.getResponseHeaders();
         InputStream is = extractResponseBody(method, exchange);
+        // make a defensive copy of the response body in the exception so its detached from the cache
+        InputStream copy = null;
+        if (is != null) {
+            copy = new ByteArrayInputStream(exchange.getContext().getTypeConverter().convertTo(byte[].class, is));
+        }
+
         if (responseCode >= 300 && responseCode < 400) {
             String redirectLocation;
             Header locationHeader = method.getResponseHeader("location");
             if (locationHeader != null) {
                 redirectLocation = locationHeader.getValue();
-                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, headers, is);
+                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, headers, copy);
             } else {
                 // no redirect location
-                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
+                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, copy);
             }
         } else {
             // internal server error (error code 500)
-            exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
+            exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, copy);
         }
+
         return exception;
     }
 
@@ -169,7 +177,7 @@ public class HttpProducer extends DefaultProducer {
 
     private static InputStream doExtractResponseBody(InputStream is, Exchange exchange) throws IOException {
         try {
-            CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
+            CachedOutputStream cos = new CachedOutputStream(exchange);
             IOHelper.copy(is, cos);
             return cos.getInputStream();
         } finally {

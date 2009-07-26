@@ -22,28 +22,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import junit.framework.TestCase;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultUnitOfWork;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.CollectionStringBuffer;
 
-public class CachedOutputStreamTest extends TestCase {
+public class CachedOutputStreamTest extends ContextTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" 
         + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
-    
-    private File file = new File("./target/cacheFile");
 
-    private static void deleteDirectory(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                deleteDirectory(files[i]);
-            }
-        }
-        file.delete();
+    private Exchange exchange;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        
+        context.getProperties().put(CachedOutputStream.TEMP_DIR, "./target/cachedir");
+        context.getProperties().put(CachedOutputStream.THRESHOLD, "16");
+        deleteDirectory("./target/cachedir");
+        createDirectory("./target/cachedir");
+
+        exchange = new DefaultExchange(context);
+        UnitOfWork uow = new DefaultUnitOfWork(exchange);
+        exchange.setUnitOfWork(uow);
     }
-    
-    private static String toString(InputStream input) throws IOException {        
+
+    private static String toString(InputStream input) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         CollectionStringBuffer builder = new CollectionStringBuffer("\n");
         while (true) {
@@ -54,18 +61,12 @@ public class CachedOutputStreamTest extends TestCase {
             builder.append(line);
         }
     }
-    
-    protected void setUp() throws Exception {        
-        if (file.exists()) {
-            deleteDirectory(file);
-        }
-        file.mkdirs();
-    }
-       
+
     public void testCacheStreamToFileAndCloseStream() throws IOException {       
-        CachedOutputStream cos = new CachedOutputStream(16);
-        cos.setOutputDir(file);
-        cos.write(TEST_STRING.getBytes("UTF-8"));        
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        cos.write(TEST_STRING.getBytes("UTF-8"));
+
+        File file = new File("./target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
@@ -73,8 +74,12 @@ public class CachedOutputStreamTest extends TestCase {
         StreamCache cache = cos.getStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
         String temp = toString((InputStream)cache);
+
         ((InputStream)cache).close();
         assertEquals("Cached a wrong file", temp, TEST_STRING);
+
+        exchange.getUnitOfWork().done(exchange);
+
         try {
             cache.reset();
             // The stream is closed, so the temp file is gone.
@@ -82,14 +87,17 @@ public class CachedOutputStreamTest extends TestCase {
         } catch (Exception exception) {
             // do nothing
         }
+
+
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);
     }
     
-    public void testCacheStreamToFileAndNotCloseStream() throws IOException {       
-        CachedOutputStream cos = new CachedOutputStream(16);
-        cos.setOutputDir(file);
-        cos.write(TEST_STRING.getBytes("UTF-8"));        
+    public void testCacheStreamToFileAndNotCloseStream() throws IOException {
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        cos.write(TEST_STRING.getBytes("UTF-8"));
+
+        File file = new File("./target/cachedir");
         String[] files = file.list();
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
@@ -102,20 +110,28 @@ public class CachedOutputStreamTest extends TestCase {
         temp = toString((InputStream)cache);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
         
+        exchange.getUnitOfWork().done(exchange);
+
         ((InputStream)cache).close();
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);       
     }
     
     public void testCacheStreamToMemory() throws IOException {
-        CachedOutputStream cos = new CachedOutputStream();
-        cos.setOutputDir(file);
-        cos.write(TEST_STRING.getBytes("UTF-8"));        
+        context.getProperties().put(CachedOutputStream.THRESHOLD, "1024");
+
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        cos.write(TEST_STRING.getBytes("UTF-8"));
+
+        File file = new File("./target/cachedir");
         String[] files = file.list();
+
         assertEquals("we should have no temp file", files.length, 0);
         StreamCache cache = cos.getStreamCache();
         assertTrue("Should get the InputStreamCache", cache instanceof InputStreamCache);
         String temp = IOConverter.toString((InputStream)cache);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
+
+        exchange.getUnitOfWork().done(exchange);
     }
 }
