@@ -71,10 +71,7 @@ public class CachedOutputStream extends OutputStream {
         this();
         String value = properties.get(THRESHOLD);
         if (value != null) {
-            int i = Integer.parseInt(value);
-            if (i > 0) {
-                threshold = i;
-            }
+            threshold = Integer.parseInt(value);
         }
         value = properties.get(TEMP_DIR);
         if (value != null) {
@@ -314,7 +311,7 @@ public class CachedOutputStream extends OutputStream {
         if (!outputLocked) {
             onWrite();
             this.totalLength += len;
-            if (inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+            if (threshold > 0 && inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
                 createFileOutputStream();
             }
             currentStream.write(b, off, len);
@@ -325,7 +322,7 @@ public class CachedOutputStream extends OutputStream {
         if (!outputLocked) {
             onWrite();
             this.totalLength += b.length;
-            if (inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+            if (threshold > 0 && inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
                 createFileOutputStream();
             }
             currentStream.write(b);
@@ -336,7 +333,7 @@ public class CachedOutputStream extends OutputStream {
         if (!outputLocked) {
             onWrite();
             this.totalLength++;
-            if (inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+            if (threshold > 0 && inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
                 createFileOutputStream();
             }
             currentStream.write(b);

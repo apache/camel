@@ -68,7 +68,7 @@ public class CachedOutputStreamTest extends TestCase {
         cos.setOutputDir(file);
         cos.write(TEST_STRING.getBytes("UTF-8"));        
         String[] files = file.list();
-        assertEquals("we should have a temp file", files.length, 1);
+        assertEquals("we should have a temp file", 1, files.length);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
         
         StreamCache cache = cos.getStreamCache();
@@ -84,17 +84,16 @@ public class CachedOutputStreamTest extends TestCase {
             // do nothing
         }
         files = file.list();
-        assertEquals("we should have no temp file", files.length, 0);
+        assertEquals("we should have no temp file", 0, files.length);
        
     }
     
     public void testCacheStreamToFileAndNotCloseStream() throws IOException {       
-        
         CachedOutputStream cos = new CachedOutputStream(16);
         cos.setOutputDir(file);
         cos.write(TEST_STRING.getBytes("UTF-8"));        
         String[] files = file.list();
-        assertEquals("we should have a temp file", files.length, 1);
+        assertEquals("we should have a temp file", 1, files.length);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
         
         StreamCache cache = cos.getStreamCache();
@@ -107,7 +106,7 @@ public class CachedOutputStreamTest extends TestCase {
         
         ((InputStream)cache).close();
         files = file.list();
-        assertEquals("we should have no temp file", files.length, 0);       
+        assertEquals("we should have no temp file", 0, files.length);
     }
     
     public void testCacheStreamToMemory() throws IOException {
@@ -115,7 +114,19 @@ public class CachedOutputStreamTest extends TestCase {
         cos.setOutputDir(file);
         cos.write(TEST_STRING.getBytes("UTF-8"));        
         String[] files = file.list();
-        assertEquals("we should have no temp file", files.length, 0);
+        assertEquals("we should have no temp file", 0, files.length);
+        StreamCache cache = cos.getStreamCache();
+        assertTrue("Should get the InputStreamCache", cache instanceof InputStreamCache);
+        String temp = IOConverter.toString((InputStream)cache);
+        assertEquals("Cached a wrong file", temp, TEST_STRING);
+    }
+
+    public void testCacheStreamToMemoryAsDiskIsDisabled() throws IOException {
+        CachedOutputStream cos = new CachedOutputStream(-1);
+        cos.setOutputDir(file);
+        cos.write(TEST_STRING.getBytes("UTF-8"));
+        String[] files = file.list();
+        assertEquals("we should have no temp file", 0, files.length);
         StreamCache cache = cos.getStreamCache();
         assertTrue("Should get the InputStreamCache", cache instanceof InputStreamCache);
         String temp = IOConverter.toString((InputStream)cache);
