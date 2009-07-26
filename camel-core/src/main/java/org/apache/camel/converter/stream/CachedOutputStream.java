@@ -26,8 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.converter.IOConverter;
@@ -58,10 +56,7 @@ public class CachedOutputStream extends OutputStream {
     private File tempFile;
 
     private File outputDir;   
-    
-    private List<Object> streamList = new ArrayList<Object>();
 
-    
     public CachedOutputStream() {
         currentStream = new ByteArrayOutputStream(2048);
         inmem = true;
@@ -129,7 +124,6 @@ public class CachedOutputStream extends OutputStream {
     public void lockOutputStream() throws IOException {
         currentStream.flush();
         outputLocked = true;
-        streamList.remove(currentStream);
     }
     
     public void close() throws IOException {
@@ -181,7 +175,6 @@ public class CachedOutputStream extends OutputStream {
                 if (copyOldContent) {
                     IOHelper.copyAndCloseInput(fin, out);
                 }
-                streamList.remove(currentStream);
                 tempFile.delete();
                 tempFile = null;
                 inmem = true;
@@ -353,15 +346,14 @@ public class CachedOutputStream extends OutputStream {
     private void createFileOutputStream() throws IOException {
         ByteArrayOutputStream bout = (ByteArrayOutputStream)currentStream;
         if (outputDir == null) {
-            tempFile = FileUtil.createTempFile("cos", "tmp");
+            tempFile = FileUtil.createTempFile("cos", ".tmp");
         } else {
-            tempFile = FileUtil.createTempFile("cos", "tmp", outputDir, false);
+            tempFile = FileUtil.createTempFile("cos", ".tmp", outputDir, false);
         }
         
         currentStream = new BufferedOutputStream(new FileOutputStream(tempFile));
         bout.writeTo(currentStream);
         inmem = false;
-        streamList.add(currentStream);
     }
 
     public File getTempFile() {
@@ -384,7 +376,6 @@ public class CachedOutputStream extends OutputStream {
                         maybeDeleteTempFile(this);
                     }
                 };
-                streamList.add(fileInputStream);
                 return fileInputStream;
             } catch (FileNotFoundException e) {
                 throw new IOException("Cached file was deleted, " + e.toString());
@@ -411,8 +402,7 @@ public class CachedOutputStream extends OutputStream {
     }
     
     private void maybeDeleteTempFile(Object stream) {        
-        streamList.remove(stream);        
-        if (!inmem && tempFile != null && streamList.isEmpty()) {            
+        if (!inmem && tempFile != null) {
             tempFile.delete();
             tempFile = null;
             currentStream = new ByteArrayOutputStream(1024);

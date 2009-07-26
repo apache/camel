@@ -65,8 +65,7 @@ public class HttpStreamCacheFileTest extends ContextTestSupport {
         // the temporary files should have been deleted
         File file = new File("./target/cachedir");
         String[] files = file.list();
-        // TODO: CAMEL-1849 when fixed this one passes
-        //assertEquals("There should be no files", files.length, 0);
+        assertEquals("There should be no files", files.length, 0);
     }
 
     @Override

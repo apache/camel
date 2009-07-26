@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -108,19 +109,28 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
                 HttpOperationFailedException exception = null;
                 Header[] headers = method.getResponseHeaders();
                 InputStream is = extractResponseBody(method, exchange);
+
+                // make a defensive copy of the response body in the exception so its detached from the cache
+                InputStream copy = null;
+                if (is != null) {
+                    copy = new ByteArrayInputStream(exchange.getContext().getTypeConverter().convertTo(byte[].class, is));
+                    // close original stream so it can delete the temporary file if it has been spooled to disk by the CachedOutputStream
+                    is.close();
+                }
+
                 if (responseCode >= 300 && responseCode < 400) {
                     String redirectLocation;
                     Header locationHeader = method.getResponseHeader("location");
                     if (locationHeader != null) {
                         redirectLocation = locationHeader.getValue();
-                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, headers, is);
+                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, headers, copy);
                     } else {
                         // no redirect location
-                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
+                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, copy);
                     }
                 } else {
                     // internal server error (error code 500)
-                    exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
+                    exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, copy);
                 }
 
                 if (exception != null) {                    
