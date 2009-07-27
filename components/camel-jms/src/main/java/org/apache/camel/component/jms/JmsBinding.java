@@ -98,7 +98,19 @@ public class JmsBinding {
      */
     public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
+            // is a custom message converter configured on endpoint then use it instead of doing the extraction
+            // based on message type
+            if (endpoint.getMessageConverter() != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extracting body using a custom MessageConverter: " + endpoint.getMessageConverter() + " from JMS message: " + message);
+                }
+                return endpoint.getMessageConverter().fromMessage(message);
+            }
+
             if (message instanceof ObjectMessage) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extracting body as a ObjectMessage from JMS message: " + message);
+                }
                 ObjectMessage objectMessage = (ObjectMessage)message;
                 Object payload = objectMessage.getObject();
                 if (payload instanceof DefaultExchangeHolder) {
@@ -109,13 +121,25 @@ public class JmsBinding {
                     return objectMessage.getObject();
                 }
             } else if (message instanceof TextMessage) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extracting body as a TextMessage from JMS message: " + message);
+                }
                 TextMessage textMessage = (TextMessage)message;
                 return textMessage.getText();
             } else if (message instanceof MapMessage) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extracting body as a MapMessage from JMS message: " + message);
+                }
                 return createMapFromMapMessage((MapMessage)message);
             } else if (message instanceof BytesMessage) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extracting body as a BytesMessage from JMS message: " + message);
+                }
                 return createByteArrayFromBytesMessage((BytesMessage)message);
             } else if (message instanceof StreamMessage) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extracting body as a StreamMessage from JMS message: " + message);
+                }
                 return message;
             } else {
                 return null;
@@ -350,6 +374,14 @@ public class JmsBinding {
             }
             Serializable holder = DefaultExchangeHolder.marshal(exchange);
             return session.createObjectMessage(holder);
+        }
+
+        // use a custom message converter
+        if (endpoint.getMessageConverter() != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Creating JmsMessage using a custom MessageConverter: " + endpoint.getMessageConverter() + " with body: " + body);
+            }
+            return endpoint.getMessageConverter().toMessage(body, session);
         }
 
         // check if header have a type set, if so we force to use it
