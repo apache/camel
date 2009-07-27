@@ -21,20 +21,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class JbiServiceProcessor implements Processor {
+    private static final transient Log LOG = LogFactory.getLog(JbiServiceProcessor.class);
+    
     private static final String ECHO_RESPONSE = "<jbi:message xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"" 
         + " xmlns:msg=\"http://cxf.component.camel.apache.org\" type=\"msg:echoResponse\"><jbi:part>"
         + "<ns1:return xmlns:ns1=\"http://cxf.component.camel.apache.org\">echo Hello World!</ns1:return>"
         + "</jbi:part></jbi:message>";
-    /*private static final String ECHO_BOOLEAN_RESPONSE = "<ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-        + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
-        + "</ns1:echoBooleanResponse>";*/
+    
 
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
-        System.out.println("print out the request " + in.getBody(String.class));
-        System.out.println("The message exchange pattern is " + exchange.getPattern());
+        LOG.info("Get the request " + in.getBody(String.class));
         
         exchange.getOut().setBody(ECHO_RESPONSE);
         
