@@ -25,7 +25,7 @@ import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -41,15 +41,8 @@ public class JmsMessage extends DefaultMessage {
     private Message jmsMessage;
     private JmsBinding binding;
 
-    public JmsMessage() {
-    }
-
-    public JmsMessage(Message jmsMessage) {
-        setJmsMessage(jmsMessage);
-    }
-
     public JmsMessage(Message jmsMessage, JmsBinding binding) {
-        this(jmsMessage);
+        setJmsMessage(jmsMessage);
         setBinding(binding);
     }
 
@@ -90,8 +83,7 @@ public class JmsMessage extends DefaultMessage {
 
     public JmsBinding getBinding() {
         if (binding == null) {
-            JmsBinding b = ExchangeHelper.getBinding(getExchange(), JmsBinding.class);
-            return b != null ? b : new JmsBinding();
+            binding = ExchangeHelper.getBinding(getExchange(), JmsBinding.class);
         }
         return binding;
     }
@@ -101,10 +93,12 @@ public class JmsMessage extends DefaultMessage {
     }
 
     public void setJmsMessage(Message jmsMessage) {
-        try {
-            setMessageId(jmsMessage.getJMSMessageID());
-        } catch (JMSException e) {
-            LOG.warn("Unable to retrieve JMSMessageID from JMS Message", e);
+        if (jmsMessage != null) {
+            try {
+                setMessageId(jmsMessage.getJMSMessageID());
+            } catch (JMSException e) {
+                LOG.warn("Unable to retrieve JMSMessageID from JMS Message", e);
+            }
         }
         this.jmsMessage = jmsMessage;
     }
@@ -118,7 +112,7 @@ public class JmsMessage extends DefaultMessage {
             try {
                 answer = jmsMessage.getObjectProperty(name);
             } catch (JMSException e) {
-                throw new RuntimeCamelException(name, e);
+                throw new RuntimeExchangeException("Unable to retrieve header from JMS Message: " + name, getExchange(), e);
             }
         }
         if (answer == null) {
@@ -138,7 +132,7 @@ public class JmsMessage extends DefaultMessage {
                     answer = JmsMessageHelper.removeJmsProperty(jmsMessage, name);
                 }
             } catch (JMSException e) {
-                throw new RuntimeCamelException(name, e);
+                throw new RuntimeExchangeException("Unable to remove header from JMS Message: " + name, getExchange(), e);
             }
         }
 
@@ -147,7 +141,7 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public JmsMessage newInstance() {
-        return new JmsMessage();
+        return new JmsMessage(null, binding);
     }
 
     /**
@@ -184,7 +178,7 @@ public class JmsMessage extends DefaultMessage {
             String id = getDestinationAsString(jmsMessage.getJMSDestination()) + jmsMessage.getJMSMessageID();
             return getSanitizedString(id);
         } catch (JMSException e) {
-            throw new RuntimeCamelException("Failed to get JMSMessageID property", e);
+            throw new RuntimeExchangeException("Unable to retrieve JMSMessageID from JMS Message", getExchange(), e);
         }
     }
 
@@ -210,10 +204,10 @@ public class JmsMessage extends DefaultMessage {
             try {
                 return jmsMessage.getJMSMessageID();
             } catch (JMSException e) {
-                throw new RuntimeCamelException("Failed to get JMSMessageID property", e);
+                throw new RuntimeExchangeException("Unable to retrieve JMSMessageID from JMS Message", getExchange(), e);
             }
         }
         return super.createExchangeId();
-
     }
+
 }

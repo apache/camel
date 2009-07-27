@@ -84,7 +84,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public JmsEndpoint(String endpointUri, String destinationName, boolean pubSubDomain) {
-        this(endpointUri, new JmsBinding(), new JmsConfiguration(), destinationName, pubSubDomain);
+        this(endpointUri, null, new JmsConfiguration(), destinationName, pubSubDomain);
+        this.binding = new JmsBinding(this);
     }
 
     /**
@@ -203,7 +204,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public Exchange createExchange(Message message) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new JmsMessage(message));
+        exchange.setIn(new JmsMessage(message, getBinding()));
         return exchange;
     }
 
