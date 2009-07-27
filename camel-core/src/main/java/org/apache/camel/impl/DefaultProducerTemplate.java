@@ -44,7 +44,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  * @version $Revision$
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
-    private static final int DEFAULT_THREADPOOL_SIZE = 5;
+    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private final CamelContext context;
     private final ProducerCache producerCache;
     private Endpoint defaultEndpoint;

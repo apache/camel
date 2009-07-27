@@ -54,7 +54,7 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
         }
         if (executorService == null && poolSize != null) {
-            executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "AsyncProcessor", true);
+            executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "Threads", true);
         }
         Processor childProcessor = routeContext.createProcessor(this);
 

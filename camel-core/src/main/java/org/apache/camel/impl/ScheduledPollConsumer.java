@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable {
+    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
 
     private final ScheduledExecutorService executor;
@@ -55,7 +56,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         if (service instanceof ScheduledExecutorService) {
             scheduled = (ScheduledExecutorService) service;
         } else {
-            scheduled = ExecutorServiceHelper.newScheduledThreadPool(5, getEndpoint().getEndpointUri(), true);
+            scheduled = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, getEndpoint().getEndpointUri(), true);
         }
 
         this.executor = scheduled;

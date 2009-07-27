@@ -38,7 +38,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  * @version $Revision$
  */
 public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
-    private static final int DEFAULT_THREADPOOL_SIZE = 5;
+    private static final int DEFAULT_THREADPOOL_SIZE = 10;
 
     private String endpointUri;
     private CamelContext camelContext;

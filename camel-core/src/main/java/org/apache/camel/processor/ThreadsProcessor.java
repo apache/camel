@@ -39,7 +39,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
-    protected static final int DEFAULT_THREADPOOL_SIZE = 5;
+    protected static final int DEFAULT_THREADPOOL_SIZE = 10;
     protected ExecutorService executorService;
     protected WaitForTaskToComplete waitForTaskToComplete;
 
@@ -105,7 +105,7 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
     }
 
     protected ExecutorService createExecutorService() {
-        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "AsyncProcessor", true);
+        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "Threads", true);
     }
 
     protected void doStop() throws Exception {
