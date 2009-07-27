@@ -435,95 +435,39 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Future<Exchange> asyncSend(final String uri, final Exchange exchange) {
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                return send(uri, exchange);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncSend(resolveMandatoryEndpoint(uri), exchange);
     }
 
     public Future<Exchange> asyncSend(final String uri, final Processor processor) {
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                return send(uri, processor);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncSend(resolveMandatoryEndpoint(uri), processor);
     }
 
     public Future<Object> asyncSendBody(final String uri, final Object body) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                sendBody(uri, body);
-                // its InOnly, so no body to return
-                return null;
-            }
-        };
-
-        return executor.submit(task);
+        return asyncSendBody(resolveMandatoryEndpoint(uri), body);
     }
 
     public Future<Object> asyncRequestBody(final String uri, final Object body) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                return requestBody(uri, body);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncRequestBody(resolveMandatoryEndpoint(uri), body);
     }
 
     public <T> Future<T> asyncRequestBody(final String uri, final Object body, final Class<T> type) {
-        Callable<T> task = new Callable<T>() {
-            public T call() throws Exception {
-                return requestBody(uri, body, type);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncRequestBody(resolveMandatoryEndpoint(uri), body, type);
     }
 
     public Future<Object> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                return requestBodyAndHeader(endpointUri, body, header, headerValue);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncRequestBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
 
     public <T> Future<T> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue, final Class<T> type) {
-        Callable<T> task = new Callable<T>() {
-            public T call() throws Exception {
-                return requestBodyAndHeader(endpointUri, body, header, headerValue, type);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncRequestBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue, type);
     }
 
     public Future<Object> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers) {
-        Callable<Object> task = new Callable<Object>() {
-            public Object call() throws Exception {
-                return requestBodyAndHeaders(endpointUri, body, headers);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncRequestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
     public <T> Future<T> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers, final Class<T> type) {
-        Callable<T> task = new Callable<T>() {
-            public T call() throws Exception {
-                return requestBodyAndHeaders(endpointUri, body, headers, type);
-            }
-        };
-
-        return executor.submit(task);
+        return asyncRequestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers, type);
     }
 
     public <T> T extractFutureBody(Future future, Class<T> type) {
@@ -533,5 +477,103 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public <T> T extractFutureBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         return ExchangeHelper.extractFutureBody(context, future, timeout, unit, type);
     }
+
+    public Future<Object> asyncRequestBody(final Endpoint endpoint, final Object body) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                return requestBody(endpoint, body);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public <T> Future<T> asyncRequestBody(final Endpoint endpoint, final Object body, final Class<T> type) {
+        Callable<T> task = new Callable<T>() {
+            public T call() throws Exception {
+                return requestBody(endpoint, body, type);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Object> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
+                                                    final Object headerValue) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                return requestBodyAndHeader(endpoint, body, header, headerValue);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public <T> Future<T> asyncRequestBodyAndHeader(final Endpoint endpoint, final Object body, final String header,
+                                                   final Object headerValue, final Class<T> type) {
+        Callable<T> task = new Callable<T>() {
+            public T call() throws Exception {
+                return requestBodyAndHeader(endpoint, body, header, headerValue, type);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    
+    public Future<Object> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
+                                                     final Map<String, Object> headers) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                return requestBodyAndHeaders(endpoint, body, headers);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public <T> Future<T> asyncRequestBodyAndHeaders(final Endpoint endpoint, final Object body,
+                                                    final Map<String, Object> headers, final Class<T> type) {
+        Callable<T> task = new Callable<T>() {
+            public T call() throws Exception {
+                return requestBodyAndHeaders(endpoint, body, headers, type);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Exchange> asyncSend(final Endpoint endpoint, final Exchange exchange) {
+        Callable<Exchange> task = new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                return send(endpoint, exchange);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Exchange> asyncSend(final Endpoint endpoint, final Processor processor) {
+        Callable<Exchange> task = new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                return send(endpoint, processor);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Object> asyncSendBody(final Endpoint endpoint, final Object body) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                sendBody(endpoint, body);
+                // its InOnly, so no body to return
+                return null;
+            }
+        };
+
+        return executor.submit(task);
+    }
+   
 
 }

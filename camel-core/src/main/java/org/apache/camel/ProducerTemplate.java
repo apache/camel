@@ -780,6 +780,103 @@ public interface ProducerTemplate extends Service {
     <T> Future<T> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type);
 
     /**
+     * Sends an asynchronous exchange to the given endpoint.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param exchange    the exchange to send
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Exchange> asyncSend(Endpoint endpoint, Exchange exchange);
+
+    /**
+     * Sends an asynchronous exchange to the given endpoint.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param processor   the transformer used to populate the new exchange
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Exchange> asyncSend(Endpoint endpoint, Processor processor);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOnly} message exchange pattern.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param body        the body to send
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncSendBody(Endpoint endpoint, Object body);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param body        the body to send
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncRequestBody(Endpoint endpoint, Object body);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint the endpoint to send the exchange to
+     * @param body        the body to send
+     * @param header      the header name
+     * @param headerValue the header value
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncRequestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param body        the body to send
+     * @param headers     headers
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncRequestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param body        the body to send
+     * @param type        the expected response type
+     * @return a handle to be used to get the response in the future
+     */
+    <T> Future<T> asyncRequestBody(Endpoint endpoint, Object body, Class<T> type);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param body        the body to send
+     * @param header      the header name
+     * @param headerValue the header value
+     * @param type        the expected response type
+     * @return a handle to be used to get the response in the future
+     */
+    <T> Future<T> asyncRequestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint    the endpoint to send the exchange to
+     * @param body        the body to send
+     * @param headers     headers
+     * @param type        the expected response type
+     * @return a handle to be used to get the response in the future
+     */
+    <T> Future<T> asyncRequestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type);
+
+    /**
      * Gets the response body from the future handle, will wait until the response is ready.
      * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
      * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
