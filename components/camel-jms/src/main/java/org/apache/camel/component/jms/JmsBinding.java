@@ -86,6 +86,16 @@ public class JmsBinding {
      */
     public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
+            // is a custom message converter configured on endpoint then use it instead of doing the extraction
+            // based on message type
+            if (endpoint != null && endpoint.getConfiguration().getMessageConverter() != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Extracting body using a custom MessageConverter: "
+                        + endpoint.getConfiguration().getMessageConverter() + " from JMS message: " + message);
+                }
+                return endpoint.getConfiguration().getMessageConverter().fromMessage(message);
+            }
+
             if (message instanceof ObjectMessage) {
                 ObjectMessage objectMessage = (ObjectMessage)message;
                 return objectMessage.getObject();
@@ -294,6 +304,16 @@ public class JmsBinding {
 
     protected Message createJmsMessage(Object body, Session session, CamelContext context)
         throws JMSException {
+
+        if (endpoint != null && endpoint.getConfiguration().getMessageConverter() != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Creating JmsMessage using a custom MessageConverter: "
+                    + endpoint.getConfiguration().getMessageConverter() + " with body: " + body);
+            }
+            return endpoint.getConfiguration().getMessageConverter().toMessage(body, session);
+        }
+
+
         if (body instanceof Node) {
             // lets convert the document to a String format
             try {
@@ -377,7 +397,7 @@ public class JmsBinding {
     }
 
     /**
-     * @deprecated Please use {@link DefaultHeaderFilterStrategy#setOutFilter()}
+     * @deprecated Please use {@link DefaultHeaderFilterStrategy#setOutFilter(java.util.Set)}
      */
     public void setIgnoreJmsHeaders(Set<String> ignoreJmsHeaders) {
         if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
