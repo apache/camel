@@ -842,7 +842,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                 ? processors.get(getReceivedCounter()) : defaultProcessor;
 
         if (processor != null) {
-            processor.process(exchange);
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                // set exceptions on exchange so we can throw exceptions to simulate errors
+                exchange.setException(e);
+            }
         }
     }
 

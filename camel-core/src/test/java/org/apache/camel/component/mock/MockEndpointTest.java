@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.language.XPathExpression;
 
 /**
  * @version $Revision$
@@ -263,6 +264,74 @@ public class MockEndpointTest extends ContextTestSupport {
         sendMessages(1);
 
         mock.assertIsNotSatisfied();
+    }
+
+    public void testSimulateError() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.whenAnyExchangeReceived(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setException(new IllegalArgumentException("Forced"));
+            }
+        });
+
+        try {
+            template.sendBody("direct:a", "Hello World");
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced", e.getCause().getMessage());
+        }
+    }
+
+    public void testSimulateErrorByThrowingException() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.whenAnyExchangeReceived(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                throw new IllegalArgumentException("Forced");
+            }
+        });
+
+        try {
+            template.sendBody("direct:a", "Hello World");
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced", e.getCause().getMessage());
+        }
+    }
+
+    public void testSimulateErrorWithIndex() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.whenExchangeReceived(2, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setException(new IllegalArgumentException("Forced"));
+            }
+        });
+
+        template.sendBody("direct:a", "Hello World");
+        try {
+            template.sendBody("direct:a", "Hello World");
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced", e.getCause().getMessage());
+        }
+    }
+
+    public void testSimulateErrorWithIndexByThrowingException() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.whenExchangeReceived(2, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                throw new IllegalArgumentException("Forced");
+            }
+        });
+
+        template.sendBody("direct:a", "Hello World");
+        try {
+            template.sendBody("direct:a", "Bye World");
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced", e.getCause().getMessage());
+        }
     }
 
     protected void sendMessages(int... counters) {
