@@ -109,12 +109,9 @@
       </snapshots>
     </repository>
     <repository>
-      <id>spring.osgi</id>
-      <url>http://static.springframework.org/maven2</url>
-    </repository>
-    <repository>
-      <id>spring.svn.repo</id>
-      <url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
+      <id>spring.external.bundle.repo</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
   </repositories>
 
