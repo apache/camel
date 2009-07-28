@@ -107,6 +107,14 @@ public class JmsBinding {
                 return endpoint.getMessageConverter().fromMessage(message);
             }
 
+            // if we are configured to not map the jms message then return it as body
+            if (!endpoint.getConfiguration().isMapJmsMessage()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Option map JMS message is false so using JMS message as body: " + message);
+                }
+                return message;
+            }
+
             if (message instanceof ObjectMessage) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Extracting body as a ObjectMessage from JMS message: " + message);

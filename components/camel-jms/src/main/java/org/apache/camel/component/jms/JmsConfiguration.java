@@ -104,6 +104,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean replyToDeliveryPersistent = true;
     private long timeToLive = -1;
     private MessageConverter messageConverter;
+    private boolean mapJmsMessage = true;
     private boolean messageIdEnabled = true;
     private boolean messageTimestampEnabled = true;
     private int priority = -1;
@@ -784,6 +785,14 @@ public class JmsConfiguration implements Cloneable {
 
     public void setMessageConverter(MessageConverter messageConverter) {
         this.messageConverter = messageConverter;
+    }
+
+    public boolean isMapJmsMessage() {
+        return mapJmsMessage;
+    }
+
+    public void setMapJmsMessage(boolean mapJmsMessage) {
+        this.mapJmsMessage = mapJmsMessage;
     }
 
     public boolean isMessageIdEnabled() {
