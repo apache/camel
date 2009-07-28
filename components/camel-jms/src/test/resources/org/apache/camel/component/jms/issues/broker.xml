@@ -39,7 +39,7 @@
         </amq:destinationPolicy>
 
         <amq:transportConnectors>
-            <amq:transportConnector uri="tcp://localhost:61616"/>
+            <amq:transportConnector uri="vm://localhost"/>
         </amq:transportConnectors>
 
     </amq:broker>

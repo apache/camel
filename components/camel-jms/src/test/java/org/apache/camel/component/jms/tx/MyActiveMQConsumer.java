@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class MyActiveMQConsumer implements Runnable {
-    public static final String ACTIVEMQ_BROKER_URI = "failover:tcp://localhost:61616";
+    public static final String ACTIVEMQ_BROKER_URI = "failover:vm://localhost";
     public static final String REQUEST_QUEUE = "request";
     private static final transient Log LOG = LogFactory.getLog(MyActiveMQConsumer.class);
     

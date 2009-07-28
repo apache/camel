@@ -24,7 +24,7 @@
 
    <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
     <broker:transportConnectors>
-       <broker:transportConnector name="openwire" uri="tcp://localhost:61616"/>
+       <broker:transportConnector name="openwire" uri="vm://localhost"/>
     </broker:transportConnectors>
   </broker:broker>
 
