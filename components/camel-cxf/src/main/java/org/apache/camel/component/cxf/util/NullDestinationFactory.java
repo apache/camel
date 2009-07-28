@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.cxf.binding.AbstractBindingFactory;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.DestinationFactory;
@@ -31,7 +30,6 @@ public class NullDestinationFactory implements DestinationFactory {
         // setup the endpoint information
         ei.setAddress("local://" + ei.getService().getName().toString() + "/" + ei.getName().getLocalPart());
         // working as the dispatch mode, the binding factory will not add interceptor
-        ei.getBinding().setProperty(AbstractBindingFactory.DATABINDING_DISABLED, Boolean.TRUE);
         // do nothing here , just creating a null destination to store the observer
         return new NullDestination();
     }
