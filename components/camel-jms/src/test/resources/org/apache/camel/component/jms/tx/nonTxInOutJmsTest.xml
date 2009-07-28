@@ -19,7 +19,7 @@
     </bean>
     
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="vm://localhost"/>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
