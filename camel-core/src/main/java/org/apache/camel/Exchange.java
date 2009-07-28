@@ -222,6 +222,7 @@ public interface Exchange {
      *
      * @return the fault
      */
+    @Deprecated
     Message getFault();
 
     /**
@@ -229,6 +230,7 @@ public interface Exchange {
      *
      * @return <tt>true</tt> if a FAULT message exists, <tt>false</tt> otherwise.
      */
+    @Deprecated
     boolean hasFault();
 
     /**

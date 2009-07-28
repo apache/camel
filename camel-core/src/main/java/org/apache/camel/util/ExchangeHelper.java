@@ -243,7 +243,7 @@ public final class ExchangeHelper {
         result.getIn().copyFrom(source.getIn());
     
         // copy out message
-        if (source.hasOut()) {
+        if (source.hasOut() && !source.getOut().isFault()) {
             // exchange pattern sensitive
             getResultMessage(result).copyFrom(source.getOut());
         }

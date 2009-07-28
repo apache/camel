@@ -104,10 +104,6 @@ public class PipelineTest extends ContextTestSupport {
         // Check the fault..
         assertEquals("Fault Message", exchange.getFault().getBody());
         assertEquals(2, exchange.getFault().getHeader("copy-counter"));        
-        
-        // Check the out Message.. It should have only been processed once.
-        // since the fault should stop it from going to the next process.
-        assertEquals(1, exchange.getOut().getHeader("copy-counter"));                
     }
 
     public void testOnlyProperties() {

@@ -45,7 +45,6 @@ public final class DefaultExchange implements Exchange {
     private Map<String, Object> properties;
     private Message in;
     private Message out;
-    private Message fault;
     private Exception exception;
     private String exchangeId;
     private UnitOfWork unitOfWork;
@@ -266,7 +265,8 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean hasFault() {
-        return fault != null;
+        Message out = getOut(false);
+        return out != null && out.isFault();
     }
 
     public Message getFault() {
@@ -274,17 +274,18 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Message getFault(boolean lazyCreate) {
-        if (fault == null && lazyCreate) {
-            fault = (in != null && in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : new DefaultMessage();
-            configureMessage(fault);
+        Message fault = getOut(lazyCreate);
+        if (fault != null) {
+            fault.setFault(true);
         }
         return fault;
     }
 
     public void setFault(Message fault) {
-        this.fault = fault;
-        configureMessage(fault);
+        if (fault != null) {
+            fault.setFault(true);
+        }
+        setOut(fault);
     }
 
     public String getExchangeId() {

@@ -30,6 +30,7 @@ import org.apache.camel.util.MessageHelper;
  * @version $Revision$
  */
 public class DefaultMessage extends MessageSupport {
+    private boolean fault = false; 
     private Map<String, Object> headers;
     private Map<String, DataHandler> attachments;
 
@@ -38,6 +39,17 @@ public class DefaultMessage extends MessageSupport {
         return MessageHelper.extractBodyForLogging(this);
     }
 
+    public boolean isFault() {
+        return fault;
+    }
+
+    /**
+     * Sets the fault flag on this message
+     */
+    public void setFault(boolean fault) {
+        this.fault = fault;
+    }
+    
     public Object getHeader(String name) {
         return getHeaders().get(name);
     }

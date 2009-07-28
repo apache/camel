@@ -48,6 +48,16 @@ public interface Message {
     Exchange getExchange();
 
     /**
+     * Returns true if this message represents a fault
+     */
+    boolean isFault();
+
+    /**
+     * Sets the fault flag on this message
+     */
+    void setFault(boolean fault);
+
+    /**
      * Accesses a specific header
      *
      * @param name  name of header
