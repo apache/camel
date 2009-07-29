@@ -43,11 +43,10 @@ import org.apache.commons.logging.LogFactory;
  * output stream will be deleted when you close this output stream or the cached inputStream.
  */
 public class CachedOutputStream extends OutputStream {
-    private static final transient Log LOG = LogFactory.getLog(CachedOutputStream.class);
-
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
-   
+    private static final transient Log LOG = LogFactory.getLog(CachedOutputStream.class);
+    
     private OutputStream currentStream = new ByteArrayOutputStream(2048);
     private boolean inMemory = true;
     private int totalLength;

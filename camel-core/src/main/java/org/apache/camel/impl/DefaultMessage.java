@@ -30,7 +30,7 @@ import org.apache.camel.util.MessageHelper;
  * @version $Revision$
  */
 public class DefaultMessage extends MessageSupport {
-    private boolean fault = false; 
+    private boolean fault; 
     private Map<String, Object> headers;
     private Map<String, DataHandler> attachments;
 

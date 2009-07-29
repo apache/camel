@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.io.ByteArrayInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
