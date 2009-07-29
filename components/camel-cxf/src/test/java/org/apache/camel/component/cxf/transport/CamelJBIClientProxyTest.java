@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.transport;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.HelloService;
 import org.junit.After;
 import org.junit.Before;
@@ -39,8 +41,17 @@ public class CamelJBIClientProxyTest {
     }
     
     @Test
-    public void echoMethodTest() {
+    public void testCallFromProxy() {
         String response = proxy.echo("Hello World!");
+        assertEquals("Get a wrong response ", "echo Hello World!", response);
+    }
+    
+    @Test
+    public void testCallFromCamel() {
+        // get camel context
+        CamelContext context = (CamelContext) applicationContext.getBean("conduit_context");
+        ProducerTemplate producer = context.createProducerTemplate();
+        String response = producer.requestBody("direct://jbiStart", "Hello", String.class);
         assertEquals("Get a wrong response ", "echo Hello World!", response);
     }
     
