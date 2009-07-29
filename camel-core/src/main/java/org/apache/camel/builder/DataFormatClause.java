@@ -131,6 +131,15 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     }
 
     /**
+     * Uses the HL7 data format
+     */
+    public T hl7(boolean validate) {
+        HL7DataFormat hl7 = new HL7DataFormat();
+        hl7.setValidate(validate);
+        return dataFormat(hl7);
+    }
+
+    /**
      * Uses the JAXB data format
      */
     public T jaxb() {

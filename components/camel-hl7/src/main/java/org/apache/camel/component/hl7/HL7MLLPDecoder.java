@@ -60,14 +60,6 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         return foundEnd;
     }
 
-    /**
-     * @param session
-     * @param in
-     * @param out
-     * @param state
-     * @return
-     * @throws RuntimeException
-     */
     private void writeString(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) {
         DecoderState state = decoderState(session);
         if (state.posStart == 0) {
@@ -89,10 +81,6 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         }
     }
 
-    /**
-     * @param session
-     * @return the charset decoder for this IoSession
-     */
     private CharsetDecoder charsetDecoder(IoSession session) {
         // convert to string using the charset decoder
         CharsetDecoder decoder = (CharsetDecoder)session.getAttribute(CHARSET_DECODER);
@@ -107,8 +95,6 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
      * Scans the buffer for start and end bytes and stores its position in the
      * session state object.
      * 
-     * @param session
-     * @param in
      * @return <code>true</code> if the end bytes were found, <code>false</code>
      *         otherwise
      */
@@ -126,7 +112,9 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                     LOG.warn("Ignoring message start at position " + in.position() + " before previous message has ended.");
                 } else {
                     state.posStart = in.position();
-                    LOG.debug("Message starts at position " + state.posStart);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Message starts at position " + state.posStart);
+                    }
                 }
             }
             // Check end bytes
@@ -135,7 +123,9 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                 if (next == config.getEndByte2()) {
                     state.posEnd = in.position() - 2; // use -2 to skip these
                                                       // last 2 end markers
-                    LOG.debug("Message ends at position " + state.posEnd);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Message ends at position " + state.posEnd);
+                    }
                     break;
                 } else {
                     // we expected the 2nd end marker
@@ -149,10 +139,6 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         return state.posEnd > 0;
     }
 
-    /**
-     * @param session
-     * @return the state of the current decoding process
-     */
     private DecoderState decoderState(IoSession session) {
         DecoderState decoderState = (DecoderState)session.getAttribute(DECODER_STATE);
         if (decoderState == null) {
@@ -185,4 +171,5 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
             posEnd = 0;
         }
     }
+
 }

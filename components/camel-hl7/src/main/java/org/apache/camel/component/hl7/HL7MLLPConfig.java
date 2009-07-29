@@ -31,6 +31,8 @@ class HL7MLLPConfig {
 
     private char endByte2 = 0x0d; // 13 decimal
 
+    private boolean validate = true;
+
     public Charset getCharset() {
         return charset;
     }
@@ -71,4 +73,11 @@ class HL7MLLPConfig {
         this.endByte2 = endByte2;
     }
 
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
+    }
 }

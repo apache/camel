@@ -101,4 +101,12 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
         config.setEndByte2(endByte2);
     }
 
+    public boolean isValidate() {
+        return config.isValidate();
+    }
+
+    public void setValidate(boolean validate) {
+        config.setValidate(validate);
+    }
+
 }

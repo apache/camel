@@ -25,8 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
-
-
 /**
  * HL7 DataFormat (supports v2.x of the HL7 protocol).
  * <p/>
@@ -64,15 +62,17 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class HL7DataFormat implements DataFormat {
 
+    private boolean validate = true;
+
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Message message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, body);
-        String encoded = HL7Converter.toString(message);
+        String encoded = HL7Converter.encode(message, validate);
         outputStream.write(encoded.getBytes());
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         String body = ExchangeHelper.convertToMandatoryType(exchange, String.class, inputStream);
-        Message message = HL7Converter.toMessage(body);
+        Message message = HL7Converter.parse(body, validate);
 
         // add MSH fields as message out headers
         Terser terser = new Terser(message);
@@ -90,5 +90,12 @@ public class HL7DataFormat implements DataFormat {
         return message;
     }
 
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
+    }
 }
 

@@ -18,9 +18,11 @@ package org.apache.camel.model.dataformat;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.DataFormat;
 
 /**
  * Represents a <a href="http://camel.apache.org/hl7.html">HL7</a> {@link org.apache.camel.spi.DataFormat}.
@@ -31,8 +33,28 @@ import org.apache.camel.model.DataFormatDefinition;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HL7DataFormat extends DataFormatDefinition {
 
+    @XmlAttribute(required = false)
+    private Boolean validate = Boolean.TRUE;
+
     public HL7DataFormat() {
         super("org.apache.camel.component.hl7.HL7DataFormat");
     }
+
+    public Boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(Boolean validate) {
+        this.validate = validate;
+    }
+
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        if (validate != null) {
+            setProperty(dataFormat, "validate", validate);
+        }
+    }
+
+
 
 }

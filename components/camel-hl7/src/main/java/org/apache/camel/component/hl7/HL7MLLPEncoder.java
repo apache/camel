@@ -19,8 +19,6 @@ package org.apache.camel.component.hl7;
 import java.nio.charset.CharsetEncoder;
 
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.parser.PipeParser;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,8 +27,9 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
-
-
+/**
+ * HL7 MLLP encoder
+ */
 class HL7MLLPEncoder implements ProtocolEncoder {
 
     private static final transient Log LOG = LogFactory.getLog(HL7MLLPEncoder.class);
@@ -65,8 +64,7 @@ class HL7MLLPEncoder implements ProtocolEncoder {
         // convert to string
         String body;
         if (message instanceof Message) {
-            Parser parser = new PipeParser();
-            body = parser.encode((Message)message);
+            body = HL7Converter.encode((Message)message, config.isValidate());
         } else if (message instanceof String) {
             body = (String)message;
         } else if (message instanceof byte[]) {
