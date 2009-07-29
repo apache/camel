@@ -67,7 +67,8 @@ public class Tracer implements InterceptStrategy {
      *
      * @return the tracer or null if none can be found
      */
-    public static Tracer getTracer(List<InterceptStrategy> list) {
+    public static Tracer getTracer(CamelContext context) {
+        List<InterceptStrategy> list = context.getInterceptStrategies();
         for (InterceptStrategy interceptStrategy : list) {
             if (interceptStrategy instanceof Tracer) {
                 return (Tracer)interceptStrategy;

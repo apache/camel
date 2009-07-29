@@ -21,9 +21,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,6 +36,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import static org.apache.camel.builder.Builder.body;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
@@ -50,6 +51,9 @@ import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.interceptor.Delayer;
+import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.DataFormat;
@@ -61,8 +65,6 @@ import org.apache.camel.spi.TransactedPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.builder.Builder.body;
-
 /**
  * Base class for processor types that most XML types extend.
  *
@@ -70,7 +72,7 @@ import static org.apache.camel.builder.Builder.body;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedType<Type> implements Block {
-    private static final transient Log LOG = LogFactory.getLog(ProcessorDefinition.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
     private ErrorHandlerBuilder errorHandlerBuilder;
     private NodeFactory nodeFactory;
     private final LinkedList<Block> blocks = new LinkedList<Block>();
@@ -130,12 +132,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
 
             // only add regular processors as event driven
             if (endpointInterceptor) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Endpoint interceptor should not be added as an event driven consumer route: " + processor);
+                if (log.isDebugEnabled()) {
+                    log.debug("Endpoint interceptor should not be added as an event driven consumer route: " + processor);
                 }
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Adding event driven processor: " + processor);
+                if (log.isTraceEnabled()) {
+                    log.trace("Adding event driven processor: " + processor);
                 }
                 routeContext.addEventDrivenProcessor(processor);
             }
@@ -159,7 +161,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         Channel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
 
-        // add interceptor strategies to the channel
+        // add interceptor strategies to the channel must be in this order: camel context, route context, local
         addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
@@ -193,6 +195,34 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
                 // trace is disabled so we should not add it
                 continue;
             }
+            if (!routeContext.isStreamCaching() && strategy instanceof StreamCaching) {
+                // stream cache is disabled so we should not add it
+                continue;
+            }
+            if (!routeContext.isHandleFault() && strategy instanceof HandleFault) {
+                // handle fault is disabled so we should not add it
+                continue;
+            }
+            if (strategy instanceof Delayer) {
+                if ((routeContext.getDelayer() == null || routeContext.getDelayer() <= 0)) {
+                    // delayer is disabled so we should not add it
+                    continue;
+                } else {
+                    // replace existing delayer as delayer have individual configuration
+                    Iterator<InterceptStrategy> it = channel.getInterceptStrategies().iterator();
+                    while (it.hasNext()) {
+                        InterceptStrategy existing = it.next();
+                        if (existing instanceof Delayer) {
+                            it.remove();
+                        }
+                    }
+                    // add the new correct delayer
+                    channel.addInterceptStrategy(strategy);
+                    continue;
+                }
+            }
+
+            // add strategy
             channel.addInterceptStrategy(strategy);
         }
     }

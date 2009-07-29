@@ -94,7 +94,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlAttribute(required = false)
     private Boolean streamCache = Boolean.TRUE;
     @XmlAttribute(required = false)
-    private Long delay;
+    private Long delayer;
     @XmlAttribute(required = false)
     private Boolean handleFault;
     @XmlAttribute(required = false)
@@ -628,12 +628,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.streamCache = streamCache;
     }
 
-    public Long getDelay() {
-        return delay;
+    public Long getDelayer() {
+        return delayer;
     }
 
-    public void setDelay(Long delay) {
-        this.delay = delay;
+    public void setDelayer(Long delayer) {
+        this.delayer = delayer;
     }
 
     public Boolean getHandleFault() {
@@ -716,8 +716,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (trace != null) {
             ctx.setTracing(trace);
         }
-        if (delay != null) {
-            ctx.setDelay(delay);
+        if (delayer != null) {
+            ctx.setDelayer(delayer);
         }
         if (handleFault != null) {
             ctx.setHandleFault(handleFault);

@@ -35,6 +35,8 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.processor.interceptor.Delayer;
+import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.RouteContext;
@@ -55,6 +57,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     private String group;
     private Boolean streamCache;
     private Boolean trace;
+    private Boolean handleFault;
+    private Long delayer;
 
     public RouteDefinition() {
     }
@@ -235,6 +239,40 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
+    /**
+     * Disable handle fault for this route.
+     */
+    public RouteDefinition noHandleFault() {
+        setHandleFault(false);
+        return this;
+    }
+
+    /**
+     * Enable handle fault for this route.
+     */
+    public RouteDefinition handleFault() {
+        setHandleFault(true);
+        return this;
+    }
+
+    /**
+     * Disable delayer for this route.
+     */
+    public RouteDefinition noDelayer() {
+        setDelayer(0L);
+        return this;
+    }
+
+    /**
+     * Enable delayer for this route.
+     *
+     * @param delay delay in millis
+     */
+    public RouteDefinition delayer(long delay) {
+        setDelayer(delay);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -304,6 +342,24 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         this.trace = trace;
     }
 
+    public Boolean isHandleFault() {
+        return handleFault;
+    }
+
+    @XmlAttribute
+    public void setHandleFault(Boolean handleFault) {
+        this.handleFault = handleFault;
+    }
+
+    public Long getDelayer() {
+        return delayer;
+    }
+
+    @XmlAttribute
+    public void setDelayer(Long delayer) {
+        this.delayer = delayer;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
@@ -313,10 +369,59 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         if (trace != null) {
             routeContext.setTracing(isTrace());
             if (isTrace()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Tracing is enabled on route: " + this);
+                }
                 // only add a new tracer if not already a global configured on camel context
-                if (Tracer.getTracer(camelContext.getInterceptStrategies()) == null) {
+                if (Tracer.getTracer(camelContext) == null) {
                     Tracer tracer = Tracer.createTracer(camelContext);
                     addInterceptStrategy(tracer);
+                }
+            }
+        }
+
+        // configure stream caching
+        if (streamCache != null) {
+            routeContext.setStreamCaching(isStreamCache());
+            if (isStreamCache()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("StramCaching is enabled on route: " + this);
+                }
+                // only add a new stream cache if not already a global configured on camel context
+                if (StreamCaching.getStreamCaching(camelContext) == null) {
+                    addInterceptStrategy(new StreamCaching());
+                }
+            }
+        }
+
+        // configure stream caching
+        if (handleFault != null) {
+            routeContext.setHandleFault(isHandleFault());
+            if (isHandleFault()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("HandleFault is enabled on route: " + this);
+                }
+                // only add a new handle fault if not already a global configured on camel context
+                if (HandleFault.getHandleFault(camelContext) == null) {
+                    addInterceptStrategy(new HandleFault());
+                }
+            }
+        }
+
+        // configure delayer
+        if (delayer != null) {
+            routeContext.setDelayer(getDelayer());
+            if (getDelayer() != null) {
+                long millis = getDelayer();
+                if (millis > 0) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Delayer is enabled with: " + millis + " ms. on route: " + this);
+                    }
+                    addInterceptStrategy(new Delayer(millis));
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Delayer is disabled on route: " + this);
+                    }
                 }
             }
         }

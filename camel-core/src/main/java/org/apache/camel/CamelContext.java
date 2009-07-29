@@ -44,7 +44,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
  *
  * @version $Revision$
  */
-public interface CamelContext extends Service {
+public interface CamelContext extends Service, RuntimeConfiguration {
 
     /**
      * Gets the name of the this context.
@@ -261,6 +261,7 @@ public interface CamelContext extends Service {
      * Returns the converter of exchanges from one type to another
      *
      * @return the converter
+     * @deprecated
      */
     ExchangeConverter getExchangeConverter();
 
@@ -462,32 +463,5 @@ public interface CamelContext extends Service {
      * @return the service pool
      */
     ServicePool<Endpoint, Producer> getProducerServicePool();
-
-    /**
-     * Sets whether stream caching is enabled or not (default is disabled).
-     *
-     * @param cache whether stream caching is enabled or not
-     */
-    void setStreamCaching(Boolean cache);
-
-    /**
-     * Sets whether tracing is enabled or not (default is disabled).
-     * <p/>
-     * Will use the default trace formatter.
-     * <p/>
-     * Use {@link this#addInterceptStrategy(org.apache.camel.spi.InterceptStrategy)} if you
-     * want to add a custom {@link org.apache.camel.processor.interceptor.Tracer} where you
-     * can custome the tracing options and formatting as you like.
-     *
-     * @param tracing whether tracing is enabled or not.
-     */
-    void setTracing(Boolean tracing);
-
-    /**
-     * Returns whether tracing enabled for this route.
-     *
-     * @return true if tracing is enabled
-     */
-    boolean isTracing();
 
 }

@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.spring.processor;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.DelayerPerRouteTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * This converter is capable of converting from an exchange to another type
- *
  * @version $Revision$
- * @deprecated
  */
-public interface ExchangeConverter {
+public class SpringDelayerPerRouteTest extends DelayerPerRouteTest {
 
-    /**
-     * Converts the given exchange to the new type
-     *
-     * @param type  the new class type
-     * @param exchange the exchange to converter
-     * @param <T> the new type
-     * @return  the converted exchange
-     */
-     <T> T  convertTo(Class<T> type, Exchange exchange);
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/delayerperroute.xml");
+    }
 }

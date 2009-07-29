@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Intercept;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeConfiguration;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -33,7 +33,7 @@ import org.apache.camel.model.RouteDefinition;
  *
  * @version $Revision$
  */
-public interface RouteContext {
+public interface RouteContext extends RuntimeConfiguration {
 
     /**
      * Gets the endpoint
@@ -163,19 +163,5 @@ public interface RouteContext {
      * @return the found object
      */
     DataFormatDefinition getDataFormat(String ref);
-
-    /**
-     * Sets whether tracing is enabled or not (default is disabled).
-     *
-     * @param tracing whether tracing is enabled or not.
-     */
-    void setTracing(Boolean tracing);
-
-    /**
-     * Returns whether tracing enabled for this route.
-     *
-     * @return true if tracing is enabled
-     */
-    boolean isTracing();
 
 }

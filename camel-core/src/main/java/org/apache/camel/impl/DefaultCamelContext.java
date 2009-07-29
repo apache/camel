@@ -73,7 +73,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
-import org.apache.camel.util.SystemHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -736,26 +735,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
+
+        // for backwards compability or if user add them here instead of the setXXX methods
+
         if (interceptStrategy instanceof Tracer) {
             setTracing(true);
+        } else if (interceptStrategy instanceof HandleFault) {
+            setHandleFault(true);
+        } else if (interceptStrategy instanceof StreamCaching) {
+            setStreamCaching(true);
+        } else if (interceptStrategy instanceof Delayer) {
+            setDelayer(((Delayer)interceptStrategy).getDelay());
         }
-    }
-
-    public boolean isStreamCacheEnabled() {
-        final Boolean value = getStreamCaching();
-        if (value != null) {
-            return value;
-        } else {
-            return SystemHelper.isSystemProperty("camel.streamCache");
-        }
-    }
-
-    public Boolean getStreamCaching() {
-        return streamCache;
     }
 
     public void setStreamCaching(Boolean cache) {
         this.streamCache = cache;
+    }
+
+    public boolean isStreamCaching() {
+        return streamCache;
     }
 
     public void setTracing(Boolean tracing) {
@@ -766,19 +765,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return trace;
     }
 
-    /**
-     * Returns true if handle fault has been enabled
-     */
-    public boolean isHandleFaultEnabled() {
-        final Boolean value = getHandleFault();
-        if (value != null) {
-            return value;
-        } else {
-            return SystemHelper.isSystemProperty("camel.handleFault");
-        }
-    }
-
-    public Boolean getHandleFault() {
+    public boolean isHandleFault() {
         return handleFault;
     }
 
@@ -786,36 +773,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.handleFault = handleFault;
     }
 
-    /**
-     * Returns true if tracing has been enabled
-     */
-    public boolean isTraceEnabled() {
-        final Boolean value = isTracing();
-        if (value != null) {
-            return value;
-        } else {
-            return SystemHelper.isSystemProperty("camel.trace");
-        }
-    }
-
-    /**
-     * Returns the delay in millis if delaying has been enabled. Returns 0 if not enabled.
-     */
-    public long isDelayEnabled() {
-        final Long value = getDelay();
-        if (value != null) {
-            return value;
-        } else {
-            String prop = SystemHelper.getSystemProperty("camel.delay");
-            return prop != null ? Long.getLong(prop) : 0;
-        }
-    }
-
-    public Long getDelay() {
+    public Long getDelayer() {
         return delay;
     }
 
-    public void setDelay(Long delay) {
+    public void setDelayer(long delay) {
         this.delay = delay;
     }
 
@@ -877,7 +839,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         startServices(producerServicePool);
 
-        if (isStreamCacheEnabled()) {
+        if (isStreamCaching()) {
             // only add a new stream cache if not already configured
             if (StreamCaching.getStreamCaching(this) == null) {
                 LOG.debug("StreamCaching is enabled");
@@ -885,29 +847,29 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
 
-        if (isTraceEnabled()) {
+        if (isTracing()) {
             // only add a new tracer if not already configured
-            if (Tracer.getTracer(this.getInterceptStrategies()) == null) {
+            if (Tracer.getTracer(this) == null) {
                 Tracer tracer = Tracer.createTracer(this);
                 LOG.debug("Tracing is enabled");
                 addInterceptStrategy(tracer);
             }
         }
 
-        long delayInMillis = isDelayEnabled();
-        if (delayInMillis > 0) {
-            // only add a new delayer if not already configured
-            if (Delayer.getDelayer(this) == null) {
-                LOG.debug("Delayer is enabled with: " + delayInMillis + " ms.");
-                addInterceptStrategy(new Delayer(delayInMillis));
-            }
-        }
-
-        if (isHandleFaultEnabled()) {
+        if (isHandleFault()) {
             // only add a new handle fault if not already configured
             if (HandleFault.getHandleFault(this) == null) {
                 LOG.debug("HandleFault is enabled");
                 addInterceptStrategy(new HandleFault());
+            }
+        }
+
+        if (getDelayer() != null && getDelayer() > 0) {
+            // only add a new delayer if not already configured
+            if (Delayer.getDelayer(this) == null) {
+                long millis = getDelayer();
+                LOG.debug("Delayer is enabled with: " + millis + " ms.");
+                addInterceptStrategy(new Delayer(millis));
             }
         }
 
@@ -1160,7 +1122,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     @Override
     public String toString() {
-        return "DefaultCamelContext(" + getName() + ")";
+        return "CamelContext(" + getName() + ")";
     }
 
 }

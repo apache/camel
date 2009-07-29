@@ -50,6 +50,9 @@ public class DefaultRouteContext implements RouteContext {
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private boolean routeAdded;
     private Boolean trace;
+    private Boolean stramCache;
+    private Boolean handleFault;
+    private Long delay;
 
     public DefaultRouteContext(RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.route = route;
@@ -178,8 +181,47 @@ public class DefaultRouteContext implements RouteContext {
         if (trace != null) {
             return trace;
         } else {
-            // fallback to let the camel context decide whether tracing is enabled
+            // fallback to the option from camel context
             return getCamelContext().isTracing();
+        }
+    }
+
+    public void setStreamCaching(Boolean cache) {
+        this.stramCache = cache;
+    }
+
+    public boolean isStreamCaching() {
+        if (stramCache != null) {
+            return stramCache;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isStreamCaching();
+        }
+    }
+
+    public void setHandleFault(Boolean handleFault) {
+        this.handleFault = handleFault;
+    }
+
+    public boolean isHandleFault() {
+        if (handleFault != null) {
+            return handleFault;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isHandleFault();
+        }
+    }
+
+    public void setDelayer(long delay) {
+        this.delay = delay;
+    }
+
+    public Long getDelayer() {
+        if (delay != null) {
+            return delay;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().getDelayer();
         }
     }
 
