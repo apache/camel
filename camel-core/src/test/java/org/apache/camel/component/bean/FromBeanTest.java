@@ -26,8 +26,8 @@ import org.apache.camel.impl.JndiRegistry;
 public class FromBeanTest extends ContextTestSupport {
 
     public void testFromBean() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello");
         getMockEndpoint("mock:bar").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:bar").message(0).body().isEqualTo("Hello");
 
         assertMockEndpointsSatisfied();
     }
