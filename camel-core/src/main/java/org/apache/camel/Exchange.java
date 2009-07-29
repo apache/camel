@@ -234,23 +234,6 @@ public interface Exchange {
     boolean hasFault();
 
     /**
-     * Returns the fault message; optionally lazily creating one if one has
-     * not been associated with this exchange
-     *
-     * @param lazyCreate <tt>true</tt> will lazy create the fault message
-     * @return the fault
-     * @deprecated use {@link #hasFault()} or {@link #getFault()}. Will be remove in Camel 2.0 GA.
-     */
-    Message getFault(boolean lazyCreate);
-
-    /**
-     * Sets the fault message
-     *
-     * @param fault the fault message
-     */
-    void setFault(Message fault);
-
-    /**
      * Returns the exception associated with this exchange
      *
      * @return the exception (or null if no faults)

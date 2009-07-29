@@ -270,22 +270,11 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Message getFault() {
-        return getFault(true);
-    }
-
-    public Message getFault(boolean lazyCreate) {
-        Message fault = getOut(lazyCreate);
+        Message fault = getOut(true);
         if (fault != null) {
             fault.setFault(true);
         }
         return fault;
-    }
-
-    public void setFault(Message fault) {
-        if (fault != null) {
-            fault.setFault(true);
-        }
-        setOut(fault);
     }
 
     public String getExchangeId() {
