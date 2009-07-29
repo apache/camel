@@ -43,9 +43,6 @@ public class DefaultMessage extends MessageSupport {
         return fault;
     }
 
-    /**
-     * Sets the fault flag on this message
-     */
     public void setFault(boolean fault) {
         this.fault = fault;
     }
