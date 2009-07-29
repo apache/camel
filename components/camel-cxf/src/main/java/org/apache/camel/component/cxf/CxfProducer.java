@@ -166,7 +166,7 @@ public class CxfProducer extends DefaultProducer {
             }
         } else if (endpoint.getDataFormat() == DataFormat.PAYLOAD) {
             params = new Object[1];
-            params[0] = exchange.getIn().getBody();
+            params[0] = exchange.getIn().getBody(CxfPayload.class);
         } else if (endpoint.getDataFormat() == DataFormat.MESSAGE) {
             params = new Object[1];
             params[0] = exchange.getIn().getBody(InputStream.class);
