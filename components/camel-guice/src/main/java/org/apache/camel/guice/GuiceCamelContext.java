@@ -36,7 +36,6 @@ import org.apache.camel.guice.impl.GuiceInjector;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LanguageResolver;
@@ -101,12 +100,6 @@ public class GuiceCamelContext extends DefaultCamelContext {
     @Inject(optional = true)
     public void setInjector(Injector injector) {
         super.setInjector(injector);
-    }
-
-    @Override
-    @Inject(optional = true)
-    public void setExchangeConverter(ExchangeConverter exchangeConverter) {
-        super.setExchangeConverter(exchangeConverter);
     }
 
     @Override
