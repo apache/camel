@@ -26,7 +26,6 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.Injector;
@@ -256,14 +255,6 @@ public interface CamelContext extends Service, RuntimeConfiguration {
 
     // Properties
     //-----------------------------------------------------------------------
-
-    /**
-     * Returns the converter of exchanges from one type to another
-     *
-     * @return the converter
-     * @deprecated
-     */
-    ExchangeConverter getExchangeConverter();
 
     /**
      * Returns the type converter used to coerce types from one type to another

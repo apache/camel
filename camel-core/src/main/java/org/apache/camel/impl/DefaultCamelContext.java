@@ -55,7 +55,6 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.Injector;
@@ -95,7 +94,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private final List<Service> servicesToClose = new ArrayList<Service>();
     private TypeConverter typeConverter;
     private TypeConverterRegistry typeConverterRegistry;
-    private ExchangeConverter exchangeConverter;
     private Injector injector;
     private ComponentResolver componentResolver;
     private boolean autoCreateComponents = true;
@@ -614,16 +612,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     // Properties
     // -----------------------------------------------------------------------
-    public ExchangeConverter getExchangeConverter() {
-        if (exchangeConverter == null) {
-            exchangeConverter = createExchangeConverter();
-        }
-        return exchangeConverter;
-    }
-
-    public void setExchangeConverter(ExchangeConverter exchangeConverter) {
-        this.exchangeConverter = exchangeConverter;
-    }
 
     public TypeConverter getTypeConverter() {
         if (typeConverter == null) {
@@ -939,17 +927,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      * components and create routes
      */
     protected void forceLazyInitialization() {
-        getExchangeConverter();
         getInjector();
         getLanguageResolver();
         getTypeConverter();
-    }
-
-    /**
-     * Lazily create a default implementation
-     */
-    protected ExchangeConverter createExchangeConverter() {
-        return new DefaultExchangeConverter();
     }
 
     /**
