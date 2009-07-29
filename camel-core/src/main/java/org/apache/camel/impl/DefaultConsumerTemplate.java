@@ -164,16 +164,6 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
     }
 
     protected boolean hasFaultMessage(Exchange result) {
-        if (result.hasFault()) {
-            Message faultMessage = result.getFault();
-            if (faultMessage != null) {
-                Object faultBody = faultMessage.getBody();
-                if (faultBody != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return result.hasOut() && result.getOut().isFault() && result.getOut().getBody() != null;
     }
-
 }

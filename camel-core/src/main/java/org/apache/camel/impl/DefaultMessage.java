@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.util.MessageHelper;
 
 /**
@@ -37,6 +38,12 @@ public class DefaultMessage extends MessageSupport {
     @Override
     public String toString() {
         return MessageHelper.extractBodyForLogging(this);
+    }
+
+    @Override
+    public void copyFrom(Message that) {
+        super.copyFrom(that);
+        fault = that.isFault();
     }
 
     public boolean isFault() {

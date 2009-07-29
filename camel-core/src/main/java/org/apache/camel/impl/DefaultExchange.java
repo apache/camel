@@ -112,9 +112,6 @@ public final class DefaultExchange implements Exchange {
         if (exchange.hasOut()) {
             safeCopy(getOut(), exchange.getOut());
         }
-        if (exchange.hasFault()) {
-            safeCopy(getFault(), exchange.getFault());
-        }
         setException(exchange.getException());
 
         unitOfWork = exchange.getUnitOfWork();
@@ -289,13 +286,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean isFailed() {
-        if (hasFault()) {
-            Object faultBody = getFault().getBody();
-            if (faultBody != null) {
-                return true;
-            }
-        }
-        return getException() != null;
+        return (hasOut() && getOut().isFault()) || getException() != null;
     }
 
     public boolean isTransacted() {

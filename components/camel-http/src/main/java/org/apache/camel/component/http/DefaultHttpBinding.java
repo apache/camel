@@ -103,10 +103,11 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
         if (exchange.isFailed()) {
-            if (exchange.hasFault()) {
-                doWriteFaultResponse(exchange.getFault(), response, exchange);
-            } else {
+            if (exchange.getException() != null) {
                 doWriteExceptionResponse(exchange.getException(), response);
+            } else {
+                // it must be a fault, no need to check for the fault flag on the message
+                doWriteFaultResponse(exchange.getOut(), response, exchange);
             }
         } else {
             // just copy the protocol relates header
