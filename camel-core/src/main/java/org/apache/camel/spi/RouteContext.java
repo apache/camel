@@ -163,4 +163,19 @@ public interface RouteContext {
      * @return the found object
      */
     DataFormatDefinition getDataFormat(String ref);
+
+    /**
+     * Sets whether tracing is enabled or not (default is disabled).
+     *
+     * @param tracing whether tracing is enabled or not.
+     */
+    void setTracing(Boolean tracing);
+
+    /**
+     * Returns whether tracing enabled for this route.
+     *
+     * @return true if tracing is enabled
+     */
+    boolean isTracing();
+
 }

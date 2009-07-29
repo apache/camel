@@ -36,6 +36,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.processor.interceptor.StreamCaching;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -53,6 +54,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     private CamelContext camelContext;
     private String group;
     private Boolean streamCache;
+    private Boolean trace;
 
     public RouteDefinition() {
     }
@@ -195,7 +197,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     }
 
     /**
-     * Disable stream caching for this Route.
+     * Disable stream caching for this route.
      */
     public RouteDefinition noStreamCaching() {
         setStreamCache(Boolean.FALSE);
@@ -204,7 +206,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     }
 
     /**
-     * Enable stream caching for this Route.
+     * Enable stream caching for this route.
      */
     public RouteDefinition streamCaching() {
         setStreamCache(Boolean.TRUE);
@@ -214,6 +216,22 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
 
         getInterceptStrategies().add(cache);
+        return this;
+    }
+
+    /**
+     * Disable tracing for this route.
+     */
+    public RouteDefinition noTracing() {
+        setTrace(false);
+        return this;
+    }
+
+    /**
+     * Enable tracing for this route.
+     */
+    public RouteDefinition tracing() {
+        setTrace(true);
         return this;
     }
 
@@ -277,10 +295,32 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         this.streamCache = streamCache;
     }
 
+    public Boolean isTrace() {
+        return trace;
+    }
+
+    @XmlAttribute
+    public void setTrace(Boolean trace) {
+        this.trace = trace;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
         RouteContext routeContext = new DefaultRouteContext(this, fromType, routes);
+
+        // configure tracing
+        if (trace != null) {
+            routeContext.setTracing(isTrace());
+            if (isTrace()) {
+                // only add a new tracer if not already a global configured on camel context
+                if (Tracer.getTracer(camelContext.getInterceptStrategies()) == null) {
+                    Tracer tracer = Tracer.createTracer(camelContext);
+                    addInterceptStrategy(tracer);
+                }
+            }
+        }
+
         // should inherit the intercept strategies we have defined
         routeContext.setInterceptStrategies(this.getInterceptStrategies());
         // force endpoint resolution

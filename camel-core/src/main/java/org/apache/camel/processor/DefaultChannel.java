@@ -71,7 +71,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     public Processor getOutput() {
         // the errorHandler is already decorated with interceptors
         // so it cointain the entire chain of processors, so we can safely use it directly as output
-        // if no error handler provided we can use the output direcly
+        // if no error handler provided we use the output
         return errorHandler != null ? errorHandler : output;
     }
 

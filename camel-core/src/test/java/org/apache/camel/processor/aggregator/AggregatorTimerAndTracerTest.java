@@ -37,7 +37,7 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                getContext().addInterceptStrategy(new Tracer());
+                getContext().setTracing(true);
 
                 from("timer://kickoff?period=9999910000").
                     setHeader("id").constant("foo").setBody().constant("a b c").

@@ -482,4 +482,12 @@ public interface CamelContext extends Service {
      * @param tracing whether tracing is enabled or not.
      */
     void setTracing(Boolean tracing);
+
+    /**
+     * Returns whether tracing enabled for this route.
+     *
+     * @return true if tracing is enabled
+     */
+    boolean isTracing();
+
 }

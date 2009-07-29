@@ -55,7 +55,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.addInterceptStrategy(new Tracer());
+                context.setTracing(true);
 
                 from("direct:start")
                         .process(new MyUOWProcessor("A"))

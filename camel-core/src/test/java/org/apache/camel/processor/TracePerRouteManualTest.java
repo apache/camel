@@ -14,23 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.timer;
+package org.apache.camel.processor;
 
-
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * @version $Revision$
  */
-public class TimerRouteWithTracerTest extends TimerRouteTest {
+public class TracePerRouteManualTest extends ContextTestSupport {
+
+    public void testTracingPerRoute() throws Exception {
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+
+        template.sendBody("direct:a", "Hello World");
+        template.sendBody("direct:b", "Bye World");
+        template.sendBody("direct:c", "Gooday World");
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                getContext().setTracing(true);
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean", "mock:result");
+            @Override
+            public void configure() throws Exception {
+                from("direct:a").tracing().streamCaching().to("mock:a");
+
+                from("direct:b").noTracing().to("mock:b");
+
+                from("direct:c").tracing().to("mock:c");
             }
         };
     }

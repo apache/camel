@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
@@ -52,7 +51,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
-import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -73,13 +71,12 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.util.SystemHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -109,7 +106,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private LifecycleStrategy lifecycleStrategy;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
-    private Boolean trace;
+    private Boolean trace = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
     private Long delay;
@@ -739,12 +736,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
+        if (interceptStrategy instanceof Tracer) {
+            setTracing(true);
+        }
     }
 
-    /**
-     * Returns true if tracing has been enabled or disabled via the {@link #setTrace(Boolean)} method
-     * or it has not been specified then default to the <b>camel.streamCache</b> system property
-     */
     public boolean isStreamCacheEnabled() {
         final Boolean value = getStreamCaching();
         if (value != null) {
@@ -763,19 +759,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public void setTracing(Boolean tracing) {
-        // look if alredy enabled
-        Tracer tracer = Tracer.getTracer(this);
-        if (tracing && tracer == null) {
-            // not already enabled
-            addInterceptStrategy(new Tracer());
-        } else if (tracer != null) {
-            // disable existing tracer
-            for (InterceptStrategy strategy : interceptStrategies) {
-                if (strategy instanceof Tracer) {
-                    interceptStrategies.remove(strategy);
-                }
-            }
-        }
+        this.trace = tracing;
+    }
+
+    public boolean isTracing() {
+        return trace;
     }
 
     /**
@@ -802,20 +790,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      * Returns true if tracing has been enabled
      */
     public boolean isTraceEnabled() {
-        final Boolean value = getTrace();
+        final Boolean value = isTracing();
         if (value != null) {
             return value;
         } else {
             return SystemHelper.isSystemProperty("camel.trace");
         }
-    }
-
-    public Boolean getTrace() {
-        return trace;
-    }
-
-    public void setTrace(Boolean trace) {
-        this.trace = trace;
     }
 
     /**
@@ -907,13 +887,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         if (isTraceEnabled()) {
             // only add a new tracer if not already configured
-            if (Tracer.getTracer(this) == null) {
-                Tracer tracer = new Tracer();
-                // lets see if we have a formatter if so use it
-                TraceFormatter formatter = this.getRegistry().lookup("traceFormatter", TraceFormatter.class);
-                if (formatter != null) {
-                    tracer.setFormatter(formatter);
-                }
+            if (Tracer.getTracer(this.getInterceptStrategies()) == null) {
+                Tracer tracer = Tracer.createTracer(this);
                 LOG.debug("Tracing is enabled");
                 addInterceptStrategy(tracer);
             }

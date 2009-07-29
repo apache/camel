@@ -14,13 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import java.util.List;
+package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -28,25 +24,24 @@ import org.apache.camel.processor.interceptor.Tracer;
 /**
  * @version $Revision$
  */
-public class FromMultipleEndpointTest extends ContextTestSupport {
+public class TracePerRouteTest extends ContextTestSupport {
 
-    public void testMultipleFromEndpoint() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:results");
-        mock.expectedMessageCount(3);
+    public void testTracingPerRoute() throws Exception {
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
 
-        template.sendBody("direct:foo", "foo");
-        template.sendBody("seda:bar", "bar");
+        // only a and c has enabled tracing
+        MockEndpoint traced = getMockEndpoint("mock:traced");
+        traced.expectedMessageCount(2);
+        traced.message(0).body(String.class).contains("mock://a");
+        traced.message(1).body(String.class).contains("mock://c");
 
-        mock.assertIsSatisfied();
-        List<Exchange> list = mock.getReceivedExchanges();
+        template.sendBody("direct:a", "Hello World");
+        template.sendBody("direct:b", "Bye World");
+        template.sendBody("direct:c", "Gooday World");
 
-        Exchange exchange = list.get(0);
-        Endpoint fromEndpoint = exchange.getFromEndpoint();
-        assertEquals("fromEndpoint URI", "direct://foo", fromEndpoint.getEndpointUri());
-
-        exchange = list.get(1);
-        fromEndpoint = exchange.getFromEndpoint();
-        assertEquals("fromEndpoint URI", "seda://bar", fromEndpoint.getEndpointUri());
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -54,11 +49,17 @@ public class FromMultipleEndpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                getContext().setTracing(true);
+                Tracer tracer = new Tracer();
+                tracer.setDestinationUri("mock:traced");
+                tracer.setLogName("foo");
+                context.addInterceptStrategy(tracer);
 
-                from("direct:foo", "seda:bar", "timer://baz?delay=500&period=1000").to("mock:results");
+                from("direct:a").to("mock:a");
+
+                from("direct:b").noTracing().to("mock:b");
+
+                from("direct:c").tracing().to("mock:c");
             }
         };
-
     }
 }

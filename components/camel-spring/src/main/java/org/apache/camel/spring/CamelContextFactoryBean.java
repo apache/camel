@@ -714,7 +714,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             ctx.setStreamCaching(streamCache);
         }
         if (trace != null) {
-            ctx.setTrace(trace);
+            ctx.setTracing(trace);
         }
         if (delay != null) {
             ctx.setDelay(delay);

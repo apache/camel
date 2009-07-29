@@ -49,6 +49,7 @@ public class DefaultRouteContext implements RouteContext {
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private boolean routeAdded;
+    private Boolean trace;
 
     public DefaultRouteContext(RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.route = route;
@@ -167,6 +168,19 @@ public class DefaultRouteContext implements RouteContext {
 
     public void setIsRouteAdded(boolean routeAdded) {
         this.routeAdded = routeAdded;
+    }
+
+    public void setTracing(Boolean tracing) {
+        this.trace = tracing;
+    }
+
+    public boolean isTracing() {
+        if (trace != null) {
+            return trace;
+        } else {
+            // fallback to let the camel context decide whether tracing is enabled
+            return getCamelContext().isTracing();
+        }
     }
 
     public DataFormatDefinition getDataFormat(String ref) {

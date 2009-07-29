@@ -50,6 +50,7 @@ import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdempotentRepository;
@@ -159,10 +160,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         channel.setNextProcessor(processor);
 
         // add interceptor strategies to the channel
-        channel.addInterceptStrategies(routeContext.getCamelContext().getInterceptStrategies());
-        channel.addInterceptStrategies(routeContext.getInterceptStrategies());
-        channel.addInterceptStrategies(this.getInterceptStrategies());
-
+        addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().getInterceptStrategies());
+        addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
+        addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
+        
         // init the channel
         channel.initChannel(this, routeContext);
 
@@ -176,6 +177,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             Processor errorHandler = getErrorHandlerBuilder().createErrorHandler(routeContext, output);
             channel.setErrorHandler(errorHandler);
             return channel;
+        }
+    }
+
+    /**
+     * Adds the given list of interceptors to the channel.
+     *
+     * @param routeContext  the route context
+     * @param channel       the channel to add strategies
+     * @param strategies    list of strategies to add.
+     */
+    protected void addInterceptStrategies(RouteContext routeContext, Channel channel, List<InterceptStrategy> strategies) {
+        for (InterceptStrategy strategy : strategies) {
+            if (!routeContext.isTracing() && strategy instanceof Tracer) {
+                // trace is disabled so we should not add it
+                continue;
+            }
+            channel.addInterceptStrategy(strategy);
         }
     }
 

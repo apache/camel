@@ -18,11 +18,11 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
@@ -47,13 +47,27 @@ public class Tracer implements InterceptStrategy {
     private boolean useJpa;
 
     /**
-     * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
+     * Creates a new tracer.
      *
-     * @param context the camel context the tracer is connected to
+     * @param context Camel context
+     * @return a new tracer
+     */
+    public static Tracer createTracer(CamelContext context) {
+        Tracer tracer = new Tracer();
+        // lets see if we have a formatter if so use it
+        TraceFormatter formatter = context.getRegistry().lookup("traceFormatter", TraceFormatter.class);
+        if (formatter != null) {
+            tracer.setFormatter(formatter);
+        }
+        return tracer;
+    }
+
+    /**
+     * A helper method to return the Tracer instance if one is enabled
+     *
      * @return the tracer or null if none can be found
      */
-    public static Tracer getTracer(CamelContext context) {
-        List<InterceptStrategy> list = context.getInterceptStrategies();
+    public static Tracer getTracer(List<InterceptStrategy> list) {
         for (InterceptStrategy interceptStrategy : list) {
             if (interceptStrategy instanceof Tracer) {
                 return (Tracer)interceptStrategy;

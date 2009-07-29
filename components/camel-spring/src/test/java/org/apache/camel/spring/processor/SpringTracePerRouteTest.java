@@ -14,24 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.timer;
+package org.apache.camel.spring.processor;
 
-
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.TracePerRouteTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  * @version $Revision$
  */
-public class TimerRouteWithTracerTest extends TimerRouteTest {
+public class SpringTracePerRouteTest extends TracePerRouteTest {
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                getContext().setTracing(true);
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean", "mock:result");
-            }
-        };
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/traceperroute.xml");
     }
 }
