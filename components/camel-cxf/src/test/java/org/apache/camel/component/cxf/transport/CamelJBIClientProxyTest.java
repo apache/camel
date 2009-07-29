@@ -17,6 +17,10 @@
 package org.apache.camel.component.cxf.transport;
 
 import junit.framework.TestCase;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+
 import org.apache.camel.component.cxf.HelloService;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -35,8 +39,17 @@ public class CamelJBIClientProxyTest extends TestCase {
         assertNotNull("The proxy should not be null.", proxy);
     }
     
-    public void testEchoMethod() {
+
+    public void testCallFromProxy() {
         String response = proxy.echo("Hello World!");
+        assertEquals("Get a wrong response ", "echo Hello World!", response);
+    }
+    
+    public void testCallFromCamel() {
+        // get camel context
+        CamelContext context = (CamelContext) applicationContext.getBean("conduit_context");
+        ProducerTemplate producer = context.createProducerTemplate();
+        String response = (String)producer.requestBody("direct://jbiStart", "Hello");
         assertEquals("Get a wrong response ", "echo Hello World!", response);
     }
     

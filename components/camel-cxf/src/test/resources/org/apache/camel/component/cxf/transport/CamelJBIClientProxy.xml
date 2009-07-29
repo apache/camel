@@ -35,8 +35,12 @@
 
    <camelContext id="conduit_context" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
-           <from uri="direct://start" />
-           <process ref="myProcessor" />
+           <from uri="direct://jbiStart"/>
+           <process ref="proxyProcessor"/>
+       </route>
+       <route>
+           <from uri="direct://jbiService" />
+           <process ref="serviceProcessor" />
        </route>
    </camelContext>
 
@@ -44,11 +48,15 @@
        <camel:camelContextRef>conduit_context</camel:camelContextRef>
    </camel:conduit>
    
-   <bean id="myProcessor" class="org.apache.camel.component.cxf.transport.JbiServiceProcessor"/>
+   <bean id="proxyProcessor" class="org.apache.camel.component.cxf.transport.ProxyProcessor">
+      <property name="helloService" ref="client"/>
+   </bean>
+   
+   <bean id="serviceProcessor" class="org.apache.camel.component.cxf.transport.JbiServiceProcessor"/>
 
    <simple:client id="client"
     	serviceClass="org.apache.camel.component.cxf.HelloService"
-    	address="camel://direct://start"
+    	address="camel://direct://jbiService"
     	serviceName="s:service"
     	xmlns:s="http://cxf.component.camel.apache.org"
     	endpointName="s:portA"
@@ -56,15 +64,4 @@
     	transportId="http://cxf.apache.org/transports/camel">
    </simple:client>
    
-   
-   
-   <!-- simple:server id="server"
-    	serviceClass="org.apache.camel.component.cxf.HelloServiceImpl"
-    	address="camel://direct://end"
-    	serviceName="s:service"
-    	xmlns:s="http://camel.apache.org/camel-test"
-    	endpointName="s:portA"
-    	bindingId="http://cxf.apache.org/bindings/jbi"
-    	transportId="http://cxf.apache.org/transports/camel">
-   </simple:server -->
 </beans>
