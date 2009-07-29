@@ -146,8 +146,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (exchange.isFailed()) {
             // 500 for internal server error which can be overridden by response code in header
             response.setStatus(Status.valueOf(500));
-            if (exchange.hasFault()) {
-                out = exchange.getFault();
+            if (exchange.hasOut() && exchange.getOut().isFault()) {
+                out = exchange.getOut();
             } else {
                 // print exception as message and stacktrace
                 Exception t = exchange.getException();

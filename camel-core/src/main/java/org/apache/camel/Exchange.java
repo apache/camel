@@ -226,14 +226,6 @@ public interface Exchange {
     Message getFault();
 
     /**
-     * Returns whether a FAULT message has been set or not.
-     *
-     * @return <tt>true</tt> if a FAULT message exists, <tt>false</tt> otherwise.
-     */
-    @Deprecated
-    boolean hasFault();
-
-    /**
      * Returns the exception associated with this exchange
      *
      * @return the exception (or null if no faults)

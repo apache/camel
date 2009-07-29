@@ -59,14 +59,6 @@ public class ExchangeResource {
         return exchange.getException();
     }
 
-    public Message getFault() {
-        return exchange.getFault();
-    }
-
-    public boolean hasFault() {
-        return exchange.hasFault();
-    }
-
     public Endpoint getFromEndpoint() {
         return exchange.getFromEndpoint();
     }

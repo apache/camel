@@ -193,10 +193,6 @@ public final class ExchangeHelper {
         
         if (result != source) {
             result.setException(source.getException());
-            if (source.hasFault()) {
-                result.getFault().copyFrom(source.getFault());
-            }
-
             if (source.hasOut()) {
                 result.getOut().copyFrom(source.getOut());
             } else if (result.getPattern() == ExchangePattern.InOptionalOut) {
@@ -489,13 +485,7 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if fault message exists
      */
     public static boolean hasFaultMessage(Exchange exchange) {
-        if (exchange.hasFault()) {
-            Object faultBody = exchange.getFault().getBody();
-            if (faultBody != null) {
-                return true;
-            }
-        }
-        return false;
+        return exchange.hasOut() && exchange.getOut().isFault() && exchange.getOut().getBody() != null;
     }
 
     /**

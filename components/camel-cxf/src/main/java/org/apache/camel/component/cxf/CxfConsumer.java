@@ -90,8 +90,8 @@ public class CxfConsumer extends DefaultConsumer {
                 // check failure
                 if (camelExchange.isFailed()) {
                     // either Fault or Exception
-                    Throwable t = (camelExchange.hasFault()) 
-                        ? (Throwable)camelExchange.getFault().getBody() : camelExchange.getException();
+                    Throwable t = (camelExchange.hasOut() && camelExchange.getOut().isFault()) 
+                        ? (Throwable)camelExchange.getOut().getBody() : camelExchange.getException();
                     throw (t instanceof Fault) ? (Fault)t : new Fault(t);
                 }
                 

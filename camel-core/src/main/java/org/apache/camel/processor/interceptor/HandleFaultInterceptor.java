@@ -57,8 +57,8 @@ public class HandleFaultInterceptor extends DelegateProcessor {
      */
     protected void handleFault(Exchange exchange) {
         // Take the fault message out before we keep on going
-        if (exchange.hasFault()) {
-            final Object faultBody = exchange.getFault().getBody();
+        if (exchange.hasOut() && exchange.getOut().isFault()) {
+            final Object faultBody = exchange.getOut().getBody();
             if (faultBody != null && exchange.getException() == null) {
                 // remove fault as we are converting it to an exception
                 exchange.setOut(null);

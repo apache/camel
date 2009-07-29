@@ -151,8 +151,8 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
     private void copyOutToIn(Exchange result, Exchange source) {
         result.setException(source.getException());
 
-        if (source.hasFault()) {
-            result.getFault().copyFrom(source.getFault());
+        if (source.hasOut() && source.getOut().isFault()) {
+            result.getOut(true).copyFrom(source.getOut());
         }
 
         result.setIn(getResultMessage(source));

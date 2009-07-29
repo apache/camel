@@ -51,11 +51,9 @@ public class DefaultExchangeHolder implements Serializable {
 
     private Object inBody;
     private Object outBody;
-    private Object faultBody;
     private final Map<String, Object> inHeaders = new LinkedHashMap<String, Object>();
     private final Map<String, Object> outHeaders = new LinkedHashMap<String, Object>();
     private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
-    private final Map<String, Object> faultHeaders = new LinkedHashMap<String, Object>();
     private Exception exception;
 
     /**
@@ -73,10 +71,6 @@ public class DefaultExchangeHolder implements Serializable {
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableObject("out body", exchange, exchange.getOut().getBody());
             payload.outHeaders.putAll(checkMapSerializableObjects("out headers", exchange, exchange.getOut().getHeaders()));
-        }
-        if (exchange.hasFault()) {
-            payload.faultBody = checkSerializableObject("fault body", exchange, exchange.getFault().getBody());
-            payload.faultHeaders.putAll(checkMapSerializableObjects("fault headers", exchange, exchange.getFault().getHeaders()));
         }
         payload.properties.putAll(checkMapSerializableObjects("exchange properties", exchange, exchange.getProperties()));
         payload.exception = exchange.getException();
@@ -97,10 +91,6 @@ public class DefaultExchangeHolder implements Serializable {
             exchange.getOut().setBody(payload.outBody);
             exchange.getOut().setHeaders(payload.outHeaders);
         }
-        if (payload.faultBody != null) {
-            exchange.getFault().setBody(payload.faultBody);
-            exchange.getFault().setHeaders(payload.faultHeaders);
-        }
         for (String key : payload.properties.keySet()) {
             exchange.setProperty(key, payload.properties.get(key));
         }
@@ -111,7 +101,6 @@ public class DefaultExchangeHolder implements Serializable {
         StringBuilder sb = new StringBuilder("DefaultExchangeHolder[");
         sb.append("inBody=").append(inBody).append(", outBody=").append(outBody);
         sb.append(", inHeaders=").append(inHeaders).append(", outHeaders=").append(outHeaders);
-        sb.append(", faultBody=").append(faultBody).append(", faultHeaders=").append(faultHeaders);
         sb.append(", properties=").append(properties).append(", exception=").append(exception);
         return sb.append(']').toString();
     }
@@ -148,5 +137,4 @@ public class DefaultExchangeHolder implements Serializable {
 
         return result;
     }
-
 }

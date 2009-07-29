@@ -89,8 +89,8 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
                     if (nextExchange.getException() != null) {
                         sb.append(" Exception: ").append(nextExchange.getException());
                     }
-                    if (nextExchange.hasFault()) {
-                        sb.append(" Fault: ").append(nextExchange.getFault());
+                    if (nextExchange.hasOut() && nextExchange.getOut().isFault()) {
+                        sb.append(" Fault: ").append(nextExchange.getOut());
                     }
                     if (exceptionHandled) {
                         sb.append(" Handled by the error handler.");
