@@ -39,9 +39,9 @@ public class DelayerPerRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setDelayer(1000);
+                context.setDelayer(2000);
 
-                from("seda:a").delayer(500).to("mock:result");
+                from("seda:a").delayer(1000).to("mock:result");
 
                 from("seda:b").noDelayer().to("mock:result");
 

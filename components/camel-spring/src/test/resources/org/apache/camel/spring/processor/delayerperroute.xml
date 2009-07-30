@@ -22,11 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- define a global delayer using 1000 ms -->
-    <camelContext id="camel" delayer="1000" xmlns="http://camel.apache.org/schema/spring">
+    <!-- define a global delayer using 2000 ms -->
+    <camelContext id="camel" delayer="2000" xmlns="http://camel.apache.org/schema/spring">
 
-        <!-- this route uses a 500 ms delayer -->
-        <route delayer="500">
+        <!-- this route uses a 1000 ms delayer -->
+        <route delayer="1000">
             <from uri="seda:a"/>
             <to uri="mock:result"/>
         </route>
