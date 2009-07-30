@@ -73,7 +73,6 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
         String response = (String)template.requestBody("direct:start", "<order foo='1'/>");
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
         
-        response = "";
         response = (String)template.sendBodyAndHeader(
              "restlet:http://localhost:9080/orders?restletMethod=post&foo=bar", 
              ExchangePattern.InOut,

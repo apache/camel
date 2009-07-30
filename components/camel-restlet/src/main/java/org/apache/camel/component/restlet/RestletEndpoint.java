@@ -212,7 +212,4 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return restletUriPatterns;
     }
 
-
-
-
 }

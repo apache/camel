@@ -183,11 +183,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         return endpoint.getHost() + ":" + endpoint.getPort();
     }
     
-    /**
-     * @param uriPattern
-     * @param endpoint 
-     * @param target 
-     */
     private void attachUriPatternToRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) {
         MethodBasedRouter router = getMethodRouter(uriPattern);
         

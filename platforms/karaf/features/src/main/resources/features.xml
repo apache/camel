@@ -346,7 +346,9 @@
     <bundle>mvn:org.apache.camel/camel-quartz/${pom.version}</bundle>
   </feature>
   <feature name='camel-restlet' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-restlet/${pom.version}</bundle>
+    <feature version='${pom.version}'>camel-http</feature>
   </feature>
   <feature name='camel-rmi' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
