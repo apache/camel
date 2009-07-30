@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FromDefinition extends OptionalIdentifiedType<FromDefinition> {
+public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> {
     @XmlAttribute
     private String uri;
     @XmlAttribute

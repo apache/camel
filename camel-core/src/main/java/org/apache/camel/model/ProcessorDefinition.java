@@ -71,7 +71,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedType<Type> implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedDefinition<Type> implements Block {
     protected final transient Log log = LogFactory.getLog(getClass());
     private ErrorHandlerBuilder errorHandlerBuilder;
     private NodeFactory nodeFactory;

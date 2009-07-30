@@ -41,7 +41,7 @@ MarshalDefinition
 MulticastDefinition
 OnCompletionDefinition
 OnExceptionDefinition
-OptionalIdentifiedType
+OptionalIdentifiedDefinition
 OtherwiseDefinition
 PackageScanDefinition
 PipelineDefinition

@@ -36,7 +36,7 @@ import org.apache.camel.util.EndpointHelper;
  */
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> implements RouteContainer {
+public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition> implements RouteContainer {
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
     @XmlTransient

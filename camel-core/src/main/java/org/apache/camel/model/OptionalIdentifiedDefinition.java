@@ -30,14 +30,16 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.CamelContext;
+
 /**
  * Allows an element to have an optional ID specified
  *
  * @version $Revision$
  */
-@XmlType(name = "optionalIdentifiedType")
+@XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition> {
     @XmlTransient
     protected static Map<String, AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
     @XmlAttribute(required = false)
