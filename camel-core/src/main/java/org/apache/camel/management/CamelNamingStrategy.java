@@ -159,7 +159,7 @@ public class CamelNamingStrategy {
             cid = null;
         }
         //String id = VALUE_UNKNOWN.equals(cid) ? ObjectName.quote(getEndpointId(ep) : "[" + cid + "]" + ObjectName.quote(getEndpointId(ep);
-        String nodeId = processor.idOrCreate();
+        String nodeId = processor.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");

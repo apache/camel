@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 
@@ -34,12 +35,13 @@ public interface InterceptStrategy {
      * to give the implementor an opportunity to wrap the target processor
      * in a route.
      *
-     * @param processorDefinition the object that invokes this method
+     * @param context       Camel context
+     * @param definition    the model this interceptor represents
      * @param target        the processor to be wrapped
      * @param nextTarget    the next processor to be routed to
      * @return processor wrapped with an interceptor or not wrapped
      * @throws Exception can be thrown
      */
-    Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition,
+    Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
                                           Processor target, Processor nextTarget) throws Exception;
 }

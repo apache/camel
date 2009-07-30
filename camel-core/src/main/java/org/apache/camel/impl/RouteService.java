@@ -45,7 +45,7 @@ public class RouteService extends ServiceSupport {
         this.routeDefinition = routeDefinition;
         this.routeContexts = routeContexts;
         this.routes = routes;
-        this.id = routeDefinition.idOrCreate();
+        this.id = routeDefinition.idOrCreate(camelContext.getNodeIdFactory());
     }
 
     public String getId() {

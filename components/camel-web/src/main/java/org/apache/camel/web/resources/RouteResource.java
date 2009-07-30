@@ -79,7 +79,7 @@ public class RouteResource extends CamelChildResourceSupport {
     public RouteResource(RoutesResource routesResource, RouteDefinition route) {
         super(routesResource.getContextResource());
         this.route = route;
-        this.id = route.idOrCreate();
+        this.id = route.idOrCreate(route.getCamelContext().getNodeIdFactory());
     }
 
     /**

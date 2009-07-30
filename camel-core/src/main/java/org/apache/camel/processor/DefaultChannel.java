@@ -135,7 +135,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
         Processor target = nextProcessor;
         for (InterceptStrategy strategy : interceptors) {
             Processor next = target == nextProcessor ? null : nextProcessor;
-            target = strategy.wrapProcessorInInterceptors(outputDefinition, target, next);
+            target = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next);
         }
 
         // sets the delegate to our wrapped output

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Pipeline;
@@ -73,7 +74,8 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {
             private Processor interceptedTarget;
 
-            public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
+            public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
+                                                         Processor target, Processor nextTarget) throws Exception {
                 // prefer next target over taget as next target is the real target
                 interceptedTarget = nextTarget != null ? nextTarget : target;
 

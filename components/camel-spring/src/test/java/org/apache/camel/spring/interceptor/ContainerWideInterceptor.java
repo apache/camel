@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
@@ -32,7 +33,7 @@ public class ContainerWideInterceptor implements InterceptStrategy {
     private static final transient Log LOG = LogFactory.getLog(ContainerWideInterceptor.class);
     private static int count;
 
-    public Processor wrapProcessorInInterceptors(final ProcessorDefinition processorDefinition,
+    public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition definition,
                                                  final Processor target, final Processor nextTarget) throws Exception {
 
         // as this is based on an unit test we are a bit lazy and just create an inlined processor

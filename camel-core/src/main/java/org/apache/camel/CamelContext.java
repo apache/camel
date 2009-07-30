@@ -25,6 +25,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -454,5 +455,19 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @return the service pool
      */
     ServicePool<Endpoint, Producer> getProducerServicePool();
+
+    /**
+     * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
+     *
+     * @param factory  custom factory to use
+     */
+    void setNodeIdFactory(NodeIdFactory factory);
+
+    /**
+     * Gets the node id factory
+     *
+     * @return  the node id factory
+     */
+    NodeIdFactory getNodeIdFactory();
 
 }

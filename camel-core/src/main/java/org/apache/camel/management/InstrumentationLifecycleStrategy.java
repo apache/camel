@@ -270,13 +270,14 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // add an intercept strategy that counts when the route sends to any of its outputs
         if (out != null) {
             out.addInterceptStrategy(new InterceptStrategy() {
-                public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
+                public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
+                                                             Processor target, Processor nextTarget) throws Exception {
                     if (registeredRoutes.containsKey(endpoint)) {
                         // do not double wrap
                         return target;
                     }
                     InstrumentationProcessor wrapper = new InstrumentationProcessor(null);
-                    wrapper.setType(processorDefinition.getShortName());
+                    wrapper.setType(definition.getShortName());
                     wrapper.setProcessor(target);
 
                     // register our wrapper

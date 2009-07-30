@@ -16,10 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.spi.NodeIdFactory;
 
 /**
  * Allows an element to have an optional ID specified
@@ -40,8 +36,6 @@ import org.apache.camel.CamelContext;
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition> {
-    @XmlTransient
-    protected static Map<String, AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
     @XmlAttribute(required = false)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -50,7 +44,6 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private boolean customId;
     @XmlElement(required = false)
     private DescriptionDefinition description;
-
 
     /**
      * Gets the value of the id property.
@@ -130,9 +123,9 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Gets the node id, creating one if not already set.
      */
-    public String idOrCreate() {
+    public String idOrCreate(NodeIdFactory factory) {
         if (id == null) {
-            id = createId();
+            id = factory.createId(this);
         }
         return getId();
     }
@@ -147,23 +140,4 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     // Implementation methods
     // -------------------------------------------------------------------------
 
-    /**
-     * A helper method to create a new id for this node
-     */
-    protected String createId() {
-        String key = getShortName();
-        return key + getNodeCounter(key).incrementAndGet();
-    }
-
-    /**
-     * Returns the counter for the given node key, lazily creating one if necessary
-     */
-    protected static synchronized AtomicInteger getNodeCounter(String key) {
-        AtomicInteger answer = nodeCounters.get(key);
-        if (answer == null) {
-            answer = new AtomicInteger(0);
-            nodeCounters.put(key, answer);
-        }
-        return answer;
-    }
 }

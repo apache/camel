@@ -62,6 +62,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
@@ -119,6 +120,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we have 6 x 100 producers in total
     private ServicePool<Endpoint, Producer> producerServicePool = new DefaultProducerServicePool(100);
+    private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
 
     public DefaultCamelContext() {
         super();
@@ -512,7 +514,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         Iterator<RouteDefinition> iter = routeDefinitions.iterator();
         while (iter.hasNext()) {
             RouteDefinition route = iter.next();
-            if (route.idOrCreate().equals(key)) {
+            if (route.idOrCreate(nodeIdFactory).equals(key)) {
                 iter.remove();
                 answer = true;
             }
@@ -528,13 +530,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        String key = routeDefinition.idOrCreate();
+        String key = routeDefinition.idOrCreate(nodeIdFactory);
         stopRoute(key);
         removeRouteDefinition(key);
     }
 
     public ServiceStatus getRouteStatus(RouteDefinition route) {
-        return getRouteStatus(route.idOrCreate());
+        return getRouteStatus(route.idOrCreate(nodeIdFactory));
     }
 
     /**
@@ -557,7 +559,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
 
     public void stopRoute(RouteDefinition route) throws Exception {
-        stopRoute(route.idOrCreate());
+        stopRoute(route.idOrCreate(nodeIdFactory));
     }
 
     /**
@@ -1080,6 +1082,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
             return answer;
         }
+    }
+
+    public NodeIdFactory getNodeIdFactory() {
+        return nodeIdFactory;
+    }
+
+    public void setNodeIdFactory(NodeIdFactory idFactory) {
+        this.nodeIdFactory = idFactory;
     }
 
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {

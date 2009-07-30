@@ -16,6 +16,7 @@
  */
 package org.apache.camel.issues;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -53,12 +54,14 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
     }
 
     private class MyTracer implements InterceptStrategy {
-        public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget)
+
+        public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition, Processor target, Processor nextTarget)
             throws Exception {
             assertNotNull(target);
             counter++;
             return target;
         }
+
     }
 
 }

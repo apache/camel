@@ -18,11 +18,11 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.CamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
@@ -77,11 +77,12 @@ public class Tracer implements InterceptStrategy {
         return null;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
+    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
+                                                 Processor target, Processor nextTarget) throws Exception {
         // Force the creation of an id, otherwise the id is not available when the trace formatter is
         // outputting trace information
-        String id = processorDefinition.idOrCreate();
-        return new TraceInterceptor(processorDefinition, target, formatter, this);
+        definition.idOrCreate(context.getNodeIdFactory());
+        return new TraceInterceptor(definition, target, formatter, this);
     }
 
     public TraceFormatter getFormatter() {

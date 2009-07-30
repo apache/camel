@@ -28,8 +28,8 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public final class HandleFault implements InterceptStrategy {
 
-    @SuppressWarnings("unchecked")
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
+    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
+                                                 Processor target, Processor nextTarget) throws Exception {
         return new HandleFaultInterceptor(target);
     }
 
