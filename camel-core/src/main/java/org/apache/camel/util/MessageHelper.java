@@ -126,9 +126,11 @@ public final class MessageHelper {
         // default to 1000 chars
         int length = 1000;
 
-        String property = message.getExchange().getContext().getProperties().get(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
-        if (property != null) {
-            length = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
+        if (message.getExchange() != null) {
+            String property = message.getExchange().getContext().getProperties().get(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+            if (property != null) {
+                length = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
+            }
         }
 
         Object obj = message.getBody();
