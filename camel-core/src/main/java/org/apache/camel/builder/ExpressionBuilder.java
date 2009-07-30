@@ -497,7 +497,7 @@ public final class ExpressionBuilder {
     public static Expression faultBodyExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getFault().getBody();
+                return exchange.getOut().isFault() ? exchange.getOut().getBody() : null;
             }
 
             @Override
@@ -514,7 +514,7 @@ public final class ExpressionBuilder {
     public static <T> Expression faultBodyExpression(final Class<T> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getFault().getBody(type);
+                return exchange.getOut().isFault() ? exchange.getOut().getBody(type) : null;
             }
 
             @Override

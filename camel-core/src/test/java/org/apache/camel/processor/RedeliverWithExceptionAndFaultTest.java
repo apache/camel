@@ -62,7 +62,8 @@ public class RedeliverWithExceptionAndFaultTest extends ContextTestSupport {
         });
         assertTrue("Should be failed", out.isFailed());
         assertNull("No exception", out.getException());
-        assertEquals("Persistent error", out.getFault().getBody());
+        assertTrue(out.getOut() != null && out.getOut().isFault());
+        assertEquals("Persistent error", out.getOut().getBody());
 
         assertMockEndpointsSatisfied();
     }

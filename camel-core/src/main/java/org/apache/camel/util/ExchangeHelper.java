@@ -456,7 +456,7 @@ public final class ExchangeHelper {
 
             // result could have a fault message
             if (hasFaultMessage(exchange)) {
-                return exchange.getFault().getBody();
+                return exchange.getOut().getBody();
             }
 
             // okay no fault then return the response according to the pattern

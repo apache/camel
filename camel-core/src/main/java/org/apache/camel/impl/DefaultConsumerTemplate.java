@@ -146,11 +146,6 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
                 throw wrapRuntimeCamelException(result.getException());
             }
 
-            // result could have a fault message
-            if (hasFaultMessage(result)) {
-                return result.getFault().getBody();
-            }
-
             // okay no fault then return the response
             if (result.hasOut()) {
                 // use OUT as the response
@@ -161,9 +156,5 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
             }
         }
         return answer;
-    }
-
-    protected boolean hasFaultMessage(Exchange result) {
-        return result.hasOut() && result.getOut().isFault() && result.getOut().getBody() != null;
     }
 }

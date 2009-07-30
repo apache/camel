@@ -102,9 +102,9 @@ public class EndpointMessageListener implements MessageListener {
                         // do not send a reply but wrap and rethrow the exception
                         rce = wrapRuntimeCamelException(exchange.getException());
                     }
-                } else if (exchange.getFault().getBody() != null) {
+                } else if (exchange.getOut().getBody() != null) {
                     // a fault occurred while processing
-                    body = (JmsMessage) exchange.getFault();
+                    body = (JmsMessage) exchange.getOut();
                     sendReply = true;
                 }
             } else if (exchange.hasOut()) {

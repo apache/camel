@@ -45,10 +45,6 @@ public class RootObject {
         return exchange.getExchangeId();
     }
 
-    public Message getFault() {
-        return exchange.getFault();
-    }
-
     public Message getRequest() {
         return exchange.getIn();
     }

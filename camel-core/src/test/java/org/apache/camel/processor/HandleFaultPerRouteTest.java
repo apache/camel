@@ -57,7 +57,8 @@ public class HandleFaultPerRouteTest extends ContextTestSupport {
 
         assertTrue("Should be failed", outB.isFailed());
         assertNull("Should not handle fault", outB.getException());
-        assertIsInstanceOf(IllegalArgumentException.class, outB.getFault().getBody());
+        assertTrue(outB.getOut() != null && outB.getOut().isFault());
+        assertIsInstanceOf(IllegalArgumentException.class, outB.getOut().getBody());
 
         Exchange outC = template.send("direct:c", new Processor() {
             public void process(Exchange exchange) throws Exception {

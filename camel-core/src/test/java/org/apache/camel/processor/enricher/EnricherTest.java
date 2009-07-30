@@ -59,7 +59,8 @@ public class EnricherTest extends ContextTestSupport {
         });
         mock.assertIsSatisfied();
         assertEquals("test", exchange.getIn().getBody());
-        assertEquals("failed", exchange.getFault().getBody());
+        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
+        assertEquals("failed", exchange.getOut().getBody());
         assertNull(exchange.getException());
     }
 
@@ -105,7 +106,8 @@ public class EnricherTest extends ContextTestSupport {
             }
         });
         assertEquals("test", exchange.getIn().getBody());
-        assertEquals("failed", exchange.getFault().getBody());
+        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
+        assertEquals("failed", exchange.getOut().getBody());
         assertNull(exchange.getException());
     }
 

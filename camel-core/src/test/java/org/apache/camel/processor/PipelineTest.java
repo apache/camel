@@ -102,8 +102,9 @@ public class PipelineTest extends ContextTestSupport {
         });
         
         // Check the fault..
-        assertEquals("Fault Message", exchange.getFault().getBody());
-        assertEquals(2, exchange.getFault().getHeader("copy-counter"));        
+        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
+        assertEquals("Fault Message", exchange.getOut().getBody());
+        assertEquals(2, exchange.getOut().getHeader("copy-counter"));        
     }
 
     public void testOnlyProperties() {
