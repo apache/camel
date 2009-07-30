@@ -31,14 +31,14 @@ public class InterceptSendToIssue extends ContextTestSupport {
     public void testInterceptSendTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "direct:foo");
+        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "direct://foo");
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertEquals("direct:start", exchange.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start", exchange.getFromEndpoint().getEndpointUri());
     }
 
     @Override

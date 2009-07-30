@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -374,7 +375,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             for (int i = 0; i < route.getOutputs().size(); i++) {
                 index = i;
                 ProcessorDefinition out = route.getOutputs().get(i);
-                if (!(out instanceof InterceptDefinition)) {
+                if (out instanceof InterceptDefinition || out instanceof InterceptSendToEndpointDefinition) {
+                    continue;
+                } else {
+                    // we found the spot
                     break;
                 }
             }
@@ -385,9 +389,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private void initPolicies(RouteDefinition route) {
         // setup the policies as JAXB yet again have not created a correct model for us
         List<ProcessorDefinition> types = route.getOutputs();
-        // we need to types as transacted cannot extend policy due JAXB limitations
+
+        // we need two types as transacted cannot extend policy due JAXB limitations
         PolicyDefinition policy = null;
         TransactedDefinition transacted = null;
+
+        // add to correct type
         for (ProcessorDefinition type : types) {
             if (type instanceof PolicyDefinition) {
                 policy = (PolicyDefinition) type;
@@ -401,6 +408,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 transacted.addOutput(type);
             }
         }
+
         // did we find a policy if so replace it as the only output on the route
         if (policy != null) {
             route.clearOutput();
@@ -539,9 +547,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * the default routes on startup
      */
     public void setRouteBuilders(RouteBuilder[] builders) {
-        for (RouteBuilder builder : builders) {
-            additionalBuilders.add(builder);
-        }
+        additionalBuilders.addAll(Arrays.asList(builders));
     }
 
     public ApplicationContext getApplicationContext() {
@@ -787,25 +793,22 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Strategy method to try find {@link RouteBuilder} instances on the classpath
      */
     protected void findRouteBuilders() throws Exception {
-
         PackageScanClassResolver resolver = getContext().getPackageScanClassResolver();
         addPackageElementContentsToScanDefinition();
 
         PackageScanDefinition packageScanDef = getPackageScan();
-
         if (packageScanDef != null && packageScanDef.getPackages().size() > 0) {
-
+            // use package scan filter
             PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
             filter.addIncludePatterns(packageScanDef.getIncludes());
             filter.addExcludePatterns(packageScanDef.getExcludes());
             resolver.addFilter(filter);
 
             String[] normalized = normalizePackages(packageScanDef.getPackages());
-            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(), getBeanPostProcessor(), getContext()
-                .getPackageScanClassResolver());
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(),
+                    getBeanPostProcessor(), getContext().getPackageScanClassResolver());
             finder.appendBuilders(getAdditionalBuilders());
         }
-
     }
 
     private void addPackageElementContentsToScanDefinition() {

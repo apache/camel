@@ -24,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +39,7 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     protected ProducerCache producerCache;
     protected Endpoint destination;
     protected ExchangePattern pattern;
+    private boolean init;
 
     public SendProcessor(Endpoint destination) {
         ObjectHelper.notNull(destination, "destination");
@@ -59,6 +61,20 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     public void process(final Exchange exchange) throws Exception {
+        // the destination could since have been intercepted by a interceptSendToEndpoint so we got to
+        // init this before we can use the destination
+        if (!init) {
+            init = true;
+            Endpoint lookup = exchange.getContext().getEndpoint(destination.getEndpointUri());
+            if (lookup instanceof InterceptSendToEndpoint) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("SendTo is intercepted using a interceptSendToEndpoint: " + lookup.getEndpointUri());
+                }
+                destination = lookup;
+            }
+        }
+
+        // send the exchange to the destination using a producer
         getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);

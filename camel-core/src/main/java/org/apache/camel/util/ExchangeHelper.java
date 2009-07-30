@@ -77,7 +77,7 @@ public final class ExchangeHelper {
      * @return the binding object of the given type or null if it could not be found or converted
      */
     public static <T> T getBinding(Exchange exchange, Class<T> type) {
-        return exchange != null ? (T) exchange.getProperty(Exchange.BINDING, type) : null;
+        return exchange != null ? exchange.getProperty(Exchange.BINDING, type) : null;
     }
 
     /**
@@ -103,8 +103,7 @@ public final class ExchangeHelper {
         return endpoint;
     }
 
-    public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type)
-        throws NoSuchPropertyException {
+    public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type) throws NoSuchPropertyException {
         T result = exchange.getProperty(propertyName, type);
         if (result != null) {
             return result;
@@ -112,8 +111,7 @@ public final class ExchangeHelper {
         throw new NoSuchPropertyException(exchange, propertyName, type);
     }
 
-    public static <T> T getMandatoryHeader(Exchange exchange, String propertyName, Class<T> type)
-        throws NoSuchHeaderException {
+    public static <T> T getMandatoryHeader(Exchange exchange, String propertyName, Class<T> type) throws NoSuchHeaderException {
         T answer = exchange.getIn().getHeader(propertyName, type);
         if (answer == null) {
             throw new NoSuchHeaderException(exchange, propertyName, type);

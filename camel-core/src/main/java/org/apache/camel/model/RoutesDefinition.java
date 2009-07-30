@@ -201,7 +201,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         // lets configure the route
         route.setCamelContext(getCamelContext());
 
-        // configure intercepts
+        // configure intercept
         for (InterceptDefinition intercept : getIntercepts()) {
             // add as first output so intercept is handled before the acutal route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps

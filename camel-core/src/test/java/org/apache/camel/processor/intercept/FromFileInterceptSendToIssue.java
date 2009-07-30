@@ -31,14 +31,14 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
     public void testInterceptSendTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "direct:foo");
+        mock.expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "direct://foo");
 
         template.sendBodyAndHeader("file://target/intercept", "Hello World", Exchange.FILE_NAME, "input.txt");
 
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        assertEquals("direct:start", exchange.getFromEndpoint().getEndpointUri());
+        assertEquals("file://target/intercept", exchange.getFromEndpoint().getEndpointUri());
     }
 
     @Override
