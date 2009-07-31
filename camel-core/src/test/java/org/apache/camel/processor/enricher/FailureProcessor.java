@@ -35,7 +35,8 @@ public class FailureProcessor implements Processor {
         if (error) {
             throw new RuntimeException("failed");
         } else {
-            exchange.getFault().setBody("failed");
+            exchange.getOut().setFault(true);
+            exchange.getOut().setBody("failed");
         }
     }
 

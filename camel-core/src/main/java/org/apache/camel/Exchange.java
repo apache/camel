@@ -218,14 +218,6 @@ public interface Exchange {
     void setOut(Message out);
 
     /**
-     * Returns the fault message
-     *
-     * @return the fault
-     */
-    @Deprecated
-    Message getFault();
-
-    /**
      * Returns the exception associated with this exchange
      *
      * @return the exception (or null if no faults)

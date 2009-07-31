@@ -74,7 +74,8 @@ public final class ProcessorBuilder {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object newBody = expression.evaluate(exchange, Object.class);
-                exchange.getFault().setBody(newBody);
+                exchange.getOut().setFault(true);
+                exchange.getOut().setBody(newBody);
             }
 
             @Override
@@ -125,7 +126,8 @@ public final class ProcessorBuilder {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                exchange.getFault().setHeader(name, value);
+                exchange.getOut().setFault(true);
+                exchange.getOut().setHeader(name, value);
             }
 
             @Override
@@ -174,7 +176,8 @@ public final class ProcessorBuilder {
     public static Processor removeFaultHeader(final String name) {
         return new Processor() {
             public void process(Exchange exchange) {
-                exchange.getFault().removeHeader(name);
+                exchange.getOut().setFault(true);
+                exchange.getOut().removeHeader(name);
             }
 
             @Override

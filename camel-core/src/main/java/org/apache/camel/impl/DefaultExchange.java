@@ -261,14 +261,6 @@ public final class DefaultExchange implements Exchange {
         this.fromEndpoint = fromEndpoint;
     }
 
-    public Message getFault() {
-        Message fault = getOut(true);
-        if (fault != null) {
-            fault.setFault(true);
-        }
-        return fault;
-    }
-
     public String getExchangeId() {
         if (exchangeId == null) {
             exchangeId = createExchangeId();
