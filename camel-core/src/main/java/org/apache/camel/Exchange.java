@@ -201,16 +201,6 @@ public interface Exchange {
     boolean hasOut();
 
     /**
-     * Returns the outbound message; optionally lazily creating one if one has
-     * not been associated with this exchange
-     *
-     * @param lazyCreate <tt>true</tt> will lazy create the out message
-     * @return the response
-     * @deprecated use {@link #hasOut()} or {@link #getOut()}. Will be remove in Camel 2.0 GA.
-     */
-    Message getOut(boolean lazyCreate);
-
-    /**
      * Sets the outbound message
      *
      * @param out the outbound message

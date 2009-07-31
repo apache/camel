@@ -200,20 +200,17 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Message getOut() {
-        return getOut(true);
-    }
-
-    public boolean hasOut() {
-        return out != null;
-    }
-
-    public Message getOut(boolean lazyCreate) {
-        if (out == null && lazyCreate) {
+        // lazy create
+        if (out == null) {
             out = (in != null && in instanceof MessageSupport)
                 ? ((MessageSupport)in).newInstance() : new DefaultMessage();
             configureMessage(out);
         }
         return out;
+    }
+
+    public boolean hasOut() {
+        return out != null;
     }
 
     public void setOut(Message out) {

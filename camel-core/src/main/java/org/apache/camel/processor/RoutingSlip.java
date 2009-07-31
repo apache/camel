@@ -152,7 +152,7 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
         result.setException(source.getException());
 
         if (source.hasOut() && source.getOut().isFault()) {
-            result.getOut(true).copyFrom(source.getOut());
+            result.getOut().copyFrom(source.getOut());
         }
 
         result.setIn(getResultMessage(source));
