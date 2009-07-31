@@ -105,8 +105,9 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
                         String message = exchange.getIn().getBody(String.class);
 
                         if (message.contains("fault")) {
-                            exchange.getFault().copyFrom(exchange.getIn());
-                            exchange.getFault().setBody(new ByteArrayInputStream(message.getBytes()));
+                            exchange.getOut().copyFrom(exchange.getIn());
+                            exchange.getOut().setBody(new ByteArrayInputStream(message.getBytes()));
+                            exchange.getOut().setFault(true);
                         }
 
                         if (message.contains("error")) {

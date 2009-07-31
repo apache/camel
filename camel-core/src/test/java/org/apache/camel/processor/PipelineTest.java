@@ -49,12 +49,13 @@ public class PipelineTest extends ContextTestSupport {
      */
     private final class InToFault implements Processor {
         public void process(Exchange exchange) throws Exception {
-            exchange.getFault().setBody(exchange.getIn().getBody());
+            exchange.getOut().setFault(true);
+            exchange.getOut().setBody(exchange.getIn().getBody());
             Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
             if (counter == null) {
                 counter = 0;
             }
-            exchange.getFault().setHeader("copy-counter", counter + 1);
+            exchange.getOut().setHeader("copy-counter", counter + 1);
         }
     }
 

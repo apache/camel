@@ -20,7 +20,6 @@ import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,8 +34,8 @@ public class FaultRetryRouteTest extends ContextTestSupport {
         int count;
         public void process(Exchange exchange) throws CamelException {
             if (count++ == 0) {
-                Message message = exchange.getFault();
-                message.setBody(new CamelException("Failed the first time"));
+                exchange.getOut().setFault(true);
+                exchange.getOut().setBody(new CamelException("Failed the first time"));
             }
         }
     };

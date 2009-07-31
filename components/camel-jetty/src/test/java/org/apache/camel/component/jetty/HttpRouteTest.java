@@ -134,7 +134,8 @@ public class HttpRouteTest extends CamelTestSupport {
                             HttpSession session = message.getRequest().getSession();
                             assertNotNull("we should get session here", session);
                         } catch (Exception e) {
-                            exchange.getFault().setBody(e);
+                            exchange.getOut().setFault(true);
+                            exchange.getOut().setBody(e);
                         }
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }

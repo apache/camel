@@ -38,10 +38,10 @@ public class RestletFaultTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getFault().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");
-                        exchange.getFault().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                        exchange.getFault().setBody("Application fault");
-                        
+                        exchange.getOut().setFault(true);
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");
+                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                        exchange.getOut().setBody("Application fault");
                     }        
                 });
             }
@@ -59,6 +59,5 @@ public class RestletFaultTest extends CamelTestSupport {
         } finally {
             method.releaseConnection();
         }
-
     }
 }

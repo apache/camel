@@ -77,7 +77,8 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
             Processor last = list.get(list.size() - 3).getProcessor();
 
             // set error message
-            exchange.getFault().setBody("Failed at: " + last.toString());
+            exchange.getOut().setFault(true);
+            exchange.getOut().setBody("Failed at: " + last.toString());
         }
 
         public String toString() {

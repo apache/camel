@@ -49,7 +49,8 @@ public class FaultRouteTest extends ContextTestSupport {
     public void testWithFault() throws Exception {
         a.whenExchangeReceived(1, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getFault().setBody("fault");
+                exchange.getOut().setFault(true);
+                exchange.getOut().setBody("fault");
             }
         });
         a.expectedMessageCount(1);

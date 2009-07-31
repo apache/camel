@@ -40,8 +40,8 @@ public class HandleFaultPerRouteTest extends ContextTestSupport {
 
         Exchange outA = template.send("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Message message = exchange.getFault();
-                message.setBody(new IllegalArgumentException("A"));
+                exchange.getOut().setFault(true);
+                exchange.getOut().setBody(new IllegalArgumentException("A"));
             }
         });
         assertTrue("Should be failed", outA.isFailed());
@@ -50,8 +50,8 @@ public class HandleFaultPerRouteTest extends ContextTestSupport {
 
         Exchange outB = template.send("direct:b", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Message message = exchange.getFault();
-                message.setBody(new IllegalArgumentException("B"));
+                exchange.getOut().setFault(true);
+                exchange.getOut().setBody(new IllegalArgumentException("B"));
             }
         });
 
@@ -62,8 +62,8 @@ public class HandleFaultPerRouteTest extends ContextTestSupport {
 
         Exchange outC = template.send("direct:c", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Message message = exchange.getFault();
-                message.setBody(new IllegalArgumentException("C"));
+                exchange.getOut().setFault(true);
+                exchange.getOut().setBody(new IllegalArgumentException("C"));
             }
         });
 

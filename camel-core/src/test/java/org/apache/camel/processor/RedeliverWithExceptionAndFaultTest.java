@@ -84,7 +84,8 @@ public class RedeliverWithExceptionAndFaultTest extends ContextTestSupport {
                             }
 
                             if (exchange.getIn().getBody().equals("Boom")) {
-                                exchange.getFault().setBody("Persistent error");
+                                exchange.getOut().setFault(true);
+                                exchange.getOut().setBody("Persistent error");
                             } else {
                                 exchange.getOut().setBody("Bye World");
                             }
