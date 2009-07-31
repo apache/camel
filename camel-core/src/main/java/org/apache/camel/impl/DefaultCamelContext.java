@@ -275,6 +275,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
+    public Endpoint hasEndpoint(String uri) {
+        // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
+        try {
+            uri = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+        synchronized (endpoints) {
+            return endpoints.get(uri);
+        }
+    }
+
     public Collection<Endpoint> getEndpoints(String uri) {
         Collection<Endpoint> answer = new ArrayList<Endpoint>();
         Collection<Endpoint> coll;

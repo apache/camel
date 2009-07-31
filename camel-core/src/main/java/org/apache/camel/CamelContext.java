@@ -147,6 +147,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     Map<String, Endpoint> getEndpointMap();
 
     /**
+     * Is the given endpoint already registered?
+     *
+     * @param uri  the URI of the endpoint
+     * @return the registered endpoint or <tt>null</tt> if not registered
+     */
+    Endpoint hasEndpoint(String uri);
+
+    /**
      * Returns the collection of all registered endpoints for a uri or an empty collection.
      * For a singleton endpoint the collection will contain exactly one element.
      *

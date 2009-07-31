@@ -65,7 +65,7 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
         // init this before we can use the destination
         if (!init) {
             init = true;
-            Endpoint lookup = exchange.getContext().getEndpoint(destination.getEndpointUri());
+            Endpoint lookup = exchange.getContext().hasEndpoint(destination.getEndpointKey());
             if (lookup instanceof InterceptSendToEndpoint) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("SendTo is intercepted using a interceptSendToEndpoint: " + lookup.getEndpointUri());
