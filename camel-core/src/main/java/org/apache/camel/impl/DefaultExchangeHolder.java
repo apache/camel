@@ -51,6 +51,7 @@ public class DefaultExchangeHolder implements Serializable {
 
     private Object inBody;
     private Object outBody;
+    private Boolean outFaultFlag = Boolean.FALSE;
     private final Map<String, Object> inHeaders = new LinkedHashMap<String, Object>();
     private final Map<String, Object> outHeaders = new LinkedHashMap<String, Object>();
     private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
@@ -71,6 +72,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableObject("out body", exchange, exchange.getOut().getBody());
             payload.outHeaders.putAll(checkMapSerializableObjects("out headers", exchange, exchange.getOut().getHeaders()));
+            payload.outFaultFlag = exchange.getOut().isFault();
         }
         payload.properties.putAll(checkMapSerializableObjects("exchange properties", exchange, exchange.getProperties()));
         payload.exception = exchange.getException();
@@ -90,6 +92,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (payload.outBody != null) {
             exchange.getOut().setBody(payload.outBody);
             exchange.getOut().setHeaders(payload.outHeaders);
+            exchange.getOut().setFault(payload.outFaultFlag.booleanValue());
         }
         for (String key : payload.properties.keySet()) {
             exchange.setProperty(key, payload.properties.get(key));

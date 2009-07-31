@@ -46,7 +46,8 @@ public final class MinaHelper {
     public static void writeBody(IoSession session, Object body, Exchange exchange) throws CamelExchangeException {
         // the write operation is asynchronous. Use WriteFuture to wait until the session has been written
         WriteFuture future = session.write(body);
-        // must use a timeout (we use 10s) as in some very high performance scenarious a write can cause thred hanging forever
+        // must use a timeout (we use 10s) as in some very high performance scenarios a write can cause 
+        // thread hanging forever
         future.join(10 * 1000L);
         if (!future.isWritten()) {
             LOG.warn("Cannot write body: " + body + " using session: " + session);

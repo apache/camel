@@ -69,10 +69,13 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
         if (!hasFault) {
             Message out = exchange.getOut();
             assertNotNull(out);
+            assertFalse(out.isFault());
             assertEquals("Goodbye!", out.getBody());
             assertEquals("cheddar", out.getHeader("cheese"));
         } else {
-            Message fault = exchange.getFault();
+            Message fault = exchange.getOut();
+            assertNotNull(fault);
+            assertTrue(fault.isFault());
             assertNotNull(fault.getBody());
             assertTrue("Should get the InterrupteException exception", fault.getBody() instanceof InterruptedException);
             assertEquals("nihao", fault.getHeader("hello"));
@@ -104,8 +107,9 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
                         Boolean setException = (Boolean) e.getProperty("setException");
 
                         if (setException) {
-                            e.getFault().setBody(new InterruptedException());
-                            e.getFault().setHeader("hello", "nihao");
+                            e.getOut().setFault(true);
+                            e.getOut().setBody(new InterruptedException());
+                            e.getOut().setHeader("hello", "nihao");
                         } else {
                             e.getOut().setBody("Goodbye!");
                             e.getOut().setHeader("cheese", "cheddar");

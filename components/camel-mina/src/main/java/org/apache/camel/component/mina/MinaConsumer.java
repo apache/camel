@@ -123,7 +123,8 @@ public class MinaConsumer extends DefaultConsumer {
                     if (exchange.getException() != null) {
                         body = exchange.getException();
                     } else {
-                        body = exchange.getFault().getBody();
+                        // failed and no exception, must be a fault
+                        body = exchange.getOut().getBody();
                     }
                 }
 
@@ -138,7 +139,6 @@ public class MinaConsumer extends DefaultConsumer {
                         LOG.debug("Writing body: " + body);
                     }
                     MinaHelper.writeBody(session, body, exchange);
-
                 }
             }
 
@@ -155,7 +155,5 @@ public class MinaConsumer extends DefaultConsumer {
                 session.close();
             }
         }
-
     }
-
 }

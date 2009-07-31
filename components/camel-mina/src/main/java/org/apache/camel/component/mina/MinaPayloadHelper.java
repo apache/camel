@@ -72,5 +72,4 @@ public final class MinaPayloadHelper {
             exchange.getOut().setBody(payload);
         }
     }
-
 }
