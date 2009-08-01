@@ -93,19 +93,6 @@ public final class DefaultExchange implements Exchange {
         return exchange;
     }
 
-    public Exchange copy(boolean handoverOnCompletion) {
-        Exchange copy = copy();
-        // do not share the unit of work
-        copy.setUnitOfWork(null);
-        // hand over on completion to the copy if we got any
-        if (handoverOnCompletion && unitOfWork != null) {
-            unitOfWork.handoverSynchronization(copy);
-        }
-        // set a correlation id so we can track back the original exchange
-        copy.setProperty(Exchange.CORRELATION_ID, this.getExchangeId());
-        return copy;
-    }
-
     private static void safeCopy(Message message, Message that) {
         if (message != null) {
             message.copyFrom(that);

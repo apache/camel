@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
@@ -114,7 +115,7 @@ public class WireTapProcessor extends SendProcessor {
 
     private Exchange configureCopyExchange(Exchange exchange) {
         // must use a copy as we dont want it to cause side effects of the original exchange
-        Exchange copy = exchange.copy(false);
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
         return copy;

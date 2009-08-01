@@ -268,16 +268,6 @@ public interface Exchange {
     Exchange copy();
 
     /**
-     * Creates a new instance and copies from the current message exchange so that it can be
-     * forwarded to another destination as a new instance. Unlike regular copy this operation
-     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
-     * for async messaging, where the original and copied exchange are independent.
-     *
-     * @param handoverOnCompletion whether the on completion callbacks should be handed over to the new copy.
-     */
-    Exchange copy(boolean handoverOnCompletion);
-
-    /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message exchange
      * otherwise this property will be null
      */

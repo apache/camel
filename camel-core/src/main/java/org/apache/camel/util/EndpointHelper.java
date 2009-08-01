@@ -196,5 +196,4 @@ public final class EndpointHelper {
     public static boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.startsWith("#");
     }
-
 }

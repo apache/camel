@@ -25,6 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronizationAdapter;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
@@ -143,7 +144,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
      */
     protected Exchange prepareExchange(Exchange exchange) {
         // must use a copy as we dont want it to cause side effects of the original exchange
-        final Exchange copy = exchange.copy(false);
+        final Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
         // add a header flag to indicate its a on completion exchange
