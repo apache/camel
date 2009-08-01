@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RoutingSlipDefinition;
@@ -69,7 +70,7 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
         for (String nextRecipient : recipients) {
             Endpoint endpoint = resolveEndpoint(exchange, nextRecipient);
 
-            Exchange copy = current.newInstance();
+            Exchange copy = new DefaultExchange(current);
             updateRoutingSlip(current);
             copyOutToIn(copy, current);
 

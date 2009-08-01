@@ -83,7 +83,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Exchange copy() {
-        Exchange exchange = newInstance();
+        Exchange exchange = new DefaultExchange(this);
         exchange.copyFrom(this);
         return exchange;
     }
@@ -130,10 +130,6 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
         return new ConcurrentHashMap<String, Object>(properties);
-    }
-
-    public Exchange newInstance() {
-        return new DefaultExchange(this);
     }
 
     public CamelContext getContext() {

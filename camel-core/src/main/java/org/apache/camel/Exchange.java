@@ -262,11 +262,6 @@ public interface Exchange {
     CamelContext getContext();
 
     /**
-     * Creates a new exchange instance with empty messages, headers and properties
-     */
-    Exchange newInstance();
-
-    /**
      * Creates a copy of the current message exchange so that it can be
      * forwarded to another destination
      */

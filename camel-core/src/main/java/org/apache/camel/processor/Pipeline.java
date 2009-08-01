@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -125,7 +126,7 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
      * @return a new exchange
      */
     protected Exchange createNextExchange(Exchange previousExchange) {
-        Exchange answer = previousExchange.newInstance();
+        Exchange answer = new DefaultExchange(previousExchange);
         // we must use the same id as this is a snapshot strategy where Camel copies a snapshot
         // before processing the next step in the pipeline, so we have a snapshot of the exchange
         // just before. This snapshot is used if Camel should do redeliveries (re try) using
