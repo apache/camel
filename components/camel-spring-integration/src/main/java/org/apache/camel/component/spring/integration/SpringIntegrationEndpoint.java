@@ -65,14 +65,6 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
         return new SpringIntegrationConsumer(this, processor);
     }
 
-    public Exchange createExchange() {
-        return createExchange(getExchangePattern());
-    }
-
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(this, pattern);
-    }
-
     public void setInputChannel(String input) {
         inputChannel = input;
     }

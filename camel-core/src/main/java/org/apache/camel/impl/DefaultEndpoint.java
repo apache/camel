@@ -158,9 +158,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
                 return exchangeType.cast(exchange);
             }
         }
-        Exchange answer = createExchange();
-        answer.copyFrom(exchange);
-        return answer;
+        return exchange.copy();
     }
 
     /**

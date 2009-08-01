@@ -43,11 +43,6 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     @Override
-    public Exchange createExchange() {
-        return new DefaultExchange(this);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public Exchange createExchange(GenericFile<T> file) {
         Exchange answer = new DefaultExchange(this);

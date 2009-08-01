@@ -63,8 +63,8 @@ public final class DefaultExchange implements Exchange {
 
     public DefaultExchange(Exchange parent) {
         this(parent.getContext(), parent.getPattern());
-        this.unitOfWork = parent.getUnitOfWork();
         this.fromEndpoint = parent.getFromEndpoint();
+        this.unitOfWork = parent.getUnitOfWork();
     }
 
     public DefaultExchange(Endpoint fromEndpoint) {
@@ -72,9 +72,8 @@ public final class DefaultExchange implements Exchange {
     }
     
     public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        this.context = fromEndpoint.getCamelContext();
+        this(fromEndpoint.getCamelContext(), pattern);
         this.fromEndpoint = fromEndpoint;
-        this.pattern = pattern;
     }
 
     @Override
@@ -83,8 +82,14 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Exchange copy() {
-        Exchange exchange = new DefaultExchange(this);
-        exchange.copyFrom(this);
+        DefaultExchange exchange = new DefaultExchange(this);
+
+        exchange.setProperties(safeCopy(getProperties()));
+        safeCopy(exchange.getIn(), getIn());
+        if (hasOut()) {
+            safeCopy(exchange.getOut(), getOut());
+        }
+        exchange.setException(getException());
         return exchange;
     }
 
@@ -92,31 +97,13 @@ public final class DefaultExchange implements Exchange {
         Exchange copy = copy();
         // do not share the unit of work
         copy.setUnitOfWork(null);
-        // handover on completeion to the copy if we got any
+        // hand over on completion to the copy if we got any
         if (handoverOnCompletion && unitOfWork != null) {
             unitOfWork.handoverSynchronization(copy);
         }
         // set a correlation id so we can track back the original exchange
         copy.setProperty(Exchange.CORRELATION_ID, this.getExchangeId());
         return copy;
-    }
-
-    public void copyFrom(Exchange exchange) {
-        if (exchange == this) {
-            return;
-        }
-        setProperties(safeCopy(exchange.getProperties()));
-
-        // this can cause strangeness if we copy, say, a FileMessage onto an FtpExchange with overloaded getExchange() methods etc.
-        safeCopy(getIn(), exchange.getIn());
-        if (exchange.hasOut()) {
-            safeCopy(getOut(), exchange.getOut());
-        }
-        setException(exchange.getException());
-
-        unitOfWork = exchange.getUnitOfWork();
-        pattern = exchange.getPattern();
-        setFromEndpoint(exchange.getFromEndpoint());
     }
 
     private static void safeCopy(Message message, Message that) {

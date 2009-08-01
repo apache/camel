@@ -278,13 +278,6 @@ public interface Exchange {
     Exchange copy(boolean handoverOnCompletion);
 
     /**
-     * Copies the data into this exchange from the given exchange
-     *
-     * @param source is the source from which headers and messages will be copied
-     */
-    void copyFrom(Exchange source);
-
-    /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message exchange
      * otherwise this property will be null
      */
