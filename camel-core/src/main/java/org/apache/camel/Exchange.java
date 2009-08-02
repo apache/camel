@@ -18,6 +18,7 @@ package org.apache.camel;
 
 import java.util.Map;
 
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -70,8 +71,7 @@ public interface Exchange {
      * @param name the name of the property
      * @param type the type of the property
      * @return the value of the given header or null if there is no property for
-     *         the given name or null if it cannot be converted to the given
-     *         type
+     *         the given name or null if it cannot be converted to the given type
      */
     <T> T getProperty(String name, Class<T> type);
 
@@ -114,9 +114,13 @@ public interface Exchange {
 
     /**
      * Returns the outbound message, lazily creating one if one has not already
-     * been associated with this exchange. If you want to inspect this property
-     * but not force lazy creation then invoke the {@link #getOut(boolean)}
-     * method passing in <tt>false</tt>
+     * been associated with this exchange. If you want to check if this exchange
+     * has an out, but not force lazy creation, invoke {@link #hasOut()} first
+     * Starting with Camel 2.0.0 an out message could also represent a fault,
+     * i.e. a persistent error at the application level (equivalent to faults
+     * defines in some specifications like wsdl and jbi). You should use 
+     * {@link #org.apache.camel.Message}} fault apis to get/set the fault
+     * flag for the out message.
      *
      * @return the response
      */
@@ -126,6 +130,7 @@ public interface Exchange {
      * Returns the outbound message; optionally lazily creating one if one has
      * not been associated with this exchange
      *
+     * @deprecated Starting with Camel 2.0.0 you should only use {@link #getOut()}
      * @param lazyCreate <tt>true</tt> will lazy create the out message
      * @return the response
      */
@@ -141,6 +146,8 @@ public interface Exchange {
     /**
      * Returns the fault message
      *
+     * @deprecated Starting with Camel 2.0.0 you should use {@link #getOut()}
+     *             and check the {@link #org.apache.camel.Message.isFault()} flag
      * @return the fault
      */
     Message getFault();
@@ -149,6 +156,8 @@ public interface Exchange {
      * Returns the fault message; optionally lazily creating one if one has
      * not been associated with this exchange
      *
+     * @deprecated Starting with Camel 2.0.0 you should use {@link #getOut()}
+     *             and check the {@link #org.apache.camel.Message.isFault()} flag
      * @param lazyCreate <tt>true</tt> will lazy create the fault message
      * @return the fault
      */
@@ -173,7 +182,7 @@ public interface Exchange {
      *
      * @return true if this exchange failed due to either an exception or fault
      * @see Exchange#getException()
-     * @see Exchange#getFault()
+     * @see Exchange#getOut()
      */
     boolean isFailed();
 
@@ -191,6 +200,10 @@ public interface Exchange {
 
     /**
      * Creates a new exchange instance with empty messages, headers and properties
+     * 
+     * @deprecated Starting with Camel 2.0.0 you should use {@link #copy()}
+     *             to get a new instance of an exchange or simply create a new
+     *             exchange object 
      */
     Exchange newInstance();
 
@@ -203,6 +216,9 @@ public interface Exchange {
     /**
      * Copies the data into this exchange from the given exchange
      *
+     * @deprecated Starting with Camel 2.0.0 you should use {@link #copy()}
+     *             to get a new instance of an exchange or simply create a new
+     *             exchange object 
      * @param source is the source from which headers and messages will be copied
      */
     void copyFrom(Exchange source);
@@ -228,5 +244,4 @@ public interface Exchange {
      * Set the exchange id
      */
     void setExchangeId(String id);
-
 }
