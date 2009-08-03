@@ -19,10 +19,12 @@
 -->
 <templates><template autoinsert="true" context="xml_all" deleted="false" description="Creates an Aggregator" enabled="true" name="camel_aggregator">&lt;route&gt;
   &lt;from uri="from_uri"/&gt;
-  &lt;aggregator&gt;
-    &lt;header&gt;cheese&lt;/header&gt;
+  &lt;aggregate&gt;
+    &lt;correlationExpression&gt;
+      &lt;simple&gt;header.cheese&lt;/simple&gt;
+    &lt;/correlationExpression&gt;
     &lt;to uri="to_uri"/&gt;
-  &lt;/aggregator&gt;
+  &lt;/aggregate&gt;
 &lt;/route&gt;
 </template><template autoinsert="true" context="xml_all" deleted="false" description="Creates a Content Based Router" enabled="true" name="camel_cbr">&lt;route&gt;
   &lt;from uri="from_uri"/&gt;
@@ -41,11 +43,10 @@
   &lt;/choice&gt;
 &lt;/route&gt;</template><template autoinsert="true" context="xml_all" deleted="false" description="Creates a Delayer" enabled="true" name="camel_delayer">&lt;route&gt;
   &lt;from uri="from_uri"/&gt;
-  &lt;delayer&gt;
-    &lt;expression/&gt;
-    &lt;delay&gt;delay_in_milliseconds&lt;/delay&gt;
-    &lt;to uri="to_uri"/&gt;
-  &lt;/delayer&gt;
+  &lt;delay&gt;
+    &lt;constant&gt;delay_in_milliseconds&lt;/constant&gt;
+  &lt;/delay&gt;
+  &lt;to uri="to_uri"/&gt;
 &lt;/route&gt;
 </template><template autoinsert="true" context="xml_all" deleted="false" description="Creates a Message Filter allows you to filter messages." enabled="true" name="camel_filter">&lt;route&gt;
   &lt;from uri="from_uri"/&gt;
@@ -96,15 +97,15 @@
 &lt;/route&gt;
     </template><template autoinsert="true" context="xml_all" deleted="false" description="Creates a Splitter" enabled="true" name="camel_splitter">&lt;route&gt;
   &lt;from uri="from_uri"/&gt;
-  &lt;splitter&gt;
+  &lt;split&gt;
     &lt;xpath&gt;//foo/bar&lt;/xpath&gt;
     &lt;to uri="to_uri"/&gt;
-  &lt;/splitter&gt;
+  &lt;/split&gt;
 &lt;/route&gt;
 </template><template autoinsert="true" context="xml_all" deleted="false" description="Creates a Throttler" enabled="true" name="camel_throttler">&lt;route&gt;
   &lt;from uri="from_uri" /&gt;
-  &lt;throttler maximumRequestsPerPeriod="number_of_messages" timePeriodMillis="milliseconds"&gt;
+  &lt;throttle maximumRequestsPerPeriod="number_of_messages" timePeriodMillis="milliseconds"&gt;
     &lt;to uri="to_uri" /&gt;
-  &lt;/throttler&gt;
+  &lt;/throttle&gt;
 &lt;/route&gt;
 </template></templates>
