@@ -34,7 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "consumer")
+@XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware {
     @XmlTransient
