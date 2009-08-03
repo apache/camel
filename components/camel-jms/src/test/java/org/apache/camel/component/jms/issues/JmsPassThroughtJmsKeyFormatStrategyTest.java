@@ -61,8 +61,8 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             Map headers = exchange.getIn().getHeaders();
-                            assertEquals("VALUE_1",headers.get("HEADER_1"));
-                            assertEquals("VALUE_1",exchange.getIn().getHeader("HEADER_1"));
+                            assertEquals("VALUE_1", headers.get("HEADER_1"));
+                            assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
                         }
                     })
                     .setHeader("HEADER_2", constant("VALUE_2"))

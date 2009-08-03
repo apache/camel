@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,7 +37,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import static org.apache.camel.builder.Builder.body;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
@@ -64,6 +64,8 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.builder.Builder.body;
 
 /**
  * Base class for processor types that most XML types extend.
@@ -204,7 +206,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
                 continue;
             }
             if (strategy instanceof Delayer) {
-                if ((routeContext.getDelayer() == null || routeContext.getDelayer() <= 0)) {
+                if (routeContext.getDelayer() == null || routeContext.getDelayer() <= 0) {
                     // delayer is disabled so we should not add it
                     continue;
                 } else {
