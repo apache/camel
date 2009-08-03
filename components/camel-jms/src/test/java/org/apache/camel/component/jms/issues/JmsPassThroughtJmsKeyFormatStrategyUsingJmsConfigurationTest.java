@@ -42,10 +42,19 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
         mock.message(0).body().isEqualTo("Hello World");
         mock.message(0).header("HEADER_1").isEqualTo("VALUE_1");
         mock.message(0).header("HEADER_2").isEqualTo("VALUE_2");
+        mock.message(0).header("HEADER_3").isEqualTo("VALUE_3");
 
         template.sendBodyAndHeader(uri, "Hello World", "HEADER_1", "VALUE_1");
 
         assertMockEndpointsSatisfied();
+
+        assertEquals("VALUE_1", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_1"));
+        assertEquals("VALUE_2", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_2"));
+        assertEquals("VALUE_3", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_3"));
+
+        assertEquals("VALUE_1", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_1"));
+        assertEquals("VALUE_2", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_2"));
+        assertEquals("VALUE_3", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_3"));
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -71,7 +80,16 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
                             assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
                         }
                     })
+                    .setHeader("HEADER_3", constant("START"))
                     .setHeader("HEADER_2", constant("VALUE_2"))
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            Map headers = exchange.getIn().getHeaders();
+                            assertEquals("START", headers.get("HEADER_3"));
+                            assertEquals("START", exchange.getIn().getHeader("HEADER_3"));
+                        }
+                    })
+                    .setHeader("HEADER_3", constant("VALUE_3"))
                     .to("mock:result");
             }
         };

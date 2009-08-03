@@ -44,6 +44,12 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
         template.sendBodyAndHeader(uri, "Hello World", "HEADER_1", "VALUE_1");
 
         assertMockEndpointsSatisfied();
+
+        assertEquals("VALUE_1", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_1"));
+        assertEquals("VALUE_2", mock.getReceivedExchanges().get(0).getIn().getHeader("HEADER_2"));
+
+        assertEquals("VALUE_1", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_1"));
+        assertEquals("VALUE_2", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_2"));
     }
 
     protected CamelContext createCamelContext() throws Exception {
