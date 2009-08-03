@@ -132,7 +132,8 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
 
-        Source source = new StringSource("<person user=\"james\">\n"
+        Source source = new StringSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<person user=\"james\">\n"
                 + "  <firstName>James</firstName>\n"
                 + "  <lastName>Strachan</lastName>\n"
                 + "  <city>London</city>\n"
@@ -150,7 +151,8 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
 
-        Source source = new StringSource("<person user=\"james\">\n"
+        Source source = new StringSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<person user=\"james\">\n"
                 + "  <firstName>James</firstName>\n"
                 + "  <lastName>Strachan</lastName>\n"
                 + "  <city>London</city>\n"
@@ -168,7 +170,8 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
 
-        Source source = new StringSource("<person user=\"james\">\n"
+        Source source = new StringSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<person user=\"james\">\n"
                 + "  <firstName>James</firstName>\n"
                 + "  <lastName>Strachan</lastName>\n"
                 + "  <city>London</city>\n"

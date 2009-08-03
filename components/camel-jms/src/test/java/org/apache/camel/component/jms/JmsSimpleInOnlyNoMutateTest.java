@@ -21,7 +21,6 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,18 +29,20 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
- * A simple request / reply test
+ * A simple in only test that does not mutate the message
  */
-public class JmsSimpleRequestReplyTest extends CamelTestSupport {
+public class JmsSimpleInOnlyNoMutateTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
     @Test
-    public void testRequetReply() throws Exception {
+    public void testRequetReplyNoMutate() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
+        result.expectedBodiesReceived("Hello World");
+        result.expectedHeaderReceived("foo", 123);
 
-        Exchange out = template.send("activemq:queue:hello", ExchangePattern.InOut, new Processor() {
+        template.send("activemq:queue:hello", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
                 exchange.getIn().setHeader("foo", 123);
@@ -49,11 +50,6 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
         });
 
         result.assertIsSatisfied();
-
-        assertNotNull(out);
-
-        assertEquals("Bye World", out.getOut().getBody(String.class));
-        assertEquals(123, out.getOut().getHeader("foo"));
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -68,12 +64,7 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Bye World");
-                        assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
-                    }
-                }).to("mock:result");
+                from("activemq:queue:hello").to("log:foo").to("mock:result");
             }
         };
     }
