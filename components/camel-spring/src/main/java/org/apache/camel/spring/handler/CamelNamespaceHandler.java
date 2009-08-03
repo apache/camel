@@ -16,8 +16,10 @@
  */
 package org.apache.camel.spring.handler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,17 +72,18 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     public void init() {
-        // remoting
-        addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class);
-        addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class);
-        addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class);
-        addBeanDefinitionParser("export", CamelServiceExporter.class);
+        // These elements parser should be used inside the camel context
+        addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, false);
+        addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, false);
+        addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, false);
+        addBeanDefinitionParser("export", CamelServiceExporter.class, false);
        
-        // jmx agent
-        addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class);
+        // jmx agent cannot be used outside of the camel context
+        addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
 
         // endpoint
-        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class);
+        // This element cannot be used out side of camel context
+        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, false);
 
         // camel context
         boolean osgi = false;
@@ -104,10 +107,16 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
-
+    
     private void addBeanDefinitionParser(String elementName, Class<?> type) {
+        addBeanDefinitionParser(elementName, type, true);
+    }
+
+    private void addBeanDefinitionParser(String elementName, Class<?> type, boolean register) {
         BeanDefinitionParser parser = new BeanDefinitionParser(type);
-        registerParser(elementName, parser);
+        if (register) {
+            registerParser(elementName, parser);
+        }
         parserMap.put(elementName, parser);
     }
 
@@ -215,6 +224,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             boolean createdBeanPostProcessor = false;
             NodeList list = element.getChildNodes();
+            List beans = new ArrayList();
             int size = list.getLength();
             for (int i = 0; i < size; i++) {
                 Node child = list.item(i);
@@ -236,12 +246,18 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                                 if (localName.equals("jmxAgent")) {
                                     builder.addPropertyReference("camelJMXAgent", id);
                                 }
+                                // set the templates with the camel context 
+                                if (localName.equals("template") || localName.equals("consumerTemplat")
+                                    || localName.equals("proxy") || localName.equals("export")) {
+                                    // set the camel context 
+                                    definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+                                }   
                             }
                         }
-
                     }
                 }
             }
+           
 
             // register as endpoint defined indirectly in the routes by from/to types having id explict set
             registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId);

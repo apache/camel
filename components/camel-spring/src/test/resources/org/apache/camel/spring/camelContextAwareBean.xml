@@ -17,26 +17,25 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camel1" xmlns="http://camel.apache.org/schema/spring">
     <properties>
        <property key="org.apache.camel.test" value="this is a test first"/>
     </properties>
     <template id="producer1"/>
   </camelContext>
   
-  <camelContext id="camel2" xmlns="http://camel.apache.org/schema/spring">
-    <properties>
-       <property key="org.apache.camel.test" value="this is a test second"/>
-    </properties>
-    <template id="producer2"/>
-  </camelContext>
+  <camel:camelContext id="camel2">
+    <camel:template id="producer2"/>
+  </camel:camelContext>
 
-  <bean id="bean" class="org.apache.camel.spring.CamelContextAwareBean"/>
-  
-  
+  <bean id="bean1" class="org.apache.camel.spring.CamelContextAwareBean">
+     <property name="camelContext" ref="camel1" />
+  </bean>
+
 </beans>

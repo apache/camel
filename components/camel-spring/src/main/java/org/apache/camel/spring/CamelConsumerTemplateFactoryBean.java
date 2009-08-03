@@ -55,7 +55,7 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
     }
 
     public boolean isSingleton() {
-        return true;
+        return false;
     }
 
     // Properties
