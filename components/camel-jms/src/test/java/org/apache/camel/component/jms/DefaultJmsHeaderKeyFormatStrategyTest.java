@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 /**
  * @version $Revision$
  */
@@ -32,9 +31,9 @@ public class DefaultJmsHeaderKeyFormatStrategyTest extends Assert {
         assertEquals("foo", strategy.encodeKey("foo"));
         assertEquals("foo123bar", strategy.encodeKey("foo123bar"));
         assertEquals("CamelFileName", strategy.encodeKey("CamelFileName"));
-        assertEquals("org_apache_camel_MyBean", strategy.encodeKey("org.apache.camel.MyBean"));
+        assertEquals("org_DOT_apache_DOT_camel_DOT_MyBean", strategy.encodeKey("org.apache.camel.MyBean"));
         assertEquals("Content_HYPHEN_Type", strategy.encodeKey("Content-Type"));
-        assertEquals("My_HYPHEN_Header_You", strategy.encodeKey("My-Header.You"));
+        assertEquals("My_HYPHEN_Header_DOT_You", strategy.encodeKey("My-Header.You"));
     }
 
     @Test
@@ -43,7 +42,8 @@ public class DefaultJmsHeaderKeyFormatStrategyTest extends Assert {
         assertEquals("foo123bar", strategy.decodeKey("foo123bar"));
         assertEquals("CamelFileName", strategy.decodeKey("CamelFileName"));
         assertEquals("Content-Type", strategy.decodeKey("Content_HYPHEN_Type"));
-        assertEquals("My-Header.You", strategy.decodeKey("My_HYPHEN_Header_You"));
+        assertEquals("My-Header.You", strategy.decodeKey("My_HYPHEN_Header_DOT_You"));
+        assertEquals("org.apache.camel.MyBean", strategy.decodeKey("org_DOT_apache_DOT_camel_DOT_MyBean"));
     }
 
 }

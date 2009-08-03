@@ -26,14 +26,14 @@ package org.apache.camel.component.jms;
 public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 
     public String encodeKey(String key) {
-        String answer = key.replace(".", "_");
+        String answer = key.replace(".", "_DOT_");
         answer = answer.replaceAll("-", "_HYPHEN_");
         return answer;
     }
 
     public String decodeKey(String key) {
         String answer = key.replaceAll("_HYPHEN_", "-");
-        answer = answer.replace("_", ".");
+        answer = answer.replace("_DOT_", ".");
         return answer;
     }
 
