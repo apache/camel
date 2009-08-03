@@ -23,21 +23,23 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: proxy -->
-  <!--  Creates a proxy to the direct:say endpoint. -->
-  <camel:proxy id="sayProxy" serviceUrl="direct:say"
-                      serviceInterface="org.apache.camel.spring.remoting.ISay"/>
-  <!-- END SNIPPET: proxy -->
-
-  <!-- START SNIPPET: export -->
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
-
-  <camel:export id="say" uri="direct:sayImpl" serviceRef="sayService"
-                         serviceInterface="org.apache.camel.spring.remoting.ISay"/>
-  <!-- END SNIPPET: export -->
 
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+     <!-- START SNIPPET: proxy -->
+     <!--  Creates a proxy to the direct:say endpoint. -->
+     <camel:proxy id="sayProxy" serviceUrl="direct:say"
+                      serviceInterface="org.apache.camel.spring.remoting.ISay"/>
+     <!-- END SNIPPET: proxy -->
+     <!-- START SNIPPET: export --> 
+     <camel:export id="say" uri="direct:sayImpl" serviceRef="sayService"
+                         serviceInterface="org.apache.camel.spring.remoting.ISay"/>
+     <!--
+       The bean is defined out side of the camel  
+       <bean id="sayService" class="org.apache.camel.spring.remoting.SayService"/>
+     -->
+     <!-- END SNIPPET: export --> 
     <route>
       <from uri="direct:say"/>
       <to uri="direct:sayImpl"/>

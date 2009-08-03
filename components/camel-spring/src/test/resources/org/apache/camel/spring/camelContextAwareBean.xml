@@ -17,17 +17,25 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext id="camel1" xmlns="http://activemq.apache.org/camel/schema/spring">
     <properties>
-       <property key="org.apache.camel.test" value="this is a test"/>
+       <property key="org.apache.camel.test" value="this is a test first"/>
     </properties>
-    <beanPostProcessor/>
+    <camel:template id="producer1"/>
   </camelContext>
+  
+  <camel:camelContext id="camel2">
+    <camel:template id="producer2"/>
+  </camel:camelContext>
 
-  <bean id="bean" class="org.apache.camel.spring.CamelContextAwareBean"/>
+  <bean id="bean1" class="org.apache.camel.spring.CamelContextAwareBean">
+     <property name="camelContext" ref="camel1" />
+  </bean>
+
 </beans>

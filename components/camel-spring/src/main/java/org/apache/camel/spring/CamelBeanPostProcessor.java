@@ -53,7 +53,7 @@ import org.springframework.context.ApplicationContextAware;
  * {@link org.apache.camel.RecipientList} for creating <a href="http://activemq.apache.org/camel/recipientlist-annotation.html">a Recipient List router via annotations</a>.
  * <p>
  * If you use the &lt;camelContext&gt; element in your <a href="http://activemq.apache.org/camel/spring.html">Spring XML</a> 
- * then one of these bean post processors is implicity installed and configured for you. So you should never have to
+ * then one of these bean post processors is implicitly installed and configured for you. So you should never have to
  * explicitly create or configure one of these instances.
  *
  * @version $Revision$
@@ -89,7 +89,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         }
         injectFields(bean);
         injectMethods(bean);
-        if (bean instanceof CamelContextAware) {
+        if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
             if (camelContext == null) {
                 LOG.warn("No CamelContext defined yet so cannot inject into: " + bean);
@@ -164,6 +164,29 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         }
 
         // all other beans can of course be processed
+        return true;
+    }
+    
+    
+    protected boolean canSetCamelContext(Object bean, String beanName) {
+        
+        try {
+            Method method = null;
+            try {
+                method = bean.getClass().getMethod("getCamelContext", new Class[]{});
+            } catch (NoSuchMethodException ex) {
+                method = bean.getClass().getMethod("getContext", new Class[]{});
+            }
+            CamelContext context = (CamelContext) method.invoke(bean, new Object[]{});
+            if (context != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The camel context of " + beanName + " is set, so we skip inject the camel context of it.");
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            // can't check the status of camelContext , so return true by default
+        }
         return true;
     }
 
