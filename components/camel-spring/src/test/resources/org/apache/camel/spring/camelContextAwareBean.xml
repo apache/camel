@@ -32,6 +32,7 @@
   
   <camel:camelContext id="camel2">
     <camel:template id="producer2"/>
+    <camel:consumerTemplate id="consumer"/>
   </camel:camelContext>
 
   <bean id="bean1" class="org.apache.camel.spring.CamelContextAwareBean">

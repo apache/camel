@@ -43,6 +43,10 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
     public void stop() throws Exception {
         consumerCache.stop();
     }
+    
+    public CamelContext getCamelContext() {
+        return context;
+    }
 
     public Exchange receive(String endpointUri) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);

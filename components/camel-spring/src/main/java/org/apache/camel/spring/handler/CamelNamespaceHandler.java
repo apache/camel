@@ -247,7 +247,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                                     builder.addPropertyReference("camelJMXAgent", id);
                                 }
                                 // set the templates with the camel context 
-                                if (localName.equals("template") || localName.equals("consumerTemplat")
+                                if (localName.equals("template") || localName.equals("consumerTemplate")
                                     || localName.equals("proxy") || localName.equals("export")) {
                                     // set the camel context 
                                     definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));

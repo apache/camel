@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,7 +32,7 @@ public class CamelContextAwareTest extends SpringTestSupport {
     protected CamelContextAwareBean bean1;
 
 
-    public void xtestInjectionPoints() throws Exception {
+    public void testInjectionPoints() throws Exception {
         assertNotNull("No CamelContext injected!", bean1.getCamelContext());
         Map<String, String> properties  = bean1.getCamelContext().getProperties();
         assertNotNull("the properties should not been null", properties);
@@ -45,6 +46,9 @@ public class CamelContextAwareTest extends SpringTestSupport {
         
         DefaultProducerTemplate producer2 = getMandatoryBean(DefaultProducerTemplate.class, "producer2");
         assertEquals("Inject a wrong camel context", producer2.getContext().getName(), "camel2");
+        
+        DefaultConsumerTemplate consumer = getMandatoryBean(DefaultConsumerTemplate.class, "consumer");
+        assertEquals("Inject a wrong camel context", consumer.getCamelContext().getName(), "camel2");
     }
 
     @Override
