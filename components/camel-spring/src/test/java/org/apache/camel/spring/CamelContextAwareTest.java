@@ -18,6 +18,8 @@ package org.apache.camel.spring;
 
 import java.util.Map;
 
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultProducerTemplate;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,7 +34,13 @@ public class CamelContextAwareTest extends SpringTestSupport {
         Map<String, String> properties  = bean.getCamelContext().getProperties();
         assertNotNull("the properties should not been null", properties);
         assertEquals("No properties injected", properties.size(), 1);
-        assertEquals("Should get the value of org.apache.camel.test", properties.get("org.apache.camel.test"), "this is a test");
+        assertEquals("Should get the value of org.apache.camel.test", properties.get("org.apache.camel.test"), "this is a test second");
+    }
+    
+    public void testCamelTemplates() throws Exception {
+        DefaultProducerTemplate producer1 = getMandatoryBean(DefaultProducerTemplate.class, "producer1");
+        // The producer is injected with a wrong camel context
+        assertEquals("Inject a wrong camel context", producer1.getContext().getName(), "camel2");
     }
 
     @Override

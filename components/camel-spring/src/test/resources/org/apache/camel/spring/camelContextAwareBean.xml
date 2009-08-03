@@ -24,10 +24,19 @@
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <properties>
-       <property key="org.apache.camel.test" value="this is a test"/>
+       <property key="org.apache.camel.test" value="this is a test first"/>
     </properties>
-    <beanPostProcessor/>
+    <template id="producer1"/>
+  </camelContext>
+  
+  <camelContext id="camel2" xmlns="http://camel.apache.org/schema/spring">
+    <properties>
+       <property key="org.apache.camel.test" value="this is a test second"/>
+    </properties>
+    <template id="producer2"/>
   </camelContext>
 
   <bean id="bean" class="org.apache.camel.spring.CamelContextAwareBean"/>
+  
+  
 </beans>
