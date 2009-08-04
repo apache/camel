@@ -67,6 +67,10 @@ public class SendBeforeInterceptor implements MethodInterceptor, CamelContextAwa
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
+    
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     // Properties
     //-----------------------------------------------------------------------

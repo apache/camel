@@ -37,4 +37,8 @@ public class MyOtherRoute extends SpringRouteBuilder implements CamelContextAwar
             throw new IllegalArgumentException("Should be named foo");
         }
     }
+    
+    public CamelContext getCamelContext() {
+        return ctx;
+    }
 }

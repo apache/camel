@@ -173,25 +173,20 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     
     
     protected boolean canSetCamelContext(Object bean, String beanName) {
-        
-        try {
-            Method method = null;
-            try {
-                method = bean.getClass().getMethod("getCamelContext", new Class[]{});
-            } catch (NoSuchMethodException ex) {
-                method = bean.getClass().getMethod("getContext", new Class[]{});
-            }
-            CamelContext context = (CamelContext) method.invoke(bean, new Object[]{});
+        boolean answer = true;
+        if (bean instanceof CamelContextAware) {
+            CamelContextAware camelContextAware = (CamelContextAware) bean;
+            CamelContext context = camelContextAware.getCamelContext();
             if (context != null) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("The camel context of " + beanName + " is set, so we skip inject the camel context of it.");
                 }
-                return false;
+                answer = false;
             }
-        } catch (Exception e) {
-            // can't check the status of camelContext , so return true by default
+        } else {
+            answer = false;
         }
-        return true;
+        return answer;
     }
 
     /**

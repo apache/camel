@@ -30,4 +30,12 @@ public interface CamelContextAware {
      * @param camelContext the Camel context
      */
     void setCamelContext(CamelContext camelContext);
+    
+    /**
+     * Get the {@link CamelContext}
+     *
+     * @return camelContext the Camel context
+     */
+    CamelContext getCamelContext();
+    
 }
