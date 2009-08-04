@@ -97,7 +97,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
                              + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (0, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (1, 'AMQ', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (2, 'Linux', 'GPL')");
+        jdbcTemplate.execute("insert into projects values (2, 'Linux', 'XXX')");
     }
 
     @After

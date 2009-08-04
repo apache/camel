@@ -58,7 +58,7 @@ public class SqlEndpointTest extends CamelTestSupport {
                              + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (3, 'Linux', 'GPL')");
+        jdbcTemplate.execute("insert into projects values (3, 'Linux', 'XXX')");
     }
 
     @After
