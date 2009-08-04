@@ -26,7 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
+import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -106,8 +108,23 @@ public class ProducerCache extends ServiceSupport {
      * @return the exchange
      */
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
+        return send(endpoint, pattern, processor, null);
+    }
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
+     * {@link Processor} to populate the exchange
+     *
+     * @param endpoint the endpoint to send the exchange to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     * @param onCompletion  callback invoked when exchange has been completed
+     * @return the exchange
+     */
+    public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Synchronization onCompletion) {
         try {
-            return sendExchange(endpoint, pattern, processor, null);
+            return sendExchange(endpoint, pattern, processor, null, onCompletion);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
         }
@@ -120,7 +137,6 @@ public class ProducerCache extends ServiceSupport {
      * @param endpoint  the endpoint to send the exchange to
      * @param exchange  the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
      * @param pattern   the exchange pattern, can be <tt>null</tt>
-     * @param callback  the callback
      * @return the response from the callback
      * @throws Exception if an internal processing error has occurred.
      */
@@ -153,6 +169,11 @@ public class ProducerCache extends ServiceSupport {
 
     protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
                                     final Processor processor, Exchange exchange) throws Exception {
+        return sendExchange(endpoint, pattern, processor, exchange, null);
+    }
+
+    protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
+                                    final Processor processor, Exchange exchange, final Synchronization onCompletion) throws Exception {
         return doInProducer(endpoint, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 if (exchange == null) {
@@ -162,6 +183,10 @@ public class ProducerCache extends ServiceSupport {
                 if (processor != null) {
                     // lets populate using the processor callback
                     processor.process(exchange);
+                }
+
+                if (onCompletion != null) {
+                    exchange.addOnCompletion(onCompletion);
                 }
 
                 // now lets dispatch

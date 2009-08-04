@@ -31,6 +31,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -397,6 +398,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         };
     }
 
+    protected Processor createSetBodyProcessorCallback(final Object body, final Synchronization onCompletion) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody(body);
+                exchange.addOnCompletion(onCompletion);
+            }
+        };
+    }
+
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
         Endpoint endpoint = context.getEndpoint(endpointUri);
         if (endpoint == null) {
@@ -476,6 +487,30 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public <T> T extractFutureBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         return ExchangeHelper.extractFutureBody(context, future, timeout, unit, type);
+    }
+
+    public Future<Object> asyncCallbackSendBody(String uri, Object body, Synchronization onCompletion) {
+        return asyncCallbackSendBody(resolveMandatoryEndpoint(uri), body, onCompletion);
+    }
+
+    public Future<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
+        return asyncCallback(endpoint, ExchangePattern.InOnly, body, onCompletion);
+    }
+
+    public Future<Object> asyncCallbackRequestBody(String uri, Object body, Synchronization onCompletion) {
+        return asyncCallbackRequestBody(resolveMandatoryEndpoint(uri), body, onCompletion);
+    }
+
+    public Future<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
+        return asyncCallback(endpoint, ExchangePattern.InOut, body, onCompletion);
+    }
+
+    public Future<Exchange> asyncCallback(String uri, Exchange exchange, Synchronization onCompletion) {
+        return asyncCallback(resolveMandatoryEndpoint(uri), exchange, onCompletion);
+    }
+
+    public Future<Exchange> asyncCallback(String uri, Processor processor, Synchronization onCompletion) {
+        return asyncCallback(resolveMandatoryEndpoint(uri), processor, onCompletion);
     }
 
     public Future<Object> asyncRequestBody(final Endpoint endpoint, final Object body) {
@@ -575,5 +610,43 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
    
+    public Future<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern, final Object body, final Synchronization onCompletion) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                Exchange exchange = send(endpoint, pattern, createSetBodyProcessorCallback(body, onCompletion));
+
+                Object result = extractResultBody(exchange, pattern);
+                if (pattern.isOutCapable()) {
+                    return result;
+                } else {
+                    // return null if not OUT capable
+                    return null;
+                }
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Exchange> asyncCallback(final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
+        Callable<Exchange> task = new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                exchange.addOnCompletion(onCompletion);
+                return send(endpoint, exchange);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
+        Callable<Exchange> task = new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                return producerCache.send(endpoint, null, processor, onCompletion);
+            }
+        };
+
+        return executor.submit(task);
+    }
 
 }

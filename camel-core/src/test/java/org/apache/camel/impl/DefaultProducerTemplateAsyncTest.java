@@ -18,13 +18,16 @@ package org.apache.camel.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -36,6 +39,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
  * @version $Revision$
  */
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
+
+    private static String order;
 
     public void testRequestAsync() throws Exception {
         Exchange exchange = new DefaultExchange(context);
@@ -270,6 +275,248 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
         assertTrue("Should take longer than: " + delta, delta > 250);
+    }
+
+    public void testAsyncCallbackExchangeInOnly() throws Exception {
+        order = "";
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        Exchange exchange = context.getEndpoint("direct:start").createExchange();
+        exchange.getIn().setBody("Hello");
+
+        template.asyncCallback("direct:start", exchange, new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("Hello World", exchange.getIn().getBody());
+                latch.countDown();
+            }
+        });
+
+        order += "A";
+        latch.await(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertMockEndpointsSatisfied();
+        assertEquals("ABC", order);
+    }
+
+    public void testAsyncCallbackExchangeInOut() throws Exception {
+        order = "";
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        Exchange exchange = context.getEndpoint("direct:start").createExchange();
+        exchange.getIn().setBody("Hello");
+        exchange.setPattern(ExchangePattern.InOut);
+
+        template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("HelloHello", exchange.getOut().getBody());
+                latch.countDown();
+            }
+        });
+
+        order += "A";
+        latch.await(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertEquals("ABC", order);
+    }
+
+    public void testAsyncCallbackExchangeInOnlyGetResult() throws Exception {
+        order = "";
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        Exchange exchange = context.getEndpoint("direct:start").createExchange();
+        exchange.getIn().setBody("Hello");
+
+        Future<Exchange> future = template.asyncCallback("direct:start", exchange, new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("Hello World", exchange.getIn().getBody());
+            }
+        });
+
+        order += "A";
+        Exchange reply = future.get(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertMockEndpointsSatisfied();
+        assertEquals("ABC", order);
+        assertNotNull(reply);
+    }
+
+    public void testAsyncCallbackExchangeInOutGetResult() throws Exception {
+        order = "";
+
+        Exchange exchange = context.getEndpoint("direct:start").createExchange();
+        exchange.getIn().setBody("Hello");
+        exchange.setPattern(ExchangePattern.InOut);
+
+        Future<Exchange> future = template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("HelloHello", exchange.getOut().getBody());
+            }
+        });
+
+        order += "A";
+        Exchange reply = future.get(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertEquals("ABC", order);
+        assertNotNull(reply);
+        assertEquals("HelloHello", reply.getOut().getBody());
+    }
+
+    public void testAsyncCallbackBodyInOnly() throws Exception {
+        order = "";
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        template.asyncCallbackSendBody("direct:start", "Hello", new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("Hello World", exchange.getIn().getBody());
+                latch.countDown();
+            }
+        });
+
+        order += "A";
+        latch.await(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertMockEndpointsSatisfied();
+        assertEquals("ABC", order);
+    }
+
+    public void testAsyncCallbackBodyInOut() throws Exception {
+        order = "";
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("HelloHello", exchange.getOut().getBody());
+                latch.countDown();
+            }
+        });
+
+        order += "A";
+        latch.await(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertEquals("ABC", order);
+    }
+
+    public void testAsyncCallbackBodyInOnlyGetResult() throws Exception {
+        order = "";
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        Future<Object> future = template.asyncCallbackSendBody("direct:start", "Hello", new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("Hello World", exchange.getIn().getBody());
+            }
+        });
+
+        order += "A";
+        Object reply = future.get(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertMockEndpointsSatisfied();
+        assertEquals("ABC", order);
+        // no reply when in only
+        assertEquals(null, reply);
+    }
+
+    public void testAsyncCallbackBodyInOutGetResult() throws Exception {
+        order = "";
+
+        Future<Object> future = template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("HelloHello", exchange.getOut().getBody());
+            }
+        });
+
+        order += "A";
+        Object reply = future.get(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertEquals("ABC", order);
+        assertEquals("HelloHello", reply);
+    }
+
+    public void testAsyncCallbackInOnlyProcessor() throws Exception {
+        order = "";
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        template.asyncCallback("direct:start", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello");
+            }
+        }, new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("Hello World", exchange.getIn().getBody());
+                latch.countDown();
+            }
+        });
+
+        order += "A";
+        latch.await(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertMockEndpointsSatisfied();
+        assertEquals("ABC", order);
+    }
+
+    public void testAsyncCallbackInOutProcessor() throws Exception {
+        order = "";
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        template.asyncCallback("direct:echo", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello");
+                exchange.setPattern(ExchangePattern.InOut);
+            }
+        }, new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                order += "B";
+                assertEquals("HelloHello", exchange.getOut().getBody());
+                latch.countDown();
+            }
+        });
+
+        order += "A";
+        latch.await(10, TimeUnit.SECONDS);
+        order += "C";
+
+        assertEquals("ABC", order);
     }
 
     @Override
