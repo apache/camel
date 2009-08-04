@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
-import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.LRUCache;
