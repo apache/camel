@@ -93,7 +93,11 @@ lengths, if/try depths, etc...
             <property name="file" value="etc/import-control.xml"/>
         </module>
         -->
-
+        <module name="GenericIllegalRegexp">
+          <property name="format" value="(\bgpl\b)|(\bgplv2\b)|(\bgnu\sgeneral\spublic\s*license\b)|(\bwww\.gnu\.org\/licenses\/gpl\.txt\b)"/>
+          <property name="ignoreComments" value="false"/>
+          <property name="ignoreCase"  value="true"/>
+        </module>
 
         <!-- Checks for Size Violations.                    -->
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
