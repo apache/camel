@@ -36,13 +36,19 @@
   
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 
-  <cxf:rsClient id="rsClient" address="http://localhost:9002"
+  <cxf:rsClient id="rsClientProxy" address="http://localhost:9002"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+   
+  <cxf:rsClient id="rsClientHttp" address="http://localhost:9002"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
-       <from uri="direct:start"/>
-       <to uri="cxfrs://bean://rsClient"/>
+       <from uri="direct://proxy"/>
+       <to uri="cxfrs://bean://rsClientProxy"/>
+    </route>
+    <route>
+       <from uri="direct://http"/>
+       <to uri="cxfrs://bean://rsClientHttp"/>
     </route>
   </camelContext>
 

@@ -37,7 +37,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test
     public void testGetConstumerWithClientProxyAPI() {
         // START SNIPPET: example
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct://proxy", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
@@ -65,7 +65,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test
     public void testGetConstumerWithHttpCentralClientAPI() {
      // START SNIPPET: example-http
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct://http", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
