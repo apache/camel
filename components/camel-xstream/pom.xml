@@ -47,8 +47,7 @@
       <artifactId>xstream</artifactId>
       <exclusions>
         <exclusion>
-          <!-- xom is an optional dependency of xstream. Its also 
-               LGPL, so its really not ASF compatible. -->
+          <!-- xom is an optional dependency of xstream. Its also an Apache incompatible license -->
           <groupId>xom</groupId>
           <artifactId>xom</artifactId>
         </exclusion>

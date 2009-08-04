@@ -52,9 +52,9 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
 
         // send the query to direct that will route it to the sql where we will execute the query
         // and bind the parameters with the data from the body. The body only contains one value
-        // in this case (GPL) but if we should use multi values then the body will be iterated
+        // in this case (XXX) but if we should use multi values then the body will be iterated
         // so we could supply a List<String> instead containing each binding value.
-        template.sendBody("direct:simple", "GPL");
+        template.sendBody("direct:simple", "XXX");
 
         mock.assertIsSatisfied();
 
@@ -80,7 +80,7 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
                              + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (3, 'Linux', 'GPL')");
+        jdbcTemplate.execute("insert into projects values (3, 'Linux', 'XXX')");
         // END SNIPPET: e2
     }
 

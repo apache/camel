@@ -46,7 +46,7 @@ public class SqlRouteTest extends ContextTestSupport {
     public void testSimpleBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("direct:simple", "GPL");
+        template.sendBody("direct:simple", "XXX");
         mock.assertIsSatisfied();
         List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         Map row = assertIsInstanceOf(Map.class, received.get(0));
@@ -152,7 +152,7 @@ public class SqlRouteTest extends ContextTestSupport {
                              + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (3, 'Linux', 'GPL')");
+        jdbcTemplate.execute("insert into projects values (3, 'Linux', 'XXX')");
     }
 
     protected void tearDown() throws Exception {
