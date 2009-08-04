@@ -206,6 +206,17 @@ public class JmsBinding {
 
         return map;
     }
+    
+    public Object getObjectProperty(Message jmsMessage, String name) throws JMSException {
+        // try a direct lookup first
+        Object answer = jmsMessage.getObjectProperty(name);
+        if (answer == null) {
+            // then encode the key and do another lookup
+            String key = jmsKeyFormatStrategy.encodeKey(name);
+            answer = jmsMessage.getObjectProperty(key);
+        }
+        return answer;
+    }
 
     protected byte[] createByteArrayFromBytesMessage(BytesMessage message) throws JMSException {
         if (message.getBodyLength() > Integer.MAX_VALUE) {

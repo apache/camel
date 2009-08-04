@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.Map;
-
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -57,6 +56,10 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public void copyFrom(org.apache.camel.Message that) {
+        // must initialize headers before we set the JmsMessage to avoid Camel
+        // populateing it before we do the copy
+        getHeaders().clear();
+
         boolean copyMessageId = true;
         if (that instanceof JmsMessage) {
             JmsMessage thatMessage = (JmsMessage) that;
@@ -66,6 +69,7 @@ public class JmsMessage extends DefaultMessage {
                 copyMessageId = false;
             }
         }
+
         if (copyMessageId) {
             setMessageId(that.getMessageId());
         }
@@ -108,35 +112,45 @@ public class JmsMessage extends DefaultMessage {
 
         // we will exclude using JMS-prefixed headers here to avoid strangeness with some JMS providers
         // e.g. ActiveMQ returns the String not the Destination type for "JMSReplyTo"!
-        if (jmsMessage != null && !name.startsWith("JMS")) {
+        // only look in jms message directly if we have not populated headers
+        if (jmsMessage != null && !hasPopulatedHeaders() && !name.startsWith("JMS")) {
             try {
-                answer = jmsMessage.getObjectProperty(name);
+                // use binding to do the lookup as it has to consider using encoded keys
+                answer = getBinding().getObjectProperty(jmsMessage, name);
             } catch (JMSException e) {
                 throw new RuntimeExchangeException("Unable to retrieve header from JMS Message: " + name, getExchange(), e);
             }
         }
-        if (answer == null) {
+        // only look if we have populated headers otherwise there are no headers at all
+        // if we do lookup a header starting with JMS then force a lookup
+        if (answer == null && (hasPopulatedHeaders() || name.startsWith("JMS"))) {
             answer = super.getHeader(name);
         }
         return answer;
     }
 
     @Override
+    public Map<String, Object> getHeaders() {
+        ensureInitialHeaders();
+        return super.getHeaders();
+    }
+
+    @Override
     public Object removeHeader(String name) {
-        Object answer = super.removeHeader(name);
+        ensureInitialHeaders();
+        return super.removeHeader(name);
+    }
 
-        if (jmsMessage != null && !name.startsWith("JMS")) {
-            try {
-                // also remove header from the JMS message
-                if (jmsMessage.propertyExists(name)) {
-                    answer = JmsMessageHelper.removeJmsProperty(jmsMessage, name);
-                }
-            } catch (JMSException e) {
-                throw new RuntimeExchangeException("Unable to remove header from JMS Message: " + name, getExchange(), e);
-            }
-        }
+    @Override
+    public void setHeaders(Map<String, Object> headers) {
+        ensureInitialHeaders();
+        super.setHeaders(headers);
+    }
 
-        return answer;
+    @Override
+    public void setHeader(String name, Object value) {
+        ensureInitialHeaders();
+        super.setHeader(name, value);
     }
 
     @Override
@@ -149,6 +163,18 @@ public class JmsMessage extends DefaultMessage {
      */
     public boolean shouldCreateNewMessage() {
         return super.hasPopulatedHeaders();
+    }
+
+    /**
+     * Ensure that the headers have been populated from the underlying JMS message
+     * before we start mutating the headers
+     */
+    protected void ensureInitialHeaders() {
+        if (jmsMessage != null && !hasPopulatedHeaders()) {
+            // we have not populated headers so force this by creating
+            // new headers and set it on super
+            super.setHeaders(createHeaders());
+        }
     }
 
     @Override

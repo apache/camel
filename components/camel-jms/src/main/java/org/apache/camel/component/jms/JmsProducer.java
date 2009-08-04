@@ -274,15 +274,19 @@ public class JmsProducer extends DefaultProducer {
         final org.apache.camel.Message in = exchange.getIn();
 
         String destinationName = in.getHeader(JmsConstants.JMS_DESTINATION_NAME, String.class);
-        // remove the header so it wont be propagated
-        in.removeHeader(JmsConstants.JMS_DESTINATION_NAME);
+        if (destinationName != null) {
+            // remove the header so it wont be propagated
+            in.removeHeader(JmsConstants.JMS_DESTINATION_NAME);
+        }
         if (destinationName == null) {
             destinationName = endpoint.getDestinationName();
         }
 
         Destination destination = in.getHeader(JmsConstants.JMS_DESTINATION, Destination.class);
-        // remove the header so it wont be propagated
-        in.removeHeader(JmsConstants.JMS_DESTINATION);
+        if (destination != null) {
+            // remove the header so it wont be propagated
+            in.removeHeader(JmsConstants.JMS_DESTINATION);
+        }
         if (destination == null) {
             destination = endpoint.getDestination();
         }
