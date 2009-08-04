@@ -17,6 +17,8 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -117,12 +119,52 @@ public class MailBinding {
         if (contentType != null && contentType.contains(";")) {
             String before = ObjectHelper.before(contentType, ";");
             String after = ObjectHelper.after(contentType, ";");
-            if (before != null && after != null) {
-                contentType = before.trim() + "; " + after.trim();
+
+            // after is the charset lets see if its given and a valid charset
+            if (after != null) {
+                String charset = ObjectHelper.after(after, "=");
+                charset = determineCharSet(configuration, charset);
+                if (charset != null) {
+                    after = "charset=" + charset;
+                } else {
+                    after = null;
+                }
+            }
+
+            if (before != null && after == null) {
+                contentType = before.trim();
+            } else if (before != null && after != null) {
+                contentType = before.trim() + "; " + after;
             }
         }
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Determined Content-Type: " + contentType);
+        }
+
         return contentType;
+    }
+
+    protected String determineCharSet(MailConfiguration configuration, String charset) {
+        if (charset == null) {
+            return null;
+        }
+        
+        boolean supported;
+        try {
+            supported = Charset.isSupported(charset);
+        } catch (IllegalCharsetNameException e) {
+            supported = false;
+        }
+
+        if (supported) {
+            return charset;
+        } else if (configuration.isIgnoreUnsupportedCharset()) {
+            LOG.warn("Charset: " + charset + " is not supported, will fallback to use platform default instead.");
+            return null;
+        }
+
+        return charset;
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
