@@ -101,6 +101,10 @@ public class DefaultMessage extends MessageSupport {
         this.headers = headers;
     }
 
+    public boolean hasHeaders() {
+        return headers != null && !headers.isEmpty();
+    }
+
     public DefaultMessage newInstance() {
         return new DefaultMessage();
     }

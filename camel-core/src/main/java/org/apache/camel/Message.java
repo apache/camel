@@ -107,6 +107,13 @@ public interface Message {
     void setHeaders(Map<String, Object> headers);
 
     /**
+     * Returns whether has any headers has been set.
+     *
+     * @return <tt>true</tt> if any headers has been set
+     */
+    boolean hasHeaders();
+
+    /**
      * Returns the body of the message as a POJO
      * <p/>
      * The body can be <tt>null</tt> if no body is set

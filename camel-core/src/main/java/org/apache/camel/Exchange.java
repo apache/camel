@@ -170,6 +170,13 @@ public interface Exchange {
     Map<String, Object> getProperties();
 
     /**
+     * Returns whether any properties has been set
+     *
+     * @return <tt>true</tt> if any properties has been set
+     */
+    boolean hasProperties();
+
+    /**
      * Returns the inbound request message
      *
      * @return the message
