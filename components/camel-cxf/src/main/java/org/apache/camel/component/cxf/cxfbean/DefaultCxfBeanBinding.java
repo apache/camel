@@ -131,7 +131,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
     }
     
     protected String getBasePath(Exchange camelExchange) {
-        String answer = camelExchange.getIn().getHeader(CxfBeanHeaderNames.BASE_PATH, String.class);
+        String answer = camelExchange.getIn().getHeader(Exchange.HTTP_BASE_URI, String.class);
 
         if (answer == null) {
             answer = camelExchange.getFromEndpoint().getEndpointUri();
