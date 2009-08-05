@@ -84,9 +84,7 @@ public final class DefaultExchange implements Exchange {
     public Exchange copy() {
         DefaultExchange exchange = new DefaultExchange(this);
 
-        if (exchange.hasProperties()) {
-            exchange.setProperties(getProperties());
-        }
+        exchange.setProperties(safeCopy(getProperties()));
         safeCopy(exchange.getIn(), getIn());
         if (hasOut()) {
             safeCopy(exchange.getOut(), getOut());
@@ -99,6 +97,13 @@ public final class DefaultExchange implements Exchange {
         if (message != null) {
             message.copyFrom(that);
         }
+    }
+
+    private static Map<String, Object> safeCopy(Map<String, Object> properties) {
+        if (properties == null) {
+            return null;
+        }
+        return new ConcurrentHashMap<String, Object>(properties);
     }
 
     public CamelContext getContext() {
