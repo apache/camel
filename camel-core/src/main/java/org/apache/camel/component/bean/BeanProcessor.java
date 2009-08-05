@@ -66,17 +66,24 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        // do we have am explict method name we always should invoke
+        boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
+
         Object bean = beanHolder.getBean();
         exchange.setProperty(Exchange.BEAN_HOLDER, beanHolder);
-
-        Processor processor = getProcessor();
         BeanInfo beanInfo = beanHolder.getBeanInfo();
 
         // do we have a custom adapter for this POJO to a Processor
-        if (processor != null) {
+        // should not be invoced if an explict method has been set
+        Processor processor = getProcessor();
+        if (!isExplicitMethod && processor != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using a custom adapter as bean invocation: " + processor);
+            }
             processor.process(exchange);
             return;
         }
+
         Message in = exchange.getIn();
 
         if (in.getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) == null) {
@@ -89,23 +96,20 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             return;
         }
 
-        boolean isExplicitMethod = false;
         String prevMethod = null;
         MethodInvocation invocation;
         if (methodObject != null) {
             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
         } else {
             // we just override the bean's invocation method name here
-            if (ObjectHelper.isNotEmpty(method)) {
+            if (isExplicitMethod) {
                 prevMethod = in.getHeader(Exchange.BEAN_METHOD_NAME, String.class);
                 in.setHeader(Exchange.BEAN_METHOD_NAME, method);
-                isExplicitMethod = true;
             }
             invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException(
-                "No method invocation could be created, no maching method could be found on: " + bean);
+            throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + bean);
         } else {
             // set method name if not explicit given
             if (method == null) {

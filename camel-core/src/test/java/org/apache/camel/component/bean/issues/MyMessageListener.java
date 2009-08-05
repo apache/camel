@@ -19,17 +19,8 @@ package org.apache.camel.component.bean.issues;
 /**
  * @version $Revision$
  */
-public class DerivedClass extends BaseClass {
+public interface MyMessageListener {
 
-    private String body;
+    void onMessage(MyMessage message);
 
-    public void process(String body) {
-        this.body = body;
-    }
-
-    public String getAndClearBody() {
-        String answer = body;
-        body = null;
-        return answer;
-    }
 }

@@ -19,17 +19,20 @@ package org.apache.camel.component.bean.issues;
 /**
  * @version $Revision$
  */
-public class DerivedClass extends BaseClass {
+public class MyMessage {
 
-    private String body;
+    private String message;
 
-    public void process(String body) {
-        this.body = body;
+    public MyMessage(String message) {
+        this.message = message;
     }
 
-    public String getAndClearBody() {
-        String answer = body;
-        body = null;
-        return answer;
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        return message;
     }
 }

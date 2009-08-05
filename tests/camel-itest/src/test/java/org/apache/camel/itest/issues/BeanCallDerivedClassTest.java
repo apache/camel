@@ -14,22 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean.issues;
+package org.apache.camel.itest.issues;
+
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class DerivedClass extends BaseClass {
+public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 
-    private String body;
-
-    public void process(String body) {
-        this.body = body;
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/itest/issues/BeanCallDerivedClassTest-context.xml");
     }
 
-    public String getAndClearBody() {
-        String answer = body;
-        body = null;
-        return answer;
+    @Test
+    public void testCallBean() throws Exception {
+        DerivedClass derived = context.getRegistry().lookup("derived", DerivedClass.class);
+
+        template.sendBody("direct:start", "Hello World");
+        assertEquals("Hello World", derived.getBody());
     }
+
 }

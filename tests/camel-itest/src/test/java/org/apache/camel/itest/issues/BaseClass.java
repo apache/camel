@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean.issues;
+package org.apache.camel.itest.issues;
+
+import javax.jms.MessageListener;
+import javax.jms.Message;
 
 /**
  * @version $Revision$
  */
-public class DerivedClass extends BaseClass {
+public class BaseClass implements MessageListener {
 
-    private String body;
-
-    public void process(String body) {
-        this.body = body;
-    }
-
-    public String getAndClearBody() {
-        String answer = body;
-        body = null;
-        return answer;
+    public void onMessage(Message message) {
+        System.out.println("base called");
     }
 }

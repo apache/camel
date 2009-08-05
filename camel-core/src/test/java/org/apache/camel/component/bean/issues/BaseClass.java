@@ -19,9 +19,9 @@ package org.apache.camel.component.bean.issues;
 /**
  * @version $Revision$
  */
-public class BaseClass {
+public class BaseClass implements MyMessageListener {
 
-    public void onMessage(String message) {
+    public void onMessage(MyMessage message) {
         // noop
     }
     
