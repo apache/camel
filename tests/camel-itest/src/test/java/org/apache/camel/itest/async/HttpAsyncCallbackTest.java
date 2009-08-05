@@ -68,7 +68,7 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
         private List<String> data = new ArrayList<String>();
 
         @Override
-        public void onDone(Exchange exchange) {
+        public void onComplete(Exchange exchange) {
             // this method is invoked when the exchange was a success and we can get the response
             String body = exchange.getOut().getBody(String.class);
             data.add(body);
