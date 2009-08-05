@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -30,10 +31,12 @@ import org.apache.camel.impl.DefaultMessage;
 public class HttpMessage extends DefaultMessage {
 
     private HttpServletRequest request;
+    private HttpServletResponse response;
 
-    public HttpMessage(Exchange exchange, HttpServletRequest request) {
+    public HttpMessage(Exchange exchange, HttpServletRequest request, HttpServletResponse response) {
         setExchange(exchange);
         this.request = request;
+        this.response = response;
 
         // use binding to read the request allowing end users to use their
         // implementation of the binding
@@ -42,6 +45,10 @@ public class HttpMessage extends DefaultMessage {
 
     public HttpServletRequest getRequest() {
         return request;
+    }
+
+    public HttpServletResponse getResponse() {
+        return response;
     }
 
     @Override

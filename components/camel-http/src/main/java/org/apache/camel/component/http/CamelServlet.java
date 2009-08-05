@@ -54,7 +54,7 @@ public class CamelServlet extends HttpServlet {
 
             // Have the camel process the HTTP exchange.
             DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
-            exchange.setIn(new HttpMessage(exchange, request));
+            exchange.setIn(new HttpMessage(exchange, request, response));
             consumer.getProcessor().process(exchange);
 
             // HC: The getBinding() is interesting because it illustrates the

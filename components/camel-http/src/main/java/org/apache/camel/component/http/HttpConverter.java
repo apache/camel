@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -44,6 +45,14 @@ public final class HttpConverter {
             return null;
         }
         return message.getRequest();
+    }
+
+    @Converter
+    public static HttpServletResponse toServletResponse(HttpMessage message) {
+        if (message == null) {
+            return null;
+        }
+        return message.getResponse();
     }
 
     @Converter
