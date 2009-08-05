@@ -30,7 +30,7 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/fileonly");
+        deleteDirectory("target/files");
         super.setUp();
         template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "report.txt");
         template.sendBodyAndHeader("file://target/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
