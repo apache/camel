@@ -398,16 +398,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         };
     }
 
-    protected Processor createSetBodyProcessorCallback(final Object body, final Synchronization onCompletion) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-                exchange.addOnCompletion(onCompletion);
-            }
-        };
-    }
-
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
         Endpoint endpoint = context.getEndpoint(endpointUri);
         if (endpoint == null) {
@@ -613,9 +603,19 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Future<Object> asyncCallback(final Endpoint endpoint, final ExchangePattern pattern, final Object body, final Synchronization onCompletion) {
         Callable<Object> task = new Callable<Object>() {
             public Object call() throws Exception {
-                Exchange exchange = send(endpoint, pattern, createSetBodyProcessorCallback(body, onCompletion));
+                Exchange answer = send(endpoint, pattern, createSetBodyProcessor(body));
 
-                Object result = extractResultBody(exchange, pattern);
+                // invoke callback before returning answer
+                // as it allows callback to be used without UnitOfWorkProcessor invoking it
+                // and thus it works directly from a producer template as well, as opposed
+                // to the UnitOfWorkProcessor that is injected in routes
+                if (answer.isFailed()) {
+                    onCompletion.onFailure(answer);
+                } else {
+                    onCompletion.onComplete(answer);
+                }
+
+                Object result = extractResultBody(answer, pattern);
                 if (pattern.isOutCapable()) {
                     return result;
                 } else {
@@ -631,8 +631,18 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Future<Exchange> asyncCallback(final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
         Callable<Exchange> task = new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                exchange.addOnCompletion(onCompletion);
-                return send(endpoint, exchange);
+                Exchange answer = send(endpoint, exchange);
+
+                // invoke callback before returning answer
+                // as it allows callback to be used without UnitOfWorkProcessor invoking it
+                // and thus it works directly from a producer template as well, as opposed
+                // to the UnitOfWorkProcessor that is injected in routes
+                if (answer.isFailed()) {
+                    onCompletion.onFailure(answer);
+                } else {
+                    onCompletion.onComplete(answer);
+                }
+                return answer;
             }
         };
 
@@ -642,7 +652,18 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Future<Exchange> asyncCallback(final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
         Callable<Exchange> task = new Callable<Exchange>() {
             public Exchange call() throws Exception {
-                return producerCache.send(endpoint, null, processor, onCompletion);
+                Exchange answer = producerCache.send(endpoint, processor);
+
+                // invoke callback before returning answer
+                // as it allows callback to be used without UnitOfWorkProcessor invoking it
+                // and thus it works directly from a producer template as well, as opposed
+                // to the UnitOfWorkProcessor that is injected in routes
+                if (answer.isFailed()) {
+                    onCompletion.onFailure(answer);
+                } else {
+                    onCompletion.onComplete(answer);
+                }
+                return answer;
             }
         };
 
