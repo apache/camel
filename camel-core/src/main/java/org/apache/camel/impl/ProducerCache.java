@@ -107,28 +107,12 @@ public class ProducerCache extends ServiceSupport {
      * @return the exchange
      */
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
-        return send(endpoint, pattern, processor, null);
-    }
-
-    /**
-     * Sends an exchange to an endpoint using a supplied
-     * {@link Processor} to populate the exchange
-     *
-     * @param endpoint the endpoint to send the exchange to
-     * @param pattern the message {@link ExchangePattern} such as
-     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
-     * @param processor the transformer used to populate the new exchange
-     * @param onCompletion  callback invoked when exchange has been completed
-     * @return the exchange
-     */
-    public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Synchronization onCompletion) {
         try {
-            return sendExchange(endpoint, pattern, processor, null, onCompletion);
+            return sendExchange(endpoint, pattern, processor, null);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
         }
     }
-
 
     /**
      * Sends an exchange to an endpoint using a supplied callback
@@ -168,11 +152,6 @@ public class ProducerCache extends ServiceSupport {
 
     protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
                                     final Processor processor, Exchange exchange) throws Exception {
-        return sendExchange(endpoint, pattern, processor, exchange, null);
-    }
-
-    protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
-                                    final Processor processor, Exchange exchange, final Synchronization onCompletion) throws Exception {
         return doInProducer(endpoint, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 if (exchange == null) {
@@ -182,10 +161,6 @@ public class ProducerCache extends ServiceSupport {
                 if (processor != null) {
                     // lets populate using the processor callback
                     processor.process(exchange);
-                }
-
-                if (onCompletion != null) {
-                    exchange.addOnCompletion(onCompletion);
                 }
 
                 // now lets dispatch
