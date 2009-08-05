@@ -234,8 +234,10 @@ public final class ExchangeHelper {
                     result.getIn().copyFrom(source.getIn());
                 }
             }
-            result.getProperties().clear();
-            result.getProperties().putAll(source.getProperties());
+
+            if (source.hasProperties()) {
+                result.getProperties().putAll(source.getProperties());
+            }
         }
     }
 
@@ -271,8 +273,9 @@ public final class ExchangeHelper {
         result.setException(source.getException());
         
         // copy properties
-        result.getProperties().clear();
-        result.getProperties().putAll(source.getProperties());
+        if (source.hasProperties()) {
+            result.getProperties().putAll(source.getProperties());
+        }
     }
 
     /**
