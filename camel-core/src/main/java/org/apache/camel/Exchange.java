@@ -69,6 +69,7 @@ public interface Exchange {
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     
+    String HTTP_BASE_URI           = "CamelHttpBaseUri";
     String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
     String HTTP_METHOD             = "CamelHttpMethod";
     String HTTP_PATH               = "CamelHttpPath";
