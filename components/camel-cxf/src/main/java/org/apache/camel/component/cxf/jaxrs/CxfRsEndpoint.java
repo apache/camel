@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -30,6 +31,9 @@ import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionPar
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 
@@ -37,9 +41,13 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
  * 
  */
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-    private List<Class> resourceClasses;    
+    private static final Log LOG = LogFactory.getLog(CxfRsEndpoint.class);
+
+    private List<Class<?>> resourceClasses;    
     private HeaderFilterStrategy headerFilterStrategy;
     private CxfRsBinding binding;
+
+    private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
     
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
        super(endpointUri, camelContext);
@@ -49,12 +57,22 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         super(endpointUri, component);
     }
     
-    public HeaderFilterStrategy getHeaderFilterStrategy() {        
+    public HeaderFilterStrategy getHeaderFilterStrategy() {    
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new CxfRsHeaderFilterStrategy();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Create default header filter strategy " + headerFilterStrategy);
+            }
+        }
         return headerFilterStrategy;
     }
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
+        if (binding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)binding)
+                .setHeaderFilterStrategy(headerFilterStrategy);
+        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {        
@@ -71,19 +89,29 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     public void setBinding(CxfRsBinding binding) {
         this.binding = binding;
+        bindingInitialized.set(false);
+
     }
     
     public CxfRsBinding getBinding() {
         if (binding == null) {
             binding = new DefaultCxfRsBinding();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Create default CXF Binding " + binding);
+            }
         } 
+        
+        if (!bindingInitialized.getAndSet(true) && binding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)binding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+        
         return binding;
     }
     
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {        
         // address
         sfb.setAddress(getEndpointUri());
-        sfb.setResourceClasses(getResourceClasses());
+        sfb.setResourceClasses(CastUtils.cast(getResourceClasses(), Class.class));
         sfb.setStart(false);
     }
     
@@ -107,15 +135,15 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return answer;
     }
        
-    public List<Class> getResourceClasses() {
+    public List<Class<?>> getResourceClasses() {
         return resourceClasses;
     }
 
-    public void setResourceClasses(List<Class> classes) {
+    public void setResourceClasses(List<Class<?>> classes) {
         resourceClasses = classes;
     }
 
-    public void setResourceClasses(Class... classes) {
+    public void setResourceClasses(Class<?>... classes) {
         setResourceClasses(Arrays.asList(classes));
     }
 

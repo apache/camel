@@ -17,13 +17,9 @@
 
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 
 /**
@@ -33,7 +29,6 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
  * It is also responsible for converting and sending back responses to CXF client. 
  */
 public class CxfRsConsumer extends DefaultConsumer {
-    private static final Log LOG = LogFactory.getLog(CxfRsConsumer.class);
     private Server server;
 
     public CxfRsConsumer(CxfRsEndpoint endpoint, Processor processor) {

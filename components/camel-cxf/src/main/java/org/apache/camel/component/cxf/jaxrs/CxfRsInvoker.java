@@ -17,8 +17,6 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.logging.Level;
 
 import javax.ws.rs.WebApplicationException;
 

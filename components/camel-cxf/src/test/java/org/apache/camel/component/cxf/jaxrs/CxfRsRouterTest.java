@@ -17,12 +17,9 @@
 
 package org.apache.camel.component.cxf.jaxrs;
 
-import java.io.InputStream;
-import java.net.URL;
-
-import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -30,8 +27,6 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import static org.junit.Assert.assertEquals;
 
 public class CxfRsRouterTest extends CamelSpringTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
@@ -43,18 +38,35 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetCustomer() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/customers/123");
+    public void testGetCustomer() throws Exception {      
+        GetMethod get = new GetMethod("http://localhost:9000/customerservice/customers/123");
+        get.addRequestHeader("Accept" , "application/json");
+        
+        HttpClient httpclient = new HttpClient();
 
-        InputStream in = url.openStream();
-        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
+        try {
+            assertEquals(200, httpclient.executeMethod(get));
+            assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
+                         get.getResponseBodyAsString());
+        } finally {
+            get.releaseConnection();
+        }
     }
     
     @Test
     public void testGetSubResource() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
-        InputStream in = url.openStream();
-        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
+        GetMethod get = new GetMethod("http://localhost:9000/customerservice/orders/223/products/323");
+        get.addRequestHeader("Accept" , "application/json");
+
+        HttpClient httpclient = new HttpClient();
+
+        try {
+            assertEquals(200, httpclient.executeMethod(get));
+            assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", 
+                         get.getResponseBodyAsString());
+        } finally {
+            get.releaseConnection();
+        }
     }
     
     @Test

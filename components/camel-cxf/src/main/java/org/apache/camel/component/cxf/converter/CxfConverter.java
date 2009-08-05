@@ -17,10 +17,12 @@
 package org.apache.camel.component.cxf.converter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
@@ -118,6 +120,30 @@ public final class CxfConverter {
     @Converter
     public static DataFormat toDataFormat(final String name) {
         return DataFormat.valueOf(name.toUpperCase());
+    }
+    
+    @Converter
+    public static InputStream toInputStream(Response response, Exchange exchange) {
+        
+        Object obj = response.getEntity();
+        
+        if (obj == null) {
+            return null;
+        }
+        
+        if (obj instanceof InputStream) {
+            // short circuit the lookup
+            return (InputStream)obj;
+        }
+        
+        TypeConverterRegistry registry = exchange.getContext().getTypeConverterRegistry();
+        TypeConverter tc = registry.lookup(InputStream.class, obj.getClass());
+        
+        if (tc != null) {
+            return tc.convertTo(InputStream.class, exchange, obj);
+        }
+        
+        return null;
     }
 
     /**

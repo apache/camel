@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.cxf.jaxrs;
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -27,11 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.message.MessageContentsList;
 
 /**
  * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
@@ -39,6 +39,9 @@ import org.apache.cxf.message.MessageContentsList;
  * according to resource annotation.  Any response will be bound to Camel exchange. 
  */
 public class CxfRsProducer extends DefaultProducer {
+    
+    private static final Log LOG = LogFactory.getLog(CxfRsProducer.class);
+
     JAXRSClientFactoryBean cfb;
 
     public CxfRsProducer(CxfRsEndpoint endpoint) {
@@ -47,6 +50,11 @@ public class CxfRsProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Process exchange: " + exchange);
+        }
+        
         Message inMessage = exchange.getIn();
         Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
         if (httpClientAPI != null && httpClientAPI.booleanValue()) {
@@ -58,37 +66,57 @@ public class CxfRsProducer extends DefaultProducer {
     }
     
     @SuppressWarnings("unchecked")
-    protected void invokeHttpClient(Exchange exchange) {
+    protected void invokeHttpClient(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();       
         WebClient client = cfb.createWebClient();
+        
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class); 
         Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);        
         String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
        
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP method = " + httpMethod);
+            LOG.trace("path = " + path);
+            LOG.trace("responseClass = " + responseClass);
+        }
+        
+        // set the path
         if (path != null) {
             client.path(path);
         } 
+        
+        CxfRsBinding binding = ((CxfRsEndpoint)getEndpoint()).getBinding();
+
+        // set the body
         Object body = null;
         if (!"GET".equals(httpMethod)) {
-            // need to check the request object
-            body = checkRequestObject(inMessage.getBody());            
+            // need to check the request object.           
+            body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Request body = " + body);
+            }
         }
         
-        /*String acceptContentType = inMessage.getHeader(Exchange.ACCEPT_CONTENT_TYPE, String.class);
-        if (acceptContentType != null) {            
-            client.accept(acceptContentType);            
-        }*/
+        // set headers
+        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(),
+                                                                exchange));
+        
+        // invoke the client
         Object response = null;        
-        if (responseClass == null) {
-            response = client.invoke(httpMethod, body, InputStream.class);
-        } else if (responseClass.equals(Response.class)) {
+        if (responseClass == null || Response.class.equals(responseClass)) {
             response = client.invoke(httpMethod, body);
         } else {
             response = client.invoke(httpMethod, body, responseClass);
         }
-       
-        if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().setBody(response);
+        
+        // set response
+        if (exchange.getPattern().isOutCapable()) {     
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Response body = " + response);
+            }
+            
+            exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
+            exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
         }
     }
 
@@ -116,9 +144,10 @@ public class CxfRsProducer extends DefaultProducer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Method findRightMethod(List<Class> resourceClasses, String methodName, Class[] parameterTypes) throws NoSuchMethodException {        
         Method answer = null;
-        for (Class clazz : resourceClasses) {
+        for (Class<?> clazz : resourceClasses) {
             try {
                 answer = clazz.getMethod(methodName, parameterTypes);
             } catch (NoSuchMethodException ex) {
@@ -134,21 +163,9 @@ public class CxfRsProducer extends DefaultProducer {
             + "withe these parameter " + arrayToString(parameterTypes));
     }
     
-    private Object checkRequestObject(Object request) {
-        if (request != null) {
-            if (request instanceof MessageContentsList) {
-                request = ((MessageContentsList)request).get(0);
-            } else if (request instanceof List) {
-                request = ((List)request).get(0);
-            } else if (request.getClass().isArray()) {
-                request = ((Object[])request)[0];
-            }
-        }
-        return request;
-    }
     
-    private Class[] getParameterTypes(Object[] objects) {
-        Class[] answer = new Class[objects.length];
+    private Class<?>[] getParameterTypes(Object[] objects) {
+        Class<?>[] answer = new Class[objects.length];
         int i = 0;
         for (Object obj : objects) {
             answer[i] = obj.getClass();

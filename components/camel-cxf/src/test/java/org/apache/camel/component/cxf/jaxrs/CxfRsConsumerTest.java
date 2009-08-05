@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.camel.Exchange;

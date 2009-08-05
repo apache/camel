@@ -61,7 +61,6 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                     CxfEndpointBean.class);
 
             result = new CxfSpringEndpoint(this, bean);
-            setEndpointHeaderFilterStrategy(result);
            
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.
@@ -78,6 +77,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
             result = new CxfEndpoint(remaining, this);
         }
         
+        setEndpointHeaderFilterStrategy(result);
         return result;
     }
         

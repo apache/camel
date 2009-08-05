@@ -20,8 +20,14 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import javax.ws.rs.core.MultivaluedMap;
 import org.apache.cxf.message.Exchange;
 
+/**
+ * Interface to bind between Camel and CXF exchange for RESTful resources.
+ *
+ * @version $Revision$
+ */
 public interface CxfRsBinding {
     
     /**
@@ -47,5 +53,53 @@ public interface CxfRsBinding {
      */
     Object populateCxfRsResponseFromExchange(org.apache.camel.Exchange camelExchange,
                                Exchange cxfExchange) throws Exception;
+    
+    /**
+     * Bind the camel in message body to a request body that gets passed
+     * to CXF RS {@link org.apache.cxf.jaxrs.client.WebClient} APIs.
+     * 
+     * @param camelMessage the source message
+     * @param camelExchange the Camel exchange
+     * @return the request object to be passed to invoke a WebClient
+     * @throws Exception
+     */
+    Object bindCamelMessageBodyToRequestBody(org.apache.camel.Message camelMessage,
+                                             org.apache.camel.Exchange camelExchange) 
+        throws Exception;
+    
+    /**
+     * Bind the camel headers to request headers that gets passed to CXF RS
+     * {@link org.apache.cxf.jaxrs.client.WebClient} APIs.
+     * 
+     * @param camelHeaders the source headers
+     * @param camelExchange the Camel exchange
+     * @param headers to be passed to WebClient
+     * @throws Exception
+     */
+    MultivaluedMap<String, String> bindCamelHeadersToRequestHeaders(Map<String, Object> camelHeaders,
+                                                                    org.apache.camel.Exchange camelExchange) 
+       throws Exception;
+                                                         
+    
+    /**
+     * Bind the HTTP response body to camel out body
+     * @param response
+     * @param exchange
+     * @return the object to be set in the Camel out message body
+     */
+    Object bindResponseToCamelBody(Object response, org.apache.camel.Exchange camelExchange)
+        throws Exception;
+    
+    /**
+     * Bind the response headers to camel out headers.
+     * 
+     * @param response
+     * @param exchange
+     * @return headers to be set in the Camel out message
+     * @throws Exception
+     */
+    Map<String, Object> bindResponseHeadersToCamelHeaders(Object response, 
+                                                          org.apache.camel.Exchange exchange)
+        throws Exception;
 
 }

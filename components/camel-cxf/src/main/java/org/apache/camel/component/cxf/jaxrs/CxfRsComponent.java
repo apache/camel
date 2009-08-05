@@ -23,9 +23,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.component.cxf.CxfSpringEndpoint;
-import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
@@ -42,6 +39,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
         super(context);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         CxfRsEndpoint answer = null;
@@ -56,7 +54,6 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
                 AbstractJAXRSFactoryBean.class);
 
             answer = new CxfRsSpringEndpoint(this.getCamelContext(), bean);
-            setEndpointHeaderFilterStrategy(answer);
            
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.
@@ -73,6 +70,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
             answer = new CxfRsEndpoint(remaining, this);
         }
         
+        setEndpointHeaderFilterStrategy(answer);
         return answer;
     }
 
