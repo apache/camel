@@ -29,7 +29,7 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * Base redeliverable error handler that also suppors a final dead letter queue in case
+ * Base redeliverable error handler that also supports a final dead letter queue in case
  * all redelivery attempts fail.
  * <p/>
  * This implementation should contain all the error handling logic and the sub classes

@@ -394,7 +394,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
             }
         }
 
-        // configure stream caching
+        // configure handle fault
         if (handleFault != null) {
             routeContext.setHandleFault(isHandleFault());
             if (isHandleFault()) {

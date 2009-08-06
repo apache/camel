@@ -78,7 +78,7 @@ public interface CxfRsBinding {
      */
     MultivaluedMap<String, String> bindCamelHeadersToRequestHeaders(Map<String, Object> camelHeaders,
                                                                     org.apache.camel.Exchange camelExchange) 
-       throws Exception;
+        throws Exception;
                                                          
     
     /**

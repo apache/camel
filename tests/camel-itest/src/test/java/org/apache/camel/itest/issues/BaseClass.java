@@ -16,8 +16,8 @@
  */
 package org.apache.camel.itest.issues;
 
-import javax.jms.MessageListener;
 import javax.jms.Message;
+import javax.jms.MessageListener;
 
 /**
  * @version $Revision$
