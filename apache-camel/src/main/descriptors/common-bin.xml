@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 <component>
-  <id>common-bin</id>
+  <!--<id>common-bin</id>-->
   <fileSets>
 
     <fileSet>

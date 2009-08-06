@@ -232,15 +232,12 @@
         </configuration>
       </plugin>
 
-
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-alpha-2</version>
         <configuration>
           <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
-
 
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
@@ -286,12 +283,12 @@
         </executions>
 
         <configuration>
-
           <encoding>UTF-8</encoding>
           <verbose>false</verbose>
           <show>public</show>
           <subpackages>org.apache.camel.web.resources</subpackages>
-
+          <!-- see http://jira.codehaus.org/browse/MJAVADOC-229 -->
+          <useStandardDocletOptions>false</useStandardDocletOptions>
           <doclet>com.sun.jersey.wadl.resourcedoc.ResourceDoclet</doclet>
           <docletArtifacts>
             <docletArtifact>
