@@ -316,7 +316,11 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
             for (int i = 0; i < batchSize; ++i) {
                 Exchange e = queue.poll();
                 if (e != null) {
-                    collection.add(e);
+                    try {
+                        collection.add(e);
+                    } catch (Throwable t) {
+                        getExceptionHandler().handleException(t);
+                    }
                 } else {
                     break;
                 }
