@@ -18,6 +18,8 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
@@ -29,6 +31,14 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
 
     public void testExceptionInAggregationStrategy() throws Exception {
+        testExceptionInFlow("direct:start");
+    }
+    
+    public void testExceptionInPredicate() throws Exception {
+        testExceptionInFlow("direct:predicate");
+    }
+    
+    private void testExceptionInFlow(String startUri) throws Exception {
         // failed first aggregation
         
         // TODO Following assertion should be true while it is not. Instead
@@ -40,8 +50,8 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
         // second aggregated
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("direct:start", "Damn", "id", 1);
-        template.sendBodyAndHeader("direct:start", "Hello World", "id", 1);
+        template.sendBodyAndHeader(startUri, "Damn", "id", 1);
+        template.sendBodyAndHeader(startUri, "Hello World", "id", 1);
 
         assertMockEndpointsSatisfied();
     }
@@ -68,6 +78,18 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
                     })
                     .to("mock:result");
 
+                from("direct:predicate")
+                    .aggregate(new Expression() {
+                    
+                        public <T> T evaluate(Exchange exchange, Class<T> type) {
+                            if (exchange.getIn().getBody().equals("Damn")) {
+                                throw new IllegalArgumentException();
+                            }
+                            return ExpressionBuilder.headerExpression("id").evaluate(exchange, type);
+                        }
+                    })
+                    .batchTimeout(500)
+                    .to("mock:result");
             }
         };
     }

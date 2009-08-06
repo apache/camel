@@ -318,6 +318,8 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                 if (e != null) {
                     try {
                         collection.add(e);
+                    } catch (Exception t) {
+                        e.setException(t);
                     } catch (Throwable t) {
                         getExceptionHandler().handleException(t);
                     }
