@@ -16,9 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,14 +33,26 @@ public class TryProcessorTest extends ContextTestSupport {
 
     private boolean handled;
 
-    public void testTryCatchFinally() throws Exception {
+    public void testTryCatchFinallyProcessor() throws Exception {
+        testTryCatchFinally("direct:processor");
+    }
+
+    public void testTryCatchFinallyExpression() throws Exception {
+        testTryCatchFinally("direct:expression");
+    }
+
+    public void testTryCatchFinallyPredicate() throws Exception {
+        testTryCatchFinally("direct:predicate");
+    }
+
+    private void testTryCatchFinally(String endpointName) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
         getMockEndpoint("mock:last").expectedMessageCount(1);
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
-        sendBody("direct:start", "<test>Hello World!</test>");
+        sendBody(endpointName, "<test>Hello World!</test>");
         assertTrue("Should have been handled", handled);
 
         assertMockEndpointsSatisfied();
@@ -45,23 +61,57 @@ public class TryProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
+                from("direct:processor")
                     .doTry()
                         .process(new ProcessorFail())
                         .to("mock:result")
-                    .doCatch(Exception.class)
+                    .doCatch(CamelException.class)
                         .process(new ProcessorHandle())
                     .doFinally()
                         .to("mock:finally")
                     .end()
                     .to("mock:last");
+                
+                from("direct:expression")
+                    .doTry()
+                        .setBody(new ProcessorFail())
+                        .to("mock:result")
+                    .doCatch(CamelException.class)
+                        .process(new ProcessorHandle())
+                    .doFinally()
+                        .to("mock:finally")
+                    .end()
+                    .to("mock:last");
+                
+                from("direct:predicate")
+                    .doTry()
+                        .to("direct:sub-predicate")
+                    .doCatch(CamelException.class)
+                        .process(new ProcessorHandle())
+                    .doFinally()
+                        .to("mock:finally")
+                    .end()
+                    .to("mock:last");
+                
+                from("direct:sub-predicate")
+                    .errorHandler(noErrorHandler())
+                    .filter(new ProcessorFail())
+                    .to("mock:result");
             }
         };
     }
 
-    private class ProcessorFail implements Processor {
+    private class ProcessorFail implements Processor, Predicate, Expression {
         public void process(Exchange exchange) throws Exception {
-            throw new IllegalStateException("Force to fail");
+            throw new RuntimeCamelException(new CamelException("Force to fail"));
+        }
+
+        public <T> T evaluate(Exchange exchange, Class<T> type) {
+            throw new RuntimeCamelException(new CamelException("Force to fail"));
+        }
+
+        public boolean matches(Exchange exchange) {
+            throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
     }
 
@@ -73,7 +123,9 @@ public class TryProcessorTest extends ContextTestSupport {
 
             Exception e = (Exception)exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
             assertNotNull("There should be an exception", e);
-            assertTrue(e instanceof IllegalStateException);
+            
+            // If we handle CamelException it is what we should have as an exception caught
+            assertTrue(e instanceof CamelException);
             assertEquals("Force to fail", e.getMessage());
         }
     }

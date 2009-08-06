@@ -51,27 +51,31 @@ public class CatchProcessor extends DelegateProcessor implements Traceable {
     }
 
     /**
-     * Whether this catch processor catch the given thrown exception
+     * Returns with the exception that is caught by this processor.
+     * 
+     * This method traverses exception causes, so sometimes the exception
+     * returned from this method might be one of causes of the parameter
+     * passed.
      *
      * @param exchange  the current exchange
      * @param exception the thrown exception
-     * @return <tt>true</tt> if this processor catches it, <tt>false</tt> otherwise.
+     * @return Throwable that this processor catches. <tt>null</tt> if nothing matches.
      */
-    public boolean catches(Exchange exchange, Throwable exception) {
+    public Throwable catches(Exchange exchange, Throwable exception) {
         // use the exception iterator to walk the caused by hierachy
         Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
         while (it.hasNext()) {
             Throwable e = it.next();
             // see if we catch this type
-            for (Class type : exceptions) {
+            for (Class<?> type : exceptions) {
                 if (type.isInstance(e) && matchesWhen(exchange)) {
-                    return true;
+                    return e;
                 }
             }
         }
 
         // not found
-        return false;
+        return null;
     }
 
 

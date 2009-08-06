@@ -98,15 +98,16 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
         }
 
         for (CatchProcessor catchClause : catchClauses) {
-            if (catchClause.catches(exchange, e)) {
+            Throwable caught = catchClause.catches(exchange, e);
+            if (caught != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("This TryProcessor catches the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
+                    LOG.trace("This TryProcessor catches the exception: " + caught.getClass().getName() + " caused by: " + e.getMessage());
                 }
 
                 // lets attach the exception to the exchange
                 Exchange localExchange = exchange.copy();
                 
-                localExchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+                localExchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
                 // give the rest of the pipeline another chance
                 localExchange.setException(null);
 
@@ -117,7 +118,7 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("The exception is handled: " + handled + " for the exception: " + e.getClass().getName()
-                        + " caused by: " + e.getMessage());
+                        + " caused by: " + caught.getMessage());
                 }
 
                 if (handled) {
