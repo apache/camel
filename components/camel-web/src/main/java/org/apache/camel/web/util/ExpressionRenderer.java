@@ -136,6 +136,11 @@ public class ExpressionRenderer {
             String words[] = expression.split("\\(|, |\\)");
 
             buffer.append(words[1]).append("().").append("append(\"").append(words[2]).append("\")");
+        } else if (expression.startsWith("prepend")) {
+            // prepend(body, World!) -> body().prepend(" World!")
+            String words[] = expression.split("\\(|, |\\)");
+
+            buffer.append(words[1]).append("().").append("prepend(\"").append(words[2]).append("\")");
         }
     }
 }

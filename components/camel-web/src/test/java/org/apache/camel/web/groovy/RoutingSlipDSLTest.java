@@ -22,15 +22,22 @@ package org.apache.camel.web.groovy;
  */
 public class RoutingSlipDSLTest extends GroovyRendererTestSupport {
 
+    public void testRoutingSlip() throws Exception {
+        String DSL = "from(\"direct:a\").routingSlip(\"myHeader\").to(\"mock:end\")";
+        String expectedDSL = "from(\"direct:a\").routingSlip(\"myHeader\", \",\").to(\"mock:end\")";
+
+        assertEquals(expectedDSL, render(DSL));
+    }
+
     public void testRoutingSlip1() throws Exception {
-        String DSL = "from(\"direct:start\").routingSlip(\"headerName\")";
-        String expectedDSL = "from(\"direct:start\").routingSlip(\"headerName\", \",\")";
+        String DSL = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\")";
+        String expectedDSL = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\", \",\")";
 
         assertEquals(expectedDSL, render(DSL));
     }
 
     public void testRoutingSlip2() throws Exception {
-        String DSL = "from(\"direct:start\").routingSlip(\"aRoutingSlipHeader\", \"#\")";
+        String DSL = "from(\"direct:c\").routingSlip(\"aRoutingSlipHeader\", \"#\")";
         String expectedDSL = DSL;
 
         assertEquals(expectedDSL, render(DSL));

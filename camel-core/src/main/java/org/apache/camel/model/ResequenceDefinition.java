@@ -195,6 +195,10 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
         return expressions;
     }
 
+    public List<Expression> getExpressionList() {
+        return expressionList;
+    }
+
     public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }

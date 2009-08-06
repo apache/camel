@@ -22,9 +22,16 @@ package org.apache.camel.web.groovy;
  */
 public class LoadBalanceDSLTest extends GroovyRendererTestSupport {
 
-    public void testFromTo() throws Exception {
+    public void testLoadBalanceRandom() throws Exception {
         String DSL = "from(\"direct:start\").loadBalance().random().to(\"mock:x\", \"mock:y\", \"mock:z\")";
         String expectedDSL = "from(\"direct:start\").loadBalance().random().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
+
+        assertEquals(expectedDSL, render(DSL));
+    }
+
+    public void testLoadBalanceFailover() throws Exception {
+        String DSL = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\", \"direct:y\")";
+        String expectedDSL = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\").to(\"direct:y\")";
 
         assertEquals(expectedDSL, render(DSL));
     }

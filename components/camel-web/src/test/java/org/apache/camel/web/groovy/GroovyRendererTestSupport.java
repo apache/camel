@@ -67,7 +67,7 @@ public abstract class GroovyRendererTestSupport extends TestCase {
         assertNotNull(route);
 
         StringBuilder sb = new StringBuilder();
-        new GroovyRenderer().renderRoute(sb, route);
+        GroovyRenderer.renderRoute(sb, route);
         return sb.toString();
     }
 

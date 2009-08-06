@@ -22,8 +22,15 @@ package org.apache.camel.web.groovy;
  */
 public class TransformDSLTest extends GroovyRendererTestSupport {
 
-    public void testTransformToConstant() throws Exception {
+    public void testTransformToConstant1() throws Exception {
         String DSL = "from(\"direct:start\").transform().constant(\"London\").to(\"mock:result\")";
+        String expectedDSL = "from(\"direct:start\").transform(constant(\"London\")).to(\"mock:result\")";
+
+        assertEquals(expectedDSL, render(DSL));
+    }
+
+    public void testTransformToConstant2() throws Exception {
+        String DSL = "from(\"direct:start\").transform(constant(\"London\")).to(\"mock:result\")";
         String expectedDSL = DSL;
 
         assertEquals(expectedDSL, render(DSL));

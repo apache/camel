@@ -19,62 +19,27 @@ package org.apache.camel.web.util;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
+import org.apache.camel.Expression;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.AggregateDefinition;
-import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.DelayDefinition;
-import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.FilterDefinition;
-import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.IdempotentConsumerDefinition;
-import org.apache.camel.model.InterceptDefinition;
-import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
-import org.apache.camel.model.LoopDefinition;
-import org.apache.camel.model.MarshalDefinition;
-import org.apache.camel.model.MulticastDefinition;
+import org.apache.camel.model.OnCompletionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.OutputDefinition;
-import org.apache.camel.model.PipelineDefinition;
-import org.apache.camel.model.PolicyDefinition;
-import org.apache.camel.model.PollEnrichDefinition;
-import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RecipientListDefinition;
-import org.apache.camel.model.RemoveHeaderDefinition;
-import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.SetBodyDefinition;
-import org.apache.camel.model.SetExchangePatternDefinition;
-import org.apache.camel.model.SetHeaderDefinition;
-import org.apache.camel.model.SetOutHeaderDefinition;
-import org.apache.camel.model.SetPropertyDefinition;
-import org.apache.camel.model.SortDefinition;
-import org.apache.camel.model.SplitDefinition;
-import org.apache.camel.model.StopDefinition;
-import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
-import org.apache.camel.model.TransactedDefinition;
-import org.apache.camel.model.TransformDefinition;
-import org.apache.camel.model.TryDefinition;
-import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.WhenDefinition;
-import org.apache.camel.model.language.ConstantExpression;
-import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
@@ -85,7 +50,7 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 /**
  * Render routes in Groovy language
  */
-public class GroovyRenderer implements TextRenderer {
+public class GroovyRenderer {
 
     public static final String header = "import org.apache.camel.language.groovy.GroovyRouteBuilder;\nclass GroovyRoute extends GroovyRouteBuilder {\nvoid configure() {\n";
 
@@ -96,8 +61,7 @@ public class GroovyRenderer implements TextRenderer {
      * 
      * @throws IOException
      */
-    public void renderRoute(StringBuilder buffer, RouteDefinition route) {
-        // TODO Auto-generated method stub
+    public static void renderRoute(StringBuilder buffer, RouteDefinition route) {
         List<FromDefinition> inputs = route.getInputs();
         List<ProcessorDefinition> outputs = route.getOutputs();
 
@@ -113,6 +77,15 @@ public class GroovyRenderer implements TextRenderer {
             }
         }
 
+        // render the global dsl not started with from, like global
+        // onCompletion, onException, intercept
+        for (ProcessorDefinition processor : outputs) {
+            if (processor.getParent() == null) {
+                renderProcessor(buffer, processor);
+                buffer.append(";");
+            }
+        }
+
         // render the inputs of the router
         buffer.append("from(");
         for (FromDefinition input : inputs) {
@@ -125,14 +98,16 @@ public class GroovyRenderer implements TextRenderer {
 
         // render the outputs of the router
         for (ProcessorDefinition processor : outputs) {
-            renderProcessor(buffer, processor);
+            if (processor.getParent() == route) {
+                renderProcessor(buffer, processor);
+            }
         }
     }
 
     /**
      * render a RoutesDefinition
      */
-    public void renderRoutes(StringBuilder buffer, RoutesDefinition routes) {
+    public static void renderRoutes(StringBuilder buffer, RoutesDefinition routes) {
         // TODO Auto-generated method stub
 
     }
@@ -140,7 +115,7 @@ public class GroovyRenderer implements TextRenderer {
     /**
      * render a ProcessorDefiniton
      */
-    private void renderProcessor(StringBuilder buffer, ProcessorDefinition processor) {
+    private static void renderProcessor(StringBuilder buffer, ProcessorDefinition processor) {
         if (processor instanceof AggregateDefinition) {
             AggregateDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof ChoiceDefinition) {
@@ -176,7 +151,15 @@ public class GroovyRenderer implements TextRenderer {
 
             LoadBalancer lb = loadB.getLoadBalancerType().getLoadBalancer(null);
             if (lb instanceof FailOverLoadBalancer) {
-                buffer.append(".failover()");
+                buffer.append(".failover(");
+                List<Class> exceptions = ((FailOverLoadBalancer)lb).getExceptions();
+                for (Class excep : exceptions) {
+                    buffer.append(excep.getSimpleName()).append(".class");
+                    if (excep != exceptions.get(exceptions.size() - 1)) {
+                        buffer.append(", ");
+                    }
+                }
+                buffer.append(")");
             } else if (lb instanceof RandomLoadBalancer) {
                 buffer.append(".random()");
             } else if (lb instanceof RoundRobinLoadBalancer) {
@@ -192,14 +175,24 @@ public class GroovyRenderer implements TextRenderer {
                 renderProcessor(buffer, branch);
             }
             return;
+        } else if (processor instanceof OnCompletionDefinition) {
+            OnCompletionDefinitionRenderer.render(buffer, processor);
+            return;
+        } else if (processor instanceof OnExceptionDefinition) {
+            OnExceptionDefinitionRenderer.render(buffer, processor);
+            return;
         } else if (processor instanceof OutputDefinition) {
             OutputDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof ResequenceDefinition) {
             ResequenceDefinition resequence = (ResequenceDefinition)processor;
             buffer.append(".").append(processor.getShortName()).append("(");
-            List<ExpressionBuilder> exps = null;
-            for (ExpressionBuilder exp : exps) {
-                buffer.append(exp.toString()).append("(),");
+
+            List<Expression> exps = resequence.getExpressionList();
+            for (Expression exp : exps) {
+                buffer.append(exp.toString()).append("()");
+                if (exp != exps.get(exps.size() - 1)) {
+                    buffer.append(", ");
+                }
             }
             buffer.append(")");
         } else if (processor instanceof RoutingSlipDefinition) {
@@ -219,9 +212,9 @@ public class GroovyRenderer implements TextRenderer {
         }
 
         List<ProcessorDefinition> outputs = processor.getOutputs();
+
         for (ProcessorDefinition nextProcessor : outputs) {
             renderProcessor(buffer, nextProcessor);
         }
     }
-
 }

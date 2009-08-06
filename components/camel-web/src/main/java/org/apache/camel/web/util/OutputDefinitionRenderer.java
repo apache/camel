@@ -19,6 +19,7 @@ package org.apache.camel.web.util;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.EnrichDefinition;
@@ -43,7 +44,6 @@ import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
-import org.apache.camel.model.language.ExpressionDefinition;
 
 /**
  * 
@@ -52,17 +52,38 @@ public class OutputDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         OutputDefinition out = (OutputDefinition)processor;
-        buffer.append(".").append(out.getShortName());
-        if (out instanceof BeanDefinition) {
+
+        boolean notGlobal = buffer.toString().endsWith(")");
+        if (notGlobal) {
+            buffer.append(".");
+        }
+        buffer.append(out.getShortName());
+
+        if (out instanceof AOPDefinition) {
+            buffer.append("()");
+            AOPDefinition aop = (AOPDefinition)out;
+
+            if (aop.getBeforeUri() != null && aop.getAfterUri() != null) {
+                buffer.append(".around(\"").append(aop.getBeforeUri());
+                buffer.append("\", \"").append(aop.getAfterUri()).append("\")");
+            } else if (aop.getBeforeUri() != null) {
+                buffer.append(".before(\"").append(aop.getBeforeUri()).append("\")");
+            } else if (aop.getAfterUri() != null) {
+                buffer.append(".after(\"").append(aop.getAfterUri()).append("\")");
+            } else if (aop.getAfterFinallyUri() != null) {
+                buffer.append(".afterFinally(\"").append(aop.getAfterUri()).append("\")");
+            }
+
+        } else if (out instanceof BeanDefinition) {
 
         } else if (out instanceof EnrichDefinition) {
             String enrich = out.toString();
             String resourceUri = enrich.substring(enrich.indexOf('[') + 1, enrich.indexOf(' '));
             buffer.append("(\"").append(resourceUri).append("\")");
         } else if (out instanceof FinallyDefinition) {
-
+            
         } else if (out instanceof InterceptDefinition) {
-
+            buffer.append("()");
         } else if (out instanceof InterceptSendToEndpointDefinition) {
 
         } else if (out instanceof MarshalDefinition) {

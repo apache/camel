@@ -51,6 +51,18 @@ public class AOPDefinition extends OutputDefinition<ProcessorDefinition> {
         return "AOP[" + getOutputs() + "]";
     }
 
+    public String getBeforeUri() {
+        return beforeUri;
+    }
+
+    public String getAfterUri() {
+        return afterUri;
+    }
+
+    public String getAfterFinallyUri() {
+        return afterFinallyUri;
+    }
+
     @Override
     public String getShortName() {
         return "aop";

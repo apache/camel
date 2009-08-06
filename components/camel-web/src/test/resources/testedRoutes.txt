@@ -49,8 +49,7 @@ from("direct:start").pipeline("bean:foo?method=hi", "bean:foo?method=kabom").to(
 #########################recipientList#########################
 from("direct:start").recipientList(header("recipientListHeader").tokenize(","))
 #########################resequencer#########################
-#from("direct:start").resequence(body()).to("mock:result")  // No getExceptionList method for ResequenceDefinition
-#from("direct:start").resequencer(body()).to("mock:result") // No getExceptionList method for ResequenceDefinition
+#from("direct:start").resequence(body()).to("mock:result")
 #########################routingSlip#########################
 from("direct:start").routingSlip("headerName")
 from("direct:start").routingSlip("aRoutingSlipHeader", "#")

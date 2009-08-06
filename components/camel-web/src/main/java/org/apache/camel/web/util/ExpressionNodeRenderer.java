@@ -113,10 +113,7 @@ public class ExpressionNodeRenderer {
             }
         } else if (expNode instanceof TransformDefinition) {
             String expValue = expression.getExpressionValue().toString();
-            if (expValue.matches("\\w+")) {
-                buffer.append("()");
-                ExpressionRenderer.renderConstant(buffer, expression);
-            } else if (expValue.startsWith("append")) {
+            if (expValue.startsWith("append") || expValue.startsWith("prepend") || expValue.startsWith("to")) {
                 buffer.append("(");
                 ExpressionRenderer.render(buffer, expression);
                 buffer.append(")");
@@ -124,9 +121,7 @@ public class ExpressionNodeRenderer {
                 buffer.append("()");
                 ExpressionRenderer.render(buffer, expression);
             } else {
-                buffer.append("(");
-                ExpressionRenderer.render(buffer, expression);
-                buffer.append(")");
+                buffer.append("(constant(\"").append(expression.getExpressionValue().toString()).append("\"))");
             }
         } else if (expNode instanceof WhenDefinition) {
             if (expression.getPredicate() != null) {

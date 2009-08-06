@@ -1,1 +1,1 @@
-from("direct:start").filter().method("myBean", "matches").to("mock:result")
+onCompletion().to("log:global").to("mock:global");from("direct:start").onCompletion().to("log:route").to("mock:sync").end().to("mock:result")

@@ -42,6 +42,10 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
     }
 
+    public List<Class> getExceptions() {
+        return exceptions;
+    }
+
     /**
      * Should the given failed Exchange failover?
      *
