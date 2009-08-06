@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
  */
 @ContextConfiguration
 public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
-    private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
+    private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>113</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
     
     @Autowired

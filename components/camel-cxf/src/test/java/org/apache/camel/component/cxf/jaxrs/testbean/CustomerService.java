@@ -116,6 +116,11 @@ public class CustomerService {
         c.setId(123);
         customers.put(c.getId(), c);
 
+        c = new Customer();
+        c.setName("Dan");
+        c.setId(113);
+        customers.put(c.getId(), c);
+
         Order o = new Order();
         o.setDescription("order 223");
         o.setId(223);
