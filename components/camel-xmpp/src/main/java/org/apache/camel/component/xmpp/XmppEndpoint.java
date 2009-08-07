@@ -17,8 +17,6 @@
 package org.apache.camel.component.xmpp;
 
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -123,8 +121,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public XMPPConnection createConnection() throws XMPPException {
 
-        if ( connection != null )
+        if (connection != null) {
             return connection;
+        }
 
         if (port > 0) {
             if (getServiceName() == null) {
@@ -198,8 +197,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     }
 
     protected synchronized void destroy() throws Exception {
-        if ( connection != null )
+        if (connection != null) {
             connection.disconnect();
+        }
     }
 
     // Properties
