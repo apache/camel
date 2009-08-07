@@ -26,6 +26,7 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -51,13 +52,11 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         in.addAttachment("cid:0001", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
 
         // create a producer that can produce the exchange (= send the mail)
-        Producer producer = endpoint.createProducer();
-        // start the producer
-        producer.start();
-        // and let it go (processes the exchange by sending the email)
-        producer.process(exchange); 
-        
-        producer.stop();
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header(MailConstants.MAIL_ALTERNATIVE_BODY).isNull();
+
+        context.createProducerTemplate().send(endpoint, exchange);
     }
     
     private void verifyTheRecivedEmail(String expectString) throws Exception {
@@ -65,12 +64,9 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         Thread.sleep(1000);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        // this header should be removed
-        mock.message(0).header(MailConstants.MAIL_ALTERNATIVE_BODY).isNull();
-        Exchange out = mock.assertExchangeReceived(0);
         mock.assertIsSatisfied();
 
+        Exchange out = mock.assertExchangeReceived(0);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
         ((MailMessage)out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
