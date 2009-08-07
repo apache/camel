@@ -17,18 +17,32 @@
 package org.apache.camel.component.xmpp;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision:520964 $
  */
 public class XmppComponent extends DefaultComponent {
+    private static final transient Log LOG = LogFactory.getLog(XmppComponent.class);
+
+    //keep a cache of endpoints so they can be properly cleaned up
+    Map<String, XmppEndpoint> endpointCache = new HashMap<String, XmppEndpoint>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+
+        if ( endpointCache.containsKey(uri) ) {
+            LOG.debug("Using cached endpoint for URI " + uri);
+            return endpointCache.get(uri);
+        }
+
+        LOG.debug("Creating new endpoint for URI " + uri);
         XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 
         URI u = new URI(uri);
@@ -48,8 +62,16 @@ public class XmppComponent extends DefaultComponent {
                 endpoint.setParticipant(remainingPath);
             }
         }
+
+        endpointCache.put(uri, endpoint);
         
         return endpoint;
     }
 
+    @Override
+    protected synchronized void doStop() throws Exception {
+        for (Map.Entry<String, XmppEndpoint> entry : endpointCache.entrySet()) {
+            entry.getValue().destroy();
+        }
+    }
 }

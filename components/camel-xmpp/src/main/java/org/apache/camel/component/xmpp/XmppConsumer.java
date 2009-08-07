@@ -56,10 +56,19 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         connection = endpoint.createConnection();
 
         if (endpoint.getRoom() == null) {
-            Chat privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), this);
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Open private chat to: " + privateChat.getParticipant());
+
+            // if an existing chat session has been opened (for example by a producer) let's
+            // just add a listener to that chat
+            Chat privateChat = connection.getChatManager().getThreadChat(endpoint.getParticipant());
+
+            if (privateChat != null) {
+                LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
+                privateChat.addMessageListener(this);
+            } else {                
+                privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), endpoint.getParticipant(), this);
+                LOG.debug("Opening private chat to " + privateChat.getParticipant());
             }
+
         } else {
             // add the presence packet listener to the connection so we only get packets that concers us
             // we must add the listener before creating the muc
@@ -92,13 +101,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             muc.leave();
             muc = null;
         }
-        if (connection != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from: " + XmppEndpoint.getConnectionMessage(connection));
-            }
-            connection.disconnect();
-            connection = null;
-        }
+        //the endpoint will clean up the connection
     }
 
     public void processPacket(Packet packet) {

@@ -17,6 +17,8 @@
 package org.apache.camel.component.xmpp;
 
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -58,6 +60,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String participant;
     private String nickname;
     private String serviceName;
+    private XMPPConnection connection;
 
     public XmppEndpoint() {
     }
@@ -117,15 +120,17 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public boolean isSingleton() {
         return true;
     }
-    
+
     public XMPPConnection createConnection() throws XMPPException {
-        XMPPConnection connection;
+
+        if ( connection != null )
+            return connection;
 
         if (port > 0) {
             if (getServiceName() == null) {
                 connection = new XMPPConnection(new ConnectionConfiguration(host, port));
             } else {
-                connection = new XMPPConnection(new ConnectionConfiguration(host, port, getServiceName()));
+                connection = new XMPPConnection(new ConnectionConfiguration(host, port, serviceName));
             }
         } else {
             connection = new XMPPConnection(host);
@@ -188,8 +193,13 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return room + "@" + chatServer;
     }
 
-    public static String getConnectionMessage(XMPPConnection connetion) {
-        return connetion.getHost() + ":" + connetion.getPort() + "/" + connetion.getServiceName();
+    public static String getConnectionMessage(XMPPConnection connection) {
+        return connection.getHost() + ":" + connection.getPort() + "/" + connection.getServiceName();
+    }
+
+    protected synchronized void destroy() throws Exception {
+        if ( connection != null )
+            connection.disconnect();
     }
 
     // Properties

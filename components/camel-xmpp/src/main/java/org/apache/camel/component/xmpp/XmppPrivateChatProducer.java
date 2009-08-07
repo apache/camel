@@ -43,11 +43,10 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         this.endpoint = endpoint;
         this.participant = participant;
         ObjectHelper.notEmpty(participant, "participant");
+        LOG.debug("Creating XmppPrivateChatProducer to participant " + participant);
     }
 
     public void process(Exchange exchange) {
-        String threadId = exchange.getExchangeId();
-
         try {
             if (connection == null) {
                 connection = endpoint.createConnection();
@@ -66,9 +65,9 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         }
 
         ChatManager chatManager = connection.getChatManager();
-        Chat chat = chatManager.getThreadChat(threadId);
+        Chat chat = chatManager.getThreadChat(getParticipant());
         if (chat == null) {
-            chat = chatManager.createChat(getParticipant(), threadId, new MessageListener() {
+            chat = chatManager.createChat(getParticipant(), getParticipant(), new MessageListener() {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
                 }
@@ -78,8 +77,8 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         Message message = null;
         try {
             message = new Message();
-            message.setTo(participant);
-            message.setThread(threadId);
+            message.setTo(getParticipant());
+            message.setThread(getParticipant());
             message.setType(Message.Type.normal);
 
             endpoint.getBinding().populateXmppMessage(message, exchange);
@@ -88,22 +87,13 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 LOG.debug("Sending XMPP message: " + message.getBody());
             }
             chat.sendMessage(message);
-        } catch (XMPPException e) {
+        } catch (XMPPException xmppe) {
+            throw new RuntimeExchangeException("Cannot send XMPP message: " + message
+                    + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
+        } catch (Exception e) {
             throw new RuntimeExchangeException("Cannot send XMPP message: " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (connection != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from: " + XmppEndpoint.getConnectionMessage(connection));
-            }
-            connection.disconnect();
-            connection = null;
-        }
-        super.doStop();
     }
 
     // Properties

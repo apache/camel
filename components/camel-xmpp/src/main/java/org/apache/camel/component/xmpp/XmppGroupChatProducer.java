@@ -99,13 +99,6 @@ public class XmppGroupChatProducer extends DefaultProducer {
             chat.leave();
             chat = null;
         }
-        if (connection != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from: " + XmppEndpoint.getConnectionMessage(connection));
-            }
-            connection.disconnect();
-            connection = null;
-        }
         super.doStop();
     }
 
