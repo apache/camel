@@ -29,7 +29,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
-
 /**
  * Unit test that we can do file over JMS to file.
  */
@@ -40,13 +39,16 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
     @Test
     public void testRouteFileToFile() throws Exception {
         deleteDirectory("target/file2file");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/file2file/in", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        Thread.sleep(100);
+
+        // sleep a little to let the file be written
+        Thread.sleep(1000);
 
         File file = new File("./target/file2file/out/hello.txt");
         file = file.getAbsoluteFile();

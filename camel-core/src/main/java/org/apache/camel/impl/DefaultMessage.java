@@ -102,6 +102,10 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public boolean hasHeaders() {
+        if (!hasPopulatedHeaders()) {
+            // force creating headers
+            getHeaders();
+        }
         return headers != null && !headers.isEmpty();
     }
 
