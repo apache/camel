@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -56,6 +57,13 @@ public class CamelInvocationHandler implements InvocationHandler {
         producer.process(exchange);
         Throwable fault = exchange.getException();
         if (fault != null) {
+            if (fault instanceof RuntimeCamelException) {
+                // if the inner cause is a runtime exception we can throw it directly
+                if (((RuntimeCamelException) fault).getCause() instanceof RuntimeException) {
+                    throw (RuntimeException) ((RuntimeCamelException) fault).getCause();
+                }
+                throw (RuntimeCamelException) fault;
+            }
             throw new InvocationTargetException(fault);
         }
         if (pattern.isOutCapable()) {
