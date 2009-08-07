@@ -24,5 +24,13 @@
     <suppress checks=".*"
               files=".+[\\\/]generated[\\\/].+\.java"
               />
-    <suppress checks=".*" files="HelloNoPackage.java"/>
+    <suppress checks=".*"
+              files=".+[\\\/]build[\\\/]src[\\\/].+\.java"
+              />
+    <suppress checks=".*"
+              files=".+[\\\/]target[\\\/].+\.java"
+              />              
+    <suppress checks=".*"
+              files=".+[\\\/]contrib[\\\/].+\.java"
+              />
 </suppressions>

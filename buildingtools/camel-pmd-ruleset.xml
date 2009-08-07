@@ -59,7 +59,7 @@
     <!--<rule ref="rulesets/codesize.xml/ExcessivePublicCount"/>-->
     <!--<rule ref="rulesets/codesize.xml/TooManyFields"/>-->
 
-    <rule ref="rulesets/controversial.xml/AssignmentInOperand"/>
+    <!--<rule ref="rulesets/controversial.xml/AssignmentInOperand"/>-->
     <!--<rule ref="rulesets/controversial.xml/AtLeastOneConstructor"/>-->
     <!--<rule ref="rulesets/controversial.xml/CallSuperInConstructor"/>-->
     <!--<rule ref="rulesets/controversial.xml/DontImportSun"/>-->
@@ -186,5 +186,21 @@
     <rule ref="rulesets/unusedcode.xml/UnusedPrivateField"/>
     <rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod"/>
     <!--<rule ref="rulesets/unusedcode.xml/UnusedFormalParameter"/>-->
+
+    <rule name="DontUseLoggerGetLogger"
+          message="Don't use Logger.getLogger(...), use LogUtils.getL7dLogger(....) instead"
+          class="net.sourceforge.pmd.rules.XPathRule">
+        <priority>2</priority>
+        <description>Don't use Logger.getLogger(...), use LogUtils.getL7dLogger(....) instead</description>
+        <properties>
+            <property name="xpath">
+                <value>
+<![CDATA[
+//PrimaryPrefix/Name[ends-with(@Image, 'Logger.getLogger') and //PackageDeclaration/Name[starts-with(@Image, 'org.apache.cxf')]]
+]]>
+                </value>
+            </property>
+        </properties>
+    </rule>
 
 </ruleset>
