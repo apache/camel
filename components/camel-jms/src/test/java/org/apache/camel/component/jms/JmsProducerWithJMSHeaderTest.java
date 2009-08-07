@@ -48,6 +48,28 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
     }
 
     @Test
+    public void testInOnlyJMSPrioritoryZero() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSPriority").isEqualTo(0);
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "0");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testInOnlyJMSPrioritoryNine() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSPriority").isEqualTo(9);
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "9");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testInOnlyJMSPrioritoryTheDeliveryModeIsDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -65,19 +87,6 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
-
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "1");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testInOnlyJMSDeliveryModeThenPriorityIsDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
-        // not provided as header but should use endpoint default then
-        mock.message(0).header("JMSPriority").isEqualTo(4);
 
         template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "1");
 

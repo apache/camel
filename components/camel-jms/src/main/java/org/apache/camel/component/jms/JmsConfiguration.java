@@ -250,8 +250,8 @@ public class JmsConfiguration implements Cloneable {
                 }
 
                 int priority = message.getJMSPriority();
-                if (priority <= 0) {
-                    // use prioriry from endpoint if not provided on message
+                if (priority < 0 || priority > 9) {
+                    // use prioriry from endpoint if not provided on message with a valid range
                     priority = this.getPriority();
                 }
 
