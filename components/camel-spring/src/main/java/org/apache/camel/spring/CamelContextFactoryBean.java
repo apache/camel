@@ -93,7 +93,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlAttribute(required = false)
     private Boolean trace;
     @XmlAttribute(required = false)
-    private Boolean streamCache = Boolean.TRUE;
+    private Boolean streamCache = Boolean.FALSE;
     @XmlAttribute(required = false)
     private Long delayer;
     @XmlAttribute(required = false)
