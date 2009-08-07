@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -25,18 +26,19 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerProducerRouteTest extends ContextTestSupport {
 
-    public void testFileRoute() throws Exception {
-        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        result.expectedMessageCount(2);
-        result.setResultWaitTime(10000);
-
-        result.assertIsSatisfied();
-    }
-
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/test-consumer-produer-inbox");
-        super.setUp(); 
+        super.setUp();
+        template.sendBodyAndHeader("file://target/test-consumer-produer-inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/test-consumer-produer-inbox", "Bye World", Exchange.FILE_NAME, "bye.txt");
+    }
+
+    public void testFileRoute() throws Exception {
+        MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        result.expectedMessageCount(2);
+
+        result.assertIsSatisfied();
     }
 
     @Override

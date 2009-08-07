@@ -19,26 +19,33 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
 public class FileConsumerNoopTest extends ContextTestSupport {
 
-    public void testNoop() throws Exception {
-        File file = new File("src/main/data");
-        String[] before = file.list();
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/filenoop");
+        super.setUp();
+        template.sendBodyAndHeader("file://target/filenoop", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/filenoop", "Bye World", Exchange.FILE_NAME, "bye.txt");
+    }
 
+    public void testNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         assertMockEndpointsSatisfied();
 
         // wait a little to let file consumer run some more
         Thread.sleep(2000);
-        String[] after = file.list();
-        assertEquals("Same number of files should exist", before.length, after.length);
+
+        File file = new File("target/filenoop").getAbsoluteFile();
+        assertEquals("There should be 2 files", 2, file.list().length);
 
         // should not come new files since
         assertMockEndpointsSatisfied();
@@ -49,7 +56,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://src/main/data?noop=true").to("mock:result");
+                from("file://target/filenoop?noop=true").to("mock:result");
             }
         };
     }
