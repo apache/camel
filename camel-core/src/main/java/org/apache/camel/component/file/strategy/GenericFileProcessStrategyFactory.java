@@ -33,10 +33,12 @@ public final class GenericFileProcessStrategyFactory {
     public static GenericFileProcessStrategy createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
+        Expression moveExpression = (Expression) params.get("move");
+        Expression moveFailedExpression = (Expression) params.get("moveFailed");
+        Expression preMoveExpression = (Expression) params.get("preMove");
         boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
-        Expression moveExpression = (Expression) params.get("move");
-        Expression preMoveExpression = (Expression) params.get("preMove");
+        boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isNoop) {
             GenericFileNoOpProcessStrategy strategy = new GenericFileNoOpProcessStrategy();
@@ -46,13 +48,18 @@ public final class GenericFileProcessStrategyFactory {
             GenericFileDeleteProcessStrategy strategy = new GenericFileDeleteProcessStrategy();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
-        } else if (moveExpression != null || preMoveExpression != null) {
+        } else if (isMove) {
             GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (moveExpression != null) {
                 GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();
                 renamer.setExpression(moveExpression);
                 strategy.setCommitRenamer(renamer);
+            }
+            if (moveFailedExpression != null) {
+                GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();
+                renamer.setExpression(moveFailedExpression);
+                strategy.setFailureRenamer(renamer);
             }
             if (preMoveExpression != null) {
                 GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();

@@ -133,8 +133,12 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      */
     protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
                                            Exchange exchange, GenericFile<T> file) {
-        if (log.isWarnEnabled()) {
-            log.warn("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
+
+        // only WARN in case we do not handle it ourself by moving failed files
+        if (endpoint.getMoveFailed() == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
+            }
         }
         try {
             processStrategy.rollback(operations, endpoint, exchange, file);

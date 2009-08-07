@@ -68,6 +68,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected String exclude;
     protected Expression fileName;
     protected Expression move;
+    protected Expression moveFailed;
     protected Expression preMove;
     protected boolean idempotent;
     protected IdempotentRepository idempotentRepository;
@@ -204,6 +205,23 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setMove(Expression move) {
         this.move = move;
+    }
+
+    /**
+     * Sets the move failure expression based on
+     * {@link org.apache.camel.language.simple.FileLanguage}
+     */
+    public void setMoveFailed(String fileLanguageExpression) {
+        String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
+        this.moveFailed = createFileLangugeExpression(expression);
+    }
+
+    public Expression getMoveFailed() {
+        return moveFailed;
+    }
+
+    public void setMoveFailed(Expression moveFailed) {
+        this.moveFailed = moveFailed;
     }
 
     /**
@@ -466,6 +484,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
         if (move != null) {
             params.put("move", move);
+        }
+        if (moveFailed != null) {
+            params.put("moveFailed", moveFailed);
         }
         if (preMove != null) {
             params.put("preMove", preMove);

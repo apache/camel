@@ -26,6 +26,7 @@ import org.apache.camel.component.file.GenericFileOperations;
 
 public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
     private GenericFileRenamer<T> beginRenamer;
+    private GenericFileRenamer<T> failureRenamer;
     private GenericFileRenamer<T> commitRenamer;
 
     public GenericFileRenameProcessStrategy() {
@@ -48,6 +49,17 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         }
 
         return true;
+    }
+
+    @Override
+    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+        // must invoke super
+        super.rollback(operations, endpoint, exchange, file);
+
+        if (failureRenamer != null) {
+            GenericFile<T> newName = failureRenamer.renameFile(exchange, file);
+            renameFile(operations, file, newName);
+        }
     }
 
     @Override
@@ -103,4 +115,11 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         this.commitRenamer = commitRenamer;
     }
 
+    public GenericFileRenamer<T> getFailureRenamer() {
+        return failureRenamer;
+    }
+
+    public void setFailureRenamer(GenericFileRenamer<T> failureRenamer) {
+        this.failureRenamer = failureRenamer;
+    }
 }

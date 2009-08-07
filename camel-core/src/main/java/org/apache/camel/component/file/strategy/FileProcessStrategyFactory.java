@@ -34,10 +34,12 @@ public final class FileProcessStrategyFactory {
     public static GenericFileProcessStrategy createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
+        Expression moveExpression = (Expression) params.get("move");
+        Expression moveFailedExpression = (Expression) params.get("moveFailed");
+        Expression preMoveExpression = (Expression) params.get("preMove");
         boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
-        Expression moveExpression = (Expression) params.get("move");
-        Expression preMoveExpression = (Expression) params.get("preMove");
+        boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isNoop) {
             GenericFileNoOpProcessStrategy<File> strategy = new GenericFileNoOpProcessStrategy<File>();
@@ -47,30 +49,41 @@ public final class FileProcessStrategyFactory {
             GenericFileDeleteProcessStrategy<File> strategy = new GenericFileDeleteProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
-        } else if (moveExpression != null || preMoveExpression != null) {
+        } else if (isMove) {
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (moveExpression != null) {
                 GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
                 renamer.setExpression(moveExpression);
                 strategy.setCommitRenamer(renamer);
+            } else {
+                strategy.setCommitRenamer(getDefaultCommitRenamer(context));
             }
             if (preMoveExpression != null) {
                 GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
+            if (moveFailedExpression != null) {
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
+                renamer.setExpression(moveFailedExpression);
+                strategy.setFailureRenamer(renamer);
+            }
             return strategy;
         } else {
             // default strategy will move files in a .camel/ subfolder where the file was consumed
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            // use context to lookup language to let it be loose coupled
-            Language language = context.resolveLanguage("file");
-            Expression expression = language.createExpression("${file:parent}/.camel/${file:onlyname}");
-            strategy.setCommitRenamer(new GenericFileExpressionRenamer<File>(expression));
+            strategy.setCommitRenamer(getDefaultCommitRenamer(context));
             return strategy;
         }
+    }
+
+    private static GenericFileExpressionRenamer<File> getDefaultCommitRenamer(CamelContext context) {
+        // use context to lookup language to let it be loose coupled
+        Language language = context.resolveLanguage("file");
+        Expression expression = language.createExpression("${file:parent}/.camel/${file:onlyname}");
+        return new GenericFileExpressionRenamer<File>(expression);
     }
 
     @SuppressWarnings("unchecked")
