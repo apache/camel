@@ -16,16 +16,13 @@
  */
 package org.apache.camel.example.camel.transport;
 
-import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Service;
 
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
-import org.apache.hello_world_soap_http.SOAPService;
 import org.apache.hello_world_soap_http.types.FaultDetail;
 
 public final class Client {
@@ -35,6 +32,7 @@ public final class Client {
     private static final QName PORT_NAME
         = new QName("http://apache.org/hello_world_soap_http", "CamelPort");
     private Service service;
+    private Greeter port;
 
 
     public Client(String address) throws MalformedURLException {
@@ -42,15 +40,18 @@ public final class Client {
         service = Service.create(SERVICE_NAME);
         service.addPort(PORT_NAME, javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING,
                         address);
+        
+        System.out.println("Acquiring router port ...");
+        port = service.getPort(PORT_NAME, Greeter.class);
 
     }
 
-
+    public Greeter getProxy() {
+        return port;
+    }
 
     public void invoke() throws Exception {
 
-        System.out.println("Acquiring router port ...");
-        Greeter port = service.getPort(PORT_NAME, Greeter.class);
         String resp;
 
         System.out.println("Invoking sayHi...");

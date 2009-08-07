@@ -32,6 +32,7 @@ public final class Client {
         = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
     private String wsdlLocation;
     private SOAPService soapService;
+    
 
     public Client(String wsdl) throws MalformedURLException {
         URL wsdlURL = null;
@@ -47,13 +48,18 @@ public final class Client {
         }
         soapService = new SOAPService(wsdlURL, SERVICE_NAME);
     }
+    
+    public Greeter getProxy() {
+        Greeter port = soapService.getSoapOverHttpRouter();
+        return port;
+    }
 
 
 
     public void invoke() throws Exception {
 
         System.out.println("Acquiring router port ...");
-        Greeter port = soapService.getSoapOverHttpRouter();
+        Greeter port = getProxy();
         String resp;
 
         System.out.println("Invoking sayHi...");
@@ -64,15 +70,6 @@ public final class Client {
         System.out.println("Invoking greetMe...");
         resp = port.greetMe(System.getProperty("user.name"));
         System.out.println("Server responded with: " + resp);
-        System.out.println();
-
-        System.out.println("Invoking greetMe with invalid length string, expecting exception...");
-        try {
-            resp = port.greetMe("Invoking greetMe with invalid length string, expecting exception...");
-        } catch (ProtocolException e) {
-            System.out.println("Expected exception has occurred: " + e.getClass().getName());
-        }
-
         System.out.println();
 
         System.out.println("Invoking greetMeOneWay...");
