@@ -16,11 +16,13 @@
  */
 package org.apache.camel.example.cxf.jaxrs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.cxf.CxfConstants;
@@ -29,9 +31,10 @@ import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.Main;
+import org.apache.camel.util.ObjectHelper;
 
 public class CamelRouterBuilder extends RouteBuilder {
-    private static final String SOAP_ENDPOINT_URI = "cxf://http://localhost:9000/soap"
+    private static final String SOAP_ENDPOINT_URI = "cxf://http://localhost:9006/soap"
         + "?serviceClass=org.apache.camel.example.cxf.jaxrs.resources.BookStore";
     private static final String REST_ENDPOINT_URI = "cxfrs://http://localhost:9002/rest"
         + "?resourceClasses=org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl";
@@ -87,31 +90,35 @@ public class CamelRouterBuilder extends RouteBuilder {
         
         // populate the message queue with some messages
         from(SOAP_ENDPOINT_URI)
-            .process(new MappingProcessor(BookStoreImpl.class))
-            .bean(new BookStoreImpl(false));
+            .process(new MappingProcessor(new BookStoreImpl(false)));
+            
 
         from(REST_ENDPOINT_URI)
-             .process(new MappingProcessor(BookStoreImpl.class))
-             .bean(new BookStoreImpl(true));
+             .process(new MappingProcessor(new BookStoreImpl(true)));
+             
       
     }
     
-    // Mapping the request to bean's invocation
+    // Mapping the request to object's invocation
     private class MappingProcessor implements Processor {
         
         private Class beanClass;
+        private Object instance;
         
-        public MappingProcessor(Class clazz) {
-            beanClass = clazz;
+        public MappingProcessor(Object obj) {
+            beanClass = obj.getClass();
+            instance = obj;
         }
          
         public void process(Exchange exchange) throws Exception {
             String operationName = exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
             Method method = findMethod(operationName, exchange.getIn().getBody(Object[].class));
-            BeanInvocation invocation = new BeanInvocation();
-            invocation.setMethod(method);
-            invocation.setArgs(exchange.getIn().getBody(Object[].class));
-            exchange.getOut().setBody(invocation);
+            try {
+                Object response = method.invoke(instance, exchange.getIn().getBody(Object[].class));
+                exchange.getOut().setBody(response);
+            }  catch (InvocationTargetException e) {
+                throw (Exception)e.getCause();
+            }
         }
         
         private Method findMethod(String operationName, Object[] parameters) throws SecurityException, NoSuchMethodException {            

@@ -27,7 +27,7 @@ public final class JAXWSClient {
     public JAXWSClient() {
         JaxWsProxyFactoryBean cfb = new JaxWsProxyFactoryBean();
         cfb.setServiceClass(BookStore.class);
-        cfb.setAddress("http://localhost:9000/soap");
+        cfb.setAddress("http://localhost:9006/soap");
         bookStore = (BookStore) cfb.create();        
     }
     

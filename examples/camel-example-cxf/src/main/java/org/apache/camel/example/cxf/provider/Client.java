@@ -41,7 +41,7 @@ public final class Client {
         this.endpointAddress = endpointAddress;
     }
 
-    public void invoke() throws Exception {
+    public String invoke() throws Exception {
         // Service Qname as defined in the WSDL.
         QName serviceName = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
 
@@ -96,8 +96,8 @@ public final class Client {
         SOAPElement bodyElement = (SOAPElement)body.getChildElements(responseName).next();
 
         String responseMessageText = bodyElement.getTextContent();
-
-        System.out.println(responseMessageText);
+        
+        return responseMessageText;
 
     }
 

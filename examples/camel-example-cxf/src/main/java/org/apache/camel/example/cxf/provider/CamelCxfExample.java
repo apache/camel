@@ -36,7 +36,9 @@ public final class CamelCxfExample {
             // set the client's service access point
             Client client = new Client("http://localhost:9000/GreeterContext/SOAPMessageService");
             // invoke the services
-            client.invoke();
+            String response = client.invoke();
+            
+            System.out.println(response);
 
         } catch (Exception ex) {
             ex.printStackTrace();

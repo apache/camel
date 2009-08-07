@@ -46,6 +46,17 @@ public final class CamelCxfExample {
 
     private CamelCxfExample() {
     }
+    
+    static class MyRouteBuilder extends RouteBuilder {
+
+        @Override
+        public void configure() throws Exception {
+            // Here we just pass the exception back , don't need to use errorHandler
+            errorHandler(noErrorHandler());
+            from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
+        }
+        
+    }
 
     public static void main(String args[]) throws Exception {
 

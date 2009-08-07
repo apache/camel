@@ -24,7 +24,7 @@ import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 
 public final class JmsBroker {
     JMSEmbeddedBroker jmsBrokerThread;
-    String jmsBrokerUrl = "tcp://localhost:61616";
+    String jmsBrokerUrl = "vm://localhost";
     String activeMQStorageDir;
     public JmsBroker() {
     }
