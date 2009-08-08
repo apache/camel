@@ -39,6 +39,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(DataSetEndpoint.class);
     private DataSet dataSet;
     private AtomicInteger receivedCounter = new AtomicInteger();
+    private int minRate;
     private long produceDelay;
     private long consumeDelay;
     private long startTime;
@@ -92,13 +93,26 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         return exchange;
     }
 
+    public int getMinRate() {
+        return minRate;
+    }
+
+    public void setMinRate(int minRate) {
+        this.minRate = minRate;
+    }
+
     @Override
-    protected void waitForCompleteLatch() throws InterruptedException {
-        // TODO lets do a much better version of this!
-        long size = getDataSet().getSize();
-        size *= 4000;
-        setResultWaitTime(size);
-        super.waitForCompleteLatch();
+    protected void waitForCompleteLatch(long timeout) throws InterruptedException {
+        super.waitForCompleteLatch(timeout);
+
+        if (minRate > 0) {
+            int count = getReceivedCounter();
+            do {
+                // wait as long as we get a decent message rate
+                super.waitForCompleteLatch(1000L);
+                count = getReceivedCounter() - count;
+            } while (count >= minRate);
+        }
     }
 
     // Properties
@@ -117,7 +131,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Sets how many messages should be preloaded (sent) before the route completes its initialisation
+     * Sets how many messages should be preloaded (sent) before the route completes its initialization
      */
     public void setPreloadSize(long preloadSize) {
         this.preloadSize = preloadSize;
@@ -159,7 +173,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         // now lets assert that they are the same
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received message: " + index + " = " + actual);
+            Integer dsi = actual.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class);
+            LOG.debug("Received message: " + index + " (DataSet index=" + dsi + ") = " + actual);
         }
 
         assertMessageExpected(index, expected, actual);
@@ -168,8 +183,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
             Thread.sleep(consumeDelay);
         }
 
-        long group = getDataSet().getReportCount();
-        if (receivedCount % group == 0) {
+        if (receivedCount % getDataSet().getReportCount() == 0) {
             reportProgress(actual, receivedCount);
         }
     }
@@ -179,7 +193,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         long elapsed = time - startTime;
         startTime = time;
 
-        LOG.info("Received: " + receivedCount + " messages so far. Last group took: " + elapsed + " millis");
+        LOG.info("Received: " + receivedCount + " messages so far. Last group of " 
+            + getDataSet().getReportCount() + " took: " + elapsed + " millis");
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
@@ -192,8 +207,10 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     public void start() throws Exception {
         long size = getDataSet().getSize();
         expectedMessageCount((int) size);
+        LOG.info("Start: " + this + " expecting " + size + " messages");
     }
 
     public void stop() throws Exception {
+        LOG.info("Stop: " + this);
     }
 }

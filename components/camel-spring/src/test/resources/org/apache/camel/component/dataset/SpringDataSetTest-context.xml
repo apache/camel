@@ -25,14 +25,15 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
+    <!-- start this first to make sure the "direct:foo" consumer is ready --> 
     <route>
-      <from uri="dataset:foo"/>
-      <to uri="direct:test.queue"/>
+      <from uri="direct:test.queue"/>
+      <to uri="dataset:foo?minRate=50"/>
     </route>
 
     <route>
-      <from uri="direct:test.queue"/>
-      <to uri="dataset:foo"/>
+      <from uri="dataset:foo?minRate=50"/>
+      <to uri="direct:test.queue"/>
     </route>
 
   </camelContext>

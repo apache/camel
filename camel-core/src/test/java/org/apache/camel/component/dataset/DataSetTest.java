@@ -44,9 +44,9 @@ public class DataSetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("dataset:foo").to("direct:foo");
-
-                from("direct:foo").to("dataset:foo");
+                // start this first to make sure the "direct:foo" consumer is ready
+                from("direct:foo").to("dataset:foo?minRate=50");
+                from("dataset:foo?minRate=50").to("direct:foo");
             }
         };
     }

@@ -783,7 +783,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         tests = new CopyOnWriteArrayList<Runnable>();
         latch = null;
         sleepForEmptyTest = 0;
-        resultWaitTime = 20000L;
+        resultWaitTime = 0;
         resultMinimumWaitTime = 0L;
         expectedMinimumCount = -1;
         expectedBodyValues = null;
@@ -856,17 +856,24 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             fail("Should have a latch!");
         }
 
-        // now lets wait for the results
-        LOG.debug("Waiting on the latch for: " + resultWaitTime + " millis");
         long start = System.currentTimeMillis();
-        latch.await(resultWaitTime, TimeUnit.MILLISECONDS);
+        waitForCompleteLatch(resultWaitTime);
         long delta = System.currentTimeMillis() - start;
         LOG.debug("Took " + delta + " millis to complete latch");
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
             fail("Expected minimum " + resultMinimumWaitTime
-                    + " millis waiting on the result, but was faster with " + delta + " millis.");
+                + " millis waiting on the result, but was faster with " + delta + " millis.");
         }
+    }
+
+    protected void waitForCompleteLatch(long timeout) throws InterruptedException {
+        // Wait for a default 10 seconds if resultWaitTime is not set
+        long waitTime = timeout == 0 ? 10000L : timeout;
+
+        // now lets wait for the results
+        LOG.debug("Waiting on the latch for: " + timeout + " millis");
+        latch.await(waitTime, TimeUnit.MILLISECONDS);
     }
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
