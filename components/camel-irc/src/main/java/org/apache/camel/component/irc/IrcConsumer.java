@@ -173,7 +173,7 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onPrivmsg(String target, IRCUser user, String msg) {
             if (configuration.isOnPrivmsg()) {
-                if (target.equals(configuration.getTarget())) {
+                if (target.equals(configuration.getTarget()) || target.equals(configuration.getNickname())) {
                     Exchange exchange = endpoint.createOnPrivmsgExchange(target, user, msg);
                     try {
                         getProcessor().process(exchange);
