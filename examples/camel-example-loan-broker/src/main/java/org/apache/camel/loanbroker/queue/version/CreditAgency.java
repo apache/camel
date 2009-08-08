@@ -33,6 +33,7 @@ public class CreditAgency implements Processor {
         exchange.getOut().setHeader(Constants.PROPERTY_SCORE, new Integer(score));
         exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, new Integer(hlength));
         exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
+        exchange.getOut().setBody("CreditAgency processed the request.");
     }
 
 }
