@@ -29,7 +29,7 @@
   <!-- This creates an embedded ActiveMQ Broker -->
   <broker xmlns="http://activemq.apache.org/schema/core" useJmx="false" persistent="false">
     <transportConnectors>
-      <transportConnector uri="tcp://localhost:61616" />
+      <transportConnector uri="vm://localhost" />
     </transportConnectors>
   </broker>
 
@@ -37,7 +37,7 @@
        See http://camel.apache.org/activemq.html for more information.
   -->
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="failover:tcp://localhost:61616"/>
+    <property name="brokerURL" value="failover:vm://localhost"/>
   </bean>
   
   <!-- END SNIPPET: activemq -->
