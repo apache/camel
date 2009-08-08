@@ -21,17 +21,38 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:broker="http://activemq.apache.org/schema/core"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd">
 <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->
-    <!-- import the normal server that is the JMS broker -->
-    <import resource="camel-server.xml"/>
+    <!-- let Spring do its IoC stuff in this package -->
+    <context:component-scan base-package="org.apache.camel.example.server"/>
+    
+    <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61616 -->
+    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
+        <broker:transportConnectors>
+            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
+        </broker:transportConnectors>
+    </broker:broker>
+    
+    <!-- lets configure the Camel JMS consumer to use the ActiveMQ broker declared above -->
+    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <!-- use the vm protocol as the JMS broker is running in the same jvm as Camel -->
+                <property name="brokerURL" value="vm://localhost"/>
+            </bean>
+        </property>
+    </bean>
     <!-- END SNIPPET: e2 -->
-
+    
     <!-- START SNIPPET: e3 -->
     <!-- turn on AspejctJ AOP to weave all @Aspects beans declared in this spring xml file -->
     <aop:aspectj-autoproxy/>
@@ -46,8 +67,18 @@
     <!-- END SNIPPET: e4 -->
 
     <!-- START SNIPPET: e5 -->
-    <!-- the audit store endpoint is configued as file based -->
-    <camel:endpoint id="AuditStore" uri="file://target/store"/>
+    <!-- declare a camel context that scans for classes that is RouteBuilder
+         in the package org.apache.camel.example.server -->
+    <camel:camelContext id="camel">
+        <camel:package>org.apache.camel.example.server</camel:package>
+        <!-- enable JMX connector so we can connect to the server and browse mbeans -->
+        <!-- Camel will log at INFO level the service URI to use for connecting with jconsole -->
+        <camel:jmxAgent id="agent" createConnector="true"/>
+        <!-- the audit store endpoint is configued as file based. 
+             In Camel 2.0 the endpoint should be defined in camel context -->
+        <camel:endpoint id="AuditStore" uri="file://target/store"/>
+    </camel:camelContext>
     <!-- END SNIPPET: e5 -->
+    
 
 </beans>

@@ -23,14 +23,21 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <import resource="camel-client.xml"/>
-
-    <!-- START SNIPPET: e1 -->
-    <!-- Camel proxy for a given service, in this case the JMS queue -->
-    <camel:proxy
-        id="multiplierProxy"
-        serviceInterface="org.apache.camel.example.server.Multiplier"
-        serviceUrl="jms:queue:numbers"/>
-    <!-- END SNIPPET: e1 -->
-
+    <camel:camelContext id="camel">
+    	<camel:template id="camelTemplate"/>
+    	<!-- START SNIPPET: e1 -->
+        <!-- Camel proxy for a given service, in this case the JMS queue 
+             In Camel 2.0 , the proxy should be defined in camelContext. -->
+          <camel:proxy
+            id="multiplierProxy"
+            serviceInterface="org.apache.camel.example.server.Multiplier"
+            serviceUrl="jms:queue:numbers"/>
+        <!-- END SNIPPET: e1 -->
+    </camel:camelContext>
+    
+    <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
+    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+    </bean>
+    
 </beans>

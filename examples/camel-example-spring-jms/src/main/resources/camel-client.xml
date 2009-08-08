@@ -26,8 +26,9 @@
 <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->
-    <camel:camelContext id="camel"/>
-    <camel:template id="camelTemplate"/>
+    <camel:camelContext id="camel">
+    	<camel:template id="camelTemplate"/>
+    </camel:camelContext>
     <!-- END SNIPPET: e2 -->
 
     <!-- START SNIPPET: e3 -->
