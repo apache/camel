@@ -16,24 +16,24 @@
  */
 package org.apache.camel.component.jms.tuning;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.CamelSpringTestSupport;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class PerformanceRouteTest extends CamelTestSupport {
+public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
+
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tuning/PerformanceRoutePojoTest-context.xml");
+    }
 
     private int size = 200;
 
     @Test
-    public void testPerformance() throws Exception {
+    public void testPojoPerformance() throws Exception {
         if (!canRunOnThisPlatform()) {
             return;
         }
@@ -61,7 +61,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        System.out.println("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
+        System.out.println("RoutePerformancePojoTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
     private boolean canRunOnThisPlatform() {
@@ -70,42 +70,4 @@ public class PerformanceRouteTest extends CamelTestSupport {
         return !os.toLowerCase().contains("hp-ux");
     }
 
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
-
-        return camelContext;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("activemq:queue:inbox?concurrentConsumers=10")
-                    .to("activemq:topic:audit")
-                    .choice()
-                        .when(header("type").isEqualTo("gold"))
-                            .to("direct:gold")
-                        .when(header("type").isEqualTo("silver"))
-                            .to("direct:silver")
-                        .otherwise()
-                            .to("direct:bronze")
-                        .end();
-
-                from("direct:gold")
-                    .to("mock:gold");
-
-                from("direct:silver")
-                    .to("mock:silver");
-
-                from("direct:bronze")
-                    .to("mock:bronze");
-
-                from("activemq:topic:audit").to("mock:audit");
-            }
-        };
-    }
 }
