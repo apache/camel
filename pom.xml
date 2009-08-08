@@ -42,7 +42,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-    <cxf-version>2.2</cxf-version>
+    <cxf-version>2.2.2</cxf-version>
     <felix-version>1.4.1</felix-version>
     <jetty-version>6.1.18</jetty-version>
   </properties>
