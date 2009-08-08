@@ -41,6 +41,7 @@ public class Bank implements Processor {
         exchange.getOut().setHeader(Constants.PROPERTY_RATE, new Double(rate));
         exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);
         exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
+        exchange.getOut().setBody("Bank processed the request.");
         // Sleep some time
         try {
             Thread.sleep((int) (Math.random() * 10) * 100);

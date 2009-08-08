@@ -55,6 +55,18 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+    <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -65,6 +77,23 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+          <childDelegation>false</childDelegation>
+          <useFile>true</useFile>
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+          <systemProperties>
+               <property>
+                    <name>java.util.logging.config.file</name>
+                    <value>${basedir}/target/test-classes/logging.properties</value>
+               </property>
+          </systemProperties>
         </configuration>
       </plugin>
       <!-- Allows the example to be run via 'mvn compile exec:java' -->
