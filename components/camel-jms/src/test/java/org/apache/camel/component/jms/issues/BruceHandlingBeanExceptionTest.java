@@ -22,7 +22,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
@@ -43,12 +42,11 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
         assertEquals("This is a fault message", out);
     }
 
-    @Ignore
-    @Test    
-    public void xxxtestSendError() throws Exception {
-        // TODO: See CAMEL-585
+    @Test
+    public void testSendError() throws Exception {
         Object out = template.requestBody("activemq:queue:error", "Hello World");
-        assertEquals("Damm", out);
+        IllegalArgumentException e = assertIsInstanceOf(IllegalArgumentException.class, out);
+        assertEquals("Forced exception by unit test", e.getMessage());
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -69,7 +67,7 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
 
                 from("activemq:queue:fault").setFaultBody(constant("This is a fault message"));
 
-                from("activemq:queue:error").bean(MyExceptionBean.class);
+                from("activemq:queue:error?transferException=true").bean(MyExceptionBean.class);
             }
         };
     }
