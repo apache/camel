@@ -25,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -36,26 +37,29 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DataSetEndpoint extends MockEndpoint implements Service {
-    private static final transient Log LOG = LogFactory.getLog(DataSetEndpoint.class);
+    private final transient Log log;
     private DataSet dataSet;
     private AtomicInteger receivedCounter = new AtomicInteger();
     private int minRate;
     private long produceDelay;
     private long consumeDelay;
-    private long startTime;
     private long preloadSize;
+    private Processor reporter;
 
     public DataSetEndpoint() {
+        this.log = LogFactory.getLog(DataSetEndpoint.class);
     }
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);
         this.dataSet = dataSet;
+        this.log = LogFactory.getLog(endpointUri);
     }
 
     public DataSetEndpoint(String endpointUri, DataSet dataSet) {
         super(endpointUri);
         this.dataSet = dataSet;
+        this.log = LogFactory.getLog(endpointUri);
     }
 
     public static void assertEquals(String description, Object expected, Object actual, Exchange exchange) {
@@ -159,42 +163,38 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.produceDelay = produceDelay;
     }
 
+    /**
+     * Sets a custom progress reporter
+     */
+    public void setReporter(Processor reporter) {
+        this.reporter = reporter;
+    }
+
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
     @Override
     protected void performAssertions(Exchange actual) throws Exception {
-        if (startTime == 0) {
-            startTime = System.currentTimeMillis();
-        }
         int receivedCount = receivedCounter.incrementAndGet();
         long index = receivedCount - 1;
         Exchange expected = createExchange(index);
 
         // now lets assert that they are the same
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             Integer dsi = actual.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class);
-            LOG.debug("Received message: " + index + " (DataSet index=" + dsi + ") = " + actual);
+            log.debug("Received message: " + index + " (DataSet index=" + dsi + ") = " + actual);
         }
 
         assertMessageExpected(index, expected, actual);
 
+        if (reporter != null) {
+            reporter.process(actual);
+        }
+
         if (consumeDelay > 0) {
             Thread.sleep(consumeDelay);
         }
-
-        if (receivedCount % getDataSet().getReportCount() == 0) {
-            reportProgress(actual, receivedCount);
-        }
-    }
-
-    protected void reportProgress(Exchange actual, int receivedCount) {
-        long time = System.currentTimeMillis();
-        long elapsed = time - startTime;
-        startTime = time;
-
-        LOG.info("Received: " + receivedCount + " messages so far. Last group of " 
-            + getDataSet().getReportCount() + " took: " + elapsed + " millis");
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
@@ -204,13 +204,23 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         getDataSet().assertMessageExpected(this, expected, actual, index);
     }
 
+    protected ThroughputLogger createReporter() {
+        ThroughputLogger answer = new ThroughputLogger(this.getEndpointUri(), (int) this.getDataSet().getReportCount());
+        answer.setAction("Received");
+        return answer;
+    }
+
     public void start() throws Exception {
         long size = getDataSet().getSize();
         expectedMessageCount((int) size);
-        LOG.info("Start: " + this + " expecting " + size + " messages");
+        if (reporter == null) {
+            reporter = createReporter();
+        }
+        log.info("Start: " + this + " expecting " + size + " messages");
     }
 
     public void stop() throws Exception {
-        LOG.info("Stop: " + this);
+        log.info("Stop: " + this);
     }
+
 }
