@@ -36,7 +36,7 @@ public final class CamelClientRemoting {
 
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
         // just get the proxy to the service and we as the client can use the "proxy" as it was
-        // a local object we are invocing. Camel will under the covers do the remote communication
+        // a local object we are invoking. Camel will under the covers do the remote communication
         // to the remote ActiveMQ server and fetch the response.
         Multiplier multiplier = (Multiplier)context.getBean("multiplierProxy");
 
