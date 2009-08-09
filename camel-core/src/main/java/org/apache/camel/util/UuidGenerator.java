@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +33,7 @@ public class UuidGenerator {
     private static int instanceCount;
     private static String hostName;
     private String seed;
-    private long sequence;
+    private AtomicLong sequence = new AtomicLong();
 
     static {
         String stub = "";
@@ -86,8 +87,8 @@ public class UuidGenerator {
     /**
      * Generate a unqiue id
      */
-    public synchronized String generateId() {
-        return this.seed + (this.sequence++);
+    public String generateId() {
+        return this.seed + sequence.getAndIncrement();
     }
 
     /**
