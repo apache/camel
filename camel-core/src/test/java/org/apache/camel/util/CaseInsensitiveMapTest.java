@@ -235,4 +235,58 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertTrue(values.contains("Beer"));
     }
 
+    public void testRomeks() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("foo", "cheese");
+
+        assertEquals(1, map.size());
+        assertEquals("cheese", map.get("fOo"));
+        assertEquals(true, map.containsKey("foo"));
+        assertEquals(true, map.containsKey("FOO"));
+
+        assertEquals(true, map.keySet().contains("FOO"));
+
+        map.put("FOO", "cake");
+        assertEquals(1, map.size());
+        assertEquals(true, map.containsKey("foo"));
+        assertEquals(true, map.containsKey("FOO"));
+
+        assertEquals("cake", map.get("fOo"));
+    }
+
+    public void testRomeksUsingRegularHashMap() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", "cheese");
+
+        assertEquals(1, map.size());
+        assertEquals(null, map.get("fOo"));
+        assertEquals(true, map.containsKey("foo"));
+        assertEquals(false, map.containsKey("FOO"));
+
+        assertEquals(false, map.keySet().contains("FOO"));
+
+        map.put("FOO", "cake");
+        assertEquals(2, map.size());
+        assertEquals(true, map.containsKey("foo"));
+        assertEquals(true, map.containsKey("FOO"));
+
+        assertEquals(null, map.get("fOo"));
+        assertEquals("cheese", map.get("foo"));
+        assertEquals("cake", map.get("FOO"));
+    }
+
+    public void testRomeksTransferedToHashMapAfterwards() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Foo", "cheese");
+        map.put("FOO", "cake");
+        assertEquals(1, map.size());
+        assertEquals(true, map.containsKey("foo"));
+        assertEquals(true, map.containsKey("FOO"));
+
+        Map<String, Object> other = new HashMap<String, Object>(map);
+        assertEquals(false, other.containsKey("foo"));
+        assertEquals(true, other.containsKey("FOO"));
+        assertEquals(1, other.size());
+    }
+
 }
