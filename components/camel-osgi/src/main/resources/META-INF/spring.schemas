@@ -22,4 +22,5 @@ http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.4.0.xsd=camel-osgi.xs
 http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.5.0.xsd=camel-osgi.xsd
 http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.6.0.xsd=camel-osgi.xsd
 http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.6.1.xsd=camel-osgi.xsd
+http\://activemq.apache.org/camel/schema/osgi/camel-osgi-1.6.2.xsd=camel-osgi.xsd
 http\://activemq.apache.org/camel/schema/osgi/camel-osgi-${pom.version}.xsd=camel-osgi.xsd
