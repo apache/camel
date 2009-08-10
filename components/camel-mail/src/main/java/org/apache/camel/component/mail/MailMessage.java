@@ -25,7 +25,6 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.CollectionHelper;
@@ -75,17 +74,6 @@ public class MailMessage extends DefaultMessage {
         this.mailMessage = mailMessage;
     }
 
-    @Override
-    public Object getHeader(String name) {
-        Object answer = super.getHeader(name);
-        
-        // mimic case insensitive search of mail message getHeader
-        if (answer == null) {
-            answer = super.getHeader(name.toLowerCase());
-        }
-        return answer;
-    }
-  
     @Override
     public MailMessage newInstance() {
         return new MailMessage();

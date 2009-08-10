@@ -432,11 +432,10 @@ public class MailBinding {
             String[] value = mailMessage.getHeader(header.getName());
             if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
-                // toLowerCase() for doing case insensitive search
                 if (value.length == 1) {
-                    CollectionHelper.appendValue(answer, header.getName().toLowerCase(), value[0]);
+                    CollectionHelper.appendValue(answer, header.getName(), value[0]);
                 } else {
-                    CollectionHelper.appendValue(answer, header.getName().toLowerCase(), value);
+                    CollectionHelper.appendValue(answer, header.getName(), value);
                 }
             }
         }

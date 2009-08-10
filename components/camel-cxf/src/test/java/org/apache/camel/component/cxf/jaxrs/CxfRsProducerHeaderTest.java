@@ -114,8 +114,7 @@ public class CxfRsProducerHeaderTest extends AbstractJUnit4SpringContextTests {
         assertNull(outMessage.getHeader("failed-header-using-http-api"));
         
         // make sure response code has been set in out header
-        assertEquals(200, outMessage.getHeader(Exchange.HTTP_RESPONSE_CODE));
-        
+        assertEquals(Integer.valueOf(200), outMessage.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
     }
     
     public static class HttpProcessor implements Processor {

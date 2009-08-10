@@ -23,6 +23,7 @@ import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.MessageHelper;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.camel.util.MessageHelper;
  * @version $Revision$
  */
 public class DefaultMessage extends MessageSupport {
-    private boolean fault; 
+    private boolean fault;
     private Map<String, Object> headers;
     private Map<String, DataHandler> attachments;
 
@@ -53,13 +54,16 @@ public class DefaultMessage extends MessageSupport {
     public void setFault(boolean fault) {
         this.fault = fault;
     }
-    
+
     public Object getHeader(String name) {
         return getHeaders().get(name);
     }
 
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
+        if (value == null) {
+            return null;
+        }
 
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
@@ -71,7 +75,7 @@ public class DefaultMessage extends MessageSupport {
         if (e != null) {
             return e.getContext().getTypeConverter().convertTo(type, e, value);
         } else {
-            return (T) value;
+            return type.cast(value);
         }
     }
 
@@ -83,11 +87,10 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public Object removeHeader(String name) {
-        if (headers != null) {
-            return headers.remove(name);
-        } else {
+        if (!hasHeaders()) {
             return null;
         }
+        return headers.remove(name);
     }
 
     public Map<String, Object> getHeaders() {
@@ -98,7 +101,12 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public void setHeaders(Map<String, Object> headers) {
-        this.headers = headers;
+        if (headers instanceof CaseInsensitiveMap) {
+            this.headers = headers;
+        } else {
+            // wrap it in a case insensitive map
+            this.headers = new CaseInsensitiveMap(headers);
+        }
     }
 
     public boolean hasHeaders() {
@@ -122,7 +130,7 @@ public class DefaultMessage extends MessageSupport {
      *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new CaseInsensitiveMap();
         populateInitialHeaders(map);
         return map;
     }
