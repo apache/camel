@@ -37,10 +37,12 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private GenericFileEndpoint<T> endpoint;
     private GenericFileOperations<T> operations;
     private ExceptionHandler exceptionHandler;
+    private GenericFile<T> file;
 
-    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
+    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations, GenericFile<T> file) {
         this.endpoint = endpoint;
         this.operations = operations;
+        this.file = file;
     }
 
     @SuppressWarnings("unchecked")
@@ -67,10 +69,6 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void onCompletion(Exchange exchange) {
         GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
-        // after processing
-        final GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-        boolean failed = exchange.isFailed();
-
         if (log.isDebugEnabled()) {
             log.debug("Done processing file: " + file + " using exchange: " + exchange);
         }
@@ -78,6 +76,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         // commit or rollback
         boolean committed = false;
         try {
+            boolean failed = exchange.isFailed();
             if (!failed) {
                 // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
                 processStrategyCommit(processStrategy, exchange, file);
@@ -116,7 +115,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
 
         try {
             if (log.isTraceEnabled()) {
-                log.trace("Committing remote file strategy: " + processStrategy + " for file: " + file);
+                log.trace("Commit file strategy: " + processStrategy + " for file: " + file);
             }
             processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
@@ -134,11 +133,8 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
                                            Exchange exchange, GenericFile<T> file) {
 
-        // only WARN in case we do not handle it ourself by moving failed files
-        if (endpoint.getMoveFailed() == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
-            }
+        if (log.isWarnEnabled()) {
+            log.warn("Rollback file strategy: " + processStrategy + " for file: " + file);
         }
         try {
             processStrategy.rollback(operations, endpoint, exchange, file);

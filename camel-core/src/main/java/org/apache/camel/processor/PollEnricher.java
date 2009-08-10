@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -111,6 +111,8 @@ public class PollEnricher extends ServiceSupport implements Processor {
      * @param exchange input data.
      */
     public void process(Exchange exchange) throws Exception {
+        preChceckPoll(exchange);
+
         Exchange resourceExchange;
         if (timeout < 0) {
             if (LOG.isDebugEnabled()) {
@@ -151,6 +153,28 @@ public class PollEnricher extends ServiceSupport implements Processor {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot aggregate exchange as its filtered: " + resourceExchange);
                 }
+            }
+        }
+    }
+
+    /**
+     * Strategy to pre check polling.
+     * <p/>
+     * Is currently used to prevent doing poll enrich from a file based endpoint when the current route also
+     * started from a file based endpoint as that is not currently supported.
+     *
+     * @param exchange the current exchange
+     */
+    protected void preChceckPoll(Exchange exchange) throws Exception {
+        // cannot poll a file endpoint if already consuming from a file endpoint (CAMEL-1895)
+        if (consumer instanceof EventDrivenPollingConsumer) {
+            EventDrivenPollingConsumer edpc = (EventDrivenPollingConsumer) consumer;
+            boolean fileBasedConsumer = edpc.getEndpoint().getEndpointKey().startsWith("file") || edpc.getEndpoint().getEndpointKey().startsWith("ftp");
+            boolean fileBasedExchange = exchange.getFromEndpoint().getEndpointUri().startsWith("file") || exchange.getFromEndpoint().getEndpointUri().startsWith("ftp");
+            if (fileBasedConsumer && fileBasedExchange) {
+                throw new IllegalArgumentException("Camel durrently does not support pollEnrich from a file/ftp endpoint"
+                        + " when the route also started from a file/ftp endpoint."
+                        + " Started from: " + exchange.getFromEndpoint().getEndpointUri() + " pollEnrich: " + edpc.getEndpoint().getEndpointUri());
             }
         }
     }
