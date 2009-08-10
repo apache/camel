@@ -25,6 +25,8 @@ import org.apache.camel.Service;
 
 /**
  * Strategy for lifecycle notifications.
+ * <p/>
+ * <b>Node:</b> Subject to change in Camel 2.1
  */
 public interface LifecycleStrategy {
 
