@@ -184,6 +184,17 @@ public final class FileUtil {
         return name;
     }
 
+    public static String stripExt(String name) {
+        if (name == null) {
+            return null;
+        }
+        int pos = name.lastIndexOf('.');
+        if (pos != -1) {
+            return name.substring(0, pos);
+        }
+        return name;
+    }
+
     /**
      * Returns only the leading path (returns <tt>null</tt> if no path)
      */
