@@ -20,19 +20,9 @@
 #
 http\://camel.apache.org/schema/cxf/camel-cxf.xsd=schema/cxfEndpoint.xsd
 
-# to support the camel-1.2's configuration
-http\://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd=schema/cxfEndpoint.xsd
-# and for the other previous releases
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.3.0.xsd=schema/cxfEndpoint.xsd
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.4.0.xsd=schema/cxfEndpoint.xsd
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.5.0.xsd=schema/cxfEndpoint.xsd
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.6.0.xsd=schema/cxfEndpoint.xsd
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.6.1.xsd=schema/cxfEndpoint.xsd
-
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-2.0-M1.xsd=schema/cxfEndpoint.xsd
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-2.0-M2.xsd=schema/cxfEndpoint.xsd
-http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-2.0-M3.xsd=schema/cxfEndpoint.xsd
-
+http\://camel.apache.org/schema/cxf/camel-cxf-2.0-M1.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/camel-cxf-2.0-M2.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/camel-cxf-2.0-M3.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-${pom.version}.xsd=schema/cxfEndpoint.xsd
 
 # since we don't publish the camel schema in the cxf site, we will always use the schema file in the class path 
