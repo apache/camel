@@ -251,6 +251,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Object modelField = model.get(field.getDeclaringClass().getName());
             
             if (modelField != null) {
+	            
+	            // Get field value
+                Object value = field.get(modelField);
+                String strValue = null;
 
                 if (this.isMessageOrdered()) {
 
@@ -265,33 +269,34 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }                    
                     
                     // Get field value
-                    Object value = field.get(modelField);
+                    //Object value = field.get(modelField);
                     
-                    // Add value to the list if not null
                     if (value != null) {
-
                         // Format field value
-                        String valueFormated = format.format(value);
+                        strValue = format.format(value);
+                    } 
+                    
+                    // Add the content to the TreeMap according to the
+                    // position defined
+                    positions.put(keyGenerated, strValue);
 
-                        // Add the content to the TreeMap according to the
-                        // position defined
-                        positions.put(keyGenerated, valueFormated);
-
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Positions size : " + positions.size());
-                        }
+                    if (LOG.isDebugEnabled()) {
+                           LOG.debug("Positions size : " + positions.size());
                     }
+                        
                 } else {
                     // Get field value
-                    Object value = field.get(modelField);
+                    //Object value = field.get(modelField);
+                    //String strValue = null;
 
                     // Add value to the list if not null
                     if (value != null) {
 
                         // Format field value
-                        String valueFormated = format.format(value);
-                        builder.append(valueFormated);
+                        strValue = format.format(value);
+                        
                     }
+                    builder.append(strValue);
 
                     if (it.hasNext()) {
                         builder.append(separator);
