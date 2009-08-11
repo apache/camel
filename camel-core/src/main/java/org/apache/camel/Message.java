@@ -25,6 +25,9 @@ import javax.activation.DataHandler;
  * Implements the <a
  * href="http://camel.apache.org/message.html">Message</a> pattern and
  * represents an inbound or outbound message as part of an {@link Exchange}
+ * <p/>
+ * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers is represented in Camel using a
+ * {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  *
  * @version $Revision$
  */
@@ -32,6 +35,8 @@ public interface Message {
 
     /**
      * Returns the id of the message
+     *
+     * @return the message id
      */
     String getMessageId();
 
@@ -44,16 +49,22 @@ public interface Message {
 
     /**
      * Returns the exchange this message is related to
+     *
+     * @return the exchange
      */
     Exchange getExchange();
 
     /**
      * Returns true if this message represents a fault
+     *
+     * @return <tt>true</tt> if this is a fault message, <tt>false</tt> for regular messages.
      */
     boolean isFault();
 
     /**
      * Sets the fault flag on this message
+     *
+     * @param fault the fault flag
      */
     void setFault(boolean fault);
 
@@ -222,12 +233,16 @@ public interface Message {
     void setAttachments(Map<String, DataHandler> attachments);
 
     /**
-     * Returns <tt>true</tt> if this message has any attachments.
+     * Returns whether this message has attachments.
+     *
+     * @return <tt>true</tt> if this message has any attachments.
      */
     boolean hasAttachments();
 
     /**
      * Returns the unique ID for a message exchange if this message is capable of creating one or null if not
+     *
+     * @return the created exchange id, or <tt>null</tt> if not capable of creating
      */
     String createExchangeId();
 }

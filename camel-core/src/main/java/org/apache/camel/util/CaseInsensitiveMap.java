@@ -23,6 +23,12 @@ import java.util.Set;
 
 /**
  * A map that uses case insensitive keys, but preserves the original keys in the keySet.
+ * <p/>
+ * This map allows you to do lookup using case insenstive keys so you can retrieve the value without worring about
+ * whether some transport protocol affects the keys such as Http and Mail protocols can do.
+ * <p/>
+ * When copying from this map to a regular Map such as {@link java.util.HashMap} then the original keys are
+ * copied over and you get the old behavior back using a regular Map with case sensitive keys.
  *
  * @version $Revision$
  */
