@@ -47,9 +47,7 @@ public class ChoiceDSLTest extends GroovyRendererTestSupport {
         String DSL = "from(\"direct:start\").split().body().choice()" +
         		".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\", \"seda:aggregate\")" +
         		".otherwise().to(\"bean:gadgetInventory\", \"seda:aggregate\")";
-        
-        //TODO check this result
-        String expectedDSL = "from(\"direct:start\").split(body()).choice()" +
+        String expectedDSL = "from(\"direct:start\").split().body().choice()" +
         		".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\").to(\"seda:aggregate\")" +
         		".otherwise().to(\"bean:gadgetInventory\").to(\"seda:aggregate\")" +
         		".end()";

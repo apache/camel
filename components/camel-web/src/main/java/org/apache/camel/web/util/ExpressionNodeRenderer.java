@@ -105,18 +105,11 @@ public class ExpressionNodeRenderer {
                 ExpressionRenderer.render(buffer, expression);
             }
         } else if (expNode instanceof SplitDefinition) {
-            if (expression.getExpressionValue() != null) {
-                buffer.append("(");
+            String expValue = expression.getExpressionValue().toString();
+            if (!expValue.contains("(")) {
+                buffer.append("().").append(expValue).append("()");
+            } else {
                 ExpressionRenderer.render(buffer, expression);
-                buffer.append(")");
-            } else if (expression.getExpressionType() != null) {
-                buffer.append("().");
-                ExpressionRenderer.render(buffer, expression);
-            }
-
-            SplitDefinition split = (SplitDefinition)expNode;
-            if (split.isStreaming()) {
-                buffer.append(".streaming()");
             }
         } else if (expNode instanceof TransformDefinition) {
             String expValue = expression.getExpressionValue().toString();

@@ -17,18 +17,14 @@
 
 package org.apache.camel.web.util;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.BeanDefinition;
-import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.InterceptDefinition;
-import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.MulticastDefinition;
@@ -48,7 +44,6 @@ import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
-import org.apache.camel.model.WhenDefinition;
 
 /**
  * 
@@ -86,20 +81,11 @@ public class OutputDefinitionRenderer {
             String resourceUri = enrich.substring(enrich.indexOf('[') + 1, enrich.indexOf(' '));
             buffer.append("(\"").append(resourceUri).append("\")");
         } else if (out instanceof FinallyDefinition) {
-
+            
         } else if (out instanceof InterceptDefinition) {
             buffer.append("()");
-            if (out instanceof InterceptFromDefinition) {
-
-            } else {
-
-            }
         } else if (out instanceof InterceptSendToEndpointDefinition) {
-            InterceptSendToEndpointDefinition interceptSend = (InterceptSendToEndpointDefinition)out;
-            buffer.append("(\"").append(interceptSend.getUri()).append("\")");
-            if (interceptSend.getSkipSendToOriginalEndpoint()) {
-                buffer.append(".skipSendToOriginalEndpoint()");
-            }
+
         } else if (out instanceof MarshalDefinition) {
             DataFormatDefinition dataFormat = ((MarshalDefinition)out).getDataFormatType();
             buffer.append("().").append(dataFormat.getClass().getAnnotation(XmlRootElement.class).name()).append("()");
@@ -129,7 +115,7 @@ public class OutputDefinitionRenderer {
             ExpressionRenderer.renderExpression(buffer, sort.getExpression().toString());
             buffer.append(")");
         } else if (out instanceof StopDefinition) {
-            buffer.append("()");
+
         } else if (out instanceof ThreadsDefinition) {
 
         } else if (out instanceof TransactedDefinition) {
@@ -138,6 +124,7 @@ public class OutputDefinitionRenderer {
 
         } else if (out instanceof UnmarshalDefinition) {
             DataFormatDefinition dataFormat = ((UnmarshalDefinition)out).getDataFormatType();
+            Class clazz = dataFormat.getClass();
             buffer.append("().").append(dataFormat.getClass().getAnnotation(XmlRootElement.class).name()).append("()");
         }
     }

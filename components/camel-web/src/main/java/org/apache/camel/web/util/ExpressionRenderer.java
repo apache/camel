@@ -111,14 +111,9 @@ public class ExpressionRenderer {
      */
     public static void renderExpression(StringBuilder buffer, String expression) {
         if (!expression.contains(",")) {
-            if (expression.contains("(")) {
-                // header(foo) -> header("foo")
-                expression = expression.replaceAll("\\(", "(\"").replaceAll("\\)", "\")");
-                buffer.append(expression);
-            } else {
-                // body -> body()
-                buffer.append(expression).append("()");
-            }
+            // header(foo) -> header("foo")
+            expression = expression.replaceAll("\\(", "(\"").replaceAll("\\)", "\")");
+            buffer.append(expression);
         } else if (expression.startsWith("tokenize")) {
             String words[] = expression.split("\\(");
             if (words.length == 2) {
@@ -126,17 +121,8 @@ public class ExpressionRenderer {
                 String tokenize = words[1].substring(words[1].indexOf(" ") + 1, words[1].lastIndexOf(")"));
                 words[1] = words[1].substring(0, words[1].indexOf(","));
 
-                if (!words[1].contains("[")) {
-                    // body
-                    buffer.append(words[1]).append("()");
-                } else {
-                    // bodyAs[clazz]
-                    String word = words[1].substring(0, words[1].indexOf("As"));
-                    String clazz = words[1].substring(words[1].lastIndexOf(".") + 1, words[1].length() - 1);
-                    buffer.append(word).append("(").append(clazz).append(".class)");
-                }
-
-                buffer.append(".").append(words[0]).append("(\"").append(tokenize).append("\")");
+                buffer.append(words[1]).append("().");
+                buffer.append(words[0]).append("(\"").append(tokenize).append("\")");
             } else if (words.length == 3) {
                 // tokenize(header(foo), ,) -> header("foo").tokenize(",")
                 String symbolName = words[2].substring(0, words[2].indexOf(")"));
