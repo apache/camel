@@ -484,7 +484,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (dataFormat == DataFormat.POJO) {
             answer = out.getBody();
         } else if (dataFormat == DataFormat.PAYLOAD) {
-            answer = out.getBody();
+            answer = out.getBody(CxfPayload.class);
         } else if (dataFormat == DataFormat.MESSAGE) {
             answer = out.getBody(InputStream.class);
         }
