@@ -262,6 +262,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // register as endpoint defined indirectly in the routes by from/to types having id explict set
             registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId);
 
+            // register templates if not already defined
+            registerTemplates(element, parserContext, contextId);
+
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element);
             if (!createdBeanPostProcessor) {
@@ -271,6 +274,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 createBeanPostProcessor(parserContext, contextId, childElement, builder);
             }
         }
+
     }
 
     protected void injectNamespaces(Element element) {
@@ -295,7 +299,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     /**
-     * Uses for auto registering endpoints from the <tt>from</tt> or <tt>to</tt> DSL if they have an id attribute set
+     * Used for auto registering endpoints from the <tt>from</tt> or <tt>to</tt> DSL if they have an id attribute set
      */
     protected void registerEndpointsWithIdsDefinedInFromOrToTypes(Element element, ParserContext parserContext, String contextId) {
         NodeList list = element.getChildNodes();
@@ -313,6 +317,56 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 registerEndpointsWithIdsDefinedInFromOrToTypes(childElement, parserContext, contextId);
             }
         }
+    }
+
+    /**
+     * Used for auto registering producer and consumer templates if not already defined in XML.
+     */
+    protected void registerTemplates(Element element, ParserContext parserContext, String contextId) {
+        boolean template = false;
+        boolean consumerTemplate = false;
+
+        NodeList list = element.getChildNodes();
+        int size = list.getLength();
+        for (int i = 0; i < size; i++) {
+            Node child = list.item(i);
+            if (child instanceof Element) {
+                Element childElement = (Element)child;
+                String localName = childElement.getLocalName();
+                if ("template".equals(localName)) {
+                    template = true;
+                } else if ("consumerTemplate".equals(localName)) {
+                    consumerTemplate = true;
+                }
+            }
+        }
+
+        if (!template) {
+            String id = "template";
+            // auto create a template
+            Element templateElement = element.getOwnerDocument().createElement("template");
+            templateElement.setAttribute("id", id);
+            BeanDefinitionParser parser = parserMap.get("template");
+            BeanDefinition definition = parser.parse(templateElement, parserContext);
+            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Registered a default ProducerTemplate with id: " + id);
+            }
+        }
+
+        if (!consumerTemplate) {
+            String id = "consumerTemplate";
+            // auto create a template
+            Element templateElement = element.getOwnerDocument().createElement("consumerTemplate");
+            templateElement.setAttribute("id", id);
+            BeanDefinitionParser parser = parserMap.get("consumerTemplate");
+            BeanDefinition definition = parser.parse(templateElement, parserContext);
+            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Registered a default ConsumerTemplate with id: " + id);
+            }
+        }
+
     }
 
     private void registerEndpoint(Element childElement, ParserContext parserContext, String contextId) {
