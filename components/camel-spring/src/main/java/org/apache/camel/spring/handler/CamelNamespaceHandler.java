@@ -335,7 +335,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
         }
 
-        if (!template) {
+        // either we have not used templat before or we have auto registered it already and therefore we
+        // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+        // since we have multiple camel contexts
+        boolean canDoTemplate = autoRegisterMap.get("template") != null
+                || !parserContext.getRegistry().isBeanNameInUse("template");
+        if (!template && canDoTemplate) {
             String id = "template";
             // auto create a template
             Element templateElement = element.getOwnerDocument().createElement("template");
@@ -347,7 +352,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             autoRegisterBeanDefinition(id, definition, parserContext, contextId);
         }
 
-        if (!consumerTemplate) {
+        // either we have not used templat before or we have auto registered it already and therefore we
+        // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+        // since we have multiple camel contexts
+        boolean canDoConsumerTemplate = autoRegisterMap.get("consumerTemplate") != null
+                || !parserContext.getRegistry().isBeanNameInUse("consumerTemplate");
+        if (!consumerTemplate && canDoConsumerTemplate) {
             String id = "consumerTemplate";
             // auto create a template
             Element templateElement = element.getOwnerDocument().createElement("consumerTemplate");
