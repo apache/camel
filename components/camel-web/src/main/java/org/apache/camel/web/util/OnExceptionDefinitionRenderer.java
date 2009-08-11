@@ -45,6 +45,12 @@ public class OnExceptionDefinitionRenderer {
         }
         buffer.append(")");
 
+        // render handled() dsl
+        if (onException.getHandledPolicy() != null) {
+            String handled = onException.getHandledPolicy().toString();
+            buffer.append(".handled(").append(handled).append(")");
+        }
+
         List<ProcessorDefinition> branches = onException.getOutputs();
         for (ProcessorDefinition branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);

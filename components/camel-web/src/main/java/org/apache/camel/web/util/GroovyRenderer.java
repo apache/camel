@@ -80,7 +80,7 @@ public class GroovyRenderer {
         // render the global dsl not started with from, like global
         // onCompletion, onException, intercept
         for (ProcessorDefinition processor : outputs) {
-            if (processor.getParent() == null) {
+            if (processor.getParent() == null && !(processor instanceof SendDefinition)) {
                 renderProcessor(buffer, processor);
                 buffer.append(";");
             }
@@ -96,9 +96,14 @@ public class GroovyRenderer {
         }
         buffer.append(")");
 
+        // render some route configurations
+        if (route.isStreamCache() != null && route.isStreamCache()) {
+            buffer.append(".streamCaching()");
+        }
+
         // render the outputs of the router
         for (ProcessorDefinition processor : outputs) {
-            if (processor.getParent() == route) {
+            if (processor.getParent() == route || processor instanceof SendDefinition) {
                 renderProcessor(buffer, processor);
             }
         }
@@ -165,7 +170,9 @@ public class GroovyRenderer {
             } else if (lb instanceof RoundRobinLoadBalancer) {
                 buffer.append(".roundRobin()");
             } else if (lb instanceof StickyLoadBalancer) {
-                buffer.append(".sticky()");
+                buffer.append(".sticky(");
+                ExpressionRenderer.renderExpression(buffer, ((StickyLoadBalancer)lb).getCorrelationExpression().toString());
+                buffer.append(")");
             } else if (lb instanceof TopicLoadBalancer) {
                 buffer.append(".topic()");
             }
@@ -189,12 +196,18 @@ public class GroovyRenderer {
 
             List<Expression> exps = resequence.getExpressionList();
             for (Expression exp : exps) {
-                buffer.append(exp.toString()).append("()");
+                ExpressionRenderer.renderExpression(buffer, exp.toString());
                 if (exp != exps.get(exps.size() - 1)) {
                     buffer.append(", ");
                 }
             }
             buffer.append(")");
+
+            if (resequence.getStreamConfig() != null) {
+                // TODO improve stream() support
+                buffer.append(".stream()");
+            }
+
         } else if (processor instanceof RoutingSlipDefinition) {
             RoutingSlipDefinition routingSlip = (RoutingSlipDefinition)processor;
             buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName()).append("\", \"").append(routingSlip.getUriDelimiter())

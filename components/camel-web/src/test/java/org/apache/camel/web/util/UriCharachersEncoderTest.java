@@ -15,17 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.camel.web.groovy;
+package org.apache.camel.web.util;
+
+import junit.framework.TestCase;
 
 /**
  * 
  */
-public class SortDSLTest extends GroovyRendererTestSupport {
+public class UriCharachersEncoderTest extends TestCase {
+    public void testEncoder() {
+        String afterEncoding = "direct:%2F%2Fstart";
+        String beforeEncoding = "direct://start";
 
-    public void testSort() throws Exception {
-        String DSL = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String result = UriCharactersEncoder.encode(beforeEncoding);
+        assertEquals("Get the wrong encoding result", afterEncoding, result);
     }
+
+    public void testNoEncoding() {
+        String noEncoding = "direct:start";
+        String result = UriCharactersEncoder.encode(noEncoding);
+        assertEquals("Get the wrong encoding result", noEncoding, result);
+    }
+
 }

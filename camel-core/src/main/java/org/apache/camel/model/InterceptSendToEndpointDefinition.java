@@ -66,7 +66,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
 
     @Override
     public String getShortName() {
-        return "interceptEndpoint";
+        return "interceptSendToEndpoint";
     }
 
     @Override

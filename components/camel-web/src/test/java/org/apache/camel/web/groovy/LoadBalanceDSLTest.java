@@ -36,4 +36,11 @@ public class LoadBalanceDSLTest extends GroovyRendererTestSupport {
         assertEquals(expectedDSL, render(DSL));
     }
 
+	public void testLoadBalanceSticky() throws Exception {
+        String DSL = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\", \"mock:y\", \"mock:z\")";
+        String expectedDSL = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
+
+        assertEquals(expectedDSL, render(DSL));
+    }
+
 }

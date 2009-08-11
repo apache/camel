@@ -20,11 +20,18 @@ package org.apache.camel.web.groovy;
 /**
  * 
  */
-public class SortDSLTest extends GroovyRendererTestSupport {
+public class ResequenceDSLTest extends GroovyRendererTestSupport {
 
-    public void testSort() throws Exception {
-        String DSL = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
+    public void testResequence() throws Exception {
+        String DSL = "from(\"direct:start\").resequence(body()).to(\"mock:result\")";
         String expectedDSL = DSL;
+
+        assertEquals(expectedDSL, render(DSL));
+    }
+
+    public void testResequencer() throws Exception {
+        String DSL = "from(\"direct:start\").resequencer(header(\"seqnum\")).stream().to(\"mock:result\")";
+        String expectedDSL = "from(\"direct:start\").resequence(header(\"seqnum\")).stream().to(\"mock:result\")";
 
         assertEquals(expectedDSL, render(DSL));
     }
