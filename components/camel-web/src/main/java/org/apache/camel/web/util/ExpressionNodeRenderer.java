@@ -36,7 +36,7 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 
 /**
- * 
+ *
  */
 public class ExpressionNodeRenderer {
 
@@ -56,7 +56,9 @@ public class ExpressionNodeRenderer {
             }
         } else if (expNode instanceof FilterDefinition) {
             if (expression.getPredicate() != null) {
-                PredicateRenderer.renderPredicate(buffer, expression.getPredicate());
+                buffer.append("(");
+                PredicateRenderer.render(buffer, expression.getPredicate());
+                buffer.append(")");
             } else if (expression.getLanguage() != null) {
                 buffer.append("()");
                 ExpressionRenderer.render(buffer, expression);
@@ -65,6 +67,7 @@ public class ExpressionNodeRenderer {
                 ExpressionRenderer.render(buffer, expression);
             }
         } else if (expNode instanceof IdempotentConsumerDefinition) {
+            // TODO improve it
         } else if (expNode instanceof LoopDefinition) {
             if (expression instanceof ConstantExpression) {
                 buffer.append("(").append(expression.getExpression()).append(")");
@@ -105,11 +108,18 @@ public class ExpressionNodeRenderer {
                 ExpressionRenderer.render(buffer, expression);
             }
         } else if (expNode instanceof SplitDefinition) {
-            String expValue = expression.getExpressionValue().toString();
-            if (!expValue.contains("(")) {
-                buffer.append("().").append(expValue).append("()");
-            } else {
+            if (expression.getExpressionValue() != null) {
+                buffer.append("(");
                 ExpressionRenderer.render(buffer, expression);
+                buffer.append(")");
+            } else if (expression.getExpressionType() != null) {
+                buffer.append("().");
+                ExpressionRenderer.render(buffer, expression);
+            }
+
+            SplitDefinition split = (SplitDefinition)expNode;
+            if (split.isStreaming()) {
+                buffer.append(".streaming()");
             }
         } else if (expNode instanceof TransformDefinition) {
             String expValue = expression.getExpressionValue().toString();
@@ -125,7 +135,9 @@ public class ExpressionNodeRenderer {
             }
         } else if (expNode instanceof WhenDefinition) {
             if (expression.getPredicate() != null) {
-                PredicateRenderer.renderPredicate(buffer, expression.getPredicate());
+                buffer.append("(");
+                PredicateRenderer.render(buffer, expression.getPredicate());
+                buffer.append(")");
             }
             if (expression instanceof ExpressionClause) {
                 buffer.append("()");

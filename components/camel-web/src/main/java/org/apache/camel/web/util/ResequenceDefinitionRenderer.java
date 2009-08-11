@@ -19,41 +19,31 @@ package org.apache.camel.web.util;
 
 import java.util.List;
 
-import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.Expression;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ResequenceDefinition;
 
 /**
  *
  */
-public class OnExceptionDefinitionRenderer {
+public class ResequenceDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
-        // if not a global onCompletion, add a period
-        boolean notGlobal = buffer.toString().endsWith(")");
-        if (notGlobal) {
-            buffer.append(".");
-        }
+        ResequenceDefinition resequence = (ResequenceDefinition)processor;
+        buffer.append(".").append(processor.getShortName()).append("(");
 
-        OnExceptionDefinition onException = (OnExceptionDefinition)processor;
-        buffer.append(processor.getShortName()).append("(");
-        List<Class> exceptions = onException.getExceptionClasses();
-        for (Class excep : exceptions) {
-            buffer.append(excep.getSimpleName()).append(".class");
-            if (excep != exceptions.get(exceptions.size() - 1)) {
+        List<Expression> exps = resequence.getExpressionList();
+        for (Expression exp : exps) {
+            ExpressionRenderer.renderExpression(buffer, exp.toString());
+            if (exp != exps.get(exps.size() - 1)) {
                 buffer.append(", ");
             }
         }
         buffer.append(")");
 
-        // render handled() dsl
-        if (onException.getHandledPolicy() != null) {
-            String handled = onException.getHandledPolicy().toString();
-            buffer.append(".handled(").append(handled).append(")");
-        }
-
-        List<ProcessorDefinition> branches = onException.getOutputs();
-        for (ProcessorDefinition branch : branches) {
-            SendDefinitionRenderer.render(buffer, branch);
+        if (resequence.getStreamConfig() != null) {
+            // TODO improve stream() support
+            buffer.append(".stream()");
         }
     }
 }

@@ -16,36 +16,14 @@
  */
 package org.apache.camel.web.util;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.camel.Expression;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.model.AggregateDefinition;
-import org.apache.camel.model.ChoiceDefinition;
-import org.apache.camel.model.ConvertBodyDefinition;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.LoadBalanceDefinition;
-import org.apache.camel.model.OnCompletionDefinition;
-import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.OtherwiseDefinition;
-import org.apache.camel.model.OutputDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.ThrottleDefinition;
-import org.apache.camel.model.WhenDefinition;
-import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
-import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 
 /**
  * Render routes in Groovy language
@@ -58,8 +36,6 @@ public class GroovyRenderer {
 
     /**
      * render a RouteDefinition
-     * 
-     * @throws IOException
      */
     public static void renderRoute(StringBuilder buffer, RouteDefinition route) {
         List<FromDefinition> inputs = route.getInputs();
@@ -78,10 +54,11 @@ public class GroovyRenderer {
         }
 
         // render the global dsl not started with from, like global
-        // onCompletion, onException, intercept
+        // intercept, interceptFrom,interceptSendToEndpoint, onCompletion,
+        // onException
         for (ProcessorDefinition processor : outputs) {
-            if (processor.getParent() == null) {
-                renderProcessor(buffer, processor);
+            if (processor.getParent() == null && !(processor instanceof SendDefinition)) {
+                ProcessorDefinitionRenderer.render(buffer, processor);
                 buffer.append(";");
             }
         }
@@ -96,125 +73,36 @@ public class GroovyRenderer {
         }
         buffer.append(")");
 
+        // render some route configurations
+        if (route.isTrace() != null) {
+            if (route.isTrace()) {
+                buffer.append(".tracing()");
+            } else {
+                buffer.append(".noTracing()");
+            }
+        }
+        if (route.isStreamCache() != null && route.isStreamCache()) {
+            buffer.append(".streamCaching()");
+        }
+
         // render the outputs of the router
         for (ProcessorDefinition processor : outputs) {
-            if (processor.getParent() == route) {
-                renderProcessor(buffer, processor);
+            if (processor.getParent() == route || processor instanceof SendDefinition) {
+                ProcessorDefinitionRenderer.render(buffer, processor);
             }
         }
     }
 
     /**
-     * render a RoutesDefinition
+     * render a set of RouteDefinition
      */
-    public static void renderRoutes(StringBuilder buffer, RoutesDefinition routes) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * render a ProcessorDefiniton
-     */
-    private static void renderProcessor(StringBuilder buffer, ProcessorDefinition processor) {
-        if (processor instanceof AggregateDefinition) {
-            AggregateDefinitionRenderer.render(buffer, processor);
-        } else if (processor instanceof ChoiceDefinition) {
-            ChoiceDefinition choice = (ChoiceDefinition)processor;
-            buffer.append(".").append(choice.getShortName()).append("()");
-            for (WhenDefinition when : choice.getWhenClauses()) {
-                renderProcessor(buffer, when);
+    public static void renderRoutes(StringBuilder buffer, List<RouteDefinition> routes) {
+        for (RouteDefinition route : routes) {
+            renderRoute(buffer, route);
+            if (route != routes.get(routes.size() - 1)) {
+                buffer.append(";");
             }
-            OtherwiseDefinition other = choice.getOtherwise();
-            if (other != null) {
-                renderProcessor(buffer, other);
-            }
-            buffer.append(".end()");
-            return;
-        } else if (processor instanceof ConvertBodyDefinition) {
-            ConvertBodyDefinition convertBody = (ConvertBodyDefinition)processor;
-            buffer.append(".").append(convertBody.getShortName()).append("(");
-            if (convertBody.getType().equals("[B")) {
-                buffer.append("byte[].class");
-            } else {
-                buffer.append(convertBody.getType()).append(".class");
-            }
-            if (convertBody.getCharset() != null) {
-                buffer.append(", \"").append(convertBody.getCharset()).append("\"");
-            }
-            buffer.append(")");
-        } else if (processor instanceof ExpressionNode) {
-            ExpressionNodeRenderer.render(buffer, processor);
-        } else if (processor instanceof LoadBalanceDefinition) {
-            LoadBalanceDefinition loadB = (LoadBalanceDefinition)processor;
-            // buffer.append(".").append(output.getShortName()).append("()");
-            buffer.append(".").append("loadBalance").append("()");
-
-            LoadBalancer lb = loadB.getLoadBalancerType().getLoadBalancer(null);
-            if (lb instanceof FailOverLoadBalancer) {
-                buffer.append(".failover(");
-                List<Class> exceptions = ((FailOverLoadBalancer)lb).getExceptions();
-                for (Class excep : exceptions) {
-                    buffer.append(excep.getSimpleName()).append(".class");
-                    if (excep != exceptions.get(exceptions.size() - 1)) {
-                        buffer.append(", ");
-                    }
-                }
-                buffer.append(")");
-            } else if (lb instanceof RandomLoadBalancer) {
-                buffer.append(".random()");
-            } else if (lb instanceof RoundRobinLoadBalancer) {
-                buffer.append(".roundRobin()");
-            } else if (lb instanceof StickyLoadBalancer) {
-                buffer.append(".sticky()");
-            } else if (lb instanceof TopicLoadBalancer) {
-                buffer.append(".topic()");
-            }
-
-            List<ProcessorDefinition> branches = loadB.getOutputs();
-            for (ProcessorDefinition branch : branches) {
-                renderProcessor(buffer, branch);
-            }
-            return;
-        } else if (processor instanceof OnCompletionDefinition) {
-            OnCompletionDefinitionRenderer.render(buffer, processor);
-            return;
-        } else if (processor instanceof OnExceptionDefinition) {
-            OnExceptionDefinitionRenderer.render(buffer, processor);
-            return;
-        } else if (processor instanceof OutputDefinition) {
-            OutputDefinitionRenderer.render(buffer, processor);
-        } else if (processor instanceof ResequenceDefinition) {
-            ResequenceDefinition resequence = (ResequenceDefinition)processor;
-            buffer.append(".").append(processor.getShortName()).append("(");
-
-            List<Expression> exps = resequence.getExpressionList();
-            for (Expression exp : exps) {
-                buffer.append(exp.toString()).append("()");
-                if (exp != exps.get(exps.size() - 1)) {
-                    buffer.append(", ");
-                }
-            }
-            buffer.append(")");
-        } else if (processor instanceof RoutingSlipDefinition) {
-            RoutingSlipDefinition routingSlip = (RoutingSlipDefinition)processor;
-            buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName()).append("\", \"").append(routingSlip.getUriDelimiter())
-                .append("\")");
-        } else if (processor instanceof SendDefinition) {
-            SendDefinitionRenderer.render(buffer, processor);
-        } else if (processor instanceof ThrottleDefinition) {
-            ThrottleDefinition throttle = (ThrottleDefinition)processor;
-            buffer.append(".").append(throttle.getShortName()).append("(").append(throttle.getMaximumRequestsPerPeriod()).append(")");
-            if (throttle.getTimePeriodMillis() != 1000) {
-                buffer.append(".timePeriodMillis(").append(throttle.getTimePeriodMillis()).append(")");
-            }
-        } else {
-            buffer.append(".").append(processor.getShortName()).append("()");
-        }
-
-        List<ProcessorDefinition> outputs = processor.getOutputs();
-
-        for (ProcessorDefinition nextProcessor : outputs) {
-            renderProcessor(buffer, nextProcessor);
         }
     }
+
 }

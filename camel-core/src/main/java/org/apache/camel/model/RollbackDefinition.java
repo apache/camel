@@ -44,6 +44,10 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
         this.message = message;
     }
 
+    public String getMessage() {
+        return message;
+    }
+    
     @Override
     public String getShortName() {
         return "rollback";

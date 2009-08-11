@@ -23,8 +23,8 @@ package org.apache.camel.web.groovy;
 public class PipelineDSLTest extends GroovyRendererTestSupport {
 
     public void testPipeline1() throws Exception {
-        String DSL = "from(\"direct:start\").pipeline(\"direct:x\", \"direct:y\", \"direct:z\", \"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").to(\"direct:x\").to(\"direct:y\").to(\"direct:z\").to(\"mock:result\")";
+        String DSL = "from(\"direct:start\").pipeline(\"mock:x\", \"mock:y\", \"mock:z\", \"mock:result\")";
+        String expectedDSL = "from(\"direct:start\").to(\"mock:x\").to(\"mock:y\").to(\"mock:z\").to(\"mock:result\")";
 
         assertEquals(expectedDSL, render(DSL));
     }

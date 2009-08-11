@@ -22,7 +22,7 @@ import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * 
+ *
  */
 public class AggregateDefinitionRenderer {
 

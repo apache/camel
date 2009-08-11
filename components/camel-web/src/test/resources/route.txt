@@ -1,1 +1,1 @@
-onCompletion().to("log:global").to("mock:global");from("direct:start").onCompletion().to("log:route").to("mock:sync").end().to("mock:result")
+from("direct:start").to("mock:result")

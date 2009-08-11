@@ -17,14 +17,26 @@
 
 package org.apache.camel.web.util;
 
+import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.WhenDefinition;
 
 /**
- * 
+ *
  */
 public class ChoiceDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
-
+        ChoiceDefinition choice = (ChoiceDefinition)processor;
+        buffer.append(".").append(choice.getShortName()).append("()");
+        for (WhenDefinition when : choice.getWhenClauses()) {
+            ProcessorDefinitionRenderer.render(buffer, when);
+        }
+        OtherwiseDefinition other = choice.getOtherwise();
+        if (other != null) {
+            ProcessorDefinitionRenderer.render(buffer, other);
+        }
+        buffer.append(".end()");
     }
 }

@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 
+ *
  */
 public class UriCharactersEncoder {
     private static BitSet unsafeCharacters;

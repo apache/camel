@@ -17,29 +17,25 @@
 
 package org.apache.camel.web.util;
 
+import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.WireTapDefinition;
 
 /**
  *
  */
-public class SendDefinitionRenderer {
+public class ConvertBodyDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
-        buffer.append(".");
-        SendDefinition send = (SendDefinition)processor;
-        if (send instanceof WireTapDefinition || send.getPattern() == null) {
-            // for wireTap and simple to
-            buffer.append(send.getShortName());
+        ConvertBodyDefinition convertBody = (ConvertBodyDefinition)processor;
+        buffer.append(".").append(convertBody.getShortName()).append("(");
+        if (convertBody.getType().equals("[B")) {
+            buffer.append("byte[].class");
         } else {
-            // for inOnly and inOut
-            if (send.getPattern().name().equals("InOnly")) {
-                buffer.append("inOnly");
-            } else if (send.getPattern().name().equals("InOut")) {
-                buffer.append("inOut");
-            }
+            buffer.append(convertBody.getType()).append(".class");
         }
-        buffer.append("(\"").append(send.getUri()).append("\")");
+        if (convertBody.getCharset() != null) {
+            buffer.append(", \"").append(convertBody.getCharset()).append("\"");
+        }
+        buffer.append(")");
     }
 }

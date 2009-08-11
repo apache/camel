@@ -18,13 +18,13 @@
 package org.apache.camel.web.groovy;
 
 /**
- * 
+ *
  */
-public class SortDSLTest extends GroovyRendererTestSupport {
+public class MulticastDSLTest extends GroovyRendererTestSupport {
 
-    public void testSort() throws Exception {
-        String DSL = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
-        String expectedDSL = DSL;
+    public void testMulticast() throws Exception {
+        String DSL = "from(\"direct:a\").multicast().to(\"mock:x\", \"mock:y\", \"mock:z\")";
+        String expectedDSL = "from(\"direct:a\").multicast().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
 
         assertEquals(expectedDSL, render(DSL));
     }

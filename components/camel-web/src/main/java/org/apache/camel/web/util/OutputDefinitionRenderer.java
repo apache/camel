@@ -25,6 +25,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.MulticastDefinition;
@@ -46,13 +47,12 @@ import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 
 /**
- * 
+ *
  */
 public class OutputDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         OutputDefinition out = (OutputDefinition)processor;
-
         boolean notGlobal = buffer.toString().endsWith(")");
         if (notGlobal) {
             buffer.append(".");
@@ -62,7 +62,6 @@ public class OutputDefinitionRenderer {
         if (out instanceof AOPDefinition) {
             buffer.append("()");
             AOPDefinition aop = (AOPDefinition)out;
-
             if (aop.getBeforeUri() != null && aop.getAfterUri() != null) {
                 buffer.append(".around(\"").append(aop.getBeforeUri());
                 buffer.append("\", \"").append(aop.getAfterUri()).append("\")");
@@ -75,32 +74,43 @@ public class OutputDefinitionRenderer {
             }
 
         } else if (out instanceof BeanDefinition) {
-
+            // TODO improve it
         } else if (out instanceof EnrichDefinition) {
             String enrich = out.toString();
             String resourceUri = enrich.substring(enrich.indexOf('[') + 1, enrich.indexOf(' '));
             buffer.append("(\"").append(resourceUri).append("\")");
         } else if (out instanceof FinallyDefinition) {
-            
+
         } else if (out instanceof InterceptDefinition) {
+            if (out instanceof InterceptFromDefinition) {
+                InterceptFromDefinition interceptFrom = (InterceptFromDefinition)out;
+                if (interceptFrom.getUri() != null) {
+                    buffer.append("(\"").append(interceptFrom.getUri()).append("\")");
+                    return;
+                }
+            }
             buffer.append("()");
         } else if (out instanceof InterceptSendToEndpointDefinition) {
-
+            InterceptSendToEndpointDefinition interceptSend = (InterceptSendToEndpointDefinition)out;
+            buffer.append("(\"").append(interceptSend.getUri()).append("\")");
+            if (interceptSend.getSkipSendToOriginalEndpoint()) {
+                buffer.append(".skipSendToOriginalEndpoint()");
+            }
         } else if (out instanceof MarshalDefinition) {
             DataFormatDefinition dataFormat = ((MarshalDefinition)out).getDataFormatType();
             buffer.append("().").append(dataFormat.getClass().getAnnotation(XmlRootElement.class).name()).append("()");
         } else if (out instanceof MulticastDefinition) {
-
+            buffer.append("()");
         } else if (out instanceof OtherwiseDefinition) {
             buffer.append("()");
         } else if (out instanceof PipelineDefinition) {
-
+            // transformed into simple ToDefinition
         } else if (out instanceof PolicyDefinition) {
-
+            // TODO improve it
         } else if (out instanceof PollEnrichDefinition) {
-
+            // TODO improve it
         } else if (out instanceof ProcessDefinition) {
-
+            // TODO improve it
         } else if (out instanceof RemoveHeaderDefinition) {
             RemoveHeaderDefinition remove = (RemoveHeaderDefinition)out;
             buffer.append("(\"").append(remove.getHeaderName()).append("\")");
@@ -108,23 +118,22 @@ public class OutputDefinitionRenderer {
             RemovePropertyDefinition remove = (RemovePropertyDefinition)out;
             buffer.append("(\"").append(remove.getPropertyName()).append("\")");
         } else if (out instanceof SetExchangePatternDefinition) {
-
+            // TODO improve it
         } else if (out instanceof SortDefinition) {
             SortDefinition sort = (SortDefinition)out;
             buffer.append("(");
             ExpressionRenderer.renderExpression(buffer, sort.getExpression().toString());
             buffer.append(")");
         } else if (out instanceof StopDefinition) {
-
+            buffer.append("()");
         } else if (out instanceof ThreadsDefinition) {
-
+            // TODO improve it
         } else if (out instanceof TransactedDefinition) {
-
+            // TODO improve it
         } else if (out instanceof TryDefinition) {
-
+            // TODO improve it
         } else if (out instanceof UnmarshalDefinition) {
             DataFormatDefinition dataFormat = ((UnmarshalDefinition)out).getDataFormatType();
-            Class clazz = dataFormat.getClass();
             buffer.append("().").append(dataFormat.getClass().getAnnotation(XmlRootElement.class).name()).append("()");
         }
     }

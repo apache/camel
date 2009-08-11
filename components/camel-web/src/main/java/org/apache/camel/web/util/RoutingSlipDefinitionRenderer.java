@@ -18,28 +18,16 @@
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
 
 /**
  *
  */
-public class SendDefinitionRenderer {
+public class RoutingSlipDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
-        buffer.append(".");
-        SendDefinition send = (SendDefinition)processor;
-        if (send instanceof WireTapDefinition || send.getPattern() == null) {
-            // for wireTap and simple to
-            buffer.append(send.getShortName());
-        } else {
-            // for inOnly and inOut
-            if (send.getPattern().name().equals("InOnly")) {
-                buffer.append("inOnly");
-            } else if (send.getPattern().name().equals("InOut")) {
-                buffer.append("inOut");
-            }
-        }
-        buffer.append("(\"").append(send.getUri()).append("\")");
+        RoutingSlipDefinition routingSlip = (RoutingSlipDefinition)processor;
+        buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName()).append("\", \"").append(routingSlip.getUriDelimiter())
+            .append("\")");
     }
 }

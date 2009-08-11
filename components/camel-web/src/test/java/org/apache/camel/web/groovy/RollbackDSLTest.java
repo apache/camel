@@ -18,12 +18,12 @@
 package org.apache.camel.web.groovy;
 
 /**
- * 
+ *
  */
-public class SortDSLTest extends GroovyRendererTestSupport {
+public class RollbackDSLTest extends GroovyRendererTestSupport {
 
-    public void testSort() throws Exception {
-        String DSL = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
+    public void testRollback() throws Exception {
+        String DSL = "from(\"direct:start\").choice().when(body().isNotEqualTo(\"ok\")).to(\"mock:rollback\").rollback(\"That do not work\").otherwise().to(\"mock:result\").end()";
         String expectedDSL = DSL;
 
         assertEquals(expectedDSL, render(DSL));

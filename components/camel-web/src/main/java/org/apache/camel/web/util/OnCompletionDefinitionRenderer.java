@@ -24,7 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 
 /**
- * 
+ *
  */
 public class OnCompletionDefinitionRenderer {
 
@@ -41,7 +41,9 @@ public class OnCompletionDefinitionRenderer {
             WhenDefinition when = onComplete.getOnWhen();
             buffer.append(".onWhen");
             if (when.getExpression().getPredicate() != null) {
-                PredicateRenderer.renderPredicate(buffer, when.getExpression().getPredicate());
+                buffer.append("(");
+                PredicateRenderer.render(buffer, when.getExpression().getPredicate());
+                buffer.append(")");
             } else {
                 buffer.append("Unsupported Expression!");
             }
@@ -56,7 +58,6 @@ public class OnCompletionDefinitionRenderer {
         for (ProcessorDefinition branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);
         }
-
 
         // if not a global onCompletion, using end() at the end
         if (notGlobal) {

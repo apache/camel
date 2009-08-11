@@ -52,6 +52,10 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
         this.correlationExpression = correlationExpression;
         this.loadBalancer = loadBalancer;
     }
+    
+    public Expression getCorrelationExpression() {
+        return correlationExpression;
+    }
 
     protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
         Object value = correlationExpression.evaluate(exchange, Object.class);

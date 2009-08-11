@@ -18,14 +18,15 @@
 package org.apache.camel.web.groovy;
 
 /**
- * 
+ *
  */
-public class SortDSLTest extends GroovyRendererTestSupport {
+public class StreamCachingDSLTest extends GroovyRendererTestSupport {
 
-    public void testSort() throws Exception {
-        String DSL = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
+    public void test() throws Exception {
+        String DSL = "from(\"direct:start\").streamCaching().to(\"mock:result\")";
         String expectedDSL = DSL;
 
         assertEquals(expectedDSL, render(DSL));
     }
+
 }

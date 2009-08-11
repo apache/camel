@@ -18,14 +18,14 @@
 package org.apache.camel.web.groovy;
 
 /**
- * 
+ *
  */
-public class SortDSLTest extends GroovyRendererTestSupport {
+public class TracingDSLTest extends GroovyRendererTestSupport {
 
-    public void testSort() throws Exception {
-        String DSL = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
+    public void testTracePerRotueManual() throws Exception {
+        String DSL = "from(\"direct:a\").tracing().streamCaching().to(\"mock:a\");from(\"direct:b\").noTracing().to(\"mock:b\");from(\"direct:c\").tracing().to(\"mock:c\")";
         String expectedDSL = DSL;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, renderRoutes(DSL));
     }
 }

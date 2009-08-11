@@ -18,28 +18,18 @@
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.ThrottleDefinition;
 
 /**
  *
  */
-public class SendDefinitionRenderer {
+public class ThrottleDefinitionRenderer {
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
-        buffer.append(".");
-        SendDefinition send = (SendDefinition)processor;
-        if (send instanceof WireTapDefinition || send.getPattern() == null) {
-            // for wireTap and simple to
-            buffer.append(send.getShortName());
-        } else {
-            // for inOnly and inOut
-            if (send.getPattern().name().equals("InOnly")) {
-                buffer.append("inOnly");
-            } else if (send.getPattern().name().equals("InOut")) {
-                buffer.append("inOut");
-            }
+        ThrottleDefinition throttle = (ThrottleDefinition)processor;
+        buffer.append(".").append(throttle.getShortName()).append("(").append(throttle.getMaximumRequestsPerPeriod()).append(")");
+        if (throttle.getTimePeriodMillis() != 1000) {
+            buffer.append(".timePeriodMillis(").append(throttle.getTimePeriodMillis()).append(")");
         }
-        buffer.append("(\"").append(send.getUri()).append("\")");
     }
 }

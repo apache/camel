@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.web.util.GroovyRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +44,47 @@ public abstract class GroovyRendererTestSupport extends TestCase {
 
     private CamelContext context;
 
-    public RouteDefinition createRoute(String dsl) throws Exception {
+    /**
+     * get the first route in camelContext
+     */
+    public RouteDefinition getRoute(String dsl) throws Exception {
+        createAndAddRoute(dsl);
+        List<RouteDefinition> list = context.getRouteDefinitions();
+        if (!list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * get all routes in camelContext
+     */
+    public List<RouteDefinition> getRoutes(String dsl) throws Exception {
+        createAndAddRoute(dsl);
+        return context.getRouteDefinitions();
+    }
+
+    public String render(String dsl) throws Exception {
+        RouteDefinition route = getRoute(dsl);
+        assertNotNull(route);
+
+        StringBuilder sb = new StringBuilder();
+        GroovyRenderer.renderRoute(sb, route);
+        return sb.toString();
+    }
+
+    public String renderRoutes(String dsl) throws Exception {
+        List<RouteDefinition> routes = getRoutes(dsl);
+
+        StringBuilder sb = new StringBuilder();
+        GroovyRenderer.renderRoutes(sb, routes);
+        return sb.toString();
+    }
+
+    /**
+     * create routes using the dsl and add them into camelContext
+     */
+    private void createAndAddRoute(String dsl) throws Exception, InstantiationException, IllegalAccessException {
         if (context != null) {
             context.stop();
         }
@@ -55,20 +96,6 @@ public abstract class GroovyRendererTestSupport extends TestCase {
         RouteBuilder builder = (RouteBuilder)clazz.newInstance();
 
         context.addRoutes(builder);
-        List<RouteDefinition> list = context.getRouteDefinitions();
-        if (!list.isEmpty()) {
-            return list.get(0);
-        }
-        return null;
-    }
-
-    public String render(String dsl) throws Exception {
-        RouteDefinition route = createRoute(dsl);
-        assertNotNull(route);
-
-        StringBuilder sb = new StringBuilder();
-        GroovyRenderer.renderRoute(sb, route);
-        return sb.toString();
     }
 
 }

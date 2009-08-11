@@ -39,16 +39,13 @@ public class GroovyRendererTest extends GroovyRendererTestSupport {
         }
     }
 
-    public void _testRoutes() throws Exception {
-        FileReader reader = new FileReader("src/test/resources/testedRoutes.txt");
+    public void testRoutes() throws Exception {
+        FileReader reader = new FileReader("src/test/resources/routes.txt");
         BufferedReader br = new BufferedReader(reader);
         String dsl = null;
         while ((dsl = br.readLine()) != null) {
-            if (dsl.startsWith("#")) {
-                continue;
-            }
             System.out.println("dsl: " + dsl);
-            System.out.println("after rendered: \n" + render(dsl));
+            System.out.println("after rendered: \n" + renderRoutes(dsl));
             System.out.println();
         }
     }
