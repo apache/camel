@@ -33,6 +33,7 @@
   <description>Camel HTTP support</description>
 
   <properties>
+    <camel.osgi.import.pkg>org.apache.commons.httpclient.*;version="[3.1,4.0)",*</camel.osgi.import.pkg>
 	<camel.osgi.export.pkg>org.apache.camel.component.http.*</camel.osgi.export.pkg>
   </properties>
 
