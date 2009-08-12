@@ -60,7 +60,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
         Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
-        s = mbsc.queryNames(new ObjectName(domainName + ":name=context,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);

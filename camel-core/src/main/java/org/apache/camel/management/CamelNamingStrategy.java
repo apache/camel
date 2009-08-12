@@ -78,7 +78,8 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
-        buffer.append(KEY_NAME + "=").append("context");
+        buffer.append(KEY_TYPE + "=" + TYPE_CONTEXT + ",");
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(context.getName()));
         return createObjectName(buffer);
     }
 
