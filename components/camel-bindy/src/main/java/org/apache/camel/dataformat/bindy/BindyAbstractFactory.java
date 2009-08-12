@@ -184,34 +184,28 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     }
     
     public static Object getDefaultValueforPrimitive(Class<?> clazz) throws Exception {
-        if (clazz == byte.class || clazz == Byte.class) {
-            return Byte.MIN_VALUE;
-        } else if (clazz == short.class || clazz == Short.class) {
-            return Short.MIN_VALUE;
-        } else if (clazz == int.class || clazz == Integer.class) {
-            return Integer.MIN_VALUE;
-        } else if (clazz == long.class || clazz == Long.class) {
-            return Long.MIN_VALUE;
-        } else if (clazz == float.class || clazz == Float.class) {
-            return Float.MIN_VALUE;
-        } else if (clazz == double.class || clazz == Double.class) {
-            return Double.MIN_VALUE;
-        } else if (clazz == BigDecimal.class) {
-            return BigDecimal.ZERO;
-        } else if (clazz == BigInteger.class) {
-            return BigInteger.ZERO;
-        } else if (clazz == String.class) {
-            return null;
-        } else if (clazz == Date.class) {
-            return null;
-        } else if (clazz == char.class || clazz == Character.class) {
-            return null;
-        } else if (clazz == boolean.class || clazz == Boolean.class) {
-            return false;
-        } else {
-            throw new IllegalArgumentException("Can not find type corresponding : " + clazz.getCanonicalName());
-        }
+    	
+    	if (clazz == byte.class ) return Byte.MIN_VALUE;
+
+    	else if (clazz == short.class ) return Short.MIN_VALUE;
+
+    	else if (clazz == int.class ) return Integer.MIN_VALUE;
+
+    	else if (clazz == long.class ) return Long.MIN_VALUE;
+
+    	else if (clazz == float.class ) return Float.MIN_VALUE;
+
+    	else if (clazz == double.class ) return Double.MIN_VALUE;
+
+    	else if (clazz == char.class ) return Character.MIN_VALUE;
+
+    	else if (clazz == boolean.class ) return false;
+
+    	else return null;
+
     }
+
+
 
     /**
      * Find the carriage return set
