@@ -48,7 +48,7 @@
       </snapshots>
     </repository>
     <repository>
-      <id>aqute.biz</id>
+      <id>biz.aQute</id>
       <url>http://www.aqute.biz/repo</url>
     </repository>
   </repositories>
