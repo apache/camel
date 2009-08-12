@@ -296,6 +296,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         strValue = format.format(value);
                         
                     }
+                    
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Data : " + value + ", value : " + strValue);
+                    }
+                    
                     builder.append(strValue);
 
                     if (it.hasNext()) {
