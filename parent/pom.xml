@@ -960,16 +960,20 @@
   <profiles>
     <profile>
 	  <id>nochecks</id>
-          <activation>
-		<activeByDefault>true</activeByDefault>
-	  </activation>
-	  <properties>
-		<!--  pmd.skip>true</pmd.skip-->
-		<checkstyle.skip>true</checkstyle.skip>
-	  </properties>
     </profile>
     <profile>
-	<id>sourcecheck</id>       
+	<id>sourcecheck</id>
+        <activation>
+                <activeByDefault>true</activeByDefault>
+        </activation>
+        <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                    </plugin>
+                </plugins>
+        </build> 
     </profile>
   </profiles>
 </project>
