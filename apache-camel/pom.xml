@@ -36,20 +36,10 @@
     <shade.version>1.0.1</shade.version>
   </properties>
 
-  <modules>
-    <module>bundle</module>
-  </modules>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-bundle</artifactId>
-      <version>${pom.version}</version>
     </dependency>
 
     <dependency>
