@@ -26,11 +26,11 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
 
+    private int size = 200;
+    
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tuning/PerformanceRoutePojoTest-context.xml");
     }
-
-    private int size = 200;
 
     @Test
     public void testPojoPerformance() throws Exception {
@@ -51,7 +51,7 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
             if (i % 10 == 0) {
                 type = "silver";
             } else if (i % 2 == 0) {
-                 type = "gold";
+                type = "gold";
             } else {
                 type = "bronze";
             }
