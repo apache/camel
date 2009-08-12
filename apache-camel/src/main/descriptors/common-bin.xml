@@ -18,15 +18,6 @@
 <assembly>
   <id>common-bin</id>
   <fileSets>
-
-    <fileSet>
-      <directory>target</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>apache-camel-*.jar</include>
-      </includes>
-    </fileSet>    
-
     <!-- copy the website docs
     <fileSet>
       <directory>${basedir}/target/website</directory>
