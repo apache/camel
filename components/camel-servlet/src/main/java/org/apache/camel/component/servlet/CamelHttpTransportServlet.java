@@ -26,11 +26,14 @@ import javax.servlet.ServletException;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelHttpTransportServlet extends CamelServlet {
     private static final transient Log LOG = LogFactory.getLog(CamelHttpTransportServlet.class);
     private static final Map<String, CamelServlet> CAMEL_SERVLET_MAP = new ConcurrentHashMap<String, CamelServlet>();
     private String servletName;
+    private AbstractApplicationContext applicationContext;
     
     public CamelHttpTransportServlet() {
         super(false);        
@@ -43,6 +46,18 @@ public class CamelHttpTransportServlet extends CamelServlet {
         this.setMatchOnUriPrefix(Boolean.valueOf(matchOnUriPrefix));
         // parser the servlet init parameters
         CAMEL_SERVLET_MAP.put(servletName, this);
+        String contextConfigLocation = config.getInitParameter("contextConfigLocation");
+        if (contextConfigLocation != null) {
+            //Create a spring application context for it
+            applicationContext = new ClassPathXmlApplicationContext(new String[]{contextConfigLocation});
+        }
+    }
+    
+    public void destroy() {
+        CAMEL_SERVLET_MAP.remove(servletName);
+        if (applicationContext != null) {
+            applicationContext.stop();
+        }
     }
     
     public static CamelServlet getCamelServlet(String servletName) {

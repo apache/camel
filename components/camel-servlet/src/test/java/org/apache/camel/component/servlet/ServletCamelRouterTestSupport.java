@@ -28,12 +28,14 @@ import com.meterware.httpunit.HttpUnitOptions;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Before;
 
 public class ServletCamelRouterTestSupport extends CamelTestSupport {
     public static final String CONTEXT = "/mycontext";
     public static final String CONTEXT_URL = "http://localhost/mycontext";
     protected ServletRunner sr;
+    protected boolean startCamelContext = true;
 
     @Before
     public void setUp() throws Exception {
@@ -44,8 +46,16 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         loadServlets();
         
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
-        
-        super.setUp();
+        if (startCamelContext) {        
+            super.setUp();
+        }
+    }
+    
+    @After
+    public void tearDown() throws Exception {
+        if (startCamelContext) {
+            super.tearDown();
+        }
     }
     
     protected void loadServlets() throws Exception {

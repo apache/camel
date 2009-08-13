@@ -54,27 +54,32 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
         client.setExceptionsThrownOnErrorStatus(false);
     }
+    
+    public static class MyServletRoute extends RouteBuilder {
+
+        @Override
+        public void configure() throws Exception {
+            errorHandler(noErrorHandler());
+            // START SNIPPET: route
+            from("servlet:///hello").process(new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                    String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+                    assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
+                    String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
+                    assertEquals("Get a wrong charset name", "UTF-8", charsetEncoding);
+                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");                        
+                    exchange.getOut().setHeader("PATH", path);
+                    exchange.getOut().setBody("<b>Hello World</b>");
+                }
+            });
+            // END SNIPPET: route
+        }
+        
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                errorHandler(noErrorHandler());
-                // START SNIPPET: route
-                from("servlet:///hello").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                        String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
-                        assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
-                        String charsetEncoding = exchange.getIn().getHeader(Exchange.HTTP_CHARACTER_ENCODING, String.class);
-                        assertEquals("Get a wrong charset name", "UTF-8", charsetEncoding);
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentType + "; charset=UTF-8");                        
-                        exchange.getOut().setHeader("PATH", path);
-                        exchange.getOut().setBody("<b>Hello World</b>");
-                    }
-                });
-                // END SNIPPET: route
-            }
-        };
+        return new MyServletRoute();
     }    
   
 
