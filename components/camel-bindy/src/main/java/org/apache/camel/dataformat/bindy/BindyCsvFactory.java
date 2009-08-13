@@ -251,8 +251,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Object modelField = model.get(field.getDeclaringClass().getName());
             
             if (modelField != null) {
-	            
-	            // Get field value
+                // Get field value
                 Object value = field.get(modelField);
                 String strValue = null;
 
@@ -281,7 +280,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     positions.put(keyGenerated, strValue);
 
                     if (LOG.isDebugEnabled()) {
-                           LOG.debug("Positions size : " + positions.size());
+                        LOG.debug("Positions size : " + positions.size());
                     }
                         
                 } else {
