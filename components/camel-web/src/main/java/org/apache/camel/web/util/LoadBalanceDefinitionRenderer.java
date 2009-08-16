@@ -19,11 +19,8 @@ package org.apache.camel.web.util;
 
 import java.util.List;
 
-import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
-import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
@@ -34,9 +31,12 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 /**
  *
  */
-public class LoadBalanceDefinitionRenderer {
+public final class LoadBalanceDefinitionRenderer {
+    private LoadBalanceDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         LoadBalanceDefinition loadB = (LoadBalanceDefinition)processor;
         // buffer.append(".").append(output.getShortName()).append("()");
         buffer.append(".").append("loadBalance").append("()");

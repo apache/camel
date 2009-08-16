@@ -25,9 +25,12 @@ import org.apache.camel.model.WhenDefinition;
 /**
  *
  */
-public class ChoiceDefinitionRenderer {
+public final class ChoiceDefinitionRenderer {
+    private ChoiceDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         ChoiceDefinition choice = (ChoiceDefinition)processor;
         buffer.append(".").append(choice.getShortName()).append("()");
         for (WhenDefinition when : choice.getWhenClauses()) {

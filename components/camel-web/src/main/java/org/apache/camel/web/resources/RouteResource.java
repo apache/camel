@@ -19,7 +19,6 @@ package org.apache.camel.web.resources;
 import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.api.view.Viewable;
 import groovy.lang.GroovyClassLoader;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -55,6 +54,7 @@ import org.apache.camel.web.util.GroovyRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jruby.Main;
+
 
 /**
  * A single Camel Route which is used to implement one or more
@@ -119,7 +119,7 @@ public class RouteResource extends CamelChildResourceSupport {
         } else if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
             StringBuilder buffer = new StringBuilder();
             GroovyRenderer.renderRoute(buffer, route);
-            return GroovyRenderer.header + buffer.toString() + GroovyRenderer.footer;
+            return GroovyRenderer.HEADER + buffer.toString() + GroovyRenderer.footer;
         } else {
             return "Unsupported language!";
         }
@@ -163,9 +163,10 @@ public class RouteResource extends CamelChildResourceSupport {
         for (int i = 0; i < routeDefinitions.size(); i++) {
             RouteDefinition routeDefinition = routeDefinitions.get(i);
             // set id only for the first route
-            if (i == 0)
+            if (i == 0) {
                 routeDefinition.setId(id);
-
+            }
+            
             // add or update the route
             getCamelContext().addRouteDefinitions(Collections.singletonList(routeDefinition));
         }

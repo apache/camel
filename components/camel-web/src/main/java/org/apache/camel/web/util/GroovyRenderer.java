@@ -28,11 +28,14 @@ import org.apache.camel.model.SendDefinition;
 /**
  * Render routes in Groovy language
  */
-public class GroovyRenderer {
+public final class GroovyRenderer {
 
-    public static final String header = "import org.apache.camel.language.groovy.GroovyRouteBuilder;\nclass GroovyRoute extends GroovyRouteBuilder {\nvoid configure() {\n";
-
+    public static final String HEADER = "import org.apache.camel.language.groovy.GroovyRouteBuilder;\nclass GroovyRoute extends GroovyRouteBuilder {\nvoid configure() {\n";
     public static final String footer = "\n}\n}";
+
+    private GroovyRenderer() {
+        // Utility class, no public or protected default constructor
+    }
 
     /**
      * render a RouteDefinition

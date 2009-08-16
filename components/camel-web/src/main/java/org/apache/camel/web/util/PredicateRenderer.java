@@ -22,7 +22,10 @@ import org.apache.camel.Predicate;
 /**
  * render a predicate
  */
-public class PredicateRenderer {
+public final class PredicateRenderer {
+    private PredicateRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
     public static void render(StringBuilder buffer, Predicate predicate) {
         String pre = predicate.toString();

@@ -24,11 +24,14 @@ import org.apache.camel.model.WireTapDefinition;
 /**
  *
  */
-public class SendDefinitionRenderer {
+public final class SendDefinitionRenderer {
+    private SendDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         buffer.append(".");
-        SendDefinition send = (SendDefinition)processor;
+        SendDefinition<?> send = (SendDefinition<?>)processor;
         if (send instanceof WireTapDefinition || send.getPattern() == null) {
             // for wireTap and simple to
             buffer.append(send.getShortName());

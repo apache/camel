@@ -23,9 +23,12 @@ import org.apache.camel.model.RoutingSlipDefinition;
 /**
  *
  */
-public class RoutingSlipDefinitionRenderer {
+public final class RoutingSlipDefinitionRenderer {
+    private RoutingSlipDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         RoutingSlipDefinition routingSlip = (RoutingSlipDefinition)processor;
         buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName()).append("\", \"").append(routingSlip.getUriDelimiter())
             .append("\")");

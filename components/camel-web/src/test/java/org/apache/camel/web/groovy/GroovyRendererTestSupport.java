@@ -38,7 +38,7 @@ public abstract class GroovyRendererTestSupport extends TestCase {
 
     public final Log LOG = LogFactory.getLog(GroovyRendererTestSupport.class);
 
-    private final String header = GroovyRenderer.header;
+    private final String header = GroovyRenderer.HEADER;
 
     private final String footer = GroovyRenderer.footer;
 

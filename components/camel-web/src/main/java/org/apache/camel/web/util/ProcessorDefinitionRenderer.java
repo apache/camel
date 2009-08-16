@@ -19,7 +19,6 @@ package org.apache.camel.web.util;
 
 import java.util.List;
 
-import org.apache.camel.Expression;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
@@ -27,7 +26,6 @@ import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.OutputDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
@@ -35,20 +33,16 @@ import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ThrottleDefinition;
-import org.apache.camel.model.WhenDefinition;
-import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
-import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 
 /**
  *
  */
-public class ProcessorDefinitionRenderer {
+public final class ProcessorDefinitionRenderer {
+    private ProcessorDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         if (processor instanceof AggregateDefinition) {
             AggregateDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof ChoiceDefinition) {

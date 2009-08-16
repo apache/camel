@@ -49,10 +49,13 @@ import org.apache.camel.model.UnmarshalDefinition;
 /**
  *
  */
-public class OutputDefinitionRenderer {
+public final class OutputDefinitionRenderer {
+    private OutputDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
-        OutputDefinition out = (OutputDefinition)processor;
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+        OutputDefinition<?> out = (OutputDefinition<?>)processor;
         boolean notGlobal = buffer.toString().endsWith(")");
         if (notGlobal) {
             buffer.append(".");

@@ -23,9 +23,12 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  *
  */
-public class ConvertBodyDefinitionRenderer {
+public final class ConvertBodyDefinitionRenderer {
+    private ConvertBodyDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         ConvertBodyDefinition convertBody = (ConvertBodyDefinition)processor;
         buffer.append(".").append(convertBody.getShortName()).append("(");
         if (convertBody.getType().equals("[B")) {

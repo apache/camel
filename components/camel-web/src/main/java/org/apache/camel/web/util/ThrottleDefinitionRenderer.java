@@ -23,9 +23,12 @@ import org.apache.camel.model.ThrottleDefinition;
 /**
  *
  */
-public class ThrottleDefinitionRenderer {
+public final class ThrottleDefinitionRenderer {
+    private ThrottleDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         ThrottleDefinition throttle = (ThrottleDefinition)processor;
         buffer.append(".").append(throttle.getShortName()).append("(").append(throttle.getMaximumRequestsPerPeriod()).append(")");
         if (throttle.getTimePeriodMillis() != 1000) {

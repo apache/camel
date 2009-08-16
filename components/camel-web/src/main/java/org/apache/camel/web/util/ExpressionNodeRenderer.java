@@ -38,9 +38,12 @@ import org.apache.camel.model.language.ExpressionDefinition;
 /**
  *
  */
-public class ExpressionNodeRenderer {
+public final class ExpressionNodeRenderer {
+    private ExpressionNodeRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         ExpressionNode expNode = (ExpressionNode)processor;
         ExpressionDefinition expression = expNode.getExpression();
 

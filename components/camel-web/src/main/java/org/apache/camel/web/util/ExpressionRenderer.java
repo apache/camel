@@ -25,7 +25,10 @@ import org.apache.camel.model.language.XPathExpression;
 /**
  *
  */
-public class ExpressionRenderer {
+public final class ExpressionRenderer {
+    private ExpressionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
     /**
      * a common render method to process the expressionDefinition

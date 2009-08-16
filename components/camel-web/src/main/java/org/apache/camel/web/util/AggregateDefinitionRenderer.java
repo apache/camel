@@ -18,15 +18,18 @@
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.AggregateDefinition;
-import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
  *
  */
-public class AggregateDefinitionRenderer {
+public final class AggregateDefinitionRenderer {
+    private AggregateDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+        
         AggregateDefinition aggregate = (AggregateDefinition)processor;
         buffer.append(".").append(aggregate.getShortName()).append("()");
 
