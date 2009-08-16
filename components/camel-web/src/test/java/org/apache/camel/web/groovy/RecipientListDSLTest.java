@@ -23,17 +23,12 @@ package org.apache.camel.web.groovy;
 public class RecipientListDSLTest extends GroovyRendererTestSupport {
 
     public void testSimpleRecipientList() throws Exception {
-        String DSL = "from(\"direct:start\").recipientList(header(\"foo\"))";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").recipientList(header(\"foo\"))";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testRecipientList() throws Exception {
-        String DSL = "from(\"direct:start\").recipientList(header(\"recipientListHeader\").tokenize(\",\"))";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").recipientList(header(\"recipientListHeader\").tokenize(\",\"))";
+        assertEquals(dsl, render(dsl));
     }
-
 }

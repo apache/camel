@@ -23,16 +23,14 @@ package org.apache.camel.web.groovy;
 public class ResequenceDSLTest extends GroovyRendererTestSupport {
 
     public void testResequence() throws Exception {
-        String DSL = "from(\"direct:start\").resequence(body()).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").resequence(body()).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testResequencer() throws Exception {
-        String DSL = "from(\"direct:start\").resequencer(header(\"seqnum\")).stream().to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").resequence(header(\"seqnum\")).stream().to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").resequencer(header(\"seqnum\")).stream().to(\"mock:result\")";
+        String expected = "from(\"direct:start\").resequence(header(\"seqnum\")).stream().to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 }

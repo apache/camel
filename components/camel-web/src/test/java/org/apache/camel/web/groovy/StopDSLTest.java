@@ -23,10 +23,10 @@ package org.apache.camel.web.groovy;
 public class StopDSLTest extends GroovyRendererTestSupport {
 
     public void testStop() throws Exception {
-        String DSL = "from(\"direct:start\").choice().when(body().contains(\"Hello\")).to(\"mock:hello\").when(body().contains(\"Bye\")).to(\"mock:bye\").stop()"
-                     + ".otherwise().to(\"mock:other\").end().to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").choice()"
+            + ".when(body().contains(\"Hello\")).to(\"mock:hello\")"
+            + ".when(body().contains(\"Bye\")).to(\"mock:bye\").stop()"
+            + ".otherwise().to(\"mock:other\").end().to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 }

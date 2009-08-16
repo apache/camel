@@ -23,16 +23,16 @@ package org.apache.camel.web.groovy;
 public class PipelineDSLTest extends GroovyRendererTestSupport {
 
     public void testPipeline1() throws Exception {
-        String DSL = "from(\"direct:start\").pipeline(\"mock:x\", \"mock:y\", \"mock:z\", \"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").to(\"mock:x\").to(\"mock:y\").to(\"mock:z\").to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").pipeline(\"mock:x\", \"mock:y\", \"mock:z\", \"mock:result\")";
+        String expected = "from(\"direct:start\").to(\"mock:x\").to(\"mock:y\").to(\"mock:z\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testPipeline2() throws Exception {
-        String DSL = "from(\"direct:start\").pipeline(\"bean:foo?method=hi\", \"bean:foo?method=kabom\").to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").to(\"bean:foo?method=hi\").to(\"bean:foo?method=kabom\").to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").pipeline(\"bean:foo?method=hi\", \"bean:foo?method=kabom\").to(\"mock:result\")";
+        String expected = "from(\"direct:start\").to(\"bean:foo?method=hi\").to(\"bean:foo?method=kabom\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 }

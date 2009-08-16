@@ -23,24 +23,23 @@ package org.apache.camel.web.groovy;
 public class LoadBalanceDSLTest extends GroovyRendererTestSupport {
 
     public void testLoadBalanceRandom() throws Exception {
-        String DSL = "from(\"direct:start\").loadBalance().random().to(\"mock:x\", \"mock:y\", \"mock:z\")";
-        String expectedDSL = "from(\"direct:start\").loadBalance().random().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
+        String dsl = "from(\"direct:start\").loadBalance().random().to(\"mock:x\", \"mock:y\", \"mock:z\")";
+        String expected = "from(\"direct:start\").loadBalance().random().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testLoadBalanceFailover() throws Exception {
-        String DSL = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\", \"direct:y\")";
-        String expectedDSL = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\").to(\"direct:y\")";
+        String dsl = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\", \"direct:y\")";
+        String expected = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\").to(\"direct:y\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
-	public void testLoadBalanceSticky() throws Exception {
-        String DSL = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\", \"mock:y\", \"mock:z\")";
-        String expectedDSL = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
+    public void testLoadBalanceSticky() throws Exception {
+        String dsl = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\", \"mock:y\", \"mock:z\")";
+        String expected = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
-
 }

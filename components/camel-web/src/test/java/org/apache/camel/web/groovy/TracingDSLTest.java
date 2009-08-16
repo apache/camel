@@ -23,9 +23,9 @@ package org.apache.camel.web.groovy;
 public class TracingDSLTest extends GroovyRendererTestSupport {
 
     public void testTracePerRotueManual() throws Exception {
-        String DSL = "from(\"direct:a\").tracing().streamCaching().to(\"mock:a\");from(\"direct:b\").noTracing().to(\"mock:b\");from(\"direct:c\").tracing().to(\"mock:c\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, renderRoutes(DSL));
+        String dsl = "from(\"direct:a\").tracing().streamCaching().to(\"mock:a\");"
+            + "from(\"direct:b\").noTracing().to(\"mock:b\");"
+            + "from(\"direct:c\").tracing().to(\"mock:c\")";
+        assertEquals(dsl, renderRoutes(dsl));
     }
 }

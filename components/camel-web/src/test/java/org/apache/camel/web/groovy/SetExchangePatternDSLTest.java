@@ -25,30 +25,24 @@ import org.apache.camel.ExchangePattern;
 public class SetExchangePatternDSLTest extends GroovyRendererTestSupport {
 
     public void testInOnly() throws Exception {
-        String DSL = "from(\"direct:start\").inOnly(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").inOnly(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testInOut() throws Exception {
-        String DSL = "from(\"direct:start\").inOut(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").inOut(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
-    public void _testToExchangePattern() throws Exception {
-        String DSL = "from(\"direct:start\").to(ExchangePattern.InOnly, \"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+    // TODO: fix this test
+    public void fixmeTestToExchangePattern() throws Exception {
+        String dsl = "from(\"direct:start\").to(ExchangePattern.InOnly, \"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
-    public void _testSetExchangepattern() throws Exception {
-        String DSL = "from(\"direct:start\").setExchangePattern(ExchangePattern.InOnly).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+    // TODO: fix this test
+    public void fixmeTestSetExchangepattern() throws Exception {
+        String dsl = "from(\"direct:start\").setExchangePattern(ExchangePattern.InOnly).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 }

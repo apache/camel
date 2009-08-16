@@ -23,24 +23,19 @@ package org.apache.camel.web.groovy;
 public class SetPropertyDSLTest extends GroovyRendererTestSupport {
 
     public void testSetProperty() throws Exception {
-        String DSL = "from(\"direct:start\").setProperty(\"foo\", constant(\"ABC\")).to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").setProperty(\"foo\").constant(\"ABC\").to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").setProperty(\"foo\", constant(\"ABC\")).to(\"mock:result\")";
+        String expected = "from(\"direct:start\").setProperty(\"foo\").constant(\"ABC\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testSetPropertyXPath() throws Exception {
-        String DSL = "from(\"direct:start\").unmarshal().string().setProperty(\"foo\").xpath(\"/person[@name='James']/@city\", String.class).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").unmarshal().string().setProperty(\"foo\").xpath(\"/person[@name='James']/@city\", String.class).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testSetPropertys() throws Exception {
-        String DSL = "from(\"direct:start\").setProperty(\"foo\").constant(\"ABC\").setProperty(\"value\").constant(\"DEF\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").setProperty(\"foo\").constant(\"ABC\").setProperty(\"value\").constant(\"DEF\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
-
 }

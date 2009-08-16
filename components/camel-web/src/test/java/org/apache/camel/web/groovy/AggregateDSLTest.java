@@ -23,32 +23,28 @@ package org.apache.camel.web.groovy;
  */
 public class AggregateDSLTest extends GroovyRendererTestSupport {
 
-    public void testAggragate() throws Exception {
+    public void testAggregate() throws Exception {
         String dsl = "from(\"direct:start\").aggregate().header(\"cheese\").to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
-    public void testAggragateCommon() throws Exception {
+    public void testAggregateCommon() throws Exception {
         String dsl = "from(\"direct:start\").aggregate(header(\"cheese\")).to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").aggregate().header(\"cheese\").to(\"mock:result\")";
+        String expected = "from(\"direct:start\").aggregate().header(\"cheese\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(expected, render(dsl));
     }
 
     public void testAggregateGroupedExchange() throws Exception {
         String dsl = "from(\"direct:start\").aggregate().simple(\"id\").batchTimeout(500L).groupExchanges().to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
     public void testAggregateTimeoutOnly() throws Exception {
         String dsl = "from(\"direct:start\").aggregate(header(\"id\")).batchTimeout(3000).batchSize(0).to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").aggregate().header(\"id\").batchTimeout(3000).batchSize(0).to(\"mock:result\")";
-
-        assertEquals(expectedDSL, render(dsl));
+        String expected = "from(\"direct:start\").aggregate().header(\"id\").batchTimeout(3000).batchSize(0).to(\"mock:result\")";
+        
+        assertEquals(expected, render(dsl));
     }
 
     /**
@@ -57,11 +53,9 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
      * @throws Exception
      * TODO: fix this test!
      */
-    public void fimeTestAggregateAndOnException() throws Exception {
+    public void fixmeTestAggregateAndOnException() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock:error\"));onException(CamelException.class).maximumRedeliveries(2);from(\"direct:start\").aggregate(header(\"id\")).to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
     /**
@@ -73,8 +67,6 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
     public void fixmeTestAggregateTimerAndTracer() throws Exception {
         String dsl = "from(\"timer://kickoff?period=9999910000\").setHeader(\"id\").constant(\"foo\").setBody().constant(\"a b c\").split(body().tokenize(\" \")).to(\"seda:splitted\");"
             + "from(\"seda:splitted\").aggregate(header(\"id\")).to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 }

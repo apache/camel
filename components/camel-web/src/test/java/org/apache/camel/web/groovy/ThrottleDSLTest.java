@@ -23,17 +23,12 @@ package org.apache.camel.web.groovy;
 public class ThrottleDSLTest extends GroovyRendererTestSupport {
 
     public void testThrottle() throws Exception {
-        String DSL = "from(\"direct:start\").throttle(100).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").throttle(100).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testThrottleWithTimePeriodMillis() throws Exception {
-        String DSL = "from(\"direct:start\").throttle(3).timePeriodMillis(10000).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").throttle(3).timePeriodMillis(10000).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
-
 }

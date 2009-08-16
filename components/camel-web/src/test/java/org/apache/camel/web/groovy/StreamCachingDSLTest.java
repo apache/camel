@@ -23,10 +23,7 @@ package org.apache.camel.web.groovy;
 public class StreamCachingDSLTest extends GroovyRendererTestSupport {
 
     public void test() throws Exception {
-        String DSL = "from(\"direct:start\").streamCaching().to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").streamCaching().to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
-
 }

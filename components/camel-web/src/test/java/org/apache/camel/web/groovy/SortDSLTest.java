@@ -23,9 +23,7 @@ package org.apache.camel.web.groovy;
 public class SortDSLTest extends GroovyRendererTestSupport {
 
     public void testSort() throws Exception {
-        String DSL = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").sort(body().tokenize(\",\")).to(\"bean:MyServiceBean.processLine\")";
+        assertEquals(dsl, render(dsl));
     }
 }

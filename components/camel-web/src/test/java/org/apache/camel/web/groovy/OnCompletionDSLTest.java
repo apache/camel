@@ -23,67 +23,53 @@ package org.apache.camel.web.groovy;
 public class OnCompletionDSLTest extends GroovyRendererTestSupport {
 
     public void testOnCompletionAndIntercept() throws Exception {
-        String DSL = "intercept().to(\"mock:intercept\");from(\"direct:start\").onCompletion().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "intercept().to(\"mock:intercept\");from(\"direct:start\").onCompletion().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testOnCompletionAndInterceptAndOnException() throws Exception {
-        String DSL = "intercept().to(\"mock:intercept\");onCompletion().to(\"log:global\").to(\"mock:sync\");onException(Exception.class).to(\"mock:exception\");from(\"direct:start\").to(\"mock:result\")";
+        String dsl = "intercept().to(\"mock:intercept\");onCompletion().to(\"log:global\").to(\"mock:sync\");onException(Exception.class).to(\"mock:exception\");from(\"direct:start\").to(\"mock:result\")";
         // the order is changed
-        String expectedDSL = "onException(Exception.class).to(\"mock:exception\");intercept().to(\"mock:intercept\");onCompletion().to(\"log:global\").to(\"mock:sync\");from(\"direct:start\").to(\"mock:result\")";
+        String expected = "onException(Exception.class).to(\"mock:exception\");intercept().to(\"mock:intercept\");onCompletion().to(\"log:global\").to(\"mock:sync\");from(\"direct:start\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testOnCompletionDSL() throws Exception {
-        String DSL = "from(\"direct:start\").onCompletion().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").onCompletion().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testOnCompletionGlobal() throws Exception {
-        String DSL = "onCompletion().to(\"log:global\").to(\"mock:sync\");from(\"direct:start\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "onCompletion().to(\"log:global\").to(\"mock:sync\");from(\"direct:start\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testOnCompletionMoreGlobal() throws Exception {
-        String DSL = "onCompletion().to(\"log:global\").to(\"mock:sync\");onCompletion().to(\"log:global\").to(\"mock:two\");onCompletion().onCompleteOnly().to(\"log:global\").to(\"mock:complete\");onCompletion().onFailureOnly().to(\"log:global\").to(\"mock:failure\");from(\"direct:start\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "onCompletion().to(\"log:global\").to(\"mock:sync\");onCompletion().to(\"log:global\").to(\"mock:two\");onCompletion().onCompleteOnly().to(\"log:global\").to(\"mock:complete\");onCompletion().onFailureOnly().to(\"log:global\").to(\"mock:failure\");from(\"direct:start\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testOnCompletionOnly() throws Exception {
-        String DSL = "from(\"direct:start\").onCompletion().onCompleteOnly().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").onCompletion().onCompleteOnly().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testOnCompletionRouteScopeOverrideGlobalScope() throws Exception {
-        String DSL = "onCompletion().to(\"log:global\").to(\"mock:global\");from(\"direct:start\").onCompletion().to(\"log:route\").to(\"mock:sync\").end().to(\"mock:result\")";
+        String dsl = "onCompletion().to(\"log:global\").to(\"mock:global\");from(\"direct:start\").onCompletion().to(\"log:route\").to(\"mock:sync\").end().to(\"mock:result\")";
         // the global onCompletion is removed
-        String expectedDSL = "from(\"direct:start\").onCompletion().to(\"log:route\").to(\"mock:sync\").end().to(\"mock:result\")";
+        String expected = "from(\"direct:start\").onCompletion().to(\"log:route\").to(\"mock:sync\").end().to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testOnCompletionWhen() throws Exception {
-        String DSL = "from(\"direct:start\").onCompletion().onWhen(body().contains(\"Hello\")).to(\"log:sync\").to(\"mock:sync\").end().to(\"log:original\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").onCompletion().onWhen(body().contains(\"Hello\")).to(\"log:sync\").to(\"mock:sync\").end().to(\"log:original\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testOnFailureOnly() throws Exception {
-        String DSL = "from(\"direct:start\").onCompletion().onFailureOnly().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").onCompletion().onFailureOnly().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 }

@@ -23,30 +23,26 @@ package org.apache.camel.web.groovy;
 public class LoopDSLTest extends GroovyRendererTestSupport {
 
     public void testSimpleLoop() throws Exception {
-        String DSL = "from(\"direct:start\").loop(8).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").loop(8).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testLoopWithHeader() throws Exception {
-        String DSL = "from(\"direct:start\").loop(header(\"loop\")).to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").loop().header(\"loop\").to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").loop(header(\"loop\")).to(\"mock:result\")";
+        String expected = "from(\"direct:start\").loop().header(\"loop\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testLoopWithXPath() throws Exception {
-        String DSL = "from(\"direct:start\").loop().xpath(\"/hello/@times\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").loop().xpath(\"/hello/@times\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testLoopWithEnd() throws Exception {
-        String DSL = "from(\"direct:start\").loop(2).to(\"mock:result\").end().to(\"mock:last\")";
-        String expectedDSL = "from(\"direct:start\").loop(2).to(\"mock:result\").to(\"mock:last\")";
+        String dsl = "from(\"direct:start\").loop(2).to(\"mock:result\").end().to(\"mock:last\")";
+        String expected = "from(\"direct:start\").loop(2).to(\"mock:result\").to(\"mock:last\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 }

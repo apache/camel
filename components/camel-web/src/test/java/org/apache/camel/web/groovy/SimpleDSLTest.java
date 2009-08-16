@@ -23,23 +23,19 @@ package org.apache.camel.web.groovy;
 public class SimpleDSLTest extends GroovyRendererTestSupport {
 
     public void testFromTo() throws Exception {
-        String DSL = "from(\"direct:start\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testMultiFrom() throws Exception {
-        String DSL = "from(\"direct:a\", \"direct:b\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:a\", \"direct:b\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testMultiTo() throws Exception {
-        String DSL = "from(\"direct:a\", \"direct:b\").to(\"mock:a\", \"mock:b\")";
-        String expectedDSL = "from(\"direct:a\", \"direct:b\").to(\"mock:a\").to(\"mock:b\")";
+        String dsl = "from(\"direct:a\", \"direct:b\").to(\"mock:a\", \"mock:b\")";
+        String expected = "from(\"direct:a\", \"direct:b\").to(\"mock:a\").to(\"mock:b\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 }

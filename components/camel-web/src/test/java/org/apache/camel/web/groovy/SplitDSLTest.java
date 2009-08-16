@@ -23,31 +23,22 @@ package org.apache.camel.web.groovy;
 public class SplitDSLTest extends GroovyRendererTestSupport {
 
     public void testSplitStream() throws Exception {
-        String DSL = "from(\"direct:start\").split(body().tokenize(\",\")).streaming().to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").split(body().tokenize(\",\")).streaming().to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testSplitTokenize() throws Exception {
-        String DSL = "from(\"direct:start\").split(body(String.class).tokenize(\",\")).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").split(body(String.class).tokenize(\",\")).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testSplitMethod() throws Exception {
-        String DSL = "from(\"direct:start\").split().method(\"mySplitterBean\", \"splitBody\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").split().method(\"mySplitterBean\", \"splitBody\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void _testSplitXPath() throws Exception {
-        String DSL = "from(\"direct:start\").split(xpath(\"//foo/bar\")).convertBodyTo(String.class).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").split(xpath(\"//foo/bar\")).convertBodyTo(String.class).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
-
 }

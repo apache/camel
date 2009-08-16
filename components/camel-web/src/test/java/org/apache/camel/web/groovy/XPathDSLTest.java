@@ -23,9 +23,7 @@ package org.apache.camel.web.groovy;
 public class XPathDSLTest extends GroovyRendererTestSupport {
 
     public void testXPath() throws Exception {
-        String DSL = "from(\"direct:start\").filter().xpath(\"/person[@name='James']\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").filter().xpath(\"/person[@name='James']\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 }

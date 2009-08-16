@@ -23,23 +23,19 @@ package org.apache.camel.web.groovy;
 public class SetHeaderDSLTest extends GroovyRendererTestSupport {
 
     public void testSetHeaderConstant() throws Exception {
-        String DSL = "from(\"direct:start\").setHeader(\"foo\", constant(\"ABC\")).to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").setHeader(\"foo\", constant(\"ABC\")).to(\"mock:result\")";
+        String expected = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testSetHeaderXPath() throws Exception {
-        String DSL = "from(\"direct:start\").unmarshal().string().setHeader(\"foo\").xpath(\"/person[@name='James']/@city\", String.class).to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").unmarshal().string().setHeader(\"foo\").xpath(\"/person[@name='James']/@city\", String.class).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testSetHeaders() throws Exception {
-        String DSL = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").setHeader(\"value\").constant(\"DEF\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").setHeader(\"value\").constant(\"DEF\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 }

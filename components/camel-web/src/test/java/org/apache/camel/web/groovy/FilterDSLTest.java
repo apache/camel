@@ -24,22 +24,16 @@ public class FilterDSLTest extends GroovyRendererTestSupport {
 
     public void testFilterHeader() throws Exception {
         String dsl = "from(\"direct:start\").filter(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
     public void testFilterBody() throws Exception {
         String dsl = "from(\"direct:start\").filter(body().contains(\"World\")).to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
     public void testFilterMethod() throws Exception {
         String dsl = "from(\"direct:start\").filter().method(\"myBean\", \"matches\").to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 }

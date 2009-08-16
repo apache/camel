@@ -23,9 +23,7 @@ package org.apache.camel.web.groovy;
 public class RollbackDSLTest extends GroovyRendererTestSupport {
 
     public void testRollback() throws Exception {
-        String DSL = "from(\"direct:start\").choice().when(body().isNotEqualTo(\"ok\")).to(\"mock:rollback\").rollback(\"That do not work\").otherwise().to(\"mock:result\").end()";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").choice().when(body().isNotEqualTo(\"ok\")).to(\"mock:rollback\").rollback(\"That do not work\").otherwise().to(\"mock:result\").end()";
+        assertEquals(dsl, render(dsl));
     }
 }

@@ -24,22 +24,18 @@ public class DelayDSLTest extends GroovyRendererTestSupport {
 
     public void testSimpleDelay() throws Exception {
         String dsl = "from(\"direct:start\").delay(1000).to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
     public void testDelayWithHeaderParameter() throws Exception {
         String dsl = "from(\"direct:start\").delay(header(\"MyDelay\")).to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
+        String expected = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(expected, render(dsl));
     }
 
     public void testDelayWithHeaderMehtod() throws Exception {
         String dsl = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 }

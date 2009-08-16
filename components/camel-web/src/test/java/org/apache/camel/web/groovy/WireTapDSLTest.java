@@ -23,16 +23,12 @@ package org.apache.camel.web.groovy;
 public class WireTapDSLTest extends GroovyRendererTestSupport {
 
     public void testWireTap1() throws Exception {
-        String DSL = "from(\"direct:start\").to(\"log:foo\").wireTap(\"direct:tap\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").to(\"log:foo\").wireTap(\"direct:tap\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     public void testWireTap2() throws Exception {
-        String DSL = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\")";
-        String expectedDSL = DSL;
-
-        assertEquals(expectedDSL, render(DSL));
+        String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 }

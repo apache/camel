@@ -23,16 +23,14 @@ package org.apache.camel.web.groovy;
 public class MarshalDSLTest extends GroovyRendererTestSupport {
 
     public void testMarshal() throws Exception {
-        String DSL = "from(\"direct:start\").marshal().serialization().to(\"direct:marshalled\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").marshal().serialization().to(\"direct:marshalled\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(dsl, render(dsl));
     }
 
     public void testMultiFrom() throws Exception {
-        String DSL = "from(\"direct:start\").unmarshal().serialization().to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").unmarshal().serialization().to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(dsl, render(dsl));
     }
 }

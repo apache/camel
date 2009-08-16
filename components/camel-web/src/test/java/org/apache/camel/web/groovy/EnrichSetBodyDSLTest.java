@@ -24,8 +24,6 @@ public class EnrichSetBodyDSLTest extends GroovyRendererTestSupport {
 
     public void testEnricher() throws Exception {
         String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 }

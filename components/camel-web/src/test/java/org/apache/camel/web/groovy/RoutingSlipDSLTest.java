@@ -23,24 +23,22 @@ package org.apache.camel.web.groovy;
 public class RoutingSlipDSLTest extends GroovyRendererTestSupport {
 
     public void testRoutingSlip() throws Exception {
-        String DSL = "from(\"direct:a\").routingSlip(\"myHeader\").to(\"mock:end\")";
-        String expectedDSL = "from(\"direct:a\").routingSlip(\"myHeader\", \",\").to(\"mock:end\")";
+        String dsl = "from(\"direct:a\").routingSlip(\"myHeader\").to(\"mock:end\")";
+        String expected = "from(\"direct:a\").routingSlip(\"myHeader\", \",\").to(\"mock:end\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testRoutingSlip1() throws Exception {
-        String DSL = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\")";
-        String expectedDSL = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\", \",\")";
+        String dsl = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\")";
+        String expected = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\", \",\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(dsl));
     }
 
     public void testRoutingSlip2() throws Exception {
-        String DSL = "from(\"direct:c\").routingSlip(\"aRoutingSlipHeader\", \"#\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:c\").routingSlip(\"aRoutingSlipHeader\", \"#\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(dsl, render(dsl));
     }
-
 }

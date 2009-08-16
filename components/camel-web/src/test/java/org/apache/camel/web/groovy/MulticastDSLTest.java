@@ -24,8 +24,8 @@ public class MulticastDSLTest extends GroovyRendererTestSupport {
 
     public void testMulticast() throws Exception {
         String DSL = "from(\"direct:a\").multicast().to(\"mock:x\", \"mock:y\", \"mock:z\")";
-        String expectedDSL = "from(\"direct:a\").multicast().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
+        String expected = "from(\"direct:a\").multicast().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expected, render(DSL));
     }
 }

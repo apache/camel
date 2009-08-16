@@ -27,9 +27,7 @@ public class ChoiceDSLTest extends GroovyRendererTestSupport {
             + ".when().method(\"controlBean\", \"isDetour\").to(\"mock:detour\")"
             + ".end()"
             + ".to(\"mock:result\")";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
     public void testChoiceWithPredication() throws Exception {
@@ -38,22 +36,17 @@ public class ChoiceDSLTest extends GroovyRendererTestSupport {
             + ".when(header(\"admin\").isEqualTo(\"true\")).to(\"mock:admin\")"
             + ".otherwise().to(\"mock:guest\")"
             + ".end()";
-        String expectedDSL = dsl;
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(dsl, render(dsl));
     }
 
     public void testChoiceWithoutEnd() throws Exception {
         String dsl = "from(\"direct:start\").split().body().choice()"
             + ".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\", \"seda:aggregate\")"
             + ".otherwise().to(\"bean:gadgetInventory\", \"seda:aggregate\")";
-        
-        //TODO check this result
-        String expectedDSL = "from(\"direct:start\").split(body()).choice()"
+        String expected = "from(\"direct:start\").split(body()).choice()"
             + ".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\").to(\"seda:aggregate\")"
             + ".otherwise().to(\"bean:gadgetInventory\").to(\"seda:aggregate\")"
             + ".end()";
-
-        assertEquals(expectedDSL, render(dsl));
+        assertEquals(expected, render(dsl));
     }
 }
