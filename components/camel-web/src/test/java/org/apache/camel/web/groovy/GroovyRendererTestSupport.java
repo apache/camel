@@ -20,6 +20,7 @@ package org.apache.camel.web.groovy;
 import java.util.List;
 
 import junit.framework.TestCase;
+import groovy.lang.GroovyClassLoader;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,14 +30,10 @@ import org.apache.camel.web.util.GroovyRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import groovy.lang.GroovyClassLoader;
-
 /**
  * An abstract class that provides basic support for GroovyRenderer test
  */
-public abstract class GroovyRendererTestSupport extends TestCase {
-    private final static Log LOG = LogFactory.getLog(GroovyRendererTestSupport.class);
-    
+public abstract class GroovyRendererTestSupport extends TestCase {    
     private final String header = GroovyRenderer.HEADER;
     private final String footer = GroovyRenderer.FOOTER;
 
@@ -95,5 +92,4 @@ public abstract class GroovyRendererTestSupport extends TestCase {
 
         context.addRoutes(builder);
     }
-
 }

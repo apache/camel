@@ -29,6 +29,13 @@ import org.apache.camel.web.util.PredicateRenderer;
  */
 public class PredicateRendererTestSupport extends TestCase {
 
+    protected void assertMatch(String expectedPredicate, Predicate predicate) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        PredicateRenderer.render(sb, predicate);
+
+        assertEquals(expectedPredicate, sb.toString());
+    }
+    
     protected static ValueBuilder body() {
         return Builder.body();
     }
@@ -52,12 +59,4 @@ public class PredicateRendererTestSupport extends TestCase {
     protected static Predicate or(Predicate p1, Predicate p2) {
         return PredicateBuilder.or(p1, p2);
     }
-
-    protected void assertMatch(String expectedPredicate, Predicate predicate) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        PredicateRenderer.render(sb, predicate);
-
-        assertEquals(expectedPredicate, sb.toString());
-    }
-
 }

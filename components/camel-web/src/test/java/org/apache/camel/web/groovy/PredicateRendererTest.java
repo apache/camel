@@ -17,11 +17,10 @@
 
 package org.apache.camel.web.groovy;
 
-import static org.apache.camel.builder.Builder.constant;
-import static org.apache.camel.builder.PredicateBuilder.in;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
-import org.apache.camel.web.util.PredicateRenderer;
+
+import static org.apache.camel.builder.PredicateBuilder.in;
 
 /**
  * 
@@ -123,7 +122,8 @@ public class PredicateRendererTest extends PredicateRendererTestSupport {
         assertMatch(expectedPredicate, predicate);
     }
 
-    public void _testIsInstanceOf() throws Exception {
+    // TODO: fix this test!
+    public void fixmeTestIsInstanceOf() throws Exception {
         String expectedPredicate = "header(\"name\").isNull()";
         Predicate predicate = header("name").isNull();
         assertMatch(expectedPredicate, predicate);

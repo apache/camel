@@ -23,7 +23,10 @@ package org.apache.camel.web.groovy;
 public class NormalizerDSLTest extends GroovyRendererTestSupport {
 
     public void testNormalizer() throws Exception {
-        String dsl = "from(\"direct:start\").choice().when().xpath(\"/employee\").to(\"bean:normalizer?method=employeeToPerson\").when().xpath(\"/customer\").to(\"bean:normalizer?method=customerToPerson\").end().to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").choice()"
+            + ".when().xpath(\"/employee\").to(\"bean:normalizer?method=employeeToPerson\")"
+            + ".when().xpath(\"/customer\").to(\"bean:normalizer?method=customerToPerson\")"
+            + ".end().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 }

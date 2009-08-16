@@ -16,9 +16,6 @@
  */
 package org.apache.camel.web.resources;
 
-import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.api.view.Viewable;
-import groovy.lang.GroovyClassLoader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,6 +39,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import com.sun.jersey.api.representation.Form;
+import com.sun.jersey.api.view.Viewable;
+
+import groovy.lang.GroovyClassLoader;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -245,7 +247,7 @@ public class RouteResource extends CamelChildResourceSupport {
 
             // load the definition class into a RouteBuilder instance
             GroovyClassLoader classLoader = new GroovyClassLoader();
-            Class clazz = classLoader.parseClass(route);
+            Class<?> clazz = classLoader.parseClass(route);
             RouteBuilder builder = (RouteBuilder)clazz.newInstance();
             LOG.info("Loaded builder: " + builder);
 
