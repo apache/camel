@@ -23,57 +23,64 @@ package org.apache.camel.web.groovy;
 public class InterceptFromDSLTest extends GroovyRendererTestSupport {
 
     public void testInterceptFromChoice() throws Exception {
-        String DSL = "interceptFrom().choice().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop().end();from(\"direct:start\").to(\"mock:a\")";
-        String expectedDSL = DSL;
+        String dsl = "interceptFrom().choice().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop().end();from(\"direct:start\").to(\"mock:a\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptFromPredicateWithStop() throws Exception {
-        String DSL = "interceptFrom().when(header(\"usertype\").isEqualTo(\"test\")).stop();from(\"direct:start\").to(\"mock:result\")";
+        String dsl = "interceptFrom().when(header(\"usertype\").isEqualTo(\"test\")).stop();from(\"direct:start\").to(\"mock:result\")";
         String expectedDSL = "interceptFrom().choice().when(header(\"usertype\").isEqualTo(\"test\")).stop().end();from(\"direct:start\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptFromToLog() throws Exception {
-        String DSL = "interceptFrom().to(\"log:received\");from(\"direct:start\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "interceptFrom().to(\"log:received\");from(\"direct:start\").to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptFromUriRegex() throws Exception {
-        String DSL = "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");from(\"seda:foo\").to(\"mock:result\");from(\"seda:cheese\").to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").to(\"mock:result\");" +
-        		"interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");" +
-        		"interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:foo\").to(\"mock:result\");" +
-        		"from(\"seda:cheese\").to(\"mock:result\")";
+        String dsl = "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");"
+            + "from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");"
+            + "from(\"seda:foo\").to(\"mock:result\");from(\"seda:cheese\").to(\"mock:result\")";
+        String expectedDSL = "from(\"direct:start\").to(\"mock:result\");"
+            + "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");"
+            + "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:foo\").to(\"mock:result\");"
+            + "from(\"seda:cheese\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, renderRoutes(DSL));
+        assertEquals(expectedDSL, renderRoutes(dsl));
     }
 
     public void testInterceptFromUriSimpleLog() throws Exception {
-        String DSL = "interceptFrom(\"seda:bar\").to(\"mock:bar\");from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");from(\"seda:bar\").to(\"mock:result\");from(\"seda:foo\").to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");interceptFrom(\"seda:bar\").to(\"mock:bar\");from(\"seda:bar\").to(\"mock:result\");from(\"seda:foo\").to(\"mock:result\")";
+        String dsl = "interceptFrom(\"seda:bar\").to(\"mock:bar\");"
+            + "from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");"
+            + "from(\"seda:bar\").to(\"mock:result\");from(\"seda:foo\").to(\"mock:result\")";
+        String expectedDSL = "from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");"
+            + "interceptFrom(\"seda:bar\").to(\"mock:bar\");from(\"seda:bar\").to(\"mock:result\");"
+            + "from(\"seda:foo\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, renderRoutes(DSL));
+        assertEquals(expectedDSL, renderRoutes(dsl));
     }
 
     public void testInterceptFromUriWildcard() throws Exception {
-        String DSL = "interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");from(\"seda:foo\").to(\"mock:result\")";
-        String expectedDSL = "from(\"direct:start\").to(\"mock:result\");" +
-        		"interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");" +
-        		"interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"seda:foo\").to(\"mock:result\")";
+        String dsl = "interceptFrom(\"seda*\").to(\"mock:intercept\");"
+            + "from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");"
+            + "from(\"seda:foo\").to(\"mock:result\")";
+        String expectedDSL = "from(\"direct:start\").to(\"mock:result\");"
+            + "interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");"
+            + "interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"seda:foo\").to(\"mock:result\")";
         
-        assertEquals(expectedDSL, renderRoutes(DSL));
+        assertEquals(expectedDSL, renderRoutes(dsl));
     }
 
     public void testInterceptFromWithPredicate() throws Exception {
-        String DSL = "interceptFrom().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop();from(\"direct:start\").to(\"mock:a\")";
+        String dsl = "interceptFrom().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop();from(\"direct:start\").to(\"mock:a\")";
         String expectedDSL = "interceptFrom().choice().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop().end();from(\"direct:start\").to(\"mock:a\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
-
 }

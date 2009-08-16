@@ -23,23 +23,23 @@ package org.apache.camel.web.groovy;
 public class FilterDSLTest extends GroovyRendererTestSupport {
 
     public void testFilterHeader() throws Exception {
-        String DSL = "from(\"direct:start\").filter(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").filter(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testFilterBody() throws Exception {
-        String DSL = "from(\"direct:start\").filter(body().contains(\"World\")).to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").filter(body().contains(\"World\")).to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testFilterMethod() throws Exception {
-        String DSL = "from(\"direct:start\").filter().method(\"myBean\", \"matches\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").filter().method(\"myBean\", \"matches\").to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 }

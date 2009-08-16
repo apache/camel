@@ -31,7 +31,7 @@ import org.apache.camel.model.SendDefinition;
 public final class GroovyRenderer {
 
     public static final String HEADER = "import org.apache.camel.language.groovy.GroovyRouteBuilder;\nclass GroovyRoute extends GroovyRouteBuilder {\nvoid configure() {\n";
-    public static final String footer = "\n}\n}";
+    public static final String FOOTER = "\n}\n}";
 
     private GroovyRenderer() {
         // Utility class, no public or protected default constructor
@@ -107,5 +107,4 @@ public final class GroovyRenderer {
             }
         }
     }
-
 }

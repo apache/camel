@@ -23,9 +23,9 @@ package org.apache.camel.web.groovy;
 public class EnrichSetBodyDSLTest extends GroovyRendererTestSupport {
 
     public void testEnricher() throws Exception {
-        String DSL = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 }

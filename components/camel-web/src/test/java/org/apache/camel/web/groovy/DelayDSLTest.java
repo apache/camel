@@ -23,23 +23,23 @@ package org.apache.camel.web.groovy;
 public class DelayDSLTest extends GroovyRendererTestSupport {
 
     public void testSimpleDelay() throws Exception {
-        String DSL = "from(\"direct:start\").delay(1000).to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").delay(1000).to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testDelayWithHeaderParameter() throws Exception {
-        String DSL = "from(\"direct:start\").delay(header(\"MyDelay\")).to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").delay(header(\"MyDelay\")).to(\"mock:result\")";
         String expectedDSL = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testDelayWithHeaderMehtod() throws Exception {
-        String DSL = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 }

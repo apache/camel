@@ -23,31 +23,40 @@ package org.apache.camel.web.groovy;
 public class InterceptSendToEndpointDSLTest extends GroovyRendererTestSupport {
 
     public void testInterceptSendToEndpoint() throws Exception {
-        String DSL = "interceptSendToEndpoint(\"mock:foo\").to(\"mock:detour\").transform(constant(\"Bye World\"));from(\"direct:first\").to(\"mock:bar\").to(\"mock:foo\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "interceptSendToEndpoint(\"mock:foo\").to(\"mock:detour\").transform(constant(\"Bye World\"));"
+            + "from(\"direct:first\").to(\"mock:bar\").to(\"mock:foo\").to(\"mock:result\")";
+        
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptSendToEndpointDynamic() throws Exception {
-        String DSL = "interceptSendToEndpoint(\"file:*\").skipSendToOriginalEndpoint().to(\"mock:detour\");from(\"direct:first\").to(\"file://foo\").to(\"file://bar\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "interceptSendToEndpoint(\"file:*\").skipSendToOriginalEndpoint().to(\"mock:detour\");"
+            + "from(\"direct:first\").to(\"file://foo\").to(\"file://bar\").to(\"mock:result\")";
+        
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptSendToEndpointInOnException() throws Exception {
-        String DSL = "onException(IOException.class).handled(true).to(\"mock:io\");interceptSendToEndpoint(\"mock:io\").skipSendToOriginalEndpoint().to(\"mock:intercepted\");from(\"direct:start\").to(\"mock:foo\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "onException(IOException.class).handled(true).to(\"mock:io\");"
+            + "interceptSendToEndpoint(\"mock:io\").skipSendToOriginalEndpoint().to(\"mock:intercepted\");"
+            + "from(\"direct:start\").to(\"mock:foo\").to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
-    public void _testInterceptSendToIssue() throws Exception {
-        String DSL = "interceptSendToEndpoint(\"direct:foo\").to(\"mock:foo\");from(\"direct:start\").setHeader(Exchange.FILE_NAME, constant(\"hello.txt\")).to(\"direct:foo\")";
-        String expectedDSL = DSL;
+    // TODO: fix this test!
+    public void fixmeTestInterceptSendToIssue() throws Exception {
+        String dsl = "interceptSendToEndpoint(\"direct:foo\").to(\"mock:foo\");"
+            + "from(\"direct:start\").setHeader(Exchange.FILE_NAME, constant(\"hello.txt\")).to(\"direct:foo\")";
+        
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
 }

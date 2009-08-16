@@ -119,7 +119,7 @@ public class RouteResource extends CamelChildResourceSupport {
         } else if (language.equalsIgnoreCase(LANGUAGE_GROOVY)) {
             StringBuilder buffer = new StringBuilder();
             GroovyRenderer.renderRoute(buffer, route);
-            return GroovyRenderer.HEADER + buffer.toString() + GroovyRenderer.footer;
+            return GroovyRenderer.HEADER + buffer.toString() + GroovyRenderer.FOOTER;
         } else {
             return "Unsupported language!";
         }

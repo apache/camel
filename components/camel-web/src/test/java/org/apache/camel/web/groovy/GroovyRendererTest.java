@@ -20,9 +20,6 @@ package org.apache.camel.web.groovy;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-
 /**
  * Test for GroovyRenderer
  */

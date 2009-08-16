@@ -23,37 +23,37 @@ package org.apache.camel.web.groovy;
 public class ChoiceDSLTest extends GroovyRendererTestSupport {
 
     public void testChoiceWithMethod() throws Exception {
-        String DSL = "from(\"direct:start\").choice()" +
-        		".when().method(\"controlBean\", \"isDetour\").to(\"mock:detour\")" +
-        		".end()" +
-        		".to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").choice()"
+            + ".when().method(\"controlBean\", \"isDetour\").to(\"mock:detour\")"
+            + ".end()"
+            + ".to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testChoiceWithPredication() throws Exception {
-        String DSL = "from(\"direct:start\").choice()" +
-        		".when(header(\"username\").isNull()).to(\"mock:god\")" +
-        		".when(header(\"admin\").isEqualTo(\"true\")).to(\"mock:admin\")" +
-        		".otherwise().to(\"mock:guest\")" +
-        		".end()";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").choice()"
+            + ".when(header(\"username\").isNull()).to(\"mock:god\")"
+            + ".when(header(\"admin\").isEqualTo(\"true\")).to(\"mock:admin\")"
+            + ".otherwise().to(\"mock:guest\")"
+            + ".end()";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testChoiceWithoutEnd() throws Exception {
-        String DSL = "from(\"direct:start\").split().body().choice()" +
-        		".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\", \"seda:aggregate\")" +
-        		".otherwise().to(\"bean:gadgetInventory\", \"seda:aggregate\")";
+        String dsl = "from(\"direct:start\").split().body().choice()"
+            + ".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\", \"seda:aggregate\")"
+            + ".otherwise().to(\"bean:gadgetInventory\", \"seda:aggregate\")";
         
         //TODO check this result
-        String expectedDSL = "from(\"direct:start\").split(body()).choice()" +
-        		".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\").to(\"seda:aggregate\")" +
-        		".otherwise().to(\"bean:gadgetInventory\").to(\"seda:aggregate\")" +
-        		".end()";
+        String expectedDSL = "from(\"direct:start\").split(body()).choice()"
+            + ".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\").to(\"seda:aggregate\")"
+            + ".otherwise().to(\"bean:gadgetInventory\").to(\"seda:aggregate\")"
+            + ".end()";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 }

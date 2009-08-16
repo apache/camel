@@ -23,16 +23,16 @@ package org.apache.camel.web.groovy;
 public class CovertBodyDSLTest extends GroovyRendererTestSupport {
 
     public void testConvertBody() throws Exception {
-        String DSL = "from(\"direct:start\").convertBodyTo(Integer.class).to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").convertBodyTo(Integer.class).to(\"mock:result\")";
         String expectedDSL = "from(\"direct:start\").convertBodyTo(java.lang.Integer.class).to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testConvertBodyWithEncoding() throws Exception {
-        String DSL = "from(\"direct:start\").convertBodyTo(byte[].class, \"iso-8859-1\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "from(\"direct:start\").convertBodyTo(byte[].class, \"iso-8859-1\").to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 }

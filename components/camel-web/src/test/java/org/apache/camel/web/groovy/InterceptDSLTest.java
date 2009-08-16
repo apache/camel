@@ -23,31 +23,30 @@ package org.apache.camel.web.groovy;
 public class InterceptDSLTest extends GroovyRendererTestSupport {
 
     public void testIntercept() throws Exception {
-        String DSL = "intercept().to(\"mock:intercepted\");from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "intercept().to(\"mock:intercepted\");from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptStop() throws Exception {
-        String DSL = "intercept().to(\"mock:intercepted\").stop();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
-        String expectedDSL = DSL;
+        String dsl = "intercept().to(\"mock:intercepted\").stop();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
+        String expectedDSL = dsl;
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptWhen() throws Exception {
-        String DSL = "intercept().when(body().contains(\"Hello\")).to(\"mock:intercepted\");from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
+        String dsl = "intercept().when(body().contains(\"Hello\")).to(\"mock:intercepted\");from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
         String expectedDSL = "intercept().choice().when(body().contains(\"Hello\")).to(\"mock:intercepted\").end();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testInterceptWhenStop() throws Exception {
-        String DSL = "intercept().when(body().contains(\"Hello\")).to(\"mock:intercepted\").stop();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
+        String dsl = "intercept().when(body().contains(\"Hello\")).to(\"mock:intercepted\").stop();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
         String expectedDSL = "intercept().choice().when(body().contains(\"Hello\")).to(\"mock:intercepted\").stop().end();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
-
 }

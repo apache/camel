@@ -23,23 +23,23 @@ package org.apache.camel.web.groovy;
 public class DeadLetterDSLTest extends GroovyRendererTestSupport {
 
     public void testDeadLetterWithDefaultRedeliverDelay() throws Exception {
-        String DSL = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(0).handled(false));from(\"direct:start\").to(\"mock:result\")";
+        String dsl = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(0).handled(false));from(\"direct:start\").to(\"mock:result\")";
         String expectedDSL = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(0).redeliverDelay(1000).handled(false));from(\"direct:start\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testDeadLetterWithDefaultHandled() throws Exception {
-        String DSL = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(3).redeliverDelay(5000));from(\"direct:start\").to(\"mock:result\")";
+        String dsl = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(3).redeliverDelay(5000));from(\"direct:start\").to(\"mock:result\")";
         String expectedDSL = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(true));from(\"direct:start\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 
     public void testDeadLetterDSL() throws Exception {
-        String DSL = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from(\"direct:start\").to(\"mock:result\")";
+        String dsl = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from(\"direct:start\").to(\"mock:result\")";
         String expectedDSL = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from(\"direct:start\").to(\"mock:result\")";
 
-        assertEquals(expectedDSL, render(DSL));
+        assertEquals(expectedDSL, render(dsl));
     }
 }
