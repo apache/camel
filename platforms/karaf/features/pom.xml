@@ -54,7 +54,6 @@
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-jaxws-spec-version>1.0</geronimo-jaxws-spec-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
-      <geronimo-javamail-1.4-version>1.6_1</geronimo-javamail-1.4-version>
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
       <hamcrest-bundle-version>1.2-dev1_1</hamcrest-bundle-version>
@@ -88,7 +87,9 @@
       <servicemix-specs-version>1.3.0</servicemix-specs-version>
       <servlet-api-2.5-version>2.5-20081211</servlet-api-2.5-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>      
-      <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>      
+      <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
+      <spring-javax-activation-version>1.1.1</spring-javax-activation-version>      
+      <spring-javax-mail-version>1.4.1</spring-javax-mail-version>
       <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_1</tagsoup-bundle-version>
       <velocity-bundle-version>1.6.2_1</velocity-bundle-version>

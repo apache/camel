@@ -77,8 +77,6 @@ public class ReportIncidentRoutesOSGiTest extends ReportIncidentRoutesTest {
     @Configuration
     public static Option[] configure() {
         Option[] options = options(
-            // install log service using pax runners profile abstraction (there are more profiles, like DS)
-            logProfile().version("1.3.0"),
             // install the spring dm profile            
             profile("spring.dm").version("1.2.0"), 
             // this is how you set the default log level when using pax logging (logProfile)
@@ -88,10 +86,12 @@ public class ReportIncidentRoutesOSGiTest extends ReportIncidentRoutesTest {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("features").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-velocity",  "camel-cxf", "camel-mail"),
+                          "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-velocity",  "camel-cxf"),
             
             // Added the mock_java_mail bundle for testing
             mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").versionAsInProject(),
+            
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-mail").versionAsInProject(),
             
             // create a customer bundle start up the report incident bundle
             bundle(newBundle().addClass(InputReportIncident.class)

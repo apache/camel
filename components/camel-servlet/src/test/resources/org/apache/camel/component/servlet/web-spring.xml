@@ -35,6 +35,7 @@
       <param-name>matchOnUriPrefix</param-name> 
       <param-value>true</param-value>
     </init-param>
+    <!-- set the camel context application file location here -->
     <init-param>
       <param-name>contextConfigLocation</param-name>
 	  <param-value>/org/apache/camel/component/servlet/camelContext.xml</param-value>

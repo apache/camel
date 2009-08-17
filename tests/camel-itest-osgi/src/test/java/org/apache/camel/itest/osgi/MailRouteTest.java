@@ -106,10 +106,10 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
                 from("pop3://route-test-james@localhost?consumer.delay=1000")
                     .to("direct:a");
 
-                // must use fixed to option to send the mail to the given reciever, as we have polled
+                // must use fixed to option to send the mail to the given receiver, as we have polled
                 // a mail from a mailbox where it already has the 'old' To as header value
-                // here we send the mail to 2 recievers. notice we can use a plain string with semi colon
-                // to seperate the mail addresses
+                // here we send the mail to 2 receivers. notice we can use a plain string with semi colon
+                // to separate the mail addresses
                 from("direct:a")
                     .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
                     .to("smtp://localhost");
@@ -124,7 +124,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
     public static Option[] configure() {
         Option[] options = options(
             // install log service using pax runners profile abstraction (there are more profiles, like DS)
-            logProfile().version("1.3.0"),
+            //logProfile().version("1.3.0"),
             // install the spring dm profile            
             profile("spring.dm").version("1.2.0"), 
             // this is how you set the default log level when using pax logging (logProfile)
@@ -133,11 +133,16 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("features").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-mail"),
+                          "camel-core", "camel-osgi", "camel-spring", "camel-test"),
+            
+            // using the java mail API bundle
+            mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.javamail-api-1.4").version("1.3.0"),
+                          
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-mail").versionAsInProject(),
             
             // Added the mock_java_mail bundle for testing
-            mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").versionAsInProject(),              
-                                      
+            mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").versionAsInProject(),
+            
             felix());
         
         return options;
