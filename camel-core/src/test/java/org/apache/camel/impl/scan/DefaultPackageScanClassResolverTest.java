@@ -17,6 +17,8 @@
 package org.apache.camel.impl.scan;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -120,5 +122,31 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         Set<Class> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
         validateMatchingSetContains(scanned,  ScanTargetTwo.class);
     }
+    
+    public void testFindByFilterPackageInJarUrl() throws Exception {
+        
+        ClassLoader savedClassLoader = null; 
+        try {
+            savedClassLoader = Thread.currentThread().getContextClassLoader();
+            URL url = getClass().getResource("/package_scan_test.jar");
+            
+            URL urls[] = {new URL("jar:" + url.toString() + "!/")};
+            URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
+
+            Thread.currentThread().setContextClassLoader(classLoader);
+
+            filter.addIncludePattern("a.*.c.*");
+            resolver.addFilter(filter);
+            Set<Class> scanned = resolver.findByFilter(filter, "a.b.c");
+            assertEquals(1, scanned.size());
+            assertEquals("class a.b.c.Test", scanned.iterator().next().toString());            
+        } finally {
+            if (savedClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(savedClassLoader);
+            } 
+        }
+
+    }
+    
 
 }
