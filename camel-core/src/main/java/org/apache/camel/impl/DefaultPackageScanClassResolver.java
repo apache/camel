@@ -210,12 +210,9 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     log.trace("Decoded urlPath: " + urlPath);
                 }
 
-                boolean isLocalFileSystem = "file".equals(url.getProtocol());
-
                 // If it's a file in a directory, trim the stupid file: spec
                 if (urlPath.startsWith("file:")) {
                     urlPath = urlPath.substring(5);
-                    isLocalFileSystem = true;
                 }
 
                 // osgi bundles should be skipped
@@ -241,8 +238,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
                     InputStream stream;
-                    if (!isLocalFileSystem) {
-                        // load resources using http (and other protocols) such as java webstart 
+                    if (urlPath.startsWith("http:")) {
+                        // load resources using http such as java webstart
                         log.debug("The current jar is accessed via http");
                         URL urlStream = new URL(urlPath);
                         URLConnection con = urlStream.openConnection();
@@ -278,12 +275,6 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
         if (log.isTraceEnabled()) {
             log.trace("Getting resource URL for package: " + packageName + " with classloader: " + loader);
-        }
-        
-        // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.  The
-        // trailing slash is harmless for other URLs  
-        if (!packageName.endsWith("/")) {
-            packageName = packageName + "/";
         }
         return loader.getResources(packageName);
     }
