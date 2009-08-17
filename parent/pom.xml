@@ -80,7 +80,7 @@
     <xbean-spring-version>3.5</xbean-spring-version>
     <xstream-version>1.3.1</xstream-version>
     <xmlsec-version>1.4.2</xmlsec-version>
-    <javamail-version>1.4.2</javamail-version>
+    <javamail-version>1.4.1</javamail-version>
     <xerces-version>2.8.0</xerces-version>
     <xalan-version>2.7.1</xalan-version>
 

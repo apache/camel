@@ -42,6 +42,12 @@
             <url>http://download.java.net/maven/2/</url>
             <layout>default</layout>
         </repository>
+        <!-- for java mail bundle -->
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -60,21 +66,9 @@
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
+            <artifactId>com.springsource.javax.mail</artifactId>
             <version>${javamail-version}</version>
         </dependency>
-
-        <!-- these 2 jars are buggy and not recommended to use -->
-        <!--dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.javamail-api-1.4</artifactId>
-            <version>1.3.0</version>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
-            <version>1.6</version>
-        </dependency-->
 
         <!-- testing -->
         <dependency>
@@ -87,6 +81,12 @@
             <groupId>org.jvnet.mock-javamail</groupId>
             <artifactId>mock-javamail</artifactId>
             <version>1.7</version>
+            <exclusions>
+              <exclusion>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+              </exclusion>
+            </exclusions>
             <scope>test</scope>
         </dependency>
         <dependency>
