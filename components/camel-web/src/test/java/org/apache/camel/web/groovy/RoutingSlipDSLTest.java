@@ -38,7 +38,6 @@ public class RoutingSlipDSLTest extends GroovyRendererTestSupport {
 
     public void testRoutingSlip2() throws Exception {
         String dsl = "from(\"direct:c\").routingSlip(\"aRoutingSlipHeader\", \"#\")";
-
         assertEquals(dsl, render(dsl));
     }
 }

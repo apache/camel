@@ -20,9 +20,11 @@ package org.apache.camel.web.util;
 import java.util.List;
 
 import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -40,11 +42,14 @@ import org.apache.camel.model.ThrottleDefinition;
 public final class ProcessorDefinitionRenderer {
     private ProcessorDefinitionRenderer() {
         // Utility class, no public or protected default constructor
-    }    
+    }
 
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         if (processor instanceof AggregateDefinition) {
             AggregateDefinitionRenderer.render(buffer, processor);
+        } else if (processor instanceof CatchDefinition) {
+            CatchDefinitionRenderer.render(buffer, processor);
+            return;
         } else if (processor instanceof ChoiceDefinition) {
             ChoiceDefinitionRenderer.render(buffer, processor);
             return;
@@ -79,6 +84,12 @@ public final class ProcessorDefinitionRenderer {
             buffer.append(".").append(processor.getShortName()).append("()");
         }
 
+        if (processor instanceof OutputDefinition) {
+            OutputDefinition out = (OutputDefinition)processor;
+            if (out instanceof FinallyDefinition) {
+                return;
+            }
+        }
         List<ProcessorDefinition> outputs = processor.getOutputs();
         for (ProcessorDefinition nextProcessor : outputs) {
             render(buffer, nextProcessor);

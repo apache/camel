@@ -49,4 +49,19 @@ public class ChoiceDSLTest extends GroovyRendererTestSupport {
             + ".end()";
         assertEquals(expected, render(dsl));
     }
+
+    public void testChoiceWithXPath() throws Exception {
+        String dsl = "from(\"direct:start\").choice()"
+            + ".when().xpath(\"\\$foo = 'bar'\").to(\"mock:x\")"
+            + ".when().xpath(\"\\$foo = 'cheese'\").to(\"mock:y\")"
+            + ".otherwise().to(\"mock:z\").end()"
+            + ".to(\"mock:end\")";
+        String expected = "from(\"direct:start\").choice()"
+            + ".when().xpath(\"$foo = 'bar'\").to(\"mock:x\")"
+            + ".when().xpath(\"$foo = 'cheese'\").to(\"mock:y\")"
+            + ".otherwise().to(\"mock:z\").end()"
+            + ".to(\"mock:end\")";
+
+        assertEquals(expected, render(dsl));
+    }
 }

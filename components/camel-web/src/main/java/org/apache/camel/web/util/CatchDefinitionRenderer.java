@@ -17,32 +17,40 @@
 
 package org.apache.camel.web.util;
 
+import java.util.List;
+
+import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.WireTapDefinition;
 
 /**
- *
+ * 
  */
-public final class SendDefinitionRenderer {
-    private SendDefinitionRenderer() {
+public final class CatchDefinitionRenderer {
+    private CatchDefinitionRenderer() {
         // Utility class, no public or protected default constructor
-    }    
-
+    }
+    
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
-        buffer.append(".");
-        SendDefinition<?> send = (SendDefinition<?>)processor;
-        if (send instanceof WireTapDefinition || send.getPattern() == null) {
-            // for wireTap and to
-            buffer.append(send.getShortName());
-        } else {
-            // for inOnly and inOut
-            if (send.getPattern().name().equals("InOnly")) {
-                buffer.append("inOnly");
-            } else if (send.getPattern().name().equals("InOut")) {
-                buffer.append("inOut");
+        CatchDefinition catchDef = (CatchDefinition)processor;
+        buffer.append(".").append(catchDef.getShortName()).append("(");
+        List<Class> exceptions = catchDef.getExceptionClasses();
+        for (Class clazz : exceptions) {
+            buffer.append(clazz.getSimpleName()).append(".class");
+            if (clazz != exceptions.get(exceptions.size() - 1)) {
+                buffer.append(", ");
             }
         }
-        buffer.append("(\"").append(send.getUri()).append("\")");
+        buffer.append(")");
+
+        // render handled() dsl
+        if (catchDef.getHandledPolicy() != null) {
+            String handled = catchDef.getHandledPolicy().toString();
+            buffer.append(".handled(").append(handled).append(")");
+        }
+
+        List<ProcessorDefinition> branches = catchDef.getOutputs();
+        for (ProcessorDefinition branch : branches) {
+            SendDefinitionRenderer.render(buffer, branch);
+        }
     }
 }

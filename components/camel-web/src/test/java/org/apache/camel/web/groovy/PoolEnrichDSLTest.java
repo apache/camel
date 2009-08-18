@@ -17,29 +17,31 @@
 
 package org.apache.camel.web.groovy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * a test case for wire tap DSL
+ * 
  */
-public class WireTapDSLTest extends GroovyRendererTestSupport {
-
-    public void testWireTap1() throws Exception {
-        String dsl = "from(\"direct:start\").to(\"log:foo\").wireTap(\"direct:tap\").to(\"mock:result\")";
-        assertEquals(dsl, render(dsl));
-    }
-
-    public void testWireTap2() throws Exception {
-        String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\")";
-        assertEquals(dsl, render(dsl));
-    }
+public class PoolEnrichDSLTest extends GroovyRendererTestSupport {
 
     /**
-     * a wireTap with two parameters
+     * a route involving a external class: aggregationStrategy
      * 
      * @throws Exception
      * TODO: fix this test!
      */
-    public void fixmeTestWireTap3() throws Exception {
-        String dsl = "from(\"direct:start\").wireTap(\"direct:foo\", constant(\"Bye World\")).to(\"mock:result\")";
+    public void fixmeTestPollEnrich() throws Exception {
+        String dsl = "from(\"direct:start\").pollEnrich(\"direct:foo\", 1000, aggregationStrategy).to(\"mock:result\")";
+        String[] importClasses = new String[] {"import org.apache.camel.processor.enricher.*"};
+        Map<String, String> newObjects = new HashMap<String, String>();
+        newObjects.put("aggregationStrategy", "SampleAggregator");
+
+        assertEquals(dsl, render(dsl, importClasses, newObjects));
+    }
+
+    public void testPollEnrichWithoutAggregationStrategy() throws Exception {
+        String dsl = "from(\"direct:start\").pollEnrich(\"direct:foo\", 1000).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 }

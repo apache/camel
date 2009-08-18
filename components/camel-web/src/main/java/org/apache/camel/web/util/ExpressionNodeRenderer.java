@@ -34,6 +34,9 @@ import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.idempotent.FileIdempotentRepository;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.IdempotentRepository;
 
 /**
  *
@@ -70,7 +73,22 @@ public final class ExpressionNodeRenderer {
                 ExpressionRenderer.render(buffer, expression);
             }
         } else if (expNode instanceof IdempotentConsumerDefinition) {
-            // TODO improve it
+            IdempotentConsumerDefinition idempotentConsume = (IdempotentConsumerDefinition)expNode;
+            buffer.append("(");
+            ExpressionRenderer.render(buffer, expression);
+            buffer.append(", ");
+            IdempotentRepository repository = idempotentConsume.getMessageIdRepository();
+            if (repository instanceof FileIdempotentRepository) {
+                // TODO need to be improved
+                buffer.append("FileIdempotentRepository.fileIdempotentRepository()");
+            } else if (repository instanceof MemoryIdempotentRepository) {
+                buffer.append("MemoryIdempotentRepository.memoryIdempotentRepository()");
+            }
+            buffer.append(")");
+            if (!idempotentConsume.isEager()) {
+                buffer.append(".eager(false)");
+            }
+
         } else if (expNode instanceof LoopDefinition) {
             if (expression instanceof ConstantExpression) {
                 buffer.append("(").append(expression.getExpression()).append(")");

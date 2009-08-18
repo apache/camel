@@ -17,20 +17,30 @@
 
 package org.apache.camel.web.groovy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 
  */
-public class SetBodyDSLTest extends GroovyRendererTestSupport {
+public class ProcessDSLTest extends GroovyRendererTestSupport {
 
-    public void testSetBody() throws Exception {
-        String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\", \"mock:tap\")";
-        String expected = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\").to(\"mock:tap\")";
+    /**
+     * a route involving a external class: validator
+     * 
+     * @throws Exception TODO: fix this test!
+     */
+    public void fixmeTestProcess() throws Exception {
+        String dsl = "from(\"direct:start\").doTry().process(validator).to(\"mock:valid\").doCatch(ValidationException.class).to(\"mock:invalid\")";
+        String[] importClasses = new String[] {"import org.apache.camel.processor.*;"};
+        Map<String, String> newObjects = new HashMap<String, String>();
+        newObjects.put("validator", "MyValidator");
 
-        assertEquals(expected, render(dsl));
+        assertEquals(dsl, render(dsl, importClasses, newObjects));
     }
-    
-    public void testSetBodyEnricher() throws Exception {
-        String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
+
+    public void testProcessRef() throws Exception {
+        String dsl = "from(\"direct:start\").processRef(\"myProcessor\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 }

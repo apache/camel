@@ -18,19 +18,27 @@
 package org.apache.camel.web.groovy;
 
 /**
- * 
+ *
  */
-public class SetBodyDSLTest extends GroovyRendererTestSupport {
+public class BeanDSLTest extends GroovyRendererTestSupport {
 
-    public void testSetBody() throws Exception {
-        String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\", \"mock:tap\")";
-        String expected = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\").to(\"mock:tap\")";
-
-        assertEquals(expected, render(dsl));
+    public void testBeanMethodHeartbeat() throws Exception {
+        String dsl = "from(\"bean:beanService?method=status\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
-    
-    public void testSetBodyEnricher() throws Exception {
-        String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
+
+    public void testBeanRef() throws Exception {
+        String dsl = "from(\"direct:start\").beanRef(\"myBean\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
+    }
+
+    public void testBeanRecipient() throws Exception {
+        String dsl = "from(\"direct:start\").beanRef(\"beanRecipient\", \"recipientList\")";
+        assertEquals(dsl, render(dsl));
+    }
+
+    public void testBeanWithException() throws Exception {
+        String dsl = "errorHandler(deadLetterChannel(\"mock://error\"));onException(Exception.class).to(\"mock:invalid\");from(\"direct:start\").beanRef(\"myBean\").to(\"mock:valid\")";
         assertEquals(dsl, render(dsl));
     }
 }

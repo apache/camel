@@ -30,7 +30,7 @@ import org.apache.camel.model.SendDefinition;
  */
 public final class GroovyRenderer {
 
-    public static final String HEADER = "import org.apache.camel.language.groovy.GroovyRouteBuilder;\nclass GroovyRoute extends GroovyRouteBuilder {\nvoid configure() {\n";
+    public static final String HEADER = "import org.apache.camel.*;\nimport org.apache.camel.language.groovy.GroovyRouteBuilder;\nclass GroovyRoute extends GroovyRouteBuilder {\nvoid configure() {\n";
     public static final String FOOTER = "\n}\n}";
 
     private GroovyRenderer() {
@@ -46,14 +46,7 @@ public final class GroovyRenderer {
 
         // render the error handler
         if (!(route.getErrorHandlerBuilder() instanceof ErrorHandlerBuilderRef)) {
-            if (route.getErrorHandlerBuilder() instanceof DeadLetterChannelBuilder) {
-                DeadLetterChannelBuilder deadLetter = (DeadLetterChannelBuilder)route.getErrorHandlerBuilder();
-                buffer.append("errorHandler(deadLetterChannel(\"").append(deadLetter.getDeadLetterUri()).append("\")");
-                buffer.append(".maximumRedeliveries(").append(deadLetter.getRedeliveryPolicy().getMaximumRedeliveries()).append(")");
-                buffer.append(".redeliverDelay(").append(deadLetter.getRedeliveryPolicy().getRedeliverDelay()).append(")");
-                buffer.append(".handled(").append(deadLetter.getHandledPolicy().toString()).append(")");
-                buffer.append(");");
-            }
+            ErrorHandlerRenderer.render(buffer, route.getErrorHandlerBuilder());
         }
 
         // render the global dsl not started with from, like global

@@ -31,4 +31,9 @@ public class ThrottleDSLTest extends GroovyRendererTestSupport {
         String dsl = "from(\"direct:start\").throttle(3).timePeriodMillis(10000).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
+
+    public void fixmeTestThrottleWithTimePeriodMillisInterval() throws Exception {
+        String dsl = "from(\"direct:start\").throttle(1).timePeriodMillis(INTERVAL).to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
+    }
 }

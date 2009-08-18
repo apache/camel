@@ -24,13 +24,11 @@ public class MarshalDSLTest extends GroovyRendererTestSupport {
 
     public void testMarshal() throws Exception {
         String dsl = "from(\"direct:start\").marshal().serialization().to(\"direct:marshalled\")";
-
         assertEquals(dsl, render(dsl));
     }
 
     public void testMultiFrom() throws Exception {
         String dsl = "from(\"direct:start\").unmarshal().serialization().to(\"mock:result\")";
-
         assertEquals(dsl, render(dsl));
     }
 }

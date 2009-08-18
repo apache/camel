@@ -18,6 +18,8 @@
 package org.apache.camel.web.groovy;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 import groovy.lang.GroovyClassLoader;
@@ -27,14 +29,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.web.util.GroovyRenderer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * An abstract class that provides basic support for GroovyRenderer test
  */
-public abstract class GroovyRendererTestSupport extends TestCase {    
-    private final String header = GroovyRenderer.HEADER;
+public abstract class GroovyRendererTestSupport extends TestCase {
+    private String header = GroovyRenderer.HEADER;
     private final String footer = GroovyRenderer.FOOTER;
 
     private CamelContext context;
@@ -66,6 +66,36 @@ public abstract class GroovyRendererTestSupport extends TestCase {
         StringBuilder sb = new StringBuilder();
         GroovyRenderer.renderRoute(sb, route);
         return sb.toString();
+    }
+
+    /**
+     * render a route with some import packages
+     */
+    public String render(String dsl, String[] imports) throws Exception {
+        // add import
+        StringBuilder sb = new StringBuilder();
+        for (String importPackage : imports) {
+            sb.append(importPackage).append("\n");
+        }
+        header = sb.toString() + "\n" + header;
+
+        return render(dsl);
+    }
+
+    /**
+     * render a route with some import packages and new object
+     */
+    public String render(String dsl, String[] imports, Map<String, String> newObjects) throws Exception {
+        // add new objects
+        StringBuilder sb = new StringBuilder();
+        for (Entry<String, String> entry : newObjects.entrySet()) {
+            String objectName = entry.getKey();
+            String clazzName = entry.getValue();
+            sb.append(clazzName).append(" ").append(objectName).append(" = new ").append(clazzName).append("();\n");
+        }
+        header += sb.toString();
+
+        return render(dsl, imports);
     }
 
     public String renderRoutes(String dsl) throws Exception {

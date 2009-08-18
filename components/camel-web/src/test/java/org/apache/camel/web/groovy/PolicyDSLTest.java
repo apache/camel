@@ -20,17 +20,10 @@ package org.apache.camel.web.groovy;
 /**
  * 
  */
-public class SetBodyDSLTest extends GroovyRendererTestSupport {
+public class PolicyDSLTest extends GroovyRendererTestSupport {
 
-    public void testSetBody() throws Exception {
-        String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\", \"mock:tap\")";
-        String expected = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\").to(\"mock:tap\")";
-
-        assertEquals(expected, render(dsl));
-    }
-    
-    public void testSetBodyEnricher() throws Exception {
-        String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
+    public void testPolicy() throws Exception {
+        String dsl = "from(\"direct:start\").policy(\"myPolicy\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 }

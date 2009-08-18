@@ -17,8 +17,11 @@
 
 package org.apache.camel.web.util;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.DataFormatDefinition;
@@ -52,10 +55,10 @@ import org.apache.camel.model.UnmarshalDefinition;
 public final class OutputDefinitionRenderer {
     private OutputDefinitionRenderer() {
         // Utility class, no public or protected default constructor
-    }    
+    }
 
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
-        OutputDefinition<?> out = (OutputDefinition<?>)processor;
+        OutputDefinition out = (OutputDefinition)processor;
         boolean notGlobal = buffer.toString().endsWith(")");
         if (notGlobal) {
             buffer.append(".");
@@ -63,27 +66,15 @@ public final class OutputDefinitionRenderer {
         buffer.append(out.getShortName());
 
         if (out instanceof AOPDefinition) {
-            buffer.append("()");
-            AOPDefinition aop = (AOPDefinition)out;
-            if (aop.getBeforeUri() != null && aop.getAfterUri() != null) {
-                buffer.append(".around(\"").append(aop.getBeforeUri());
-                buffer.append("\", \"").append(aop.getAfterUri()).append("\")");
-            } else if (aop.getBeforeUri() != null) {
-                buffer.append(".before(\"").append(aop.getBeforeUri()).append("\")");
-            } else if (aop.getAfterUri() != null) {
-                buffer.append(".after(\"").append(aop.getAfterUri()).append("\")");
-            } else if (aop.getAfterFinallyUri() != null) {
-                buffer.append(".afterFinally(\"").append(aop.getAfterUri()).append("\")");
-            }
-
+            renderAop(buffer, out);
         } else if (out instanceof BeanDefinition) {
-            // TODO improve it
+            renderBean(buffer, processor);
         } else if (out instanceof EnrichDefinition) {
             String enrich = out.toString();
             String resourceUri = enrich.substring(enrich.indexOf('[') + 1, enrich.indexOf(' '));
             buffer.append("(\"").append(resourceUri).append("\")");
         } else if (out instanceof FinallyDefinition) {
-
+            renderFinally(buffer, out);
         } else if (out instanceof InterceptDefinition) {
             if (out instanceof InterceptFromDefinition) {
                 InterceptFromDefinition interceptFrom = (InterceptFromDefinition)out;
@@ -101,7 +92,8 @@ public final class OutputDefinitionRenderer {
             }
         } else if (out instanceof MarshalDefinition) {
             DataFormatDefinition dataFormat = ((MarshalDefinition)out).getDataFormatType();
-            buffer.append("().").append(dataFormat.getClass().getAnnotation(XmlRootElement.class).name()).append("()");
+            XmlRootElement xmlRoot = dataFormat.getClass().getAnnotation(XmlRootElement.class);
+            buffer.append("().").append(xmlRoot.name()).append("()");
         } else if (out instanceof MulticastDefinition) {
             buffer.append("()");
         } else if (out instanceof OtherwiseDefinition) {
@@ -109,11 +101,11 @@ public final class OutputDefinitionRenderer {
         } else if (out instanceof PipelineDefinition) {
             // transformed into simple ToDefinition
         } else if (out instanceof PolicyDefinition) {
-            // TODO improve it
+            renderPolicy(buffer, out);
         } else if (out instanceof PollEnrichDefinition) {
-            // TODO improve it
+            renderPollEnrich(buffer, out);
         } else if (out instanceof ProcessDefinition) {
-            // TODO improve it
+            renderProcess(buffer, out);
         } else if (out instanceof RemoveHeaderDefinition) {
             RemoveHeaderDefinition remove = (RemoveHeaderDefinition)out;
             buffer.append("(\"").append(remove.getHeaderName()).append("\")");
@@ -121,7 +113,10 @@ public final class OutputDefinitionRenderer {
             RemovePropertyDefinition remove = (RemovePropertyDefinition)out;
             buffer.append("(\"").append(remove.getPropertyName()).append("\")");
         } else if (out instanceof SetExchangePatternDefinition) {
-            // TODO improve it
+            SetExchangePatternDefinition setEP = (SetExchangePatternDefinition)out;
+            buffer.append("(ExchangePattern.");
+            buffer.append(setEP.getPattern().toString());
+            buffer.append(")");
         } else if (out instanceof SortDefinition) {
             SortDefinition sort = (SortDefinition)out;
             buffer.append("(");
@@ -130,14 +125,104 @@ public final class OutputDefinitionRenderer {
         } else if (out instanceof StopDefinition) {
             buffer.append("()");
         } else if (out instanceof ThreadsDefinition) {
-            // TODO improve it
+            renderThreads(buffer, out);
         } else if (out instanceof TransactedDefinition) {
-            // TODO improve it
+            renderTransacted(buffer, out);
         } else if (out instanceof TryDefinition) {
-            // TODO improve it
+            buffer.append("()");
         } else if (out instanceof UnmarshalDefinition) {
             DataFormatDefinition dataFormat = ((UnmarshalDefinition)out).getDataFormatType();
-            buffer.append("().").append(dataFormat.getClass().getAnnotation(XmlRootElement.class).name()).append("()");
+            XmlRootElement xmlRoot = dataFormat.getClass().getAnnotation(XmlRootElement.class);
+            buffer.append("().").append(xmlRoot.name()).append("()");
         }
+    }
+
+    private static void renderAop(StringBuilder buffer, OutputDefinition out) {
+        buffer.append("()");
+        AOPDefinition aop = (AOPDefinition)out;
+        if (aop.getBeforeUri() != null && aop.getAfterUri() != null) {
+            buffer.append(".around(\"").append(aop.getBeforeUri());
+            buffer.append("\", \"").append(aop.getAfterUri()).append("\")");
+        } else if (aop.getBeforeUri() != null) {
+            buffer.append(".before(\"").append(aop.getBeforeUri()).append("\")");
+        } else if (aop.getAfterUri() != null) {
+            buffer.append(".after(\"").append(aop.getAfterUri()).append("\")");
+        } else if (aop.getAfterFinallyUri() != null) {
+            buffer.append(".afterFinally(\"").append(aop.getAfterUri()).append("\")");
+        }
+    }
+
+    private static void renderBean(StringBuilder buffer, ProcessorDefinition<?> processor) {
+        BeanDefinition beanDef = (BeanDefinition)processor;
+        if (beanDef.getRef() != null) {
+            buffer.append("Ref(\"").append(beanDef.getRef()).append("\"");
+            if (beanDef.getMethod() != null) {
+                buffer.append(", \"").append(beanDef.getMethod()).append("\"");
+            }
+            buffer.append(")");
+        }
+    }
+
+    private static void renderFinally(StringBuilder buffer, OutputDefinition out) {
+        buffer.append("()");
+        FinallyDefinition finallyDef = (FinallyDefinition)out;
+        List<ProcessorDefinition> branches = finallyDef.getOutputs();
+        for (ProcessorDefinition branch : branches) {
+            SendDefinitionRenderer.render(buffer, branch);
+        }
+        buffer.append(".end()");
+    }
+
+    private static void renderPolicy(StringBuilder buffer, OutputDefinition out) {
+        PolicyDefinition policy = (PolicyDefinition)out;
+        buffer.append("(");
+        if (policy.getRef() != null) {
+            buffer.append("\"").append(policy.getRef()).append("\"");
+        }
+        buffer.append(")");
+    }
+
+    private static void renderPollEnrich(StringBuilder buffer, OutputDefinition out) {
+        PollEnrichDefinition pollEnrich = (PollEnrichDefinition)out;
+        buffer.append("(\"");
+        buffer.append(pollEnrich.getResourceUri()).append("\", ").append(pollEnrich.getTimeout());
+        if (pollEnrich.getAggregationStrategy() != null) {
+            buffer.append(", An aggregationStrategy instance here");
+        }
+        buffer.append(")");
+    }
+
+    private static void renderProcess(StringBuilder buffer, OutputDefinition out) {
+        ProcessDefinition process = (ProcessDefinition)out;
+        if (process.getRef() != null) {
+            buffer.append("Ref(\"").append(process.getRef()).append("\")");
+        } else {
+            buffer.append("(");
+            buffer.append("An inlined processor instance here");
+            buffer.append(")");
+        }
+    }
+
+    private static void renderThreads(StringBuilder buffer, OutputDefinition out) {
+        ThreadsDefinition threads = (ThreadsDefinition)out;
+        buffer.append("(");
+        if (threads.getPoolSize() != null) {
+            buffer.append(threads.getPoolSize());
+        }
+        buffer.append(")");
+
+        WaitForTaskToComplete wait = threads.getWaitForTaskToComplete();
+        if (wait != WaitForTaskToComplete.IfReplyExpected) {
+            buffer.append(".waitForTaskToComplete(WaitForTaskToComplete.").append(wait).append(")");
+        }
+    }
+
+    private static void renderTransacted(StringBuilder buffer, OutputDefinition out) {
+        TransactedDefinition transacted = (TransactedDefinition)out;
+        buffer.append("(");
+        if (transacted.getRef() != null) {
+            buffer.append("\"").append(transacted.getRef()).append("\"");
+        }
+        buffer.append(")");
     }
 }

@@ -20,17 +20,19 @@ package org.apache.camel.web.groovy;
 /**
  * 
  */
-public class SetBodyDSLTest extends GroovyRendererTestSupport {
+public class TransactedDSLTest extends GroovyRendererTestSupport {
 
-    public void testSetBody() throws Exception {
-        String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\", \"mock:tap\")";
-        String expected = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\").to(\"mock:tap\")";
+    public void testTransacted() throws Exception {
+        String dsl = "from(\"direct:start\").transacted(\"myTransacted\").to(\"mock:result\")";
+        String expected = "from(\"direct:start\").policy(\"myTransacted\").to(\"mock:result\")";
 
         assertEquals(expected, render(dsl));
     }
-    
-    public void testSetBodyEnricher() throws Exception {
-        String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
-        assertEquals(dsl, render(dsl));
+
+    public void testTransactedWithPolicy() throws Exception {
+        String dsl = "from(\"direct:start\").transacted().policy(\"myPolicy\").to(\"mock:result\")";
+        String expected = "from(\"direct:start\").policy().policy(\"myPolicy\").to(\"mock:result\")";
+
+        assertEquals(expected, render(dsl));
     }
 }

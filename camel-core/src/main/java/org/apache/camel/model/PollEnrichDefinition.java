@@ -58,6 +58,22 @@ public class PollEnrichDefinition extends OutputDefinition<PollEnrichDefinition>
         this.resourceUri = resourceUri;
         this.timeout = timeout;
     }
+    
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    public Long getTimeout() {
+        return timeout;
+    }
+
+    public String getAggregationStrategyRef() {
+        return aggregationStrategyRef;
+    }
+
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
 
     @Override
     public String toString() {
