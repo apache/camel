@@ -145,26 +145,4 @@
    <modules>
      <module>mock-javamail_1.7</module>
    </modules>
-   
-   <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                   <goal>help</goal>
-                </goals>
-                <phase>none</phase>
-             </execution>
-           </executions>
-         </plugin>
-       </plugins>
-     </build>
-    </profile>
-   </profiles>
 </project>
