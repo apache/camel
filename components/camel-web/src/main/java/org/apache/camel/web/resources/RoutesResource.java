@@ -95,6 +95,12 @@ public class RoutesResource extends CamelChildResourceSupport {
         return routeResource;
     }
 
+    @Path("{id}/status")
+    public RouteStatusResource getRouteStatus(@PathParam("id") String id) {
+        RouteResource routeResource = getRoute(id);
+        return routeResource.getRouteStatus();
+    }    
+    
     // Properties
     // -------------------------------------------------------------------------
     public List<RouteDefinition> getRoutes() {
