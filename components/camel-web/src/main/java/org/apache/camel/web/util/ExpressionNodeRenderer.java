@@ -44,126 +44,180 @@ import org.apache.camel.spi.IdempotentRepository;
 public final class ExpressionNodeRenderer {
     private ExpressionNodeRenderer() {
         // Utility class, no public or protected default constructor
-    }    
+    }
 
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         ExpressionNode expNode = (ExpressionNode)processor;
-        ExpressionDefinition expression = expNode.getExpression();
-
         buffer.append(".").append(expNode.getShortName());
         if (expNode instanceof DelayDefinition) {
-            String delay = expression.getExpressionValue().toString();
-            if (!delay.contains("(")) {
-                String delayTime = expression.getExpressionValue().toString();
-                buffer.append("(").append(delayTime).append(")");
-            } else {
-                buffer.append("()");
-                ExpressionRenderer.render(buffer, expression);
-            }
+            renderDelay(buffer, expNode);
         } else if (expNode instanceof FilterDefinition) {
-            if (expression.getPredicate() != null) {
-                buffer.append("(");
-                PredicateRenderer.render(buffer, expression.getPredicate());
-                buffer.append(")");
-            } else if (expression.getLanguage() != null) {
-                buffer.append("()");
-                ExpressionRenderer.render(buffer, expression);
-            } else {
-                buffer.append("()");
-                ExpressionRenderer.render(buffer, expression);
-            }
+            renderFilter(buffer, expNode);
         } else if (expNode instanceof IdempotentConsumerDefinition) {
-            IdempotentConsumerDefinition idempotentConsume = (IdempotentConsumerDefinition)expNode;
-            buffer.append("(");
-            ExpressionRenderer.render(buffer, expression);
-            buffer.append(", ");
-            IdempotentRepository repository = idempotentConsume.getMessageIdRepository();
-            if (repository instanceof FileIdempotentRepository) {
-                // TODO need to be improved
-                buffer.append("FileIdempotentRepository.fileIdempotentRepository()");
-            } else if (repository instanceof MemoryIdempotentRepository) {
-                buffer.append("MemoryIdempotentRepository.memoryIdempotentRepository()");
-            }
-            buffer.append(")");
-            if (!idempotentConsume.isEager()) {
-                buffer.append(".eager(false)");
-            }
-
+            renderIdempotentConsumer(buffer, expNode);
         } else if (expNode instanceof LoopDefinition) {
-            if (expression instanceof ConstantExpression) {
-                buffer.append("(").append(expression.getExpression()).append(")");
-            } else {
-                buffer.append("()");
-                ExpressionRenderer.render(buffer, expression);
-            }
+            renderLoop(buffer, expNode);
         } else if (expNode instanceof RecipientListDefinition) {
+            ExpressionDefinition expression = expNode.getExpression();
             buffer.append("(");
             ExpressionRenderer.render(buffer, expression);
             buffer.append(")");
         } else if (expNode instanceof SetBodyDefinition) {
-            String expValue = expression.getExpressionValue().toString();
-            if (expValue.startsWith("append")) {
-                buffer.append("(");
-                ExpressionRenderer.render(buffer, expression);
-                buffer.append(")");
-            } else {
-                buffer.append("()");
-                ExpressionRenderer.renderConstant(buffer, expression);
-            }
+            renderSetBody(buffer, expNode);
         } else if (expNode instanceof SetHeaderDefinition) {
-            SetHeaderDefinition set = (SetHeaderDefinition)expNode;
-            buffer.append("(\"").append(set.getHeaderName()).append("\")");
-            if (expression.getExpressionValue() != null) {
-                ExpressionRenderer.renderConstant(buffer, expression);
-            } else if (expression.getExpressionType() != null) {
-                ExpressionRenderer.render(buffer, expression);
-            }
+            renderSetHeader(buffer, expNode);
         } else if (expNode instanceof SetOutHeaderDefinition) {
-            buffer.append("(\"unspported expressions in SetOutHeaderDefinition\")");
+            // TODO unsupported expression node
+            buffer.append("(\"setOutHeaderDefinition\")");
         } else if (expNode instanceof SetPropertyDefinition) {
-            SetPropertyDefinition set = (SetPropertyDefinition)expNode;
-            buffer.append("(\"").append(set.getPropertyName()).append("\")");
-            if (expression.getExpressionValue() != null) {
-                ExpressionRenderer.renderConstant(buffer, expression);
-            } else if (expression.getExpressionType() != null) {
-                ExpressionRenderer.render(buffer, expression);
-            }
+            renderSetProperty(buffer, expNode);
         } else if (expNode instanceof SplitDefinition) {
-            if (expression.getExpressionValue() != null) {
-                buffer.append("(");
-                ExpressionRenderer.render(buffer, expression);
-                buffer.append(")");
-            } else if (expression.getExpressionType() != null) {
-                buffer.append("().");
-                ExpressionRenderer.render(buffer, expression);
-            }
-
-            SplitDefinition split = (SplitDefinition)expNode;
-            if (split.isStreaming()) {
-                buffer.append(".streaming()");
-            }
+            renderSplit(buffer, expNode);
         } else if (expNode instanceof TransformDefinition) {
-            String expValue = expression.getExpressionValue().toString();
-            if (expValue.startsWith("append") || expValue.startsWith("prepend") || expValue.startsWith("to")) {
-                buffer.append("(");
-                ExpressionRenderer.render(buffer, expression);
-                buffer.append(")");
-            } else if (expValue.startsWith("xpath")) {
-                buffer.append("()");
-                ExpressionRenderer.render(buffer, expression);
-            } else {
-                buffer.append("(constant(\"").append(expression.getExpressionValue().toString()).append("\"))");
-            }
+            renderTransform(buffer, expNode);
         } else if (expNode instanceof WhenDefinition) {
+            renderWhen(buffer, expNode);
+        }
+    }
+
+    private static void renderDelay(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        String delay = expression.getExpressionValue().toString();
+        if (!delay.contains("(")) {
+            String delayTime = expression.getExpressionValue().toString();
+            buffer.append("(").append(delayTime).append(")");
+        } else {
+            buffer.append("()");
+            ExpressionRenderer.render(buffer, expression);
+        }
+    }
+
+    private static void renderFilter(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        if (!(expression instanceof ExpressionClause)) {
             if (expression.getPredicate() != null) {
                 buffer.append("(");
                 PredicateRenderer.render(buffer, expression.getPredicate());
                 buffer.append(")");
             }
-            if (expression instanceof ExpressionClause) {
+        } else {
+            String language = expression.getLanguage();
+            if (language != null && !language.equals("")) {
                 buffer.append("()");
-                ExpressionRenderer.render(buffer, (ExpressionClause)expression);
+                ExpressionRenderer.render(buffer, expression);
+            } else {
+                buffer.append("()");
+                ExpressionRenderer.render(buffer, expression);
             }
+        }
+    }
+
+    private static void renderIdempotentConsumer(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        IdempotentConsumerDefinition idempotentConsume = (IdempotentConsumerDefinition)expNode;
+        buffer.append("(");
+        ExpressionRenderer.render(buffer, expression);
+        buffer.append(", ");
+        IdempotentRepository repository = idempotentConsume.getMessageIdRepository();
+        if (repository instanceof FileIdempotentRepository) {
+            // TODO need to be improved
+            buffer.append("FileIdempotentRepository.fileIdempotentRepository()");
+        } else if (repository instanceof MemoryIdempotentRepository) {
+            buffer.append("MemoryIdempotentRepository.memoryIdempotentRepository()");
+        }
+        buffer.append(")");
+        if (!idempotentConsume.isEager()) {
+            buffer.append(".eager(false)");
+        }
+    }
+
+    private static void renderLoop(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        if (expression instanceof ConstantExpression) {
+            buffer.append("(").append(expression.getExpression()).append(")");
+        } else {
+            buffer.append("()");
+            ExpressionRenderer.render(buffer, expression);
+        }
+    }
+
+    private static void renderSetBody(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        String expValue = expression.getExpressionValue().toString();
+        if (expValue.startsWith("append")) {
+            buffer.append("(");
+            ExpressionRenderer.render(buffer, expression);
+            buffer.append(")");
+        } else {
+            buffer.append("()");
+            ExpressionRenderer.renderConstant(buffer, expression);
+        }
+    }
+
+    private static void renderSetHeader(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        SetHeaderDefinition set = (SetHeaderDefinition)expNode;
+        buffer.append("(\"").append(set.getHeaderName()).append("\")");
+        if (expression.getExpressionValue() != null) {
+            ExpressionRenderer.renderConstant(buffer, expression);
+        } else if (expression.getExpressionType() != null) {
+            ExpressionRenderer.render(buffer, expression);
+        }
+    }
+
+    private static void renderSetProperty(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        SetPropertyDefinition set = (SetPropertyDefinition)expNode;
+        buffer.append("(\"").append(set.getPropertyName()).append("\")");
+        if (expression.getExpressionValue() != null) {
+            ExpressionRenderer.renderConstant(buffer, expression);
+        } else if (expression.getExpressionType() != null) {
+            ExpressionRenderer.render(buffer, expression);
+        }
+    }
+
+    private static void renderSplit(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        if (expression.getExpressionValue() != null) {
+            buffer.append("(");
+            ExpressionRenderer.render(buffer, expression);
+            buffer.append(")");
+        } else if (expression.getExpressionType() != null) {
+            buffer.append("().");
+            ExpressionRenderer.render(buffer, expression);
+        }
+
+        SplitDefinition split = (SplitDefinition)expNode;
+        if (split.isStreaming()) {
+            buffer.append(".streaming()");
+        }
+    }
+
+    private static void renderTransform(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        String expValue = expression.getExpressionValue().toString();
+        if (expValue.startsWith("append") || expValue.startsWith("prepend") || expValue.startsWith("to")) {
+            buffer.append("(");
+            ExpressionRenderer.render(buffer, expression);
+            buffer.append(")");
+        } else if (expValue.startsWith("xpath")) {
+            buffer.append("()");
+            ExpressionRenderer.render(buffer, expression);
+        } else {
+            buffer.append("(constant(\"").append(expression.getExpressionValue().toString()).append("\"))");
+        }
+    }
+
+    private static void renderWhen(StringBuilder buffer, ExpressionNode expNode) {
+        ExpressionDefinition expression = expNode.getExpression();
+        if (expression.getPredicate() != null) {
+            buffer.append("(");
+            PredicateRenderer.render(buffer, expression.getPredicate());
+            buffer.append(")");
+        }
+        if (expression instanceof ExpressionClause) {
+            buffer.append("()");
+            ExpressionRenderer.render(buffer, (ExpressionClause)expression);
         }
     }
 }

@@ -157,21 +157,19 @@ public class RouteResource extends CamelChildResourceSupport {
      * Allows a routes builder to be updated
      */
     public void postRoutes(RouteBuilder builder) throws Exception {
-        // add the route builder into a temporary camel context
-        CamelContext tempContext = new DefaultCamelContext();
-        tempContext.addRoutes(builder);
-        // get all the added routes and add them into current context
-        List<RouteDefinition> routeDefinitions = tempContext.getRouteDefinitions();
-        for (int i = 0; i < routeDefinitions.size(); i++) {
-            RouteDefinition routeDefinition = routeDefinitions.get(i);
-            // set id only for the first route
-            if (i == 0) {
-                routeDefinition.setId(id);
-            }
-            
-            // add or update the route
-            getCamelContext().addRouteDefinitions(Collections.singletonList(routeDefinition));
-        }
+        DefaultCamelContext defaultCamelContext = (DefaultCamelContext)getCamelContext();
+        // stop and remove the original route
+        defaultCamelContext.stopRoute(id);
+        defaultCamelContext.removeRouteDefinition(id);
+
+        // add the routes in a route builder
+        defaultCamelContext.addRoutes(builder);
+
+        // reserve the id on the newest route
+        List<RouteDefinition> routeDefinitions = defaultCamelContext.getRouteDefinitions();
+        RouteDefinition route = routeDefinitions.get(routeDefinitions.size() - 1);
+        route.setId(id);
+        defaultCamelContext.startRoute(route);
     }
 
     /**

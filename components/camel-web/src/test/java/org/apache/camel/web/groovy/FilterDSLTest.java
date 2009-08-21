@@ -36,4 +36,9 @@ public class FilterDSLTest extends GroovyRendererTestSupport {
         String dsl = "from(\"direct:start\").filter().method(\"myBean\", \"matches\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
+
+    public void testFilterXPath() throws Exception {
+        String dsl = "from(\"direct:start\").filter().xpath(\"/person[@Name='James']\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
+    }
 }

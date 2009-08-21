@@ -1,7 +1,7 @@
 #########################aggregate#########################
 from("direct:start").aggregate().header("cheese").to("mock:result")
 from("direct:start").aggregate(header("cheese")).to("mock:result")
-#errorHandler(deadLetterChannel("mock:error"));onException(CamelException.class).maximumRedeliveries(2);from("direct:start").aggregate(header("id")).to("mock:result")
+#errorHandler(deadLetterChannel("mock://error"));onException(CamelException.class).maximumRedeliveries(2);from("direct:start").aggregate(header("id")).to("mock:result")
 from("direct:start").aggregate().simple("id").batchTimeout(500L).groupExchanges().to("mock:result")
 from("direct:start").aggregate(header("id")).batchTimeout(3000).batchSize(0).to("mock:result")
 from("timer://kickoff?period=9999910000").setHeader("id").constant("foo").setBody().constant("a b c").split(body().tokenize(" ")).to("seda:splitted");from("seda:splitted").aggregate(header("id")).to("mock:result")
@@ -35,10 +35,10 @@ from("direct:start").delay().header("MyDelay").to("mock:result")
 #########################detour#########################
 from("direct:start").choice().when().method("controlBean", "isDetour").to("mock:detour").end().to("mock:result")
 #########################deadLetter/errorHandler#########################
-errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0).handled(false));from("direct:start").to("mock:result")
-errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(3).redeliverDelay(5000));from("direct:start").to("mock:result")
-errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from("direct:start").to("mock:result")
-#errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(4).loggingLevel(LoggingLevel.DEBUG));from("direct:start").to("mock:result")
+errorHandler(deadLetterChannel("mock://failed").maximumRedeliveries(0).handled(false));from("direct:start").to("mock:result")
+errorHandler(deadLetterChannel("mock://failed").maximumRedeliveries(3).redeliverDelay(5000));from("direct:start").to("mock:result")
+errorHandler(deadLetterChannel("mock://failed").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from("direct:start").to("mock:result")
+#errorHandler(deadLetterChannel("mock://error").maximumRedeliveries(4).loggingLevel(LoggingLevel.DEBUG));from("direct:start").to("mock:result")
 #########################enricher#########################
 from("direct:start").setBody(body().append(" World!")).to("mock:result")
 #########################filter#########################
