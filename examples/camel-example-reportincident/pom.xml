@@ -33,38 +33,14 @@
     <packaging>war</packaging>
     
     <repositories>
-    <repository>
-      <id>ops4j.releases</id>
-      <url>http://repository.ops4j.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>ops4j.snapshots</id>
-      <url>http://repository.ops4j.org/mvn-snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>biz.aQute</id>
-      <url>http://www.aqute.biz/repo</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>ops4j.releases</id>
-      <url>http://repository.ops4j.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-   </pluginRepositories>
-
+      <repository>
+        <id>biz.aQute</id>
+        <url>http://www.aqute.biz/repo</url>
+      </repository>
+    </repositories>
+    
 	<properties>
-		<pax-exam-version>0.6.0</pax-exam-version>
+		<pax-exam-version>1.0.0</pax-exam-version>
 		<pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>
 	</properties>
 
@@ -137,31 +113,26 @@
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam</artifactId>
-			<version>${pax-exam-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-junit</artifactId>
-			<version>${pax-exam-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-container-default</artifactId>
-			<version>${pax-exam-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-junit-extender-impl</artifactId>
-			<version>${pax-exam-version}</version>
 			<scope>test</scope>
 		</dependency>
 	    <dependency>
 		   <groupId>org.ops4j.pax.swissbox</groupId>
 		   <artifactId>pax-swissbox-tinybundles</artifactId>
-		   <version>1.0.0</version>
 		   <scope>test</scope>
         </dependency>
 		<dependency>

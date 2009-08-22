@@ -73,6 +73,8 @@
     <groovy-version>1.6.3</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <junit-version>4.4</junit-version>
+    <pax-exam-version>1.0.0</pax-exam-version>
+    <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
     <saxon-version>9.1.0.1</saxon-version>
     <scala-version>2.7.3</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
@@ -768,6 +770,32 @@
         <version>20070112</version>
       </dependency>
 
+      <!-- optional Pax support-->
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam</artifactId>
+        <version>${pax-exam-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-junit</artifactId>
+        <version>${pax-exam-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-container-default</artifactId>
+        <version>${pax-exam-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-junit-extender-impl</artifactId>
+        <version>${pax-exam-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.swissbox</groupId>
+        <artifactId>pax-swissbox-tinybundles</artifactId>
+        <version>${pax-tiny-bundle-version}</version>
+      </dependency>
       <!-- optional Saxon support-->
       <dependency>
         <groupId>net.sf.saxon</groupId>

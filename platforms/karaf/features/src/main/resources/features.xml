@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <features>
   <feature name='camel-core' version='${pom.version}'>
-    <bundle>mvn:javax.activation/com.springsource.javax.activation/${spring-javax-activation-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.1/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${jaxb-bundle-version}</bundle>
@@ -54,7 +54,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/${velocity-bundle-version}</bundle>
     <bundle>mvn:org.apache.ws.commons.axiom/axiom-impl/${axiom-version}</bundle>
     <bundle>mvn:org.apache.ws.commons.axiom/axiom-api/${axiom-version}</bundle>
-    <bundle>mvn:javax.mail/com.springsource.javax.mail/${spring-javax-mail-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.javamail-api-1.4/${servicemix-specs-version}</bundle> 
     <bundle>mvn:org.apache.neethi/neethi/${neethi-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.abdera/${abdera-bundle-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxws_2.1_spec/${geronimo-jaxws-spec-version}</bundle>
@@ -309,6 +309,7 @@
   <feature name='camel-mail' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-context/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-context-support/${spring-version}</bundle>
+    <bundle>mvn:javax.activation/com.springsource.javax.activation/${spring-javax-activation-version}</bundle>
     <bundle>mvn:javax.mail/com.springsource.javax.mail/${spring-javax-mail-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${pom.version}</bundle>

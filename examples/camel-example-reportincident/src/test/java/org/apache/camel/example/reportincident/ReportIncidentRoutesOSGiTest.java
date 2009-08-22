@@ -88,10 +88,13 @@ public class ReportIncidentRoutesOSGiTest extends ReportIncidentRoutesTest {
                          artifactId("features").versionAsInProject().type("xml/features"),                         
                           "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-velocity",  "camel-cxf"),
             
+            // using the java mail API bundle
+            mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.javamail-api-1.4").version("1.3.0"),
+                                        
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-mail").versionAsInProject(),
+                          
             // Added the mock_java_mail bundle for testing
             mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").versionAsInProject(),
-            
-            mavenBundle().groupId("org.apache.camel").artifactId("camel-mail").versionAsInProject(),
             
             // create a customer bundle start up the report incident bundle
             bundle(newBundle().addClass(InputReportIncident.class)

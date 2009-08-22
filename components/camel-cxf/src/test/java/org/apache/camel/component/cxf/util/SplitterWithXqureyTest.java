@@ -38,6 +38,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -70,6 +71,16 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
                 // split the message with namespaces defined 
                 Namespaces namespaces = new Namespaces("one", "http://camel.apache.org/schema/one");                
                 from("direct:endpoint").split().xpath("//one:other", namespaces).to("mock:result");
+                
+                from("direct:toString").split().xpath("//one:other", namespaces)
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            ElementImpl element = (ElementImpl) exchange.getIn().getBody();
+                            String message = CxfUtils.elementToString(element);
+                            exchange.getOut().setBody(message);
+                        }
+                    })
+                    .to("mock:result");
             }
         };
     }
@@ -87,6 +98,21 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
             String message = CxfUtils.elementToString(element);            
             log.info("The splited message is " + message);
             assertTrue("The splitted message should start with <other", message.indexOf("<other") == 0);
+            assertEquals("Get a wrong message", verifyStrings[i], message);
+            i++;
+        }
+    }
+    
+    @Test
+    public void testToStringProcessor() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.reset();
+        result.expectedMessageCount(4);
+        template.sendBody("direct:toString", xmlData);
+        assertMockEndpointsSatisfied();
+        int i = 0;
+        for (Exchange exchange : result.getExchanges()) {
+            String message = exchange.getIn().getBody(String.class);
             assertEquals("Get a wrong message", verifyStrings[i], message);
             i++;
         }

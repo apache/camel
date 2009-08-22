@@ -65,8 +65,7 @@ public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() {
         Option[] options = options(
-            // install log service using pax runners profile abstraction (there are more profiles, like DS)
-            logProfile().version("1.3.0"),
+           
             // install the spring dm profile            
             profile("spring.dm").version("1.2.0"),    
             // this is how you set the default log level when using pax logging (logProfile)
