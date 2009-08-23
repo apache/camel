@@ -476,14 +476,14 @@ public class BeanInfo {
         return null;
     }
 
-    protected boolean isValidMethod(Class clazz, Method method) {
+    protected boolean isValidMethod(Class<?> clazz, Method method) {
         // must be a public method
         if (!Modifier.isPublic(method.getModifiers())) {
             return false;
         }
 
-        // return type must not be an Exchange
-        if (method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) {
+        // return type must not be an Exchange and it should not be a bridge method
+        if ((method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) || method.isBridge()) {
             return false;
         }
 
