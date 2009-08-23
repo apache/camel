@@ -38,7 +38,6 @@ public final class SpringTestHelper {
         test.setCamelContextService(new Service() {
             public void start() throws Exception {
                 applicationContext.start();
-
             }
 
             public void stop() throws Exception {

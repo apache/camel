@@ -16,13 +16,10 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.InterceptDefinition;
@@ -42,7 +39,6 @@ import org.apache.camel.model.RoutesDefinition;
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RoutesDefinition routeCollection = new RoutesDefinition();
-    private List<Route> routes = new ArrayList<Route>();
 
     public RouteBuilder() {
         this(null);
@@ -295,6 +291,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception if the routes could not be created for whatever reason
      */
     protected void addRoutes(RoutesBuilder routes) throws Exception {
-        getContext().addRoutes(routes);
+        if (routes instanceof RouteBuilder) {
+            // if its a RouteBuilder then let it use my route collection and error handler
+            // then we are integrated seamless
+            RouteBuilder builder = (RouteBuilder) routes;
+            builder.setContext(this.getContext());
+            builder.setRouteCollection(this.getRouteCollection());
+            builder.setErrorHandlerBuilder(this.getErrorHandlerBuilder());
+            // must invoke configure on the original builder so it adds its configuration to me
+            builder.configure();
+        } else {
+            getContext().addRoutes(routes);
+        }
     }
+
 }
