@@ -123,8 +123,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         validateMatchingSetContains(scanned,  ScanTargetTwo.class);
     }
     
-    // Disable until CAMEL-1917 is fixed
-    public void disabledtestFindByFilterPackageInJarUrl() throws Exception {
+    public void testFindByFilterPackageInJarUrl() throws Exception {
         
         ClassLoader savedClassLoader = null; 
         try {
