@@ -499,8 +499,8 @@ public class BeanInfo {
             return false;
         }
 
-        // return type must not be an Exchange
-        if (method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) {
+        // return type must not be an Exchange and it should not be a bridge method
+        if ((method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) || method.isBridge()) {
             return false;
         }
 
