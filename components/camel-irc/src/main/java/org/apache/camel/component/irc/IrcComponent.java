@@ -66,7 +66,7 @@ public class IrcComponent extends DefaultComponent {
         final IRCConnection connection;
         if (connectionCache.containsKey(configuration.getCacheKey())) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Returning Cached Connection to " + configuration.getHostname() + " " + configuration.getTarget());
+                LOG.debug("Returning Cached Connection to " + configuration.getHostname() + ":" + configuration.getNickname());
             }
             connection = connectionCache.get(configuration.getCacheKey());
         } else {
@@ -81,7 +81,7 @@ public class IrcComponent extends DefaultComponent {
 
         if (configuration.getUsingSSL()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating SSL Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
+                LOG.debug("Creating SSL Connection to " + configuration.getHostname() + " destination(s): " + configuration.getListOfChannels()
                         + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
             }
             SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
@@ -92,7 +92,7 @@ public class IrcComponent extends DefaultComponent {
 
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
+                LOG.debug("Creating Connection to " + configuration.getHostname() + " destination(s): " + configuration.getListOfChannels()
                         + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
             }
 

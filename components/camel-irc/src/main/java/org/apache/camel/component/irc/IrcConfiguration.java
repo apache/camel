@@ -18,6 +18,8 @@ package org.apache.camel.component.irc;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.camel.RuntimeCamelException;
@@ -27,6 +29,7 @@ import org.schwering.irc.lib.ssl.SSLTrustManager;
 
 public class IrcConfiguration implements Cloneable {
     private String target;
+    private List<String> channels = new ArrayList<String>();
     private String hostname;
     private String password;
     private String nickname;
@@ -49,16 +52,16 @@ public class IrcConfiguration implements Cloneable {
     public IrcConfiguration() {
     }
 
-    public IrcConfiguration(String hostname, String nickname, String displayname, String target) {
-        this.target = target;
+    public IrcConfiguration(String hostname, String nickname, String displayname, List<String> channels) {
+        this.channels = channels;
         this.hostname = hostname;
         this.nickname = nickname;
         this.username = nickname;
         this.realname = displayname;
     }
 
-    public IrcConfiguration(String hostname, String username, String password, String nickname, String displayname, String target) {
-        this.target = target;
+    public IrcConfiguration(String hostname, String username, String password, String nickname, String displayname, List<String> channels) {
+        this.channels = channels;
         this.hostname = hostname;
         this.username = username;
         this.password = password;
@@ -76,6 +79,14 @@ public class IrcConfiguration implements Cloneable {
 
     public String getCacheKey() {
         return hostname + ":" + nickname;
+    }
+
+    public String getListOfChannels() {
+        String retval = "";
+        for ( String channel : channels ) {
+            retval += channel + " ";
+        }
+        return retval.trim();
     }
 
     public void configure(String uriStr) throws URISyntaxException {
@@ -100,13 +111,33 @@ public class IrcConfiguration implements Cloneable {
         setRealname(uri.getUserInfo());
         setHostname(uri.getHost());
 
-        if (uri.getFragment() == null || uri.getFragment().length() == 0) {
-            throw new RuntimeCamelException("The IRC channel name is required but not configured");
+        if (uri.getFragment() != null && uri.getFragment().length() != 0) {
+            String channel = "#" + uri.getFragment();
+            addChannel(channel);
         }
+    }
 
-        String channel = uri.getFragment();
+    public void addChannel(String channel) {
+        boolean alreadyHave = false;
+        for (String aChannel : channels) {
+            if ( channel.contentEquals(aChannel)) {
+                alreadyHave = true;
+            }
+        }
+        if (!alreadyHave) {
+            channels.add(channel);
+        }
+    }
 
-        setTarget("#" + channel);
+    public void setChannels(String channels) {
+        String[] args = channels.split(",");
+
+        for (String channel : args) {
+            channel = channel.trim();
+            if (channel.startsWith("#")) {
+                addChannel(channel);
+            }
+        }
     }
 
     public void setTrustManager(SSLTrustManager trustManager) {
@@ -173,12 +204,8 @@ public class IrcConfiguration implements Cloneable {
         this.ports = ports;
     }
 
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
+    public List<String> getChannels() {
+        return channels;
     }
 
     public boolean isPersistent() {

@@ -44,8 +44,12 @@ public class IrcConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (connection != null) {
-            String target = endpoint.getConfiguration().getTarget();
-            connection.doPart(target);
+            for (String channel : endpoint.getConfiguration().getChannels()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Parting: " + channel);
+                }
+                connection.doPart(channel);
+            }
             connection.removeIRCEventListener(listener);
         }
         super.doStop();
@@ -55,14 +59,15 @@ public class IrcConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        String target = endpoint.getConfiguration().getTarget();
-        listener = new FilteredIRCEventAdapter(target);
+        listener = new FilteredIRCEventAdapter();
         connection.addIRCEventListener(listener);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Joining: " + target + " using " + connection.getClass().getName());
+        for (String channel : endpoint.getConfiguration().getChannels()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Joining: " + channel + " using " + connection.getClass().getName());
+            }
+            connection.doJoin(channel);
         }
-        connection.doJoin(target);
     }
 
     public IRCConnection getConnection() {
@@ -70,11 +75,6 @@ public class IrcConsumer extends DefaultConsumer {
     }
 
     class FilteredIRCEventAdapter extends IRCEventAdapter {
-        final String target;
-
-        public FilteredIRCEventAdapter(String target) {
-            this.target = target;
-        }
 
         @Override
         public void onNick(IRCUser user, String newNick) {
@@ -103,13 +103,11 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onJoin(String channel, IRCUser user) {
             if (configuration.isOnJoin()) {
-                if (channel.equals(configuration.getTarget())) {
-                    Exchange exchange = endpoint.createOnJoinExchange(channel, user);
-                    try {
-                        getProcessor().process(exchange);
-                    } catch (Exception e) {
-                        handleException(e);
-                    }
+                Exchange exchange = endpoint.createOnJoinExchange(channel, user);
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    handleException(e);
                 }
             }
         }
@@ -117,13 +115,11 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onKick(String channel, IRCUser user, String passiveNick, String msg) {
             if (configuration.isOnKick()) {
-                if (channel.equals(configuration.getTarget())) {
-                    Exchange exchange = endpoint.createOnKickExchange(channel, user, passiveNick, msg);
-                    try {
-                        getProcessor().process(exchange);
-                    } catch (Exception e) {
-                        handleException(e);
-                    }
+                Exchange exchange = endpoint.createOnKickExchange(channel, user, passiveNick, msg);
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    handleException(e);
                 }
             }
         }
@@ -131,13 +127,11 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onMode(String channel, IRCUser user, IRCModeParser modeParser) {
             if (configuration.isOnMode()) {
-                if (channel.equals(configuration.getTarget())) {
-                    Exchange exchange = endpoint.createOnModeExchange(channel, user, modeParser);
-                    try {
-                        getProcessor().process(exchange);
-                    } catch (Exception e) {
-                        handleException(e);
-                    }
+                Exchange exchange = endpoint.createOnModeExchange(channel, user, modeParser);
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    handleException(e);
                 }
             }
         }
@@ -145,13 +139,11 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onPart(String channel, IRCUser user, String msg) {
             if (configuration.isOnPart()) {
-                if (channel.equals(configuration.getTarget())) {
-                    Exchange exchange = endpoint.createOnPartExchange(channel, user, msg);
-                    try {
-                        getProcessor().process(exchange);
-                    } catch (Exception e) {
-                        handleException(e);
-                    }
+                Exchange exchange = endpoint.createOnPartExchange(channel, user, msg);
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    handleException(e);
                 }
             }
         }
@@ -159,13 +151,11 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onTopic(String channel, IRCUser user, String topic) {
             if (configuration.isOnTopic()) {
-                if (channel.equals(configuration.getTarget())) {
-                    Exchange exchange = endpoint.createOnTopicExchange(channel, user, topic);
-                    try {
-                        getProcessor().process(exchange);
-                    } catch (Exception e) {
-                        handleException(e);
-                    }
+                Exchange exchange = endpoint.createOnTopicExchange(channel, user, topic);
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    handleException(e);
                 }
             }
         }
@@ -173,13 +163,11 @@ public class IrcConsumer extends DefaultConsumer {
         @Override
         public void onPrivmsg(String target, IRCUser user, String msg) {
             if (configuration.isOnPrivmsg()) {
-                if (target.equals(configuration.getTarget()) || target.equals(configuration.getNickname())) {
-                    Exchange exchange = endpoint.createOnPrivmsgExchange(target, user, msg);
-                    try {
-                        getProcessor().process(exchange);
-                    } catch (Exception e) {
-                        handleException(e);
-                    }
+                Exchange exchange = endpoint.createOnPrivmsgExchange(target, user, msg);
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    handleException(e);
                 }
             }
         }

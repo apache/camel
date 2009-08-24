@@ -34,10 +34,8 @@ public class IrcPrivmsgTest extends CamelTestSupport {
     protected String expectedBody1 = "Message One";
     protected String expectedBody2 = "Message Two";
 
-    protected String command = "PRIVMSG camel-con :";
-
-    protected String body1 = command + expectedBody1;
-    protected String body2 = command + expectedBody2;
+    protected String body1 = expectedBody1;
+    protected String body2 = expectedBody2;
 
     private boolean sentMessages;    
 
@@ -62,7 +60,8 @@ public class IrcPrivmsgTest extends CamelTestSupport {
                         when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("mock:result").
                         when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
 
-                from("seda:consumerJoined").process(new Processor() {
+                from("seda:consumerJoined")
+                    .process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         sendMessages();
                     }
@@ -87,9 +86,8 @@ public class IrcPrivmsgTest extends CamelTestSupport {
             sentMessages = true;
 
             // now the consumer has joined, lets send some messages
-
-            template.sendBody(sendUri(), body1);
-            template.sendBody(sendUri(), body2);
+            template.sendBodyAndHeader(sendUri(), body1, "irc.target", "camel-con");
+            template.sendBodyAndHeader(sendUri(), body2, "irc.target", "camel-con");
         }
     }
 }

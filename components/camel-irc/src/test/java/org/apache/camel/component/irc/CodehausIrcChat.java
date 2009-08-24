@@ -17,6 +17,8 @@
 package org.apache.camel.component.irc;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
@@ -90,7 +92,10 @@ public final class CodehausIrcChat {
 
     public static void main(String[] args) throws InterruptedException {
         //final IrcConfiguration config = new IrcConfiguration("irc.codehaus.org", "camel-irc", "Camel IRC Component", "#camel-test");
-        final IrcConfiguration config = new IrcConfiguration("irc.codehaus.org", "camel-rc", "Camel IRC Component", "#camel-test");
+
+        List<String> channels = new ArrayList<String>();
+        channels.add("#camel-test");
+        final IrcConfiguration config = new IrcConfiguration("irc.codehaus.org", "camel-rc", "Camel IRC Component", channels);
 
         final IRCConnection conn = new IRCConnection(config.getHostname(), config.getPorts(), config.getPassword(), config.getNickname(), config.getUsername(), config.getRealname());
 
@@ -113,7 +118,10 @@ public final class CodehausIrcChat {
         // conn.send("/JOIN #camel-test");
 
         // System.out.println("Joining Channel: " + config.getTarget());
-        conn.doJoin(config.getTarget());
+
+        for (String channel : config.getChannels()) {
+            conn.doJoin(channel);
+        }
 
         conn.doPrivmsg("#camel-test", "hi!");
         Thread.sleep(Integer.MAX_VALUE);

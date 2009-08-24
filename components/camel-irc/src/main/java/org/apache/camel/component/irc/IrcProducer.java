@@ -42,15 +42,24 @@ public class IrcProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         final String msg = exchange.getIn().getBody(String.class);
+        final String targetChannel = exchange.getIn().getHeader(IrcConstants.IRC_TARGET, String.class);
         if (isMessageACommand(msg)) {
-            connection.send(msg);
-        } else {
-            String target = endpoint.getConfiguration().getTarget();
-
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending to: " + target + " message: " + msg);
+                LOG.debug("Sending command: " + msg);
             }
-            connection.doPrivmsg(target, msg);
+            connection.send(msg);
+        } else if (targetChannel != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending to: " + targetChannel + " message: " + msg);
+            }
+            connection.doPrivmsg(targetChannel, msg);
+        } else {
+            for (String channel : endpoint.getConfiguration().getChannels()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending to: " + channel + " message: " + msg);
+                }
+                connection.doPrivmsg(channel, msg);
+            }
         }
     }
 
@@ -61,16 +70,23 @@ public class IrcProducer extends DefaultProducer {
         ircErrorLogger = createIrcErrorLogger();
         connection.addIRCEventListener(ircErrorLogger);
 
-        String target = endpoint.getConfiguration().getTarget();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Joining: " + target);
+        for (String channel : endpoint.getConfiguration().getChannels()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Joining: " + channel);
+            }
+            connection.doJoin(channel);
         }
-        connection.doJoin(target);
     }
 
     @Override
     protected void doStop() throws Exception {
         if (connection != null) {
+            for (String channel : endpoint.getConfiguration().getChannels()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Parting: " + channel);
+                }
+                connection.doPart(channel);
+            }
             connection.removeIRCEventListener(ircErrorLogger);
         }
         super.doStop();
