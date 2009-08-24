@@ -192,7 +192,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             // register on completion callback that does the completiom stategies
             // (for instance to move the file after we have processed it)
-            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target));
+            String originalFileName = file.getFileName();
+            exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target, originalFileName));
 
             // process the exchange
             getProcessor().process(exchange);

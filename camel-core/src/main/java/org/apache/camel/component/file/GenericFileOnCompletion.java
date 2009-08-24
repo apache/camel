@@ -38,11 +38,14 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private GenericFileOperations<T> operations;
     private ExceptionHandler exceptionHandler;
     private GenericFile<T> file;
+    private String originalFileName;
 
-    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations, GenericFile<T> file) {
+    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
+                                   GenericFile<T> file, String originalFileName) {
         this.endpoint = endpoint;
         this.operations = operations;
         this.file = file;
+        this.originalFileName = originalFileName;
     }
 
     @SuppressWarnings("unchecked")
@@ -93,7 +96,9 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             }
 
             // remove file from the in progress list as its no longer in progress
-            endpoint.getInProgressRepository().remove(file.getFileName());
+            // use the original file name that was used to add it to the repository
+            // as the name can be different when using preMove option
+            endpoint.getInProgressRepository().remove(originalFileName);
         }
     }
 
