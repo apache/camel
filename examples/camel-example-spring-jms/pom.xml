@@ -129,13 +129,6 @@
             </properties>
         </profile>
         <profile>
-            <id>CamelClientStop</id>
-            <properties>
-                <!-- we start using our own class to control what we do in the main -->
-                <target.main.class>org.apache.camel.example.client.CamelClientStop</target.main.class>
-            </properties>
-        </profile>
-        <profile>
             <id>CamelClientRemoting</id>
             <properties>
                 <!-- we start using our own class to control what we do in the main -->

@@ -32,8 +32,7 @@ The example should run if you type:
   mvn exec:java -PCamelClient
   mvn exec:java -PCamelClientRemoting
   mvn exec:java -PCamelClientEndpoint
-  mvn exec:java -PCamelClientStop
-  
+
 You can stack the maven goals so you can compile and execute it in one command:
   mvn compile exec:java -PCamelServer
 
