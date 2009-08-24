@@ -72,6 +72,8 @@ public class CachedOutputStream extends OutputStream {
                 try {
                     // cleanup temporary file
                     if (tempFile != null) {
+                        // close the stream first and than delete the file
+                        close();
                         boolean deleted = tempFile.delete();
                         if (!deleted) {
                             LOG.warn("Cannot delete temporary cache file: " + tempFile);

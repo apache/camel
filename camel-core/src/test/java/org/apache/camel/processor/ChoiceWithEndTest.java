@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -30,7 +31,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
 
     public void testRouteIsCorrectAtRuntime() throws Exception {
         // use navigate to find that the end works as expected
-        Navigate<Processor> nav = context.getRoutes().get(0).navigate();
+        Navigate<Processor> nav = getRoute("direct://start").navigate();
         List<Processor> node = nav.next();
         node = ((Navigate) node.get(0)).next();
 
@@ -43,6 +44,18 @@ public class ChoiceWithEndTest extends ContextTestSupport {
         assertIsInstanceOf(ChoiceProcessor.class, unwrapChannel(node.get(1)).getNextProcessor());
         assertIsInstanceOf(TransformProcessor.class, unwrapChannel(node.get(2)).getNextProcessor());
         assertIsInstanceOf(SendProcessor.class, unwrapChannel(node.get(3)).getNextProcessor());
+    }
+    
+    private Route getRoute(String routeEndpointURI) {
+        Route answer = null;
+        for (Route route : context.getRoutes()) {
+            if (routeEndpointURI.equals(route.getEndpoint().getEndpointUri())) {
+                answer = route;
+                break;
+            }
+        }
+        return answer;
+        
     }
 
     public void testChoiceHello() throws Exception {

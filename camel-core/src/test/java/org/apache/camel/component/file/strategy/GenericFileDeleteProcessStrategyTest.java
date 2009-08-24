@@ -24,6 +24,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.FileUtil;
 
 /**
  * Unit test about retrying deleting processed file, that can be a bit more tricky
@@ -49,8 +50,8 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 
         public boolean existsFile(String name) throws GenericFileOperationFailedException {
             existsCounter++;
-
-            if ("target/foo/boom.txt".equals(name)) {
+            // The file name should be normalized
+            if (FileUtil.normalizePath("target/foo/boom.txt").equals(name)) {
                 // test that we can newer delete this file
                 return true;
             }

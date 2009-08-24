@@ -109,10 +109,13 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         cache.reset();
         temp = toString((InputStream)cache);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
-        
+        // windows can't delet the file which is open , so we close the stream first
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            ((InputStream)cache).close();
+        }
         exchange.getUnitOfWork().done(exchange);
-
         ((InputStream)cache).close();
+        
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);       
     }
