@@ -30,7 +30,7 @@ public class RouteBuilderAddRoutesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to("mock:result");
 
-                addRoutes(new MyExtraRoute());
+                includeRoutes(new MyExtraRoute());
             }
         };
     }

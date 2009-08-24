@@ -237,6 +237,31 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         checkInitialized();
     }
 
+    /**
+     * Includes the routes from the build to this builder.
+     * <p/>
+     * This allows you to use other builds as route templates.
+     * @param routes other builder with routes to include
+     *
+     * @throws Exception can be thrown during configuration
+     */
+    public void includeRoutes(RoutesBuilder routes) throws Exception {
+        // TODO: We should support including multiple routes so I think invoking configure()
+        // needs to be deferred to later
+        if (routes instanceof RouteBuilder) {
+            // if its a RouteBuilder then let it use my route collection and error handler
+            // then we are integrated seamless
+            RouteBuilder builder = (RouteBuilder) routes;
+            builder.setContext(this.getContext());
+            builder.setRouteCollection(this.getRouteCollection());
+            builder.setErrorHandlerBuilder(this.getErrorHandlerBuilder());
+            // must invoke configure on the original builder so it adds its configuration to me
+            builder.configure();
+        } else {
+            getContext().addRoutes(routes);
+        }
+    }
+
     @Override
     public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
         super.setErrorHandlerBuilder(errorHandlerBuilder);
@@ -289,20 +314,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * Adds a collection of routes to this context
      *
      * @throws Exception if the routes could not be created for whatever reason
+     * @deprecated use {@link #includeRoutes(org.apache.camel.RoutesBuilder) includeRoutes} instead.
      */
+    @Deprecated
     protected void addRoutes(RoutesBuilder routes) throws Exception {
-        if (routes instanceof RouteBuilder) {
-            // if its a RouteBuilder then let it use my route collection and error handler
-            // then we are integrated seamless
-            RouteBuilder builder = (RouteBuilder) routes;
-            builder.setContext(this.getContext());
-            builder.setRouteCollection(this.getRouteCollection());
-            builder.setErrorHandlerBuilder(this.getErrorHandlerBuilder());
-            // must invoke configure on the original builder so it adds its configuration to me
-            builder.configure();
-        } else {
-            getContext().addRoutes(routes);
-        }
+        includeRoutes(routes);
     }
 
 }

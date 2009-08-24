@@ -28,7 +28,7 @@ public class RouteBuilderAddRoutesOnlyInterceptTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                addRoutes(new MyExtraRoute());
+                includeRoutes(new MyExtraRoute());
 
                 from("direct:start").to("mock:result");
             }
