@@ -70,7 +70,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected Expression move;
     protected Expression moveFailed;
     protected Expression preMove;
-    protected boolean idempotent;
+    protected Boolean idempotent;
     protected IdempotentRepository idempotentRepository;
     protected GenericFileFilter<T> filter;
     protected Comparator<GenericFile<T>> sorter;
@@ -266,11 +266,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.fileName = createFileLangugeExpression(fileLanguageExpression);
     }
 
-    public boolean isIdempotent() {
-        return idempotent;
+    public Boolean isIdempotent() {
+        return idempotent != null ? idempotent : false;
     }
 
-    public void setIdempotent(boolean idempotent) {
+    boolean isIdempotentSet() {
+        return idempotent != null;
+    }
+
+    public void setIdempotent(Boolean idempotent) {
         this.idempotent = idempotent;
     }
 
