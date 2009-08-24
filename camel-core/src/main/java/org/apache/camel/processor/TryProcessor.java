@@ -121,9 +121,7 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
                         + " caused by: " + caught.getMessage());
                 }
 
-                if (handled) {
-                    localExchange.removeProperty(Exchange.EXCEPTION_CAUGHT);
-                } else {
+                if (!handled) {
                     // put exception back as it was not handled
                     if (localExchange.getException() == null) {
                         localExchange.setException(localExchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));

@@ -14,32 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.onexception;
 
-import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * The handle catch clause has a pipeline processing the exception.
+ * @version $Revision$
  */
-public class ValidationWithMultipleHandlesTest extends ValidationTest {
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                context.setTracing(true);
+public class OnCatchHandledTest extends OnExceptionHandledTest {
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
                 from("direct:start")
                     .doTry()
-                        .process(validator)
-                    .doCatch(ValidationException.class)
-                        .setHeader("xxx", constant("yyy"))
-                    .end()
-                    .doTry()
-                        .process(validator).to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .pipeline("seda:a", "mock:invalid");
+                        .throwException(new IllegalArgumentException("Forced"))
+                    .doCatch(IllegalArgumentException.class).handled(true)
+                        .to("log:foo?showAll=true").to("mock:handled")
+                    .end();
             }
         };
     }
-
 }
