@@ -24,6 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.jivesoftware.smack.packet.Message;
 
 /**
@@ -34,6 +38,7 @@ import org.jivesoftware.smack.packet.Message;
  */
 public class XmppBinding {
 
+    private static final transient Log LOG = LogFactory.getLog(XmppBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
 
     public XmppBinding() {
@@ -66,7 +71,12 @@ public class XmppBinding {
                     String language = exchange.getContext().getTypeConverter().convertTo(String.class, value);
                     message.setLanguage(language);
                 } else {
-                    message.setProperty(name, value);
+                    try {
+                        message.setProperty(name, value);
+                        LOG.debug("Added property name: " + name + " value: " + value.toString());
+                    } catch ( IllegalArgumentException iae ) {
+                        LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
+                    }
                 }
             }
         }
