@@ -36,7 +36,16 @@ public class MainExampleTest extends TestCase {
         main.start();
 
         // then some time later
-        Thread.sleep(2000);
+        Thread.sleep(1000);
+        main.stop();
+    }
+    
+    public void testFileApplicationContextUri() throws Exception {
+        Main main = new Main();
+        main.setFileApplicationContextUri("src/test/resources/org/apache/camel/spring/routingUsingProcessor.xml");
+        main.start();
+        // sleep for a while
+        Thread.sleep(1000);
         main.stop();
     }
 
