@@ -91,16 +91,15 @@ public class DefaultCamelContextTest extends TestCase {
             }            
         });
         ctx.start();
-        assertEquals("Should have one RouteService", ctx.getRouteServices().size(), 1);        
+        assertEquals("Should have one RouteService", 1, ctx.getRouteServices().size());
         String routesString = ctx.getRoutes().toString();
         ctx.stop();
-        assertEquals("The RouteService should be removed ", ctx.getRouteServices().size(), 1);
+        assertEquals("The RouteService should NOT be removed even when we stop", 1, ctx.getRouteServices().size());
         ctx.start();
-        assertEquals("Should have one RouteService", ctx.getRouteServices().size(), 1);
-        //System.out.println("The routes is " + ctx.getRoutes());
+        assertEquals("Should have one RouteService", 1, ctx.getRouteServices().size());
         assertEquals("The Routes should be same", routesString, ctx.getRoutes().toString());
         ctx.stop();
-        assertEquals("The RouteService should be removed ", ctx.getRouteServices().size(), 1);        
+        assertEquals("The RouteService should NOT be removed even when we stop", 1, ctx.getRouteServices().size());
     }
 
 }

@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
@@ -37,7 +38,10 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
     }
 
     public void testFromWithNoOutputs() throws Exception {
-        Thread.sleep(500);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(2);
+
+        assertMockEndpointsSatisfied();
 
         assertTrue("Counter should be 2 or higher", counter >= 2);
     }
@@ -48,7 +52,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addInterceptStrategy(new MyTracer());
 
-                from("timer://kickoff_1?period=250").from("timer://kickoff_2?period=250&delay=10");
+                from("timer://kickoff_1?period=250").from("timer://kickoff_2?period=250&delay=10").to("mock:result");
             }
         };
     }
@@ -56,7 +60,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
     private class MyTracer implements InterceptStrategy {
 
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition, Processor target, Processor nextTarget)
-            throws Exception {
+                throws Exception {
             assertNotNull(target);
             counter++;
             return target;

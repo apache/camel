@@ -57,19 +57,17 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
     @SuppressWarnings("unchecked")
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
-            List<MBeanServer> servers =
-                    (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+            List<MBeanServer> servers = (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
             for (MBeanServer server : servers) {
                 if (domainName.equals(server.getDefaultDomain())) {
-
                     mbsc = server;
                     break;
                 }
             }
         }
+
         return mbsc;
     }
-
 
 }
