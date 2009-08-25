@@ -25,7 +25,7 @@ import org.apache.camel.Service;
 /**
  * Camel JMX service agent
  */
-public interface InstrumentationAgent extends Service {
+public interface ManagementAgent extends Service {
 
     /**
      * Registers object with management infrastructure with a specific name. Object must be annotated or 

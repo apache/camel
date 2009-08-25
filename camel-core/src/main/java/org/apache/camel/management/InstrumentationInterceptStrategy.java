@@ -26,7 +26,7 @@ import org.apache.camel.spi.InterceptStrategy;
 /**
  * This strategy class wraps targeted processors with a
  * {@link InstrumentationProcessor}. Each InstrumentationProcessor has an
- * embedded {@link PerformanceCounter} for monitoring performance metrics.
+ * embedded {@link ManagedPerformanceCounter} for monitoring performance metrics.
  * <p/>
  * This class looks up a map to determine which PerformanceCounter should go into the
  * InstrumentationProcessor for any particular target processor.
@@ -35,9 +35,9 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
-    private Map<ProcessorDefinition, PerformanceCounter> registeredCounters;
+    private Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters;
 
-    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, PerformanceCounter> registeredCounters) {
+    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters) {
         this.registeredCounters = registeredCounters;
     }
 
@@ -49,7 +49,7 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         }
 
         // only wrap a performance counter if we have it registered in JMX by the jmx agent
-        PerformanceCounter counter = registeredCounters.get(definition);
+        ManagedPerformanceCounter counter = registeredCounters.get(definition);
         if (counter != null) {
             InstrumentationProcessor wrapper = new InstrumentationProcessor(counter);
             wrapper.setProcessor(target);

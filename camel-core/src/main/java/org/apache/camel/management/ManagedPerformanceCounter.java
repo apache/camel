@@ -24,7 +24,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "PerformanceCounter", currencyTimeLimit = 15)
-public class PerformanceCounter extends Counter {
+public class ManagedPerformanceCounter extends ManagedCounter {
 
     private AtomicLong numCompleted = new AtomicLong(0L);
     private double minProcessingTime;

@@ -25,7 +25,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Route", currencyTimeLimit = 15)
-public class ManagedRoute extends PerformanceCounter {
+public class ManagedRoute extends ManagedPerformanceCounter {
 
     public static final String VALUE_UNKNOWN = "Unknown";
     private Route route;

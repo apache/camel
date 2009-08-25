@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Naming strategy used when registering MBeans.
  */
-public class CamelNamingStrategy {
+public class DefaultManagementNamingStrategy {
     public static final String VALUE_UNKNOWN = "unknown";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
@@ -50,11 +50,11 @@ public class CamelNamingStrategy {
     protected String domainName;
     protected String hostName = "localhost";
 
-    public CamelNamingStrategy() {
+    public DefaultManagementNamingStrategy() {
         this("org.apache.camel");
     }
 
-    public CamelNamingStrategy(String domainName) {
+    public DefaultManagementNamingStrategy(String domainName) {
         if (domainName != null) {
             this.domainName = domainName;
         }

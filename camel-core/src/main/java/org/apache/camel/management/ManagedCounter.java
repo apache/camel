@@ -23,7 +23,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Counter", currencyTimeLimit = 15)
-public class Counter {
+public class ManagedCounter {
 
     protected AtomicLong numExchanges = new AtomicLong(0L);
 

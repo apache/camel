@@ -38,7 +38,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.InstrumentationAgent;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -55,8 +55,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
 
     private static final String MANAGED_RESOURCE_CLASSNAME = "org.springframework.jmx.export.annotation.ManagedResource";
-    private InstrumentationAgent agent;
-    private CamelNamingStrategy namingStrategy;
+    private ManagementAgent agent;
+    private DefaultManagementNamingStrategy namingStrategy;
     private boolean initialized;
     private final Map<Endpoint, InstrumentationProcessor> registeredRoutes = new HashMap<Endpoint, InstrumentationProcessor>();
 
@@ -64,7 +64,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         this(new DefaultInstrumentationAgent());
     }
 
-    public InstrumentationLifecycleStrategy(InstrumentationAgent agent) {
+    public InstrumentationLifecycleStrategy(ManagementAgent agent) {
         this.agent = agent;
     }
     /**
@@ -73,7 +73,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
      * @param agent    the agent
      * @param context  the camel context
      */
-    public InstrumentationLifecycleStrategy(InstrumentationAgent agent, CamelContext context) {
+    public InstrumentationLifecycleStrategy(ManagementAgent agent, CamelContext context) {
         this.agent = agent;
         onContextStart(context);
     }
@@ -86,7 +86,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 DefaultCamelContext dc = (DefaultCamelContext)context;
                 // call addService so that context will start and stop the agent
                 dc.addService(agent);
-                namingStrategy = new CamelNamingStrategy(agent.getMBeanObjectDomainName());
+                namingStrategy = new DefaultManagementNamingStrategy(agent.getMBeanObjectDomainName());
                 ManagedService ms = new ManagedService(dc);
                 agent.register(ms, getNamingStrategy().getObjectName(dc));
             } catch (Exception e) {
@@ -210,8 +210,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition, PerformanceCounter> registeredCounters =
-            new HashMap<ProcessorDefinition, PerformanceCounter>();
+        Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters =
+            new HashMap<ProcessorDefinition, ManagedPerformanceCounter>();
 
         // Each processor in a route will have its own performance counter
         // The performance counter are MBeans that we register with MBeanServer.
@@ -238,7 +238,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 name = getNamingStrategy().getObjectName(routeContext, processor);
 
                 // register mbean wrapped in the performance counter mbean
-                PerformanceCounter pc = new PerformanceCounter();
+                ManagedPerformanceCounter pc = new ManagedPerformanceCounter();
                 agent.register(pc, name);
 
                 // add to map now that it has been registered
@@ -323,15 +323,15 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         return true;
     }
 
-    public CamelNamingStrategy getNamingStrategy() {
+    public DefaultManagementNamingStrategy getNamingStrategy() {
         return namingStrategy;
     }
 
-    public void setNamingStrategy(CamelNamingStrategy strategy) {
+    public void setNamingStrategy(DefaultManagementNamingStrategy strategy) {
         this.namingStrategy = strategy;
     }
 
-    public void setAgent(InstrumentationAgent agent) {
+    public void setAgent(ManagementAgent agent) {
         this.agent = agent;
     }
 

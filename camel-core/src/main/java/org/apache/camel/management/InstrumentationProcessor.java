@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * JMX enabled processor that uses the {@link Counter} for instrumenting
+ * JMX enabled processor that uses the {@link ManagedCounter} for instrumenting
  * processing of exchanges.
  *
  * @version $Revision$
@@ -30,13 +30,13 @@ import org.apache.commons.logging.LogFactory;
 public class InstrumentationProcessor extends DelegateProcessor {
 
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
-    private PerformanceCounter counter;
+    private ManagedPerformanceCounter counter;
     private String type;
 
     public InstrumentationProcessor() {
     }
 
-    public InstrumentationProcessor(PerformanceCounter counter) {
+    public InstrumentationProcessor(ManagedPerformanceCounter counter) {
         this.counter = counter;
     }
 
@@ -45,7 +45,7 @@ public class InstrumentationProcessor extends DelegateProcessor {
         return "Instrumention" + (type != null ? ":" + type : "") + "[" + processor + "]";
     }
 
-    public void setCounter(PerformanceCounter counter) {
+    public void setCounter(ManagedPerformanceCounter counter) {
         this.counter = counter;
     }
 

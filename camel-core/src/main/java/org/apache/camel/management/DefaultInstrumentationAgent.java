@@ -40,7 +40,7 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.spi.InstrumentationAgent;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +50,7 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 /**
  * Default implementation of the Camel JMX service agent
  */
-public class DefaultInstrumentationAgent extends ServiceSupport implements InstrumentationAgent {
+public class DefaultInstrumentationAgent extends ServiceSupport implements ManagementAgent {
 
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
