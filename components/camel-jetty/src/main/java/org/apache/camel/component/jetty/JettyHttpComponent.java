@@ -60,7 +60,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
-    protected SslSocketConnector sslSocketConnector;
+    protected Map<Integer, SslSocketConnector> sslSocketConnectors;
 
     class ConnectorRef {
         Server server;
@@ -137,7 +137,7 @@ public class JettyHttpComponent extends HttpComponent {
             if (connectorRef == null) {
                 Connector connector;
                 if ("https".equals(endpoint.getProtocol())) {
-                    connector = getSslSocketConnector();
+                    connector = getSslSocketConnector(endpoint.getPort());
                 } else {
                     connector = new SelectChannelConnector();
                 }
@@ -235,29 +235,47 @@ public class JettyHttpComponent extends HttpComponent {
         return sslKeystore;
     }
 
-    public synchronized SslSocketConnector getSslSocketConnector() {
-        if (sslSocketConnector == null) {
-            sslSocketConnector = new SslSocketConnector();
-            // with default null values, jetty ssl system properties
-            // and console will be read by jetty implementation
-            sslSocketConnector.setPassword(sslPassword);
-            sslSocketConnector.setKeyPassword(sslKeyPassword);
-            if (sslKeystore != null) {
-                sslSocketConnector.setKeystore(sslKeystore);
-            } else {
-                // try the keystore system property as a backup, jetty doesn't seem
-                // to read this property anymore
-                String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
-                if (keystoreProperty != null) {
-                    sslSocketConnector.setKeystore(keystoreProperty);
-                }
+    public SslSocketConnector getSslSocketConnector(int port) {
+        SslSocketConnector answer = null;
+        if (sslSocketConnectors != null) {
+            answer = sslSocketConnectors.get(port);
+        }
+        if (answer == null) {
+            answer = createSslSocketConnector();
+        } else {
+            // try the keystore system property as a backup, jetty doesn't seem
+            // to read this property anymore
+            String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
+            if (keystoreProperty != null) {
+                answer.setKeystore(keystoreProperty);
+            }
+
+        }
+        return answer;
+    }
+    
+    public SslSocketConnector createSslSocketConnector() {
+        SslSocketConnector answer = new SslSocketConnector();
+        // with default null values, jetty ssl system properties
+        // and console will be read by jetty implementation
+        answer.setPassword(sslPassword);
+        answer.setKeyPassword(sslKeyPassword);
+        if (sslKeystore != null) {
+            answer.setKeystore(sslKeystore);
+        } else {
+            // try the keystore system property as a backup, jetty doesn't seem
+            // to read this property anymore
+            String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
+            if (keystoreProperty != null) {
+                answer.setKeystore(keystoreProperty);
             }
         }
-        return sslSocketConnector;
+        
+        return answer;
     }
 
-    public void setSslSocketConnector(SslSocketConnector connector) {
-        sslSocketConnector = connector;
+    public void setSslSocketConnectors(Map <Integer, SslSocketConnector> connectors) {
+        sslSocketConnectors = connectors;
     }
 
     protected CamelServlet createServletForConnector(Server server, Connector connector, List<Handler> handlers) throws Exception {

@@ -53,6 +53,8 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:9080/hello").process(proc);
+                
+                from("jetty:https://localhost:9090/test").to("mock:b");
             }
         };
     }

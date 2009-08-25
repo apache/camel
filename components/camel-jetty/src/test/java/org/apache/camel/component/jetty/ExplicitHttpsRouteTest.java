@@ -18,6 +18,8 @@ package org.apache.camel.component.jetty;
 
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,20 +27,28 @@ import org.apache.camel.builder.RouteBuilder;
 import org.mortbay.jetty.security.SslSocketConnector;
 
 public class ExplicitHttpsRouteTest extends HttpsRouteTest {
+    
+    private SslSocketConnector createSslSocketConnector() throws URISyntaxException {
+        SslSocketConnector sslSocketConnector = new SslSocketConnector();
+        sslSocketConnector.setKeyPassword(pwd);
+        sslSocketConnector.setPassword(pwd);
+        URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+        sslSocketConnector.setKeystore(keyStoreUrl.toURI().getPath());
+        sslSocketConnector.setTruststoreType("JKS");
+        return sslSocketConnector;
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                SslSocketConnector sslSocketConnector = new SslSocketConnector();
-                sslSocketConnector.setKeyPassword(pwd);
-                sslSocketConnector.setPassword(pwd);
-                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-                sslSocketConnector.setKeystore(keyStoreUrl.toURI().getPath());
-                sslSocketConnector.setTruststoreType("JKS");
                 
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
-                componentJetty.setSslSocketConnector(sslSocketConnector);
+                Map<Integer, SslSocketConnector> connectors = new HashMap<Integer, SslSocketConnector>();
+                connectors.put(9080, createSslSocketConnector());
+                connectors.put(9090, createSslSocketConnector());
+                
+                componentJetty.setSslSocketConnectors(connectors);
                 
                 from("jetty:https://localhost:9080/test").to("mock:a");
 
@@ -48,6 +58,8 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:9080/hello").process(proc);
+                
+                from("jetty:https://localhost:9090/test").to("mock:b");
             }
         };
     }

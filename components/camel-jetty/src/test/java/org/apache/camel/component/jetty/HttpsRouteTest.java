@@ -79,13 +79,16 @@ public class HttpsRouteTest extends CamelTestSupport {
 
     @Test
     public void testEndpoint() throws Exception {
-        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
-        mockEndpoint.expectedBodiesReceived(expectedBody);
+        MockEndpoint mockEndpointA = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
+        mockEndpointA.expectedBodiesReceived(expectedBody);
+        MockEndpoint mockEndpointB = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
+        mockEndpointB.expectedBodiesReceived(expectedBody);
 
         invokeHttpEndpoint();
 
-        mockEndpoint.assertIsSatisfied();
-        List<Exchange> list = mockEndpoint.getReceivedExchanges();
+        mockEndpointA.assertIsSatisfied();
+        mockEndpointB.assertIsSatisfied();
+        List<Exchange> list = mockEndpointA.getReceivedExchanges();
         Exchange exchange = list.get(0);
         assertNotNull("exchange", exchange);
 
@@ -138,6 +141,7 @@ public class HttpsRouteTest extends CamelTestSupport {
     
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader("jetty:https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("jetty:https://localhost:9090/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
@@ -159,6 +163,8 @@ public class HttpsRouteTest extends CamelTestSupport {
                     }
                 };
                 from("jetty:https://localhost:9080/hello").process(proc);
+                
+                from("jetty:https://localhost:9090/test").to("mock:b");
             }
         };
     }
