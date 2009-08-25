@@ -26,14 +26,13 @@
   <bean id="agent" class="org.apache.camel.management.DefaultInstrumentationAgent">
     <property name="server" ref="mbeanServer"/>
   </bean>
+
+    <bean id="managementStrategy" class="org.apache.camel.management.ManagedManagementStrategy">
+        <property name="managementAgent" ref="agent"/>
+    </bean>
   
-  <bean id="lifeCycleStrategy" class="org.apache.camel.management.InstrumentationLifecycleStrategy">
-  	<constructor-arg>
-  	  <ref bean="agent"/>
-  	</constructor-arg>
-    <constructor-arg>
-  	  <ref bean="camel"/>
-  	</constructor-arg>
+  <bean id="lifeCycleStrategy" class="org.apache.camel.management.DefaultManagedLifecycleStrategy">
+      <constructor-arg index="0" ref="managementStrategy"/>
   </bean>
   
   <bean id="mybean" class="org.apache.camel.spring.example.DummyBean">

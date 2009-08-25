@@ -30,6 +30,7 @@ import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TraceableUnitOfWork;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +53,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     public DefaultUnitOfWork(Exchange exchange) {
         // TODO: optimize to only copy original message if enabled to do so in the route
 
-        // special for JmsMessage as it can cause it to loose headers later. Yeah JMS suchs
+        // special for JmsMessage as it can cause it to loose headers later.
         if (exchange.getIn().getClass().getSimpleName().equals("JmsMessage")) {
             this.originalInMessage = new DefaultMessage();
             this.originalInMessage.setBody(exchange.getIn().getBody());
@@ -60,6 +61,9 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         } else {
             this.originalInMessage = exchange.getIn().copy();
         }
+
+        // fire event
+        EventHelper.notifyExchangeCreated(exchange.getContext(), exchange);
     }
 
     public void start() throws Exception {
@@ -105,8 +109,17 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     }
 
     public void done(Exchange exchange) {
+        boolean failed = exchange.isFailed();
+
+        // fire event to signal the exchange is done
+        if (failed) {
+            EventHelper.notifyExchangeFailed(exchange.getContext(), exchange);
+        } else {
+            EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
+        }
+
         if (synchronizations != null && !synchronizations.isEmpty()) {
-            boolean failed = exchange.isFailed();
+            // invoke synchronization callbacks
             for (Synchronization synchronization : synchronizations) {
                 try {
                     if (failed) {
@@ -116,7 +129,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
                     }
                 } catch (Exception e) {
                     // must catch exceptions to ensure all synchronizations have a chance to run
-                    LOG.error("Exception occured during onCompletion. This exception will be ignored: ", e);
+                    LOG.error("Exception occurred during onCompletion. This exception will be ignored: ", e);
                 }
             }
         }

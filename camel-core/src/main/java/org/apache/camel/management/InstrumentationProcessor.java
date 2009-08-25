@@ -17,12 +17,13 @@
 package org.apache.camel.management;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * JMX enabled processor that uses the {@link ManagedCounter} for instrumenting
+ * JMX enabled processor that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
  * processing of exchanges.
  *
  * @version $Revision$
@@ -49,12 +50,16 @@ public class InstrumentationProcessor extends DelegateProcessor {
         this.counter = counter;
     }
 
+    public ManagedPerformanceCounter getCounter() {
+        return counter;
+    }
+
     public void process(Exchange exchange) throws Exception {
         if (processor != null) {
 
             long startTime = 0;
             if (counter != null) {
-                startTime = System.nanoTime();
+                startTime = System.currentTimeMillis();
             }
 
             try {
@@ -64,15 +69,14 @@ public class InstrumentationProcessor extends DelegateProcessor {
             }
 
             if (counter != null) {
-                // convert nanoseconds to milliseconds
-                recordTime(exchange, (System.nanoTime() - startTime) / 1000000.0);
+                recordTime(exchange, System.currentTimeMillis() - startTime);
             }
         }
     }
 
-    protected void recordTime(Exchange exchange, double duration) {
+    protected void recordTime(Exchange exchange, long duration) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Recording duration: " + duration + " millis for exchange: " + exchange);
+            LOG.trace((type != null ? type + ": " : "") + "Recording duration: " + duration + " millis for exchange: " + exchange);
         }
 
         if (!exchange.isFailed() && exchange.getException() == null) {

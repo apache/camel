@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
+import org.apache.camel.management.InstrumentationProcessor;
 
 /**
  * A {@link DefaultRoute} which starts with an
@@ -66,8 +67,14 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
 
     @SuppressWarnings("unchecked")
     public Navigate<Processor> navigate() {
-        if (processor instanceof Navigate) {
-            return (Navigate) processor;
+        Processor answer = getProcessor();
+        // skip the instrumentation processor if this route was wrapped by one
+        if (answer instanceof InstrumentationProcessor) {
+            answer = ((InstrumentationProcessor) answer).getProcessor();
+        }
+
+        if (answer instanceof Navigate) {
+            return (Navigate) answer;
         }
         return null;
     }

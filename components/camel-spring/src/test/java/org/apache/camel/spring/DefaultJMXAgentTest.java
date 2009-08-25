@@ -63,8 +63,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     public void testQueryMbeans() throws Exception {
-        // TODO: Routes are temporary disabled until the code in InstrumentationLifecycleStrategy is fixed
-        // assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size());
+        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size());
         assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null).size());
     }
 

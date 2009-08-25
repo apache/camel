@@ -14,24 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
-
-import java.io.IOException;
+package org.apache.camel.management.mbean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-@ManagedResource(description = "Managed Route", currencyTimeLimit = 15)
+@ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter {
 
     public static final String VALUE_UNKNOWN = "Unknown";
     private Route route;
     private String description;
 
-    ManagedRoute(Route route) {
+    public ManagedRoute(ManagementStrategy strategy, Route route) {
+        super(strategy);
         this.route = route;
         this.description = route.toString();
     }
@@ -40,24 +40,30 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         return route;
     }
 
+    @ManagedAttribute(description = "Route id")
+    public String getId() {
+        Object id = route.getProperties().get(Route.ID_PROPERTY);
+        return id != null ? id.toString() : VALUE_UNKNOWN;
+    }
+
+    @ManagedAttribute(description = "Route Description")
+    public String getDescription() {
+        return description;
+    }
+
     @ManagedAttribute(description = "Route Endpoint Uri")
     public String getEndpointUri() {
         Endpoint ep = route.getEndpoint();
         return ep != null ? ep.getEndpointUri() : VALUE_UNKNOWN;
     }
 
-    @ManagedAttribute(description = "Route description")
-    public String getDescription() {
-        return description;
-    }
-
     @ManagedOperation(description = "Start Route")
-    public void start() throws IOException {
-        throw new IOException("Not supported");
+    public void start() throws Exception {
+        throw new IllegalArgumentException("Start not supported");
     }
 
     @ManagedOperation(description = "Stop Route")
-    public void stop() throws IOException {
-        throw new IOException("Not supported");
+    public void stop() throws Exception {
+        throw new IllegalArgumentException("Stop not supported");
     }
 }

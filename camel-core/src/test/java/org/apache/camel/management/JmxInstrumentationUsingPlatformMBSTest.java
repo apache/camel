@@ -66,8 +66,8 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
                 }
             }
         }
-
         return mbsc;
     }
+
 
 }

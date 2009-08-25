@@ -58,6 +58,14 @@ public interface ManagementAgent extends Service {
     void unregister(ObjectName name) throws JMException;
 
     /**
+     * Is the given object registered
+     *
+     * @param name the name
+     * @return <tt>true</tt> if registered
+     */
+    boolean isRegistered(ObjectName name);
+
+    /**
      * Get the MBeanServer which hosts managed objects.
      * <p/>
      * <b>Notice:</b> If the JMXEnabled configuration is not set to <tt>true</tt>,

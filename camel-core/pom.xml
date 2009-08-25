@@ -71,9 +71,16 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
-    </dependency>    
+    </dependency>
 
-    <!-- to allow Spring annotations to be used -->
+    <!-- required dependencies by camel-core -->
+    <dependency>
+      <groupId>org.fusesource.commonman</groupId>
+      <artifactId>commons-management</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <!-- to allow Spring annotations to be used for management -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>

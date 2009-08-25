@@ -18,13 +18,13 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
@@ -45,8 +45,11 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.management.InstrumentationLifecycleStrategy;
+import org.apache.camel.management.DefaultInstrumentationAgent;
+import org.apache.camel.management.DefaultManagedLifecycleStrategy;
+import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.Delayer;
@@ -63,21 +66,21 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -104,6 +107,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private final Map<String, Language> languages = new HashMap<String, Language>();
     private Registry registry;
     private LifecycleStrategy lifecycleStrategy;
+    private ManagementStrategy managementStrategy;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace = Boolean.FALSE;
@@ -129,12 +133,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         name = NAME_PREFIX + ++nameSuffix;
 
         if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            LOG.info("JMX is disabled. Using DefaultLifecycleStrategy.");
-            lifecycleStrategy = new DefaultLifecycleStrategy();
+            LOG.info("JMX is disabled. Using SimpleLifecycleStrategy.");
+            lifecycleStrategy = new SimpleLifecycleStrategy();
+            managementStrategy = new DefaultManagementStrategy();
         } else {
             try {
-                LOG.info("JMX enabled. Using InstrumentationLifecycleStrategy.");
-                lifecycleStrategy = new InstrumentationLifecycleStrategy();
+                LOG.info("JMX enabled. Using DefaultManagedLifecycleStrategy.");
+                managementStrategy = new ManagedManagementStrategy(new DefaultInstrumentationAgent());
+                lifecycleStrategy = new DefaultManagedLifecycleStrategy(managementStrategy);
             } catch (NoClassDefFoundError e) {
                 // if we can't instantiate the JMX enabled strategy then fallback to default
                 // could be because of missing .jars on the classpath
@@ -147,8 +153,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
             // if not created then fallback to default
             if (lifecycleStrategy == null) {
-                LOG.warn("Cannot use JMX lifecycle strategy. Using DefaultLifecycleStrategy instead.");
-                lifecycleStrategy = new DefaultLifecycleStrategy();
+                LOG.warn("Cannot use JMX lifecycle strategy. Using SimpleLifecycleStrategy instead.");
+                managementStrategy = new DefaultManagementStrategy();
+                lifecycleStrategy = new SimpleLifecycleStrategy();
             }
         }
 
@@ -198,6 +205,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
             component.setCamelContext(this);
             components.put(componentName, component);
+            lifecycleStrategy.onComponentAdd(componentName, component);
         }
     }
 
@@ -212,8 +220,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     if (component != null) {
                         addComponent(name, component);
                         if (isStarted() || isStarting()) {
-                            // If the component is looked up after the context is started,
-                            // lets start it up.
+                            // If the component is looked up after the context is started, lets start it up.
                             startServices(component);
                         }
                     }
@@ -235,9 +242,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
+    @Deprecated
     public Component removeComponent(String componentName) {
         synchronized (components) {
-            return components.remove(componentName);
+            Component answer = components.remove(componentName);
+            if (answer != null) {
+                lifecycleStrategy.onComponentRemove(componentName, answer);
+            }
+            return answer;
         }
     }
 
@@ -253,6 +265,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     }
                     components.put(componentName, component);
                     component.setCamelContext(this);
+                    lifecycleStrategy.onComponentAdd(componentName, component);
                 } catch (Exception e) {
                     throw new RuntimeCamelException("Factory failed to create the " + componentName
                             + " component", e);
@@ -324,6 +337,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         synchronized (endpoints) {
             startServices(endpoint);
             oldEndpoint = endpoints.remove(uri);
+            lifecycleStrategy.onEndpointAdd(endpoint);
             addEndpointToRegistry(uri, endpoint);
             if (oldEndpoint != null) {
                 stopServices(oldEndpoint);
@@ -332,6 +346,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return oldEndpoint;
     }
 
+    @Deprecated
     public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
         Collection<Endpoint> answer = new ArrayList<Endpoint>();
         synchronized (endpoints) {
@@ -339,6 +354,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             if (oldEndpoint != null) {
                 answer.add(oldEndpoint);
                 stopServices(oldEndpoint);
+                lifecycleStrategy.onEndpointRemove(oldEndpoint);
             } else {
                 for (Map.Entry entry : endpoints.entrySet()) {
                     oldEndpoint = (Endpoint) entry.getValue();
@@ -346,6 +362,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         answer.add(oldEndpoint);
                         stopServices(oldEndpoint);
                         endpoints.remove(entry.getKey());
+                        lifecycleStrategy.onEndpointRemove(oldEndpoint);
                     }
                 }
             }
@@ -357,6 +374,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return addEndpoint(uri, endpoint);
     }
 
+    @Deprecated
     public Endpoint removeSingletonEndpoint(String uri) throws Exception {
         Collection<Endpoint> answer = removeEndpoints(uri);
         return (Endpoint) (answer.size() > 0 ? answer.toArray()[0] : null);
@@ -406,9 +424,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
                     if (answer != null) {
                         addService(answer);
-                        Endpoint newAnswer = addEndpointToRegistry(uri, answer);
                         lifecycleStrategy.onEndpointAdd(answer);
-                        answer = newAnswer;
+                        answer = addEndpointToRegistry(uri, answer);
                     }
                 } catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);
@@ -586,17 +603,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-
-    /**
-     * Adds a service, starting it so that it will be stopped with this context
-     */
     public void addService(Object object) throws Exception {
         if (object instanceof Service) {
             Service service = (Service) object;
             getLifecycleStrategy().onServiceAdd(this, service);
-            service.start();
             servicesToClose.add(service);
         }
+        startServices(object);
     }
 
     // Helper methods
@@ -833,13 +846,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
+        EventHelper.notifyCamelContextStarted(this);
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
 
-    protected void doStart() throws Exception {
+    protected synchronized void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
+        EventHelper.notifyCamelContextStarting(this);
 
         startServices(producerServicePool);
 
@@ -882,40 +897,71 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         } catch (Exception e) {
             // not all containers allow access to its MBeanServer (such as OC4j)
             LOG.warn("Cannot start lifecycleStrategy: " + lifecycleStrategy + ". Cause: " + e.getMessage());
-            if (lifecycleStrategy instanceof InstrumentationLifecycleStrategy) {
+            if (!(lifecycleStrategy instanceof SimpleLifecycleStrategy)) {
                 // fallback to non JMX lifecycle to allow Camel to startup
-                LOG.warn("Will fallback to use default (non JMX) lifecycle strategy");
-                lifecycleStrategy = new DefaultLifecycleStrategy();
+                LOG.warn("Will fallback to use SimpleLifecycleStrategy (non JMX) lifecycle strategy");
+                lifecycleStrategy = new SimpleLifecycleStrategy();
                 lifecycleStrategy.onContextStart(this);
             }
         }
 
         forceLazyInitialization();
-        if (components != null) {
-            for (Component component : components.values()) {
-                startServices(component);
-            }
-        }
+        startServices(components.values());
+
          // To avoid initiating the routeDefinitions after stopping the camel context
         if (!routeDefinitionInitiated) {            
             startRouteDefinitions(routeDefinitions);
             routeDefinitionInitiated = true;
-        }        
+        }
+
+        // starting will continue in the start method
     }
 
     protected synchronized void doStop() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
+        EventHelper.notifyCamelContextStopping(this);
+
+        // the stop order is important
+        stopServices(endpoints.values());
+        endpoints.clear();
+
         stopServices(routeServices.values());
-        stopServices(servicesToClose);
-        if (components != null) {
-            for (Component component : components.values()) {
-                stopServices(component);
-            }
-        }
-        servicesToClose.clear();
+        // do not clear route services as we can start Camel again and get the route back as before
         stopServices(producerServicePool);
 
+        stopServices(components.values());
+        components.clear();
+
+        stopServices(servicesToClose);
+        servicesToClose.clear();
+
+        try {
+            lifecycleStrategy.onContextStop(this);
+        } catch (Exception e) {
+            LOG.warn("Cannot stop lifecycleStrategy: " + lifecycleStrategy + ". Cause: " + e.getMessage());
+        }
+
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
+        EventHelper.notifyCamelContextStopped(this);
+    }
+
+    private void stopServices(Object service) throws Exception {
+        // allow us to do custom work before delegating to service helper
+        ServiceHelper.stopService(service);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void stopServices(Collection services) throws Exception {
+        // close them in reverse order as they where added
+        List reverse = new ArrayList(services);
+        Collections.reverse(reverse);
+        for (Object service : reverse) {
+            stopServices(service);
+        }
+    }
+
+    private void startServices(Object service) throws Exception {
+        ServiceHelper.startService(service);
     }
 
     protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
@@ -1104,6 +1150,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setNodeIdFactory(NodeIdFactory idFactory) {
         this.nodeIdFactory = idFactory;
+    }
+
+    public ManagementStrategy getManagementStrategy() {
+        return managementStrategy;
+    }
+
+    public void setManagementStrategy(ManagementStrategy managementStrategy) {
+        this.managementStrategy = managementStrategy;
     }
 
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {

@@ -20,8 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.util.KeyValueHolder;
 
 /**
  * This strategy class wraps targeted processors with a
@@ -36,9 +38,12 @@ import org.apache.camel.spi.InterceptStrategy;
 public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
     private Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters;
+    private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors;
 
-    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters) {
+    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters,
+                                            Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors) {
         this.registeredCounters = registeredCounters;
+        this.wrappedProcessors = wrappedProcessors;
     }
 
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
@@ -54,8 +59,12 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
             InstrumentationProcessor wrapper = new InstrumentationProcessor(counter);
             wrapper.setProcessor(target);
             wrapper.setType(definition.getShortName());
-            // remove to not double wrap it
-            registeredCounters.remove(definition);
+
+            // add it to the mapping of wrappers so we can later change it to a decorated counter
+            // that when we register the processor
+            KeyValueHolder<ProcessorDefinition, InstrumentationProcessor> holder =
+                    new KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>(definition, wrapper);
+            wrappedProcessors.put(target, holder);
             return wrapper;
         }
 
@@ -64,6 +73,7 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
     @Override
     public String toString() {
-        return "Instrument";
+        return "InstrumentProcessor";
     }
+
 }

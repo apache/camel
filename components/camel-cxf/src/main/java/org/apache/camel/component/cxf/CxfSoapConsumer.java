@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import javax.xml.transform.Source;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
@@ -85,6 +86,9 @@ public class CxfSoapConsumer implements Consumer {
         server = sfb.create();
     }
 
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
 
     public void start() throws Exception {
         server.start();

@@ -26,14 +26,14 @@ public interface Service {
     /**
      * Starts the service
      * 
-     * @throws Exception
+     * @throws Exception is thrown if starting failed
      */
     void start() throws Exception;
 
     /**
      * Stops the service
      * 
-     * @throws Exception
+     * @throws Exception is thrown if stopping failed
      */
     void stop() throws Exception;
 }

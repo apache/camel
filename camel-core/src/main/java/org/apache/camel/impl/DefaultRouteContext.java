@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -137,8 +138,14 @@ public class DefaultRouteContext implements RouteContext {
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             Processor unitOfWorkProcessor = new UnitOfWorkProcessor(processor);
 
+            // and wrap it by a instrumentation processor that is to be used for performance stats
+            // for this particular route
+            InstrumentationProcessor wrapper = new InstrumentationProcessor();
+            wrapper.setType("route");
+            wrapper.setProcessor(unitOfWorkProcessor);
+
             // and create the route that wraps the UoW
-            Route edcr = new EventDrivenConsumerRoute(getEndpoint(), unitOfWorkProcessor);
+            Route edcr = new EventDrivenConsumerRoute(getEndpoint(), wrapper);
             edcr.getProperties().put(Route.ID_PROPERTY, route.idOrCreate(getCamelContext().getNodeIdFactory()));
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {

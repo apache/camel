@@ -32,6 +32,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
@@ -55,6 +56,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
 
     // Component Management Methods
     //-----------------------------------------------------------------------
+
+    /**
+     * Adds a service, starting it so that it will be stopped with this context
+     *
+     * @param object the service
+     * @throws Exception can be thrown when starting the service
+     */
+    void addService(Object object) throws Exception;
 
     /**
      * Adds a component to the context.
@@ -477,5 +486,19 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @return  the node id factory
      */
     NodeIdFactory getNodeIdFactory();
+
+    /**
+     * Gets the management strategy
+     *
+     * @return the management strategy
+     */
+    ManagementStrategy getManagementStrategy();
+
+    /**
+     * Sets the management strategy to use
+     *
+     * @param strategy the management strategy
+     */
+    void setManagementStrategy(ManagementStrategy strategy);
 
 }

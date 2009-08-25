@@ -22,4 +22,11 @@ package org.apache.camel;
  * @version $Revision$
  */
 public interface Consumer extends Service {
+
+    /**
+     * Gets the endpoint this {@link Consumer} consumes from.
+     *
+     * @return the endpoint
+     */
+    Endpoint getEndpoint();
 }

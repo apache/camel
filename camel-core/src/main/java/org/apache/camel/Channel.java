@@ -31,8 +31,6 @@ import org.apache.camel.spi.RouteContext;
  */
 public interface Channel extends Processor, Navigate<Processor> {
 
-    List<Processor> next();
-
     /**
      * Sets the processor that the channel should route the {@link Exchange} to.
      *

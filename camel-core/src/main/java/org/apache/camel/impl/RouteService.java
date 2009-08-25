@@ -16,15 +16,19 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Navigate;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.EventHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
@@ -75,36 +79,64 @@ public class RouteService extends ServiceSupport {
 
         for (Route route : routes) {
             List<Service> services = route.getServicesForRoute();
+
+            // gather list of services to start as we need to start child services as well
+            List<Service> list = new ArrayList<Service>();
             for (Service service : services) {
-                startChildService(service);
+                doGetServiesToStart(list, service);
+            }
+            startChildService(list);
+
+            // fire event
+            EventHelper.notifyRouteStarted(camelContext, route);
+        }
+    }
+
+    /**
+     * Need to recursive start child services for routes
+     */
+    private void doGetServiesToStart(List<Service> services, Service service) throws Exception {
+        services.add(service);
+
+        if (service instanceof Navigate) {
+            Navigate<?> nav = (Navigate<?>) service;
+            if (nav.hasNext()) {
+                List<?> children = nav.next();
+                for (Object child : children) {
+                    if (child instanceof Service) {
+                        doGetServiesToStart(services, (Service) child);
+                    }
+                }
             }
         }
     }
 
     protected void doStop() throws Exception {
-        camelContext.removeRouteCollection(routes);
-
-        // there is no lifecycyle for routesRemove
+        getLifecycleStrategy().onRoutesRemove(routes);
 
         // do not stop child services as in doStart
         // as route.getServicesForRoute() will restart
         // already stopped services, so we end up starting
         // stuff when we stop.
+
+        // fire events
+        for (Route route : routes) {
+            EventHelper.notifyRouteStopped(camelContext, route);
+        }
+
+        camelContext.removeRouteCollection(routes);
     }
 
     protected LifecycleStrategy getLifecycleStrategy() {
         return camelContext.getLifecycleStrategy();
     }
 
-    protected void startChildService(Service service) throws Exception {
-        getLifecycleStrategy().onServiceAdd(camelContext, service);
-        service.start();
-        addChildService(service);
-    }
-
-    protected void stopChildService(Service service) throws Exception {
-        service.stop();
-        removeChildService(service);
+    protected void startChildService(List<Service> services) throws Exception {
+        for (Service service : services) {
+            getLifecycleStrategy().onServiceAdd(camelContext, service);
+            ServiceHelper.startService(service);
+            addChildService(service);
+        }
     }
 
 }

@@ -29,8 +29,7 @@ import javax.management.remote.JMXServiceURL;
  */
 public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsingDefaultsTest {
 
-    protected static final String JMXSERVICEURL =
-        "service:jmx:rmi:///jndi/rmi://localhost:2123/jmxrmi/camel";
+    protected static final String JMXSERVICEURL = "service:jmx:rmi:///jndi/rmi://localhost:2123/jmxrmi/camel";
     protected JMXConnector clientConnector;
 
     protected boolean canRunOnThisPlatform() {

@@ -104,13 +104,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     public void startService(Service service) throws Exception {
-        CamelContext camelContext = getCamelContext();
-        if (camelContext instanceof DefaultCamelContext) {
-            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) camelContext;
-            defaultCamelContext.addService(service);
-        } else {
-            service.start();
-        }
+        getCamelContext().addService(service);
     }
 
     /**

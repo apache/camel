@@ -14,30 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.spi;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.EventObject;
 
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
+/**
+ * Notifier to send {@link java.util.EventObject events}.
+ *
+ * @see org.apache.camel.spi.EventFactory
+ * @version $Revision$
+ */
+public interface EventNotifier {
 
-@ManagedResource(description = "Counter", currencyTimeLimit = 15)
-public class ManagedCounter {
+    /**
+     * Notifies the given event
+     *
+     * @param event the event
+     * @throws Exception can be thrown if notification failed
+     */
+    void notify(EventObject event) throws Exception;
 
-    protected AtomicLong numExchanges = new AtomicLong(0L);
+    /**
+     * Checks whether notification for the given event is enabled.
+     * <p/>
+     * If disabled the event will not be sent and silently ignored instead.
+     *
+     * @param event the event
+     * @return <tt>true</tt> if the event should be sent, <tt>false</tt> to silently ignore it
+     */
+    boolean isEnabled(EventObject event);
 
-    @ManagedOperation(description = "Reset counters")
-    public void reset() {
-        numExchanges.set(0L);
-    }
-
-    @ManagedAttribute(description = "Total number of exchanges")
-    public long getNumExchanges() throws Exception {
-        return numExchanges.get();
-    }
-
-    public long increment() {
-        return numExchanges.incrementAndGet();
-    }
 }

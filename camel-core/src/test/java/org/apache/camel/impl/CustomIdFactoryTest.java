@@ -88,7 +88,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should take the when path
-        assertEquals("#choice2##when3#", ids);
+        assertEquals("#choice4##when2#", ids);
     }
 
     /**
@@ -102,7 +102,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should take the otherwise path
-        assertEquals("#choice2##otherwise4#", ids);
+        assertEquals("#choice4##otherwise3#", ids);
     }
 
     private class MyDebuggerCheckingId implements InterceptStrategy {

@@ -14,40 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import java.util.Collection;
+package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
-import org.apache.camel.Service;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.Producer;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- * Default implementation of the lifecycle strategy.
+ * @version $Revision$
  */
-public class DefaultLifecycleStrategy implements LifecycleStrategy {
+@ManagedResource(description = "Managed Producer")
+public class ManagedProducer extends ManagedService {
 
-    public void onContextStart(CamelContext context) {
-        // do nothing
+    private Producer producer;
+
+    public ManagedProducer(CamelContext context, Producer producer) {
+        super(context, producer);
+        this.producer = producer;
     }
 
-    public void onEndpointAdd(Endpoint endpoint) {
-        // do nothing
+    public Producer getProducer() {
+        return producer;
     }
 
-    public void onServiceAdd(CamelContext context, Service service) {
-        // do nothing
+    @ManagedAttribute(description = "Endpoint Uri")
+    public String getUri() {
+        return producer.getEndpoint().getEndpointUri();
     }
 
-    public void onRoutesAdd(Collection<Route> routes) {
-        // do nothing
-    }
-
-    public void onRouteContextCreate(RouteContext routeContext) {
-        // do nothing
+    @ManagedAttribute(description = "Singleton")
+    public boolean isSingleton() {
+        return producer.isSingleton();
     }
 
 }

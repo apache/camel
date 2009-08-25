@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.management.mbean;
 
-import java.io.IOException;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-@ManagedResource(description = "Managed Service", currencyTimeLimit = 15)
+@ManagedResource(description = "Managed Service")
 public class ManagedService {
 
-    private ServiceSupport service;
+    private CamelContext context;
+    private Service service;
 
-    public ManagedService(ServiceSupport service) {
+    public ManagedService(CamelContext context, Service service) {
+        this.context = context;
         this.service = service;
     }
 
@@ -37,26 +38,25 @@ public class ManagedService {
         return service;
     }
 
+    public CamelContext getContext() {
+        return context;
+    }
+
     @ManagedAttribute(description = "Service running state")
-    public boolean isStarted() throws IOException {
-        return service.isStarted();
+    public boolean isStarted() {
+        if (service instanceof ServiceSupport) {
+            return ((ServiceSupport) service).isStarted();
+        }
+        throw new IllegalStateException("The managed service does not support running state, is type: " + service.getClass().getName());
     }
 
     @ManagedOperation(description = "Start Service")
-    public void start() throws IOException {
-        try {
-            service.start();
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
+    public void start() throws Exception {
+        service.start();
     }
 
     @ManagedOperation(description = "Stop Service")
-    public void stop() throws IOException {
-        try {
-            service.stop();
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
+    public void stop() throws Exception {
+        service.stop();
     }
 }

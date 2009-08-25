@@ -14,32 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.management.mbean;
 
-import org.apache.camel.Endpoint;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.BrowsableEndpoint;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-@ManagedResource(description = "Managed Endpoint", currencyTimeLimit = 15)
-public class ManagedEndpoint {
+/**
+ * @version $Revision$
+ */
+@ManagedResource(description = "Managed BrowsableEndpoint")
+public class ManagedBrowsableEndpoint extends ManagedEndpoint {
 
-    private Endpoint endpoint;
+    private BrowsableEndpoint endpoint;
 
-    public ManagedEndpoint(Endpoint endpoint) {
+    public ManagedBrowsableEndpoint(BrowsableEndpoint endpoint) {
+        super(endpoint);
         this.endpoint = endpoint;
     }
 
-    public Endpoint getEndpoint() {
+    public BrowsableEndpoint getEndpoint() {
         return endpoint;
     }
 
-    @ManagedAttribute(description = "Endpoint Uri")
-    public String getUri() {
-        return endpoint.getEndpointUri();
+    @ManagedOperation(description = "Current number of Exchanges in Queue")
+    public long qeueSize() {
+        return endpoint.getExchanges().size();
     }
 
-    @ManagedAttribute(description = "Singleton")
-    public boolean isSingleton() {
-        return endpoint.isSingleton();
+    @ManagedOperation(description = "Get Exchange from queue by index")
+    public Exchange browseExchange(Integer index) {
+        return endpoint.getExchanges().get(index);
     }
+
 }

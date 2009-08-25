@@ -18,34 +18,38 @@ package org.apache.camel.management;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.Service;
+import org.apache.camel.management.mbean.ManagedComponent;
+import org.apache.camel.management.mbean.ManagedConsumer;
+import org.apache.camel.management.mbean.ManagedEndpoint;
+import org.apache.camel.management.mbean.ManagedProcessor;
+import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Naming strategy used when registering MBeans.
  */
-public class DefaultManagementNamingStrategy {
+public class DefaultManagementNamingStrategy implements ManagementNamingStrategy {
     public static final String VALUE_UNKNOWN = "unknown";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
-    public static final String KEY_GROUP = "group";
-    public static final String KEY_ROUTE = "route";
-    public static final String KEY_NODE_ID = "nodeid";
     public static final String TYPE_CONTEXT = "context";
     public static final String TYPE_ENDPOINT = "endpoints";
     public static final String TYPE_PROCESSOR = "processors";
     public static final String TYPE_CONSUMER = "consumers";
     public static final String TYPE_ROUTE = "routes";
+    public static final String TYPE_COMPONENT = "components";
 
     protected String domainName;
     protected String hostName = "localhost";
@@ -61,19 +65,10 @@ public class DefaultManagementNamingStrategy {
         try {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
-            // ignore, use the default "locahost"
+            // ignore, use the default "localhost"
         }
     }
 
-    /**
-     * Implements the naming strategy for a {@link CamelContext}.
-     * The convention used for a {@link CamelContext} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=context,name=&lt;context-name&gt;</tt>
-     *
-     * @param context the camel context
-     * @return generated ObjectName
-     * @throws MalformedObjectNameException can be thrown
-     */
     public ObjectName getObjectName(CamelContext context) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
@@ -83,11 +78,6 @@ public class DefaultManagementNamingStrategy {
         return createObjectName(buffer);
     }
 
-    /**
-     * Implements the naming strategy for a {@link ManagedEndpoint}.
-     * The convention used for a {@link ManagedEndpoint} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=endpoint,component=&lt;component-name&gt;name=&lt;endpoint-name&gt;</tt>
-     */
     public ObjectName getObjectName(ManagedEndpoint mbean) throws MalformedObjectNameException {
         Endpoint ep = mbean.getEndpoint();
 
@@ -99,36 +89,55 @@ public class DefaultManagementNamingStrategy {
         return createObjectName(buffer);
     }
 
-    /**
-     * Implements the naming strategy for a {@link org.apache.camel.impl.ServiceSupport Service}.
-     * The convention used for a {@link org.apache.camel.Service Service} ObjectName is
-     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=service,name=&lt;service-name&gt;</tt>
-     */
-    public ObjectName getObjectName(CamelContext context, ManagedService mbean) throws MalformedObjectNameException {
-        String serviceBranch;
-        Service service = mbean.getService();
-        if (service instanceof Consumer) {
-            serviceBranch = TYPE_CONSUMER;
-        } else {
-            return null;
-        }
-
+    public ObjectName getObjectName(ManagedComponent mbean) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
-        buffer.append(KEY_TYPE + "=" + serviceBranch + ",");
-        buffer.append(KEY_NAME + "=")
-            .append(service.getClass().getSimpleName())
-            .append("(0x").append(Integer.toHexString(mbean.getService().hashCode())).append(")");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getComponent().getCamelContext())).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_COMPONENT + ",");
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(mbean.getName()));
         return createObjectName(buffer);
     }
 
+    public ObjectName getObjectName(ManagedProcessor mbean) throws MalformedObjectNameException {
+        Processor processor = mbean.getProcessor();
+        ProcessorDefinition definition = mbean.getDefinition();
 
-    /**
-     * Implements the naming strategy for a {@link ManagedRoute}.
-     * The convention used for a {@link ManagedRoute} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=route,name=&lt;route-name&gt;</tt>
-     */
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getContext())).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
+
+        if (definition.hasCustomIdAssigned()) {
+            // use id in name
+            String nodeId = definition.getId();
+            buffer.append(KEY_NAME + "=").append(ObjectName.quote(nodeId));
+        } else {
+            // create a name based on its instance
+            buffer.append(KEY_NAME + "=")
+                .append(processor.getClass().getSimpleName())
+                .append("(").append(getIdentityHashCode(processor)).append(")");
+        }
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectName(ManagedConsumer mbean) throws MalformedObjectNameException {
+        Consumer consumer = mbean.getConsumer();
+
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getContext())).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_CONSUMER).append(",");
+        buffer.append(KEY_NAME + "=")
+            .append(consumer.getClass().getSimpleName())
+            .append("(").append(getIdentityHashCode(consumer)).append(")");
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectName(ManagedService mbean) throws MalformedObjectNameException {
+        // not supported
+        return null;
+    }
+
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
         Route route = mbean.getRoute();
         Endpoint ep = route.getEndpoint();
@@ -138,37 +147,22 @@ public class DefaultManagementNamingStrategy {
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id == null ? ("0x" + Integer.toHexString(route.hashCode())) : id));
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
         return createObjectName(buffer);
     }
 
-    /**
-     * Implements the naming strategy for a {@link ProcessorDefinition}.
-     * The convention used for a {@link ProcessorDefinition} ObjectName is:
-     * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;,nodeid=&lt;node-id&gt;</tt>
-     */
+    @Deprecated
     public ObjectName getObjectName(RouteContext routeContext, ProcessorDefinition processor)
         throws MalformedObjectNameException {
+
         Endpoint ep = routeContext.getEndpoint();
-        String ctxid;
-        String cid;
-        if (ep != null) {
-            ctxid = getContextId(ep.getCamelContext());            
-            cid = ObjectName.quote(ep.getEndpointUri());
-        } else {
-            ctxid = VALUE_UNKNOWN;
-            cid = null;
-        }
-        //String id = VALUE_UNKNOWN.equals(cid) ? ObjectName.quote(getEndpointId(ep) : "[" + cid + "]" + ObjectName.quote(getEndpointId(ep);
         String nodeId = processor.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(ctxid).append(",");
-        // buffer.append(KEY_ROUTE + "=").append(id).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_PROCESSOR + ",");
-        buffer.append(KEY_NODE_ID + "=").append(nodeId).append(",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(processor.toString()));
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(nodeId));
         return createObjectName(buffer);
     }
 
@@ -200,9 +194,13 @@ public class DefaultManagementNamingStrategy {
             String uri = ep.getEndpointKey();
             int pos = uri.indexOf('?');
             String id = (pos == -1) ? uri : uri.substring(0, pos);
-            id += "?id=0x" + Integer.toHexString(ep.hashCode());
+            id += "?id=" + getIdentityHashCode(ep);
             return id;
         }
+    }
+
+    private static String getIdentityHashCode(Object object) {
+        return "0x" + Integer.toHexString(System.identityHashCode(object));
     }
 
     /**

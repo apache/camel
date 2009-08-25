@@ -61,7 +61,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Manag
 
     private ExecutorService executorService;
     private MBeanServer server;
-    private Set<ObjectName> mbeans = new HashSet<ObjectName>();
+    private final Set<ObjectName> mbeansRegistered = new HashSet<ObjectName>();
     private MetadataMBeanInfoAssembler assembler;
     private JMXConnectorServer cs;
 
@@ -213,6 +213,11 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Manag
 
     public void unregister(ObjectName name) throws JMException {
         server.unregisterMBean(name);
+        mbeansRegistered.remove(name);
+    }
+
+    public boolean isRegistered(ObjectName name) {
+        return server.isRegistered(name);
     }
 
     protected void doStart() throws Exception {
@@ -243,12 +248,12 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Manag
 
         // Using the array to hold the busMBeans to avoid the
         // CurrentModificationException
-        Object[] mBeans = mbeans.toArray();
+        ObjectName[] mBeans = mbeansRegistered.toArray(new ObjectName[mbeansRegistered.size()]);
         int caught = 0;
-        for (Object name : mBeans) {
-            mbeans.remove(name);
+        for (ObjectName name : mBeans) {
+            mbeansRegistered.remove(name);
             try {
-                unregister((ObjectName)name);
+                unregister(name);
             } catch (JMException jmex) {
                 LOG.info("Exception unregistering MBean", jmex);
                 caught++;
@@ -293,7 +298,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Manag
                 LOG.debug("Registered MBean with objectname: " + registeredName);
             }
 
-            mbeans.add(registeredName);
+            mbeansRegistered.add(registeredName);
         }
     }
 

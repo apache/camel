@@ -16,15 +16,7 @@
  */
 package org.apache.camel.spring;
 
-import java.util.Collection;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Route;
-import org.apache.camel.Service;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.impl.SimpleLifecycleStrategy;
 
 /**
  * Dummy LifecycleStrategy for LifecycleStrategy injection test.
@@ -32,30 +24,5 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  *
  */
-public class DummyLifecycleStrategy implements LifecycleStrategy {
-
-    public void onContextCreate(CamelContext context) {
-        // Do nothing
-    }
-
-    public void onEndpointAdd(Endpoint endpoint) {
-        // Do nothing
-    }
-
-    public void onRouteContextCreate(RouteContext routeContext) {
-        // Do nothing
-    }
-
-    public void onRoutesAdd(Collection<Route> routes) {
-        // Do nothing
-    }
-
-    public void onServiceAdd(CamelContext context, Service service) {
-        // Do nothing
-    }
-
-    public void onContextStart(CamelContext arg0) {
-        // Do nothing
-    }
-
+public class DummyLifecycleStrategy extends SimpleLifecycleStrategy {
 }

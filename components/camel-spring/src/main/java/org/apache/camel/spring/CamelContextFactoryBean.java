@@ -32,10 +32,12 @@ import org.apache.camel.CamelException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultLifecycleStrategy;
+import org.apache.camel.impl.SimpleLifecycleStrategy;
 import org.apache.camel.impl.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultInstrumentationAgent;
-import org.apache.camel.management.InstrumentationLifecycleStrategy;
+import org.apache.camel.management.DefaultManagedLifecycleStrategy;
+import org.apache.camel.management.DefaultManagementStrategy;
+import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
@@ -422,7 +424,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private void initJMXAgent() throws Exception {
         if (camelJMXAgent != null && camelJMXAgent.isDisabled()) {
             LOG.info("JMXAgent disabled");
-            getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
+            getContext().setLifecycleStrategy(new SimpleLifecycleStrategy());
+            getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
             DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
             agent.setConnectorPort(camelJMXAgent.getConnectorPort());
@@ -435,7 +438,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             agent.setOnlyRegisterProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
 
             LOG.info("JMXAgent enabled: " + camelJMXAgent);
-            getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));
+            getContext().setLifecycleStrategy(new DefaultManagedLifecycleStrategy());
+            getContext().setManagementStrategy(new ManagedManagementStrategy());
+            getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
         }
     }
 

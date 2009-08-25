@@ -17,13 +17,11 @@
 package org.apache.camel.management;
 
 import java.lang.management.ManagementFactory;
-import java.util.List;
 import java.util.Set;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerConnection;
-import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,29 +32,24 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ContextTestSupport {
 
     protected String domainName = DefaultInstrumentationAgent.DEFAULT_DOMAIN;
-    protected MBeanServerConnection mbsc;
-    protected long sleepForConnection;
+    protected MBeanServer server;
 
     public void testCustomId() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
-                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
-            assertEquals(domainName, mbsc.getDefaultDomain());
-        }
-
-        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set s = server.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 6, s.size());
 
-        s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
+        s = server.queryNames(new ObjectName(domainName + ":type=context,*"), null);
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
-        s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
+        s = server.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 1 processor: " + s, 1, s.size());
         // should be mock foo
         ObjectName on = (ObjectName) s.iterator().next();
-        assertEquals("myfoo", on.getKeyProperty("nodeid"));
+        String id = (String) server.getAttribute(on, "Id");
+        assertEquals("myfoo", id);
 
-        s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
-        assertEquals("Could not find 1 route: " + s, 2, s.size());
+        s = server.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
+        assertEquals("Could not find 2 route: " + s, 2, s.size());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -67,36 +60,16 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        System.clearProperty(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
-        releaseMBeanServers();
-        mbsc = null;
-        super.tearDown();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void releaseMBeanServers() {
-        List<MBeanServer> servers = (List<MBeanServer>) MBeanServerFactory.findMBeanServer(null);
-        for (MBeanServer server : servers) {
-            MBeanServerFactory.releaseMBeanServer(server);
-        }
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getManagementStrategy().onlyManageProcessorWithCustomId(true);
+        return context;
     }
 
     @Override
     protected void setUp() throws Exception {
-        System.setProperty(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID, "true");
-        releaseMBeanServers();
         super.setUp();
-        Thread.sleep(sleepForConnection);
-        mbsc = getMBeanConnection();
-    }
-
-
-    protected MBeanServerConnection getMBeanConnection() throws Exception {
-        if (mbsc == null) {
-            mbsc = ManagementFactory.getPlatformMBeanServer();
-        }
-        return mbsc;
+        server = ManagementFactory.getPlatformMBeanServer();
     }
 
     @Override
