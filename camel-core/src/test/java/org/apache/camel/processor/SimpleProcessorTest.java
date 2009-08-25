@@ -17,31 +17,18 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class SimpleMockTest extends ContextTestSupport {
+public class SimpleProcessorTest extends ContextTestSupport {
 
-    public void testSimple() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    public void testSimpleTwoMessages() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World", "Bye World");
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
-
-        assertMockEndpointsSatisfied();
+    public void testProcess() throws Exception {
+        String out = template.requestBody("direct:start", "Hello World", String.class);
+        assertEquals("Bye World", out);
     }
 
     @Override
@@ -49,8 +36,13 @@ public class SimpleMockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("log:bar").to("mock:result");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody("Bye World");
+                    }
+                });
             }
         };
     }
+
 }
