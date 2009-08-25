@@ -21,6 +21,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.jivesoftware.smack.packet.Message;
 import org.junit.Test;
 
@@ -28,6 +31,7 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class XmppRouteChatTest extends CamelTestSupport {
+    private static final transient Log LOG = LogFactory.getLog(XmppRouteChatTest.class);
     protected MockEndpoint consumerEndpoint;
     protected MockEndpoint producerEndpoint;
     protected String body1 = "the first message";
@@ -35,23 +39,38 @@ public class XmppRouteChatTest extends CamelTestSupport {
 
 
     @Test
-    public void testXmppChat() {
-        producerEndpoint = (MockEndpoint)context.getEndpoint("mock:fromProducer");
-        consumerEndpoint = (MockEndpoint)context.getEndpoint("mock:fromConsumer");
+    public void testXmppChat() throws Exception {
+        consumerEndpoint = (MockEndpoint)context.getEndpoint("mock:out1");
+        producerEndpoint = (MockEndpoint)context.getEndpoint("mock:out2");
+
+        consumerEndpoint.expectedBodiesReceived(body1, body2);
+        producerEndpoint.expectedBodiesReceived(body1, body2);
 
         //will send chat messages to the consumer
-        template.sendBody("direct:toProducer", body1);
-        template.sendBody("direct:toProducer", body2);
-        consumerEndpoint.expectedBodiesReceived(body1, body2);
-        
         template.sendBody("direct:toConsumer", body1);
         template.sendBody("direct:toConsumer", body2);
-        consumerEndpoint.expectedBodiesReceived(body1, body2);
+        
+        template.sendBody("direct:toProducer", body1);
+        template.sendBody("direct:toProducer", body2);
+
+        consumerEndpoint.assertIsSatisfied();
+        producerEndpoint.assertIsSatisfied();
+
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+
+                Processor stringConverter = new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        XmppMessage xmppMessage = (XmppMessage)exchange.getIn();
+                        Message message = xmppMessage.getXmppMessage();
+                        String body = message.getBody();
+                        LOG.debug("Converting message - " + body);
+                        exchange.getIn().setBody(body);
+                    }
+                };
 
                 from("direct:toConsumer")
                     .to(getConsumerUri());
@@ -60,31 +79,22 @@ public class XmppRouteChatTest extends CamelTestSupport {
                     .to(getProducerUri());
 
                 from(getConsumerUri())
-                    .to("mock:fromConsumer");
+                    .process(stringConverter)
+                    .to("mock:out1");
 
                 from(getProducerUri())
-                    .to("mock:fromProducer");
-
-                from("direct:getString")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            XmppMessage xmppMessage = (XmppMessage)exchange.getIn();
-                            Message message = xmppMessage.getXmppMessage();
-                            exchange.getIn().setBody(message.getBody());
-                        }
-                    })
-                    .to("direct:getStringResult");
-
+                    .process(stringConverter)
+                    .to("mock:out2");
             }
         };
     }
 
     protected String getProducerUri() {
-        return "xmpp://camel_producer@jabber.org:5222/camel_consumer@jabber.org?user=camel_producer&password=secret&serviceName=jabber.org";
+        return "xmpp://jabber.org:5222/camel_consumer?user=camel_producer&password=secret&serviceName=jabber.org";
     }
     
     protected String getConsumerUri() {
-        return "xmpp://camel_consumer@jabber.org:5222/camel_producer@jabber.org?user=camel_consumer&password=secret&serviceName=jabber.org";
+        return "xmpp://jabber.org:5222/camel_producer?user=camel_consumer&password=secret&serviceName=jabber.org";
     }
 
 }

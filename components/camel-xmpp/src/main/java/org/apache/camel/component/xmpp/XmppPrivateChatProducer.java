@@ -84,14 +84,14 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             endpoint.getBinding().populateXmppMessage(message, exchange);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending XMPP message: " + message.getBody());
+                LOG.debug("Sending XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message.getBody());
             }
             chat.sendMessage(message);
         } catch (XMPPException xmppe) {
-            throw new RuntimeExchangeException("Cannot send XMPP message: " + message
+            throw new RuntimeExchangeException("Cannot send XMPP message: to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
         } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot send XMPP message: " + message
+            throw new RuntimeExchangeException("Cannot send XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
     }

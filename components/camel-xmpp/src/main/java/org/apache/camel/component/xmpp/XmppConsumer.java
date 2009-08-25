@@ -44,6 +44,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     private static final transient Log LOG = LogFactory.getLog(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
+    private Chat privateChat;
     private XMPPConnection connection;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
@@ -59,7 +60,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
             // if an existing chat session has been opened (for example by a producer) let's
             // just add a listener to that chat
-            Chat privateChat = connection.getChatManager().getThreadChat(endpoint.getParticipant());
+            privateChat = connection.getChatManager().getThreadChat(endpoint.getParticipant());
 
             if (privateChat != null) {
                 LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
@@ -106,13 +107,13 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
     public void processPacket(Packet packet) {
         if (packet instanceof Message) {
-            processMessage(null, (Message) packet);
+            processMessage(null, (Message)packet);
         }
     }
 
     public void processMessage(Chat chat, Message message) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Recieved XMPP message: " + message.getBody());
+            LOG.debug("Received XMPP message for " + endpoint.getUser() + " from " + endpoint.getParticipant() + " : " + message.getBody());
         }
 
         Exchange exchange = endpoint.createExchange(message);
@@ -122,5 +123,4 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             exchange.setException(e);
         }
     }
-
 }
