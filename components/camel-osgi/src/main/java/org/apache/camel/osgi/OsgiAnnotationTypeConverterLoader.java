@@ -37,7 +37,7 @@ public class OsgiAnnotationTypeConverterLoader extends AnnotationTypeConverterLo
     @Override
     public void load(TypeConverterRegistry registry) throws Exception {
         for (Activator.TypeConverterEntry entry : Activator.getTypeConverterEntries()) {
-            OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(entry.bundle.getBundleContext());
+            OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(entry.bundle);
             String[] packages = entry.converterPackages.toArray(new String[entry.converterPackages.size()]);
             Set<Class> classes = resolver.findAnnotated(Converter.class, packages);           
             for (Class type : classes) {
