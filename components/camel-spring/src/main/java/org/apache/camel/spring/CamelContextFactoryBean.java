@@ -231,6 +231,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().addInterceptStrategy(delayer);
         }
 
+        ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);
+        if (managementStrategy != null) {
+            LOG.info("Using custom ManagementStrategy: " + managementStrategy);
+            getContext().setManagementStrategy(managementStrategy);
+        }
+
         // add global interceptors
         Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
         if (interceptStrategies != null && !interceptStrategies.isEmpty()) {
