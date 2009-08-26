@@ -21,6 +21,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -36,9 +37,26 @@ public class ManagedRegisterRouteTest extends ContextTestSupport {
 
         ObjectName on = set.iterator().next();
 
+        boolean registered = mbeanServer.isRegistered(on);
+        assertEquals("Should be registered", true, registered);
+
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         // the route has this starting endpoint uri
         assertEquals("direct://start", uri);
+
+        // should be started
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+
+        // stop the route
+        context.stopRoute(context.getRouteDefinitions().get(0));
+
+        registered = mbeanServer.isRegistered(on);
+        assertEquals("Should be registered", true, registered);
+
+        // should be stopped, eg its removed
+        state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
     }
 
     @Override

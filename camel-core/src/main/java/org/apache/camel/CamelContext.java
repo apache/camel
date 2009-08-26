@@ -433,8 +433,17 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Returns the current status of the given route
      *
+     * @param routeId the route id
+     * @return the status for the route
+     */
+    ServiceStatus getRouteStatus(String routeId);
+
+    /**
+     * Returns the current status of the given route
+     *
      * @param route the route
      * @return the status for the route
+     * @deprecated will be removed in Camel 2.2
      */
     ServiceStatus getRouteStatus(RouteDefinition route);
 

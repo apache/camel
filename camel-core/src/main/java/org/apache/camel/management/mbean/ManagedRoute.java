@@ -16,8 +16,10 @@
  */
 package org.apache.camel.management.mbean;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -29,10 +31,12 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     public static final String VALUE_UNKNOWN = "Unknown";
     private Route route;
     private String description;
+    private CamelContext context;
 
-    public ManagedRoute(ManagementStrategy strategy, Route route) {
+    public ManagedRoute(ManagementStrategy strategy, CamelContext context, Route route) {
         super(strategy);
         this.route = route;
+        this.context = context;
         this.description = route.toString();
     }
 
@@ -40,10 +44,17 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         return route;
     }
 
+    public CamelContext getContext() {
+        return context;
+    }
+
     @ManagedAttribute(description = "Route id")
     public String getId() {
-        Object id = route.getProperties().get(Route.ID_PROPERTY);
-        return id != null ? id.toString() : VALUE_UNKNOWN;
+        String id = route.getId();
+        if (id == null) {
+            id = VALUE_UNKNOWN;
+        }
+        return id;
     }
 
     @ManagedAttribute(description = "Route Description")
@@ -55,6 +66,17 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     public String getEndpointUri() {
         Endpoint ep = route.getEndpoint();
         return ep != null ? ep.getEndpointUri() : VALUE_UNKNOWN;
+    }
+
+    @ManagedAttribute(description = "Route state")
+    public String getState() {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+        ServiceStatus status = context.getRouteStatus(route.getId());
+        // if no status exists then its stopped
+        if (status == null) {
+            status = ServiceStatus.Stopped;
+        }
+        return status.name();
     }
 
     @ManagedOperation(description = "Start Route")

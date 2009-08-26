@@ -582,9 +582,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return getRouteStatus(route.idOrCreate(nodeIdFactory));
     }
 
-    /**
-     * Returns the status of the service of the given ID or null if there is no service created yet
-     */
     public ServiceStatus getRouteStatus(String key) {
         RouteService routeService = routeServices.get(key);
         if (routeService != null) {
@@ -599,7 +596,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         RouteService routeService = new RouteService(this, route, routeContexts, routes);
         startRouteService(routeService);
     }
-
 
     public void stopRoute(RouteDefinition route) throws Exception {
         stopRoute(route.idOrCreate(nodeIdFactory));

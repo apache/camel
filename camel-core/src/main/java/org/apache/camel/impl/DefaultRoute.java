@@ -56,6 +56,10 @@ public abstract class DefaultRoute implements Route {
         return "Route";
     }
 
+    public String getId() {
+        return (String) properties.get(Route.ID_PROPERTY);
+    }
+
     public Endpoint getEndpoint() {
         return endpoint;
     }

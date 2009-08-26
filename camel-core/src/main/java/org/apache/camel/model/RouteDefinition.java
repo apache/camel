@@ -87,7 +87,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      */
     public ServiceStatus getStatus() {
         if (camelContext != null) {
-            ServiceStatus answer = camelContext.getRouteStatus(this);
+            ServiceStatus answer = camelContext.getRouteStatus(this.getId());
             if (answer == null) {
                 answer = ServiceStatus.Stopped;
             }

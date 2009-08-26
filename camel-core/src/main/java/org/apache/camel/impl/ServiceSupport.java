@@ -109,7 +109,9 @@ public abstract class ServiceSupport implements Service {
         if (isStopped()) {
             return ServiceStatus.Stopped;
         }
-        return ServiceStatus.Created;
+
+        // use stopped as fallback
+        return ServiceStatus.Stopped;
     }
     
     /**

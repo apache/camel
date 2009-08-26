@@ -141,7 +141,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
         Route route = mbean.getRoute();
         Endpoint ep = route.getEndpoint();
-        String id = (String)route.getProperties().get(Route.ID_PROPERTY);
+        String id = route.getId();
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");

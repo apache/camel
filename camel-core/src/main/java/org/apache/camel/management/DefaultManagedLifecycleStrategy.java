@@ -333,7 +333,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(getStrategy(), route);
+            ManagedRoute mr = new ManagedRoute(getStrategy(), context, route);
 
             // get the wrapped instrumentation processor from this route
             // and set me as the counter
@@ -362,14 +362,8 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             return;
         }
 
-        for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(getStrategy(), route);
-            try {
-                getStrategy().unmanageObject(mr);
-            } catch (Exception e) {
-                LOG.warn("Could not unregister Route MBean", e);
-            }
-        }
+        // keep the route in the mbean so its still there, it will still be unregistered
+        // when camel itself is shutting down
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {

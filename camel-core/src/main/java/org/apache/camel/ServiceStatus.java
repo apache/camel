@@ -16,19 +16,29 @@
  */
 package org.apache.camel;
 
+import java.io.Serializable;
+
 /**
  * Reresents the status of a {@link Service} instance
  *
  * @version $Revision$
  */
-public enum ServiceStatus {
-    Created, Starting, Started, Stopping, Stopped;
+public enum ServiceStatus implements Serializable {
+    Starting, Started, Stopping, Stopped;
 
     public boolean isStartable() {
-        return this == Created || this == Stopped;
+        return this == Stopped;
     }
 
     public boolean isStoppable() {
         return this == Starting || this == Started;
+    }
+
+    public boolean isStarted() {
+        return this == Started;
+    }
+
+    public boolean isStopped() {
+        return this == Stopped;
     }
 }

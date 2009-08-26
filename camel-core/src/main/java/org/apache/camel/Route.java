@@ -26,6 +26,13 @@ public interface Route {
     String GROUP_PROPERTY = "group";
 
     /**
+     * Gets the route id
+     *
+     * @return the route id
+     */
+    String getId();
+
+    /**
      * Gets the inbound endpoint
      */
     Endpoint getEndpoint();
