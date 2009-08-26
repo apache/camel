@@ -62,10 +62,10 @@ public class IrcPrivmsgTest extends CamelTestSupport {
 
                 from("seda:consumerJoined")
                     .process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        sendMessages();
-                    }
-                });
+                        public void process(Exchange exchange) throws Exception {
+                            sendMessages();
+                        }
+                    });
             }
         };
     }

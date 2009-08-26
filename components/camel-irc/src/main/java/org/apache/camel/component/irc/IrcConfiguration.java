@@ -18,9 +18,9 @@ package org.apache.camel.component.irc;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
@@ -83,7 +83,7 @@ public class IrcConfiguration implements Cloneable {
 
     public String getListOfChannels() {
         String retval = "";
-        for ( String channel : channels ) {
+        for (String channel : channels) {
             retval += channel + " ";
         }
         return retval.trim();
@@ -120,7 +120,7 @@ public class IrcConfiguration implements Cloneable {
     public void addChannel(String channel) {
         boolean alreadyHave = false;
         for (String aChannel : channels) {
-            if ( channel.contentEquals(aChannel)) {
+            if (channel.contentEquals(aChannel)) {
                 alreadyHave = true;
             }
         }

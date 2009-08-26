@@ -141,7 +141,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
                 if (bundleContext == null) {
                     // Bundle is not in STARTING|ACTIVE|STOPPING state
                     // (See OSGi 4.1 spec, section 4.3.17)
-                    bundles = new org.osgi.framework.Bundle[] { bundle };
+                    bundles = new org.osgi.framework.Bundle[] {bundle};
                 } else {
                     bundles = bundleContext.getBundles();
                 }
