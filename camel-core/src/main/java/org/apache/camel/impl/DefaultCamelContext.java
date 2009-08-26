@@ -106,7 +106,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private final Map<String, Language> languages = new HashMap<String, Language>();
     private Registry registry;
-    private LifecycleStrategy lifecycleStrategy;
+    private List<LifecycleStrategy> lifecycleStrategies = new ArrayList<LifecycleStrategy>();
     private ManagementStrategy managementStrategy;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
@@ -133,14 +133,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         name = NAME_PREFIX + ++nameSuffix;
 
         if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            LOG.info("JMX is disabled. Using SimpleLifecycleStrategy.");
-            lifecycleStrategy = new SimpleLifecycleStrategy();
+            LOG.info("JMX is disabled. Using DefaultManagementStrategy.");
             managementStrategy = new DefaultManagementStrategy();
         } else {
+            boolean registered = false;
             try {
                 LOG.info("JMX enabled. Using DefaultManagedLifecycleStrategy.");
                 managementStrategy = new ManagedManagementStrategy(new DefaultInstrumentationAgent());
-                lifecycleStrategy = new DefaultManagedLifecycleStrategy(managementStrategy);
+                lifecycleStrategies.add(new DefaultManagedLifecycleStrategy(managementStrategy));
+                registered = true;
             } catch (NoClassDefFoundError e) {
                 // if we can't instantiate the JMX enabled strategy then fallback to default
                 // could be because of missing .jars on the classpath
@@ -151,22 +152,19 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             } catch (Exception e) {
                 LOG.warn("Could not create JMX lifecycle strategy, caused by: " + e.getMessage());
             }
-            // if not created then fallback to default
-            if (lifecycleStrategy == null) {
-                LOG.warn("Cannot use JMX lifecycle strategy. Using SimpleLifecycleStrategy instead.");
+            if (!registered) {
+                LOG.warn("Cannot use JMX. Fallback to using DefaultManagementStrategy.");
                 managementStrategy = new DefaultManagementStrategy();
-                lifecycleStrategy = new SimpleLifecycleStrategy();
             }
         }
 
         // use WebSphere specific resolver if running on WebSphere
-        if (WebSpherePacakageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
+        if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
             LOG.info("Using WebSphere specific PackageScanClassResolver");
-            packageScanClassResolver = new WebSpherePacakageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
+            packageScanClassResolver = new WebSpherePackageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
         } else {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
         }
-
     }
 
     /**
@@ -205,7 +203,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
             component.setCamelContext(this);
             components.put(componentName, component);
-            lifecycleStrategy.onComponentAdd(componentName, component);
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onComponentAdd(componentName, component);
+            }
         }
     }
 
@@ -247,7 +247,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         synchronized (components) {
             Component answer = components.remove(componentName);
             if (answer != null) {
-                lifecycleStrategy.onComponentRemove(componentName, answer);
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onComponentRemove(componentName, answer);
+                }
             }
             return answer;
         }
@@ -265,7 +267,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     }
                     components.put(componentName, component);
                     component.setCamelContext(this);
-                    lifecycleStrategy.onComponentAdd(componentName, component);
+                    for (LifecycleStrategy strategy : lifecycleStrategies) {
+                        strategy.onComponentAdd(componentName, component);
+                    }
                 } catch (Exception e) {
                     throw new RuntimeCamelException("Factory failed to create the " + componentName
                             + " component", e);
@@ -337,7 +341,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         synchronized (endpoints) {
             startServices(endpoint);
             oldEndpoint = endpoints.remove(uri);
-            lifecycleStrategy.onEndpointAdd(endpoint);
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onEndpointAdd(endpoint);
+            }
             addEndpointToRegistry(uri, endpoint);
             if (oldEndpoint != null) {
                 stopServices(oldEndpoint);
@@ -354,7 +360,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             if (oldEndpoint != null) {
                 answer.add(oldEndpoint);
                 stopServices(oldEndpoint);
-                lifecycleStrategy.onEndpointRemove(oldEndpoint);
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onEndpointRemove(oldEndpoint);
+                }
             } else {
                 for (Map.Entry entry : endpoints.entrySet()) {
                     oldEndpoint = (Endpoint) entry.getValue();
@@ -362,7 +370,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         answer.add(oldEndpoint);
                         stopServices(oldEndpoint);
                         endpoints.remove(entry.getKey());
-                        lifecycleStrategy.onEndpointRemove(oldEndpoint);
+                        for (LifecycleStrategy strategy : lifecycleStrategies) {
+                            strategy.onEndpointRemove(oldEndpoint);
+                        }
                     }
                 }
             }
@@ -424,7 +434,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
                     if (answer != null) {
                         addService(answer);
-                        lifecycleStrategy.onEndpointAdd(answer);
+                        for (LifecycleStrategy strategy : lifecycleStrategies) {
+                            strategy.onEndpointAdd(answer);
+                        }
                         answer = addEndpointToRegistry(uri, answer);
                     }
                 } catch (Exception e) {
@@ -606,7 +618,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public void addService(Object object) throws Exception {
         if (object instanceof Service) {
             Service service = (Service) object;
-            getLifecycleStrategy().onServiceAdd(this, service);
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onServiceAdd(this, service);
+            }
             servicesToClose.add(service);
         }
         startServices(object);
@@ -730,12 +744,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.registry = registry;
     }
 
-    public LifecycleStrategy getLifecycleStrategy() {
-        return lifecycleStrategy;
+    public List<LifecycleStrategy> getLifecycleStrategies() {
+        return lifecycleStrategies;
     }
 
-    public void setLifecycleStrategy(LifecycleStrategy lifecycleStrategy) {
-        this.lifecycleStrategy = lifecycleStrategy;
+    public void setLifecycleStrategies(List<LifecycleStrategy> lifecycleStrategies) {
+        this.lifecycleStrategies = lifecycleStrategies;
+    }
+
+    public void addLifecycleStrategy(LifecycleStrategy lifecycleStrategy) {
+        this.lifecycleStrategies.add(lifecycleStrategy);
     }
 
     public List<RouteDefinition> getRouteDefinitions() {
@@ -753,7 +771,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
 
-        // for backwards compability or if user add them here instead of the setXXX methods
+        // for backwards compatible or if user add them here instead of the setXXX methods
 
         if (interceptStrategy instanceof Tracer) {
             setTracing(true);
@@ -892,16 +910,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
 
-        try {
-            lifecycleStrategy.onContextStart(this);
-        } catch (Exception e) {
-            // not all containers allow access to its MBeanServer (such as OC4j)
-            LOG.warn("Cannot start lifecycleStrategy: " + lifecycleStrategy + ". Cause: " + e.getMessage());
-            if (!(lifecycleStrategy instanceof SimpleLifecycleStrategy)) {
-                // fallback to non JMX lifecycle to allow Camel to startup
-                LOG.warn("Will fallback to use SimpleLifecycleStrategy (non JMX) lifecycle strategy");
-                lifecycleStrategy = new SimpleLifecycleStrategy();
-                lifecycleStrategy.onContextStart(this);
+
+        Iterator<LifecycleStrategy> it = lifecycleStrategies.iterator();
+        while (it.hasNext()) {
+            LifecycleStrategy strategy = it.next();
+            try {
+                strategy.onContextStart(this);
+            } catch (Exception e) {
+                // not all containers allow access to its MBeanServer (such as OC4j)
+                // so here we remove the troublesome strategy to be able to continue
+                LOG.warn("Cannot start lifecycle strategy: " + strategy + ". This strategy will be removed. Cause " + e.getMessage(), e);
+                it.remove();
             }
         }
 
@@ -936,9 +955,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         servicesToClose.clear();
 
         try {
-            lifecycleStrategy.onContextStop(this);
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onContextStop(this);
+            }
         } catch (Exception e) {
-            LOG.warn("Cannot stop lifecycleStrategy: " + lifecycleStrategy + ". Cause: " + e.getMessage());
+            LOG.warn("Cannot stop lifecycle strategies: " + e.getMessage());
         }
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");

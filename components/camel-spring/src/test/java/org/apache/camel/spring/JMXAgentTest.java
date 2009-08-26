@@ -30,10 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @version $Revision$
  */
-@Ignore
 public class JMXAgentTest extends DefaultJMXAgentTest {
-
-    // TODO: Fix me later
 
     protected static final String JMXSERVICEURL = "service:jmx:rmi:///jndi/rmi://localhost:20008/jmxrmi/camel";
     protected JMXConnector clientConnector;

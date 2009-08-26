@@ -39,6 +39,7 @@ import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -431,7 +432,9 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         // force endpoint resolution
         routeContext.getEndpoint();
         if (camelContext != null) {
-            camelContext.getLifecycleStrategy().onRouteContextCreate(routeContext);
+            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                strategy.onRouteContextCreate(routeContext);
+            }
         }
 
         List<ProcessorDefinition> list = new ArrayList<ProcessorDefinition>(outputs);

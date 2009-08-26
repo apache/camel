@@ -48,7 +48,7 @@ public class ManagedUnregisterConsumerTest extends ContextTestSupport {
         ObjectName on = set.iterator().next();
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
-        String uri = (String) mbeanServer.getAttribute(on, "Uri");
+        String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("direct://start", uri);
 
         context.stop();

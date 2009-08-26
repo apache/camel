@@ -134,8 +134,8 @@ public class GuiceCamelContext extends DefaultCamelContext {
 
     @Override
     @Inject(optional = true)
-    public void setLifecycleStrategy(LifecycleStrategy lifecycleStrategy) {
-        super.setLifecycleStrategy(lifecycleStrategy);
+    public void setLifecycleStrategies(List<LifecycleStrategy> lifecycleStrategies) {
+        super.setLifecycleStrategies(lifecycleStrategies);
     }
 
     @Override

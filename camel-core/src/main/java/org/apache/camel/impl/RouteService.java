@@ -75,7 +75,9 @@ public class RouteService extends ServiceSupport {
     protected void doStart() throws Exception {
         camelContext.addRouteCollection(routes);
 
-        getLifecycleStrategy().onRoutesAdd(routes);
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+            strategy.onRoutesAdd(routes);
+        }
 
         for (Route route : routes) {
             List<Service> services = route.getServicesForRoute();
@@ -112,7 +114,9 @@ public class RouteService extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        getLifecycleStrategy().onRoutesRemove(routes);
+        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+            strategy.onRoutesRemove(routes);
+        }
 
         // do not stop child services as in doStart
         // as route.getServicesForRoute() will restart
@@ -127,13 +131,11 @@ public class RouteService extends ServiceSupport {
         camelContext.removeRouteCollection(routes);
     }
 
-    protected LifecycleStrategy getLifecycleStrategy() {
-        return camelContext.getLifecycleStrategy();
-    }
-
     protected void startChildService(List<Service> services) throws Exception {
         for (Service service : services) {
-            getLifecycleStrategy().onServiceAdd(camelContext, service);
+            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                strategy.onServiceAdd(camelContext, service);
+            }
             ServiceHelper.startService(service);
             addChildService(service);
         }

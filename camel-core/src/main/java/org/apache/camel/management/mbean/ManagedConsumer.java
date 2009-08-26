@@ -39,7 +39,7 @@ public class ManagedConsumer extends ManagedService {
     }
 
     @ManagedAttribute(description = "Endpoint Uri")
-    public String getUri() {
+    public String getEndpointUri() {
         return consumer.getEndpoint().getEndpointUri();
     }
 

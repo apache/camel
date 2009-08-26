@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,7 +33,6 @@ import org.apache.camel.CamelException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.SimpleLifecycleStrategy;
 import org.apache.camel.impl.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.DefaultManagedLifecycleStrategy;
@@ -62,6 +62,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.EndpointHelper;
@@ -180,6 +181,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().setProperties(properties.asMap());
         }
 
+        // setup JMX agent at first
+        initJMXAgent();
+
         // set the resolvers first
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
@@ -195,13 +199,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (factoryFinderResolver != null) {
             LOG.info("Using custom FactoryFinderResolver: " + factoryFinderResolver);
             getContext().setFactoryFinderResolver(factoryFinderResolver);
-        }
-
-        // set the lifecycle strategy if defined
-        LifecycleStrategy lifecycleStrategy = getBeanForType(LifecycleStrategy.class);
-        if (lifecycleStrategy != null) {
-            LOG.info("Using custom LifecycleStrategy: " + lifecycleStrategy);
-            getContext().setLifecycleStrategy(lifecycleStrategy);
         }
 
         // set the strategy if defined
@@ -235,14 +232,27 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // add global interceptors
-        Map<String, InterceptStrategy> strategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
-        if (strategies != null && !strategies.isEmpty()) {
-            for (String id : strategies.keySet()) {
-                InterceptStrategy strategy = strategies.get(id);
+        Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
+        if (interceptStrategies != null && !interceptStrategies.isEmpty()) {
+            for (String id : interceptStrategies.keySet()) {
+                InterceptStrategy strategy = interceptStrategies.get(id);
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (!getContext().getInterceptStrategies().contains(strategy)) {
                     LOG.info("Using custom intercept strategy with id: " + id + " and implementation: " + strategy);
                     getContext().addInterceptStrategy(strategy);
+                }
+            }
+        }
+
+        // set the lifecycle strategy if defined
+        Map<String, LifecycleStrategy> lifecycleStrategies = getContext().getRegistry().lookupByType(LifecycleStrategy.class);
+        if (lifecycleStrategies != null && !lifecycleStrategies.isEmpty()) {
+            for (String id : lifecycleStrategies.keySet()) {
+                LifecycleStrategy strategy = lifecycleStrategies.get(id);
+                // do not add if already added, for instance a tracer that is also an InterceptStrategy class
+                if (!getContext().getLifecycleStrategies().contains(strategy)) {
+                    LOG.info("Using custom lifecycle strategy with id: " + id + " and implementation: " + strategy);
+                    getContext().addLifecycleStrategy(strategy);
                 }
             }
         }
@@ -277,9 +287,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
-
-        // setup JMX agent
-        initJMXAgent();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found JAXB created routes: " + getRoutes());
@@ -424,9 +431,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private void initJMXAgent() throws Exception {
         if (camelJMXAgent != null && camelJMXAgent.isDisabled()) {
             LOG.info("JMXAgent disabled");
-            getContext().setLifecycleStrategy(new SimpleLifecycleStrategy());
+            // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
+            getContext().setLifecycleStrategies(new ArrayList<LifecycleStrategy>());
             getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
+            LOG.info("JMXAgent enabled: " + camelJMXAgent);
             DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
             agent.setConnectorPort(camelJMXAgent.getConnectorPort());
             agent.setCreateConnector(camelJMXAgent.isCreateConnector());
@@ -437,9 +446,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
             agent.setOnlyRegisterProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
 
-            LOG.info("JMXAgent enabled: " + camelJMXAgent);
-            getContext().setLifecycleStrategy(new DefaultManagedLifecycleStrategy());
-            getContext().setManagementStrategy(new ManagedManagementStrategy());
+            ManagementStrategy managementStrategy = new ManagedManagementStrategy(agent);
+            getContext().setManagementStrategy(managementStrategy);
+            // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
+            getContext().setLifecycleStrategies(new ArrayList<LifecycleStrategy>());
+            getContext().addLifecycleStrategy(new DefaultManagedLifecycleStrategy(managementStrategy));
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
         }
     }
@@ -461,7 +472,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
         }
         return bean;
-
     }
 
     public void destroy() throws Exception {

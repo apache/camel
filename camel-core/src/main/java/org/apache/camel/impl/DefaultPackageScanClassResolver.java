@@ -267,7 +267,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     /**
      * Strategy to get the resources by the given classloader.
      * <p/>
-     * Notice that in WebSphere platforms there is a {@link WebSpherePacakageScanClassResolver}
+     * Notice that in WebSphere platforms there is a {@link WebSpherePackageScanClassResolver}
      * to take care of WebSphere's odditiy of resource loading.
      *
      * @param loader  the classloader

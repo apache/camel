@@ -304,11 +304,18 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     Injector getInjector();
 
     /**
-     * Returns the lifecycle strategy used to handle lifecycle notification
+     * Returns the lifecycle strategies used to handle lifecycle notifications
      *
-     * @return the lifecycle strategy
+     * @return the lifecycle strategies
      */
-    LifecycleStrategy getLifecycleStrategy();
+    List<LifecycleStrategy> getLifecycleStrategies();
+
+    /**
+     * Adds the given lifecycle strategy to be used.
+     *
+     * @param lifecycleStrategy  the strategy
+     */
+    void addLifecycleStrategy(LifecycleStrategy lifecycleStrategy);
 
     /**
      * Resolves a language for creating expressions

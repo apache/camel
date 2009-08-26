@@ -23,7 +23,7 @@ import java.util.Enumeration;
 /**
  * WebSphere specific resolver to handle loading annotated resources in JAR files.
  */
-public class WebSpherePacakageScanClassResolver extends DefaultPackageScanClassResolver {
+public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassResolver {
 
     private final String resourcePath;
 
@@ -32,7 +32,7 @@ public class WebSpherePacakageScanClassResolver extends DefaultPackageScanClassR
      *
      * @param resourcePath  the fixed resource path to use for fetching camel jars in WebSphere.
      */
-    public WebSpherePacakageScanClassResolver(String resourcePath) {
+    public WebSpherePackageScanClassResolver(String resourcePath) {
         this.resourcePath = resourcePath;
     }
 

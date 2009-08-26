@@ -93,7 +93,6 @@ public class RouteBuilderFinder {
         if (beans == null || beans.isEmpty()) {
             return false;
         }
-        // TODO apply some filter?
         return true;
     }
 

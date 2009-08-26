@@ -24,16 +24,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @version $Revision$
  */
-public class LifecycleStrategyInjectionTest extends SpringTestSupport {
+public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/lifecycleStrategyInjection.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/multipleLifecycleStrategyInjection.xml");
     }
-    
+
     public void testInjectedStrategy() throws Exception {
-        assertEquals(2, context.getLifecycleStrategies().size());
+        assertEquals(3, context.getLifecycleStrategies().size());
         assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(1));
+        assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(2));
     }
-    
+
 }

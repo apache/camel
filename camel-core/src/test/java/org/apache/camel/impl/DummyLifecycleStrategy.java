@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -27,52 +29,57 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Simple implementation of the {@link LifecycleStrategy} that does nothing.
+ * @version $Revision$
  */
-public class SimpleLifecycleStrategy implements LifecycleStrategy {
+public class DummyLifecycleStrategy implements LifecycleStrategy {
+
+    private List<String> events = new ArrayList<String>();
 
     public void onContextStart(CamelContext context) {
-        // do nothing
+        events.add("onContextStart");
     }
 
     public void onContextStop(CamelContext context) {
-        // do nothing
+        events.add("onContextStop");
     }
 
     public void onComponentAdd(String name, Component component) {
-        // do nothing
+        events.add("onComponentAdd");
     }
 
     public void onComponentRemove(String name, Component component) {
-        // do nothing
+        events.add("onComponentRemove");
     }
 
     public void onEndpointAdd(Endpoint endpoint) {
-        // do nothing
+        events.add("onEndpointAdd");
     }
 
     public void onEndpointRemove(Endpoint endpoint) {
-        // do nothing
+        events.add("onEndpointRemove");
     }
 
     public void onServiceAdd(CamelContext context, Service service) {
-        // do nothing
+        events.add("onServiceAdd");
     }
 
     public void onServiceRemove(CamelContext context, Service service) {
-        // do nothing
+        events.add("onServiceRemove");
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
-        // do nothing
+        events.add("onRoutesAdd");
     }
 
     public void onRoutesRemove(Collection<Route> routes) {
-        // do nothing
+        events.add("onRoutesRemove");
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        // do nothing
+        events.add("onRouteContextCreate");
     }
 
+    public List<String> getEvents() {
+        return events;
+    }
 }

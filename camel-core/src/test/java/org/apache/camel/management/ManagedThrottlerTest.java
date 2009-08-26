@@ -22,7 +22,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -64,7 +63,7 @@ public class ManagedThrottlerTest extends ContextTestSupport {
         Long last = (Long) mbeanServer.getAttribute(routeName, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take at most 1 sec: was " + total, total < 1100);
+        assertTrue("Should take at most 1.5 sec: was " + total, total < 1500);
 
         // change the throttler using JMX
         mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequestsPerPeriod", (long) 2));
