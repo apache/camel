@@ -75,15 +75,11 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
     private static final String MANAGED_RESOURCE_CLASSNAME = "org.springframework.jmx.export.annotation.ManagedResource";
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
-    private final ManagementStrategy strategy;
+    private final CamelContext context;
     private boolean initialized;
 
-    public DefaultManagedLifecycleStrategy() {
-        strategy = new ManagedManagementStrategy();
-    }
-
-    public DefaultManagedLifecycleStrategy(ManagementStrategy strategy) {
-        this.strategy = strategy;
+    public DefaultManagedLifecycleStrategy(CamelContext context) {
+        this.context = context;
     }
 
     public void onContextStart(CamelContext context) {
@@ -91,10 +87,10 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             initialized = true;
 
             // call addService so that context will handle lifecycle on the strategy
-            context.addService(strategy);
+            context.addService(getStrategy());
 
             ManagedCamelContext mc = new ManagedCamelContext(context);
-            strategy.manageObject(mc);
+            getStrategy().manageObject(mc);
 
         } catch (Exception e) {
             // must rethrow to allow CamelContext fallback to non JMX agent to allow
@@ -111,8 +107,8 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         try {
             ManagedCamelContext mc = new ManagedCamelContext(context);
             // the context could have been removed already
-            if (strategy.isManaged(null, mc)) {
-                strategy.unmanageObject(mc);
+            if (getStrategy().isManaged(null, mc)) {
+                getStrategy().unmanageObject(mc);
             }
         } catch (Exception e) {
             LOG.warn("Could not unregister CamelContext MBean", e);
@@ -126,7 +122,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
         try {
             ManagedComponent mc = new ManagedComponent(name, component);
-            strategy.manageObject(mc);
+            getStrategy().manageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not register Component MBean", e);
         }
@@ -139,7 +135,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
         try {
             ManagedComponent mc = new ManagedComponent(name, component);
-            strategy.unmanageObject(mc);
+            getStrategy().unmanageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not unregister Component MBean", e);
         }
@@ -191,7 +187,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             } else {
                 me = new ManagedEndpoint(endpoint);
             }
-            strategy.unmanageObject(me);
+            getStrategy().unmanageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not unregister Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
@@ -209,7 +205,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             Method method = annotation.getClass().getMethod("objectName");
             String name = (String) method.invoke(annotation);
             ObjectName objectName = ObjectName.getInstance(name);
-            strategy.manageNamedObject(endpoint, objectName);
+            getStrategy().manageNamedObject(endpoint, objectName);
         } catch (Exception e) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("objectName method not present on endpoint, wrapping endpoint in ManagedEndpoint instead: " + endpoint);
@@ -226,7 +222,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             } else {
                 me = new ManagedEndpoint(endpoint);
             }
-            strategy.manageObject(me);
+            getStrategy().manageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
@@ -251,7 +247,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             managedObject = getManagedObjectForService(context, service);
         }
         try {
-            strategy.manageObject(managedObject);
+            getStrategy().manageObject(managedObject);
         } catch (Exception e) {
             LOG.warn("Could not register service: " + service + " as Service MBean.", e);
         }
@@ -272,7 +268,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
         if (managedObject != null) {
             try {
-                strategy.unmanageObject(managedObject);
+                getStrategy().unmanageObject(managedObject);
             } catch (Exception e) {
                 LOG.warn("Could not unregister service: " + service + " as Service MBean.", e);
             }
@@ -337,7 +333,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(strategy, route);
+            ManagedRoute mr = new ManagedRoute(getStrategy(), route);
 
             // get the wrapped instrumentation processor from this route
             // and set me as the counter
@@ -351,7 +347,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             }
 
             try {
-                strategy.manageObject(mr);
+                getStrategy().manageObject(mr);
             } catch (JMException e) {
                 LOG.warn("Could not register Route MBean", e);
             } catch (Exception e) {
@@ -367,9 +363,9 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(strategy, route);
+            ManagedRoute mr = new ManagedRoute(getStrategy(), route);
             try {
-                strategy.unmanageObject(mr);
+                getStrategy().unmanageObject(mr);
             } catch (Exception e) {
                 LOG.warn("Could not unregister Route MBean", e);
             }
@@ -421,7 +417,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
 
         // okay this is a processor we would like to manage so create the
         // performance counter that is the base for processors
-        ManagedPerformanceCounter pc = new ManagedPerformanceCounter(strategy);
+        ManagedPerformanceCounter pc = new ManagedPerformanceCounter(getStrategy());
 
         // and add it as a a registered counter that will be used lazy when Camel
         // does the instrumentation of the route and adds the InstrumentationProcessor
@@ -451,20 +447,22 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
 
         // only if custom id assigned
-        if (strategy.isOnlyManageProcessorWithCustomId()) {
+        if (getStrategy().isOnlyManageProcessorWithCustomId()) {
             return processor.hasCustomIdAssigned();
         }
 
         // use customer filter
-        return strategy.manageProcessor(processor);
+        return getStrategy().manageProcessor(processor);
+    }
+
+    private ManagementStrategy getStrategy() {
+        return context.getManagementStrategy();
     }
 
     public void start() throws Exception {
-        strategy.start();
     }
 
     public void stop() throws Exception {
-        strategy.stop();
     }
 }
 

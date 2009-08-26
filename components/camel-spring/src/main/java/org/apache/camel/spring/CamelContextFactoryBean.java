@@ -432,7 +432,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (camelJMXAgent != null && camelJMXAgent.isDisabled()) {
             LOG.info("JMXAgent disabled");
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
-            getContext().setLifecycleStrategies(new ArrayList<LifecycleStrategy>());
+            getContext().getLifecycleStrategies().clear();
+            // no need to add a lifecycle strategy as we do not need one as JMX is disabled
             getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
             LOG.info("JMXAgent enabled: " + camelJMXAgent);
@@ -449,8 +450,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(agent);
             getContext().setManagementStrategy(managementStrategy);
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
-            getContext().setLifecycleStrategies(new ArrayList<LifecycleStrategy>());
-            getContext().addLifecycleStrategy(new DefaultManagedLifecycleStrategy(managementStrategy));
+            getContext().getLifecycleStrategies().clear();
+            getContext().addLifecycleStrategy(new DefaultManagedLifecycleStrategy(getContext()));
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
         }
     }
