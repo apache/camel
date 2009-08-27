@@ -86,6 +86,10 @@ public abstract class DefaultRoute implements Route {
         return servicesForRoute;
     }
 
+    public void onStartingServices(List<Service> services) throws Exception {
+        addServices(services);
+    }
+
     public List<Service> getServices() {
         return services;
     }

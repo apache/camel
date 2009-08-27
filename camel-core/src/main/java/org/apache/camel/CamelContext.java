@@ -258,8 +258,17 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param route the route to start
      * @throws Exception is thrown if the route could not be started for whatever reason
+     * @deprecated will be removed in Camel 2.2
      */
     void startRoute(RouteDefinition route) throws Exception;
+
+    /**
+     * Starts the given route if it has been previously stopped
+     *
+     * @param routeId the route id
+     * @throws Exception is thrown if the route could not be started for whatever reason
+     */
+    void startRoute(String routeId) throws Exception;
 
     /**
      * Stops the given route. It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
@@ -267,9 +276,35 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param route the route to stop
      * @throws Exception is thrown if the route could not be stopped for whatever reason
+     * @deprecated will be removed in Camel 2.2
      */
     void stopRoute(RouteDefinition route) throws Exception;
 
+    /**
+     * Stops the given route. It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
+     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     *
+     * @param routeId the route id
+     * @throws Exception is thrown if the route could not be stopped for whatever reason
+     */
+    void stopRoute(String routeId) throws Exception;
+
+    /**
+     * Returns the current status of the given route
+     *
+     * @param routeId the route id
+     * @return the status for the route
+     */
+    ServiceStatus getRouteStatus(String routeId);
+
+    /**
+     * Returns the current status of the given route
+     *
+     * @param route the route
+     * @return the status for the route
+     * @deprecated will be removed in Camel 2.2
+     */
+    ServiceStatus getRouteStatus(RouteDefinition route);
 
     // Properties
     //-----------------------------------------------------------------------
@@ -429,23 +464,6 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @throws NoFactoryAvailableException is thrown if a factory could not be found
      */
     FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
-
-    /**
-     * Returns the current status of the given route
-     *
-     * @param routeId the route id
-     * @return the status for the route
-     */
-    ServiceStatus getRouteStatus(String routeId);
-
-    /**
-     * Returns the current status of the given route
-     *
-     * @param route the route
-     * @return the status for the route
-     * @deprecated will be removed in Camel 2.2
-     */
-    ServiceStatus getRouteStatus(RouteDefinition route);
 
     /**
      * Returns the class resolver to be used for loading/lookup of classes.

@@ -597,6 +597,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         startRouteService(routeService);
     }
 
+    public synchronized void startRoute(String routeId) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            routeService.start();
+        }
+    }
+
     public void stopRoute(RouteDefinition route) throws Exception {
         stopRoute(route.idOrCreate(nodeIdFactory));
     }
@@ -605,7 +612,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      * Stops the route denoted by the given RouteType id
      */
     public synchronized void stopRoute(String key) throws Exception {
-        RouteService routeService = routeServices.remove(key);
+        RouteService routeService = routeServices.get(key);
         if (routeService != null) {
             routeService.stop();
         }

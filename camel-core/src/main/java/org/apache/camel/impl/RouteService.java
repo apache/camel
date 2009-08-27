@@ -29,6 +29,8 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
@@ -37,6 +39,8 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public class RouteService extends ServiceSupport {
+
+    private static final Log LOG = LogFactory.getLog(RouteService.class);
 
     private final DefaultCamelContext camelContext;
     private final RouteDefinition routeDefinition;
@@ -80,12 +84,19 @@ public class RouteService extends ServiceSupport {
         }
 
         for (Route route : routes) {
-            List<Service> services = route.getServicesForRoute();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Starting route: " + route);
+            }
+
+            List<Service> services = route.getServices();
+
+            // callback that we are staring these services
+            route.onStartingServices(services);
 
             // gather list of services to start as we need to start child services as well
             List<Service> list = new ArrayList<Service>();
             for (Service service : services) {
-                doGetServiesToStart(list, service);
+                doGetChildServies(list, service);
             }
             startChildService(list);
 
@@ -94,37 +105,26 @@ public class RouteService extends ServiceSupport {
         }
     }
 
-    /**
-     * Need to recursive start child services for routes
-     */
-    private void doGetServiesToStart(List<Service> services, Service service) throws Exception {
-        services.add(service);
-
-        if (service instanceof Navigate) {
-            Navigate<?> nav = (Navigate<?>) service;
-            if (nav.hasNext()) {
-                List<?> children = nav.next();
-                for (Object child : children) {
-                    if (child instanceof Service) {
-                        doGetServiesToStart(services, (Service) child);
-                    }
-                }
-            }
-        }
-    }
-
     protected void doStop() throws Exception {
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRoutesRemove(routes);
         }
 
-        // do not stop child services as in doStart
-        // as route.getServicesForRoute() will restart
-        // already stopped services, so we end up starting
-        // stuff when we stop.
-
-        // fire events
         for (Route route : routes) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Stopping route: " + route);
+            }
+            // getServices will not add services again
+            List<Service> services = route.getServices();
+
+            // gather list of services to stop as we need to start child services as well
+            List<Service> list = new ArrayList<Service>();
+            for (Service service : services) {
+                doGetChildServies(list, service);
+            }
+            stopChildService(list);
+
+            // fire event
             EventHelper.notifyRouteStopped(camelContext, route);
         }
 
@@ -138,6 +138,35 @@ public class RouteService extends ServiceSupport {
             }
             ServiceHelper.startService(service);
             addChildService(service);
+        }
+    }
+
+    protected void stopChildService(List<Service> services) throws Exception {
+        for (Service service : services) {
+            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                strategy.onServiceRemove(camelContext, service);
+            }
+            ServiceHelper.stopService(service);
+            removeChildService(service);
+        }
+    }
+
+    /**
+     * Need to recursive start child services for routes
+     */
+    private static void doGetChildServies(List<Service> services, Service service) throws Exception {
+        services.add(service);
+
+        if (service instanceof Navigate) {
+            Navigate<?> nav = (Navigate<?>) service;
+            if (nav.hasNext()) {
+                List<?> children = nav.next();
+                for (Object child : children) {
+                    if (child instanceof Service) {
+                        doGetChildServies(services, (Service) child);
+                    }
+                }
+            }
         }
     }
 

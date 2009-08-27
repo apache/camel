@@ -53,15 +53,26 @@ public interface Route {
 
     /**
      * This property map is used to associate information about
-     * the route. Gets all tbe services for this routes
+     * the route. Gets all the services for this routes
+     * </p>
+     * This implementation is used for initiali
      *
      * @return the services
      * @throws Exception is thrown in case of error
+     * @deprecated will be removed in Camel 2.2
      */
     List<Service> getServicesForRoute() throws Exception;
 
     /**
-     * Returns the additional services required for this particular route
+     * A strategy callback allowing special initialization when services is starting.
+     *
+     * @param services the service
+     * @throws Exception is thrown in case of error
+     */
+    void onStartingServices(List<Service> services) throws Exception;
+
+    /**
+     * Returns the services for this particular route
      */
     List<Service> getServices();
 

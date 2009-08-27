@@ -68,7 +68,7 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         return ep != null ? ep.getEndpointUri() : VALUE_UNKNOWN;
     }
 
-    @ManagedAttribute(description = "Route state")
+    @ManagedAttribute(description = "Route State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         ServiceStatus status = context.getRouteStatus(route.getId());
@@ -86,11 +86,11 @@ public class ManagedRoute extends ManagedPerformanceCounter {
 
     @ManagedOperation(description = "Start Route")
     public void start() throws Exception {
-        throw new IllegalArgumentException("Start not supported");
+        context.startRoute(getRouteId());
     }
 
     @ManagedOperation(description = "Stop Route")
     public void stop() throws Exception {
-        throw new IllegalArgumentException("Stop not supported");
+        context.stopRoute(getRouteId());
     }
 }

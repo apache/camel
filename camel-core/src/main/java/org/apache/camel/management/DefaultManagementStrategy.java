@@ -94,28 +94,28 @@ public class DefaultManagementStrategy implements ManagementStrategy {
         return false;
     }
 
-    public void manageObject(Object o) throws Exception {
+    public void manageObject(Object managedObject) throws Exception {
         // noop
     }
 
-    public void manageNamedObject(Object o, Object o1) throws Exception {
+    public void manageNamedObject(Object managedObject, Object preferedName) throws Exception {
         // noop
     }
 
-    public <T> T getManagedObjectName(Object o, String s, Class<T> tClass) throws Exception {
+    public <T> T getManagedObjectName(Object managedObject, String customName, Class<T> nameType) throws Exception {
         // noop
         return null;
     }
 
-    public void unmanageObject(Object o) throws Exception {
+    public void unmanageObject(Object managedObject) throws Exception {
         // noop
     }
 
-    public void unmanageNamedObject(Object o) throws Exception {
+    public void unmanageNamedObject(Object name) throws Exception {
         // noop
     }
 
-    public boolean isManaged(Object o, Object o1) {
+    public boolean isManaged(Object managedObject, Object name) {
         // noop
         return false;
     }
