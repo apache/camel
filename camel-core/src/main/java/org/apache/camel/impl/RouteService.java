@@ -100,6 +100,9 @@ public class RouteService extends ServiceSupport {
             }
             startChildService(list);
 
+            // start the route itself
+            ServiceHelper.startService(route);
+
             // fire event
             EventHelper.notifyRouteStarted(camelContext, route);
         }
@@ -123,6 +126,9 @@ public class RouteService extends ServiceSupport {
                 doGetChildServies(list, service);
             }
             stopChildService(list);
+
+            // stop the route itself
+            ServiceHelper.stopService(route);
 
             // fire event
             EventHelper.notifyRouteStopped(camelContext, route);

@@ -38,13 +38,6 @@ public interface Route {
     Endpoint getEndpoint();
 
     /**
-     * Sets the inbound endpoint
-     *
-     * @param endpoint the endpoint
-     */
-    void setEndpoint(Endpoint endpoint);
-
-    /**
      * This property map is used to associate information about the route.
      *
      * @return properties
@@ -75,13 +68,6 @@ public interface Route {
      * Returns the services for this particular route
      */
     List<Service> getServices();
-
-    /**
-     * Sets the sources for this route
-     *
-     * @param services the services
-     */
-    void setServices(List<Service> services);
 
     /**
      * Adds a service to this route

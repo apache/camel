@@ -20,23 +20,18 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
+ * Extended test to see if mbeans is removed and stats are correct
+ *
  * @version $Revision$
  */
-public class ManagedRouteStopAndStartTest extends ContextTestSupport {
+public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStartTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        deleteDirectory("target/managed");
-        super.setUp();
-    }
-
+    @SuppressWarnings("unchecked")
     public void testStopAndStartRoute() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
@@ -52,11 +47,32 @@ public class ManagedRouteStopAndStartTest extends ContextTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
+        // need a bit time to let JMX update
+        Thread.sleep(1000);
+
+        // should have 1 completed exchange
+        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+        assertEquals(1, completed.longValue());
+
+        // should be 1 consumer and 1 processor
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
+        assertEquals("Should be 1 consumer", 1, set.size());
+
+        set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
+        assertEquals("Should be 1 processor", 1, set.size());
+
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+
+        // should be 0 consumer and 0 processor
+        set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
+        assertEquals("Should be 0 consumer", 0, set.size());
+
+        set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
+        assertEquals("Should be 0 processor", 0, set.size());
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
@@ -78,25 +94,22 @@ public class ManagedRouteStopAndStartTest extends ContextTestSupport {
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
+        // should be 1 consumer and 1 processor
+        set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
+        assertEquals("Should be 1 consumer", 1, set.size());
+
+        set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
+        assertEquals("Should be 1 processor", 1, set.size());
+
         // this time the file is consumed
         mock.assertIsSatisfied();
-    }
 
-    static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
+        // need a bit time to let JMX update
+        Thread.sleep(1000);
 
-        return set.iterator().next();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("file://target/managed").to("mock:result");
-            }
-        };
+        // should have 2 completed exchange
+        completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+        assertEquals(2, completed.longValue());
     }
 
 }

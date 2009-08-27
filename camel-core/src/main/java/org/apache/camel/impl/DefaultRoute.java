@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -33,12 +32,11 @@ import org.apache.camel.Service;
  *
  * @version $Revision$
  */
-public abstract class DefaultRoute implements Route {
+public abstract class DefaultRoute extends ServiceSupport implements Route {
 
+    private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<String, Object>();
-    private Endpoint endpoint;
-    private List<Service> services = new ArrayList<Service>();
-    private List<Channel> channels = new ArrayList<Channel>();
+    private final List<Service> services = new ArrayList<Service>();
 
     public DefaultRoute(Endpoint endpoint) {
         this.endpoint = endpoint;
@@ -53,7 +51,7 @@ public abstract class DefaultRoute implements Route {
 
     @Override
     public String toString() {
-        return "Route";
+        return "Route " + getId();
     }
 
     public String getId() {
@@ -62,18 +60,6 @@ public abstract class DefaultRoute implements Route {
 
     public Endpoint getEndpoint() {
         return endpoint;
-    }
-
-    public void setEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public List<Channel> getChannels() {
-        return channels;
-    }
-
-    public void setChannels(List<Channel> channels) {
-        this.channels = channels;
     }
 
     public Map<String, Object> getProperties() {
@@ -94,10 +80,6 @@ public abstract class DefaultRoute implements Route {
         return services;
     }
 
-    public void setServices(List<Service> services) {
-        this.services = services;
-    }
-
     public void addService(Service service) {
         getServices().add(service);
     }
@@ -106,6 +88,14 @@ public abstract class DefaultRoute implements Route {
      * Strategy method to allow derived classes to lazily load services for the route
      */
     protected void addServices(List<Service> services) throws Exception {
+    }
+
+    protected void doStart() throws Exception {
+    }
+
+    protected void doStop() throws Exception {
+        // clear services when stopping
+        services.clear();
     }
 
 }

@@ -1001,10 +1001,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      */
     protected synchronized void startRouteService(RouteService routeService) throws Exception {
         String key = routeService.getId();
-        stopRoute(key);
-        routeServices.put(key, routeService);
-        if (shouldStartRoutes()) {
-            routeService.start();
+        ServiceStatus status = getRouteStatus(key);
+
+        if (status != null && status.isStarted()) {
+            // already started, then stop it
+            LOG.debug("Route " + key + " is already started");
+            return;
+        } else {
+            routeServices.put(key, routeService);
+            if (shouldStartRoutes()) {
+                routeService.start();
+            }
         }
     }
 

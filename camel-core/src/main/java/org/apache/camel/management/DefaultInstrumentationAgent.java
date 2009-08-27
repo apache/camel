@@ -214,6 +214,9 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Manag
     public void unregister(ObjectName name) throws JMException {
         server.unregisterMBean(name);
         mbeansRegistered.remove(name);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Unregistered MBean with objectname: " + name);
+        }
     }
 
     public boolean isRegistered(ObjectName name) {

@@ -246,6 +246,15 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             // regular for services
             managedObject = getManagedObjectForService(context, service);
         }
+
+        // skip already managed services, for example if a route has been restarted
+        if (getStrategy().isManaged(managedObject, null)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("The service is already managed: " + service);
+            }
+            return;
+        }
+
         try {
             getStrategy().manageObject(managedObject);
         } catch (Exception e) {
@@ -335,6 +344,14 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         for (Route route : routes) {
             ManagedRoute mr = new ManagedRoute(getStrategy(), context, route);
 
+            // skip already managed routes, for example if the route has been restarted
+            if (getStrategy().isManaged(mr, null)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The route is already managed: " + route);
+                }
+                continue;
+            }
+
             // get the wrapped instrumentation processor from this route
             // and set me as the counter
             if (route instanceof EventDrivenConsumerRoute) {
@@ -357,12 +374,7 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
     }
 
     public void onRoutesRemove(Collection<Route> routes) {
-        // the agent hasn't been started
-        if (!initialized) {
-            return;
-        }
-
-        // keep the route in the mbean so its still there, it will still be unregistered
+        // noop - keep the route in the mbean so its still there, it will still be unregistered
         // when camel itself is shutting down
     }
 
