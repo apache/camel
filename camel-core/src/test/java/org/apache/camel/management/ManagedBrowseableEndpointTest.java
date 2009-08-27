@@ -49,7 +49,7 @@ public class ManagedBrowseableEndpointTest extends ContextTestSupport {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
-        String uri = (String) mbeanServer.getAttribute(name, "Uri");
+        String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
 
         Long size = (Long) mbeanServer.invoke(name, "qeueSize", null, null);

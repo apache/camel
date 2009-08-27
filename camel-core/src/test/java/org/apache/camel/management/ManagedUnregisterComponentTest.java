@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -47,6 +48,9 @@ public class ManagedUnregisterComponentTest extends ContextTestSupport {
 
         ObjectName on = set.iterator().next();
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
+
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals(ServiceStatus.Started.name(), state);
 
         context.stop();
 

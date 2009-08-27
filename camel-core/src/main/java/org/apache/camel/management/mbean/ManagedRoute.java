@@ -49,7 +49,7 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     }
 
     @ManagedAttribute(description = "Route id")
-    public String getId() {
+    public String getRouteId() {
         String id = route.getId();
         if (id == null) {
             id = VALUE_UNKNOWN;
@@ -77,6 +77,11 @@ public class ManagedRoute extends ManagedPerformanceCounter {
             status = ServiceStatus.Stopped;
         }
         return status.name();
+    }
+
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
+        return context.getName();
     }
 
     @ManagedOperation(description = "Start Route")

@@ -33,8 +33,13 @@ public class ManagedEndpoint {
         return endpoint;
     }
 
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
+        return endpoint.getCamelContext().getName();
+    }
+
     @ManagedAttribute(description = "Endpoint Uri")
-    public String getUri() {
+    public String getEndpointUri() {
         return endpoint.getEndpointUri();
     }
 

@@ -17,6 +17,8 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.Component;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.impl.ServiceSupport;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -34,12 +36,34 @@ public class ManagedComponent {
         this.component = component;
     }
 
-    @ManagedAttribute(description = "Component Name")
-    public String getName() {
-        return name;
-    }
-
     public Component getComponent() {
         return component;
     }
+
+    @ManagedAttribute(description = "Component Name")
+    public String getComponentName() {
+        return name;
+    }
+
+    @ManagedAttribute(description = "Component State")
+    public String getState() {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+        if (component instanceof ServiceSupport) {
+            ServiceStatus status = ((ServiceSupport) component).getStatus();
+            // if no status exists then its stopped
+            if (status == null) {
+                status = ServiceStatus.Stopped;
+            }
+            return status.name();
+        }
+
+        // assume started if not a ServiceSupport instance
+        return ServiceStatus.Started.name();
+    }
+
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
+        return component.getCamelContext().getName();
+    }
+
 }

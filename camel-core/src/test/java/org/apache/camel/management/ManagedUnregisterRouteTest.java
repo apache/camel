@@ -43,7 +43,7 @@ public class ManagedUnregisterRouteTest extends ContextTestSupport {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
-        String id = (String) mbeanServer.getAttribute(on, "Id");
+        String id = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", id);
 
         context.stop();

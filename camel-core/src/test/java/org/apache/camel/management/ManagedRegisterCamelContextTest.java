@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -42,11 +43,11 @@ public class ManagedRegisterCamelContextTest extends ContextTestSupport {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
-        String name = (String) mbeanServer.getAttribute(on, "Name");
+        String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
-        Boolean started = (Boolean) mbeanServer.getAttribute(on, "Started");
-        assertEquals(Boolean.TRUE, started);
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals(ServiceStatus.Started.name(), state);
     }
 
     @Override

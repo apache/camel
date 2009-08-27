@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -45,11 +46,11 @@ public class ManagedUnregisterCamelContextTest extends TestSupport {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
-        String name = (String) mbeanServer.getAttribute(on, "Name");
+        String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
-        Boolean started = (Boolean) mbeanServer.getAttribute(on, "Started");
-        assertEquals(true, started.booleanValue());
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals(ServiceStatus.Started.name(), state);
 
         context.stop();
 

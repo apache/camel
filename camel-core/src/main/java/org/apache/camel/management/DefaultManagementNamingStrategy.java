@@ -94,7 +94,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getComponent().getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_COMPONENT + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(mbean.getName()));
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(mbean.getComponentName()));
         return createObjectName(buffer);
     }
 

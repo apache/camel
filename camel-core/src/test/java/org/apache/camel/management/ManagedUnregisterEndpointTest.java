@@ -43,7 +43,7 @@ public class ManagedUnregisterEndpointTest extends ContextTestSupport {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
-        String uri = (String) mbeanServer.getAttribute(on, "Uri");
+        String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("mock://result", uri);
 
         context.stop();

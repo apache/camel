@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -42,12 +43,25 @@ public class ManagedService {
         return context;
     }
 
-    @ManagedAttribute(description = "Service running state")
-    public boolean isStarted() {
+    @ManagedAttribute(description = "Service State")
+    public String getState() {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (service instanceof ServiceSupport) {
-            return ((ServiceSupport) service).isStarted();
+            ServiceStatus status = ((ServiceSupport) service).getStatus();
+            // if no status exists then its stopped
+            if (status == null) {
+                status = ServiceStatus.Stopped;
+            }
+            return status.name();
         }
-        throw new IllegalStateException("The managed service does not support running state, is type: " + service.getClass().getName());
+
+        // assume started if not a ServiceSupport instance
+        return ServiceStatus.Started.name();
+    }
+
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
+        return context.getName();
     }
 
     @ManagedOperation(description = "Start Service")

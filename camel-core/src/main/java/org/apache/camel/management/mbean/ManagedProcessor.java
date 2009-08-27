@@ -18,6 +18,8 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -56,17 +58,38 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
         return definition;
     }
 
+    @ManagedAttribute(description = "Processor State")
+    public String getState() {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+        if (processor instanceof ServiceSupport) {
+            ServiceStatus status = ((ServiceSupport) processor).getStatus();
+            // if no status exists then its stopped
+            if (status == null) {
+                status = ServiceStatus.Stopped;
+            }
+            return status.name();
+        }
+
+        // assume started if not a ServiceSupport instance
+        return ServiceStatus.Started.name();
+    }
+
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
+        return context.getName();
+    }
+
     @ManagedAttribute(description = "Route id")
     public String getRouteId() {
         return routeId;
     }
 
-    @ManagedAttribute(description = "id")
-    public String getId() {
+    @ManagedAttribute(description = "Processor id")
+    public String getProcessorId() {
         return id;
     }
 
-    private String doGetRouteId(ProcessorDefinition definition) {
+    private static String doGetRouteId(ProcessorDefinition definition) {
         if (definition == null) {
             return null;
         }

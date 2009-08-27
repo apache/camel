@@ -16,8 +16,11 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -30,7 +33,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public class ManagedCamelContext {
 
     private CamelContext context;
-    private ProducerTemplate template;
 
     public ManagedCamelContext(CamelContext context) {
         this.context = context;
@@ -40,14 +42,28 @@ public class ManagedCamelContext {
         return context;
     }
 
-    @ManagedAttribute(description = "Name")
-    public String getName() {
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
         return context.getName();
     }
 
-    @ManagedAttribute(description = "Camel running state")
-    public boolean isStarted() {
-        return ((ServiceSupport) context).isStarted();
+    @ManagedAttribute(description = "Camel State")
+    public String getState() {
+        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+        ServiceStatus status = ((ServiceSupport) context).getStatus();
+        // if no status exists then its stopped
+        if (status == null) {
+            status = ServiceStatus.Stopped;
+        }
+        return status.name();
+    }
+
+    @ManagedAttribute(description = "Camel Properties")
+    public Map<String, String> getProperties() {
+        if (context.getProperties().isEmpty()) {
+            return null;
+        }
+        return context.getProperties();
     }
 
     @ManagedOperation(description = "Start Camel")
@@ -74,8 +90,5 @@ public class ManagedCamelContext {
         template.stop();
         return answer;
     }
-
-
-
 
 }
