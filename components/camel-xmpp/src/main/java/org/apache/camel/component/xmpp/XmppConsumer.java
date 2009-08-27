@@ -22,6 +22,8 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ChatManager;
+import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -40,11 +42,12 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  *
  * @version $Revision$
  */
-public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener {
+public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
     private static final transient Log LOG = LogFactory.getLog(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
     private Chat privateChat;
+    private ChatManager chatManager;
     private XMPPConnection connection;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
@@ -55,21 +58,19 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     @Override
     protected void doStart() throws Exception {
         connection = endpoint.createConnection();
+        chatManager = connection.getChatManager();
+        chatManager.addChatListener(this);
 
         if (endpoint.getRoom() == null) {
-
-            // if an existing chat session has been opened (for example by a producer) let's
-            // just add a listener to that chat
-            privateChat = connection.getChatManager().getThreadChat(endpoint.getParticipant());
+            privateChat = chatManager.getThreadChat(endpoint.getChatId());
 
             if (privateChat != null) {
                 LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
                 privateChat.addMessageListener(this);
             } else {                
-                privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), endpoint.getParticipant(), this);
+                privateChat = connection.getChatManager().createChat(endpoint.getParticipant(),endpoint.getChatId(), this);
                 LOG.debug("Opening private chat to " + privateChat.getParticipant());
             }
-
         } else {
             // add the presence packet listener to the connection so we only get packets that concers us
             // we must add the listener before creating the muc
@@ -103,6 +104,13 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             muc = null;
         }
         //the endpoint will clean up the connection
+    }
+
+    public void chatCreated(Chat chat, boolean createdLocally) {
+        if (!createdLocally) {
+            LOG.debug("Accepting incoming chat session from " + chat.getParticipant());
+            chat.addMessageListener(this);
+        }
     }
 
     public void processPacket(Packet packet) {

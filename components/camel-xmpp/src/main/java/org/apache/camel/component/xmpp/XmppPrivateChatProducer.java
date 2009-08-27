@@ -65,11 +65,14 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         }
 
         ChatManager chatManager = connection.getChatManager();
-        Chat chat = chatManager.getThreadChat(getParticipant());
+        LOG.debug("Looking for existing chat instance with thread ID " + endpoint.getChatId());
+        Chat chat = chatManager.getThreadChat(endpoint.getChatId());
         if (chat == null) {
-            chat = chatManager.createChat(getParticipant(), getParticipant(), new MessageListener() {
+            LOG.debug("Creating new chat instance with thread ID " + endpoint.getChatId());
+            chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
+                    LOG.debug("Received and discarding message from " + getParticipant() + " : " + message.getBody());
                 }
             });
         }
@@ -78,7 +81,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         try {
             message = new Message();
             message.setTo(getParticipant());
-            message.setThread(getParticipant());
+            message.setThread(endpoint.getChatId());
             message.setType(Message.Type.normal);
 
             endpoint.getBinding().populateXmppMessage(message, exchange);

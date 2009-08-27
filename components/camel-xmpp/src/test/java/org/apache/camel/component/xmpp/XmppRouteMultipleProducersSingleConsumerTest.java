@@ -30,37 +30,35 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class XmppRouteChatTest extends CamelTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(XmppRouteChatTest.class);
-    protected MockEndpoint consumerEndpoint;
-    protected MockEndpoint producerEndpoint;
-    protected String body1 = "the first message";
-    protected String body2 = "the second message";
-
+public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSupport {
+    private static final transient Log LOG = LogFactory.getLog(XmppRouteMultipleProducersSingleConsumerTest.class);
+    protected MockEndpoint goodEndpoint;
+    protected MockEndpoint badEndpoint;
 
     @Test
-    public void testXmppChat() throws Exception {
-        consumerEndpoint = (MockEndpoint)context.getEndpoint("mock:out1");
-        producerEndpoint = (MockEndpoint)context.getEndpoint("mock:out2");
+    public void testProducerGetsEverything() throws Exception {
 
-        consumerEndpoint.expectedBodiesReceived(body1, body2);
-        producerEndpoint.expectedBodiesReceived(body1, body2);
+        goodEndpoint = (MockEndpoint)context.getEndpoint("mock:good");
+        badEndpoint = (MockEndpoint)context.getEndpoint("mock:bad");
 
-        //will send chat messages to the consumer
-        template.sendBody("direct:toConsumer", body1);
-        template.sendBody("direct:toConsumer", body2);
-        
-        template.sendBody("direct:toProducer", body1);
-        template.sendBody("direct:toProducer", body2);
+        goodEndpoint.expectedMessageCount(4);
+        badEndpoint.expectedMessageCount(0);
 
-        consumerEndpoint.assertIsSatisfied();
-        producerEndpoint.assertIsSatisfied();
+        template.sendBody("direct:toProducer1", "From producer");
+        template.sendBody("direct:toProducer1", "From producer");
 
+        template.sendBody("direct:toProducer2", "From producer1");
+        template.sendBody("direct:toProducer2", "From producer1");
+
+        goodEndpoint.assertIsSatisfied();
+        badEndpoint.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+
+                //getContext().setTracing(true);
 
                 Processor stringConverter = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -72,25 +70,33 @@ public class XmppRouteChatTest extends CamelTestSupport {
                     }
                 };
 
-                from("direct:toConsumer")
-                    .to(getConsumerUri());
+                from("direct:toProducer1")
+                    .to(getProducer1Uri());
 
-                from("direct:toProducer")
-                    .to(getProducerUri());
+                from("direct:toProducer2")
+                    .to(getProducer2Uri());
 
                 from(getConsumerUri())
                     .process(stringConverter)
-                    .to("mock:out1");
+                    .to(getConsumerUri());
 
-                from(getProducerUri())
+                from(getProducer1Uri())
                     .process(stringConverter)
-                    .to("mock:out2");
+                    .to("mock:good");
+
+                from(getProducer2Uri())
+                    .process(stringConverter)
+                    .to("mock:bad");
             }
         };
     }
 
-    protected String getProducerUri() {
+    protected String getProducer1Uri() {
         return "xmpp://jabber.org:5222/camel_consumer@jabber.org?user=camel_producer&password=secret&serviceName=jabber.org";
+    }
+
+    protected String getProducer2Uri() {
+        return "xmpp://jabber.org:5222/camel_consumer@jabber.org?user=camel_producer1&password=secret&serviceName=jabber.org";
     }
     
     protected String getConsumerUri() {

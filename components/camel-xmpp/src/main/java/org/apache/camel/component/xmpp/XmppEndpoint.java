@@ -35,7 +35,9 @@ import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
@@ -137,6 +139,17 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         connection.connect();
 
+        connection.addPacketListener(new XmppLogger("INBOUND"), new PacketFilter() {
+                public boolean accept(Packet packet) {
+                    return true;
+                }
+        });
+        connection.addPacketWriterListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
+                public boolean accept(Packet packet) {
+                    return true;
+                }
+        });
+
         if (login && !connection.isAuthenticated()) {
             if (user != null) {
                 if (LOG.isDebugEnabled()) {
@@ -194,6 +207,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public static String getConnectionMessage(XMPPConnection connection) {
         return connection.getHost() + ":" + connection.getPort() + "/" + connection.getServiceName();
+    }
+
+    public String getChatId() {
+        return "Chat:" + getParticipant() + ":" + getUser();
     }
 
     protected synchronized void destroy() throws Exception {
