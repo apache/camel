@@ -59,6 +59,8 @@ public abstract class ServiceSupport implements Service {
                     } else {
                         started.set(true);
                         starting.set(false);
+                        stopping.set(false);
+                        stopped.set(false);
                     }
                 }
             }
@@ -82,6 +84,8 @@ public abstract class ServiceSupport implements Service {
             } finally {
                 stopped.set(true);
                 stopping.set(false);
+                starting.set(false);
+                started.set(false);
             }
         }
     }
