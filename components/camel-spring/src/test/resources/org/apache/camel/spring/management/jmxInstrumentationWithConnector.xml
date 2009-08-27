@@ -32,7 +32,7 @@
     </bean>
   
   <bean id="lifeCycleStrategy" class="org.apache.camel.management.DefaultManagedLifecycleStrategy">
-      <constructor-arg index="0" ref="managementStrategy"/>
+      <constructor-arg index="0" ref="camel"/>
   </bean>
   
   <bean id="mybean" class="org.apache.camel.spring.example.DummyBean">
