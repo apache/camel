@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.irc;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
-
+import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
 
 /**
@@ -38,6 +37,7 @@ public class IrcComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(IrcComponent.class);
     private IrcConfiguration configuration;
     private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
+    private IRCEventListener ircLogger;
 
     public IrcComponent() {
         configuration = new IrcConfiguration();
@@ -103,6 +103,13 @@ public class IrcComponent extends DefaultComponent {
         conn.setColors(configuration.isColors());
         conn.setPong(true);
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Adding IRC event logging listener");
+        }
+
+        ircLogger = createIrcLogger();
+        conn.addIRCEventListener(ircLogger);
+
         try {
             conn.connect();
         } catch (Exception e) {
@@ -129,6 +136,10 @@ public class IrcComponent extends DefaultComponent {
             closeConnection(entry.getKey(), entry.getValue());
         }
         super.doStop();
+    }
+
+    protected IRCEventListener createIrcLogger() {
+        return new IrcLogger(LOG);
     }
 
     public IrcConfiguration getConfiguration() {

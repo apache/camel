@@ -21,7 +21,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
-import org.schwering.irc.lib.IRCEventListener;
 
 public class IrcProducer extends DefaultProducer {
 
@@ -32,7 +31,6 @@ public class IrcProducer extends DefaultProducer {
 
     private IRCConnection connection;
     private IrcEndpoint endpoint;
-    private IRCEventListener ircErrorLogger;
 
     public IrcProducer(IrcEndpoint endpoint, IRCConnection connection) {
         super(endpoint);
@@ -67,9 +65,6 @@ public class IrcProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        ircErrorLogger = createIrcErrorLogger();
-        connection.addIRCEventListener(ircErrorLogger);
-
         for (String channel : endpoint.getConfiguration().getChannels()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Joining: " + channel);
@@ -87,7 +82,6 @@ public class IrcProducer extends DefaultProducer {
                 }
                 connection.doPart(channel);
             }
-            connection.removeIRCEventListener(ircErrorLogger);
         }
         super.doStop();
     }
@@ -99,10 +93,6 @@ public class IrcProducer extends DefaultProducer {
             }
         }
         return false;
-    }
-
-    protected IRCEventListener createIrcErrorLogger() {
-        return new IrcErrorLogger(LOG);
     }
 
 }
