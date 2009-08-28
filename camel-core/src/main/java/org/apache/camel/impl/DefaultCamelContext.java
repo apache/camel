@@ -591,7 +591,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public void startRoute(RouteDefinition route) throws Exception {
-        Collection<Route> routes = new ArrayList<Route>();
+        List<Route> routes = new ArrayList<Route>();
         List<RouteContext> routeContexts = route.addRoutes(this, routes);
         RouteService routeService = new RouteService(this, route, routeContexts, routes);
         startRouteService(routeService);

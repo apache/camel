@@ -56,6 +56,11 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
     }
 
+    public synchronized void setDestination(Endpoint destination) {
+        this.destination = destination;
+        this.init = false;
+    }
+
     public String getTraceLabel() {
         return destination.getEndpointUri();
     }
@@ -95,6 +100,10 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
 
     public Endpoint getDestination() {
         return destination;
+    }
+
+    public ExchangePattern getPattern() {
+        return pattern;
     }
 
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {

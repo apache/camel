@@ -19,6 +19,8 @@ package org.apache.camel;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.RouteContext;
+
 public interface Route {
 
     String ID_PROPERTY = "id";
@@ -43,6 +45,13 @@ public interface Route {
      * @return properties
      */
     Map<String, Object> getProperties();
+
+    /**
+     * Gets the route context
+     *
+     * @return the route context
+     */
+    RouteContext getRouteContext();
 
     /**
      * This property map is used to associate information about

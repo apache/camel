@@ -145,7 +145,7 @@ public class DefaultRouteContext implements RouteContext {
             wrapper.setProcessor(unitOfWorkProcessor);
 
             // and create the route that wraps the UoW
-            Route edcr = new EventDrivenConsumerRoute(getEndpoint(), wrapper);
+            Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), wrapper);
             edcr.getProperties().put(Route.ID_PROPERTY, route.idOrCreate(getCamelContext().getNodeIdFactory()));
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {

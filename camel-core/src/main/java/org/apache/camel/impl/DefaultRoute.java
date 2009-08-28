@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * A <a href="http://camel.apache.org/routes.html">Route</a>
@@ -37,13 +38,15 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<String, Object>();
     private final List<Service> services = new ArrayList<Service>();
+    private final RouteContext routeContext;
 
-    public DefaultRoute(Endpoint endpoint) {
+    public DefaultRoute(RouteContext routeContext, Endpoint endpoint) {
+        this.routeContext = routeContext;
         this.endpoint = endpoint;
     }
 
-    public DefaultRoute(Endpoint endpoint, Service... services) {
-        this(endpoint);
+    public DefaultRoute(RouteContext routeContext, Endpoint endpoint, Service... services) {
+        this(routeContext, endpoint);
         for (Service service : services) {
             addService(service);
         }
@@ -60,6 +63,10 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
 
     public Endpoint getEndpoint() {
         return endpoint;
+    }
+
+    public RouteContext getRouteContext() {
+        return routeContext;
     }
 
     public Map<String, Object> getProperties() {

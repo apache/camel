@@ -43,6 +43,7 @@ import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -51,6 +52,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.ClassResolver;
@@ -316,9 +318,9 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             return new ManagedDelayer(context, (Delayer) processor, definition);
         } else if (processor instanceof Throttler) {
             return new ManagedThrottler(context, (Throttler) processor, definition);
+        } else if (processor instanceof SendProcessor) {
+            return new ManagedSendProcessor(context, (SendProcessor) processor, definition);
         }
-
-        // TODO Add more specialized support for processors such as SendTo, WireTap etc.
 
         // fallback to a generic processor
         return new ManagedProcessor(context, processor, definition);

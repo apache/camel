@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.management.InstrumentationProcessor;
 
 /**
@@ -34,8 +35,8 @@ import org.apache.camel.management.InstrumentationProcessor;
 public class EventDrivenConsumerRoute extends DefaultRoute {
     private final Processor processor;
 
-    public EventDrivenConsumerRoute(Endpoint endpoint, Processor processor) {
-        super(endpoint);
+    public EventDrivenConsumerRoute(RouteContext routeContext, Endpoint endpoint, Processor processor) {
+        super(routeContext, endpoint);
         this.processor = processor;
     }
 
