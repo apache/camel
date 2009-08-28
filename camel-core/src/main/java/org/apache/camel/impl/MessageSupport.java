@@ -136,7 +136,9 @@ public abstract class MessageSupport implements Message {
     public void copyFrom(Message that) {
         setMessageId(that.getMessageId());
         setBody(that.getBody());
+        getHeaders().clear();
         getHeaders().putAll(that.getHeaders());
+        getAttachments().clear();
         getAttachments().putAll(that.getAttachments());
     }
 
