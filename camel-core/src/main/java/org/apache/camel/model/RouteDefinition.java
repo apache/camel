@@ -373,11 +373,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
                 if (log.isDebugEnabled()) {
                     log.debug("Tracing is enabled on route: " + this);
                 }
-                // only add a new tracer if not already a global configured on camel context
-                if (Tracer.getTracer(camelContext) == null) {
-                    Tracer tracer = Tracer.createTracer(camelContext);
-                    addInterceptStrategy(tracer);
-                }
+                // tracing is added in the DefaultChannel so we can enable it on the fly
             }
         }
 

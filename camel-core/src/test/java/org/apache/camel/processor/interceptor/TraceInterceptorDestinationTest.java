@@ -91,7 +91,7 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
                 // we disable regular trace logging in the log file. You can omit this and
                 // have both.
                 tracer.setLogLevel(LoggingLevel.OFF);
-                // and we must remeber to add the tracer to Camel
+                // and we must remember to add the tracer to Camel
                 getContext().addInterceptStrategy(tracer);
                 // END SNIPPET: e1
 

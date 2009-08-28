@@ -84,6 +84,16 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         return context.getName();
     }
 
+    @ManagedAttribute(description = "Tracing")
+    public Boolean getTracing() {
+        return route.getRouteContext().isTracing();
+    }
+
+    @ManagedAttribute(description = "Tracing")
+    public void setTracing(Boolean tracing) {
+        route.getRouteContext().setTracing(tracing);
+    }
+
     @ManagedOperation(description = "Start Route")
     public void start() throws Exception {
         context.startRoute(getRouteId());

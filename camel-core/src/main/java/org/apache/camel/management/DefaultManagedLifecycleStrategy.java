@@ -45,6 +45,7 @@ import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedThrottler;
+import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
@@ -54,6 +55,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -241,7 +243,10 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
 
         Object managedObject;
-        if (service instanceof Processor) {
+        if (service instanceof Tracer) {
+            // special for tracer
+            managedObject = new ManagedTracer(context, (Tracer) service);
+        } else if (service instanceof Processor) {
             // special for processors
             managedObject = getManagedObjectForProcessor(context, (Processor) service);
         } else {
@@ -271,7 +276,11 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
         }
 
         Object managedObject;
-        if (service instanceof Processor) {
+        if (service instanceof Tracer) {
+            // special for tracer
+            managedObject = new ManagedTracer(context, (Tracer) service);
+        } else if (service instanceof Processor) {
+            // special for processors
             managedObject = getManagedObjectForProcessor(context, (Processor) service);
         } else {
             // regular for services
@@ -403,9 +412,9 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
             registerPerformanceCounters(routeContext, processor, registeredCounters);
         }
 
-        // add intercept strategy that executes the JMX instrumentation for performance metrics
+        // set this managed intercept strategy that executes the JMX instrumentation for performance metrics
         // so our registered counters can be used for fine grained performance instrumentation
-        routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
+        routeContext.setManagedInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
     @SuppressWarnings("unchecked")

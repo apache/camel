@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
@@ -31,7 +32,7 @@ import org.apache.camel.spi.InterceptStrategy;
  *
  * @version $Revision$
  */
-public class Tracer implements InterceptStrategy {
+public class Tracer implements InterceptStrategy, Service {
 
     private TraceFormatter formatter = new DefaultTraceFormatter();
     private boolean enabled = true;
@@ -230,5 +231,11 @@ public class Tracer implements InterceptStrategy {
     @Override
     public String toString() {
         return "Tracer";
+    }
+
+    public void start() throws Exception {
+    }
+
+    public void stop() throws Exception {
     }
 }

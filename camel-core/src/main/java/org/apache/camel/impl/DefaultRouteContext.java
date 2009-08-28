@@ -49,6 +49,7 @@ public class DefaultRouteContext implements RouteContext {
     private final List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private InterceptStrategy managedInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
     private Boolean stramCache;
@@ -170,6 +171,14 @@ public class DefaultRouteContext implements RouteContext {
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
+    }
+
+    public void setManagedInterceptStrategy(InterceptStrategy interceptStrategy) {
+        this.managedInterceptStrategy = interceptStrategy;
+    }
+
+    public InterceptStrategy getManagedInterceptStrategy() {
+        return managedInterceptStrategy;
     }
 
     public boolean isRouteAdded() {

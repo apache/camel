@@ -26,6 +26,7 @@ import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
@@ -44,6 +45,8 @@ public interface ManagementNamingStrategy {
     ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException;
 
     ObjectName getObjectName(ManagedConsumer mbean) throws MalformedObjectNameException;
+
+    ObjectName getObjectName(ManagedTracer mbean) throws MalformedObjectNameException;
 
     /**
      * @deprecated

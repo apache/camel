@@ -535,4 +535,11 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     void setManagementStrategy(ManagementStrategy strategy);
 
+    /**
+     * Gets the default tracer
+     *
+     * @return the default tracer
+     */
+    InterceptStrategy getDefaultTracer();
+
 }

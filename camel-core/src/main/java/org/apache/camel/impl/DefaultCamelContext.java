@@ -127,6 +127,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     // so if we have 6 endpoints in the pool, we have 6 x 100 producers in total
     private ServicePool<Endpoint, Producer> producerServicePool = new DefaultProducerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
+    private Tracer defaultTracer;
 
     public DefaultCamelContext() {
         super();
@@ -888,12 +889,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
 
         if (isTracing()) {
-            // only add a new tracer if not already configured
-            if (Tracer.getTracer(this) == null) {
-                Tracer tracer = Tracer.createTracer(this);
-                LOG.debug("Tracing is enabled");
-                addInterceptStrategy(tracer);
-            }
+            // tracing is added in the DefaultChannel so we can enable it on the fly
+            LOG.debug("Tracing is enabled");
         }
 
         if (isHandleFault()) {
@@ -1189,6 +1186,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setManagementStrategy(ManagementStrategy managementStrategy) {
         this.managementStrategy = managementStrategy;
+    }
+
+    public InterceptStrategy getDefaultTracer() {
+        if (defaultTracer == null) {
+            defaultTracer = new Tracer();
+        }
+        return defaultTracer;
     }
 
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {

@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.spi.TraceableUnitOfWork;
 
 /**
@@ -75,6 +76,12 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
             List<RouteNode> list = tuow.getNodes();
             // get the 3rd last as its the bean
             Processor last = list.get(list.size() - 3).getProcessor();
+
+            // wrapped by JMX
+            if (last instanceof InstrumentationProcessor) {
+                InstrumentationProcessor ip = (InstrumentationProcessor) last;
+                last = ip.getProcessor();
+            }
 
             // set error message
             exchange.getOut().setFault(true);

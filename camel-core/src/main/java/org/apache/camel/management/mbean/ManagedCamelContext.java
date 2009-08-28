@@ -66,6 +66,16 @@ public class ManagedCamelContext {
         return context.getProperties();
     }
 
+    @ManagedAttribute(description = "Tracing")
+    public Boolean getTracing() {
+        return context.isTracing();
+    }
+
+    @ManagedAttribute(description = "Tracing")
+    public void setTracing(Boolean tracing) {
+        context.setTracing(tracing);
+    }
+
     @ManagedOperation(description = "Start Camel")
     public void start() throws Exception {
         context.start();

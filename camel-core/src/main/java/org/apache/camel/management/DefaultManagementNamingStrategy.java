@@ -32,6 +32,7 @@ import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -50,6 +51,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_CONSUMER = "consumers";
     public static final String TYPE_ROUTE = "routes";
     public static final String TYPE_COMPONENT = "components";
+    public static final String TYPE_TRACER = "tracer";
 
     protected String domainName;
     protected String hostName = "localhost";
@@ -136,6 +138,17 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public ObjectName getObjectName(ManagedService mbean) throws MalformedObjectNameException {
         // not supported
         return null;
+    }
+
+    public ObjectName getObjectName(ManagedTracer mbean) throws MalformedObjectNameException {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getCamelContext())).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_TRACER + ",");
+        buffer.append(KEY_NAME + "=")
+            .append("Tracer")
+            .append("(").append(getIdentityHashCode(mbean.getTracer())).append(")");
+        return createObjectName(buffer);
     }
 
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {

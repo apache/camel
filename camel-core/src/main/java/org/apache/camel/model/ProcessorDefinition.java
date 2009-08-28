@@ -166,6 +166,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // add interceptor strategies to the channel must be in this order: camel context, route context, local
         addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().getInterceptStrategies());
         addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
+        if (routeContext.getManagedInterceptStrategy() != null) {
+            channel.addInterceptStrategy(routeContext.getManagedInterceptStrategy());
+        }
         addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
         
         // init the channel
@@ -193,10 +196,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     protected void addInterceptStrategies(RouteContext routeContext, Channel channel, List<InterceptStrategy> strategies) {
         for (InterceptStrategy strategy : strategies) {
-            if (!routeContext.isTracing() && strategy instanceof Tracer) {
-                // trace is disabled so we should not add it
-                continue;
-            }
             if (!routeContext.isStreamCaching() && strategy instanceof StreamCaching) {
                 // stream cache is disabled so we should not add it
                 continue;

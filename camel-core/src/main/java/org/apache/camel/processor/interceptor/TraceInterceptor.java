@@ -35,6 +35,7 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -56,6 +57,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     private final Tracer tracer;
     private TraceFormatter formatter;
     private Class jpaTraceEventMessageClass;
+    private RouteContext routeContext;
 
     public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
@@ -90,7 +92,18 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return "TraceInterceptor[" + node + "]";
     }
 
+    public void setRouteContext(RouteContext routeContext) {
+        this.routeContext = routeContext;
+    }
+
     public void process(final Exchange exchange) throws Exception {
+        // do not trace if tracing is disabled
+        if (!tracer.isEnabled() || (routeContext != null && !routeContext.isTracing())) {
+            super.proceed(exchange);
+            return;
+        }
+
+
         // interceptor will also trace routes supposed only for TraceEvents so we need to skip
         // logging TraceEvents to avoid infinite looping
         if (exchange.getProperty(Exchange.TRACE_EVENT, Boolean.class) != null) {
@@ -178,7 +191,10 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return formatter;
     }
 
-    
+    public Tracer getTracer() {
+        return tracer;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected boolean beforeOnException(OnExceptionDefinition onException, TraceableUnitOfWork tuow, Exchange exchange) throws Exception {
