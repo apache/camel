@@ -83,4 +83,22 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("123", exchange.getIn().getHeader("bar", String.class));
     }
 
+    public void testInType() throws Exception {
+        exchange.setIn(new MyMessage());
+
+        MyMessage my = exchange.getIn(MyMessage.class);
+        assertNotNull(my);
+    }
+
+    public void testOutType() throws Exception {
+        exchange.setOut(new MyMessage());
+
+        MyMessage my = exchange.getOut(MyMessage.class);
+        assertNotNull(my);
+    }
+
+    private class MyMessage extends DefaultMessage {
+
+    }
+
 }

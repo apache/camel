@@ -185,6 +185,14 @@ public interface Exchange {
     Message getIn();
 
     /**
+     * Returns the inbound request message as the given type
+     *
+     * @param type the given type
+     * @return the message as the given type or <tt>null</tt> if not possible to covert to given type
+     */
+    <T> T getIn(Class<T> type);
+
+    /**
      * Sets the inbound message instance
      *
      * @param in the inbound message
@@ -200,6 +208,14 @@ public interface Exchange {
      * @return the response
      */
     Message getOut();
+
+    /**
+     * Returns the outbound request message as the given type
+     *
+     * @param type the given type
+     * @return the message as the given type or <tt>null</tt> if not possible to covert to given type
+     */
+    <T> T getOut(Class<T> type);
 
     /**
      * Returns whether an OUT message has been set or not.
@@ -248,7 +264,8 @@ public interface Exchange {
      *
      * @return true if this exchange failed due to either an exception or fault
      * @see Exchange#getException()
-     * @see Exchange#getFault()
+     * @see Message#setFault(boolean)
+     * @see Message#isFault()
      */
     boolean isFailed();
 

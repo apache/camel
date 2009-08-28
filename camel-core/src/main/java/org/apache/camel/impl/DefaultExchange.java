@@ -168,6 +168,19 @@ public final class DefaultExchange implements Exchange {
         return in;
     }
 
+    public <T> T getIn(Class<T> type) {
+        Message in = getIn();
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(in)) {
+            return type.cast(in);
+        }
+
+        // fallback to use type converter
+        return context.getTypeConverter().convertTo(type, in);
+    }
+
     public void setIn(Message in) {
         this.in = in;
         configureMessage(in);
@@ -181,6 +194,23 @@ public final class DefaultExchange implements Exchange {
             configureMessage(out);
         }
         return out;
+    }
+
+    public <T> T getOut(Class<T> type) {
+        if (!hasOut()) {
+            return null;
+        }
+
+        Message out = getOut();
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(out)) {
+            return type.cast(out);
+        }
+
+        // fallback to use type converter
+        return context.getTypeConverter().convertTo(type, out);
     }
 
     public boolean hasOut() {
