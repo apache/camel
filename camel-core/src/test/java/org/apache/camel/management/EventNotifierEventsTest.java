@@ -31,8 +31,8 @@ import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.management.event.RouteStartEvent;
-import org.apache.camel.management.event.RouteStopEvent;
+import org.apache.camel.management.event.RouteStartedEvent;
+import org.apache.camel.management.event.RouteStoppedEvent;
 import org.apache.camel.spi.EventNotifier;
 
 /**
@@ -72,8 +72,8 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
         assertEquals(6, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
-        assertIsInstanceOf(RouteStartEvent.class, events.get(1));
-        assertIsInstanceOf(RouteStartEvent.class, events.get(2));
+        assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
+        assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
         assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(5));
@@ -82,8 +82,8 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
         assertEquals(10, events.size());
         assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(6));
-        assertIsInstanceOf(RouteStopEvent.class, events.get(7));
-        assertIsInstanceOf(RouteStopEvent.class, events.get(8));
+        assertIsInstanceOf(RouteStoppedEvent.class, events.get(7));
+        assertIsInstanceOf(RouteStoppedEvent.class, events.get(8));
         assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(9));
     }
 
@@ -98,8 +98,8 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
         assertEquals(6, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
-        assertIsInstanceOf(RouteStartEvent.class, events.get(1));
-        assertIsInstanceOf(RouteStartEvent.class, events.get(2));
+        assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
+        assertIsInstanceOf(RouteStartedEvent.class, events.get(2));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(3));
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(4));
         assertIsInstanceOf(ExchangeFailedEvent.class, events.get(5));
@@ -108,8 +108,8 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
         assertEquals(10, events.size());
         assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(6));
-        assertIsInstanceOf(RouteStopEvent.class, events.get(7));
-        assertIsInstanceOf(RouteStopEvent.class, events.get(8));
+        assertIsInstanceOf(RouteStoppedEvent.class, events.get(7));
+        assertIsInstanceOf(RouteStoppedEvent.class, events.get(8));
         assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(9));
     }
 

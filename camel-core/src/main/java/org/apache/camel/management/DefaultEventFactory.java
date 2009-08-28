@@ -28,8 +28,8 @@ import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.management.event.RouteStartEvent;
-import org.apache.camel.management.event.RouteStopEvent;
+import org.apache.camel.management.event.RouteStartedEvent;
+import org.apache.camel.management.event.RouteStoppedEvent;
 import org.apache.camel.spi.EventFactory;
 
 /**
@@ -53,12 +53,12 @@ public class DefaultEventFactory implements EventFactory {
         return new CamelContextStoppedEvent(context);
     }
 
-    public EventObject createRouteStartEvent(Route route) {
-        return new RouteStartEvent(route);
+    public EventObject createRouteStartedEvent(Route route) {
+        return new RouteStartedEvent(route);
     }
 
-    public EventObject createRouteStopEvent(Route route) {
-        return new RouteStopEvent(route);
+    public EventObject createRouteStoppedEvent(Route route) {
+        return new RouteStoppedEvent(route);
     }
 
     public EventObject createExchangeCreatedEvent(Exchange exchange) {

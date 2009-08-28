@@ -39,9 +39,9 @@ public interface EventFactory {
 
     EventObject createCamelContextStoppedEvent(CamelContext context);
 
-    EventObject createRouteStartEvent(Route route);
+    EventObject createRouteStartedEvent(Route route);
 
-    EventObject createRouteStopEvent(Route route);
+    EventObject createRouteStoppedEvent(Route route);
 
     EventObject createExchangeCreatedEvent(Exchange exchange);
 

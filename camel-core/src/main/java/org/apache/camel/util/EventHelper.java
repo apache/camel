@@ -111,7 +111,7 @@ public final class EventHelper {
         if (factory == null) {
             return;
         }
-        EventObject event = factory.createRouteStartEvent(route);
+        EventObject event = factory.createRouteStartedEvent(route);
         if (event == null) {
             return;
         }
@@ -127,7 +127,7 @@ public final class EventHelper {
         if (factory == null) {
             return;
         }
-        EventObject event = factory.createRouteStopEvent(route);
+        EventObject event = factory.createRouteStoppedEvent(route);
         if (event == null) {
             return;
         }

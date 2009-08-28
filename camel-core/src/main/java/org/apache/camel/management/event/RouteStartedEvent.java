@@ -23,11 +23,11 @@ import org.apache.camel.Route;
 /**
  * @version $Revision$
  */
-public class RouteStartEvent extends EventObject {
+public class RouteStartedEvent extends EventObject {
 
     private Route route;
 
-    public RouteStartEvent(Route source) {
+    public RouteStartedEvent(Route source) {
         super(source);
         this.route = source;
     }
