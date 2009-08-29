@@ -20,6 +20,7 @@ import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -176,6 +177,23 @@ public final class EventHelper {
             return;
         }
         EventObject event = factory.createExchangeFailedEvent(exchange);
+        if (event == null) {
+            return;
+        }
+        doNotifyEvent(notifier, event);
+    }
+
+    public static void notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
+                                                    boolean deadLetterChannel) {
+        EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
+        if (notifier == null) {
+            return;
+        }
+        EventFactory factory = context.getManagementStrategy().getEventFactory();
+        if (factory == null) {
+            return;
+        }
+        EventObject event = factory.createExchangeFailureHandled(exchange, failureHandler, deadLetterChannel);
         if (event == null) {
             return;
         }

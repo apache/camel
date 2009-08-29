@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
  */
 public class ExchangeCreatedEvent extends EventObject {
 
-    private Exchange exchange;
+    private final Exchange exchange;
 
     public ExchangeCreatedEvent(Exchange source) {
         super(source);
@@ -35,4 +35,10 @@ public class ExchangeCreatedEvent extends EventObject {
     public Exchange getExchange() {
         return exchange;
     }
+
+    @Override
+    public String toString() {
+        return "Exchange created: " + exchange;
+    }
+
 }

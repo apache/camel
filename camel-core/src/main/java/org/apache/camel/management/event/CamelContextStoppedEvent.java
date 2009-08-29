@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
  */
 public class CamelContextStoppedEvent extends EventObject {
 
-    private CamelContext context;
+    private final CamelContext context;
 
     public CamelContextStoppedEvent(CamelContext source) {
         super(source);

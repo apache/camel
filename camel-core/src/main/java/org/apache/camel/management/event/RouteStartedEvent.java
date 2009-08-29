@@ -25,7 +25,7 @@ import org.apache.camel.Route;
  */
 public class RouteStartedEvent extends EventObject {
 
-    private Route route;
+    private final Route route;
 
     public RouteStartedEvent(Route source) {
         super(source);
@@ -35,4 +35,10 @@ public class RouteStartedEvent extends EventObject {
     public Route getRoute() {
         return route;
     }
+
+    @Override
+    public String toString() {
+        return "Started route: " + route.getId();
+    }
+
 }

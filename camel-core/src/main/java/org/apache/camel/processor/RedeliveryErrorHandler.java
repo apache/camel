@@ -27,6 +27,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.EventHelper;
 
 /**
  * Base redeliverable error handler that also supports a final dead letter queue in case
@@ -129,6 +130,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 deliverToFailureProcessor(target, exchange, data);
                 // prepare the exchange for failure before returning
                 prepareExchangeAfterFailure(exchange, data);
+                // fire event if we had a failure processor to handle it
+                if (target != null) {
+                    boolean deadLetterChannel = target == data.deadLetterProcessor && data.deadLetterProcessor != null;
+                    EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, target, deadLetterChannel);
+                }
                 // and then return
                 return;
             }

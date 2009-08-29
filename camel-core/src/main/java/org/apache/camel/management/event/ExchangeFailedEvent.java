@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
  */
 public class ExchangeFailedEvent extends EventObject {
 
-    private Exchange exchange;
+    private final Exchange exchange;
 
     public ExchangeFailedEvent(Exchange source) {
         super(source);
@@ -34,6 +34,11 @@ public class ExchangeFailedEvent extends EventObject {
 
     public Exchange getExchange() {
         return exchange;
+    }
+
+    @Override
+    public String toString() {
+        return "Exchange failed: " + exchange;
     }
 
 }

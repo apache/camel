@@ -21,6 +21,7 @@ import java.util.EventObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.Processor;
 
 /**
  * Factory to create {@link java.util.EventObject} events} that are emitted when such an event occur.
@@ -48,5 +49,7 @@ public interface EventFactory {
     EventObject createExchangeCompletedEvent(Exchange exchange);
 
     EventObject createExchangeFailedEvent(Exchange exchange);
+
+    EventObject createExchangeFailureHandled(Exchange exchange, Processor failureHandler, boolean deadLetterChannel);
 
 }

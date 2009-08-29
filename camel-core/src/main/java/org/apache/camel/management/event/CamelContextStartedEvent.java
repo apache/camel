@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
  */
 public class CamelContextStartedEvent extends EventObject {
 
-    private CamelContext context;
+    private final CamelContext context;
 
     public CamelContextStartedEvent(CamelContext source) {
         super(source);

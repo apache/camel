@@ -25,7 +25,7 @@ import org.apache.camel.Route;
  */
 public class RouteStoppedEvent extends EventObject {
 
-    private Route route;
+    private final Route route;
 
     public RouteStoppedEvent(Route source) {
         super(source);
@@ -34,6 +34,11 @@ public class RouteStoppedEvent extends EventObject {
 
     public Route getRoute() {
         return route;
+    }
+
+    @Override
+    public String toString() {
+        return "Stopped route: " + route.getId();
     }
 
 }
