@@ -105,10 +105,9 @@ public class IrcComponent extends DefaultComponent {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding IRC event logging listener");
+            ircLogger = createIrcLogger(configuration.getHostname());
+            conn.addIRCEventListener(ircLogger);
         }
-
-        ircLogger = createIrcLogger();
-        conn.addIRCEventListener(ircLogger);
 
         try {
             conn.connect();
@@ -138,8 +137,8 @@ public class IrcComponent extends DefaultComponent {
         super.doStop();
     }
 
-    protected IRCEventListener createIrcLogger() {
-        return new IrcLogger(LOG);
+    protected IRCEventListener createIrcLogger(String hostname) {
+        return new IrcLogger(LOG, hostname);
     }
 
     public IrcConfiguration getConfiguration() {
