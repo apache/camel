@@ -34,7 +34,7 @@ public class SourceCache extends StringSource implements StreamCache {
     }
 
     public SourceCache(String data) {
-        new StringSource(data);
+        super(data);
     }
 
     public void reset() {

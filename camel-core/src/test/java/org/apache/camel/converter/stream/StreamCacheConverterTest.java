@@ -16,12 +16,19 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
+
+import org.xml.sax.InputSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -30,12 +37,14 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultExchange;
 
+
 /**
  * Test cases for {@link StreamCacheConverter}
  */
 public class StreamCacheConverterTest extends ContextTestSupport {
     
     private static final String TEST_FILE = "org/apache/camel/converter/stream/test.xml";
+    private static final String MESSAGE = "<test>This is a test</test>";
     private StreamCacheConverter converter;
     private Exchange exchange;
     
@@ -44,6 +53,14 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         super.setUp();
         this.converter = new StreamCacheConverter();
         this.exchange = new DefaultExchange(context);
+    }
+    
+    public void testConvertToStreamCache() throws Exception {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
+        StreamCache streamCache = converter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
+        String message = exchange.getContext().getTypeConverter().convertTo(String.class, streamCache);
+        assertNotNull(message);
+        assertEquals("The converted message is wrong", MESSAGE, message);
     }
 
     public void testConvertToStreamCacheStreamSource() throws Exception {
