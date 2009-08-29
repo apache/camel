@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -78,8 +78,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 /**
  * A Spring {@link FactoryBean} to create and initialize a
  * {@link SpringCamelContext} and install routes either explicitly configured in
