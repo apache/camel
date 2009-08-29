@@ -29,6 +29,8 @@ public class IrcMessage extends DefaultMessage {
     private IRCUser user;
     private String whoWasKickedNick;
     private String message;
+    private int num;
+    private String value;
 
     public IrcMessage() {
     }
@@ -58,6 +60,13 @@ public class IrcMessage extends DefaultMessage {
         this.messageType = messageType;
         this.target = target;
         this.user = user;
+    }
+
+    public IrcMessage(String messageType, int num, String value, String message) {
+        this.messageType = messageType;
+        this.num = num;
+        this.value = value;
+        this.message = message;
     }
 
     public String getMessageType() {
@@ -126,6 +135,10 @@ public class IrcMessage extends DefaultMessage {
             map.put(IrcConstants.IRC_USER_NICK, user.getNick());
             map.put(IrcConstants.IRC_USER_SERVERNAME, user.getServername());
             map.put(IrcConstants.IRC_USER_USERNAME, user.getUsername());
+        }
+        if (value != null) {
+            map.put(IrcConstants.IRC_NUM, num);
+            map.put(IrcConstants.IRC_VALUE, value);
         }
     }
 

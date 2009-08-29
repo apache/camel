@@ -99,6 +99,13 @@ public class IrcEndpoint extends DefaultEndpoint {
         return exchange;
     }
 
+    public Exchange createOnReplyExchange(int num, String value, String msg) {
+        DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
+        exchange.setProperty(Exchange.BINDING, getBinding());
+        exchange.setIn(new IrcMessage("REPLY", num, value, msg));
+        return exchange;
+    }
+
     public Exchange createOnTopicExchange(String channel, IRCUser user, String topic) {
         DefaultExchange exchange = new DefaultExchange(this, getExchangePattern());
         exchange.setProperty(Exchange.BINDING, getBinding());

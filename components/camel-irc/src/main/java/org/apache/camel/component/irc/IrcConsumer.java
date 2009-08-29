@@ -149,6 +149,18 @@ public class IrcConsumer extends DefaultConsumer {
         }
 
         @Override
+        public void onReply(int num, String value, String msg) {
+            if (configuration.isOnReply()) {
+                Exchange exchange = endpoint.createOnReplyExchange(num, value, msg);
+                try {
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    handleException(e);
+                }
+            }
+        }
+
+        @Override
         public void onTopic(String channel, IRCUser user, String topic) {
             if (configuration.isOnTopic()) {
                 Exchange exchange = endpoint.createOnTopicExchange(channel, user, topic);

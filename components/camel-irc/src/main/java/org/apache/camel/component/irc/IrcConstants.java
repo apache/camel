@@ -27,6 +27,8 @@ public final class IrcConstants {
     public static final String IRC_USER_NICK = "irc.user.nick";
     public static final String IRC_USER_SERVERNAME = "irc.user.servername";
     public static final String IRC_USER_USERNAME = "irc.user.username";
+    public static final String IRC_NUM = "irc.num";
+    public static final String IRC_VALUE = "irc.value";
 
     private IrcConstants() {
         // Utility class
