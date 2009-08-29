@@ -433,17 +433,17 @@ public final class ExchangeHelper {
      * @param newExchange  the new exchange
      */
     public static void prepareAggregation(Exchange oldExchange, Exchange newExchange) {
-        // copy body/header from OUT to IN
+        // move body/header from OUT to IN
         if (oldExchange != null) {
             if (oldExchange.hasOut()) {
-                oldExchange.getIn().copyFrom(oldExchange.getOut());
+                oldExchange.setIn(oldExchange.getOut());
                 oldExchange.setOut(null);
             }
         }
 
         if (newExchange != null) {
             if (newExchange.hasOut()) {
-                newExchange.getIn().copyFrom(newExchange.getOut());
+                newExchange.setIn(newExchange.getOut());
                 newExchange.setOut(null);
             }
         }

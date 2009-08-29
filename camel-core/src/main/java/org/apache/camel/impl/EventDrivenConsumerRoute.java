@@ -23,8 +23,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * A {@link DefaultRoute} which starts with an

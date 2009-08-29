@@ -20,8 +20,8 @@ import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Route;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 
 /**
  * Factory to create {@link java.util.EventObject} events} that are emitted when such an event occur.

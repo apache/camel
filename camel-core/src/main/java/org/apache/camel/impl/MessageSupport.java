@@ -129,6 +129,11 @@ public abstract class MessageSupport implements Message {
     }
 
     public void copyFrom(Message that) {
+        if (that == this) {
+            // the same instance so do not need to copy
+            return;
+        }
+
         setMessageId(that.getMessageId());
         setBody(that.getBody());
         if (hasHeaders()) {

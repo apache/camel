@@ -57,7 +57,7 @@ public class HttpRoundtripHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHttpRoundTripHeadersWithNoIngoredHeaders() throws Exception {
+    public void testHttpRoundTripHeadersWithNoIgnoredHeaders() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
@@ -85,7 +85,7 @@ public class HttpRoundtripHeaderTest extends CamelTestSupport {
                         String input = (String) exchange.getIn().getBody();
                         // append some text to invalidate Context-Length
                         // for the http reply
-                        exchange.getOut().setBody(input + outputText);
+                        exchange.getIn().setBody(input + outputText);
                     }
                 };
 
@@ -104,7 +104,7 @@ public class HttpRoundtripHeaderTest extends CamelTestSupport {
         Message in = exchange.getIn();
         assertNotNull("in", in);
         Map<String, Object> headers = in.getHeaders();
-        assertTrue("no headers are propagated", headers.isEmpty());
+        assertTrue("no headers are propagated", !headers.isEmpty());
         assertEquals("body has expectedText:" + expected, expected, in.getBody());
     }
 
