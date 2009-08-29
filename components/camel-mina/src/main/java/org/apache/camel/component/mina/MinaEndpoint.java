@@ -36,6 +36,13 @@ import org.apache.mina.common.IoSession;
  * @version $Revision$
  */
 public class MinaEndpoint extends DefaultEndpoint {
+    /** The key of the IoSession which is stored in the message header*/
+    public static final transient String HEADER_MINA_IOSESSION = "CamelMinaIoSession";
+    /** The socket address of local machine that received the message. */
+    public static final transient String HEADER_LOCAL_ADDRESS = "CamelMinaLocalAddress";
+    /** The socket address of the remote machine that send the message. */
+    public static final transient String HEADER_REMOTE_ADDRESS = "CamelMinaRemoteAddress";
+    
 
     private SocketAddress address;
     private IoAcceptor acceptor;
@@ -75,6 +82,9 @@ public class MinaEndpoint extends DefaultEndpoint {
 
     public Exchange createExchange(IoSession session, Object payload) {
         Exchange exchange = createExchange();
+        exchange.getIn().setHeader(HEADER_MINA_IOSESSION, session);
+        exchange.getIn().setHeader(HEADER_LOCAL_ADDRESS, session.getLocalAddress());
+        exchange.getIn().setHeader(HEADER_REMOTE_ADDRESS , session.getRemoteAddress());
         MinaPayloadHelper.setIn(exchange, payload);
         return exchange;
     }
