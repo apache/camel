@@ -23,7 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
 public class JettyJmsTest extends AbstractJUnit4SpringContextTests {
@@ -43,26 +42,9 @@ public class JettyJmsTest extends AbstractJUnit4SpringContextTests {
     protected MockEndpoint resultEndpoint;
 
     @Test
-    public void testMocksAreValidWithTracerEnabled() throws Exception {
-        assertNotNull(camelContext);
-        Tracer tracer = Tracer.getTracer(camelContext);
-        assertNotNull(tracer);
-        assertTrue("The tracer should be enabled", tracer.isEnabled());
-        validMockes();
-    }
-
-    @Test
-    public void testMocksAreValidWithTracerDisabled() throws Exception {
-        assertNotNull(camelContext);
-        Tracer tracer = Tracer.getTracer(camelContext);
-        assertNotNull(tracer);
-        tracer.setEnabled(false);
-        validMockes();
-    }
-
-    private void validMockes() throws Exception {
+    public void testMocksAreValid() throws Exception {
         assertNotNull(resultEndpoint);
-        resultEndpoint.reset();        
+        resultEndpoint.reset();
 
         ProducerTemplate template = camelContext.createProducerTemplate();
         template.sendBodyAndHeader("jetty:http://localhost:9000/test", "Hello form Willem", "Operation", "greetMe");
@@ -81,4 +63,5 @@ public class JettyJmsTest extends AbstractJUnit4SpringContextTests {
             assertEquals("Should get the header", "greetMe", exchange.getIn().getHeader("Operation"));
         }
     }
+
 }
