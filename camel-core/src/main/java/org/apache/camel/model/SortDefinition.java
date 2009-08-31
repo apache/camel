@@ -89,7 +89,8 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
             setExpression(bodyExpression());
         }
 
-        return new SortProcessor(getExpression(), getComparator());
+        Expression exp = expression.getExpression();
+        return new SortProcessor(exp, getComparator());
     }
 
     @Override
@@ -114,18 +115,16 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
         this.comparatorRef = comparatorRef;
     }
 
-    public Expression getExpression() {
-        if (expression == null) {
-            return null;
-        }
-        if (expression.getExpression() != null) {
-            return expression.getExpression();
-        }
-        return expression.getExpressionType();
+    public ExpressionSubElementDefinition getExpression() {
+        return expression;
     }
 
     public void setExpression(Expression expression) {
         this.expression = new ExpressionSubElementDefinition(expression);
+    }
+
+    public void setExpression(ExpressionSubElementDefinition expression) {
+        this.expression = expression;
     }
 
     /**
