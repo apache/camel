@@ -73,7 +73,9 @@ public abstract class ContextTestSupport extends TestSupport {
         assertValidContext(context);
 
         template = context.createProducerTemplate();
+        template.start();
         consumer = context.createConsumerTemplate();
+        consumer.start();
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
