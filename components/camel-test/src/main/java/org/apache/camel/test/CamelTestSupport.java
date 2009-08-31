@@ -85,7 +85,9 @@ public abstract class CamelTestSupport extends TestSupport {
         assertValidContext(context);
 
         template = context.createProducerTemplate();
+        template.start();
         consumer = context.createConsumerTemplate();
+        consumer.start();
 
         postProcessTest();
         
