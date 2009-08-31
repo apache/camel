@@ -90,6 +90,10 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
         }
 
         Expression exp = expression.getExpression();
+        // fallback to the type when its been initialized from JAXB using camel-spring
+        if (exp == null) {
+            exp = expression.getExpressionType();
+        }
         return new SortProcessor(exp, getComparator());
     }
 

@@ -24,9 +24,9 @@ import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
+import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional
@@ -131,6 +131,14 @@ public class PollEnricher extends ServiceSupport implements Processor {
             resourceExchange = consumer.receive(timeout);
         }
 
+        if (LOG.isDebugEnabled()) {
+            if (resourceExchange == null) {
+                LOG.debug("Consumer received no exchange");
+            } else {
+                LOG.debug("Consumer received: " + resourceExchange);
+            }
+        }
+
         if (resourceExchange != null && resourceExchange.isFailed()) {
             // copy resource exchange onto original exchange (preserving pattern)
             copyResultsPreservePattern(exchange, resourceExchange);
@@ -147,8 +155,10 @@ public class PollEnricher extends ServiceSupport implements Processor {
                 // prepare the exchanges for aggregation
                 ExchangeHelper.prepareAggregation(exchange, resourceExchange);
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
-                // copy aggregation result onto original exchange (preserving pattern)
-                copyResultsPreservePattern(exchange, aggregatedExchange);
+                if (aggregatedExchange != null) {
+                    // copy aggregation result onto original exchange (preserving pattern)
+                    copyResultsPreservePattern(exchange, aggregatedExchange);
+                }
             } else {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot aggregate exchange as its filtered: " + resourceExchange);

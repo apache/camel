@@ -33,12 +33,12 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 public class JmsPollingConsumerTest extends CamelTestSupport {
 
     @Test
-    public void testJmsPollingConsumer() throws Exception {
+    public void testJmsPollingConsumerWait() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Claus");
 
         // use another thread for polling consumer to demonstrate that we can wait before
-        // the message is sent to the quueue
+        // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             public void run() {
                 String body = consumer.receiveBody("activemq:queue.start", String.class);
@@ -47,7 +47,77 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
-        Thread.sleep(50);
+        Thread.sleep(500);
+
+        template.sendBody("direct:start", "Hello");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testJmsPollingConsumerNoWait() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello Claus");
+
+        // use another thread for polling consumer to demonstrate that we can wait before
+        // the message is sent to the queue
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            public void run() {
+                String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
+                assertNull("Should be null", body);
+
+                template.sendBody("activemq:queue.foo", "Hello Claus");
+            }
+        });
+
+        // wait a little to demonstrate we can start poll before we have a msg on the queue
+        Thread.sleep(500);
+
+        template.sendBody("direct:start", "Hello");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testJmsPollingConsumerLowTimeout() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello Claus");
+
+        // use another thread for polling consumer to demonstrate that we can wait before
+        // the message is sent to the queue
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            public void run() {
+                String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
+                assertNull("Should be null", body);
+
+                template.sendBody("activemq:queue.foo", "Hello Claus");
+            }
+        });
+
+        // wait a little to demonstrate we can start poll before we have a msg on the queue
+        Thread.sleep(500);
+
+        template.sendBody("direct:start", "Hello");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testJmsPollingConsumerHighTimeout() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello Claus");
+
+        // use another thread for polling consumer to demonstrate that we can wait before
+        // the message is sent to the queue
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            public void run() {
+                String body = consumer.receiveBody("activemq:queue.start", 3000, String.class);
+                template.sendBody("activemq:queue.foo", body + " Claus");
+            }
+        });
+
+        // wait a little to demonstrate we can start poll before we have a msg on the queue
+        Thread.sleep(500);
 
         template.sendBody("direct:start", "Hello");
 

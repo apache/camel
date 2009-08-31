@@ -258,7 +258,7 @@ public final class ExchangeHelper {
             // no need to copy
             return;
         }
-        
+
         // copy in message
         result.getIn().copyFrom(source.getIn());
     

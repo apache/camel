@@ -23,7 +23,7 @@
     ">
 
   <!-- START SNIPPET: example -->
-  <bean id="agent" class="org.apache.camel.management.DefaultInstrumentationAgent">
+  <bean id="agent" class="org.apache.camel.management.DefaultManagementAgent">
     <property name="server" ref="mbeanServer"/>
   </bean>
 
@@ -31,7 +31,7 @@
         <property name="managementAgent" ref="agent"/>
     </bean>
   
-  <bean id="lifeCycleStrategy" class="org.apache.camel.management.DefaultManagedLifecycleStrategy">
+  <bean id="lifeCycleStrategy" class="org.apache.camel.management.DefaultManagementLifecycleStrategy">
       <constructor-arg index="0" ref="camel"/>
   </bean>
   
