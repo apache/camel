@@ -24,9 +24,9 @@ import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
-import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional

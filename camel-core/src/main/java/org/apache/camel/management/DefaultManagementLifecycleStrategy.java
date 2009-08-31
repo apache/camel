@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.component.timer.TimerEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -47,6 +48,7 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedThrottler;
+import org.apache.camel.management.mbean.ManagedTimerEndpoint;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -190,6 +192,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             ManagedEndpoint me;
             if (endpoint instanceof BrowsableEndpoint) {
                 me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
+            } else if (endpoint instanceof TimerEndpoint) {
+                me = new ManagedTimerEndpoint((TimerEndpoint) endpoint);
             } else {
                 me = new ManagedEndpoint(endpoint);
             }
@@ -225,6 +229,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             ManagedEndpoint me;
             if (endpoint instanceof BrowsableEndpoint) {
                 me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
+            } else if (endpoint instanceof TimerEndpoint) {
+                me = new ManagedTimerEndpoint((TimerEndpoint) endpoint);
             } else {
                 me = new ManagedEndpoint(endpoint);
             }
