@@ -33,6 +33,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
@@ -43,6 +44,7 @@ import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedTracer;
@@ -73,16 +75,16 @@ import org.apache.commons.logging.LogFactory;
  * @see org.apache.camel.spi.ManagementStrategy
  * @version $Revision$
  */
-public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Service {
+public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service {
 
-    private static final Log LOG = LogFactory.getLog(DefaultManagedLifecycleStrategy.class);
+    private static final Log LOG = LogFactory.getLog(DefaultManagementLifecycleStrategy.class);
     private static final String MANAGED_RESOURCE_CLASSNAME = "org.springframework.jmx.export.annotation.ManagedResource";
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
     private final CamelContext context;
     private boolean initialized;
 
-    public DefaultManagedLifecycleStrategy(CamelContext context) {
+    public DefaultManagementLifecycleStrategy(CamelContext context) {
         this.context = context;
     }
 
@@ -336,7 +338,9 @@ public class DefaultManagedLifecycleStrategy implements LifecycleStrategy, Servi
     }
 
     private Object getManagedObjectForService(CamelContext context, Service service) {
-        if (service instanceof Consumer) {
+        if (service instanceof ScheduledPollConsumer) {
+            return new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
+        } else if (service instanceof Consumer) {
             return new ManagedConsumer(context, (Consumer) service);
         } else if (service instanceof Producer) {
             return new ManagedProducer(context, (Producer) service);

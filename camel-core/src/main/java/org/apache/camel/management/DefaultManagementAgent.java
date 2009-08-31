@@ -50,14 +50,14 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 /**
  * Default implementation of the Camel JMX service agent
  */
-public class DefaultInstrumentationAgent extends ServiceSupport implements ManagementAgent {
+public class DefaultManagementAgent extends ServiceSupport implements ManagementAgent {
 
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_REGISTRY_PORT = 1099;
     public static final int DEFAULT_CONNECTION_PORT = -1;
     public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
-    private static final transient Log LOG = LogFactory.getLog(DefaultInstrumentationAgent.class);
+    private static final transient Log LOG = LogFactory.getLog(DefaultManagementAgent.class);
 
     private ExecutorService executorService;
     private MBeanServer server;

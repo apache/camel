@@ -59,7 +59,7 @@ public class CamelInvocationHandler implements InvocationHandler {
         if (fault != null) {
             if (fault instanceof RuntimeCamelException) {
                 // if the inner cause is a runtime exception we can throw it directly
-                if (((RuntimeCamelException) fault).getCause() instanceof RuntimeException) {
+                if (fault.getCause() instanceof RuntimeException) {
                     throw (RuntimeException) ((RuntimeCamelException) fault).getCause();
                 }
                 throw (RuntimeCamelException) fault;

@@ -31,7 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends ContextTestSupport {
 
-    protected String domainName = DefaultInstrumentationAgent.DEFAULT_DOMAIN;
+    protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServer server;
 
     public void testCustomId() throws Exception {

@@ -241,6 +241,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         if (executorService != null) {
             executorService.shutdown();
             executorService.awaitTermination(0, TimeUnit.SECONDS);
+            executorService = null;
         }
         ServiceHelper.stopServices(processors);
     }

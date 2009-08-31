@@ -34,8 +34,8 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.scan.PatternBasedPackageScanFilter;
-import org.apache.camel.management.DefaultInstrumentationAgent;
-import org.apache.camel.management.DefaultManagedLifecycleStrategy;
+import org.apache.camel.management.DefaultManagementAgent;
+import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.FromDefinition;
@@ -80,6 +80,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 /**
  * A Spring {@link FactoryBean} to create and initialize a
  * {@link SpringCamelContext} and install routes either explicitly configured in
@@ -443,7 +444,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
             LOG.info("JMXAgent enabled: " + camelJMXAgent);
-            DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
+            DefaultManagementAgent agent = new DefaultManagementAgent();
             agent.setConnectorPort(camelJMXAgent.getConnectorPort());
             agent.setCreateConnector(camelJMXAgent.isCreateConnector());
             agent.setMBeanObjectDomainName(camelJMXAgent.getMbeanObjectDomainName());
@@ -457,7 +458,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().setManagementStrategy(managementStrategy);
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
             getContext().getLifecycleStrategies().clear();
-            getContext().addLifecycleStrategy(new DefaultManagedLifecycleStrategy(getContext()));
+            getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
         }
     }

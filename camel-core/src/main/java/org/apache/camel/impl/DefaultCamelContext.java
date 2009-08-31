@@ -45,8 +45,8 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.management.DefaultInstrumentationAgent;
-import org.apache.camel.management.DefaultManagedLifecycleStrategy;
+import org.apache.camel.management.DefaultManagementAgent;
+import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagedManagementStrategy;
@@ -140,8 +140,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             boolean registered = false;
             try {
                 LOG.info("JMX enabled. Using DefaultManagedLifecycleStrategy.");
-                managementStrategy = new ManagedManagementStrategy(new DefaultInstrumentationAgent());
-                lifecycleStrategies.add(new DefaultManagedLifecycleStrategy(this));
+                managementStrategy = new ManagedManagementStrategy(new DefaultManagementAgent());
+                lifecycleStrategies.add(new DefaultManagementLifecycleStrategy(this));
                 registered = true;
             } catch (NoClassDefFoundError e) {
                 // if we can't instantiate the JMX enabled strategy then fallback to default

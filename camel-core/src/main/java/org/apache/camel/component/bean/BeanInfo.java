@@ -39,7 +39,6 @@ import org.apache.camel.Message;
 import org.apache.camel.OutHeaders;
 import org.apache.camel.Properties;
 import org.apache.camel.Property;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
@@ -48,7 +47,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ExchangeHelper.convertToType;
-
 
 /**
  * Represents the metadata about a bean type created via a combination of
@@ -430,7 +428,7 @@ public class BeanInfo {
             return possibles.get(0);
         } else if (possibles.isEmpty()) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("No poosible methods trying to convert body to parameter types");
+                LOG.trace("No possible methods trying to convert body to parameter types");
             }
 
             // lets try converting

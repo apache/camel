@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.managment;
 
-import org.apache.camel.management.DefaultInstrumentationAgent;
+import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spring.EndpointReferenceTest;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
 
     public void testJmxConfiguration() throws Exception {
-        ManagementAgent agent = getMandatoryBean(DefaultInstrumentationAgent.class, "agent");
+        ManagementAgent agent = getMandatoryBean(DefaultManagementAgent.class, "agent");
         assertNotNull("SpringInstrumentationAgent must be configured for JMX support", agent);
         assertNotNull("MBeanServer must be configured for JMX support", agent.getMBeanServer());
         assertEquals("org.apache.camel.test", agent.getMBeanServer().getDefaultDomain());

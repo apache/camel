@@ -38,7 +38,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
-    protected String domainName = DefaultInstrumentationAgent.DEFAULT_DOMAIN;
+    protected String domainName = DefaultManagementAgent.DEFAULT_DOMAIN;
     protected MBeanServerConnection mbsc;
     protected long sleepForConnection;
 

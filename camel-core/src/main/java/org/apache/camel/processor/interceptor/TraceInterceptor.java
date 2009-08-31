@@ -64,20 +64,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         this.tracer = tracer;
         this.node = node;
         this.formatter = formatter;
-
-        // set logger to use
-        if (tracer.getLogName() != null) {
-            logger = new Logger(LogFactory.getLog(tracer.getLogName()), this);
-        } else {
-            // use default logger
-            logger = new Logger(LogFactory.getLog(TraceInterceptor.class), this);
-        }
-
-        // set logging level if provided
-        if (tracer.getLogLevel() != null) {
-            logger.setLevel(tracer.getLogLevel());
-        }
-
+        this.logger = tracer.getLogger(this);
         if (tracer.getFormatter() != null) {
             this.formatter = tracer.getFormatter();
         }

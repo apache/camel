@@ -53,7 +53,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
-        this.executor = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "ProducerTemplate", true);
         this.producerCache = new ProducerCache(context.getProducerServicePool());
     }
 
@@ -670,4 +669,21 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
 
+    @Override
+    public void start() throws Exception {
+        super.start();
+        if (executor == null) {
+            executor = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "ProducerTemplate", true);
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        if (executor != null) {
+            executor.shutdown();
+            // must null it so we can restart
+            executor = null;
+        }
+    }
 }

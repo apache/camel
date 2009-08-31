@@ -112,6 +112,8 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         super.doStop();
         if (executorService != null) {
             executorService.shutdown();
+            // must null it so we can restart
+            executorService = null;
         }
     }
 

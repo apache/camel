@@ -66,7 +66,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        // do we have am explict method name we always should invoke
+        // do we have an explicit method name we always should invoke
         boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
 
         Object bean = beanHolder.getBean();
@@ -74,7 +74,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         BeanInfo beanInfo = beanHolder.getBeanInfo();
 
         // do we have a custom adapter for this POJO to a Processor
-        // should not be invoced if an explict method has been set
+        // should not be invoced if an explicit method has been set
         Processor processor = getProcessor();
         if (!isExplicitMethod && processor != null) {
             if (LOG.isTraceEnabled()) {
@@ -109,7 +109,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + bean);
+            throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
         } else {
             // set method name if not explicit given
             if (method == null) {

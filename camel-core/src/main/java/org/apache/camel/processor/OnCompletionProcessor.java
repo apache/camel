@@ -59,6 +59,8 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     protected void doStop() throws Exception {
         if (executorService != null) {
             executorService.shutdown();
+            // must null it so we can restart
+            executorService = null;
         }
         ServiceHelper.stopService(processor);
     }

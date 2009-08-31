@@ -25,7 +25,10 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.Logger;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An interceptor strategy for tracing routes
@@ -36,8 +39,8 @@ public class Tracer implements InterceptStrategy, Service {
 
     private TraceFormatter formatter = new DefaultTraceFormatter();
     private boolean enabled = true;
-    private String logName;
-    private LoggingLevel logLevel;
+    private String logName = Tracer.class.getName();
+    private LoggingLevel logLevel = LoggingLevel.INFO;
     private Predicate traceFilter;
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
@@ -46,6 +49,7 @@ public class Tracer implements InterceptStrategy, Service {
     private String destinationUri;
     private Endpoint destination;
     private boolean useJpa;
+    private Logger logger;
 
     /**
      * Creates a new tracer.
@@ -76,6 +80,20 @@ public class Tracer implements InterceptStrategy, Service {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the logger to be used for tracers that can format and log a given exchange.
+     *
+     * @param formatter the exchange formatter
+     * @return the logger to use
+     */
+    public synchronized Logger getLogger(ExchangeFormatter formatter) {
+        if (logger == null) {
+            logger = new Logger(LogFactory.getLog(getLogName()), formatter);
+            logger.setLevel(getLogLevel());
+        }
+        return logger;
     }
 
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
@@ -140,6 +158,10 @@ public class Tracer implements InterceptStrategy, Service {
      */
     public void setLogLevel(LoggingLevel logLevel) {
         this.logLevel = logLevel;
+        // update logger if its in use
+        if (logger != null) {
+            logger.setLevel(logLevel);
+        }
     }
 
     public boolean isTraceExceptions() {
@@ -174,6 +196,10 @@ public class Tracer implements InterceptStrategy, Service {
      */
     public void setLogName(String logName) {
         this.logName = logName;
+        // update logger if its in use
+        if (logger != null) {
+            logger.setLogName(logName);
+        }
     }
 
     /**

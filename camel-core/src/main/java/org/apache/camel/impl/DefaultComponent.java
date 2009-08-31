@@ -184,6 +184,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     protected void doStop() throws Exception {
         if (executorService != null) {
             executorService.shutdown();
+            // must null it so we can restart
+            executorService = null;
         }
     }
 

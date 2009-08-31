@@ -47,7 +47,7 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
     private static final Log LOG = LogFactory.getLog(ManagedManagementStrategy.class);
 
     public ManagedManagementStrategy() {
-        this(new DefaultInstrumentationAgent());
+        this(new DefaultManagementAgent());
     }
 
     public ManagedManagementStrategy(ManagementAgent managementAgent) {
