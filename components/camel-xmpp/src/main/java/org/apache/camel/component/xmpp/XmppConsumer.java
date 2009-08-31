@@ -68,7 +68,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
                 LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
                 privateChat.addMessageListener(this);
             } else {                
-                privateChat = connection.getChatManager().createChat(endpoint.getParticipant(),endpoint.getChatId(), this);
+                privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
                 LOG.debug("Opening private chat to " + privateChat.getParticipant());
             }
         } else {
