@@ -124,7 +124,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
         try {
-            ManagedComponent mc = new ManagedComponent(name, component);
+            Object mc = getManagedObjectForComponent(name, component);
             getStrategy().manageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not register Component MBean", e);
@@ -137,10 +137,18 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
         try {
-            ManagedComponent mc = new ManagedComponent(name, component);
+            Object mc = getManagedObjectForComponent(name, component);
             getStrategy().unmanageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not unregister Component MBean", e);
+        }
+    }
+
+    private Object getManagedObjectForComponent(String name, Component component) {
+        if (component instanceof ManagementAware) {
+            return ((ManagementAware) component).getManagedObject(component);
+        } else {
+            return new ManagedComponent(name, component);
         }
     }
 
@@ -159,14 +167,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            Object me;
-            if (endpoint instanceof ManagementAware) {
-                me = ((ManagementAware) endpoint).getManagedObject(endpoint);
-            } else if (endpoint instanceof BrowsableEndpoint) {
-                me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
-            } else {
-                me = new ManagedEndpoint(endpoint);
-            }
+            Object me = getManagedObjectForEndpoint(endpoint);
             getStrategy().manageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
@@ -181,17 +182,20 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            Object me;
-            if (endpoint instanceof ManagementAware) {
-                me = ((ManagementAware) endpoint).getManagedObject(endpoint);
-            } else if (endpoint instanceof BrowsableEndpoint) {
-                me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
-            } else {
-                me = new ManagedEndpoint(endpoint);
-            }
+            Object me = getManagedObjectForEndpoint(endpoint);
             getStrategy().unmanageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not unregister Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
+        }
+    }
+
+    private Object getManagedObjectForEndpoint(Endpoint endpoint) {
+        if (endpoint instanceof ManagementAware) {
+            return ((ManagementAware) endpoint).getManagedObject(endpoint);
+        } else if (endpoint instanceof BrowsableEndpoint) {
+            return new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
+        } else {
+            return new ManagedEndpoint(endpoint);
         }
     }
 
@@ -204,16 +208,10 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        Object managedObject;
-        if (service instanceof Tracer) {
-            // special for tracer
-            managedObject = new ManagedTracer(context, (Tracer) service);
-        } else if (service instanceof Processor) {
-            // special for processors
-            managedObject = getManagedObjectForProcessor(context, (Processor) service);
-        } else {
-            // regular for services
-            managedObject = getManagedObjectForService(context, service);
+        Object managedObject = getManagedObjectForService(context, service);
+        if (managedObject == null) {
+            // service should not be managed
+            return;
         }
 
         // skip already managed services, for example if a route has been restarted
@@ -237,17 +235,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        Object managedObject;
-        if (service instanceof Tracer) {
-            // special for tracer
-            managedObject = new ManagedTracer(context, (Tracer) service);
-        } else if (service instanceof Processor) {
-            // special for processors
-            managedObject = getManagedObjectForProcessor(context, (Processor) service);
-        } else {
-            // regular for services
-            managedObject = getManagedObjectForService(context, service);
-        }
+        Object managedObject = getManagedObjectForService(context, service);
         if (managedObject != null) {
             try {
                 getStrategy().unmanageObject(managedObject);
@@ -257,7 +245,29 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
-    protected Object getManagedObjectForProcessor(CamelContext context, Processor processor) {
+    @SuppressWarnings("unchecked")
+    private Object getManagedObjectForService(CamelContext context, Service service) {
+        if (service instanceof ManagementAware) {
+            return ((ManagementAware) service).getManagedObject(service);
+        } else if (service instanceof Tracer) {
+            // special for tracer
+            return new ManagedTracer(context, (Tracer) service);
+        } else if (service instanceof Producer) {
+            return new ManagedProducer(context, (Producer) service);
+        } else if (service instanceof ScheduledPollConsumer) {
+                return new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
+        } else if (service instanceof Consumer) {
+            return new ManagedConsumer(context, (Consumer) service);
+        } else if (service instanceof Processor) {
+            // special for processors
+            return getManagedObjectForProcessor(context, (Processor) service);
+        }
+
+        // not supported
+        return null;
+    }
+
+    private Object getManagedObjectForProcessor(CamelContext context, Processor processor) {
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
@@ -295,19 +305,6 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // fallback to a generic processor
         return new ManagedProcessor(context, processor, definition);
-    }
-
-    private Object getManagedObjectForService(CamelContext context, Service service) {
-        if (service instanceof ScheduledPollConsumer) {
-            return new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
-        } else if (service instanceof Consumer) {
-            return new ManagedConsumer(context, (Consumer) service);
-        } else if (service instanceof Producer) {
-            return new ManagedProducer(context, (Producer) service);
-        }
-
-        // not supported
-        return null;
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
@@ -444,6 +441,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     public void stop() throws Exception {
+        initialized = false;
     }
 }
 

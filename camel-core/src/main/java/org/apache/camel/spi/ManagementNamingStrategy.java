@@ -28,6 +28,8 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
+ * Strategy for computing {@link ObjectName} names for the various beans that Camel register for management.
+ *
  * @version $Revision$
  */
 public interface ManagementNamingStrategy {
