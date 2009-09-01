@@ -71,8 +71,7 @@ public class StopWatch {
     public String toString() {
         double average = totalElapsed;
         average /= totalLoops;
-        average /= 1000;
-        return id + " count: " + loopCount + " elapsed: " + groupElapsed + " min: " + minTime + " max: " + maxTime + " average: " + formatSeconds(average);
+        return id + " count: " + loopCount + ", elapsed (ms): " + groupElapsed + ", min (ms): " + minTime + ", max (ms): " + maxTime + ", average (ms): " + formatNumber(average);
     }
 
     public int getLogFrequency() {
@@ -103,7 +102,7 @@ public class StopWatch {
         return groupElapsed;
     }
 
-    protected String formatSeconds(double time) {
+    protected String formatNumber(double time) {
         return numberFormat.format(time);
     }
 }

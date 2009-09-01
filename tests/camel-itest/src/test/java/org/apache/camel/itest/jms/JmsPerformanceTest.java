@@ -78,7 +78,7 @@ public class JmsPerformanceTest extends CamelTestSupport {
     }
 
     protected void assertExpectedMessagesReceived() throws InterruptedException {
-        receivedCountDown.await(50000, TimeUnit.SECONDS);
+        receivedCountDown.await(50, TimeUnit.SECONDS);
 
         assertEquals("Received message count", expectedMessageCount, consumedMessageCount);
 
