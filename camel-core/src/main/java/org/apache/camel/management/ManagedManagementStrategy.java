@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import javax.management.ObjectName;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
@@ -71,37 +72,39 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
         if (managedObject instanceof ManagedCamelContext) {
             ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
-            objectName = getManagementNamingStrategy().getObjectName(mcc.getContext());
+            objectName = getManagementNamingStrategy().getObjectNameForCamelContext(mcc.getContext());
         }
 
         if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
-            objectName = getManagementNamingStrategy().getObjectName(mc);
+            objectName = getManagementNamingStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
         }
 
         if (managedObject instanceof ManagedEndpoint) {
             ManagedEndpoint me = (ManagedEndpoint) managedObject;
-            objectName = getManagementNamingStrategy().getObjectName(me);
+            objectName = getManagementNamingStrategy().getObjectNameForEndpoint(me.getEndpoint());
+        } else if (managedObject instanceof Endpoint) {
+            objectName = getManagementNamingStrategy().getObjectNameForEndpoint((Endpoint) managedObject);
         }
 
         if (managedObject instanceof ManagedRoute) {
             ManagedRoute mr = (ManagedRoute) managedObject;
-            objectName = getManagementNamingStrategy().getObjectName(mr);
+            objectName = getManagementNamingStrategy().getObjectNameForRoute(mr.getRoute());
         }
 
         if (managedObject instanceof ManagedProcessor) {
             ManagedProcessor mp = (ManagedProcessor) managedObject;
-            objectName = getManagementNamingStrategy().getObjectName(mp);
+            objectName = getManagementNamingStrategy().getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
         }
 
         if (managedObject instanceof ManagedConsumer) {
             ManagedConsumer ms = (ManagedConsumer) managedObject;
-            objectName = getManagementNamingStrategy().getObjectName(ms);
+            objectName = getManagementNamingStrategy().getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
         }
 
         if (managedObject instanceof ManagedTracer) {
             ManagedTracer mt = (ManagedTracer) managedObject;
-            objectName = getManagementNamingStrategy().getObjectName(mt);
+            objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getCamelContext(), mt.getTracer());
         }
 
         return nameType.cast(objectName);

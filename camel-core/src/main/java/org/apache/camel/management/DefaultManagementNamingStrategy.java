@@ -22,20 +22,14 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.management.mbean.ManagedComponent;
-import org.apache.camel.management.mbean.ManagedConsumer;
-import org.apache.camel.management.mbean.ManagedEndpoint;
-import org.apache.camel.management.mbean.ManagedProcessor;
-import org.apache.camel.management.mbean.ManagedRoute;
-import org.apache.camel.management.mbean.ManagedService;
-import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Naming strategy used when registering MBeans.
@@ -71,7 +65,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         }
     }
 
-    public ObjectName getObjectName(CamelContext context) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -80,33 +74,28 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectName(ManagedEndpoint mbean) throws MalformedObjectNameException {
-        Endpoint ep = mbean.getEndpoint();
-
+    public ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(endpoint.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ENDPOINT + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(getEndpointId(ep)));
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(getEndpointId(endpoint)));
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectName(ManagedComponent mbean) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForComponent(Component component, String name) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getComponent().getCamelContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(component.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_COMPONENT + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(mbean.getComponentName()));
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(name));
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectName(ManagedProcessor mbean) throws MalformedObjectNameException {
-        Processor processor = mbean.getProcessor();
-        ProcessorDefinition definition = mbean.getDefinition();
-
+    public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
 
         if (definition.hasCustomIdAssigned()) {
@@ -122,12 +111,10 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectName(ManagedConsumer mbean) throws MalformedObjectNameException {
-        Consumer consumer = mbean.getConsumer();
-
+    public ObjectName getObjectNameForConsumer(CamelContext context, Consumer consumer) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_CONSUMER).append(",");
         buffer.append(KEY_NAME + "=")
             .append(consumer.getClass().getSimpleName())
@@ -135,24 +122,18 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectName(ManagedService mbean) throws MalformedObjectNameException {
-        // not supported
-        return null;
-    }
-
-    public ObjectName getObjectName(ManagedTracer mbean) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(mbean.getCamelContext())).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_TRACER + ",");
         buffer.append(KEY_NAME + "=")
             .append("Tracer")
-            .append("(").append(getIdentityHashCode(mbean.getTracer())).append(")");
+            .append("(").append(getIdentityHashCode(tracer)).append(")");
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
-        Route route = mbean.getRoute();
+    public ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException {
         Endpoint ep = route.getEndpoint();
         String id = route.getId();
 
@@ -161,21 +142,6 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
-        return createObjectName(buffer);
-    }
-
-    @Deprecated
-    public ObjectName getObjectName(RouteContext routeContext, ProcessorDefinition processor)
-        throws MalformedObjectNameException {
-
-        Endpoint ep = routeContext.getEndpoint();
-        String nodeId = processor.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
-
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
-        buffer.append(KEY_TYPE + "=" + TYPE_PROCESSOR + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(nodeId));
         return createObjectName(buffer);
     }
 

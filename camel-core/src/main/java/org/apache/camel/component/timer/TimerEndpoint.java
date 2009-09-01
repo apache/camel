@@ -24,13 +24,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.ManagementAware;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound PojoExchanges.
  *
  * @version $Revision$
  */
-public class TimerEndpoint extends DefaultEndpoint {
+@ManagedResource(description = "Managed Timer Endpoint")
+public class TimerEndpoint extends DefaultEndpoint implements ManagementAware<TimerEndpoint> {
     private String timerName;
     private Date time;
     private long period = 1000;
@@ -65,6 +69,11 @@ public class TimerEndpoint extends DefaultEndpoint {
         return new TimerConsumer(this, processor);
     }
 
+    public Object getManagedObject(TimerEndpoint object) {
+        return this;
+    }
+
+    @ManagedAttribute(description = "Timer Name")
     public String getTimerName() {
         if (timerName == null) {
             timerName = getEndpointUri();
@@ -72,38 +81,47 @@ public class TimerEndpoint extends DefaultEndpoint {
         return timerName;
     }
 
+    @ManagedAttribute(description = "Timer Name")
     public void setTimerName(String timerName) {
         this.timerName = timerName;
     }
 
+    @ManagedAttribute(description = "Timer Daemon")
     public boolean isDaemon() {
         return daemon;
     }
 
+    @ManagedAttribute(description = "Timer Daemon")
     public void setDaemon(boolean daemon) {
         this.daemon = daemon;
     }
 
+    @ManagedAttribute(description = "Timer Delay")
     public long getDelay() {
         return delay;
     }
 
+    @ManagedAttribute(description = "Timer Delay")
     public void setDelay(long delay) {
         this.delay = delay;
     }
 
+    @ManagedAttribute(description = "Timer FixedRate")
     public boolean isFixedRate() {
         return fixedRate;
     }
 
+    @ManagedAttribute(description = "Timer FixedRate")
     public void setFixedRate(boolean fixedRate) {
         this.fixedRate = fixedRate;
     }
 
+    @ManagedAttribute(description = "Timer Period")
     public long getPeriod() {
         return period;
     }
 
+    @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
         this.period = period;
     }
@@ -116,6 +134,7 @@ public class TimerEndpoint extends DefaultEndpoint {
         this.time = time;
     }
 
+    @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return true;
     }
@@ -130,4 +149,15 @@ public class TimerEndpoint extends DefaultEndpoint {
     public void setTimer(Timer timer) {
         this.timer = timer;
     }
+
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
+        return this.getCamelContext().getName();
+    }
+
+    @ManagedAttribute(description = "Endpoint Uri")
+    public String getEndpointUri() {
+        return super.getEndpointUri();
+    }
+
 }

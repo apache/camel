@@ -16,13 +16,11 @@
  */
 package org.apache.camel.management;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.management.JMException;
-import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -32,7 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.component.timer.TimerEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -48,7 +45,6 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedThrottler;
-import org.apache.camel.management.mbean.ManagedTimerEndpoint;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -61,8 +57,8 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.KeyValueHolder;
@@ -80,7 +76,6 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service {
 
     private static final Log LOG = LogFactory.getLog(DefaultManagementLifecycleStrategy.class);
-    private static final String MANAGED_RESOURCE_CLASSNAME = "org.springframework.jmx.export.annotation.ManagedResource";
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
     private final CamelContext context;
@@ -163,74 +158,12 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        // see if the spring-jmx is on the classpath
-        Class annotationClass = resolveManagedAnnotation(endpoint);
-        if (annotationClass == null) {
-            // no its not so register the endpoint as a new managed endpoint
-            registerEndpointAsManagedEndpoint(endpoint);
-            return;
-        }
-
-        // see if the endpoint have been annotation with a spring JMX annotation
-        Object annotation = endpoint.getClass().getAnnotation(annotationClass);
-        if (annotation == null) {
-            // no its not so register the endpoint as a new managed endpoint
-            registerEndpointAsManagedEndpoint(endpoint);
-        } else {
-            // there is already a spring JMX annotation so attempt to register it
-            attemptToRegisterManagedResource(endpoint, annotation);
-        }
-    }
-
-    public void onEndpointRemove(Endpoint endpoint) {
-        // the agent hasn't been started
-        if (!initialized) {
-            return;
-        }
-
         try {
-            ManagedEndpoint me;
-            if (endpoint instanceof BrowsableEndpoint) {
+            Object me;
+            if (endpoint instanceof ManagementAware) {
+                me = ((ManagementAware) endpoint).getManagedObject(endpoint);
+            } else if (endpoint instanceof BrowsableEndpoint) {
                 me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
-            } else if (endpoint instanceof TimerEndpoint) {
-                me = new ManagedTimerEndpoint((TimerEndpoint) endpoint);
-            } else {
-                me = new ManagedEndpoint(endpoint);
-            }
-            getStrategy().unmanageObject(me);
-        } catch (Exception e) {
-            LOG.warn("Could not unregister Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
-        }
-    }
-
-    private Class resolveManagedAnnotation(Endpoint endpoint) {
-        CamelContext context = endpoint.getCamelContext();
-
-        ClassResolver resolver = context.getClassResolver();
-        return resolver.resolveClass(MANAGED_RESOURCE_CLASSNAME);
-    }
-
-    private void attemptToRegisterManagedResource(Endpoint endpoint, Object annotation) {
-        try {
-            Method method = annotation.getClass().getMethod("objectName");
-            String name = (String) method.invoke(annotation);
-            ObjectName objectName = ObjectName.getInstance(name);
-            getStrategy().manageNamedObject(endpoint, objectName);
-        } catch (Exception e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("objectName method not present on endpoint, wrapping endpoint in ManagedEndpoint instead: " + endpoint);
-            }
-            registerEndpointAsManagedEndpoint(endpoint);
-        }
-    }
-
-    private void registerEndpointAsManagedEndpoint(Endpoint endpoint) {
-        try {
-            ManagedEndpoint me;
-            if (endpoint instanceof BrowsableEndpoint) {
-                me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
-            } else if (endpoint instanceof TimerEndpoint) {
-                me = new ManagedTimerEndpoint((TimerEndpoint) endpoint);
             } else {
                 me = new ManagedEndpoint(endpoint);
             }
@@ -238,7 +171,28 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
+    }
 
+    @SuppressWarnings("unchecked")
+    public void onEndpointRemove(Endpoint endpoint) {
+        // the agent hasn't been started
+        if (!initialized) {
+            return;
+        }
+
+        try {
+            Object me;
+            if (endpoint instanceof ManagementAware) {
+                me = ((ManagementAware) endpoint).getManagedObject(endpoint);
+            } else if (endpoint instanceof BrowsableEndpoint) {
+                me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
+            } else {
+                me = new ManagedEndpoint(endpoint);
+            }
+            getStrategy().unmanageObject(me);
+        } catch (Exception e) {
+            LOG.warn("Could not unregister Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
+        }
     }
 
     public void onServiceAdd(CamelContext context, Service service) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.management.ObjectName;
@@ -24,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -32,6 +32,17 @@ import org.apache.camel.impl.DefaultComponent;
  * with the mbean server.
  */
 public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDefaultsTest {
+
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        context.addComponent("custom", new CustomComponent());
+
+        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
+        naming.setHostName("localhost");
+        naming.setDomainName("org.apache.camel");
+        return context;
+    }
 
     public void testCustomEndpoint() throws Exception {
         if (!canRunOnThisPlatform()) {
@@ -43,12 +54,24 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
 
-        resolveMandatoryEndpoint("custom:end", CustomEndpoint.class);
-        ObjectName objName = new ObjectName("testdomain:name=customEndpoint");
+        resolveMandatoryEndpoint("custom://end", CustomEndpoint.class);
 
-        assertEquals("bar", mbsc.getAttribute(objName, "Foo"));
+        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+
+        // get custom
+        Iterator<ObjectName> it = s.iterator();
+        ObjectName on1 = it.next();
+        ObjectName on2 = it.next();
+
+        if (on1.getCanonicalName().contains("custom")) {
+            assertEquals("bar", mbsc.getAttribute(on1, "Foo"));
+        } else {
+            assertEquals("bar", mbsc.getAttribute(on2, "Foo"));
+        }
     }
 
+    @SuppressWarnings("unchecked")
     public void testManagedEndpoint() throws Exception {
         if (!canRunOnThisPlatform()) {
             return;
@@ -63,10 +86,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
         ObjectName objName = new ObjectName(domainName + ":type=endpoints,*");
         Set<ObjectName> s = mbsc.queryNames(objName, null);
-
-        ObjectName dynamicallyGeneratedObjName = s.iterator().next();
-
-        assertEquals("direct://start", mbsc.getAttribute(dynamicallyGeneratedObjName, "EndpointUri"));
+        assertEquals(2, s.size());
     }
 
     public void testCounters() throws Exception {
@@ -83,6 +103,30 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
     }
 
+    public void testMBeansRegistered() throws Exception {
+        if (!canRunOnThisPlatform()) {
+            return;
+        }
+
+        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
+                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
+            assertEquals(domainName, mbsc.getDefaultDomain());
+        }
+
+        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
+        assertEquals("Could not find 1 context: " + s, 1, s.size());
+
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
+        assertEquals("Could not find 2 processors: " + s, 2, s.size());
+
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
+        assertEquals("Could not find 1 route: " + s, 1, s.size());
+    }
+
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -92,14 +136,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
                 from("direct:start").delay(10).to("custom:end");
             }
         };
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(createRegistry());
-        context.addComponent("custom", new CustomComponent());
-
-        return context;
     }
 
     private class CustomComponent extends DefaultComponent {

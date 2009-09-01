@@ -20,13 +20,11 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.mbean.ManagedComponent;
-import org.apache.camel.management.mbean.ManagedConsumer;
-import org.apache.camel.management.mbean.ManagedEndpoint;
-import org.apache.camel.management.mbean.ManagedProcessor;
-import org.apache.camel.management.mbean.ManagedRoute;
-import org.apache.camel.management.mbean.ManagedService;
-import org.apache.camel.management.mbean.ManagedTracer;
+import org.apache.camel.Component;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
@@ -34,28 +32,18 @@ import org.apache.camel.model.ProcessorDefinition;
  */
 public interface ManagementNamingStrategy {
 
-    ObjectName getObjectName(CamelContext context) throws MalformedObjectNameException;
+    ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException;
 
-    ObjectName getObjectName(ManagedComponent mbean) throws MalformedObjectNameException;
+    ObjectName getObjectNameForComponent(Component component, String name) throws MalformedObjectNameException;
 
-    ObjectName getObjectName(ManagedEndpoint mbean) throws MalformedObjectNameException;
+    ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException;
 
-    ObjectName getObjectName(ManagedProcessor mbean) throws MalformedObjectNameException;
+    ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) throws MalformedObjectNameException;
 
-    ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException;
+    ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException;
 
-    ObjectName getObjectName(ManagedConsumer mbean) throws MalformedObjectNameException;
+    ObjectName getObjectNameForConsumer(CamelContext context, Consumer consumer) throws MalformedObjectNameException;
 
-    ObjectName getObjectName(ManagedTracer mbean) throws MalformedObjectNameException;
-
-    /**
-     * @deprecated
-     */
-    ObjectName getObjectName(ManagedService mbean) throws MalformedObjectNameException;
-
-    /**
-     * @deprecated
-     */
-    ObjectName getObjectName(RouteContext routeContext, ProcessorDefinition processor) throws MalformedObjectNameException;
+    ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException;
 
 }

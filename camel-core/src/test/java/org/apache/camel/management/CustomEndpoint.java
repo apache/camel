@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.ManagementAware;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -26,17 +27,21 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * and must be declared a public class otherwise the mbean server connection cannot access its methods.
  */
 // START SNIPPET: e1
-@ManagedResource(objectName = "testdomain:name=customEndpoint")
-public class CustomEndpoint extends MockEndpoint {
+@ManagedResource(description = "Our custom managed endpoint")
+public class CustomEndpoint extends MockEndpoint implements ManagementAware<CustomEndpoint> {
 
     public CustomEndpoint(final String endpointUri, final Component component) {
         super(endpointUri, component);
     }
 
+    public Object getManagedObject(CustomEndpoint object) {
+        return this;
+    }
+
     public boolean isSingleton() {
         return true;
     }
-    
+
     protected String createEndpointUri() {
         return "custom";
     }
@@ -44,6 +49,11 @@ public class CustomEndpoint extends MockEndpoint {
     @ManagedAttribute
     public String getFoo() {
         return "bar";
+    }
+
+    @ManagedAttribute
+    public String getEndpointUri() {
+        return super.getEndpointUri();
     }
 }
 // END SNIPPET: e1
