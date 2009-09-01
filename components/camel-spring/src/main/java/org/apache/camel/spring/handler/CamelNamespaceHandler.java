@@ -61,7 +61,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
-    protected Binder<Node> binder;
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
@@ -139,9 +138,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         return parserElementNames;
     }
 
-    protected Object parseUsingJaxb(Element element, ParserContext parserContext) {
+    protected Object parseUsingJaxb(Element element, ParserContext parserContext, Binder<Node> binder) {
         try {
-            binder = getJaxbContext().createBinder();
             return binder.unmarshal(element);
         } catch (JAXBException e) {
             throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
@@ -196,7 +194,13 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
 
             // now lets parse the routes with JAXB
-            Object value = parseUsingJaxb(element, parserContext);
+            Binder<Node> binder = null;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
+            }
+            Object value = parseUsingJaxb(element, parserContext, binder);
             
             if (value instanceof CamelContextFactoryBean) {
                 // set the property value with the JAXB parsed value
@@ -254,13 +258,13 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
            
 
             // register as endpoint defined indirectly in the routes by from/to types having id explict set
-            registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId);
+            registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
 
             // register templates if not already defined
             registerTemplates(element, parserContext, contextId);
 
             // lets inject the namespaces into any namespace aware POJOs
-            injectNamespaces(element);
+            injectNamespaces(element, binder);
             if (!createdBeanPostProcessor) {
                 // no bean processor element so lets create it by ourself
                 Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
@@ -271,7 +275,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     }
 
-    protected void injectNamespaces(Element element) {
+    protected void injectNamespaces(Element element, Binder<Node> binder) {
         NodeList list = element.getChildNodes();
         Namespaces namespaces = null;
         int size = list.getLength();
@@ -287,7 +291,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     }
                     namespaces.configure(namespaceAware);
                 }
-                injectNamespaces(childElement);
+                injectNamespaces(childElement, binder);
             }
         }
     }
@@ -295,7 +299,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     /**
      * Used for auto registering endpoints from the <tt>from</tt> or <tt>to</tt> DSL if they have an id attribute set
      */
-    protected void registerEndpointsWithIdsDefinedInFromOrToTypes(Element element, ParserContext parserContext, String contextId) {
+    protected void registerEndpointsWithIdsDefinedInFromOrToTypes(Element element, ParserContext parserContext, String contextId, Binder<Node> binder) {
         NodeList list = element.getChildNodes();
         int size = list.getLength();
         for (int i = 0; i < size; i++) {
@@ -308,7 +312,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     registerEndpoint(childElement, parserContext, contextId);
                 }
                 // recursive
-                registerEndpointsWithIdsDefinedInFromOrToTypes(childElement, parserContext, contextId);
+                registerEndpointsWithIdsDefinedInFromOrToTypes(childElement, parserContext, contextId, binder);
             }
         }
     }
