@@ -115,8 +115,10 @@ public class Enricher extends ServiceSupport implements Processor {
                 // prepare the exchanges for aggregation
                 ExchangeHelper.prepareAggregation(exchange, resourceExchange);
                 Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
-                // copy aggregation result onto original exchange (preserving pattern)
-                copyResultsPreservePattern(exchange, aggregatedExchange);
+                if (aggregatedExchange != null) {
+                    // copy aggregation result onto original exchange (preserving pattern)
+                    copyResultsPreservePattern(exchange, aggregatedExchange);
+                }
             } else {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot aggregate exchange as its filtered: " + resourceExchange);
@@ -166,7 +168,9 @@ public class Enricher extends ServiceSupport implements Processor {
     private static class CopyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            copyResultsPreservePattern(oldExchange, newExchange);
+            if (newExchange != null) {
+                copyResultsPreservePattern(oldExchange, newExchange);
+            }
             return oldExchange;
         }
 

@@ -182,7 +182,7 @@ public class PollEnricher extends ServiceSupport implements Processor {
             boolean fileBasedConsumer = edpc.getEndpoint().getEndpointKey().startsWith("file") || edpc.getEndpoint().getEndpointKey().startsWith("ftp");
             boolean fileBasedExchange = exchange.getFromEndpoint().getEndpointUri().startsWith("file") || exchange.getFromEndpoint().getEndpointUri().startsWith("ftp");
             if (fileBasedConsumer && fileBasedExchange) {
-                throw new IllegalArgumentException("Camel durrently does not support pollEnrich from a file/ftp endpoint"
+                throw new IllegalArgumentException("Camel currently does not support pollEnrich from a file/ftp endpoint"
                         + " when the route also started from a file/ftp endpoint."
                         + " Started from: " + exchange.getFromEndpoint().getEndpointUri() + " pollEnrich: " + edpc.getEndpoint().getEndpointUri());
             }
@@ -230,7 +230,9 @@ public class PollEnricher extends ServiceSupport implements Processor {
     private static class CopyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            copyResultsPreservePattern(oldExchange, newExchange);
+            if (newExchange != null) {
+                copyResultsPreservePattern(oldExchange, newExchange);
+            }
             return oldExchange;
         }
 

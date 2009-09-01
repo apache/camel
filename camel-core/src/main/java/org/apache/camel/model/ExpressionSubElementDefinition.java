@@ -90,4 +90,17 @@ public class ExpressionSubElementDefinition {
         }
         return getPredicate();
     }
+
+    @Override
+    public String toString() {
+        if (expression != null) {
+            return expression.toString();
+        } else if (expressionType != null) {
+            return expressionType.toString();
+        } else if (predicate != null) {
+            return predicate.toString();
+        }
+        return super.toString();
+    }
 }
+
