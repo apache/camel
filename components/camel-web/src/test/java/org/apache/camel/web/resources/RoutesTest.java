@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.junit.Test;
 
 
 /**
@@ -27,6 +28,7 @@ import org.apache.camel.model.RoutesDefinition;
  */
 public class RoutesTest extends TestSupport {
 
+    @Test
     public void testRoutes() throws Exception {
 
         String text = resource.path("routes").accept("application/xml").get(String.class);

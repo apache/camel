@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for enricher DSL
  */
 public class EnrichSetBodyDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testEnricher() throws Exception {
         String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

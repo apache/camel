@@ -17,16 +17,20 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for marshal and unmarshal DSL
  */
 public class MarshalDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testMarshal() throws Exception {
         String dsl = "from(\"direct:start\").marshal().serialization().to(\"direct:marshalled\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testMultiFrom() throws Exception {
         String dsl = "from(\"direct:start\").unmarshal().serialization().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

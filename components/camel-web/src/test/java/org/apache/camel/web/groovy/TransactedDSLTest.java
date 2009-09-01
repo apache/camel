@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class TransactedDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testTransacted() throws Exception {
         String dsl = "from(\"direct:start\").transacted(\"myTransacted\").to(\"mock:result\")";
         String expected = "from(\"direct:start\").policy(\"myTransacted\").to(\"mock:result\")";
@@ -29,6 +32,7 @@ public class TransactedDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testTransactedWithPolicy() throws Exception {
         String dsl = "from(\"direct:start\").transacted().policy(\"myPolicy\").to(\"mock:result\")";
         String expected = "from(\"direct:start\").policy().policy(\"myPolicy\").to(\"mock:result\")";

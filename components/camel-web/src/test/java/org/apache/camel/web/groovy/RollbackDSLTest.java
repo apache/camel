@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  *
  */
 public class RollbackDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testRollback() throws Exception {
         String dsl = "from(\"direct:start\").choice().when(body().isNotEqualTo(\"ok\")).to(\"mock:rollback\").rollback(\"That do not work\").otherwise().to(\"mock:result\").end()";
         assertEquals(dsl, render(dsl));

@@ -17,16 +17,20 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for delay DSL: from().delay().to()
  */
 public class DelayDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testSimpleDelay() throws Exception {
         String dsl = "from(\"direct:start\").delay(1000).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testDelayWithHeaderParameter() throws Exception {
         String dsl = "from(\"direct:start\").delay(header(\"MyDelay\")).to(\"mock:result\")";
         String expected = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
@@ -34,6 +38,7 @@ public class DelayDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testDelayWithHeaderMehtod() throws Exception {
         String dsl = "from(\"direct:start\").delay().header(\"MyDelay\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

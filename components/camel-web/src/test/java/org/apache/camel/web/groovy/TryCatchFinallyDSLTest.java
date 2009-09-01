@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  *
  */
 public class TryCatchFinallyDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testTryCatch() throws Exception {
         String dsl = "from(\"direct:start\").doTry().to(\"mock:result\")"
             + ".doCatch(IOException.class).handled(false).to(\"mock:io\")"
@@ -33,6 +36,7 @@ public class TryCatchFinallyDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testTryCatchFinally() throws Exception {
         String dsl = "from(\"direct:start\").doTry().to(\"mock:result\")"
             + ".doCatch(IOException.class).handled(false).to(\"mock:io\")"

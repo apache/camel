@@ -18,12 +18,14 @@
 package org.apache.camel.web.groovy;
 
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.junit.Test;
 
 /**
  * 
  */
 public class IdempotentConsumerDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testIdempotentConsumerAsync() throws Exception {
         String dsl = "from(\"direct:start\").idempotentConsumer(header(\"messageId\"), MemoryIdempotentRepository.memoryIdempotentRepository()).threads().to(\"mock:result\")";
         String[] importClasses = new String[] {"import org.apache.camel.processor.idempotent.*"};
@@ -31,6 +33,7 @@ public class IdempotentConsumerDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl, importClasses));
     }
 
+    @Test
     public void testIdempotentConsumerAsyncWithCacheSize() throws Exception {
         // drop the cache size
         String dsl = "from(\"direct:start\").idempotentConsumer(header(\"messageId\"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).threads().to(\"mock:result\")";
@@ -40,6 +43,7 @@ public class IdempotentConsumerDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl, importClasses));
     }
 
+    @Test
     public void testIdempotentConsumerEager() throws Exception {
         String dsl = "from(\"direct:start\").idempotentConsumer(header(\"messageId\"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).eager(false).to(\"mock:result\")";
         String expected = "from(\"direct:start\").idempotentConsumer(header(\"messageId\"), MemoryIdempotentRepository.memoryIdempotentRepository()).eager(false).to(\"mock:result\")";

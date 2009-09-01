@@ -16,19 +16,22 @@
  */
 package org.apache.camel.web.resources;
 
+import org.junit.Test;
+
 
 /**
  * @version $Revision$
  */
 public class EndpointsHtmlTest extends TestSupport {
 
+    @Test
     public void testCamelAsHtml() throws Exception {
         String response = resource("/").accept("text/html").get(String.class);
 
         assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
     }
 
-
+    @Test
     public void testEndpointsAsHtml() throws Exception {
         String response = resource("endpoints").accept("text/html").get(String.class);
 

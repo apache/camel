@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class RemovePropertyDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testRemoveProperty() throws Exception {
         String dsl = "from(\"direct:start\").setProperty(\"foo\").constant(\"bar\").to(\"mock:mid\").removeProperty(\"foo\").to(\"mock:end\")";
         assertEquals(dsl, render(dsl));

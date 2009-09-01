@@ -17,16 +17,20 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class ResequenceDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testResequence() throws Exception {
         String dsl = "from(\"direct:start\").resequence(body()).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testResequencer() throws Exception {
         String dsl = "from(\"direct:start\").resequencer(header(\"seqnum\")).stream().to(\"mock:result\")";
         String expected = "from(\"direct:start\").resequence(header(\"seqnum\")).stream().to(\"mock:result\")";

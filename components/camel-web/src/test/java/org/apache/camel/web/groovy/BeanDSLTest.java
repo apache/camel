@@ -17,26 +17,32 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  *
  */
 public class BeanDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testBeanMethodHeartbeat() throws Exception {
         String dsl = "from(\"bean:beanService?method=status\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testBeanRef() throws Exception {
         String dsl = "from(\"direct:start\").beanRef(\"myBean\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testBeanRecipient() throws Exception {
         String dsl = "from(\"direct:start\").beanRef(\"beanRecipient\", \"recipientList\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testBeanWithException() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock://error\"));onException(Exception.class).to(\"mock:invalid\");from(\"direct:start\").beanRef(\"myBean\").to(\"mock:valid\")";
         assertEquals(dsl, render(dsl));

@@ -17,23 +17,29 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * 
  */
 public class InterceptSendToEndpointDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testInterceptSendToEndpoint() throws Exception {
         String dsl = "interceptSendToEndpoint(\"mock:foo\").to(\"mock:detour\").transform(constant(\"Bye World\"));"
             + "from(\"direct:first\").to(\"mock:bar\").to(\"mock:foo\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testInterceptSendToEndpointDynamic() throws Exception {
         String dsl = "interceptSendToEndpoint(\"file:*\").skipSendToOriginalEndpoint().to(\"mock:detour\");"
             + "from(\"direct:first\").to(\"file://foo\").to(\"file://bar\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testInterceptSendToEndpointInOnException() throws Exception {
         String dsl = "onException(IOException.class).handled(true).to(\"mock:io\");"
             + "interceptSendToEndpoint(\"mock:io\").skipSendToOriginalEndpoint().to(\"mock:intercepted\");"
@@ -41,6 +47,8 @@ public class InterceptSendToEndpointDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
+    @Ignore("Need to fix this test")
+    @Test
     // TODO: fix this test!
     public void fixmeTestInterceptSendToIssue() throws Exception {
         String dsl = "interceptSendToEndpoint(\"direct:foo\").to(\"mock:foo\");"

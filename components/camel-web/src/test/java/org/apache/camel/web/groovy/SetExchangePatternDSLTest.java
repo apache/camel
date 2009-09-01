@@ -18,29 +18,37 @@
 package org.apache.camel.web.groovy;
 
 import org.apache.camel.ExchangePattern;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * 
  */
 public class SetExchangePatternDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testInOnly() throws Exception {
         String dsl = "from(\"direct:start\").inOnly(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testInOut() throws Exception {
         String dsl = "from(\"direct:start\").inOut(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
     // TODO: fix this test
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestToExchangePattern() throws Exception {
         String dsl = "from(\"direct:start\").to(ExchangePattern.InOnly, \"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
     // TODO: fix this test
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestSetExchangepattern() throws Exception {
         String dsl = "from(\"direct:start\").setExchangePattern(ExchangePattern.InOnly).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

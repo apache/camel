@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for routingSlip DSL
  */
 public class RoutingSlipDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testRoutingSlip() throws Exception {
         String dsl = "from(\"direct:a\").routingSlip(\"myHeader\").to(\"mock:end\")";
         String expected = "from(\"direct:a\").routingSlip(\"myHeader\", \",\").to(\"mock:end\")";
@@ -29,6 +32,7 @@ public class RoutingSlipDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testRoutingSlip1() throws Exception {
         String dsl = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\")";
         String expected = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\", \",\")";
@@ -36,6 +40,7 @@ public class RoutingSlipDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testRoutingSlip2() throws Exception {
         String dsl = "from(\"direct:c\").routingSlip(\"aRoutingSlipHeader\", \"#\")";
         assertEquals(dsl, render(dsl));

@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  *
  */
 public class MulticastDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testMulticast() throws Exception {
         String dsl = "from(\"direct:a\").multicast().to(\"mock:x\", \"mock:y\", \"mock:z\")";
         String expected = "from(\"direct:a\").multicast().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";

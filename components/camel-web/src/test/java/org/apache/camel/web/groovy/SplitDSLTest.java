@@ -17,27 +17,35 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * 
  */
 public class SplitDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testSplitStream() throws Exception {
         String dsl = "from(\"direct:start\").split(body().tokenize(\",\")).streaming().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testSplitTokenize() throws Exception {
         String dsl = "from(\"direct:start\").split(body(String.class).tokenize(\",\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testSplitMethod() throws Exception {
         String dsl = "from(\"direct:start\").split().method(\"mySplitterBean\", \"splitBody\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
     // TODO: fix this test!
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestSplitXPath() throws Exception {
         String dsl = "from(\"direct:start\").split(xpath(\"//foo/bar\")).convertBodyTo(String.class).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

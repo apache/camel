@@ -17,12 +17,15 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 
 /**
  *
  */
 public class ThreadsDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testThreadsAsyncDeadLetterChannel() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock://dead\").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(false));"
             + "from(\"direct:start\").threads(3).to(\"mock:result\")";
@@ -32,16 +35,19 @@ public class ThreadsDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testThreadsAsyncRoute() throws Exception {
         String dsl = "from(\"direct:start\").transform(body().append(\" World\")).threads().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testThreadsAsyncRouteNoWait() throws Exception {
         String dsl = "from(\"direct:start\").transform(body().append(\" World\")).threads().waitForTaskToComplete(WaitForTaskToComplete.Never).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testThreadsAsyncRouteWaitIfReplyExpected() throws Exception {
         String dsl = "from(\"direct:start\").transform(body().append(\" World\")).threads().waitForTaskToComplete(WaitForTaskToComplete.IfReplyExpected).to(\"mock:result\")";
         String expected = "from(\"direct:start\").transform(body().append(\" World\")).threads().to(\"mock:result\")";

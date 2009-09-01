@@ -17,16 +17,20 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class InterceptFromDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testInterceptFromChoice() throws Exception {
         String dsl = "interceptFrom().choice().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop().end();from(\"direct:start\").to(\"mock:a\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testInterceptFromPredicateWithStop() throws Exception {
         String dsl = "interceptFrom().when(header(\"usertype\").isEqualTo(\"test\")).stop();from(\"direct:start\").to(\"mock:result\")";
         String expected = "interceptFrom().choice().when(header(\"usertype\").isEqualTo(\"test\")).stop().end();from(\"direct:start\").to(\"mock:result\")";
@@ -34,11 +38,13 @@ public class InterceptFromDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testInterceptFromToLog() throws Exception {
         String dsl = "interceptFrom().to(\"log:received\");from(\"direct:start\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testInterceptFromUriRegex() throws Exception {
         String dsl = "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");"
             + "from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");"
@@ -51,6 +57,7 @@ public class InterceptFromDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, renderRoutes(dsl));
     }
 
+    @Test
     public void testInterceptFromUriSimpleLog() throws Exception {
         String dsl = "interceptFrom(\"seda:bar\").to(\"mock:bar\");"
             + "from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");"
@@ -62,6 +69,7 @@ public class InterceptFromDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, renderRoutes(dsl));
     }
 
+    @Test
     public void testInterceptFromUriWildcard() throws Exception {
         String dsl = "interceptFrom(\"seda*\").to(\"mock:intercept\");"
             + "from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");"
@@ -73,6 +81,7 @@ public class InterceptFromDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, renderRoutes(dsl));
     }
 
+    @Test
     public void testInterceptFromWithPredicate() throws Exception {
         String dsl = "interceptFrom().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop();from(\"direct:start\").to(\"mock:a\")";
         String expected = "interceptFrom().choice().when(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:b\").stop().end();from(\"direct:start\").to(\"mock:a\")";

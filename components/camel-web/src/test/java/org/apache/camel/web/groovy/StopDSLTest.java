@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  *
  */
 public class StopDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testStop() throws Exception {
         String dsl = "from(\"direct:start\").choice()"
             + ".when(body().contains(\"Hello\")).to(\"mock:hello\")"

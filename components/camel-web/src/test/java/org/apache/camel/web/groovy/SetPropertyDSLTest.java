@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class SetPropertyDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testSetProperty() throws Exception {
         String dsl = "from(\"direct:start\").setProperty(\"foo\", constant(\"ABC\")).to(\"mock:result\")";
         String expected = "from(\"direct:start\").setProperty(\"foo\").constant(\"ABC\").to(\"mock:result\")";
@@ -29,11 +32,13 @@ public class SetPropertyDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testSetPropertyXPath() throws Exception {
         String dsl = "from(\"direct:start\").unmarshal().string().setProperty(\"foo\").xpath(\"/person[@name='James']/@city\", String.class).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testSetPropertys() throws Exception {
         String dsl = "from(\"direct:start\").setProperty(\"foo\").constant(\"ABC\").setProperty(\"value\").constant(\"DEF\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

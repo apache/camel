@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class SetBodyDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testSetBody() throws Exception {
         String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\", \"mock:tap\")";
         String expected = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\").to(\"mock:tap\")";
@@ -29,6 +32,7 @@ public class SetBodyDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
     
+    @Test
     public void testSetBodyEnricher() throws Exception {
         String dsl = "from(\"direct:start\").setBody(body().append(\" World!\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

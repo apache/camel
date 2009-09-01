@@ -17,17 +17,17 @@
 
 package org.apache.camel.web.groovy;
 
-import junit.framework.TestCase;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.web.util.PredicateRenderer;
+import org.junit.Assert;
 
 /**
  * 
  */
-public class PredicateRendererTestSupport extends TestCase {
+public class PredicateRendererTestSupport extends Assert {
 
     protected void assertMatch(String expectedPredicate, Predicate predicate) throws Exception {
         StringBuilder sb = new StringBuilder();

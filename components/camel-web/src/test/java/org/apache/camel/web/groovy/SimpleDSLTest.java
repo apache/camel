@@ -17,21 +17,26 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for some basic DSL: from().to()
  */
 public class SimpleDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testFromTo() throws Exception {
         String dsl = "from(\"direct:start\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testMultiFrom() throws Exception {
         String dsl = "from(\"direct:a\", \"direct:b\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testMultiTo() throws Exception {
         String dsl = "from(\"direct:a\", \"direct:b\").to(\"mock:a\", \"mock:b\")";
         String expected = "from(\"direct:a\", \"direct:b\").to(\"mock:a\").to(\"mock:b\")";

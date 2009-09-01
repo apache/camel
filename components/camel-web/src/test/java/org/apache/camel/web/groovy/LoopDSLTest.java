@@ -17,16 +17,20 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for loop DSL
  */
 public class LoopDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testSimpleLoop() throws Exception {
         String dsl = "from(\"direct:start\").loop(8).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testLoopWithHeader() throws Exception {
         String dsl = "from(\"direct:start\").loop(header(\"loop\")).to(\"mock:result\")";
         String expected = "from(\"direct:start\").loop().header(\"loop\").to(\"mock:result\")";
@@ -34,11 +38,13 @@ public class LoopDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testLoopWithXPath() throws Exception {
         String dsl = "from(\"direct:start\").loop().xpath(\"/hello/@times\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testLoopWithEnd() throws Exception {
         String dsl = "from(\"direct:start\").loop(2).to(\"mock:result\").end().to(\"mock:last\")";
         String expected = "from(\"direct:start\").loop(2).to(\"mock:result\").to(\"mock:last\")";

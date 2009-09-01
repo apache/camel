@@ -21,19 +21,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import junit.framework.TestCase;
 import groovy.lang.GroovyClassLoader;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.web.util.GroovyRenderer;
+import org.junit.Assert;
 
 /**
  * An abstract class that provides basic support for GroovyRenderer test
  */
-public abstract class GroovyRendererTestSupport extends TestCase {
+public abstract class GroovyRendererTestSupport extends Assert {
     private String header = GroovyRenderer.HEADER;
     private final String footer = GroovyRenderer.FOOTER;
 

@@ -17,21 +17,26 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for some deadLetter DSL: errorhandler(deadLetter()).to()
  */
 public class DeadLetterDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testDeadLetterWithDefaultRedeliverDelay() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock://failed\").handled(false));from(\"direct:start\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testDeadLetterWithDefaultHandled() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000));from(\"direct:start\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testDeadLetterDSL() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from(\"direct:start\").to(\"mock:result\")";
         String expected = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from(\"direct:start\").to(\"mock:result\")";

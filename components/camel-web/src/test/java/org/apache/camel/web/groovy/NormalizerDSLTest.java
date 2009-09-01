@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for normalizer DSL: from().to()
  */
 public class NormalizerDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testNormalizer() throws Exception {
         String dsl = "from(\"direct:start\").choice()"
             + ".when().xpath(\"/employee\").to(\"bean:normalizer?method=employeeToPerson\")"

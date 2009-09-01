@@ -20,6 +20,9 @@ package org.apache.camel.web.groovy;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * 
  */
@@ -31,6 +34,8 @@ public class PoolEnrichDSLTest extends GroovyRendererTestSupport {
      * @throws Exception
      * TODO: fix this test!
      */
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestPollEnrich() throws Exception {
         String dsl = "from(\"direct:start\").pollEnrich(\"direct:foo\", 1000, aggregationStrategy).to(\"mock:result\")";
         String[] importClasses = new String[] {"import org.apache.camel.processor.enricher.*"};
@@ -40,6 +45,7 @@ public class PoolEnrichDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl, importClasses, newObjects));
     }
 
+    @Test
     public void testPollEnrichWithoutAggregationStrategy() throws Exception {
         String dsl = "from(\"direct:start\").pollEnrich(\"direct:foo\", 1000).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

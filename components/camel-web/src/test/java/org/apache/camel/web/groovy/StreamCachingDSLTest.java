@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  *
  */
 public class StreamCachingDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void test() throws Exception {
         String dsl = "from(\"direct:start\").streamCaching().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

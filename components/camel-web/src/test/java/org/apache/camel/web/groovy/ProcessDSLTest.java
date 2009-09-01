@@ -20,6 +20,9 @@ package org.apache.camel.web.groovy;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * 
  */
@@ -30,6 +33,8 @@ public class ProcessDSLTest extends GroovyRendererTestSupport {
      * 
      * @throws Exception TODO: fix this test!
      */
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestProcess() throws Exception {
         String dsl = "from(\"direct:start\").doTry().process(validator).to(\"mock:valid\").doCatch(ValidationException.class).to(\"mock:invalid\")";
         String[] importClasses = new String[] {"import org.apache.camel.processor.*;"};
@@ -39,6 +44,7 @@ public class ProcessDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl, importClasses, newObjects));
     }
 
+    @Test
     public void testProcessRef() throws Exception {
         String dsl = "from(\"direct:start\").processRef(\"myProcessor\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for xpath DSL
  */
 public class XPathDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testXPath() throws Exception {
         String dsl = "from(\"direct:start\").filter().xpath(\"/person[@name='James']\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

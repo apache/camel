@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class RemoveHeaderDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testRemoveHeader() throws Exception {
         String dsl = "from(\"direct:start\").setHeader(\"foo\").constant(\"bar\").to(\"mock:mid\").removeHeader(\"foo\").to(\"mock:end\")";
         assertEquals(dsl, render(dsl));

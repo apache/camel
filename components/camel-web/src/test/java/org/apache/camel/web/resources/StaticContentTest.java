@@ -16,11 +16,14 @@
  */
 package org.apache.camel.web.resources;
 
+import org.junit.Test;
+
 /**
  * @version $Revision$
  */
 public class StaticContentTest  extends TestSupport {
 
+    @Test
     public void testCssFile() throws Exception {
         String response = resource("/css/site.css").get(String.class);
         assertNotNull("Should have returned a response", response);

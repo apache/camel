@@ -21,12 +21,14 @@ import java.util.List;
 import org.apache.camel.web.model.Camel;
 import org.apache.camel.web.model.EndpointLink;
 import org.apache.camel.web.model.Endpoints;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class EndpointsTest extends TestSupport {
 
+    @Test
     public void testCamelAsXml() throws Exception {
         Camel camel = resource("/").accept("application/xml").get(Camel.class);
         assertValidCamel(camel);
@@ -35,6 +37,7 @@ public class EndpointsTest extends TestSupport {
         assertValidCamel(camel);
     }
 
+    @Test
     public void testEndpointsAsXml() throws Exception {
         Endpoints endpoints = resource("endpoints").accept("application/xml").get(Endpoints.class);
         assertValidEndpoints(endpoints);

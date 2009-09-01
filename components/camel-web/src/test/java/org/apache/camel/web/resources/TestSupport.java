@@ -16,30 +16,30 @@
  */
 package org.apache.camel.web.resources;
 
-import junit.framework.TestCase;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-
 import org.apache.camel.web.Main;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 
 /**
  * @version $Revision$
  */
-public class TestSupport extends TestCase {
+public class TestSupport extends Assert {
     private static final transient Log LOG = LogFactory.getLog(TestSupport.class);
 
     protected ClientConfig clientConfig;
     protected Client client;
     protected WebResource resource;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+        
         Main.start();
 
         clientConfig = new DefaultClientConfig();
@@ -49,10 +49,8 @@ public class TestSupport extends TestCase {
         resource = client.resource(Main.getRootUrl());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-
+    @After
+    public void tearDown() throws Exception {
         Main.stop();
     }
 

@@ -17,26 +17,32 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for filter DSL: from().filter().to()
  */
 public class FilterDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testFilterHeader() throws Exception {
         String dsl = "from(\"direct:start\").filter(header(\"foo\").isEqualTo(\"bar\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testFilterBody() throws Exception {
         String dsl = "from(\"direct:start\").filter(body().contains(\"World\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testFilterMethod() throws Exception {
         String dsl = "from(\"direct:start\").filter().method(\"myBean\", \"matches\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testFilterXPath() throws Exception {
         String dsl = "from(\"direct:start\").filter().xpath(\"/person[@Name='James']\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

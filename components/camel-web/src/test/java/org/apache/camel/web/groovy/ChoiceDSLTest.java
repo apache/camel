@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for choice DSL
  */
 public class ChoiceDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testChoiceWithMethod() throws Exception {
         String dsl = "from(\"direct:start\").choice()"
             + ".when().method(\"controlBean\", \"isDetour\").to(\"mock:detour\")"
@@ -30,6 +33,7 @@ public class ChoiceDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testChoiceWithPredication() throws Exception {
         String dsl = "from(\"direct:start\").choice()"
             + ".when(header(\"username\").isNull()).to(\"mock:god\")"
@@ -39,6 +43,7 @@ public class ChoiceDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testChoiceWithoutEnd() throws Exception {
         String dsl = "from(\"direct:start\").split().body().choice()"
             + ".when().method(\"orderItemHelper\", \"isWidget\").to(\"bean:widgetInventory\", \"seda:aggregate\")"
@@ -50,6 +55,7 @@ public class ChoiceDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testChoiceWithXPath() throws Exception {
         String dsl = "from(\"direct:start\").choice()"
             + ".when().xpath(\"\\$foo = 'bar'\").to(\"mock:x\")"

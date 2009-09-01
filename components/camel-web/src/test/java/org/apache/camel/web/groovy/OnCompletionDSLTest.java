@@ -17,17 +17,21 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class OnCompletionDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testOnCompletionAndIntercept() throws Exception {
         String dsl = "intercept().to(\"mock:intercept\");"
             + "from(\"direct:start\").onCompletion().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testOnCompletionAndInterceptAndOnException() throws Exception {
         String dsl = "intercept().to(\"mock:intercept\");"
             + "onCompletion().to(\"log:global\").to(\"mock:sync\");"
@@ -42,16 +46,19 @@ public class OnCompletionDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testOnCompletionDSL() throws Exception {
         String dsl = "from(\"direct:start\").onCompletion().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testOnCompletionGlobal() throws Exception {
         String dsl = "onCompletion().to(\"log:global\").to(\"mock:sync\");from(\"direct:start\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testOnCompletionMoreGlobal() throws Exception {
         String dsl = "onCompletion().to(\"log:global\").to(\"mock:sync\");"
             + "onCompletion().to(\"log:global\").to(\"mock:two\");"
@@ -61,11 +68,13 @@ public class OnCompletionDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testOnCompletionOnly() throws Exception {
         String dsl = "from(\"direct:start\").onCompletion().onCompleteOnly().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testOnCompletionRouteScopeOverrideGlobalScope() throws Exception {
         String dsl = "onCompletion().to(\"log:global\").to(\"mock:global\");"
             + "from(\"direct:start\").onCompletion().to(\"log:route\").to(\"mock:sync\").end().to(\"mock:result\")";
@@ -75,11 +84,13 @@ public class OnCompletionDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testOnCompletionWhen() throws Exception {
         String dsl = "from(\"direct:start\").onCompletion().onWhen(body().contains(\"Hello\")).to(\"log:sync\").to(\"mock:sync\").end().to(\"log:original\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testOnFailureOnly() throws Exception {
         String dsl = "from(\"direct:start\").onCompletion().onFailureOnly().to(\"log:sync\").to(\"mock:sync\").end().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

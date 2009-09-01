@@ -17,21 +17,28 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * a test case for throttle DSL
  */
 public class ThrottleDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testThrottle() throws Exception {
         String dsl = "from(\"direct:start\").throttle(100).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testThrottleWithTimePeriodMillis() throws Exception {
         String dsl = "from(\"direct:start\").throttle(3).timePeriodMillis(10000).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestThrottleWithTimePeriodMillisInterval() throws Exception {
         String dsl = "from(\"direct:start\").throttle(1).timePeriodMillis(INTERVAL).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

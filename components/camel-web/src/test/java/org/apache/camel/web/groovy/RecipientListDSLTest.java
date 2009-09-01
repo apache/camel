@@ -17,16 +17,20 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for some basic DSL: from().to()
  */
 public class RecipientListDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testSimpleRecipientList() throws Exception {
         String dsl = "from(\"direct:start\").recipientList(header(\"foo\"))";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testRecipientList() throws Exception {
         String dsl = "from(\"direct:start\").recipientList(header(\"recipientListHeader\").tokenize(\",\"))";
         assertEquals(dsl, render(dsl));

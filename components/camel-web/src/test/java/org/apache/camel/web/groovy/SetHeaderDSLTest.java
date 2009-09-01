@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class SetHeaderDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testSetHeaderConstant() throws Exception {
         String dsl = "from(\"direct:start\").setHeader(\"foo\", constant(\"ABC\")).to(\"mock:result\")";
         String expected = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").to(\"mock:result\")";
@@ -29,11 +32,13 @@ public class SetHeaderDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testSetHeaderXPath() throws Exception {
         String dsl = "from(\"direct:start\").unmarshal().string().setHeader(\"foo\").xpath(\"/person[@name='James']/@city\", String.class).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testSetHeaders() throws Exception {
         String dsl = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").setHeader(\"value\").constant(\"DEF\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

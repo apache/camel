@@ -17,17 +17,22 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 
 /**
  * a test case for aggregate DSL
  */
 public class AggregateDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testAggregate() throws Exception {
         String dsl = "from(\"direct:start\").aggregate().header(\"cheese\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testAggregateCommon() throws Exception {
         String dsl = "from(\"direct:start\").aggregate(header(\"cheese\")).to(\"mock:result\")";
         String expected = "from(\"direct:start\").aggregate().header(\"cheese\").to(\"mock:result\")";
@@ -35,11 +40,13 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testAggregateGroupedExchange() throws Exception {
         String dsl = "from(\"direct:start\").aggregate().simple(\"id\").batchTimeout(500L).groupExchanges().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testAggregateTimeoutOnly() throws Exception {
         String dsl = "from(\"direct:start\").aggregate(header(\"id\")).batchTimeout(3000).batchSize(0).to(\"mock:result\")";
         String expected = "from(\"direct:start\").aggregate().header(\"id\").batchTimeout(3000).batchSize(0).to(\"mock:result\")";
@@ -53,6 +60,8 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
      * @throws Exception
      * TODO: fix this test!
      */
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestAggregateAndOnException() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock:error\"));onException(CamelException.class).maximumRedeliveries(2);from(\"direct:start\").aggregate(header(\"id\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
@@ -64,6 +73,8 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
      * @throws Exception
      * TODO: fix this test!
      */
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestAggregateTimerAndTracer() throws Exception {
         String dsl = "from(\"timer://kickoff?period=9999910000\").setHeader(\"id\").constant(\"foo\").setBody().constant(\"a b c\").split(body().tokenize(\" \")).to(\"seda:splitted\");"
             + "from(\"seda:splitted\").aggregate(header(\"id\")).to(\"mock:result\")";

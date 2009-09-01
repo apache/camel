@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class PolicyDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testPolicy() throws Exception {
         String dsl = "from(\"direct:start\").policy(\"myPolicy\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

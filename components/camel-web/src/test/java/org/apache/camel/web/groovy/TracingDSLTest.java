@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  *
  */
 public class TracingDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testTracePerRotueManual() throws Exception {
         String dsl = "from(\"direct:a\").tracing().streamCaching().to(\"mock:a\");"
             + "from(\"direct:b\").noTracing().to(\"mock:b\");"

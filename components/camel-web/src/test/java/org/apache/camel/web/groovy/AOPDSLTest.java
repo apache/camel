@@ -17,16 +17,22 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * 
  */
 public class AOPDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testAOPAfter() throws Exception {
         String dsl = "from(\"direct:start\").aop().after(\"mock:after\").transform(constant(\"Bye World\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Ignore("Need to fix this test")
+    @Test
     // TODO: fix this test!
     public void fixmeTestAOPAfterFinally() throws Exception {
         String dsl = "from(\"direct:start\").aop().afterFinally(\"mock:after\").choice()"
@@ -36,11 +42,14 @@ public class AOPDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testAOPAround() throws Exception {
         String dsl = "from(\"direct:start\").aop().around(\"mock:before\", \"mock:after\").transform(constant(\"Bye World\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Ignore("Need to fix this test")
+    @Test
     // TODO: fix this test!
     public void fixmeTestAOPAroundFinally() throws Exception {
         String dsl = "from(\"direct:start\").aop().aroundFinally(\"mock:before\", \"mock:after\").choice()"
@@ -50,11 +59,13 @@ public class AOPDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testAOPBefore() throws Exception {
         String dsl = "from(\"direct:start\").aop().before(\"mock:before\").transform(constant(\"Bye World\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testAOPNestedRoute() throws Exception {
         String dsl = "from(\"direct:start\").to(\"mock:start\").aop().around(\"mock:before\", \"mock:after\")"
             + ".transform(constant(\"Bye\")).to(\"mock:middle\").transform(body().append(\" World\")).end().transform(body().prepend(\"Bye \")).to(\"mock:result\")";

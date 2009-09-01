@@ -20,11 +20,14 @@ package org.apache.camel.web.groovy;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+import org.junit.Test;
+
 /**
  * Test for GroovyRenderer
  */
 public class GroovyRendererTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testRoute() throws Exception {
         FileReader reader = new FileReader("src/test/resources/route.txt");
         BufferedReader br = new BufferedReader(reader);
@@ -36,6 +39,7 @@ public class GroovyRendererTest extends GroovyRendererTestSupport {
         }
     }
 
+    @Test
     public void testRoutes() throws Exception {
         FileReader reader = new FileReader("src/test/resources/routes.txt");
         BufferedReader br = new BufferedReader(reader);

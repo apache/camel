@@ -17,21 +17,26 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * 
  */
 public class InterceptDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testIntercept() throws Exception {
         String dsl = "intercept().to(\"mock:intercepted\");from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testInterceptStop() throws Exception {
         String dsl = "intercept().to(\"mock:intercepted\").stop();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testInterceptWhen() throws Exception {
         String dsl = "intercept().when(body().contains(\"Hello\")).to(\"mock:intercepted\");from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
         String expected = "intercept().choice().when(body().contains(\"Hello\")).to(\"mock:intercepted\").end();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
@@ -39,6 +44,7 @@ public class InterceptDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testInterceptWhenStop() throws Exception {
         String dsl = "intercept().when(body().contains(\"Hello\")).to(\"mock:intercepted\").stop();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";
         String expected = "intercept().choice().when(body().contains(\"Hello\")).to(\"mock:intercepted\").stop().end();from(\"direct:start\").to(\"mock:foo\").to(\"mock:bar\").to(\"mock:result\")";

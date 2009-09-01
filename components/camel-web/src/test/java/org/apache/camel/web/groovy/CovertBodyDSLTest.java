@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for convertBody DSL: from().convertBodyTo().to()
  */
 public class CovertBodyDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testConvertBody() throws Exception {
         String dsl = "from(\"direct:start\").convertBodyTo(Integer.class).to(\"mock:result\")";
         String expected = "from(\"direct:start\").convertBodyTo(java.lang.Integer.class).to(\"mock:result\")";
@@ -29,6 +32,7 @@ public class CovertBodyDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testConvertBodyWithEncoding() throws Exception {
         String dsl = "from(\"direct:start\").convertBodyTo(byte[].class, \"iso-8859-1\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

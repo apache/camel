@@ -17,16 +17,21 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * a test case for wire tap DSL
  */
 public class WireTapDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testWireTap1() throws Exception {
         String dsl = "from(\"direct:start\").to(\"log:foo\").wireTap(\"direct:tap\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
+    @Test
     public void testWireTap2() throws Exception {
         String dsl = "from(\"direct:start\").delay(1000).setBody().constant(\"Tapped\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
@@ -38,6 +43,8 @@ public class WireTapDSLTest extends GroovyRendererTestSupport {
      * @throws Exception
      * TODO: fix this test!
      */
+    @Ignore("Need to fix this test")
+    @Test
     public void fixmeTestWireTap3() throws Exception {
         String dsl = "from(\"direct:start\").wireTap(\"direct:foo\", constant(\"Bye World\")).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));

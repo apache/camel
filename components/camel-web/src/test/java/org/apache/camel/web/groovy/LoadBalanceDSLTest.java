@@ -17,11 +17,14 @@
 
 package org.apache.camel.web.groovy;
 
+import org.junit.Test;
+
 /**
  * a test case for loadBalance DSL
  */
 public class LoadBalanceDSLTest extends GroovyRendererTestSupport {
 
+    @Test
     public void testLoadBalanceRandom() throws Exception {
         String dsl = "from(\"direct:start\").loadBalance().random().to(\"mock:x\", \"mock:y\", \"mock:z\")";
         String expected = "from(\"direct:start\").loadBalance().random().to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";
@@ -29,6 +32,7 @@ public class LoadBalanceDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testLoadBalanceFailover() throws Exception {
         String dsl = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\", \"direct:y\")";
         String expected = "from(\"direct:start\").loadBalance().failover(IOException.class).to(\"direct:x\").to(\"direct:y\")";
@@ -36,6 +40,7 @@ public class LoadBalanceDSLTest extends GroovyRendererTestSupport {
         assertEquals(expected, render(dsl));
     }
 
+    @Test
     public void testLoadBalanceSticky() throws Exception {
         String dsl = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\", \"mock:y\", \"mock:z\")";
         String expected = "from(\"direct:start\").loadBalance().sticky(header(\"foo\")).to(\"mock:x\").to(\"mock:y\").to(\"mock:z\")";

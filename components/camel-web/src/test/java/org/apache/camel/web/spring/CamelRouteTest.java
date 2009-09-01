@@ -21,21 +21,25 @@ import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.web.resources.CamelContextResource;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class CamelRouteTest extends TestCase {
+public class CamelRouteTest extends Assert {
     protected AbstractXmlApplicationContext applicationContext;
     protected CamelContext camelContext;
-
+ 
+    @Test
     public void testCanMarshalRoutes() throws Exception {
         CamelContextResource resource = new CamelContextResource(camelContext);
         RoutesDefinition routes = resource.getRoutesResource().getRouteDefinitions();
@@ -50,20 +54,18 @@ public class CamelRouteTest extends TestCase {
         System.out.println("XML is: " + xml);
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         applicationContext = new FileSystemXmlApplicationContext("src/main/webapp/WEB-INF/applicationContext.xml");
         applicationContext.start();
         camelContext = (CamelContext) applicationContext.getBean("camelContext", CamelContext.class);
         assertNotNull("camelContext", camelContext);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (applicationContext != null) {
             applicationContext.stop();
         }
-        super.tearDown();
     }
 }
