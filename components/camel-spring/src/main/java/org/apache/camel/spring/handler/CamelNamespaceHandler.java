@@ -198,7 +198,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             try {
                 binder = getJaxbContext().createBinder();
             } catch (JAXBException e) {
-                throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder : " + e, e);
             }
             Object value = parseUsingJaxb(element, parserContext, binder);
             
