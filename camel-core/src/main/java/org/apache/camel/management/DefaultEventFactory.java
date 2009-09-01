@@ -75,7 +75,7 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeFailedEvent(exchange);
     }
 
-    public EventObject createExchangeFailureHandled(Exchange exchange, Processor failureHandler, boolean deadLetterChannel) {
+    public EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel) {
         return new ExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel);
     }
 }

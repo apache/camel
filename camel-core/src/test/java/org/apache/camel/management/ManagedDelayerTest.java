@@ -21,7 +21,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -69,7 +68,7 @@ public class ManagedDelayerTest extends ContextTestSupport {
         // send in another message
         template.sendBody("direct:start", "Bye World");
 
-        Expression delay = (Expression) mbeanServer.getAttribute(delayerName, "Delay");
+        Long delay = (Long) mbeanServer.getAttribute(delayerName, "Delay");
         assertNotNull(delay);
 
         completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");

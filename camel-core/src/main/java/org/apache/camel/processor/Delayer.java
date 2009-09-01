@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
  */
 public class Delayer extends DelayProcessorSupport implements Traceable {
     private Expression delay;
+    private long delayValue;
 
     public Delayer(Processor processor, Expression delay) {
         super(processor);
@@ -48,6 +49,10 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
         return delay;
     }
 
+    public long getDelayValue() {
+        return delayValue;
+    }
+
     public void setDelay(Expression delay) {
         this.delay = delay;
     }
@@ -64,7 +69,10 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
         if (delay != null) {
             Long longValue = delay.evaluate(exchange, Long.class);
             if (longValue != null) {
+                delayValue = longValue;
                 time = longValue;
+            } else {
+                delayValue = 0;
             }
         }
         if (time <= 0) {

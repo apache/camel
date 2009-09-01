@@ -193,7 +193,7 @@ public final class EventHelper {
         if (factory == null) {
             return;
         }
-        EventObject event = factory.createExchangeFailureHandled(exchange, failureHandler, deadLetterChannel);
+        EventObject event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel);
         if (event == null) {
             return;
         }

@@ -43,8 +43,8 @@ public class ManagedDelayer extends ManagedProcessor {
     }
 
     @ManagedAttribute(description = "Delay")
-    public Expression getDelay() {
-        return getDelayer().getDelay();
+    public Long getDelay() {
+        return getDelayer().getDelayValue();
     }
 
     @ManagedOperation(description = "Set a constant delay in millis")

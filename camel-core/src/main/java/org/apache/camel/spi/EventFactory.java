@@ -50,6 +50,6 @@ public interface EventFactory {
 
     EventObject createExchangeFailedEvent(Exchange exchange);
 
-    EventObject createExchangeFailureHandled(Exchange exchange, Processor failureHandler, boolean deadLetterChannel);
+    EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel);
 
 }
