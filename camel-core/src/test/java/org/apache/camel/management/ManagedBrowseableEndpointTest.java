@@ -21,7 +21,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -55,13 +54,13 @@ public class ManagedBrowseableEndpointTest extends ContextTestSupport {
         Long size = (Long) mbeanServer.invoke(name, "qeueSize", null, null);
         assertEquals(2, size.longValue());
 
-        Exchange exchange = (Exchange) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
-        assertNotNull(exchange);
-        assertEquals("Hello World", exchange.getIn().getBody());
+        String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
+        assertTrue(out.contains("Hello World") );
 
-        exchange = (Exchange) mbeanServer.invoke(name, "browseExchange", new Object[]{1}, new String[]{"java.lang.Integer"});
-        assertNotNull(exchange);
-        assertEquals("Bye World", exchange.getIn().getBody());
+        out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{1}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
+        assertTrue(out.contains("Bye World") );
     }
 
     @Override
