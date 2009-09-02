@@ -100,7 +100,7 @@ public class JmsBinding {
         try {
             // is a custom message converter configured on endpoint then use it instead of doing the extraction
             // based on message type
-            if (endpoint.getMessageConverter() != null) {
+            if (endpoint != null && endpoint.getMessageConverter() != null) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Extracting body using a custom MessageConverter: " + endpoint.getMessageConverter() + " from JMS message: " + message);
                 }
@@ -108,7 +108,7 @@ public class JmsBinding {
             }
 
             // if we are configured to not map the jms message then return it as body
-            if (!endpoint.getConfiguration().isMapJmsMessage()) {
+            if (endpoint != null && !endpoint.getConfiguration().isMapJmsMessage()) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Option map JMS message is false so using JMS message as body: " + message);
                 }
@@ -396,7 +396,7 @@ public class JmsBinding {
         }
 
         // use a custom message converter
-        if (endpoint.getMessageConverter() != null) {
+        if (endpoint != null && endpoint.getMessageConverter() != null) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Creating JmsMessage using a custom MessageConverter: " + endpoint.getMessageConverter() + " with body: " + body);
             }
