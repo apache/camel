@@ -63,7 +63,7 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         // let it execute async and return the Future
         Callable<Exchange> task = createTask(output, copy);
 
-        // sumbit the task
+        // submit the task
         Future<Exchange> future = getExecutorService().submit(task);
 
         // compute if we should wait for task to complete or not
