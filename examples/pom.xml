@@ -56,6 +56,7 @@
     <module>camel-example-guice-jms</module>
     <module>camel-example-jms-file</module>
     <module>camel-example-loan-broker</module>
+    <module>camel-example-management</module>
     <module>camel-example-osgi</module>
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reportincident</module>
