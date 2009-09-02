@@ -379,22 +379,27 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     // Delegated properties from the configuration
     //-------------------------------------------------------------------------
+    @ManagedAttribute
     public int getAcknowledgementMode() {
         return getConfiguration().getAcknowledgementMode();
     }
 
+    @ManagedAttribute
     public String getAcknowledgementModeName() {
         return getConfiguration().getAcknowledgementModeName();
     }
 
+    @ManagedAttribute
     public int getCacheLevel() {
         return getConfiguration().getCacheLevel();
     }
 
+    @ManagedAttribute
     public String getCacheLevelName() {
         return getConfiguration().getCacheLevelName();
     }
 
+    @ManagedAttribute
     public String getClientId() {
         return getConfiguration().getClientId();
     }
@@ -416,6 +421,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getDestinationResolver();
     }
 
+    @ManagedAttribute
     public String getDurableSubscriptionName() {
         return getConfiguration().getDurableSubscriptionName();
     }
@@ -424,6 +430,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getExceptionListener();
     }
 
+    @ManagedAttribute
     public int getIdleTaskExecutionLimit() {
         return getConfiguration().getIdleTaskExecutionLimit();
     }
@@ -436,10 +443,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getListenerConnectionFactory();
     }
 
+    @ManagedAttribute
     public int getMaxConcurrentConsumers() {
         return getConfiguration().getMaxConcurrentConsumers();
     }
 
+    @ManagedAttribute
     public int getMaxMessagesPerTask() {
         return getConfiguration().getMaxMessagesPerTask();
     }
@@ -452,22 +461,27 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getMetadataJmsOperations(endpoint);
     }
 
+    @ManagedAttribute
     public int getPriority() {
         return getConfiguration().getPriority();
     }
 
+    @ManagedAttribute
     public long getReceiveTimeout() {
         return getConfiguration().getReceiveTimeout();
     }
 
+    @ManagedAttribute
     public long getRecoveryInterval() {
         return getConfiguration().getRecoveryInterval();
     }
 
+    @ManagedAttribute
     public String getReplyTo() {
         return getConfiguration().getReplyTo();
     }
 
+    @ManagedAttribute
     public String getReplyToDestinationSelectorName() {
         return getConfiguration().getReplyToDestinationSelectorName();
     }
@@ -480,6 +494,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getRequestMapPurgePollTimeMillis();
     }
 
+    @ManagedAttribute
     public long getRequestTimeout() {
         return getConfiguration().getRequestTimeout();
     }
@@ -492,6 +507,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getTemplateConnectionFactory();
     }
 
+    @ManagedAttribute
     public long getTimeToLive() {
         return getConfiguration().getTimeToLive();
     }
@@ -500,78 +516,97 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getTransactionManager();
     }
 
+    @ManagedAttribute
     public String getTransactionName() {
         return getConfiguration().getTransactionName();
     }
 
+    @ManagedAttribute
     public int getTransactionTimeout() {
         return getConfiguration().getTransactionTimeout();
     }
 
+    @ManagedAttribute
     public boolean isAcceptMessagesWhileStopping() {
         return getConfiguration().isAcceptMessagesWhileStopping();
     }
 
+    @ManagedAttribute
     public boolean isAlwaysCopyMessage() {
         return getConfiguration().isAlwaysCopyMessage();
     }
 
+    @ManagedAttribute
     public boolean isAutoStartup() {
         return getConfiguration().isAutoStartup();
     }
 
+    @ManagedAttribute
     public boolean isDeliveryPersistent() {
         return getConfiguration().isDeliveryPersistent();
     }
 
+    @ManagedAttribute
     public boolean isDisableReplyTo() {
         return getConfiguration().isDisableReplyTo();
     }
 
+    @ManagedAttribute
     public boolean isEagerLoadingOfProperties() {
         return getConfiguration().isEagerLoadingOfProperties();
     }
 
+    @ManagedAttribute
     public boolean isExplicitQosEnabled() {
         return getConfiguration().isExplicitQosEnabled();
     }
 
+    @ManagedAttribute
     public boolean isExposeListenerSession() {
         return getConfiguration().isExposeListenerSession();
     }
 
+    @ManagedAttribute
     public boolean isMessageIdEnabled() {
         return getConfiguration().isMessageIdEnabled();
     }
 
+    @ManagedAttribute
     public boolean isMessageTimestampEnabled() {
         return getConfiguration().isMessageTimestampEnabled();
     }
 
+    @ManagedAttribute
     public boolean isPreserveMessageQos() {
         return getConfiguration().isPreserveMessageQos();
     }
 
+    @ManagedAttribute
     public boolean isPubSubNoLocal() {
         return getConfiguration().isPubSubNoLocal();
     }
 
+    @ManagedAttribute
     public boolean isReplyToDeliveryPersistent() {
         return getConfiguration().isReplyToDeliveryPersistent();
     }
 
+    @ManagedAttribute
     public boolean isSubscriptionDurable() {
         return getConfiguration().isSubscriptionDurable();
     }
 
+    @ManagedAttribute
     public boolean isTransacted() {
         return getConfiguration().isTransacted();
     }
 
+    @ManagedAttribute
     public boolean isTransactedInOut() {
         return getConfiguration().isTransactedInOut();
     }
 
+    @ManagedAttribute
     public boolean isUseMessageIDAsCorrelationID() {
         return getConfiguration().isUseMessageIDAsCorrelationID();
     }
@@ -580,34 +615,42 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().isUseVersion102();
     }
 
+    @ManagedAttribute
     public void setAcceptMessagesWhileStopping(boolean acceptMessagesWhileStopping) {
         getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
     }
 
+    @ManagedAttribute
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
     }
 
+    @ManagedAttribute
     public void setAcknowledgementModeName(String consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementModeName(consumerAcknowledgementMode);
     }
 
+    @ManagedAttribute
     public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
         getConfiguration().setAlwaysCopyMessage(alwaysCopyMessage);
     }
 
+    @ManagedAttribute
     public void setAutoStartup(boolean autoStartup) {
         getConfiguration().setAutoStartup(autoStartup);
     }
 
+    @ManagedAttribute
     public void setCacheLevel(int cacheLevel) {
         getConfiguration().setCacheLevel(cacheLevel);
     }
 
+    @ManagedAttribute
     public void setCacheLevelName(String cacheName) {
         getConfiguration().setCacheLevelName(cacheName);
     }
 
+    @ManagedAttribute
     public void setClientId(String consumerClientId) {
         getConfiguration().setClientId(consumerClientId);
     }
@@ -625,6 +668,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setConsumerType(consumerType);
     }
 
+    @ManagedAttribute
     public void setDeliveryPersistent(boolean deliveryPersistent) {
         getConfiguration().setDeliveryPersistent(deliveryPersistent);
     }
@@ -633,14 +677,17 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
+    @ManagedAttribute
     public void setDisableReplyTo(boolean disableReplyTo) {
         getConfiguration().setDisableReplyTo(disableReplyTo);
     }
 
+    @ManagedAttribute
     public void setDurableSubscriptionName(String durableSubscriptionName) {
         getConfiguration().setDurableSubscriptionName(durableSubscriptionName);
     }
 
+    @ManagedAttribute
     public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
         getConfiguration().setEagerLoadingOfProperties(eagerLoadingOfProperties);
     }
@@ -649,14 +696,17 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setExceptionListener(exceptionListener);
     }
 
+    @ManagedAttribute
     public void setExplicitQosEnabled(boolean explicitQosEnabled) {
         getConfiguration().setExplicitQosEnabled(explicitQosEnabled);
     }
 
+    @ManagedAttribute
     public void setExposeListenerSession(boolean exposeListenerSession) {
         getConfiguration().setExposeListenerSession(exposeListenerSession);
     }
 
+    @ManagedAttribute
     public void setIdleTaskExecutionLimit(int idleTaskExecutionLimit) {
         getConfiguration().setIdleTaskExecutionLimit(idleTaskExecutionLimit);
     }
@@ -669,10 +719,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setListenerConnectionFactory(listenerConnectionFactory);
     }
 
+    @ManagedAttribute
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         getConfiguration().setMaxConcurrentConsumers(maxConcurrentConsumers);
     }
 
+    @ManagedAttribute
     public void setMaxMessagesPerTask(int maxMessagesPerTask) {
         getConfiguration().setMaxMessagesPerTask(maxMessagesPerTask);
     }
@@ -681,10 +733,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setMessageConverter(messageConverter);
     }
 
+    @ManagedAttribute
     public void setMessageIdEnabled(boolean messageIdEnabled) {
         getConfiguration().setMessageIdEnabled(messageIdEnabled);
     }
 
+    @ManagedAttribute
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         getConfiguration().setMessageTimestampEnabled(messageTimestampEnabled);
     }
@@ -693,10 +747,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setMetadataJmsOperations(metadataJmsOperations);
     }
 
+    @ManagedAttribute
     public void setPreserveMessageQos(boolean preserveMessageQos) {
         getConfiguration().setPreserveMessageQos(preserveMessageQos);
     }
 
+    @ManagedAttribute
     public void setPriority(int priority) {
         getConfiguration().setPriority(priority);
     }
@@ -705,26 +761,32 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setProviderMetadata(providerMetadata);
     }
 
+    @ManagedAttribute
     public void setPubSubNoLocal(boolean pubSubNoLocal) {
         getConfiguration().setPubSubNoLocal(pubSubNoLocal);
     }
 
+    @ManagedAttribute
     public void setReceiveTimeout(long receiveTimeout) {
         getConfiguration().setReceiveTimeout(receiveTimeout);
     }
 
+    @ManagedAttribute
     public void setRecoveryInterval(long recoveryInterval) {
         getConfiguration().setRecoveryInterval(recoveryInterval);
     }
 
+    @ManagedAttribute
     public void setReplyTo(String replyToDestination) {
         getConfiguration().setReplyTo(replyToDestination);
     }
 
+    @ManagedAttribute
     public void setReplyToDeliveryPersistent(boolean replyToDeliveryPersistent) {
         getConfiguration().setReplyToDeliveryPersistent(replyToDeliveryPersistent);
     }
 
+    @ManagedAttribute
     public void setReplyToDestinationSelectorName(String replyToDestinationSelectorName) {
         getConfiguration().setReplyToDestinationSelectorName(replyToDestinationSelectorName);
     }
@@ -737,10 +799,12 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setRequestMapPurgePollTimeMillis(requestMapPurgePollTimeMillis);
     }
 
+    @ManagedAttribute
     public void setRequestTimeout(long requestTimeout) {
         getConfiguration().setRequestTimeout(requestTimeout);
     }
 
+    @ManagedAttribute
     public void setSubscriptionDurable(boolean subscriptionDurable) {
         getConfiguration().setSubscriptionDurable(subscriptionDurable);
     }
@@ -753,14 +817,17 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setTemplateConnectionFactory(templateConnectionFactory);
     }
 
+    @ManagedAttribute
     public void setTimeToLive(long timeToLive) {
         getConfiguration().setTimeToLive(timeToLive);
     }
 
+    @ManagedAttribute
     public void setTransacted(boolean consumerTransacted) {
         getConfiguration().setTransacted(consumerTransacted);
     }
 
+    @ManagedAttribute
     public void setTransactedInOut(boolean transactedInOut) {
         getConfiguration().setTransactedInOut(transactedInOut);
     }
@@ -769,14 +836,17 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setTransactionManager(transactionManager);
     }
 
+    @ManagedAttribute
     public void setTransactionName(String transactionName) {
         getConfiguration().setTransactionName(transactionName);
     }
 
+    @ManagedAttribute
     public void setTransactionTimeout(int transactionTimeout) {
         getConfiguration().setTransactionTimeout(transactionTimeout);
     }
 
+    @ManagedAttribute
     public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
         getConfiguration().setUseMessageIDAsCorrelationID(useMessageIDAsCorrelationID);
     }
@@ -801,18 +871,22 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setJmsKeyFormatStrategy(jmsHeaderStrategy);
     }
 
+    @ManagedAttribute
     public boolean isTransferExchange() {
         return getConfiguration().isTransferExchange();
     }
 
+    @ManagedAttribute
     public void setTransferExchange(boolean transferExchange) {
         getConfiguration().setTransferExchange(transferExchange);
     }
 
+    @ManagedAttribute
     public boolean isTransferException() {
         return getConfiguration().isTransferException();
     }
 
+    @ManagedAttribute
     public void setTransferException(boolean transferException) {
         getConfiguration().setTransferException(transferException);
     }

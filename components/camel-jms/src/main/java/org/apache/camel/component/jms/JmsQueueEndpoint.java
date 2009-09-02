@@ -105,8 +105,13 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     }
 
     @ManagedOperation(description = "Get Exchange from queue by index")
-    public Exchange browseExchange(Integer index) {
-        return getExchanges().get(index);
+    public String browseExchange(Integer index) {
+        Exchange exchange = getExchanges().get(index);
+        if (exchange == null) {
+            return null;
+        }
+        // must use java type with JMX such as java.lang.String
+        return exchange.toString();
     }
 
 
