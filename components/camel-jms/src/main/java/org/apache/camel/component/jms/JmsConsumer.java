@@ -27,33 +27,53 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  * @version $Revision$
  */
 public class JmsConsumer extends DefaultConsumer {
-    private final AbstractMessageListenerContainer listenerContainer;
+    private AbstractMessageListenerContainer listenerContainer;
     private EndpointMessageListener messageListener;
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
         this.listenerContainer = listenerContainer;
+        this.listenerContainer.setMessageListener(getEndpointMessageListener());
+    }
 
-        createMessageListener(endpoint, processor);
-        this.listenerContainer.setMessageListener(messageListener);
+    public JmsEndpoint getEndpoint() {
+        return (JmsEndpoint) super.getEndpoint();
     }
 
     public AbstractMessageListenerContainer getListenerContainer() {
+        if (listenerContainer == null) {
+            createMessageListenerContainer();
+        }
         return listenerContainer;
     }
 
     public EndpointMessageListener getEndpointMessageListener() {
+        if (messageListener == null) {
+            createMessageListener(getEndpoint(), getProcessor());
+        }
         return messageListener;
     }
-    
+
     protected void createMessageListener(JmsEndpoint endpoint, Processor processor) {
         messageListener = new EndpointMessageListener(endpoint, processor);
         messageListener.setBinding(endpoint.getBinding());
     }
 
+    protected void createMessageListenerContainer() {
+        listenerContainer = getEndpoint().createMessageListenerContainer();
+        getEndpoint().configureListenerContainer(listenerContainer);
+        listenerContainer.setMessageListener(getEndpointMessageListener());
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // create listener container
+        if (listenerContainer == null) {
+            createMessageListenerContainer();
+        }
+
         listenerContainer.afterPropertiesSet();
         listenerContainer.start();
     }
@@ -62,6 +82,11 @@ public class JmsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         listenerContainer.stop();
         listenerContainer.destroy();
+
+        // null container and listener so they are fully re created if this consumer is restarted
+        // then we will use updated configuration from jms endpoint that may have been managed using JMX
+        listenerContainer = null;
+        messageListener = null;
         super.doStop();
     }
 }

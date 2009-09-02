@@ -36,12 +36,15 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.ManagementAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -49,7 +52,8 @@ import org.springframework.transaction.PlatformTransactionManager;
  *
  * @version $Revision:520964 $
  */
-public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+@ManagedResource(description = "Managed JMS Endpoint")
+public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint> {
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -158,21 +162,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return answer;
     }
 
-
     public JmsConsumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer(this);
         return createConsumer(processor, listenerContainer);
     }
 
-    /**
-     * Creates a consumer using the given processor and listener container
-     *
-     * @param processor         the processor to use to process the messages
-     * @param listenerContainer the listener container
-     * @return a newly created consumer
-     * @throws Exception if the consumer cannot be created
-     */
-    public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
+    public AbstractMessageListenerContainer createMessageListenerContainer() {
+        return configuration.createMessageListenerContainer(this);
+    }
+
+    public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
         } else if (destination != null) {
@@ -186,6 +185,18 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
+    }
+
+    /**
+     * Creates a consumer using the given processor and listener container
+     *
+     * @param processor         the processor to use to process the messages
+     * @param listenerContainer the listener container
+     * @return a newly created consumer
+     * @throws Exception if the consumer cannot be created
+     */
+    public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
+        configureListenerContainer(listenerContainer);
         return new JmsConsumer(this, processor, listenerContainer);
     }
 
@@ -220,6 +231,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      */
     public JmsOperations createInOutTemplate() {
         return configuration.createInOutTemplate(this, pubSubDomain, destinationName, configuration.getRequestTimeout());
+    }
+
+    public Object getManagedObject(JmsEndpoint endpoint) {
+        return this;
     }
 
     // Properties
@@ -384,6 +399,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getClientId();
     }
 
+    @ManagedAttribute
     public int getConcurrentConsumers() {
         return getConfiguration().getConcurrentConsumers();
     }
@@ -596,6 +612,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setClientId(consumerClientId);
     }
 
+    @ManagedAttribute
     public void setConcurrentConsumers(int concurrentConsumers) {
         getConfiguration().setConcurrentConsumers(concurrentConsumers);
     }
@@ -615,7 +632,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setDestinationResolver(DestinationResolver destinationResolver) {
         getConfiguration().setDestinationResolver(destinationResolver);
     }
-
 
     public void setDisableReplyTo(boolean disableReplyTo) {
         getConfiguration().setDisableReplyTo(disableReplyTo);
@@ -799,6 +815,17 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setTransferException(boolean transferException) {
         getConfiguration().setTransferException(transferException);
+    }
+
+    @ManagedAttribute(description = "Camel id")
+    public String getCamelId() {
+        return getCamelContext().getName();
+    }
+
+    @ManagedAttribute(description = "Endpoint Uri")
+    @Override
+    public String getEndpointUri() {
+        return super.getEndpointUri();
     }
 
     // Implementation methods

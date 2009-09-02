@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-
 import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 
@@ -34,8 +33,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
-
-
 
 /**
  * @version $Revision$

@@ -26,12 +26,16 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * An endpoint for a JMS Queue which is also browsable
  *
  * @version $Revision$
  */
+@ManagedResource(description = "Managed JMS Queue Endpoint")
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     private static final transient Log LOG = LogFactory.getLog(JmsQueueEndpoint.class);
 
@@ -72,6 +76,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
         queueBrowseStrategy = createQueueBrowseStrategy();
     }
 
+    @ManagedAttribute
     public int getMaximumBrowseSize() {
         return maximumBrowseSize;
     }
@@ -80,6 +85,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
      * If a number is set > 0 then this limits the number of messages that are
      * returned when browsing the queue
      */
+    @ManagedAttribute
     public void setMaximumBrowseSize(int maximumBrowseSize) {
         this.maximumBrowseSize = maximumBrowseSize;
     }
@@ -92,6 +98,17 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
         JmsOperations template = getConfiguration().createInOnlyTemplate(this, false, queue);
         return queueBrowseStrategy.browse(template, queue, this);
     }
+
+    @ManagedOperation(description = "Current number of Exchanges in Queue")
+    public long qeueSize() {
+        return getExchanges().size();
+    }
+
+    @ManagedOperation(description = "Get Exchange from queue by index")
+    public Exchange browseExchange(Integer index) {
+        return getExchanges().get(index);
+    }
+
 
     protected QueueBrowseStrategy createQueueBrowseStrategy() {
         QueueBrowseStrategy answer = null;
