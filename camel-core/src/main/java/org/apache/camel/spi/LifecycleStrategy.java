@@ -20,7 +20,6 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -79,26 +78,18 @@ public interface LifecycleStrategy {
      *
      * @param context the camel context
      * @param service the added service
+     * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceAdd(CamelContext context, Service service);
-
-    /**
-     * Notification on adding a {@link Consumer} as input to a given {@link Route}
-     *
-     * @param route
-     * @param consumer      the consumer
-     */
-    void onRouteConsumerAdd(Route route, Consumer consumer);
-
-    void onRouteConsumerRemove(Route route, Consumer consumer);
+    void onServiceAdd(CamelContext context, Service service, Route route);
 
     /**
      * Notification on removing a {@link Service}.
      *
      * @param context the camel context
      * @param service the removed service
+     * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceRemove(CamelContext context, Service service);
+    void onServiceRemove(CamelContext context, Service service, Route route);
 
     /**
      * Notification on adding {@link Route}(s).
@@ -120,7 +111,5 @@ public interface LifecycleStrategy {
      * @param routeContext the added route context
      */
     void onRouteContextCreate(RouteContext routeContext);
-
-    // TODO: Add more stop methods and also consider always having CamelContext as parameter
 
 }

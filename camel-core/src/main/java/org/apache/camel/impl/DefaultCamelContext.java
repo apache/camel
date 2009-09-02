@@ -623,7 +623,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         if (object instanceof Service) {
             Service service = (Service) object;
             for (LifecycleStrategy strategy : lifecycleStrategies) {
-                strategy.onServiceAdd(this, service);
+                strategy.onServiceAdd(this, service, null);
             }
             servicesToClose.add(service);
         }

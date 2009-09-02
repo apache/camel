@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.Route;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -34,15 +35,14 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
     private final CamelContext context;
     private final Processor processor;
     private final ProcessorDefinition definition;
-    private final String routeId;
     private final String id;
+    private Route route;
 
     public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) {
         super(context.getManagementStrategy());
         this.context = context;
         this.processor = processor;
         this.definition = definition;
-        this.routeId = doGetRouteId(definition);
         this.id = definition.idOrCreate(context.getNodeIdFactory());
     }
 
@@ -56,6 +56,14 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
 
     public ProcessorDefinition getDefinition() {
         return definition;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     @ManagedAttribute(description = "Processor State")
@@ -81,24 +89,15 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
 
     @ManagedAttribute(description = "Route id")
     public String getRouteId() {
-        return routeId;
+        if (route != null) {
+            return route.getId();
+        }
+        return null;
     }
 
     @ManagedAttribute(description = "Processor id")
     public String getProcessorId() {
         return id;
-    }
-
-    private static String doGetRouteId(ProcessorDefinition definition) {
-        if (definition == null) {
-            return null;
-        }
-
-        if (definition instanceof RouteDefinition) {
-            return definition.getId();
-        } else {
-            return doGetRouteId(definition.getParent());
-        }
     }
 
 }

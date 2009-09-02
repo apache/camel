@@ -44,6 +44,7 @@ import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
+import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.AOPDefinition;
@@ -144,6 +145,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Object getManagedObjectForComponent(String name, Component component) {
         if (component instanceof ManagementAware) {
             return ((ManagementAware) component).getManagedObject(component);
@@ -174,7 +176,6 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void onEndpointRemove(Endpoint endpoint) {
         // the agent hasn't been started
         if (!initialized) {
@@ -189,6 +190,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Object getManagedObjectForEndpoint(Endpoint endpoint) {
         if (endpoint instanceof ManagementAware) {
             return ((ManagementAware) endpoint).getManagedObject(endpoint);
@@ -199,7 +201,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
-    public void onServiceAdd(CamelContext context, Service service) {
+    public void onServiceAdd(CamelContext context, Service service, Route route) {
         // services can by any kind of misc type but also processors
         // so we have special logic when its a processor
 
@@ -208,7 +210,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        Object managedObject = getManagedObjectForService(context, service);
+        Object managedObject = getManagedObjectForService(context, service, route);
         if (managedObject == null) {
             // service should not be managed
             return;
@@ -229,13 +231,13 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
-    public void onServiceRemove(CamelContext context, Service service) {
+    public void onServiceRemove(CamelContext context, Service service, Route route) {
         // the agent hasn't been started
         if (!initialized) {
             return;
         }
 
-        Object managedObject = getManagedObjectForService(context, service);
+        Object managedObject = getManagedObjectForService(context, service, route);
         if (managedObject != null) {
             try {
                 getStrategy().unmanageObject(managedObject);
@@ -246,28 +248,35 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     @SuppressWarnings("unchecked")
-    private Object getManagedObjectForService(CamelContext context, Service service) {
+    private Object getManagedObjectForService(CamelContext context, Service service, Route route) {
+        ManagedService answer = null;
+
         if (service instanceof ManagementAware) {
             return ((ManagementAware) service).getManagedObject(service);
         } else if (service instanceof Tracer) {
             // special for tracer
             return new ManagedTracer(context, (Tracer) service);
         } else if (service instanceof Producer) {
-            return new ManagedProducer(context, (Producer) service);
+            answer = new ManagedProducer(context, (Producer) service);
         } else if (service instanceof ScheduledPollConsumer) {
-            return new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
+            answer = new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
         } else if (service instanceof Consumer) {
-            return new ManagedConsumer(context, (Consumer) service);
+            answer = new ManagedConsumer(context, (Consumer) service);
         } else if (service instanceof Processor) {
             // special for processors
-            return getManagedObjectForProcessor(context, (Processor) service);
+            return getManagedObjectForProcessor(context, (Processor) service, route);
         }
 
-        // not supported
-        return null;
+        if (answer != null) {
+            answer.setRoute(route);
+            return answer;
+        } else {
+            // not supported
+            return null;
+        }
     }
 
-    private Object getManagedObjectForProcessor(CamelContext context, Processor processor) {
+    private Object getManagedObjectForProcessor(CamelContext context, Processor processor, Route route) {
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
@@ -278,7 +287,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         // get the managed object as it can be a specialized type such as a Delayer/Throttler etc.
-        Object managedObject = createManagedObjectForProcessor(context, processor, holder.getKey());
+        Object managedObject = createManagedObjectForProcessor(context, processor, holder.getKey(), route);
         // only manage if we have a name for it as otherwise we do not want to manage it anyway
         if (managedObject != null) {
             // is it a performance counter then we need to set our counter
@@ -294,59 +303,25 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         return managedObject;
     }
 
-    private Object createManagedObjectForProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) {
+    private Object createManagedObjectForProcessor(CamelContext context, Processor processor,
+                                                   ProcessorDefinition definition, Route route) {
+
+        ManagedProcessor answer = null;
         if (processor instanceof Delayer) {
-            return new ManagedDelayer(context, (Delayer) processor, definition);
+            answer = new ManagedDelayer(context, (Delayer) processor, definition);
         } else if (processor instanceof Throttler) {
-            return new ManagedThrottler(context, (Throttler) processor, definition);
+            answer = new ManagedThrottler(context, (Throttler) processor, definition);
         } else if (processor instanceof SendProcessor) {
-            return new ManagedSendProcessor(context, (SendProcessor) processor, definition);
+            answer = new ManagedSendProcessor(context, (SendProcessor) processor, definition);
         }
 
-        // fallback to a generic processor
-        return new ManagedProcessor(context, processor, definition);
-    }
-
-    public void onRouteConsumerAdd(Route route, Consumer consumer) {
-        // the agent hasn't been started
-        if (!initialized) {
-            return;
+        if (answer == null) {
+            // fallback to a generic processor
+            answer = new ManagedProcessor(context, processor, definition);
         }
 
-        Object managedObject;
-        if (consumer instanceof ManagementAware) {
-            managedObject = ((ManagementAware) consumer).getManagedObject(consumer);
-        } else if (consumer instanceof ScheduledPollConsumer) {
-            managedObject = new ManagedScheduledPollConsumer(route.getRouteContext().getCamelContext(), (ScheduledPollConsumer) consumer, route);
-        } else {
-            managedObject = new ManagedConsumer(route.getRouteContext().getCamelContext(), consumer, route);
-        }
-        try {
-            getStrategy().manageObject(managedObject);
-        } catch (Exception e) {
-            LOG.warn("Could not register consumer MBean.", e);
-        }
-    }
-
-    public void onRouteConsumerRemove(Route route, Consumer consumer) {
-        // the agent hasn't been started
-        if (!initialized) {
-            return;
-        }
-
-        Object managedObject;
-        if (consumer instanceof ManagementAware) {
-            managedObject = ((ManagementAware) consumer).getManagedObject(consumer);
-        } else if (consumer instanceof ScheduledPollConsumer) {
-            managedObject = new ManagedScheduledPollConsumer(route.getRouteContext().getCamelContext(), (ScheduledPollConsumer) consumer, route);
-        } else {
-            managedObject = new ManagedConsumer(route.getRouteContext().getCamelContext(), consumer, route);
-        }
-        try {
-            getStrategy().unmanageObject(managedObject);
-        } catch (Exception e) {
-            LOG.warn("Could not register consumer MBean.", e);
-        }
+        answer.setRoute(route);
+        return answer;
     }
 
     public void onRoutesAdd(Collection<Route> routes) {

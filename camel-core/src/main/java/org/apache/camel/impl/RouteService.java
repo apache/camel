@@ -140,16 +140,9 @@ public class RouteService extends ServiceSupport {
     }
 
     protected void startChildService(Route route, List<Service> services) throws Exception {
-        boolean first = true;
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                // the first one is the input consumer
-                if (first && service instanceof Consumer) {
-                    strategy.onRouteConsumerAdd(route, (Consumer) service);
-                } else {
-                    strategy.onServiceAdd(camelContext, service);
-                    first = false;
-                }
+                strategy.onServiceAdd(camelContext, service, route);
             }
             ServiceHelper.startService(service);
             addChildService(service);
@@ -157,16 +150,9 @@ public class RouteService extends ServiceSupport {
     }
 
     protected void stopChildService(Route route, List<Service> services) throws Exception {
-        boolean first = true;
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                // the first one is the input consumer
-                if (first && service instanceof Consumer) {
-                    strategy.onRouteConsumerRemove(route, (Consumer) service);
-                } else {
-                    strategy.onServiceRemove(camelContext, service);
-                    first = false;
-                }
+                strategy.onServiceRemove(camelContext, service, route);
             }
             ServiceHelper.stopService(service);
             removeChildService(service);

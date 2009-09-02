@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
@@ -29,6 +30,7 @@ public class ManagedService {
 
     private CamelContext context;
     private Service service;
+    private Route route;
 
     public ManagedService(CamelContext context, Service service) {
         this.context = context;
@@ -41,6 +43,14 @@ public class ManagedService {
 
     public CamelContext getContext() {
         return context;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     @ManagedAttribute(description = "Service State")
@@ -62,6 +72,14 @@ public class ManagedService {
     @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return context.getName();
+    }
+
+    @ManagedAttribute(description = "Route id")
+    public String getRouteId() {
+        if (route != null) {
+            return route.getId();
+        }
+        return null;
     }
 
     @ManagedOperation(description = "Start Service")

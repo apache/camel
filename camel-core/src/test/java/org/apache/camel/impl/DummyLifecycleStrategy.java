@@ -60,20 +60,12 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
         events.add("onEndpointRemove");
     }
 
-    public void onServiceAdd(CamelContext context, Service service) {
+    public void onServiceAdd(CamelContext context, Service service, Route route) {
         events.add("onServiceAdd");
     }
 
-    public void onServiceRemove(CamelContext context, Service service) {
+    public void onServiceRemove(CamelContext context, Service service, Route route) {
         events.add("onServiceRemove");
-    }
-
-    public void onRouteConsumerAdd(Route route, Consumer consumer) {
-        events.add("onRouteConsumerAdd");
-    }
-
-    public void onRouteConsumerRemove(Route route, Consumer consumer) {
-        events.add("onRouteConsumerRemove");
     }
 
     public void onRoutesAdd(Collection<Route> routes) {

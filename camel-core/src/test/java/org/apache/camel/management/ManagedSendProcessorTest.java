@@ -55,6 +55,10 @@ public class ManagedSendProcessorTest extends ContextTestSupport {
         // get the object name for the delayer
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mysend\"");
 
+        // should be on route1
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route1", routeId);
+
         // send it somewhere else
         mbeanServer.invoke(on, "changeDestination", new Object[]{"direct:foo"}, new String[]{"java.lang.String"});
 

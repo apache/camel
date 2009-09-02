@@ -185,7 +185,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
         // which we must manage as well
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             if (tracer instanceof Service) {
-                strategy.onServiceAdd(camelContext, (Service) tracer);
+                strategy.onServiceAdd(camelContext, (Service) tracer, null);
             }
         }
 

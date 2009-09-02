@@ -30,7 +30,6 @@ import org.apache.camel.spi.RouteContext;
  * Dummy LifecycleStrategy for LifecycleStrategy injection test.
  *
  * @version $Revision$
- *
  */
 public class DummyLifecycleStrategy implements LifecycleStrategy {
 
@@ -52,10 +51,10 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
     public void onEndpointRemove(Endpoint endpoint) {
     }
 
-    public void onServiceAdd(CamelContext camelContext, Service service) {
+    public void onServiceAdd(CamelContext camelContext, Service service, Route route) {
     }
 
-    public void onServiceRemove(CamelContext camelContext, Service service) {
+    public void onServiceRemove(CamelContext camelContext, Service service, Route route) {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
