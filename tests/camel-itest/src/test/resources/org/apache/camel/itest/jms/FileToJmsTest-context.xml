@@ -26,13 +26,13 @@
     <!-- activemq broker -->
     <broker:broker useJmx="false" persistent="false" brokerName="localhost">
         <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
+            <broker:transportConnector name="tcp" uri="vm://localhost?broker.persistent=false"/>
         </broker:transportConnectors>
     </broker:broker>
 
     <!-- camel stuff below to send and listen to broker with a spring JMS transaction manager -->
     <bean id="jmsFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">

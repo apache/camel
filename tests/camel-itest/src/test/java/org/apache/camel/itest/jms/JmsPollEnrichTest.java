@@ -34,6 +34,8 @@ public class JmsPollEnrichTest extends CamelTestSupport {
     public void testPollEnrichJms() throws Exception {
         template.sendBody("jms:queue:foo", "Bye World");
 
+        Thread.sleep(500);
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 

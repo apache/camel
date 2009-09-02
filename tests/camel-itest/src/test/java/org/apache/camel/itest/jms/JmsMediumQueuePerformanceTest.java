@@ -36,8 +36,6 @@ public class JmsMediumQueuePerformanceTest extends JmsPerformanceTest {
 
         Thread.sleep(2000);
 
-        // TODO now start the route!
-
         System.out.println("Now testing!");
         timedSendLoop(mediumQueueCount, expected);
 

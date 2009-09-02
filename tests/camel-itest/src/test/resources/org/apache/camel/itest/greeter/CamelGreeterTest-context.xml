@@ -48,7 +48,7 @@
   	<property name="connectionFactory">
   		<bean class="org.apache.activemq.ActiveMQConnectionFactory">
   			<property name="brokerURL"
-  				value="tcp://localhost:61616" />
+  				value="vm://localhost?broker.persistent=false" />
   		</bean>
   	</property>
   </bean>
