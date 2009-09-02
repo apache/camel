@@ -45,6 +45,8 @@ public class RoutePerformanceTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint(uri);
         endpoint.expectedMessageCount((int) dataSet.getSize());
         endpoint.expectedHeaderReceived("foo", 123);
+        // give 30 seconds for slow servers
+        endpoint.setResultWaitTime(30000);
 
         assertMockEndpointsSatisfied();
 

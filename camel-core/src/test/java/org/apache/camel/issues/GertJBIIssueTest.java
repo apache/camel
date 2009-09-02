@@ -16,18 +16,23 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.SynchronizationAdapter;
 
 /**
  * @version $Revision$
  */
 public class GertJBIIssueTest extends ContextTestSupport {
+
+    private static Exception cause;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -100,6 +105,49 @@ public class GertJBIIssueTest extends ContextTestSupport {
         assertEquals("Should have failed", true, task.isFailed());
 
         Exception cause = assertIsInstanceOf(IllegalArgumentException.class, task.getException());
+        assertEquals("Forced", cause.getMessage());
+    }
+
+    public void testSimulateJBIEndpointNotExistOnCompletion() throws Exception {
+        cause = null;
+        
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0).handled(false));
+
+                from("direct:start")
+                    // must wait for task to complete to know if there was an exception
+                    // as its in-only based
+                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Always)
+                    .to("mock:done")
+                    .throwException(new IllegalArgumentException("Forced"));
+
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+        getMockEndpoint("mock:dlc").expectedMessageCount(1);
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        template.send("direct:start", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        cause = exchange.getException();
+                        latch.countDown();
+                    }
+                });
+            }
+        });
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        assertNotNull("Should have failed", cause);
+        assertIsInstanceOf(IllegalArgumentException.class, cause);
         assertEquals("Forced", cause.getMessage());
     }
 
