@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -33,6 +34,11 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer {
 
     public ManagedScheduledPollConsumer(CamelContext context, ScheduledPollConsumer consumer) {
         super(context, consumer);
+        this.consumer = consumer;
+    }
+
+    public ManagedScheduledPollConsumer(CamelContext context, ScheduledPollConsumer consumer, Route route) {
+        super(context, consumer, route);
         this.consumer = consumer;
     }
 

@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -65,6 +66,14 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
 
     public void onServiceRemove(CamelContext context, Service service) {
         events.add("onServiceRemove");
+    }
+
+    public void onRouteConsumerAdd(Route route, Consumer consumer) {
+        events.add("onRouteConsumerAdd");
+    }
+
+    public void onRouteConsumerRemove(Route route, Consumer consumer) {
+        events.add("onRouteConsumerRemove");
     }
 
     public void onRoutesAdd(Collection<Route> routes) {

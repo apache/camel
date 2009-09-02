@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Route;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -27,20 +28,38 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 @ManagedResource(description = "Managed Consumer")
 public class ManagedConsumer extends ManagedService {
 
-    private Consumer consumer;
+    private final Consumer consumer;
+    private final Route route;
 
     public ManagedConsumer(CamelContext context, Consumer consumer) {
+        this(context, consumer, null);
+    }
+
+    public ManagedConsumer(CamelContext context, Consumer consumer, Route route) {
         super(context, consumer);
         this.consumer = consumer;
+        this.route = route;
     }
 
     public Consumer getConsumer() {
         return consumer;
     }
 
+    public Route getRoute() {
+        return route;
+    }
+
     @ManagedAttribute(description = "Endpoint Uri")
     public String getEndpointUri() {
         return consumer.getEndpoint().getEndpointUri();
+    }
+
+    @ManagedAttribute(description = "Route id")
+    public String getRouteId() {
+        if (route != null) {
+            return route.getId();
+        }
+        return null;
     }
 
 }

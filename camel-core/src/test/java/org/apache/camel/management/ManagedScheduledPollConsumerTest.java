@@ -55,6 +55,9 @@ public class ManagedScheduledPollConsumerTest extends ContextTestSupport {
         Long delay = (Long) mbeanServer.getAttribute(on, "Delay");
         assertEquals(4000, delay.longValue());
 
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route1", routeId);
+
         // stop it
         mbeanServer.invoke(on, "stop", null, null);
 

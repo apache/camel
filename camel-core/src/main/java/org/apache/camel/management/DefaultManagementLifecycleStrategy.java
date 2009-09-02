@@ -255,7 +255,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         } else if (service instanceof Producer) {
             return new ManagedProducer(context, (Producer) service);
         } else if (service instanceof ScheduledPollConsumer) {
-                return new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
+            return new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
         } else if (service instanceof Consumer) {
             return new ManagedConsumer(context, (Consumer) service);
         } else if (service instanceof Processor) {
@@ -305,6 +305,48 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // fallback to a generic processor
         return new ManagedProcessor(context, processor, definition);
+    }
+
+    public void onRouteConsumerAdd(Route route, Consumer consumer) {
+        // the agent hasn't been started
+        if (!initialized) {
+            return;
+        }
+
+        Object managedObject;
+        if (consumer instanceof ManagementAware) {
+            managedObject = ((ManagementAware) consumer).getManagedObject(consumer);
+        } else if (consumer instanceof ScheduledPollConsumer) {
+            managedObject = new ManagedScheduledPollConsumer(route.getRouteContext().getCamelContext(), (ScheduledPollConsumer) consumer, route);
+        } else {
+            managedObject = new ManagedConsumer(route.getRouteContext().getCamelContext(), consumer, route);
+        }
+        try {
+            getStrategy().manageObject(managedObject);
+        } catch (Exception e) {
+            LOG.warn("Could not register consumer MBean.", e);
+        }
+    }
+
+    public void onRouteConsumerRemove(Route route, Consumer consumer) {
+        // the agent hasn't been started
+        if (!initialized) {
+            return;
+        }
+
+        Object managedObject;
+        if (consumer instanceof ManagementAware) {
+            managedObject = ((ManagementAware) consumer).getManagedObject(consumer);
+        } else if (consumer instanceof ScheduledPollConsumer) {
+            managedObject = new ManagedScheduledPollConsumer(route.getRouteContext().getCamelContext(), (ScheduledPollConsumer) consumer, route);
+        } else {
+            managedObject = new ManagedConsumer(route.getRouteContext().getCamelContext(), consumer, route);
+        }
+        try {
+            getStrategy().unmanageObject(managedObject);
+        } catch (Exception e) {
+            LOG.warn("Could not register consumer MBean.", e);
+        }
     }
 
     public void onRoutesAdd(Collection<Route> routes) {

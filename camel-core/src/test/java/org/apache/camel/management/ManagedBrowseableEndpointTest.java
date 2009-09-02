@@ -56,11 +56,11 @@ public class ManagedBrowseableEndpointTest extends ContextTestSupport {
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
-        assertTrue(out.contains("Hello World") );
+        assertTrue(out.contains("Hello World"));
 
         out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{1}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
-        assertTrue(out.contains("Bye World") );
+        assertTrue(out.contains("Bye World"));
     }
 
     @Override

@@ -20,14 +20,13 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 
 /**
  * Strategy for lifecycle notifications.
- * <p/>
- * <b>Node:</b> Subject to change in Camel 2.1
  */
 public interface LifecycleStrategy {
 
@@ -82,6 +81,16 @@ public interface LifecycleStrategy {
      * @param service the added service
      */
     void onServiceAdd(CamelContext context, Service service);
+
+    /**
+     * Notification on adding a {@link Consumer} as input to a given {@link Route}
+     *
+     * @param route
+     * @param consumer      the consumer
+     */
+    void onRouteConsumerAdd(Route route, Consumer consumer);
+
+    void onRouteConsumerRemove(Route route, Consumer consumer);
 
     /**
      * Notification on removing a {@link Service}.

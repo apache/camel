@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Navigate;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -98,7 +99,8 @@ public class RouteService extends ServiceSupport {
             for (Service service : services) {
                 doGetChildServies(list, service);
             }
-            startChildService(list);
+
+            startChildService(route, list);
 
             // start the route itself
             ServiceHelper.startService(route);
@@ -125,7 +127,7 @@ public class RouteService extends ServiceSupport {
             for (Service service : services) {
                 doGetChildServies(list, service);
             }
-            stopChildService(list);
+            stopChildService(route, list);
 
             // stop the route itself
             ServiceHelper.stopService(route);
@@ -137,20 +139,34 @@ public class RouteService extends ServiceSupport {
         camelContext.removeRouteCollection(routes);
     }
 
-    protected void startChildService(List<Service> services) throws Exception {
+    protected void startChildService(Route route, List<Service> services) throws Exception {
+        boolean first = true;
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onServiceAdd(camelContext, service);
+                // the first one is the input consumer
+                if (first && service instanceof Consumer) {
+                    strategy.onRouteConsumerAdd(route, (Consumer) service);
+                } else {
+                    strategy.onServiceAdd(camelContext, service);
+                    first = false;
+                }
             }
             ServiceHelper.startService(service);
             addChildService(service);
         }
     }
 
-    protected void stopChildService(List<Service> services) throws Exception {
+    protected void stopChildService(Route route, List<Service> services) throws Exception {
+        boolean first = true;
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onServiceRemove(camelContext, service);
+                // the first one is the input consumer
+                if (first && service instanceof Consumer) {
+                    strategy.onRouteConsumerRemove(route, (Consumer) service);
+                } else {
+                    strategy.onServiceRemove(camelContext, service);
+                    first = false;
+                }
             }
             ServiceHelper.stopService(service);
             removeChildService(service);

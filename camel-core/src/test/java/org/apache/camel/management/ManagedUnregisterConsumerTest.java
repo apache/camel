@@ -51,6 +51,9 @@ public class ManagedUnregisterConsumerTest extends ContextTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("direct://start", uri);
 
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route1", routeId);
+
         context.stop();
 
         assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
