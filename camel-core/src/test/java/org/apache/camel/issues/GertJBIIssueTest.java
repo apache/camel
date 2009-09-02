@@ -117,9 +117,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0).handled(false));
 
                 from("direct:start")
-                    // must wait for task to complete to know if there was an exception
-                    // as its in-only based
-                    .threads(2).waitForTaskToComplete(WaitForTaskToComplete.Always)
+                    .threads(2)
                     .to("mock:done")
                     .throwException(new IllegalArgumentException("Forced"));
 
