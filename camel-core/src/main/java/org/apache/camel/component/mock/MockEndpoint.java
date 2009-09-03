@@ -299,7 +299,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
-     * Adds an expectation that the given header name & value are received by this endpoint
+     * Sets an expectation that the given header name & value are received by this endpoint
      */
     public void expectedHeaderReceived(final String name, final Object value) {
         this.headerName = name;
@@ -331,7 +331,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
     
     /**
-     * Adds an expectation that the given property name & value are received by this endpoint
+     * Sets an expectation that the given property name & value are received by this endpoint
      */
     public void expectedPropertyReceived(final String name, final Object value) {
         this.propertyName = name;
@@ -375,7 +375,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
-     * Adds an expectation that the given body values are received by this endpoint
+     * Sets an expectation that the given body values are received by this endpoint
      */
     public void expectedBodiesReceived(Object... bodies) {
         List bodyList = new ArrayList();
