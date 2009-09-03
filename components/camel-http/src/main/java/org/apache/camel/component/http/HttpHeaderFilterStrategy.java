@@ -31,6 +31,7 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
+        getOutFilter().add("transfer-encoding");
         setLowerCase(true);
         
         // filter headers begin with "Camel" or "org.apache.camel"
