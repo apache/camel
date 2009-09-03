@@ -34,8 +34,6 @@ public class JmsPollEnrichTest extends CamelTestSupport {
     public void testPollEnrichJms() throws Exception {
         template.sendBody("jms:queue:foo", "Bye World");
 
-        Thread.sleep(500);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
@@ -48,7 +46,7 @@ public class JmsPollEnrichTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").pollEnrich("jms:queue:foo").to("mock:result");
+                from("direct:start").pollEnrich("jms:queue:foo", 5000).to("mock:result");
             }
         };
     }
