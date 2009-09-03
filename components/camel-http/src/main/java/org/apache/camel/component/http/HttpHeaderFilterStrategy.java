@@ -31,6 +31,7 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
+        getOutFilter().add("transfer-encoding");
         getOutFilter().add(HttpMethods.HTTP_METHOD.toLowerCase());
         getOutFilter().add(HttpProducer.QUERY);
         getOutFilter().add(HttpProducer.HTTP_RESPONSE_CODE.toLowerCase());
