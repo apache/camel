@@ -39,6 +39,8 @@ public class MinaConfiguration implements Cloneable {
     private boolean lazySessionCreation = true;
     private boolean transferExchange;
     private boolean minaLogger;
+    private int encoderMaxLineLength = -1;
+    private int decoderMaxLineLength = -1;
     private List<IoFilter> filters;
 
     /**
@@ -150,6 +152,22 @@ public class MinaConfiguration implements Cloneable {
 
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
+    }
+
+    public void setEncoderMaxLineLength(int encoderMaxLineLength) {
+        this.encoderMaxLineLength = encoderMaxLineLength;
+    }
+
+    public int getEncoderMaxLineLength() {
+        return encoderMaxLineLength;
+    }
+
+    public void setDecoderMaxLineLength(int decoderMaxLineLength) {
+        this.decoderMaxLineLength = decoderMaxLineLength;
+    }
+
+    public int getDecoderMaxLineLength() {
+        return decoderMaxLineLength;
     }
 
     public boolean isMinaLogger() {

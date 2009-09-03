@@ -32,8 +32,8 @@ import org.apache.mina.filter.codec.textline.TextLineEncoder;
  */
 public class TextLineCodecFactory implements ProtocolCodecFactory {
 
-    private ProtocolEncoder encoder;
-    private ProtocolDecoder decoder;
+    private TextLineEncoder encoder;
+    private TextLineDecoder decoder;
 
     public TextLineCodecFactory(Charset charset, LineDelimiter delimiter) {
         if (delimiter.equals(LineDelimiter.AUTO)) {
@@ -51,6 +51,22 @@ public class TextLineCodecFactory implements ProtocolCodecFactory {
 
     public ProtocolDecoder getDecoder() throws Exception {
         return decoder;
+    }
+
+    public void setEncoderMaxLineLength(int encoderMaxLineLength) {
+        encoder.setMaxLineLength(encoderMaxLineLength);
+    }
+
+    public int getEncoderMaxLineLength() {
+        return encoder.getMaxLineLength();
+    }
+
+    public void setDecoderMaxLineLength(int decoderMaxLineLength) {
+        decoder.setMaxLineLength(decoderMaxLineLength);
+    }
+
+    public int getDecoderMaxLineLength() {
+        return decoder.getMaxLineLength();
     }
 
 }

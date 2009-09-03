@@ -210,12 +210,21 @@ public class MinaComponent extends DefaultComponent {
             if (configuration.isTextline()) {
                 Charset charset = getEncodingParameter(type, configuration);
                 LineDelimiter delimiter = getLineDelimiterParameter(configuration.getTextlineDelimiter());
-                codecFactory = new TextLineCodecFactory(charset, delimiter);
+                TextLineCodecFactory tmpCodecFactory = new TextLineCodecFactory(charset, delimiter);
+                if (configuration.getEncoderMaxLineLength() > 0) {
+                    tmpCodecFactory.setEncoderMaxLineLength(configuration.getEncoderMaxLineLength());
+                }
+                if (configuration.getDecoderMaxLineLength() > 0) {
+                    tmpCodecFactory.setDecoderMaxLineLength(configuration.getDecoderMaxLineLength());
+                }
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: "
-                            + charset + " and line delimiter: " + configuration.getTextlineDelimiter()
+                            + charset + " line delimiter: " + configuration.getTextlineDelimiter()
                             + "(" + delimiter + ")");
+                    LOG.debug("Encoder maximum line length: " + tmpCodecFactory.getEncoderMaxLineLength()
+                            + "Decoder maximum line length: " + tmpCodecFactory.getDecoderMaxLineLength());
                 }
+                codecFactory = tmpCodecFactory;
             } else {
                 codecFactory = new ObjectSerializationCodecFactory();
                 if (LOG.isDebugEnabled()) {
