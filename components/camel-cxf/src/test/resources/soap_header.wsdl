@@ -278,6 +278,9 @@
         </port>        
         <port binding="tns:headerTesterSOAPBinding" name="SoapPortCustomRelay">
             <soap:address location="http://localhost:6000/HeaderService/"/>
-        </port>        
+        </port>      
+        <port binding="tns:headerTesterSOAPBinding" name="SoapPortRelayWithInsertion">
+            <soap:address location="http://localhost:5000/HeaderService/"/>
+        </port>  
     </service>
 </definitions>

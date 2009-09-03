@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.cxf.soap.headers;
 
+import java.io.StringReader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -35,10 +36,13 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
 import org.w3c.dom.Node;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.camel.component.cxf.CxfMessage;
 import org.apache.camel.component.cxf.headers.MessageHeadersRelay;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spring.SpringTestSupport;
@@ -47,9 +51,12 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.headers.Header;
+import org.apache.cxf.headers.Header.Direction;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.jaxws.EndpointImpl;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -60,7 +67,8 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
 
     private ServerImpl relayServer;
     private ServerImpl noRelayServer;
-    
+    private ServerImpl relayServerWithInsertion;
+
     @Override
     protected void setUp() throws Exception {
         setUseRouteBuilder(false);
@@ -76,7 +84,10 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
         if (noRelayServer != null) {
             noRelayServer.stop();
         }        
-
+        if (relayServerWithInsertion != null) {
+            relayServerWithInsertion.stop();
+        }
+        
         super.tearDown();
         BusFactory.setDefaultBus(null);
     }
@@ -96,6 +107,11 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
         address = "http://localhost:7070/HeaderService/";
         endpoint = (EndpointImpl) Endpoint.publish(address, impl);
         noRelayServer = endpoint.getServer();
+        
+        impl = new HeaderTesterWithInsertionImpl();
+        address = "http://localhost:5091/HeaderService/";
+        endpoint = (EndpointImpl) Endpoint.publish(address, impl);
+        relayServerWithInsertion = endpoint.getServer();
     }
 
     
@@ -200,7 +216,30 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
                    response.getFirstName().equals("pass"));
         validateReturnedOutOfBandHeader(proxy);
     }
+    
+    public void testInoutOutOfBandHeaderCXFClientRelayWithHeaderInsertion() throws Exception {
+        HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
+                                            HeaderService.SERVICE);
+        HeaderTester proxy = s.getSoapPortRelayWithInsertion();
+        addOutOfBoundHeader(proxy, false);
+        Me me = new Me();
+        me.setFirstName("john");
+        me.setLastName("Doh");
+        Me response = proxy.inoutOutOfBandHeader(me);
+        assertTrue("Expected the out of band header to propagate but it didn't", 
+                   response.getFirstName().equals("pass"));
+        
+        InvocationHandler handler  = Proxy.getInvocationHandler(proxy);
+        BindingProvider  bp = null;
+        if (!(handler instanceof BindingProvider)) {
+            fail("Unable to cast dynamic proxy InocationHandler to BindingProvider type");
+        }
 
+        bp = (BindingProvider)handler;
+        Map<String, Object> responseContext = bp.getResponseContext();
+        validateReturnedOutOfBandHeaderWithInsertion(responseContext, true);
+    }
+    
     public void testOutOutOfBandHeaderCXFClientRelay() throws Exception {
         HeaderService s = new HeaderService(getClass().getClassLoader().getResource("soap_header.wsdl"),
                                             HeaderService.SERVICE);
@@ -341,7 +380,6 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
     public void testInOutOutOfBandHeaderCamelTemplateRelay() throws Exception {
         doTestInOutOutOfBandHeaderCamelTemplate("direct:relayProducer");
     }
-
     
     protected void doTestInOutOfBandHeaderCamelTemplate(String producerUri) throws Exception {
         // START SNIPPET: sending
@@ -487,5 +525,106 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
         assertTrue("Expected out-of-band Header attribute testReturnHdrAttribute recevied :"
                    + hdrToTest.getHdrAttribute(), "testReturnHdrAttribute"
             .equals(hdrToTest.getHdrAttribute()));
+    }
+    
+    protected static void validateReturnedOutOfBandHeaderWithInsertion(Map<String, Object> responseContext, boolean expect) {
+        List<OutofBandHeader> hdrToTest = new ArrayList<OutofBandHeader>();
+        List oobHdr = (List)responseContext.get(Header.HEADER_LIST);
+        if (!expect) {
+            if (oobHdr == null || (oobHdr != null && oobHdr.size() == 0)) {
+                return;
+            }
+            fail("Should have got *no* out-of-band headers, but some were found");
+        }
+        if (oobHdr == null) {
+            fail("Should have got List of out-of-band headers");
+        }
+
+        assertTrue("HeaderHolder list expected to conain 2 object received " + oobHdr.size(),
+                   oobHdr.size() == 2);
+        
+        int i = 0;
+        if (oobHdr != null & oobHdr instanceof List) {
+            Iterator iter = oobHdr.iterator();
+            while (iter.hasNext()) {
+                Object hdr = iter.next();
+                if (hdr instanceof Header) {
+                    Header hdr1 = (Header)hdr;
+                    if (hdr1.getObject() instanceof Node) {
+                        try {
+                            JAXBElement job = (JAXBElement)JAXBContext
+                                .newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                                .createUnmarshaller().unmarshal((Node)hdr1.getObject());
+                            hdrToTest.add((OutofBandHeader)job.getValue());
+                        } catch (JAXBException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
+        assertTrue("out-of-band header should not be null", hdrToTest.size() > 0);
+        assertTrue("Expected out-of-band Header name testOobReturnHeaderName recevied :"
+                   + hdrToTest.get(0).getName(), "testOobReturnHeaderName".equals(hdrToTest.get(0).getName()));
+        assertTrue("Expected out-of-band Header value testOobReturnHeaderValue recevied :"
+                   + hdrToTest.get(0).getValue(), "testOobReturnHeaderValue".equals(hdrToTest.get(0).getValue()));
+        assertTrue("Expected out-of-band Header attribute testReturnHdrAttribute recevied :"
+                   + hdrToTest.get(0).getHdrAttribute(), "testReturnHdrAttribute"
+            .equals(hdrToTest.get(0).getHdrAttribute()));
+        
+        assertTrue("Expected out-of-band Header name New_testOobHeader recevied :"
+                   + hdrToTest.get(1).getName(), "New_testOobHeader".equals(hdrToTest.get(1).getName()));
+        assertTrue("Expected out-of-band Header value New_testOobHeaderValue recevied :"
+                   + hdrToTest.get(1).getValue(), "New_testOobHeaderValue".equals(hdrToTest.get(1).getValue()));
+        assertTrue("Expected out-of-band Header attribute testHdrAttribute recevied :"
+                   + hdrToTest.get(1).getHdrAttribute(), "testHdrAttribute"
+            .equals(hdrToTest.get(1).getHdrAttribute()));
+    }
+
+    public static class InsertRequestOutHeaderProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            CxfMessage message = exchange.getIn().getBody(CxfMessage.class);
+            Message cxf = message.getMessage();
+            List<SoapHeader> soapHeaders = (List)cxf.get(Header.HEADER_LIST);
+
+            // Insert a new header
+            String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><outofbandHeader "
+                + "xmlns=\"http://cxf.apache.org/outofband/Header\" hdrAttribute=\"testHdrAttribute\" "
+                + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:mustUnderstand=\"1\">"
+                + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
+            
+            SoapHeader newHeader = new SoapHeader(soapHeaders.get(0).getName(),
+                                                  DOMUtils.readXml(new StringReader(xml)).getDocumentElement());
+            // make sure direction is IN since it is a request message.
+            newHeader.setDirection(Direction.DIRECTION_IN);
+            //newHeader.setMustUnderstand(false);
+            soapHeaders.add(newHeader);
+            
+        }
+        
+    }
+    
+    public static class InsertResponseOutHeaderProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            CxfMessage message = exchange.getOut().getBody(CxfMessage.class);
+            Map responseContext = (Map)message.getMessage().get(Client.RESPONSE_CONTEXT);
+            List<SoapHeader> soapHeaders = (List)responseContext.get(Header.HEADER_LIST);
+            
+            // Insert a new header
+            String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><outofbandHeader "
+                + "xmlns=\"http://cxf.apache.org/outofband/Header\" hdrAttribute=\"testHdrAttribute\" "
+                + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:mustUnderstand=\"1\">"
+                + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
+            SoapHeader newHeader = new SoapHeader(soapHeaders.get(0).getName(),
+                           DOMUtils.readXml(new StringReader(xml)).getDocumentElement());
+            // make sure direction is OUT since it is a response message.
+            newHeader.setDirection(Direction.DIRECTION_OUT);
+            //newHeader.setMustUnderstand(false);
+            soapHeaders.add(newHeader);
+                                           
+        }
     }
 }

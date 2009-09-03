@@ -312,8 +312,8 @@ public final class CxfBinding {
         }
         Map<String, Object> responseContext = (Map<String, Object>)context.get(Client.RESPONSE_CONTEXT);
         List<Header> headers = (List<Header>)responseContext.get(Header.HEADER_LIST);
-        responseContext.remove(Header.HEADER_LIST);
         if (!endpoint.isRelayHeaders()) {
+            responseContext.remove(Header.HEADER_LIST);
             Exchange e = exchange.getExchange();
             if (e == null) {
                 return;
@@ -387,17 +387,14 @@ public final class CxfBinding {
                                        Map<String, Object> context,
                                        MessageHeadersRelay relay) {
         
-        List<Header> to = (List<Header>)context.get(Header.HEADER_LIST);
-        boolean hasHeaders = true;
-        if (to == null) {
-            to = new ArrayList<Header>();
-            hasHeaders = false;
-        }
+//        List<Header> to = (List<Header>)context.get(Header.HEADER_LIST);
+        List<Header> to = new ArrayList<Header>();
+
         relay.relay(direction, from, to);
         for (Header header : to) {
             header.setDirection(Header.Direction.DIRECTION_OUT);
         }
-        if (!hasHeaders && to.size() > 0) {
+        if (to.size() > 0) {
             context.put(Header.HEADER_LIST, to);
         }
     }

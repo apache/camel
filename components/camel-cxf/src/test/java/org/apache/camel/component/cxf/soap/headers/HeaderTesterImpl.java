@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -56,8 +53,8 @@ public class HeaderTesterImpl implements HeaderTester {
     private static final Logger LOG = Logger.getLogger(HeaderTesterImpl.class.getName());
     
     @Resource
-    private WebServiceContext context;
-    private boolean relayHeaders = true;
+    protected WebServiceContext context;
+    protected boolean relayHeaders = true;
     
     public HeaderTesterImpl() {
     }
@@ -189,7 +186,7 @@ public class HeaderTesterImpl implements HeaderTester {
         }
     }
     
-    private boolean validateOutOfBandHander() {
+    protected boolean validateOutOfBandHander() {
         MessageContext ctx = context == null ? null : context.getMessageContext();
         if (!relayHeaders) {
             if (ctx != null 
