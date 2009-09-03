@@ -26,7 +26,10 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -54,8 +57,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private static final transient Log LOG = LogFactory.getLog(MulticastProcessor.class);
 
-    // TODO: Add option to stop if an exception was thrown during processing to break asap (future task cancel)
-
     /**
      * Class that represent each step in the multicast route to do
      */
@@ -81,6 +82,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private final AggregationStrategy aggregationStrategy;
     private final boolean isParallelProcessing;
     private final boolean streaming;
+    private final boolean stopOnException;
     private ExecutorService executorService;
 
     public MulticastProcessor(Collection<Processor> processors) {
@@ -88,16 +90,18 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(processors, aggregationStrategy, false, null, false);
+        this(processors, aggregationStrategy, false, null, false, false);
     }
     
-    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ExecutorService executorService, boolean streaming) {
+    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy,
+                              boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException) {
         notNull(processors, "processors");
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.isParallelProcessing = parallelProcessing;
         this.executorService = executorService;
         this.streaming = streaming;
+        this.stopOnException = stopOnException;
 
         if (isParallelProcessing()) {
             if (this.executorService == null) {
@@ -123,7 +127,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         if (isParallelProcessing()) {
             doProcessParallel(result, pairs, isStreaming());
         } else {
-            doProcessSequntiel(result, pairs);
+            doProcessSequntial(result, pairs);
         }
 
         if (result.get() != null) {
@@ -132,7 +136,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     protected void doProcessParallel(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs, boolean streaming) throws InterruptedException, ExecutionException {
-        CompletionService<Exchange> completion;
+        final CompletionService<Exchange> completion;
+        final AtomicBoolean running = new AtomicBoolean(true);
+
         if (streaming) {
             // execute tasks in paralle+streaming and aggregate in the order they are finished (out of order sequence)
             completion = new ExecutorCompletionService<Exchange>(executorService);
@@ -140,20 +146,34 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             // execute tasks in parallel and aggregate in the order the tasks are submitted (in order sequence)
             completion = new SubmitOrderedCompletionService<Exchange>(executorService);
         }
-        int total = 0;
+
+        final AtomicInteger total =  new AtomicInteger(0);
 
         for (ProcessorExchangePair pair : pairs) {
             final Processor producer = pair.getProcessor();
             final Exchange subExchange = pair.getExchange();
-            updateNewExchange(subExchange, total, pairs);
+            updateNewExchange(subExchange, total.intValue(), pairs);
 
             completion.submit(new Callable<Exchange>() {
                 public Exchange call() throws Exception {
+                    if (!running.get()) {
+                        // do not start processing the task if we are not running
+                        return subExchange;
+                    }
+
                     try {
                         producer.process(subExchange);
                     } catch (Exception e) {
                         subExchange.setException(e);
                     }
+
+                    // should we stop in case of an exception occurred during processing?
+                    if (stopOnException && subExchange.getException() != null) {
+                        // signal to stop running
+                        running.set(false);
+                        throw new CamelExchangeException("Parallel processing failed for number " + total.intValue(), subExchange, subExchange.getException());
+                    }
+
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Parallel processing complete for exchange: " + subExchange);
                     }
@@ -161,10 +181,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                 }
             });
 
-            total++;
+            total.incrementAndGet();
         }
 
-        for (int i = 0; i < total; i++) {
+        for (int i = 0; i < total.intValue(); i++) {
             Future<Exchange> future = completion.take();
             Exchange subExchange = future.get();
             if (aggregationStrategy != null) {
@@ -177,7 +197,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    protected void doProcessSequntiel(AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws Exception {
+    protected void doProcessSequntial(AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws Exception {
         int total = 0;
 
         for (ProcessorExchangePair pair : pairs) {
@@ -186,9 +206,19 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             updateNewExchange(subExchange, total, pairs);
 
             // process it sequentially
-            producer.process(subExchange);
+            try {
+                producer.process(subExchange);
+            } catch (Exception e) {
+                subExchange.setException(e);
+            }
+
+            // should we stop in case of an exception occured during processing?
+            if (stopOnException && subExchange.getException() != null) {
+                throw new CamelExchangeException("Sequiental processing failed for number " + total, subExchange, subExchange.getException());
+            }
+
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Sequientel processing complete for number " + total + " exchange: " + subExchange);
+                LOG.trace("Sequiental processing complete for number " + total + " exchange: " + subExchange);
             }
 
             if (aggregationStrategy != null) {
@@ -198,7 +228,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Done sequientel processing " + total + " exchanges");
+            LOG.debug("Done sequiental processing " + total + " exchanges");
         }
     }
 
@@ -262,6 +292,13 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
      */
     public boolean isStreaming() {
         return streaming;
+    }
+
+    /**
+     * Should the multicast processor stop processing further exchanges in case of an exception occurred?
+     */
+    public boolean isStopOnException() {
+        return stopOnException;
     }
 
     /**

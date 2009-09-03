@@ -53,6 +53,8 @@ public class SplitDefinition extends ExpressionNode {
     private String executorServiceRef;
     @XmlAttribute(required = false)
     private Boolean streaming = false;
+    @XmlAttribute(required = false)
+    private Boolean stopOnException;
 
     public SplitDefinition() {
     }
@@ -81,7 +83,7 @@ public class SplitDefinition extends ExpressionNode {
         aggregationStrategy = createAggregationStrategy(routeContext);
         executorService = createExecutorService(routeContext);
         return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
-                isParallelProcessing(), executorService, streaming);
+                isParallelProcessing(), executorService, isStreaming(), isStopOnException());
     }
 
     
@@ -145,8 +147,10 @@ public class SplitDefinition extends ExpressionNode {
      * @param parallelProcessing <tt>true</tt> to use a thread pool, if <tt>false</tt> then work is done in the
      * calling thread.
      *
+     * @deprecated use #parallelProcessing instead
      * @return the builder
      */
+    @Deprecated
     public SplitDefinition parallelProcessing(boolean parallelProcessing) {
         setParallelProcessing(parallelProcessing);
         return this;
@@ -163,6 +167,19 @@ public class SplitDefinition extends ExpressionNode {
         return this;
     }
     
+    /**
+     * Will now stop further processing if an exception occurred during processing of an
+     * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
+     * <p/>
+     * The default behavior is to <b>not</b> stop but continue processing till the end
+     *
+     * @return the builder
+     */
+    public SplitDefinition stopOnException() {
+        setStopOnException(true);
+        return this;
+    }
+
     /**
      * Setting the executor service for executing the splitting action.
      *
@@ -203,6 +220,14 @@ public class SplitDefinition extends ExpressionNode {
 
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
+    }
+
+    public Boolean isStopOnException() {
+        return stopOnException != null ? stopOnException : false;
+    }
+
+    public void setStopOnException(Boolean stopOnException) {
+        this.stopOnException = stopOnException;
     }
 
     public ExecutorService getExecutorService() {

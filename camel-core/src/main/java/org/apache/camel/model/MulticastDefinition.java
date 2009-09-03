@@ -49,6 +49,8 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
     private String executorServiceRef;
     @XmlAttribute(required = false)
     private Boolean streaming;
+    @XmlAttribute(required = false)
+    private Boolean stopOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
 
@@ -100,6 +102,19 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
         setStreaming(true);
         return this;
     }
+
+    /**
+     * Will now stop further processing if an exception occurred during processing of an
+     * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
+     * <p/>
+     * The default behavior is to <b>not</b> stop but continue processing till the end
+     *
+     * @return the builder
+     */
+    public MulticastDefinition stopOnException() {
+        setStopOnException(true);
+        return this;
+    }
        
     /**
      * Setting the executor service for executing the multicasting action.
@@ -122,7 +137,8 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
         if (executorServiceRef != null) {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
         }
-        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executorService, isStreaming());
+        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executorService,
+                isStreaming(), isStopOnException());
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -148,6 +164,14 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
 
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
+    }
+
+    public Boolean isStopOnException() {
+        return stopOnException != null ? stopOnException : false;
+    }
+
+    public void setStopOnException(Boolean stopOnException) {
+        this.stopOnException = stopOnException;
     }
 
     public ExecutorService getExecutorService() {

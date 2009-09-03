@@ -45,12 +45,12 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
     private final Expression expression;
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
-        this(expression, destination, aggregationStrategy, false, null, false);
+        this(expression, destination, aggregationStrategy, false, null, false, false);
     }
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
-                    boolean parallelProcessing, ExecutorService executorService, boolean streaming) {
-        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, streaming);
+                    boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException) {
+        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException);
 
         this.expression = expression;
         notNull(expression, "expression");
