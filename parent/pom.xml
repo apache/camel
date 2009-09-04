@@ -39,7 +39,7 @@
     <activemq-version>5.2.0</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
     <axiom-version>1.2.8</axiom-version>
-    <cxf-version>2.2.2</cxf-version>
+    <cxf-version>2.2.3</cxf-version>
     <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
@@ -48,7 +48,7 @@
     <httpcore-version>4.0</httpcore-version>
     <httpclient-version>3.1</httpclient-version>
     <jetty-version>6.1.16</jetty-version>
-    <slf4j-version>1.5.6</slf4j-version>
+    <slf4j-version>1.5.8</slf4j-version>
     <openjpa-version>1.2.1</openjpa-version>
     <spring-version>2.5.6</spring-version>
     <spring-osgi-version>1.2.0</spring-osgi-version>
