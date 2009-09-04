@@ -64,19 +64,21 @@ public class CxfExchange extends DefaultExchange {
             return;
         }
         
-        org.apache.camel.Message message = exchange.getIn();
+        // Just make sure the wrapped CXF message be copied
+        
+        CxfMessage message = (CxfMessage)exchange.getIn();
         if (message != null) {
-            this.setIn(message);
+            this.setIn(new CxfMessage(message.getMessage()));
         }
         
-        message = exchange.getOut(false);
+        message = (CxfMessage) exchange.getOut(false);
         if (message != null) {
-            this.setOut(message);
+            this.setOut(new CxfMessage(message.getMessage()));
         }
         
-        message = exchange.getFault(false);
+        message = (CxfMessage) exchange.getFault(false);
         if (message != null) {
-            this.setFault(message);
+            this.setFault(new CxfMessage(message.getMessage()));
         }
         
     }
