@@ -542,4 +542,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     InterceptStrategy getDefaultTracer();
 
+    /**
+     * Disables using JMX as {@link org.apache.camel.spi.ManagementStrategy}.
+     */
+    void disableJMX();
+
 }

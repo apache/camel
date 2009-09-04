@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
@@ -108,11 +109,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private Registry registry;
     private List<LifecycleStrategy> lifecycleStrategies = new ArrayList<LifecycleStrategy>();
     private ManagementStrategy managementStrategy;
+    private AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
+    private Boolean disableJMX = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
@@ -132,32 +135,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public DefaultCamelContext() {
         super();
         name = NAME_PREFIX + ++nameSuffix;
-
-        if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            LOG.info("JMX is disabled. Using DefaultManagementStrategy.");
-            managementStrategy = new DefaultManagementStrategy();
-        } else {
-            boolean registered = false;
-            try {
-                LOG.info("JMX enabled. Using DefaultManagedLifecycleStrategy.");
-                managementStrategy = new ManagedManagementStrategy(new DefaultManagementAgent());
-                lifecycleStrategies.add(new DefaultManagementLifecycleStrategy(this));
-                registered = true;
-            } catch (NoClassDefFoundError e) {
-                // if we can't instantiate the JMX enabled strategy then fallback to default
-                // could be because of missing .jars on the classpath
-                LOG.warn("Could not find needed classes for JMX lifecycle strategy."
-                        + " Needed class is in spring-context.jar using Spring 2.5 or newer ("
-                        + " spring-jmx.jar using Spring 2.0.x)."
-                        + " NoClassDefFoundError: " + e.getMessage());
-            } catch (Exception e) {
-                LOG.warn("Could not create JMX lifecycle strategy, caused by: " + e.getMessage());
-            }
-            if (!registered) {
-                LOG.warn("Cannot use JMX. Fallback to using DefaultManagementStrategy.");
-                managementStrategy = new DefaultManagementStrategy();
-            }
-        }
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -1181,6 +1158,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public ManagementStrategy getManagementStrategy() {
+        if (managementStrategyInitialized.compareAndSet(false, true)) {
+            managementStrategy = createManagementStrategy();
+        }
         return managementStrategy;
     }
 
@@ -1208,9 +1188,47 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
     }
-    
+
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
+    }
+
+    protected ManagementStrategy createManagementStrategy() {
+        ManagementStrategy answer = null;
+
+        if (disableJMX || Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+            LOG.info("JMX is disabled. Using DefaultManagementStrategy.");
+            answer = new DefaultManagementStrategy();
+        } else {
+            try {
+                LOG.info("JMX enabled. Using DefaultManagedLifecycleStrategy.");
+                answer = new ManagedManagementStrategy(new DefaultManagementAgent());
+                // prefer to have it at first strategy
+                lifecycleStrategies.add(0, new DefaultManagementLifecycleStrategy(this));
+            } catch (NoClassDefFoundError e) {
+                // if we can't instantiate the JMX enabled strategy then fallback to default
+                // could be because of missing .jars on the classpath
+                LOG.warn("Could not find needed classes for JMX lifecycle strategy."
+                        + " Needed class is in spring-context.jar using Spring 2.5 or newer ("
+                        + " spring-jmx.jar using Spring 2.0.x)."
+                        + " NoClassDefFoundError: " + e.getMessage());
+            } catch (Exception e) {
+                LOG.warn("Could not create JMX lifecycle strategy, caused by: " + e.getMessage());
+            }
+        }
+
+        if (answer == null) {
+            LOG.warn("Cannot use JMX. Fallback to using DefaultManagementStrategy.");
+            answer = new DefaultManagementStrategy();
+        }
+
+        return answer;
+    }
+
+    public void disableJMX() {
+        disableJMX = true;
+        LOG.info("JMX is disabled. Using DefaultManagementStrategy.");
+        setManagementStrategy(new DefaultManagementStrategy());
     }
 
     @Override

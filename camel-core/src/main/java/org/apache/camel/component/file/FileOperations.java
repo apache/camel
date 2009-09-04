@@ -53,13 +53,55 @@ public class FileOperations implements GenericFileOperations<File> {
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {        
         File file = new File(name);
-        return file.exists() && file.delete();
+
+        // do not try to delete non existing files
+        if (!file.exists()) {
+            return false;
+        }
+
+        // some OS such as Windows can have problem doing delete IO operations so we may need to
+        // retry a couple of times to let it work
+        boolean deleted = false;
+        int count = 0;
+        while (!deleted && count < 3) {
+            deleted = file.delete();
+            if (count > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+            count++;
+        }
+        return deleted;
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         File file = new File(from);
-        File target = new File(to);        
-        return file.renameTo(target);
+        File target = new File(to);
+
+        // do not try to rename non existing files
+        if (!file.exists()) {
+            return false;
+        }
+
+        // some OS such as Windows can have problem doing rename IO operations so we may need to
+        // retry a couple of times to let it work
+        boolean renamed = false;
+        int count = 0;
+        while (!renamed && count < 3) {
+            renamed = file.renameTo(target);
+            if (count > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+            count++;
+        }
+        return renamed;
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
