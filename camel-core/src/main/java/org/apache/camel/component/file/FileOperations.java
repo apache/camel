@@ -64,8 +64,12 @@ public class FileOperations implements GenericFileOperations<File> {
         boolean deleted = false;
         int count = 0;
         while (!deleted && count < 3) {
+            if (LOG.isDebugEnabled() && count > 0) {
+                LOG.debug("Retrying attempt " + count + " to delete file: " + name);
+            }
+
             deleted = file.delete();
-            if (count > 0) {
+            if (!deleted && count > 0) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -73,6 +77,11 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
             }
             count++;
+        }
+
+
+        if (LOG.isDebugEnabled() && count > 0) {
+            LOG.debug("Tried " + count + " to delete file: " + name + " with result: " + deleted);
         }
         return deleted;
     }
@@ -91,8 +100,12 @@ public class FileOperations implements GenericFileOperations<File> {
         boolean renamed = false;
         int count = 0;
         while (!renamed && count < 3) {
+            if (LOG.isDebugEnabled() && count > 0) {
+                LOG.debug("Retrying attempt " + count + " to rename file from: " + from + " to: " + to);
+            }
+
             renamed = file.renameTo(target);
-            if (count > 0) {
+            if (!renamed && count > 0) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -100,6 +113,10 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
             }
             count++;
+        }
+
+        if (LOG.isDebugEnabled() && count > 0) {
+            LOG.debug("Tried " + count + " to rename file: " + from + " to: " + to + " with result: " + renamed);
         }
         return renamed;
     }

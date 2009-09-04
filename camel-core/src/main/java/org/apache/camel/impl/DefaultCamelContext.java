@@ -1175,6 +1175,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return defaultTracer;
     }
 
+    public void disableJMX() {
+        disableJMX = true;
+    }
+
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint.isSingleton()) {
             return uri;
@@ -1223,12 +1227,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
 
         return answer;
-    }
-
-    public void disableJMX() {
-        disableJMX = true;
-        LOG.info("JMX is disabled. Using DefaultManagementStrategy.");
-        setManagementStrategy(new DefaultManagementStrategy());
     }
 
     @Override
