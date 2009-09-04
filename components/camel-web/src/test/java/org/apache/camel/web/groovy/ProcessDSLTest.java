@@ -31,7 +31,7 @@ public class ProcessDSLTest extends GroovyRendererTestSupport {
     /**
      * a route involving a external class: validator
      * 
-     * @throws Exception TODO: fix this test!
+     * TODO: fix this test!
      */
     @Ignore("Need to fix this test")
     @Test

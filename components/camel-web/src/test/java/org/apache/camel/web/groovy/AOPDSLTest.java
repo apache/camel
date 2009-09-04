@@ -31,10 +31,8 @@ public class AOPDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
-    @Ignore("Need to fix this test")
     @Test
-    // TODO: fix this test!
-    public void fixmeTestAOPAfterFinally() throws Exception {
+    public void testAOPAfterFinally() throws Exception {
         String dsl = "from(\"direct:start\").aop().afterFinally(\"mock:after\").choice()"
             + ".when(body().isEqualTo(\"Hello World\")).transform(constant(\"Bye World\"))"
             + ".otherwise().transform(constant(\"Kabom the World\")).throwException(new IllegalArgumentException(\"Damn\"))"
@@ -48,14 +46,12 @@ public class AOPDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
-    @Ignore("Need to fix this test")
     @Test
-    // TODO: fix this test!
     public void fixmeTestAOPAroundFinally() throws Exception {
         String dsl = "from(\"direct:start\").aop().aroundFinally(\"mock:before\", \"mock:after\").choice()"
             + ".when(body().isEqualTo(\"Hello World\")).transform(constant(\"Bye World\"))"
             + ".otherwise().transform(constant(\"Kabom the World\")).throwException(new IllegalArgumentException(\"Damn\"))"
-            + ".end()to(\"mock:result\")";
+            + ".end().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
@@ -74,5 +70,4 @@ public class AOPDSLTest extends GroovyRendererTestSupport {
 
         assertEquals(expected, render(dsl));
     }
-
 }

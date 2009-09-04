@@ -35,6 +35,7 @@ import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ThrottleDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
 
 /**
  *
@@ -80,6 +81,8 @@ public final class ProcessorDefinitionRenderer {
             SendDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof ThrottleDefinition) {
             ThrottleDefinitionRenderer.render(buffer, processor);
+        } else if (processor instanceof ThrowExceptionDefinition) {
+            ThrowExceptionDefinitionRenderer.render(buffer, processor);
         } else {
             buffer.append(".").append(processor.getShortName()).append("()");
         }

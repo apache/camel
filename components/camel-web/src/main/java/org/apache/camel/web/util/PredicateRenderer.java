@@ -25,7 +25,7 @@ import org.apache.camel.Predicate;
 public final class PredicateRenderer {
     private PredicateRenderer() {
         // Utility class, no public or protected default constructor
-    }    
+    }
 
     public static void render(StringBuilder buffer, Predicate predicate) {
         String pre = predicate.toString();
@@ -46,8 +46,13 @@ public final class PredicateRenderer {
 
     public static void render(StringBuilder buffer, String predicate) {
         String left = predicate.substring(0, predicate.indexOf(" "));
-        String operation = predicate.substring(predicate.indexOf(" ") + 1, predicate.lastIndexOf(" "));
-        String right = predicate.substring(predicate.lastIndexOf(" ") + 1);
+        String opAndRight = predicate.substring(left.length() + 1, predicate.length());
+        String operation = opAndRight.substring(0, opAndRight.indexOf(" "));
+        String right = opAndRight.substring(operation.length() + 1, opAndRight.length());
+        if (operation.equals("is") && right.startsWith("not")) {
+            operation = "is not";
+            right = right.substring(4, right.length());
+        }
 
         renderLeft(buffer, left);
         renderOperation(buffer, operation);
@@ -157,7 +162,7 @@ public final class PredicateRenderer {
     }
 
     private static void renderOr(StringBuilder buffer, String predicate) {
-     // (predicate1 or predicate2)
+        // (predicate1 or predicate2)
         buffer.append("or(");
         String predicate1 = predicate.substring(1, predicate.indexOf(") or ("));
         String predicate2 = predicate.substring(predicate.indexOf(") or (") + 6, predicate.length() - 1);
@@ -174,6 +179,10 @@ public final class PredicateRenderer {
         } else if (right.equals("") || right.equals("null")) {
             // for isNull() and isNotNull()
             return;
+        } else if (right.startsWith("java.")) {
+            // for isInstanceOf(clazz)
+            String className = right.substring(right.lastIndexOf(".") + 1, right.length());
+            buffer.append("(").append(className).append(".class)");
         } else {
             // string -> "string"
             buffer.append("(\"").append(right).append("\")");

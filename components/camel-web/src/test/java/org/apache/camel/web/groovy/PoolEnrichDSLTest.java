@@ -31,7 +31,6 @@ public class PoolEnrichDSLTest extends GroovyRendererTestSupport {
     /**
      * a route involving a external class: aggregationStrategy
      * 
-     * @throws Exception
      * TODO: fix this test!
      */
     @Ignore("Need to fix this test")

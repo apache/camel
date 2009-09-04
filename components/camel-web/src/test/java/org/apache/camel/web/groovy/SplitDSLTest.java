@@ -43,11 +43,9 @@ public class SplitDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
-    // TODO: fix this test!
-    @Ignore("Need to fix this test")
     @Test
     public void fixmeTestSplitXPath() throws Exception {
-        String dsl = "from(\"direct:start\").split(xpath(\"//foo/bar\")).convertBodyTo(String.class).to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").split().xpath(\"//foo/bar\", String.class).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 }

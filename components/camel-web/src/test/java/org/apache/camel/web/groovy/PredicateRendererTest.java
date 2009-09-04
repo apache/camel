@@ -139,12 +139,10 @@ public class PredicateRendererTest extends PredicateRendererTestSupport {
         assertMatch(expectedPredicate, predicate);
     }
 
-    @Ignore("Need to fix this test")
     @Test
-    // TODO: fix this test!
-    public void fixmeTestIsInstanceOf() throws Exception {
-        String expectedPredicate = "header(\"name\").isNull()";
-        Predicate predicate = header("name").isNull();
+    public void testIsInstanceOf() throws Exception {
+        String expectedPredicate = "header(\"name\").isInstanceOf(String.class)";
+        Predicate predicate = header("name").isInstanceOf(String.class);
         assertMatch(expectedPredicate, predicate);
     }
 

@@ -96,7 +96,7 @@ public final class GroovyRenderer {
         for (RouteDefinition route : routes) {
             renderRoute(buffer, route);
             if (route != routes.get(routes.size() - 1)) {
-                buffer.append(";");
+                buffer.append(";\n");
             }
         }
     }

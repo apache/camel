@@ -32,7 +32,7 @@
   <decorator name="printable" page="printable.jsp" />
 
   <decorator name="plain" page="plain.jsp">
-    <pattern>/routes/*/edit</pattern>
+    <!-- <pattern>/routes/*/edit</pattern> -->
   </decorator>
 
 </decorators>

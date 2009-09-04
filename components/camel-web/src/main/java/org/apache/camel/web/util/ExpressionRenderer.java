@@ -62,7 +62,20 @@ public final class ExpressionRenderer {
      * @param buffer
      */
     public static void renderConstant(StringBuilder buffer, ExpressionDefinition expression) {
-        buffer.append(".constant(\"").append(expression.getExpressionValue().toString()).append("\")");
+        renderConstant(buffer, expression.getExpressionValue().toString());
+    }
+
+    /**
+     * Render a constant: constant("")
+     * 
+     * @param expression
+     * @param buffer
+     */
+    public static void renderConstant(StringBuilder buffer, String expression) {
+        if (buffer.toString().endsWith(")")) {
+            buffer.append(".");
+        }
+        buffer.append("constant(\"").append(expression).append("\")");
     }
 
     /**

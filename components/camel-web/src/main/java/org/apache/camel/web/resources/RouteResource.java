@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,12 +41,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.api.view.Viewable;
 
 import groovy.lang.GroovyClassLoader;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -65,11 +64,11 @@ import org.jruby.Main;
  * @version $Revision$
  */
 public class RouteResource extends CamelChildResourceSupport {
+    public static final String LANGUAGE_XML = "Xml";
+    public static final String LANGUAGE_GROOVY = "Groovy";
+    public static final String LANGUAGE_RUBY = "Ruby";
+    public static final String LANGUAGE_SCALA = "Scala";
     private static final transient Log LOG = LogFactory.getLog(RouteResource.class);
-    private static final String LANGUAGE_XML = "Xml";
-    private static final String LANGUAGE_GROOVY = "Groovy";
-    private static final String LANGUAGE_RUBY = "Ruby";
-    private static final String LANGUAGE_SCALA = "Scala";
 
     private RouteDefinition route;
     private String error = "";
@@ -175,21 +174,21 @@ public class RouteResource extends CamelChildResourceSupport {
     /**
      * Updates a route definition using form encoded data from a web form
      * 
-     * @param formData is the form data POSTed typically from a HTML form with
-     *            the <code>route</code> field used to encode the XML text of
-     *            the new route definition
+     * @param language is the edited language used on this route
+     * @param body is the route definition content POSTed typically from a HTML
+     *            form with the <code>route</code> field
+     * @param edited is a flag to show whether the route have been edited
      */
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response postRouteForm(@Context UriInfo uriInfo, Form formData) throws URISyntaxException {
-        // TODO replace the Form class with an injected bean?
-        String language = formData.getFirst("language", String.class);
-        String body = formData.getFirst("route", String.class);
-        String edited = formData.getFirst("edited", String.class);
+    public Response postRouteForm(@Context UriInfo uriInfo, @FormParam("language") String language, 
+                                  @FormParam("route") String body, @FormParam("edited") String edited)
+        throws URISyntaxException {
 
         if (edited.equals("false")) {
             return Response.seeOther(new URI("/routes")).build();
         }
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("new Route is: " + body);
         }
@@ -240,9 +239,6 @@ public class RouteResource extends CamelChildResourceSupport {
      */
     private Response parseGroovy(String route) {
         try {
-            // store the route definition
-            // File file = storeRoute(route, LANGUAGE_GROOVY);
-
             // load the definition class into a RouteBuilder instance
             GroovyClassLoader classLoader = new GroovyClassLoader();
             Class<?> clazz = classLoader.parseClass(route);
@@ -318,7 +314,8 @@ public class RouteResource extends CamelChildResourceSupport {
             File file = storeRoute(route, LANGUAGE_SCALA);
 
             // load the definition class
-
+            //TODO: process the route definition using scala route builder
+            
             return Response.seeOther(new URI("/routes")).build();
 
         } catch (IOException e) {

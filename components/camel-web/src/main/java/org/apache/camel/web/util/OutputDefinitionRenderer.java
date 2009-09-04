@@ -140,15 +140,20 @@ public final class OutputDefinitionRenderer {
     private static void renderAop(StringBuilder buffer, OutputDefinition out) {
         buffer.append("()");
         AOPDefinition aop = (AOPDefinition)out;
-        if (aop.getBeforeUri() != null && aop.getAfterUri() != null) {
-            buffer.append(".around(\"").append(aop.getBeforeUri());
-            buffer.append("\", \"").append(aop.getAfterUri()).append("\")");
-        } else if (aop.getBeforeUri() != null) {
-            buffer.append(".before(\"").append(aop.getBeforeUri()).append("\")");
+        if (aop.getBeforeUri() != null) {
+            if (aop.getAfterUri() != null) {
+                buffer.append(".around(\"").append(aop.getBeforeUri());
+                buffer.append("\", \"").append(aop.getAfterUri()).append("\")");
+            } else if (aop.getAfterFinallyUri() != null) {
+                buffer.append(".aroundFinally(\"").append(aop.getBeforeUri());
+                buffer.append("\", \"").append(aop.getAfterFinallyUri()).append("\")");
+            } else {
+                buffer.append(".before(\"").append(aop.getBeforeUri()).append("\")");
+            }
         } else if (aop.getAfterUri() != null) {
             buffer.append(".after(\"").append(aop.getAfterUri()).append("\")");
         } else if (aop.getAfterFinallyUri() != null) {
-            buffer.append(".afterFinally(\"").append(aop.getAfterUri()).append("\")");
+            buffer.append(".afterFinally(\"").append(aop.getAfterFinallyUri()).append("\")");
         }
     }
 

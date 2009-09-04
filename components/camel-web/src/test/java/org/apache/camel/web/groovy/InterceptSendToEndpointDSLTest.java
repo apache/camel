@@ -41,18 +41,18 @@ public class InterceptSendToEndpointDSLTest extends GroovyRendererTestSupport {
 
     @Test
     public void testInterceptSendToEndpointInOnException() throws Exception {
-        String dsl = "onException(IOException.class).handled(true).to(\"mock:io\");"
+        String dsl = "onException(IOException.class).to(\"mock:io\");"
             + "interceptSendToEndpoint(\"mock:io\").skipSendToOriginalEndpoint().to(\"mock:intercepted\");"
             + "from(\"direct:start\").to(\"mock:foo\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
-    @Ignore("Need to fix this test")
     @Test
-    // TODO: fix this test!
-    public void fixmeTestInterceptSendToIssue() throws Exception {
+    public void testInterceptSendToIssue() throws Exception {
         String dsl = "interceptSendToEndpoint(\"direct:foo\").to(\"mock:foo\");"
             + "from(\"direct:start\").setHeader(Exchange.FILE_NAME, constant(\"hello.txt\")).to(\"direct:foo\")";
-        assertEquals(dsl, render(dsl));
+        String expected = "interceptSendToEndpoint(\"direct:foo\").to(\"mock:foo\");"
+            + "from(\"direct:start\").setHeader(\"CamelFileName\").constant(\"hello.txt\").to(\"direct:foo\")";
+        assertEquals(expected, render(dsl));
     }
 }

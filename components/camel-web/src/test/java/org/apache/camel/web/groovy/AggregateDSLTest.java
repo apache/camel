@@ -20,7 +20,6 @@ package org.apache.camel.web.groovy;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
 /**
  * a test case for aggregate DSL
  */
@@ -50,34 +49,31 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
     public void testAggregateTimeoutOnly() throws Exception {
         String dsl = "from(\"direct:start\").aggregate(header(\"id\")).batchTimeout(3000).batchSize(0).to(\"mock:result\")";
         String expected = "from(\"direct:start\").aggregate().header(\"id\").batchTimeout(3000).batchSize(0).to(\"mock:result\")";
-        
+
         assertEquals(expected, render(dsl));
     }
 
     /**
-     * a route involving a external class: CamelException
-     * 
-     * @throws Exception
-     * TODO: fix this test!
+     * a route involving a external exception class: CamelException
      */
-    @Ignore("Need to fix this test")
     @Test
-    public void fixmeTestAggregateAndOnException() throws Exception {
-        String dsl = "errorHandler(deadLetterChannel(\"mock:error\"));onException(CamelException.class).maximumRedeliveries(2);from(\"direct:start\").aggregate(header(\"id\")).to(\"mock:result\")";
-        assertEquals(dsl, render(dsl));
+    public void testAggregateAndOnException() throws Exception {
+        String dsl = "errorHandler(deadLetterChannel(\"mock:error\"));" + "onException(CamelException.class).maximumRedeliveries(2);"
+                     + "from(\"direct:start\").aggregate(header(\"id\")).to(\"mock:result\")";
+        String expected = "errorHandler(deadLetterChannel(\"mock://error\"));" + "onException(CamelException.class).maximumRedeliveries(2);"
+                          + "from(\"direct:start\").aggregate().header(\"id\").to(\"mock:result\")";
+        assertEquals(expected, render(dsl));
     }
 
     /**
-     * a set of routes that uses aggregate DSL
-     * 
-     * @throws Exception
-     * TODO: fix this test!
+     * a set of routes that use split and aggregate DSL
      */
-    @Ignore("Need to fix this test")
     @Test
     public void fixmeTestAggregateTimerAndTracer() throws Exception {
         String dsl = "from(\"timer://kickoff?period=9999910000\").setHeader(\"id\").constant(\"foo\").setBody().constant(\"a b c\").split(body().tokenize(\" \")).to(\"seda:splitted\");"
-            + "from(\"seda:splitted\").aggregate(header(\"id\")).to(\"mock:result\")";
-        assertEquals(dsl, render(dsl));
+                     + "from(\"seda:splitted\").aggregate(header(\"id\")).to(\"mock:result\")";
+        String expected = "from(\"timer://kickoff?period=9999910000\").setHeader(\"id\").constant(\"foo\").setBody().constant(\"a b c\").split(body().tokenize(\" \")).to(\"seda:splitted\");\n"
+                          + "from(\"seda:splitted\").aggregate().header(\"id\").to(\"mock:result\")";
+        assertEquals(expected, renderRoutes(dsl));
     }
 }

@@ -39,11 +39,7 @@ public class WireTapDSLTest extends GroovyRendererTestSupport {
 
     /**
      * a wireTap with two parameters
-     * 
-     * @throws Exception
-     * TODO: fix this test!
      */
-    @Ignore("Need to fix this test")
     @Test
     public void fixmeTestWireTap3() throws Exception {
         String dsl = "from(\"direct:start\").wireTap(\"direct:foo\", constant(\"Bye World\")).to(\"mock:result\")";

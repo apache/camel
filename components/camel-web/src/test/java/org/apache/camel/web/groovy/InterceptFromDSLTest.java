@@ -49,9 +49,9 @@ public class InterceptFromDSLTest extends GroovyRendererTestSupport {
         String dsl = "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");"
             + "from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");"
             + "from(\"seda:foo\").to(\"mock:result\");from(\"seda:cheese\").to(\"mock:result\")";
-        String expected = "from(\"direct:start\").to(\"mock:result\");"
-            + "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");"
-            + "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:foo\").to(\"mock:result\");"
+        String expected = "from(\"direct:start\").to(\"mock:result\");\n"
+            + "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");\n"
+            + "interceptFrom(\"seda:(bar|foo)\").to(\"mock:intercept\");from(\"seda:foo\").to(\"mock:result\");\n"
             + "from(\"seda:cheese\").to(\"mock:result\")";
 
         assertEquals(expected, renderRoutes(dsl));
@@ -62,8 +62,8 @@ public class InterceptFromDSLTest extends GroovyRendererTestSupport {
         String dsl = "interceptFrom(\"seda:bar\").to(\"mock:bar\");"
             + "from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");"
             + "from(\"seda:bar\").to(\"mock:result\");from(\"seda:foo\").to(\"mock:result\")";
-        String expected = "from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");"
-            + "interceptFrom(\"seda:bar\").to(\"mock:bar\");from(\"seda:bar\").to(\"mock:result\");"
+        String expected = "from(\"direct:start\").to(\"mock:first\").to(\"seda:bar\");\n"
+            + "interceptFrom(\"seda:bar\").to(\"mock:bar\");from(\"seda:bar\").to(\"mock:result\");\n"
             + "from(\"seda:foo\").to(\"mock:result\")";
 
         assertEquals(expected, renderRoutes(dsl));
@@ -74,8 +74,8 @@ public class InterceptFromDSLTest extends GroovyRendererTestSupport {
         String dsl = "interceptFrom(\"seda*\").to(\"mock:intercept\");"
             + "from(\"direct:start\").to(\"mock:result\");from(\"seda:bar\").to(\"mock:result\");"
             + "from(\"seda:foo\").to(\"mock:result\")";
-        String expected = "from(\"direct:start\").to(\"mock:result\");"
-            + "interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");"
+        String expected = "from(\"direct:start\").to(\"mock:result\");\n"
+            + "interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"seda:bar\").to(\"mock:result\");\n"
             + "interceptFrom(\"seda*\").to(\"mock:intercept\");from(\"seda:foo\").to(\"mock:result\")";
         
         assertEquals(expected, renderRoutes(dsl));

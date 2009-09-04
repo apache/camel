@@ -26,16 +26,15 @@ public class SetHeaderDSLTest extends GroovyRendererTestSupport {
 
     @Test
     public void testSetHeaderConstant() throws Exception {
-        String dsl = "from(\"direct:start\").setHeader(\"foo\", constant(\"ABC\")).to(\"mock:result\")";
-        String expected = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").to(\"mock:result\")";
-
-        assertEquals(expected, render(dsl));
+        String dsl = "from(\"direct:start\").setHeader(\"foo\").constant(\"ABC\").to(\"mock:result\")";
+        assertEquals(dsl, render(dsl));
     }
 
     @Test
     public void testSetHeaderXPath() throws Exception {
         String dsl = "from(\"direct:start\").unmarshal().string().setHeader(\"foo\").xpath(\"/person[@name='James']/@city\", String.class).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
+
     }
 
     @Test

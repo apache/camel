@@ -33,9 +33,14 @@
       </c:if>
       </form>
     </td>
+  </tr>
   </c:forEach>
 </ul>
 </table>
+
+<ul>
+<li><a href='<c:url value="/routes/create"/>'>Create New Route</a>
+</ul>
 
 </body>
 </html>

@@ -28,17 +28,18 @@ public final class ErrorHandlerRenderer {
     private ErrorHandlerRenderer() {
         // Utility class, no public or protected default constructor
     }
-    
+
     public static void render(StringBuilder buffer, ErrorHandlerBuilder errorHandler) {
         if (errorHandler instanceof DeadLetterChannelBuilder) {
             DeadLetterChannelBuilder deadLetter = (DeadLetterChannelBuilder)errorHandler;
             buffer.append("errorHandler(deadLetterChannel(\"").append(deadLetter.getDeadLetterUri()).append("\")");
-            int maxRediliveries = deadLetter.getRedeliveryPolicy().getMaximumRedeliveries();
+
+            // render the redelivery policy
+            RedeliveryPolicy redelivery = deadLetter.getRedeliveryPolicy();
+            int maxRediliveries = redelivery.getMaximumRedeliveries();
             if (maxRediliveries != 0) {
                 buffer.append(".maximumRedeliveries(").append(maxRediliveries).append(")");
             }
-
-            RedeliveryPolicy redelivery = deadLetter.getRedeliveryPolicy();
             long redeliverDelay = redelivery.getRedeliverDelay();
             if (redeliverDelay != 1000) {
                 buffer.append(".redeliverDelay(").append(redeliverDelay).append(")");
@@ -47,6 +48,7 @@ public final class ErrorHandlerRenderer {
                 buffer.append(".logStackTrace(true)");
             }
 
+            // render the handled policy
             if (deadLetter.getHandledPolicy() != null) {
                 String handledPolicy = deadLetter.getHandledPolicy().toString();
                 if (handledPolicy.equals("false")) {

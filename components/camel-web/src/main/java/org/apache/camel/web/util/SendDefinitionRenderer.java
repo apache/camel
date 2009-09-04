@@ -27,14 +27,28 @@ import org.apache.camel.model.WireTapDefinition;
 public final class SendDefinitionRenderer {
     private SendDefinitionRenderer() {
         // Utility class, no public or protected default constructor
-    }    
+    }
 
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         buffer.append(".");
         SendDefinition<?> send = (SendDefinition<?>)processor;
-        if (send instanceof WireTapDefinition || send.getPattern() == null) {
-            // for wireTap and to
+        if (send instanceof WireTapDefinition) {
+            // for wireTap
             buffer.append(send.getShortName());
+            buffer.append("(\"").append(send.getUri());
+            WireTapDefinition wireTap = (WireTapDefinition)send;
+            if (wireTap.getNewExchangeExpression() != null) {
+                String expression = wireTap.getNewExchangeExpression().toString();
+                buffer.append("\", ");
+                ExpressionRenderer.renderConstant(buffer, expression);
+                buffer.append(")");
+            } else {
+                buffer.append("\")");
+            }
+        } else if (send.getPattern() == null) {
+            // for to
+            buffer.append(send.getShortName());
+            buffer.append("(\"").append(send.getUri()).append("\")");
         } else {
             // for inOnly and inOut
             if (send.getPattern().name().equals("InOnly")) {
@@ -42,7 +56,7 @@ public final class SendDefinitionRenderer {
             } else if (send.getPattern().name().equals("InOut")) {
                 buffer.append("inOut");
             }
+            buffer.append("(\"").append(send.getUri()).append("\")");
         }
-        buffer.append("(\"").append(send.getUri()).append("\")");
     }
 }

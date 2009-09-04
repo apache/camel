@@ -15,20 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.camel.web.groovy;
+package org.apache.camel.web.util;
 
-import org.junit.Test;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ThrowExceptionDefinition;
 
 /**
  *
  */
-public class TracingDSLTest extends GroovyRendererTestSupport {
+public final class ThrowExceptionDefinitionRenderer {
+    private ThrowExceptionDefinitionRenderer() {
+        // Utility class, no public or protected default constructor
+    }
 
-    @Test
-    public void testTracePerRotueManual() throws Exception {
-        String dsl = "from(\"direct:a\").tracing().streamCaching().to(\"mock:a\");\n"
-            + "from(\"direct:b\").noTracing().to(\"mock:b\");\n"
-            + "from(\"direct:c\").tracing().to(\"mock:c\")";
-        assertEquals(dsl, renderRoutes(dsl));
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+        ThrowExceptionDefinition throwExp = (ThrowExceptionDefinition)processor;
+        buffer.append(".").append(throwExp.getShortName()).append("(");
+        String expName = throwExp.getException().getClass().getSimpleName();
+        String msg = throwExp.getException().getMessage();
+        buffer.append("new ").append(expName).append("(\"").append(msg).append("\"))");
     }
 }

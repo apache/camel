@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
 
 /**
  *
@@ -28,7 +29,7 @@ import org.apache.camel.model.ProcessorDefinition;
 public final class OnExceptionDefinitionRenderer {
     private OnExceptionDefinitionRenderer() {
         // Utility class, no public or protected default constructor
-    }    
+    }
 
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         // if not a global onCompletion, add a period
@@ -48,10 +49,34 @@ public final class OnExceptionDefinitionRenderer {
         }
         buffer.append(")");
 
-        // render handled() dsl
+        // render the redelivery policy
+        if (onException.getRedeliveryPolicy() != null) {
+            RedeliveryPolicyDefinition redelivery = onException.getRedeliveryPolicy();
+            if (redelivery.getMaximumRedeliveries() != null) {
+                int maxRediliveries = redelivery.getMaximumRedeliveries();
+                if (maxRediliveries != 0) {
+                    buffer.append(".maximumRedeliveries(").append(maxRediliveries).append(")");
+                }
+            }
+            if (redelivery.getRedeliveryDelay() != null) {
+                long redeliverDelay = redelivery.getRedeliveryDelay();
+                if (redeliverDelay != 1000) {
+                    buffer.append(".redeliverDelay(").append(redeliverDelay).append(")");
+                }
+            }
+            if (redelivery.getLogStackTrace() != null) {
+                if (redelivery.getLogStackTrace()) {
+                    buffer.append(".logStackTrace(true)");
+                }
+            }
+        }
+
+        // render the handled policy
         if (onException.getHandledPolicy() != null) {
-            String handled = onException.getHandledPolicy().toString();
-            buffer.append(".handled(").append(handled).append(")");
+            String handledPolicy = onException.getHandledPolicy().toString();
+            if (handledPolicy.equals("false")) {
+                buffer.append(".handled(").append(handledPolicy).append(")");
+            }
         }
 
         List<ProcessorDefinition> branches = onException.getOutputs();

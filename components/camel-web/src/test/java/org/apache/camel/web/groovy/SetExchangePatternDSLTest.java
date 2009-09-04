@@ -38,18 +38,19 @@ public class SetExchangePatternDSLTest extends GroovyRendererTestSupport {
         assertEquals(dsl, render(dsl));
     }
 
-    // TODO: fix this test
-    @Ignore("Need to fix this test")
+    /**
+     * to(ExchangePattern.PATTERN, dest) -> PATTERN(dest) 
+     * since we can't distinguish them at CamelContext
+     */
     @Test
-    public void fixmeTestToExchangePattern() throws Exception {
+    public void testToWithExchangePattern() throws Exception {
         String dsl = "from(\"direct:start\").to(ExchangePattern.InOnly, \"mock:result\")";
-        assertEquals(dsl, render(dsl));
+        String expected = "from(\"direct:start\").inOnly(\"mock:result\")";
+        assertEquals(expected, render(dsl));
     }
 
-    // TODO: fix this test
-    @Ignore("Need to fix this test")
     @Test
-    public void fixmeTestSetExchangepattern() throws Exception {
+    public void testSetExchangepattern() throws Exception {
         String dsl = "from(\"direct:start\").setExchangePattern(ExchangePattern.InOnly).to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
