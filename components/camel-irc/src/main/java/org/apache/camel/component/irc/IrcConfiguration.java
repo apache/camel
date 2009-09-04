@@ -45,7 +45,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean onKick = true;
     private boolean onMode = true;
     private boolean onPart = true;
-    private boolean onReply = false;
+    private boolean onReply;
     private boolean onTopic = true;
     private boolean onPrivmsg = true;
     private int[] ports = {6667, 6668, 6669};
