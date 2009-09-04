@@ -609,7 +609,7 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
     public static class InsertResponseOutHeaderProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            CxfMessage message = exchange.getOut().getBody(CxfMessage.class);
+            CxfMessage message = exchange.getIn().getBody(CxfMessage.class);
             Map responseContext = (Map)message.getMessage().get(Client.RESPONSE_CONTEXT);
             List<SoapHeader> soapHeaders = (List)responseContext.get(Header.HEADER_LIST);
             

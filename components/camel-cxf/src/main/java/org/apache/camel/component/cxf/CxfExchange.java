@@ -59,28 +59,6 @@ public class CxfExchange extends DefaultExchange {
         super(exchange);
         this.exchange = exchange.getExchange();
         
-        if (DataFormat.MESSAGE == exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class)) {
-            // message body is an input stream so it is not copied to new exchange
-            return;
-        }
-        
-        // Just make sure the wrapped CXF message be copied
-        
-        CxfMessage message = (CxfMessage)exchange.getIn();
-        if (message != null) {
-            this.setIn(new CxfMessage(message.getMessage()));
-        }
-        
-        message = (CxfMessage) exchange.getOut(false);
-        if (message != null) {
-            this.setOut(new CxfMessage(message.getMessage()));
-        }
-        
-        message = (CxfMessage) exchange.getFault(false);
-        if (message != null) {
-            this.setFault(new CxfMessage(message.getMessage()));
-        }
-        
     }
 
     public CxfExchange(CamelContext context, ExchangePattern pattern, Message inMessage) {
