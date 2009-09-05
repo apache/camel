@@ -16,11 +16,20 @@
  */
 package org.apache.camel.osgi;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Route;
+import org.apache.camel.Service;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RouteContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.springframework.osgi.context.BundleContextAware;
@@ -28,9 +37,10 @@ import org.springframework.osgi.context.BundleContextAware;
 /**
  * The OsgiServiceRegistry support to get the service object from the bundle context
  */
-public class OsgiServiceRegistry implements Registry {
+public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
     private BundleContext bundleContext;
-    private Map<String, Object> serviceCacheMap = new ConcurrentHashMap<String, Object>(); 
+    private Map<String, Object> serviceCacheMap = new ConcurrentHashMap<String, Object>();
+    private ConcurrentLinkedQueue<ServiceReference> serviceReferenceQueue = new ConcurrentLinkedQueue<ServiceReference>();
     
     public OsgiServiceRegistry(BundleContext bc) {
         bundleContext = bc;
@@ -46,8 +56,9 @@ public class OsgiServiceRegistry implements Registry {
         if (service == null) {
             ServiceReference sr = bundleContext.getServiceReference(name);            
             if (sr != null) {
-                // TODO need to keep the track of Service
+                // Need to keep the track of Service
                 // and call ungetService when the camel context is closed 
+                serviceReferenceQueue.add(sr);
                 service = bundleContext.getService(sr);
                 if (service != null) {
                     serviceCacheMap.put(name, service);
@@ -61,6 +72,67 @@ public class OsgiServiceRegistry implements Registry {
     public <T> Map<String, T> lookupByType(Class<T> type) {
         // not implemented so we return an empty map
         return Collections.EMPTY_MAP;
+    }
+
+    public void onComponentAdd(String name, Component component) {
+        // Do nothing here
+        
+    }
+
+    public void onComponentRemove(String name, Component component) {
+        // Do nothing here
+        
+    }
+
+    public void onContextStart(CamelContext context) {
+        // Do nothing here
+        
+    }
+
+    public void onContextStop(CamelContext context) {
+        // Unget the OSGi service
+        ServiceReference sr = serviceReferenceQueue.poll();
+        while (sr != null) {
+            bundleContext.ungetService(sr);
+            sr = serviceReferenceQueue.poll();
+        }
+        // Clean up the OSGi Service Cache
+        serviceCacheMap.clear();
+    }
+
+    public void onEndpointAdd(Endpoint endpoint) {
+        // Do nothing here
+        
+    }
+
+    public void onEndpointRemove(Endpoint endpoint) {
+        // Do nothing here
+        
+    }
+
+    public void onRouteContextCreate(RouteContext routeContext) {
+        // Do nothing here
+        
+    }
+
+    public void onRoutesAdd(Collection<Route> routes) {
+        // Do nothing here
+        
+    }
+
+    public void onRoutesRemove(Collection<Route> routes) {
+        // Do nothing here
+        
+    }
+
+    public void onServiceAdd(CamelContext context, Service service, Route route) {
+        // Do nothing here
+        
+    }
+
+    public void onServiceRemove(CamelContext context, Service service, Route route) {
+        // Do nothing here
+        
     }
 
 }

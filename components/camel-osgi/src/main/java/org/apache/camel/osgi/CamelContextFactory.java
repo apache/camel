@@ -79,6 +79,8 @@ public class CamelContextFactory implements BundleContextAware {
         ObjectHelper.notNull(bundleContext, "BundleContext");
         LOG.debug("Setting the OSGi ServiceRegistry");
         OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
+        // Need to clean up the OSGi service when camel context is closed.
+        context.addLifecycleStrategy(osgiServiceRegistry);
         CompositeRegistry compositeRegistry = new CompositeRegistry();
         compositeRegistry.addRegistry(osgiServiceRegistry);
         compositeRegistry.addRegistry(context.getRegistry());

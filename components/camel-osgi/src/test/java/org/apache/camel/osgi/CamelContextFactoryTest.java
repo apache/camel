@@ -23,12 +23,14 @@ import org.junit.Test;
 
 public class CamelContextFactoryTest extends CamelOsgiTestSupport {
     @Test 
-    public void osigServiceRegistryTest() {
+    public void osigServiceRegistryTest() throws Exception {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(getBundleContext());
         DefaultCamelContext context = factory.createContext();
+        context.start();
         MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
         assertNotNull("MyService should not be null", myService);
+        context.stop();
     }
 
 }
