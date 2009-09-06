@@ -50,8 +50,8 @@ import org.apache.cxf.outofband.header.OutofBandHeader;
 public class HeaderTesterImpl implements HeaderTester {
     
     @Resource
-    private WebServiceContext context;
-    private boolean relayHeaders = true;
+    protected WebServiceContext context;
+    protected boolean relayHeaders = true;
     
     public HeaderTesterImpl() {
     }
@@ -183,7 +183,7 @@ public class HeaderTesterImpl implements HeaderTester {
         }
     }
     
-    private boolean validateOutOfBandHander() {
+    protected boolean validateOutOfBandHander() {
         MessageContext ctx = context == null ? null : context.getMessageContext();
         if (!relayHeaders) {
             if (ctx != null 
