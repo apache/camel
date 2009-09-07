@@ -31,7 +31,7 @@ import org.junit.Test;
 public class JettyAsyncWithThreadsTest extends CamelTestSupport {
 
     private static final String ENDPOINT_NAME = "http://localhost:9876/asyncRouteTest";
-	private static String route = "";
+    private static String route = "";
 
     @Before
     public void setUp() throws Exception {
@@ -119,14 +119,14 @@ public class JettyAsyncWithThreadsTest extends CamelTestSupport {
                         .transform(body().append(" World"))
                             // now turn the route into async from this point forward
                             // the caller will have a Future<Exchange> returned as response in OUT
-                            // to be used to grap the async response when he fell like it
+                            // to be used to grab the async response when he fell like it
                             // we do not want to wait for tasks to be complete so we instruct Camel
                             // to not wait, and therefore Camel returns the Future<Exchange> handle we
                             // can use to get the result when we want
                         .threads().waitForTaskToComplete(WaitForTaskToComplete.Never)
                             // from this point forward this is the async route doing its work
                             // so we do a bit of delay to simulate heavy work that takes time
-						.to("mock:foo")
+                            .to("mock:foo")
                         .delay(100)
                             // and we also work with the message so we can prepare a response
                         .process(new MyProcessor())

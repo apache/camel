@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
-import static org.junit.Assert.assertNull;
-
 import org.apache.activemq.command.ActiveMQBlobMessage;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNull;
 
 /**
  * @version $Revision$
