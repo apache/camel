@@ -582,10 +582,9 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
             .equals(hdrToTest.get(1).getHdrAttribute()));
     }
     
-    // START SNIPPET: InsertRequestOutHeaderProcessor
+    // START SNIPPET: SOAPHeaderProcessors
 
     public static class InsertRequestOutHeaderProcessor implements Processor {
-
         public void process(Exchange exchange) throws Exception {
             CxfMessage message = exchange.getIn().getBody(CxfMessage.class);
             Message cxf = message.getMessage();
@@ -605,16 +604,9 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
             soapHeaders.add(newHeader);
             
         }
-        
     }
     
-    // END SNIPPET: InsertRequestOutHeaderProcessor
-
-    
-    // START SNIPPET: InsertResponseOutHeaderProcessor
-
     public static class InsertResponseOutHeaderProcessor implements Processor {
-
         public void process(Exchange exchange) throws Exception {
             CxfMessage message = exchange.getIn().getBody(CxfMessage.class);
             Map responseContext = (Map)message.getMessage().get(Client.RESPONSE_CONTEXT);
@@ -634,7 +626,6 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
                                            
         }
     }
-    
-    // END SNIPPET: InsertResponseOutHeaderProcessor
+    // END SNIPPET: SOAPHeaderProcessors
 
 }
