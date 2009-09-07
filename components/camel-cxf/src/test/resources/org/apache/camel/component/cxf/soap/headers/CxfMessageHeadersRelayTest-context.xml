@@ -138,12 +138,14 @@
           <from uri="cxf:bean:routerRelayEndpoint"/>
           <to uri="cxf:bean:serviceRelayEndpoint"/>
       </route>
+      <!-- START SNIPPET: processSoapHeaderRoute -->
       <route>
           <from uri="cxf:bean:routerRelayEndpointWithInsertion"/>
           <process ref="InsertRequestOutHeaderProcessor" />
           <to uri="cxf:bean:serviceRelayEndpointWithInsertion"/>
           <process ref="InsertResponseOutHeaderProcessor" />
-      </route>          
+      </route>     
+      <!-- END SNIPPET: processSoapHeaderRoute -->     
       <route>
          <from uri="direct:directProducer" />
          <to uri="cxf:bean:serviceRelayEndpoint" />

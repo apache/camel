@@ -634,6 +634,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         
     }
     
+    // START SNIPPET: InsertResponseOutHeaderProcessor
+    
     public static class InsertResponseOutHeaderProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
@@ -652,6 +654,10 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
             soapHeaders.add(newHeader);
             
         }
+        
     }
+    
+    // END SNIPPET: InsertResponseOutHeaderProcessor
+
 
 }
