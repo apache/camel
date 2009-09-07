@@ -114,12 +114,14 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     protected void doStart() throws Exception {
+        if (producerCache != null) {
+            producerCache.start();
+        }
     }
 
     protected void doStop() throws Exception {
         if (producerCache != null) {
             producerCache.stop();
-            producerCache = null;
         }
     }
 
