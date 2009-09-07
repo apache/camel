@@ -608,7 +608,7 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
         
     }
     
-    // END SNIPPET: InsertResponseOutHeaderProcessor
+    // END SNIPPET: InsertRequestOutHeaderProcessor
 
     
     // START SNIPPET: InsertResponseOutHeaderProcessor
