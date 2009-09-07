@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -38,6 +39,8 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         this.route = route;
         this.context = context;
         this.description = route.toString();
+        boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+        setStatisticsEnabled(enabled);
     }
 
     public Route getRoute() {

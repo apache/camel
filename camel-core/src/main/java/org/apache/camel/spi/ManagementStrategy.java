@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Service;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
@@ -113,5 +114,21 @@ public interface ManagementStrategy extends org.fusesource.commons.management.Ma
      * @return true or false
      */
     boolean isOnlyManageProcessorWithCustomId();
+
+    /**
+     * Sets the statistics level
+     * <p/>
+     * Default is {@link org.apache.camel.ManagementStatisticsLevel#All}
+     *
+     * @param level the new level
+     */
+    void setSatisticsLevel(ManagementStatisticsLevel level);
+
+    /**
+     * Gets the statistics level
+     *
+     * @return the level
+     */
+    ManagementStatisticsLevel getStatisticsLevel();
 
 }

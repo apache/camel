@@ -22,6 +22,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -43,6 +44,9 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
         this.processor = processor;
         this.definition = definition;
         this.id = definition.idOrCreate(context.getNodeIdFactory());
+
+        boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+        setStatisticsEnabled(enabled);
     }
 
     public CamelContext getContext() {

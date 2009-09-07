@@ -60,6 +60,7 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAware;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.KeyValueHolder;
@@ -413,6 +414,9 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         // okay this is a processor we would like to manage so create the
         // performance counter that is the base for processors
         ManagedPerformanceCounter pc = new ManagedPerformanceCounter(getStrategy());
+        // set statistics enabled depending on the option
+        boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+        pc.setStatisticsEnabled(enabled);
 
         // and add it as a a registered counter that will be used lazy when Camel
         // does the instrumentation of the route and adds the InstrumentationProcessor

@@ -23,6 +23,7 @@ import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementStrategy;
 import org.fusesource.commons.management.Statistic;
 
@@ -46,6 +47,7 @@ public class DefaultManagementStrategy implements ManagementStrategy {
     private ManagementNamingStrategy managementNamingStrategy;
     private boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
+    private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
 
     public EventNotifier getEventNotifier() {
         return eventNotifier;
@@ -129,6 +131,14 @@ public class DefaultManagementStrategy implements ManagementStrategy {
     public Statistic createStatistic(String name, Object owner, Statistic.UpdateMode updateMode) {
         // noop
         return null;
+    }
+
+    public void setSatisticsLevel(ManagementStatisticsLevel level) {
+        this.statisticsLevel = level;
+    }
+
+    public ManagementStatisticsLevel getStatisticsLevel() {
+        return statisticsLevel;
     }
 
     public void start() throws Exception {

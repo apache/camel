@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.model.IdentifiedType;
 
 /**
@@ -86,6 +86,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      */
     @XmlAttribute(required = false)
     private Boolean usePlatformMBeanServer = Boolean.TRUE;
+
+    /**
+     * Level of granularity for performance statistics enabled
+     */
+    @XmlAttribute(required = false)
+    private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
 
     public Integer getConnectorPort() {
         return connectorPort;
@@ -159,6 +165,14 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         disabled = value != null ? value : Boolean.FALSE;
     }
 
+    public ManagementStatisticsLevel getStatisticsLevel() {
+        return statisticsLevel;
+    }
+
+    public void setStatisticsLevel(ManagementStatisticsLevel statisticsLevel) {
+        this.statisticsLevel = statisticsLevel;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -181,6 +195,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (mbeanObjectDomainName != null) {
             sb.append(", mbeanObjectDomainName=").append(mbeanObjectDomainName);
+        }
+        if (statisticsLevel != null) {
+            sb.append(", statisticsLevel=").append(statisticsLevel);
         }
         sb.append("]");
         return sb.toString();

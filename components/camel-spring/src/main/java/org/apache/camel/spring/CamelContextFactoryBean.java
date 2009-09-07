@@ -456,10 +456,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(agent);
             getContext().setManagementStrategy(managementStrategy);
+
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
             getContext().getLifecycleStrategies().clear();
             getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
+            // set additional configuration from camelJMXAgent
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
+            getContext().getManagementStrategy().setSatisticsLevel(camelJMXAgent.getStatisticsLevel());
         }
     }
 
