@@ -57,8 +57,8 @@ public class InstrumentationProcessor extends DelegateProcessor {
     public void process(Exchange exchange) throws Exception {
         if (processor != null) {
 
-            long startTime = 0;
-            if (counter != null) {
+            long startTime = -1;
+            if (counter != null && counter.isStatisticsEnabled()) {
                 startTime = System.currentTimeMillis();
             }
 
@@ -68,7 +68,7 @@ public class InstrumentationProcessor extends DelegateProcessor {
                 exchange.setException(e);
             }
 
-            if (counter != null) {
+            if (startTime != -1) {
                 recordTime(exchange, System.currentTimeMillis() - startTime);
             }
         }

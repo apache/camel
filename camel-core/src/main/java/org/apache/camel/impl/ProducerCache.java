@@ -29,10 +29,10 @@ import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.util.LRUCache;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Cache containing created {@link Producer}.

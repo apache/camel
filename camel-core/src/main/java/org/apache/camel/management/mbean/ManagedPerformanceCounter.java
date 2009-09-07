@@ -37,6 +37,7 @@ public class ManagedPerformanceCounter extends ManagedCounter {
     private Statistic firstExchangeFailureTime;
     private Statistic lastExchangeCompletedTime;
     private Statistic lastExchangeFailureTime;
+    private boolean statisticsEnabled = true;
 
     public ManagedPerformanceCounter(ManagementStrategy strategy) {
         super(strategy);
@@ -129,6 +130,16 @@ public class ManagedPerformanceCounter extends ManagedCounter {
         return value > 0 ? new Date(value) : null;
     }
 
+    @ManagedAttribute(description = "Statistics enabled")
+    public boolean isStatisticsEnabled() {
+        return statisticsEnabled;
+    }
+
+    @ManagedAttribute(description = "Statistics enabled")
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        this.statisticsEnabled = statisticsEnabled;
+    }
+
     /**
      * This method is called when an exchange has been processed successfully.
      * 
@@ -165,5 +176,6 @@ public class ManagedPerformanceCounter extends ManagedCounter {
 
         lastExchangeFailureTime.updateValue(now);
     }
+
 
 }
