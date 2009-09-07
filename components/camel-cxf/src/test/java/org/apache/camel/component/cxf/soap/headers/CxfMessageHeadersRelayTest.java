@@ -581,6 +581,8 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
                    + hdrToTest.get(1).getHdrAttribute(), "testHdrAttribute"
             .equals(hdrToTest.get(1).getHdrAttribute()));
     }
+    
+    // START SNIPPET: InsertRequestOutHeaderProcessor
 
     public static class InsertRequestOutHeaderProcessor implements Processor {
 
@@ -606,6 +608,11 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
         
     }
     
+    // END SNIPPET: InsertResponseOutHeaderProcessor
+
+    
+    // START SNIPPET: InsertResponseOutHeaderProcessor
+
     public static class InsertResponseOutHeaderProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
@@ -627,4 +634,7 @@ public class CxfMessageHeadersRelayTest extends SpringTestSupport {
                                            
         }
     }
+    
+    // END SNIPPET: InsertResponseOutHeaderProcessor
+
 }
