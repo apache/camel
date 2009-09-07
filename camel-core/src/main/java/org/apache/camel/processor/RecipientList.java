@@ -81,7 +81,7 @@ public class RecipientList extends ServiceSupport implements Processor {
     protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
         // setup producer cache as we need to use the pluggable service pool defined on camel context
         if (producerCache == null) {
-            this.producerCache = new ProducerCache(exchange.getContext().getProducerServicePool());
+            this.producerCache = new ProducerCache(exchange.getContext());
             this.producerCache.start();
         }
         return this.producerCache;

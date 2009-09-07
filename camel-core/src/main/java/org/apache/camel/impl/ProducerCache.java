@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,12 +28,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.LRUCache;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Cache containing created {@link Producer}.
@@ -44,15 +44,20 @@ public class ProducerCache extends ServiceSupport {
 
     private final Map<String, Producer> producers;
     private final ServicePool<Endpoint, Producer> pool;
+    private final CamelContext context;
 
     // TODO: Have easy configuration of pooling in Camel
 
-    public ProducerCache(ServicePool<Endpoint, Producer> producerServicePool) {
-        this.pool = producerServicePool;
-        this.producers = new LRUCache<String, Producer>(1000);
+    public ProducerCache(CamelContext context) {
+        this(context, context.getProducerServicePool());
     }
 
-    public ProducerCache(ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
+    public ProducerCache(CamelContext context, ServicePool<Endpoint, Producer> producerServicePool) {
+        this(context, producerServicePool, new LRUCache<String, Producer>(1000));
+    }
+
+    public ProducerCache(CamelContext context, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
+        this.context = context;
         this.pool = producerServicePool;
         this.producers = cache;
     }
@@ -185,7 +190,8 @@ public class ProducerCache extends ServiceSupport {
             // create a new producer
             try {
                 answer = endpoint.createProducer();
-                answer.start();
+                // add it as service to camel context so it can be managed as well
+                context.addService(answer);
             } catch (Exception e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }

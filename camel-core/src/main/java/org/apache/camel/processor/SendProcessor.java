@@ -92,10 +92,10 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
         // setup producer cache as we need to use the pluggable service pool defined on camel context
         if (producerCache == null) {
-            this.producerCache = new ProducerCache(exchange.getContext().getProducerServicePool());
-            this.producerCache.start();
+            producerCache = new ProducerCache(exchange.getContext());
+            producerCache.start();
         }
-        return this.producerCache;
+        return producerCache;
     }
 
     public Endpoint getDestination() {
@@ -114,14 +114,12 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     protected void doStart() throws Exception {
-        if (producerCache != null) {
-            producerCache.start();
-        }
     }
 
     protected void doStop() throws Exception {
         if (producerCache != null) {
             producerCache.stop();
+            producerCache = null;
         }
     }
 

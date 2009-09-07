@@ -53,14 +53,14 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
-        this.producerCache = new ProducerCache(context.getProducerServicePool());
+        this.producerCache = new ProducerCache(context);
         this.executor = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "ProducerTemplate", true);
     }
 
     public DefaultProducerTemplate(CamelContext context, ExecutorService executor) {
         this.context = context;
+        this.producerCache = new ProducerCache(context);
         this.executor = executor;
-        this.producerCache = new ProducerCache(context.getProducerServicePool());
     }
 
     public DefaultProducerTemplate(CamelContext context, Endpoint defaultEndpoint) {

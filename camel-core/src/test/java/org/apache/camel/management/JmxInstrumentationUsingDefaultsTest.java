@@ -56,6 +56,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
 
+        template.sendBody("direct:start", "Hello World");
+
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
@@ -66,6 +68,12 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 2 processors: " + s, 2, s.size());
+
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=consumers,*"), null);
+        assertEquals("Could not find 1 consumers: " + s, 1, s.size());
+
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=producers,*"), null);
+        assertEquals("Could not find 2 producers: " + s, 2, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());

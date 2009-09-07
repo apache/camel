@@ -26,10 +26,12 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Naming strategy used when registering MBeans.
@@ -43,6 +45,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_ENDPOINT = "endpoints";
     public static final String TYPE_PROCESSOR = "processors";
     public static final String TYPE_CONSUMER = "consumers";
+    public static final String TYPE_PRODUCER = "producers";
     public static final String TYPE_ROUTE = "routes";
     public static final String TYPE_COMPONENT = "components";
     public static final String TYPE_TRACER = "tracer";
@@ -116,9 +119,30 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_CONSUMER).append(",");
+
+        String name = consumer.getClass().getSimpleName();
+        if (ObjectHelper.isEmpty(name)) {
+            name = "Consumer";
+        }
         buffer.append(KEY_NAME + "=")
-            .append(consumer.getClass().getSimpleName())
+            .append(name)
             .append("(").append(getIdentityHashCode(consumer)).append(")");
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForProducer(CamelContext context, Producer producer) throws MalformedObjectNameException {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_PRODUCER).append(",");
+
+        String name = producer.getClass().getSimpleName();
+        if (ObjectHelper.isEmpty(name)) {
+            name = "Producer";
+        }
+        buffer.append(KEY_NAME + "=")
+            .append(name)
+            .append("(").append(getIdentityHashCode(producer)).append(")");
         return createObjectName(buffer);
     }
 

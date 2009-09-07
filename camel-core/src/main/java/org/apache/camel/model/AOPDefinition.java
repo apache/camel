@@ -87,14 +87,14 @@ public class AOPDefinition extends OutputDefinition<ProcessorDefinition> {
         Processor finallyProcessor = null;
 
         if (beforeUri != null) {
-            pipe.add(new SendDefinition(beforeUri));
+            pipe.add(new ToDefinition(beforeUri));
         }
         pipe.addAll(getOutputs());
 
         if (afterUri != null) {
-            pipe.add(new SendDefinition(afterUri));
+            pipe.add(new ToDefinition(afterUri));
         } else if (afterFinallyUri != null) {
-            finallyProcessor = new SendDefinition(afterFinallyUri).createProcessor(routeContext);
+            finallyProcessor = new ToDefinition(afterFinallyUri).createProcessor(routeContext);
         }
 
         Processor tryProcessor = createOutputsProcessor(routeContext, pipe);

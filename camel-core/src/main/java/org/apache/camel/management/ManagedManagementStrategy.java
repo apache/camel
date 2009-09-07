@@ -24,6 +24,7 @@ import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedProcessor;
+import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
@@ -100,6 +101,11 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         if (managedObject instanceof ManagedConsumer) {
             ManagedConsumer ms = (ManagedConsumer) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
+        }
+
+        if (managedObject instanceof ManagedProducer) {
+            ManagedProducer ms = (ManagedProducer) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForProducer(ms.getContext(), ms.getProducer());
         }
 
         if (managedObject instanceof ManagedTracer) {

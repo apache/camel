@@ -112,7 +112,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param componentName the name of the component
      * @param factory       used to create a new component instance if the component was not previously added.
      * @return the component
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     Component getOrCreateComponent(String componentName, Callable<Component> factory);
 
     // Endpoint Management Methods
@@ -260,6 +262,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @throws Exception is thrown if the route could not be started for whatever reason
      * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     void startRoute(RouteDefinition route) throws Exception;
 
     /**
@@ -278,6 +281,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @throws Exception is thrown if the route could not be stopped for whatever reason
      * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     void stopRoute(RouteDefinition route) throws Exception;
 
     /**
@@ -304,6 +308,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @return the status for the route
      * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     ServiceStatus getRouteStatus(RouteDefinition route);
 
     // Properties

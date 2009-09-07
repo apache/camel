@@ -1166,6 +1166,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setManagementStrategy(ManagementStrategy managementStrategy) {
         this.managementStrategy = managementStrategy;
+        // should be considered initialized as we use a custom strategy
+        managementStrategyInitialized.set(true);
     }
 
     public InterceptStrategy getDefaultTracer() {
