@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy.format;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,11 +41,22 @@ public class DatePatternFormat implements PatternFormat<Date> {
     }
 
     public Date parse(String string) throws Exception {
-        ObjectHelper.notNull(this.pattern, "pattern");
+
+    	Date date;
         DateFormat df = this.getDateFormat();
+
+        ObjectHelper.notNull(this.pattern, "pattern");
+        
         // Force the parser to be strict in the syntax of the date to be converted
         df.setLenient(false);
-        return df.parse(string);
+        
+        try {
+        	date = df.parse(string);
+        	return date;
+        } catch (ParseException pe) {
+            throw new IllegalArgumentException("Unparseable date : " + string );
+        }
+         
     }
 
     protected java.text.DateFormat getDateFormat() {
