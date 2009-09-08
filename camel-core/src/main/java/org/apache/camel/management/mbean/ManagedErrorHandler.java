@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.spi.RouteContext;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -60,6 +61,46 @@ public class ManagedErrorHandler {
     @ManagedAttribute(description = "Does the error handler support redelivery")
     public boolean isSupportRedelivery() {
         return errorHandler instanceof RedeliveryErrorHandler;
+    }
+
+    @ManagedAttribute(description = "Is this error handler a dead letter channel")
+    public boolean isDeadLetterChannel() {
+        if (!isSupportRedelivery()) {
+            return false;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getDeadLetter() != null;
+    }
+
+    @ManagedAttribute(description = "When a message is moved to dead letter channel is it the original message or recent message")
+    public boolean isDeadLetterUseOriginalMessage() {
+        if (!isSupportRedelivery()) {
+            return false;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.isUseOriginalMessagePolicy();
+    }
+
+    @ManagedAttribute(description = "Does this error handler support transactions")
+    public boolean isSupportTransactions() {
+        if (errorHandler instanceof ErrorHandlerSupport) {
+            ErrorHandlerSupport ehs = (ErrorHandlerSupport) errorHandler;
+            return ehs.supportTransacted();
+        } else {
+            return false;
+        }
+    }
+
+    @ManagedAttribute(description = "Endpoint Uri for the dead letter channel where dead message is move to")
+    public String getDeadLetterChannelEndpointUri() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getDeadLetterUri();
     }
 
     @ManagedAttribute(description = "RedeliveryPolicy for maximum redeliveries")

@@ -216,6 +216,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return deadLetter;
     }
 
+    public String getDeadLetterUri() {
+        return deadLetterUri;
+    }
+
+    public boolean isUseOriginalMessagePolicy() {
+        return useOriginalMessagePolicy;
+    }
+
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }
