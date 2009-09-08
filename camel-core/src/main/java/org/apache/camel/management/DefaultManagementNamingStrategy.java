@@ -132,7 +132,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
             // it has not then its an indirection and we should do some work to lookup the real builder
             ref = builderRef.getRef();
-            builder = builderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef());
+            builder = ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef());
 
             // must do a 2nd lookup in case this is also a reference
             // (this happens with spring DSL using errorHandlerRef on <route> as it gets a bit
@@ -141,7 +141,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
                 builderRef = (ErrorHandlerBuilderRef) builder;
                 // does it refer to a non default error handler then do a 2nd lookup
                 if (!builderRef.getRef().equals(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER)) {
-                    builder = builderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef());
+                    builder = ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef());
                     ref = builderRef.getRef();
                 }
             }

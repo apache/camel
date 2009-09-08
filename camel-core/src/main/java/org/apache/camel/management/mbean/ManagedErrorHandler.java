@@ -16,9 +16,9 @@
  */
 package org.apache.camel.management.mbean;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.spi.RouteContext;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -64,14 +64,242 @@ public class ManagedErrorHandler {
 
     @ManagedAttribute(description = "RedeliveryPolicy for maximum redeliveries")
     public Integer getMaximumRedeliveries() {
-        if (errorHandler instanceof RedeliveryErrorHandler) {
-            RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
-            return redelivery.getRedeliveryPolicy().getMaximumRedeliveries();
+        if (!isSupportRedelivery()) {
+            return null;
         }
-        // not supported
-        return null;
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getMaximumRedeliveries();
     }
 
-    // TODO: work in progress
+    @ManagedAttribute(description = "RedeliveryPolicy for maximum redeliveries")
+    public void setMaximumRedeliveries(Integer maximum) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setMaximumRedeliveries(maximum);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for maximum redelivery delay")
+    public Long getMaximumRedeliveryDelay() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getMaximumRedeliveryDelay();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for maximum redelivery delay")
+    public void setMaximumRedeliveryDelay(Long delay) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setMaximumRedeliveryDelay(delay);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for redelivery delay")
+    public Long getRedeliveryDelay() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getRedeliverDelay();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for redelivery delay")
+    public void setRedeliveryDelay(Long delay) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setRedeliverDelay(delay);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for backoff multipler")
+    public Double getBackOffMultiplier() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getBackOffMultiplier();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for backoff multipler")
+    public void setBackOffMultiplier(Double multiplier) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setBackOffMultiplier(multiplier);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for collision avoidance factor")
+    public Double getCollisionAvoidanceFactor() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getCollisionAvoidanceFactor();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for collision avoidance factor")
+    public void setCollisionAvoidanceFactor(Double factor) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setCollisionAvoidanceFactor(factor);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for collision avoidance percent")
+    public Double getCollisionAvoidancePercent() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return (double) redelivery.getRedeliveryPolicy().getCollisionAvoidancePercent();  
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for collision avoidance percent")
+    public void setCollisionAvoidancePercent(Double percent) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setCollisionAvoidancePercent(percent);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for delay pattern")
+    public String getDelayPattern() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getDelayPattern();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for delay pattern")
+    public void setDelayPattern(String pattern) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setDelayPattern(pattern);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging level when retries exhausted")
+    public String getRetriesExhaustedLogLevel() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getRetriesExhaustedLogLevel().name();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging level when retries exhausted")
+    public void setRetriesExhaustedLogLevel(String level) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setRetriesExhaustedLogLevel(LoggingLevel.valueOf(level));
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging level when attempting retry")
+    public String getRetryAttemptedLogLevel() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().getRetryAttemptedLogLevel().name();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging level when attempting retry")
+    public void setRetryAttemptedLogLevel(String level) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setRetryAttemptedLogLevel(LoggingLevel.valueOf(level));
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging stack traces")
+    public Boolean getLogStackTrace() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isLogStackTrace();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging stack traces")
+    public void setLogStackTrace(Boolean log) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setLogStackTrace(log);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for using collision avoidance")
+    public Boolean getUseCollisionAvoidance() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isUseCollisionAvoidance();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for using collision avoidance")
+    public void setUseCollisionAvoidance(Boolean avoidance) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setUseCollisionAvoidance(avoidance);
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for using exponential backoff")
+    public Boolean getUseExponentialBackOff() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isUseExponentialBackOff();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for using exponential backoff")
+    public void setUseExponentialBackOff(Boolean backoff) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setUseExponentialBackOff(backoff);
+    }
 
 }
