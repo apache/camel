@@ -25,14 +25,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.springframework.osgi.context.BundleContextAware;
 
 /**
  * The OsgiServiceRegistry support to get the service object from the bundle context
@@ -76,17 +77,14 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
 
     public void onComponentAdd(String name, Component component) {
         // Do nothing here
-        
     }
 
     public void onComponentRemove(String name, Component component) {
         // Do nothing here
-        
     }
 
     public void onContextStart(CamelContext context) {
         // Do nothing here
-        
     }
 
     public void onContextStop(CamelContext context) {
@@ -102,37 +100,33 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
 
     public void onEndpointAdd(Endpoint endpoint) {
         // Do nothing here
-        
     }
 
     public void onEndpointRemove(Endpoint endpoint) {
         // Do nothing here
-        
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
         // Do nothing here
-        
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
         // Do nothing here
-        
     }
 
     public void onRoutesRemove(Collection<Route> routes) {
         // Do nothing here
-        
     }
 
     public void onServiceAdd(CamelContext context, Service service, Route route) {
         // Do nothing here
-        
     }
 
     public void onServiceRemove(CamelContext context, Service service, Route route) {
         // Do nothing here
-        
     }
 
+    public void onErrorHandlerAdd(RouteContext routeContext, Processor processor, ErrorHandlerBuilder errorHandlerBuilder) {
+        // Do nothing here
+    }
 }
