@@ -249,8 +249,11 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             cs = null;
         }
 
-        // Using the array to hold the busMBeans to avoid the
-        // CurrentModificationException
+        if (mbeansRegistered.isEmpty()) {
+            return;
+        }
+
+        // Using the array to hold the busMBeans to avoid the CurrentModificationException
         ObjectName[] mBeans = mbeansRegistered.toArray(new ObjectName[mbeansRegistered.size()]);
         int caught = 0;
         for (ObjectName name : mBeans) {
