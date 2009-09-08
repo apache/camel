@@ -54,11 +54,11 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -159,7 +159,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     protected Processor wrapChannel(RouteContext routeContext, Processor processor) throws Exception {
-        // put a channel inbetween this and each output to control the route flow logic
+        // put a channel in between this and each output to control the route flow logic
         Channel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
 
@@ -181,8 +181,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         } else {
             // regular definition so add the error handler
             Processor output = channel.getOutput();
-            Processor errorHandler = getErrorHandlerBuilder().createErrorHandler(routeContext, output);
+            // create error handler
+            ErrorHandlerBuilder builder = getErrorHandlerBuilder();
+            Processor errorHandler = builder.createErrorHandler(routeContext, output);
+            // set error handler on channel
             channel.setErrorHandler(errorHandler);
+
+            // invoke lifecycles so we can manage this error handler builder
+            for (LifecycleStrategy strategy : routeContext.getCamelContext().getLifecycleStrategies()) {
+                strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
+            }
+
             return channel;
         }
     }
@@ -2168,6 +2177,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     @XmlAttribute(required = false)
     public void setErrorHandlerRef(String errorHandlerRef) {
         this.errorHandlerRef = errorHandlerRef;
+        // we use an specific error handler ref (from Spring DSL) then wrap that
+        // with a error handler build ref so Camel knows its not just the default one
         setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
     }
 

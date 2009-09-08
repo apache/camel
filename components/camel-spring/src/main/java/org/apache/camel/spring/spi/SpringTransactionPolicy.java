@@ -19,7 +19,6 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
@@ -68,15 +67,16 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         // check if its a ref if so then do a lookup
         if (builder instanceof ErrorHandlerBuilderRef) {
             // its a reference to a error handler so lookup the reference
-            ErrorHandlerBuilderRef ref = (ErrorHandlerBuilderRef) builder;
+            ErrorHandlerBuilderRef builderRef = (ErrorHandlerBuilderRef) builder;
+            String ref = builderRef.getRef();
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
-            if (ref.isErrorHandlerBuilderConfigued()) {
+            if (ErrorHandlerBuilderRef.isErrorHandlerBuilderConfigued(ref)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Looking up ErrorHandlerBuilder with ref: " + ref.getRef());
+                    LOG.debug("Looking up ErrorHandlerBuilder with ref: " + ref);
                 }
-                builder = ref.lookupErrorHandlerBuilder(routeContext);
+                builder = ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, ref);
             }
         }
 

@@ -28,9 +28,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -49,6 +52,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_ROUTE = "routes";
     public static final String TYPE_COMPONENT = "components";
     public static final String TYPE_TRACER = "tracer";
+    public static final String TYPE_ERRORHANDLER = "errorhandlers";
 
     protected String domainName;
     protected String hostName = "localhost";
@@ -111,6 +115,48 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
                 .append(processor.getClass().getSimpleName())
                 .append("(").append(getIdentityHashCode(processor)).append(")");
         }
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder builder) throws MalformedObjectNameException {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER).append(",");
+
+        // we want to only register one instance of the various error handler types and thus do some lookup
+        // if its a ErrorHandlerBuildRef. We need a bit of work to do that as there are potential indirection.
+        String ref = null;
+        if (builder instanceof ErrorHandlerBuilderRef) {
+            ErrorHandlerBuilderRef builderRef = (ErrorHandlerBuilderRef) builder;
+
+            // it has not then its an indirection and we should do some work to lookup the real builder
+            ref = builderRef.getRef();
+            builder = builderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef());
+
+            // must do a 2nd lookup in case this is also a reference
+            // (this happens with spring DSL using errorHandlerRef on <route> as it gets a bit
+            // complex with indirections for error handler references
+            if (builder instanceof ErrorHandlerBuilderRef) {
+                builderRef = (ErrorHandlerBuilderRef) builder;
+                // does it refer to a non default error handler then do a 2nd lookup
+                if (!builderRef.getRef().equals(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER)) {
+                    builder = builderRef.lookupErrorHandlerBuilder(routeContext, builderRef.getRef());
+                    ref = builderRef.getRef();
+                }
+            }
+        }
+
+        if (ref != null) {
+            String name = builder.getClass().getSimpleName() + "(ref:" + ref + ")";
+            buffer.append(KEY_NAME + "=").append(ObjectName.quote(name));
+        } else {
+            // create a name based on its instance
+            buffer.append(KEY_NAME + "=")
+                .append(builder.getClass().getSimpleName())
+                .append("(").append(getIdentityHashCode(builder)).append(")");
+        }
+
         return createObjectName(buffer);
     }
 

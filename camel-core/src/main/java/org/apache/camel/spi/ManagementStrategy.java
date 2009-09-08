@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Service;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**

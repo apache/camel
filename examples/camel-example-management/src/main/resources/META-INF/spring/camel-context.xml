@@ -38,6 +38,18 @@
         <value>JAVA</value>
     </u:list>
 
+    <bean id="dlc" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="activemq:queue:dead"/>
+        <property name="redeliveryPolicy" ref="redeliveyPolicy"/>
+    </bean>
+
+    <bean id="redeliveyPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
+        <property name="maximumRedeliveries" value="5"/>
+        <property name="backOffMultiplier" value="2.0"/>
+        <property name="useExponentialBackOff" value="true"/>
+        <property name="maximumRedeliveryDelay" value="30000"/>
+    </bean>
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <!-- Default JMX connector url: "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel" -->
         <jmxAgent id="agent" createConnector="true"/>
@@ -57,7 +69,7 @@
             </split>
         </route>
 
-        <route>
+        <route errorHandlerRef="dlc">
             <from uri="activemq:queue:stock"/>
             <delay><constant>100</constant></delay>
             <bean ref="stock" method="transform"/>

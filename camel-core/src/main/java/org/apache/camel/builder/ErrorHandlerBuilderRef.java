@@ -48,9 +48,79 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         if (handler == null) {
-            handler = lookupErrorHandlerBuilder(routeContext);
+            handler = createErrorHandler(routeContext);
         }
         return handler.createErrorHandler(routeContext, processor);
+    }
+
+    public boolean supportTransacted() {
+        return supportTransacted;
+    }
+
+    /**
+     * Lookup the error handler by the given ref
+     *
+     * @param routeContext the route context
+     * @param ref          reference id for the error handler
+     * @return the error handler
+     */
+    public static ErrorHandlerBuilder lookupErrorHandlerBuilder(RouteContext routeContext, String ref) {
+        ErrorHandlerBuilder answer;
+
+        // if the ref is the default then we do not have any explicit error handler configured
+        // if that is the case then use error handlers configured on the route, as for instance
+        // the transacted error handler could have been configured on the route so we should use that one
+        if (!isErrorHandlerBuilderConfigured(ref)) {
+            // see if there has been configured a route builder on the route
+            answer = routeContext.getRoute().getErrorHandlerBuilder();
+            if (answer == null) {
+                answer = routeContext.lookup(routeContext.getRoute().getErrorHandlerRef(), ErrorHandlerBuilder.class);
+            }
+            if (answer == null) {
+                // fallback to the default error handler if none configured on the route
+                answer = new DefaultErrorHandlerBuilder();
+            }
+            // check if its also a ref with no error handler configuration like me
+            if (answer instanceof ErrorHandlerBuilderRef) {
+                ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
+                String otherRef = other.getRef();
+                if (!isErrorHandlerBuilderConfigured(otherRef)) {
+                    // the other has also no explicit error handler configured then fallback to the default error handler
+                    // otherwise we could recursive loop forever (triggered by createErrorHandler method)
+                    answer = new DefaultErrorHandlerBuilder();
+                    // inherit the error handlers from the other as they are to be shared
+                    // this is needed by camel-spring when none error handler has been explicit configured
+                    answer.setErrorHandlers(other.getErrorHandlers());
+                }
+            }
+        } else {
+            // use specific configured error handler
+            answer = routeContext.lookup(ref, ErrorHandlerBuilder.class);
+        }
+
+        return answer;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public ErrorHandlerBuilder getHandler() {
+        return handler;
+    }
+
+    private ErrorHandlerBuilder createErrorHandler(RouteContext routeContext) {
+        handler = lookupErrorHandlerBuilder(routeContext, getRef());
+        ObjectHelper.notNull(handler, "error handler '" + ref + "'");
+
+        // configure if the handler support transacted
+        supportTransacted = handler.supportTransacted();
+
+        List<OnExceptionDefinition> list = getErrorHandlers();
+        for (OnExceptionDefinition exceptionType : list) {
+            handler.addErrorHandlers(exceptionType);
+        }
+        return handler;
     }
 
     /**
@@ -62,61 +132,8 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
      * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder
      * in camel-spring.
      */
-    public boolean isErrorHandlerBuilderConfigued() {
-        return !DEFAULT_ERROR_HANDLER_BUILDER.equals(getRef());
-    }
-
-    public boolean supportTransacted() {
-        return supportTransacted;
-    }
-
-    public ErrorHandlerBuilder lookupErrorHandlerBuilder(RouteContext routeContext) {
-        if (handler == null) {
-            // if the ref is the default then the we do not have any explicit error handler configured
-            // if that is the case then use error handlers configured on the route, as for instance
-            // the transacted error handler could have been configured on the route so we should use that one
-            if (!isErrorHandlerBuilderConfigued()) {
-                // see if there has been configured a route builder on the route
-                handler = routeContext.getRoute().getErrorHandlerBuilder();
-                if (handler == null) {
-                    handler = routeContext.lookup(routeContext.getRoute().getErrorHandlerRef(), ErrorHandlerBuilder.class);
-                }
-                if (handler == null) {
-                    // fallback to the default error handler if none configured on the route
-                    handler = new DefaultErrorHandlerBuilder();
-                }
-                // check if its also a ref with no error handler configuration like me
-                if (handler instanceof ErrorHandlerBuilderRef) {
-                    ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) handler;
-                    if (!other.isErrorHandlerBuilderConfigued()) {
-                        // the other has also no explict error handler configured then fallback to the default error handler
-                        // otherwise we could recursive loop forever (triggered by createErrorHandler method)
-                        handler = new DefaultErrorHandlerBuilder();
-                        // inherit the error handlers from the other as they are to be shared
-                        // this is needed by camel-spring when none error handler has been explicit configured
-                        handler.setErrorHandlers(other.getErrorHandlers());
-                    }
-                }
-            } else {
-                // use specific configured error handler
-                handler = routeContext.lookup(ref, ErrorHandlerBuilder.class);
-            }
-
-            ObjectHelper.notNull(handler, "error handler '" + ref + "'");
-
-            // configure if the handler support transacted
-            supportTransacted = handler.supportTransacted();
-
-            List<OnExceptionDefinition> list = getErrorHandlers();
-            for (OnExceptionDefinition exceptionType : list) {
-                handler.addErrorHandlers(exceptionType);
-            }
-        }
-        return handler;
-    }
-
-    public String getRef() {
-        return ref;
+    private static boolean isErrorHandlerBuilderConfigured(String ref) {
+        return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
     @Override

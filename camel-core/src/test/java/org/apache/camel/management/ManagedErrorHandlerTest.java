@@ -16,20 +16,19 @@
  */
 package org.apache.camel.management;
 
+import java.util.Iterator;
 import java.util.Set;
-import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class ManagedStatisticsLevelOffTest extends ContextTestSupport {
+public class ManagedErrorHandlerTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -37,38 +36,25 @@ public class ManagedStatisticsLevelOffTest extends ContextTestSupport {
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
         naming.setHostName("localhost");
         naming.setDomainName("org.apache.camel");
-
-        // disable it by default
-        context.getManagementStrategy().setSatisticsLevel(ManagementStatisticsLevel.Off);
         return context;
     }
 
-    @SuppressWarnings("unchecked")
-    public void testManageStatisticsLevelDisabled() throws Exception {
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
-
-        // get the stats for the route
+    public void testManagedErrorHandler() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(1, set.size());
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
+        // there should only be 2 error handler types as route 1 and route 3 uses the same default error handler
+        assertEquals(2, set.size());
 
-        ObjectName on = set.iterator().next();
+        Iterator<ObjectName> it = set.iterator();
+        ObjectName on1 = it.next();
+        ObjectName on2 = it.next();
 
-        // use route to get the total time
-        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(0, completed.longValue());
+        String name1 = on1.getCanonicalName();
+        String name2 = on2.getCanonicalName();
 
-        // disable statistics
-        mbeanServer.setAttribute(on, new Attribute("StatisticsEnabled", true));
-
-        // send in another message
-        template.sendBody("direct:start", "Goodday World");
-
-        // should be 1
-        completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(1, completed.longValue());
+        assertTrue("Should be a default error handler", name1.contains("CamelDefaultErrorHandlerBuilder") || name2.contains("CamelDefaultErrorHandlerBuilder"));
+        assertTrue("Should be a dead letter error handler", name1.contains("DeadLetterChannelBuilder") || name2.contains("DeadLetterChannelBuilder"));
     }
 
     @Override
@@ -76,9 +62,12 @@ public class ManagedStatisticsLevelOffTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
+                from("direct:foo").to("mock:foo");
+
+                from("direct:bar").errorHandler(deadLetterChannel("mock:dead")).to("mock:bar");
+
+                from("direct:baz").to("mock:baz");
             }
         };
     }
-
 }

@@ -26,10 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -38,6 +40,7 @@ import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
+import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
@@ -60,7 +63,6 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAware;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.KeyValueHolder;
@@ -366,6 +368,29 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     public void onRoutesRemove(Collection<Route> routes) {
         // noop - keep the route in the mbean so its still there, it will still be unregistered
         // when camel itself is shutting down
+    }
+
+    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {
+        // the agent hasn't been started
+        if (!initialized) {
+            return;
+        }
+
+        Object managedObject = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
+
+        // skip already managed services, for example if a route has been restarted
+        if (getStrategy().isManaged(managedObject, null)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("The error handler builder is already managed: " + errorHandlerBuilder);
+            }
+            return;
+        }
+
+        try {
+            getStrategy().manageObject(managedObject);
+        } catch (Exception e) {
+            LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandlerMBean.", e);
+        }
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {

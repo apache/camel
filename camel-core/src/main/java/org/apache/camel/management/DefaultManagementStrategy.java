@@ -18,12 +18,12 @@ package org.apache.camel.management;
 
 import java.util.EventObject;
 
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementStrategy;
 import org.fusesource.commons.management.Statistic;
 

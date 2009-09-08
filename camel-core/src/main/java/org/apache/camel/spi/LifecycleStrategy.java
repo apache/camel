@@ -21,8 +21,10 @@ import java.util.Collection;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 
 /**
  * Strategy for lifecycle notifications.
@@ -111,5 +113,15 @@ public interface LifecycleStrategy {
      * @param routeContext the added route context
      */
     void onRouteContextCreate(RouteContext routeContext);
+
+
+    /**
+     * Notification on adding error handler.
+     *
+     * @param routeContext        the added route context
+     * @param errorHandler        the error handler
+     * @param errorHandlerBuilder the error handler builder
+     */
+    void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder);
 
 }

@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
@@ -40,6 +41,8 @@ public interface ManagementNamingStrategy {
     ObjectName getObjectNameForComponent(Component component, String name) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException;
+
+    ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder builder) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) throws MalformedObjectNameException;
 

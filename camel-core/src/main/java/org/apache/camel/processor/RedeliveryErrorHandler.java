@@ -342,6 +342,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
+        // TODO: setting failure handled should only be if we used a failure processor
         // we could not process the exchange so we let the failure processor handled it
         ExchangeHelper.setFailureHandled(exchange);
 

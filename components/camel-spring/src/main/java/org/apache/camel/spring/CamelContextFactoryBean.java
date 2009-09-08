@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultManagementAgent;
@@ -755,11 +755,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             ctx.setHandleFault(handleFault);
         }
         if (errorHandlerRef != null) {
-            ErrorHandlerBuilder errorHandlerBuilder = (ErrorHandlerBuilder) getApplicationContext().getBean(errorHandlerRef, ErrorHandlerBuilder.class);
-            if (errorHandlerBuilder == null) {
-                throw new IllegalArgumentException("Cannot find ErrorHandlerBuilder bean with id: " + errorHandlerRef);
-            }
-            ctx.setErrorHandlerBuilder(errorHandlerBuilder);
+            ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
         }
 
         if (shouldStartContext != null) {

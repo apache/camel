@@ -23,6 +23,7 @@ import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
+import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
@@ -91,6 +92,11 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         if (managedObject instanceof ManagedRoute) {
             ManagedRoute mr = (ManagedRoute) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForRoute(mr.getRoute());
+        }
+
+        if (managedObject instanceof ManagedErrorHandler) {
+            ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
         }
 
         if (managedObject instanceof ManagedProcessor) {

@@ -21,8 +21,10 @@ import java.util.Collection;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -58,6 +60,9 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
+    }
+
+    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {
     }
 
     public void onRoutesRemove(Collection<Route> routes) {
