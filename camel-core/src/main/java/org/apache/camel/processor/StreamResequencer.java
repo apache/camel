@@ -33,6 +33,7 @@ import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The
@@ -187,7 +188,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
         
         public Delivery() {
-            super("Resequencer Delivery Thread");
+            super(ExecutorServiceHelper.getThreadName("Resequencer Delivery"));
         }
         
         @Override

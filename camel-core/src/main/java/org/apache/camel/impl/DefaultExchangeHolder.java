@@ -117,7 +117,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (converted != null) {
             return converted;
         } else {
-            LOG.warn(type + " containig object: " + object + " of type: " + object.getClass().getCanonicalName() + " cannot be serialized, it will be excluded by the holder");
+            LOG.warn(type + " containing object: " + object + " of type: " + object.getClass().getCanonicalName() + " cannot be serialized, it will be excluded by the holder.");
             return null;
         }
     }
@@ -134,7 +134,7 @@ public class DefaultExchangeHolder implements Serializable {
                 result.put(entry.getKey(), converted);
             } else {
                 LOG.warn(type + " containing object: " + entry.getValue() + " with key: " + entry.getKey()
-                        + " cannot be serialized, it will be excluded by the holder");
+                        + " cannot be serialized, it will be excluded by the holder.");
             }
         }
 

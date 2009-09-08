@@ -109,7 +109,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
 
                 // must use a copy as we dont want it to cause side effects of the original exchange
                 final Exchange copy = prepareExchange(exchange);
-                // must remove exception otherwise onFaulure routing will fail as well
+                // must remove exception otherwise onFailure routing will fail as well
                 // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
                 copy.setException(null);
 

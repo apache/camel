@@ -129,7 +129,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
                     }
                 } catch (Exception e) {
                     // must catch exceptions to ensure all synchronizations have a chance to run
-                    LOG.error("Exception occurred during onCompletion. This exception will be ignored: ", e);
+                    LOG.warn("Exception occurred during onCompletion. This exception will be ignored: ", e);
                 }
             }
         }

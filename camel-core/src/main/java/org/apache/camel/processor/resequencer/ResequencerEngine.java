@@ -18,6 +18,8 @@ package org.apache.camel.processor.resequencer;
 
 import java.util.Timer;
 
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+
 /**
  * Resequences elements based on a given {@link SequenceElementComparator}.
  * This resequencer is designed for resequencing element streams. Stream-based
@@ -97,7 +99,7 @@ public class ResequencerEngine<E> {
     }
 
     public void start() {
-        timer = new Timer("Camel Stream Resequencer Timer", true);
+        timer = new Timer(ExecutorServiceHelper.getThreadName("Stream Resequencer Timer"), true);
     }
 
     /**

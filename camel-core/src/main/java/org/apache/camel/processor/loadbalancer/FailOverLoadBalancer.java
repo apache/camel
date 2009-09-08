@@ -37,7 +37,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         this.exceptions = exceptions;
         for (Class type : exceptions) {
             if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
-                throw new IllegalArgumentException("Class is not an instance of Trowable: " + type);
+                throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
             }
         }
     }

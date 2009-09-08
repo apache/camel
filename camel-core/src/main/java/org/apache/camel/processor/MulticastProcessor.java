@@ -127,7 +127,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         if (isParallelProcessing()) {
             doProcessParallel(result, pairs, isStreaming());
         } else {
-            doProcessSequntial(result, pairs);
+            doProcessSequential(result, pairs);
         }
 
         if (result.get() != null) {
@@ -197,7 +197,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    protected void doProcessSequntial(AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws Exception {
+    protected void doProcessSequential(AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws Exception {
         int total = 0;
 
         for (ProcessorExchangePair pair : pairs) {
@@ -214,11 +214,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
             // should we stop in case of an exception occured during processing?
             if (stopOnException && subExchange.getException() != null) {
-                throw new CamelExchangeException("Sequiental processing failed for number " + total, subExchange, subExchange.getException());
+                throw new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException());
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Sequiental processing complete for number " + total + " exchange: " + subExchange);
+                LOG.trace("Sequential processing complete for number " + total + " exchange: " + subExchange);
             }
 
             if (aggregationStrategy != null) {
@@ -228,7 +228,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Done sequiental processing " + total + " exchanges");
+            LOG.debug("Done sequential processing " + total + " exchanges");
         }
     }
 
