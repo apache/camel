@@ -72,7 +72,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
-            if (ErrorHandlerBuilderRef.isErrorHandlerBuilderConfigued(ref)) {
+            if (ErrorHandlerBuilderRef.isErrorHandlerBuilderConfigured(ref)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Looking up ErrorHandlerBuilder with ref: " + ref);
                 }

@@ -101,6 +101,19 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
+    /**
+     * Returns whether a specific error handler builder has been configured or not.
+     * <p/>
+     * Can be used to test if none has been configured and then install a custom error handler builder
+     * replacing the default error handler (that would have been used as fallback otherwise).
+     * <br/>
+     * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder
+     * in camel-spring.
+     */
+    public static boolean isErrorHandlerBuilderConfigured(String ref) {
+        return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
+    }
+
     public String getRef() {
         return ref;
     }
@@ -121,19 +134,6 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
             handler.addErrorHandlers(exceptionType);
         }
         return handler;
-    }
-
-    /**
-     * Returns whether a specific error handler builder has been configured or not.
-     * <p/>
-     * Can be used to test if none has been configured and then install a custom error handler builder
-     * replacing the default error handler (that would have been used as fallback otherwise).
-     * <br/>
-     * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder
-     * in camel-spring.
-     */
-    private static boolean isErrorHandlerBuilderConfigured(String ref) {
-        return !DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
     }
 
     @Override

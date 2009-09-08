@@ -54,9 +54,11 @@ import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -308,6 +310,10 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
     private Object createManagedObjectForProcessor(CamelContext context, Processor processor,
                                                    ProcessorDefinition definition, Route route) {
+        // skip error handlers
+        if (processor instanceof ErrorHandler) {
+            return false;
+        }
 
         ManagedProcessor answer = null;
         if (processor instanceof Delayer) {
@@ -467,6 +473,10 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
         // skip aop
         if (processor instanceof AOPDefinition) {
+            return false;
+        }
+        // skip policy
+        if (processor instanceof PolicyDefinition) {
             return false;
         }
 
