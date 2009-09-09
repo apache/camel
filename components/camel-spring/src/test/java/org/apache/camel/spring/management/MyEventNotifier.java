@@ -14,22 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spring.management;
+
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.List;
+
+import org.apache.camel.spi.EventNotifier;
 
 /**
- * A routes builder is capable of building routes using the builder and model classes.
- * <p/>
- * Eventually the routes is added to a {@link org.apache.camel.CamelContext} where they
- * run inside.
+ * @version $Revision$
  */
-public interface RoutesBuilder {
+public class MyEventNotifier implements EventNotifier {
 
-    /**
-     * Adds the routes from this Route Builder to the CamelContext.
-     *
-     * @param context the Camel context
-     * @throws Exception is thrown if initialization of routes failed
-     */
-    void addRoutesToCamelContext(CamelContext context) throws Exception;
+    private List<EventObject> events = new ArrayList<EventObject>();
 
+    public void notify(EventObject event) throws Exception {
+        events.add(event);
+    }
+
+    public boolean isEnabled(EventObject event) {
+        return true;
+    }
+
+    public List<EventObject> getEvents() {
+        return events;
+    }
 }

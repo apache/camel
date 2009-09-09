@@ -32,24 +32,96 @@ import org.apache.camel.Route;
  */
 public interface EventFactory {
 
+    /**
+     * Creates an {@link EventObject} for Camel is starting.
+     *
+     * @param context camel context
+     * @return the created event
+     */
     EventObject createCamelContextStartingEvent(CamelContext context);
 
+    /**
+     * Creates an {@link EventObject} for Camel has been started successfully.
+     *
+     * @param context camel context
+     * @return the created event
+     */
     EventObject createCamelContextStartedEvent(CamelContext context);
 
+    /**
+     * Creates an {@link EventObject} for Camel failing to start
+     *
+     * @param context camel context
+     * @param cause the cause exception that prevents Camel from starting
+     * @return the created event
+     */
+    EventObject createCamelContextStartingFailedEvent(CamelContext context, Exception cause);
+
+    /**
+     * Creates an {@link EventObject} for Camel is stopping.
+     *
+     * @param context camel context
+     * @return the created event
+     */
     EventObject createCamelContextStoppingEvent(CamelContext context);
 
+    /**
+     * Creates an {@link EventObject} for Camel has been stopped successfully.
+     *
+     * @param context camel context
+     * @return the created event
+     */
     EventObject createCamelContextStoppedEvent(CamelContext context);
 
+    /**
+     * Creates an {@link EventObject} for {@link Route} has been started successfully.
+     *
+     * @param route the route
+     * @return the created event
+     */
     EventObject createRouteStartedEvent(Route route);
 
+    /**
+     * Creates an {@link EventObject} for {@link Route} has been stopped successfully.
+     *
+     * @param route the route
+     * @return the created event
+     */
     EventObject createRouteStoppedEvent(Route route);
 
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has been created
+     *
+     * @param exchange the exchange
+     * @return the created event
+     */
     EventObject createExchangeCreatedEvent(Exchange exchange);
 
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has been completed successfully
+     *
+     * @param exchange the exchange
+     * @return the created event
+     */
     EventObject createExchangeCompletedEvent(Exchange exchange);
 
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has failed
+     *
+     * @param exchange the exchange
+     * @return the created event
+     */
     EventObject createExchangeFailedEvent(Exchange exchange);
 
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has failed
+     * but was handled by the Camel error handlers such as an dead letter channel.
+     *
+     * @param exchange the exchange
+     * @param failureHandler the failure handler such as moving the message to a dead letter queue
+     * @param deadLetterChannel whether it was a dead letter channel or not handling the failure
+     * @return the created event
+     */
     EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel);
 
 }

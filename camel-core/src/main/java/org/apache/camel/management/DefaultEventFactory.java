@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStartingEvent;
+import org.apache.camel.management.event.CamelContextStartingFailedEvent;
 import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
@@ -53,6 +54,10 @@ public class DefaultEventFactory implements EventFactory {
 
     public EventObject createCamelContextStoppedEvent(CamelContext context) {
         return new CamelContextStoppedEvent(context);
+    }
+
+    public EventObject createCamelContextStartingFailedEvent(CamelContext context, Exception cause) {
+        return new CamelContextStartingFailedEvent(context, cause);
     }
 
     public EventObject createRouteStartedEvent(Route route) {

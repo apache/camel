@@ -59,6 +59,8 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.EventFactory;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -236,6 +238,18 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (managementStrategy != null) {
             LOG.info("Using custom ManagementStrategy: " + managementStrategy);
             getContext().setManagementStrategy(managementStrategy);
+        }
+
+        EventFactory eventFactory = getBeanForType(EventFactory.class);
+        if (eventFactory != null) {
+            LOG.info("Using custom EventFactory: " + eventFactory);
+            getContext().getManagementStrategy().setEventFactory(eventFactory);
+        }
+
+        EventNotifier eventNotifier = getBeanForType(EventNotifier.class);
+        if (eventNotifier != null) {
+            LOG.info("Using custom EventNotifier: " + eventNotifier);
+            getContext().getManagementStrategy().setEventNotifier(eventNotifier);
         }
 
         // add global interceptors

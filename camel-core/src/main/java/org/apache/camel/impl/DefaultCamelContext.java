@@ -855,6 +855,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
         EventHelper.notifyCamelContextStarting(this);
 
+        try {
+            doStartCamel();
+        } catch (Exception e) {
+            // fire event that we failed to start
+            EventHelper.notifyCamelContextStartingFailedEvent(this, e);
+            // rethrown cause
+            throw e;
+        }
+    }
+
+    private void doStartCamel() throws Exception {
         startServices(producerServicePool);
 
         if (isStreamCaching()) {

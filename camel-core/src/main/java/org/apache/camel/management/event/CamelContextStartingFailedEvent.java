@@ -14,22 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.management.event;
+
+import java.util.EventObject;
+
+import org.apache.camel.CamelContext;
 
 /**
- * A routes builder is capable of building routes using the builder and model classes.
- * <p/>
- * Eventually the routes is added to a {@link org.apache.camel.CamelContext} where they
- * run inside.
+ * @version $Revision$
  */
-public interface RoutesBuilder {
+public class CamelContextStartingFailedEvent extends EventObject {
 
-    /**
-     * Adds the routes from this Route Builder to the CamelContext.
-     *
-     * @param context the Camel context
-     * @throws Exception is thrown if initialization of routes failed
-     */
-    void addRoutesToCamelContext(CamelContext context) throws Exception;
+    private CamelContext context;
+    private Exception cause;
+
+    public CamelContextStartingFailedEvent(CamelContext context, Exception cause) {
+        super(context);
+        this.context = context;
+        this.cause = cause;
+    }
+
+    public CamelContext getContext() {
+        return context;
+    }
+
+    public Exception getCause() {
+        return cause;
+    }
+
+    @Override
+    public String toString() {
+        return "Starting CamelContext: " + context.getName() + " failed due to " + cause.getMessage();
+    }
 
 }
