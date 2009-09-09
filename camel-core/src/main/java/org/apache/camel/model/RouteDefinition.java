@@ -34,11 +34,11 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -274,6 +274,17 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
+    /**
+     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
+     *
+     * @param errorHandlerBuilder the error handler to be used by default for all child routes
+     * @return the current builder with the error handler configured
+     */
+    public RouteDefinition errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+        setErrorHandlerBuilder(errorHandlerBuilder);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -359,6 +370,30 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     @XmlAttribute
     public void setDelayer(Long delayer) {
         this.delayer = delayer;
+    }
+
+    /**
+     * Sets the bean ref name of the error handler builder to use on this route
+     */
+    @XmlAttribute(required = false)
+    public void setErrorHandlerRef(String errorHandlerRef) {
+        this.errorHandlerRef = errorHandlerRef;
+        // we use an specific error handler ref (from Spring DSL) then wrap that
+        // with a error handler build ref so Camel knows its not just the default one
+        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
+    }
+
+    public String getErrorHandlerRef() {
+        return errorHandlerRef;
+    }
+
+    /**
+     * Sets the error handler if one is not already set
+     */
+    protected void setErrorHandlerBuilderIfNull(ErrorHandlerBuilder errorHandlerBuilder) {
+        if (this.errorHandlerBuilder == null) {
+            setErrorHandlerBuilder(errorHandlerBuilder);
+        }
     }
 
     // Implementation methods

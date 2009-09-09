@@ -107,8 +107,9 @@ public class HttpPostWithBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeader(Exchange.HTTP_METHOD, POST).to("http://www.google.com");
-                from("direct:reset").setHeader(Exchange.HTTP_METHOD, POST).
-                    errorHandler(deadLetterChannel("direct:recovery").maximumRedeliveries(1)).to("http://www.google.com").to("mock:result");
+                from("direct:reset")
+                    .errorHandler(deadLetterChannel("direct:recovery").maximumRedeliveries(1))
+                    .setHeader(Exchange.HTTP_METHOD, POST).to("http://www.google.com").to("mock:result");
                 from("direct:recovery").setHeader(Exchange.HTTP_METHOD, GET).to("http://www.google.com").to("mock:recovery");
             }
         };

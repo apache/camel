@@ -75,16 +75,15 @@ import static org.apache.camel.builder.Builder.body;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedDefinition<Type> implements Block {
     protected final transient Log log = LogFactory.getLog(getClass());
-    private ErrorHandlerBuilder errorHandlerBuilder;
+    protected ErrorHandlerBuilder errorHandlerBuilder;
+    protected String errorHandlerRef;
     private NodeFactory nodeFactory;
     private final LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition parent;
-    private String errorHandlerRef;
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition> getOutputs();
-
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
@@ -1471,18 +1470,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return answer;
     }
 
-    /**
-     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
-     *
-     * @param errorHandlerBuilder the error handler to be used by default for all child routes
-     * @return the current builder with the error handler configured
-     */
-    @SuppressWarnings("unchecked")
-    public Type errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
-        setErrorHandlerBuilder(errorHandlerBuilder);
-        return (Type) this;
-    }
-
     // Transformers
     // -------------------------------------------------------------------------
 
@@ -2156,30 +2143,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
         this.errorHandlerBuilder = errorHandlerBuilder;
-    }
-
-    /**
-     * Sets the error handler if one is not already set
-     */
-    protected void setErrorHandlerBuilderIfNull(ErrorHandlerBuilder errorHandlerBuilder) {
-        if (this.errorHandlerBuilder == null) {
-            setErrorHandlerBuilder(errorHandlerBuilder);
-        }
-    }
-
-    public String getErrorHandlerRef() {
-        return errorHandlerRef;
-    }
-
-    /**
-     * Sets the bean ref name of the error handler builder to use on this route
-     */
-    @XmlAttribute(required = false)
-    public void setErrorHandlerRef(String errorHandlerRef) {
-        this.errorHandlerRef = errorHandlerRef;
-        // we use an specific error handler ref (from Spring DSL) then wrap that
-        // with a error handler build ref so Camel knows its not just the default one
-        setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
     }
 
     @XmlTransient
