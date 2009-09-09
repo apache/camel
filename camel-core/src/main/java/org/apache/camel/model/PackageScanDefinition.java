@@ -52,6 +52,18 @@ public class PackageScanDefinition {
         return packages;
     }
 
+    public void setPackages(List<String> packages) {
+        this.packages = packages;
+    }
+
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
+    }
+
+    public void setIncludes(List<String> includes) {
+        this.includes = includes;
+    }
+
     protected void clear() {
         packages.clear();
         excludes.clear();
