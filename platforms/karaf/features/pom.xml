@@ -81,16 +81,18 @@
       <neethi-version>2.0.4</neethi-version>
       <ognl-bundle-version>2.7.3_1</ognl-bundle-version>
       <oro-bundle-version>2.0.8_1</oro-bundle-version>
+      <openjpa-bundle-version>1.2.1_1-SNAPSHOT</openjpa-bundle-version>
       <oscache-bundle-version>2.4_1</oscache-bundle-version>
       <quartz-bundle-version>1.6.1_1</quartz-bundle-version>
       <qpid-bundle-version>1.0-incubating-M2.1_1</qpid-bundle-version>
       <saxon-bundle-version>9.1.0.1_1</saxon-bundle-version>
-      <servicemix-specs-version>1.3.0</servicemix-specs-version>
+      <servicemix-specs-version>1.4-SNAPSHOT</servicemix-specs-version>
       <servlet-api-2.5-version>2.5-20081211</servlet-api-2.5-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>      
+      <spring-commons-collections-version>3.2.1</spring-commons-collections-version>
       <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-      <spring-javax-activation-version>1.1.1</spring-javax-activation-version>      
-      <spring-javax-mail-version>1.4.1</spring-javax-mail-version>
+      <spring-javax-persistence-version>1.99.0</spring-javax-persistence-version>
+      <spring-serp-version>1.13.1</spring-serp-version>
       <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_1</tagsoup-bundle-version>
       <velocity-bundle-version>1.6.2_1</velocity-bundle-version>
