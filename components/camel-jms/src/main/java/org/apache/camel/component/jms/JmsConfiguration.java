@@ -1019,7 +1019,7 @@ public class JmsConfiguration implements Cloneable {
      * created and destroyed per message).
      *
      * @param endpoint the endpoint
-     * @return the cacne level
+     * @return the cache level
      */
     protected int defaultCacheLevel(JmsEndpoint endpoint) {
         // if we are on a new enough spring version we can assume CACHE_CONSUMER
