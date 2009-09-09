@@ -99,6 +99,11 @@
       <artifactId>camel-servlet</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jpa</artifactId>
+      <scope>test</scope>
+    </dependency>
 	<dependency>
 	  <groupId>org.apache.camel.tests</groupId>
 	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
@@ -125,7 +130,11 @@
       <version>1.1</version>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa-persistence-jdbc</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
