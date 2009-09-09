@@ -51,7 +51,7 @@ public class ManagedPerformanceCounter extends ManagedCounter {
         this.firstExchangeCompletedTime = strategy.createStatistic("org.apache.camel.firstExchangeCompletedTime", this, Statistic.UpdateMode.VALUE);
         this.firstExchangeFailureTime = strategy.createStatistic("org.apache.camel.firstExchangeFailureTime", this, Statistic.UpdateMode.VALUE);
         this.lastExchangeCompletedTime = strategy.createStatistic("org.apache.camel.lastExchangeCompletedTime", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeFailureTime = strategy.createStatistic("org.apache.camel.lasttExchangeFailureTime", this, Statistic.UpdateMode.VALUE);
+        this.lastExchangeFailureTime = strategy.createStatistic("org.apache.camel.lastExchangeFailureTime", this, Statistic.UpdateMode.VALUE);
     }
 
     @Override
