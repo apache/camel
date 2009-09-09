@@ -50,6 +50,10 @@
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jdk14</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
