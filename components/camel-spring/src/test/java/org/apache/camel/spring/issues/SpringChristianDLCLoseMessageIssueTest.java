@@ -47,6 +47,9 @@ public class SpringChristianDLCLoseMessageIssueTest extends SpringTestSupport {
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Kaboom");
 
+        // give seda a bit time to route the messages
+        Thread.sleep(1000);
+
         assertMockEndpointsSatisfied();
     }
 
@@ -63,6 +66,9 @@ public class SpringChristianDLCLoseMessageIssueTest extends SpringTestSupport {
 
         template.sendBody("direct:start", "Hello World");
         template.sendBody("direct:start", "Bye World");
+
+        // give seda a bit time to route the messages
+        Thread.sleep(1000);
 
         assertMockEndpointsSatisfied();
     }
