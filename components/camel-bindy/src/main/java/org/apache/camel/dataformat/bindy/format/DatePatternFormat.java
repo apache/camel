@@ -20,11 +20,16 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.camel.dataformat.bindy.PatternFormat;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class DatePatternFormat implements PatternFormat<Date> {
+	
+	private static final transient Log LOG = LogFactory.getLog(DatePatternFormat.class);
 
     private String pattern;
 
@@ -44,23 +49,20 @@ public class DatePatternFormat implements PatternFormat<Date> {
 
     	Date date;
         DateFormat df = this.getDateFormat();
+        LOG.info("Pattern : " + this.pattern);
 
         ObjectHelper.notNull(this.pattern, "pattern");
         
         // Force the parser to be strict in the syntax of the date to be converted
         df.setLenient(false);
-        
-        try {
-        	date = df.parse(string);
-        	return date;
-        } catch (ParseException pe) {
-            throw new IllegalArgumentException("Unparseable date : " + string );
-        }
+       	date = df.parse(string);
+
+       	return date;
          
     }
 
     protected java.text.DateFormat getDateFormat() {
-        return new SimpleDateFormat(this.pattern);
+        return new SimpleDateFormat(this.pattern, Locale.FRANCE);
     }
 
     public String getPattern() {

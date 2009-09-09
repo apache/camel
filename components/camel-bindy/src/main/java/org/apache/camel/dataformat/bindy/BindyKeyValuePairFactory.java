@@ -118,57 +118,63 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         int pos = 0;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Data : " + data);
-        }
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Data : " + data);
+		}
 
-        while (pos < data.size()) {
+		while (pos < data.size()) {
 
-            if (!data.get(pos).equals("")) {
+			if (!data.get(pos).equals("")) {
 
-                // Separate the key from its value
-                // e.g 8=FIX 4.1 --> key = 8 and Value = FIX 4.1
-                ObjectHelper.notNull(this.keyValuePairSeparator,
-                                     "Key Value Pair not defined in the @Message annotation");
-                String[] keyValuePair = data.get(pos).split(this.getKeyValuePairSeparator());
+				// Separate the key from its value
+				// e.g 8=FIX 4.1 --> key = 8 and Value = FIX 4.1
+				ObjectHelper.notNull(this.keyValuePairSeparator,
+						"Key Value Pair not defined in the @Message annotation");
+				String[] keyValuePair = data.get(pos).split(this.getKeyValuePairSeparator());
 
-                int tag = Integer.parseInt(keyValuePair[0]);
-                String keyValue = keyValuePair[1];
+				int tag = Integer.parseInt(keyValuePair[0]);
+				String keyValue = keyValuePair[1];
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Key : " + tag + ", value : " + keyValue);
-                }
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Key : " + tag + ", value : " + keyValue);
+				}
 
-                KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
-                ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag);
+				KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
+				ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag);
 
-                Field field = annotedFields.get(tag);
-                field.setAccessible(true);
+				Field field = annotedFields.get(tag);
+				field.setAccessible(true);
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Tag : " + tag + ", Data : " + keyValue + ", Field type : " + field.getType());
-                }
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Tag : " + tag + ", Data : " + keyValue + ", Field type : " + field.getType());
+				}
 
-                Format<?> format;
+				Format<?> format;
 
-                // Get pattern defined for the field
-                String pattern = keyValuePairField.pattern();
+				// Get pattern defined for the field
+				String pattern = keyValuePairField.pattern();
 
-                // Create format object to format the field
-                format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
+				// Create format object to format the field
+				format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
 
-                // field object to be set
-                Object modelField = model.get(field.getDeclaringClass().getName());
+				// field object to be set
+				Object modelField = model.get(field.getDeclaringClass().getName());
 
-                // format the value of the key received
-                Object value = format.parse(keyValue);
+				// format the value of the key received
+				Object value;
+				try {
+					value = format.parse(keyValue);
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Parsing error detected for field defined at the tag : "
+							+ tag, e);
+				}
 
-                field.set(modelField, value);
+				field.set(modelField, value);
 
-            }
+			}
 
-            pos++;
-        }
+			pos++;
+		}
 
     }
 
@@ -242,7 +248,13 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     if (keyValue != null) {
 
                         // Format field value
-                        String valueFormated = format.format(keyValue);
+                        String valueFormated;
+                        
+                        try {
+                        	valueFormated = format.format(keyValue);
+                        } catch (Exception e) {
+                        	throw new IllegalArgumentException("Formating error detected for the tag : " + keyValuePairField.tag(), e);
+                        }
 
                         // Create the key value string
                         String value = keyValuePairField.tag() + this.getKeyValuePairSeparator()
@@ -262,7 +274,13 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     if (keyValue != null) {
 
                         // Format field value
-                        String valueFormated = format.format(keyValue);
+                        String valueFormated;
+                        
+                        try {
+                        	valueFormated = format.format(keyValue);
+                        } catch (Exception e) {
+                        	throw new IllegalArgumentException("Formating error detected for the tag : " + keyValuePairField.tag(), e);
+                        }
 
                         // Create the key value string
                         String value = keyValuePairField.tag() + this.getKeyValuePairSeparator()

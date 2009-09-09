@@ -182,7 +182,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Object value = null;
             
             if (!data.equals("")) {
-                value = format.parse(data);
+            	try {
+            		value = format.parse(data);
+            	} catch (Exception e) {
+            		throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos, e);
+            	}
             } else {
                 value = getDefaultValueforPrimitive(field.getType());
             }
@@ -267,12 +271,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
                     }                    
                     
-                    // Get field value
-                    //Object value = field.get(modelField);
-                    
                     if (value != null) {
                         // Format field value
-                        strValue = format.format(value);
+                    	try {
+                    		strValue = format.format(value);
+                    	} catch (Exception e) {
+                    		throw new IllegalArgumentException("Formating error detected for the value : " + value, e);
+                    	}
                     } 
                     
                     // Add the content to the TreeMap according to the
@@ -292,7 +297,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (value != null) {
 
                         // Format field value
-                        strValue = format.format(value);
+                    	try {
+                    		strValue = format.format(value);
+                    	} catch (Exception e) {
+                    		throw new IllegalArgumentException("Formating error detected for the value : " + value, e);
+                    	}
                         
                     }
                     
