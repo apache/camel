@@ -57,9 +57,10 @@ public class InstrumentationProcessor extends DelegateProcessor {
     public void process(Exchange exchange) throws Exception {
         if (processor != null) {
 
+            // use nano time as its more accurate
             long startTime = -1;
             if (counter != null && counter.isStatisticsEnabled()) {
-                startTime = System.currentTimeMillis();
+                startTime = System.nanoTime();
             }
 
             try {
@@ -69,7 +70,8 @@ public class InstrumentationProcessor extends DelegateProcessor {
             }
 
             if (startTime != -1) {
-                recordTime(exchange, System.currentTimeMillis() - startTime);
+                long diff = (System.nanoTime() - startTime) / 1000000;
+                recordTime(exchange, diff);
             }
         }
     }
