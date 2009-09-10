@@ -18,27 +18,39 @@ package org.apache.camel.management.event;
 
 import java.util.EventObject;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.CamelContext;
 
 /**
  * @version $Revision$
  */
-public class ExchangeFailedEvent extends EventObject {
+public class ServiceStopFailureEvent extends EventObject {
 
-    private final Exchange exchange;
+    private CamelContext context;
+    private Object service;
+    private Exception cause;
 
-    public ExchangeFailedEvent(Exchange source) {
-        super(source);
-        this.exchange = source;
+    public ServiceStopFailureEvent(CamelContext context, Object service, Exception cause) {
+        super(service);
+        this.context = context;
+        this.service = service;
+        this.cause = cause;
     }
 
-    public Exchange getExchange() {
-        return exchange;
+    public CamelContext getContext() {
+        return context;
+    }
+
+    public Object getService() {
+        return service;
+    }
+
+    public Exception getCause() {
+        return cause;
     }
 
     @Override
     public String toString() {
-        return "Exchange failed: " + exchange;
+        return "Failure to stop service: " + service + " due to " + cause.getMessage();
     }
 
 }

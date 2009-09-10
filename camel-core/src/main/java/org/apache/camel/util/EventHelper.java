@@ -80,7 +80,7 @@ public final class EventHelper {
         if (factory == null) {
             return;
         }
-        EventObject event = factory.createCamelContextStartupFailedEvent(context, cause);
+        EventObject event = factory.createCamelContextStartupFailureEvent(context, cause);
         if (event == null) {
             return;
         }
@@ -119,7 +119,7 @@ public final class EventHelper {
         doNotifyEvent(notifier, event);
     }
 
-    public static void notifyServiceStoppingFailed(CamelContext context, Object service, Exception cause) {
+    public static void notifyCamelContextStopFailed(CamelContext context, Exception cause) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
         if (notifier == null) {
             return;
@@ -128,7 +128,39 @@ public final class EventHelper {
         if (factory == null) {
             return;
         }
-        EventObject event = factory.createServiceStoppingFailedEvent(context, service, cause);
+        EventObject event = factory.createCamelContextStopFailureEvent(context, cause);
+        if (event == null) {
+            return;
+        }
+        doNotifyEvent(notifier, event);
+    }
+
+    public static void notifyServiceStopFailure(CamelContext context, Object service, Exception cause) {
+        EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
+        if (notifier == null) {
+            return;
+        }
+        EventFactory factory = context.getManagementStrategy().getEventFactory();
+        if (factory == null) {
+            return;
+        }
+        EventObject event = factory.createServiceStopFailureEvent(context, service, cause);
+        if (event == null) {
+            return;
+        }
+        doNotifyEvent(notifier, event);
+    }
+
+    public static void notifyServiceStartupFailure(CamelContext context, Object service, Exception cause) {
+        EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
+        if (notifier == null) {
+            return;
+        }
+        EventFactory factory = context.getManagementStrategy().getEventFactory();
+        if (factory == null) {
+            return;
+        }
+        EventObject event = factory.createServiceStartupFailureEvent(context, service, cause);
         if (event == null) {
             return;
         }

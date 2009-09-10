@@ -24,16 +24,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStartingEvent;
-import org.apache.camel.management.event.CamelContextStartupFailedEvent;
+import org.apache.camel.management.event.CamelContextStartupFailureEvent;
+import org.apache.camel.management.event.CamelContextStopFailureEvent;
 import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailedEvent;
+import org.apache.camel.management.event.ExchangeFailureEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
-import org.apache.camel.management.event.ServiceStoppingFailedEvent;
+import org.apache.camel.management.event.ServiceStartupFailureEvent;
+import org.apache.camel.management.event.ServiceStopFailureEvent;
 import org.apache.camel.spi.EventFactory;
 
 /**
@@ -57,12 +59,20 @@ public class DefaultEventFactory implements EventFactory {
         return new CamelContextStoppedEvent(context);
     }
 
-    public EventObject createCamelContextStartupFailedEvent(CamelContext context, Exception cause) {
-        return new CamelContextStartupFailedEvent(context, cause);
+    public EventObject createCamelContextStartupFailureEvent(CamelContext context, Exception cause) {
+        return new CamelContextStartupFailureEvent(context, cause);
     }
 
-    public EventObject createServiceStoppingFailedEvent(CamelContext context, Object service, Exception cause) {
-        return new ServiceStoppingFailedEvent(context, service, cause);
+    public EventObject createCamelContextStopFailureEvent(CamelContext context, Exception cause) {
+        return new CamelContextStopFailureEvent(context, cause);
+    }
+
+    public EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Exception cause) {
+        return new ServiceStartupFailureEvent(context, service, cause);
+    }
+
+    public EventObject createServiceStopFailureEvent(CamelContext context, Object service, Exception cause) {
+        return new ServiceStopFailureEvent(context, service, cause);
     }
 
     public EventObject createRouteStartedEvent(Route route) {
@@ -82,7 +92,7 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     public EventObject createExchangeFailedEvent(Exchange exchange) {
-        return new ExchangeFailedEvent(exchange);
+        return new ExchangeFailureEvent(exchange);
     }
 
     public EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel) {

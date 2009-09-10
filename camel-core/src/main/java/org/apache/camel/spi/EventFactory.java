@@ -52,10 +52,19 @@ public interface EventFactory {
      * Creates an {@link EventObject} for Camel failing to start
      *
      * @param context camel context
-     * @param cause the cause exception that prevents Camel from starting
+     * @param cause the cause exception
      * @return the created event
      */
-    EventObject createCamelContextStartupFailedEvent(CamelContext context, Exception cause);
+    EventObject createCamelContextStartupFailureEvent(CamelContext context, Exception cause);
+
+    /**
+     * Creates an {@link EventObject} for Camel failing to stop cleanly
+     *
+     * @param context camel context
+     * @param cause the cause exception
+     * @return the created event
+     */
+    EventObject createCamelContextStopFailureEvent(CamelContext context, Exception cause);
 
     /**
      * Creates an {@link EventObject} for Camel is stopping.
@@ -74,14 +83,24 @@ public interface EventFactory {
     EventObject createCamelContextStoppedEvent(CamelContext context);
 
     /**
-     * Creates an {@link EventObject} for a Service failed to stop with success
+     * Creates an {@link EventObject} for a Service failed to start cleanly
      *
      * @param context camel context
      * @param service the service
-     * @param cause the cause exception that prevents Camel from starting
+     * @param cause the cause exception
      * @return the created event
      */
-    EventObject createServiceStoppingFailedEvent(CamelContext context, Object service, Exception cause);
+    EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Exception cause);
+
+    /**
+     * Creates an {@link EventObject} for a Service failed to stop cleanly
+     *
+     * @param context camel context
+     * @param service the service
+     * @param cause the cause exception
+     * @return the created event
+     */
+    EventObject createServiceStopFailureEvent(CamelContext context, Object service, Exception cause);
 
     /**
      * Creates an {@link EventObject} for {@link Route} has been started successfully.

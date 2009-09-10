@@ -27,7 +27,7 @@ import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
-import org.apache.camel.management.event.ServiceStoppingFailedEvent;
+import org.apache.camel.management.event.ServiceStopFailureEvent;
 import org.apache.camel.spi.EventNotifier;
 
 /**
@@ -75,11 +75,11 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(1));
         assertIsInstanceOf(CamelContextStoppingEvent.class, events.get(2));
-        ServiceStoppingFailedEvent event = assertIsInstanceOf(ServiceStoppingFailedEvent.class, events.get(3));
+        ServiceStopFailureEvent event = assertIsInstanceOf(ServiceStopFailureEvent.class, events.get(3));
         assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(4));
 
         assertEquals("Fail B", event.getCause().getMessage());
-        assertEquals("Stopping service: B failed due to Fail B", event.toString());
+        assertEquals("Failure to stop service: B due to Fail B", event.toString());
     }
 
     private class MyService implements Service {

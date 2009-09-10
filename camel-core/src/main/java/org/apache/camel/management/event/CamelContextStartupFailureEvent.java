@@ -23,12 +23,12 @@ import org.apache.camel.CamelContext;
 /**
  * @version $Revision$
  */
-public class CamelContextStartupFailedEvent extends EventObject {
+public class CamelContextStartupFailureEvent extends EventObject {
 
     private CamelContext context;
     private Exception cause;
 
-    public CamelContextStartupFailedEvent(CamelContext context, Exception cause) {
+    public CamelContextStartupFailureEvent(CamelContext context, Exception cause) {
         super(context);
         this.context = context;
         this.cause = cause;
@@ -44,7 +44,7 @@ public class CamelContextStartupFailedEvent extends EventObject {
 
     @Override
     public String toString() {
-        return "Starting CamelContext: " + context.getName() + " failed due to " + cause.getMessage();
+        return "Failed to start Camel: " + context.getName() + " due to " + cause.getMessage();
     }
 
 }

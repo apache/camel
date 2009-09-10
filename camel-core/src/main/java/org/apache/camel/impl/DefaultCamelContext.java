@@ -969,7 +969,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         } catch (Exception e) {
             LOG.warn("Error occurred while stopping service: " + service + ". This exception will be ignored.");
             // fire event
-            EventHelper.notifyServiceStoppingFailed(this, service, e);
+            EventHelper.notifyServiceStopFailure(this, service, e);
         }
     }
 

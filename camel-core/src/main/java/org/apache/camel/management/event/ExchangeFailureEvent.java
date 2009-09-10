@@ -19,49 +19,26 @@ package org.apache.camel.management.event;
 import java.util.EventObject;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
 /**
  * @version $Revision$
  */
-public class ExchangeFailureHandledEvent extends EventObject {
+public class ExchangeFailureEvent extends EventObject {
 
     private final Exchange exchange;
-    private final Processor failureHandler;
-    private final boolean deadLetterChannel;
-    private final boolean handled;
 
-    public ExchangeFailureHandledEvent(Exchange source, Processor failureHandler, boolean deadLetterChannel) {
+    public ExchangeFailureEvent(Exchange source) {
         super(source);
         this.exchange = source;
-        this.failureHandler = failureHandler;
-        this.deadLetterChannel = deadLetterChannel;
-        this.handled = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.class);
     }
 
     public Exchange getExchange() {
         return exchange;
     }
 
-    public Processor getFailureHandler() {
-        return failureHandler;
-    }
-
-    public boolean isDeadLetterChannel() {
-        return deadLetterChannel;
-    }
-
-    public boolean isHandled() {
-        return handled;
-    }
-
     @Override
     public String toString() {
-        if (isDeadLetterChannel()) {
-            return "Exchange failed: " + exchange + " but was handled by dead letter channel: " + failureHandler;
-        } else {
-            return "Exchange failed: " + exchange + " but was processed by: " + failureHandler;
-        }
+        return "Exchange failure: " + exchange;
     }
 
 }

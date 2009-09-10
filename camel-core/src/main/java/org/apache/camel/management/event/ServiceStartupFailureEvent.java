@@ -23,13 +23,13 @@ import org.apache.camel.CamelContext;
 /**
  * @version $Revision$
  */
-public class ServiceStoppingFailedEvent extends EventObject {
+public class ServiceStartupFailureEvent extends EventObject {
 
     private CamelContext context;
     private Object service;
     private Exception cause;
 
-    public ServiceStoppingFailedEvent(CamelContext context, Object service, Exception cause) {
+    public ServiceStartupFailureEvent(CamelContext context, Object service, Exception cause) {
         super(service);
         this.context = context;
         this.service = service;
@@ -50,7 +50,7 @@ public class ServiceStoppingFailedEvent extends EventObject {
 
     @Override
     public String toString() {
-        return "Stopping service: " + service + " failed due to " + cause.getMessage();
+        return "Failure to start service: " + service + " due to " + cause.getMessage();
     }
 
 }
