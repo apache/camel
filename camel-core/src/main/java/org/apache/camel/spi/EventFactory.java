@@ -74,6 +74,16 @@ public interface EventFactory {
     EventObject createCamelContextStoppedEvent(CamelContext context);
 
     /**
+     * Creates an {@link EventObject} for a Service failed to stop with success
+     *
+     * @param context camel context
+     * @param service the service
+     * @param cause the cause exception that prevents Camel from starting
+     * @return the created event
+     */
+    EventObject createServiceStoppingFailedEvent(CamelContext context, Object service, Exception cause);
+
+    /**
      * Creates an {@link EventObject} for {@link Route} has been started successfully.
      *
      * @param route the route

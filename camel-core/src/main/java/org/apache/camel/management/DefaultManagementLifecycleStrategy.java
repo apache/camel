@@ -95,11 +95,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         try {
             initialized = true;
 
-            // call addService so that context will handle lifecycle on the strategy
-            context.addService(getStrategy());
-
             ManagedCamelContext mc = new ManagedCamelContext(context);
-            getStrategy().manageObject(mc);
+            getManagementStrategy().manageObject(mc);
 
         } catch (Exception e) {
             // must rethrow to allow CamelContext fallback to non JMX agent to allow
@@ -116,8 +113,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         try {
             ManagedCamelContext mc = new ManagedCamelContext(context);
             // the context could have been removed already
-            if (getStrategy().isManaged(null, mc)) {
-                getStrategy().unmanageObject(mc);
+            if (getManagementStrategy().isManaged(null, mc)) {
+                getManagementStrategy().unmanageObject(mc);
             }
         } catch (Exception e) {
             LOG.warn("Could not unregister CamelContext MBean", e);
@@ -131,7 +128,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
         try {
             Object mc = getManagedObjectForComponent(name, component);
-            getStrategy().manageObject(mc);
+            getManagementStrategy().manageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not register Component MBean", e);
         }
@@ -144,7 +141,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
         try {
             Object mc = getManagedObjectForComponent(name, component);
-            getStrategy().unmanageObject(mc);
+            getManagementStrategy().unmanageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not unregister Component MBean", e);
         }
@@ -175,7 +172,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         try {
             Object me = getManagedObjectForEndpoint(endpoint);
-            getStrategy().manageObject(me);
+            getManagementStrategy().manageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
@@ -189,7 +186,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         try {
             Object me = getManagedObjectForEndpoint(endpoint);
-            getStrategy().unmanageObject(me);
+            getManagementStrategy().unmanageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not unregister Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
@@ -222,7 +219,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         // skip already managed services, for example if a route has been restarted
-        if (getStrategy().isManaged(managedObject, null)) {
+        if (getManagementStrategy().isManaged(managedObject, null)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("The service is already managed: " + service);
             }
@@ -230,7 +227,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            getStrategy().manageObject(managedObject);
+            getManagementStrategy().manageObject(managedObject);
         } catch (Exception e) {
             LOG.warn("Could not register service: " + service + " as Service MBean.", e);
         }
@@ -245,7 +242,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         Object managedObject = getManagedObjectForService(context, service, route);
         if (managedObject != null) {
             try {
-                getStrategy().unmanageObject(managedObject);
+                getManagementStrategy().unmanageObject(managedObject);
             } catch (Exception e) {
                 LOG.warn("Could not unregister service: " + service + " as Service MBean.", e);
             }
@@ -340,10 +337,10 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(getStrategy(), context, route);
+            ManagedRoute mr = new ManagedRoute(getManagementStrategy(), context, route);
 
             // skip already managed routes, for example if the route has been restarted
-            if (getStrategy().isManaged(mr, null)) {
+            if (getManagementStrategy().isManaged(mr, null)) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("The route is already managed: " + route);
                 }
@@ -362,7 +359,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             }
 
             try {
-                getStrategy().manageObject(mr);
+                getManagementStrategy().manageObject(mr);
             } catch (JMException e) {
                 LOG.warn("Could not register Route MBean", e);
             } catch (Exception e) {
@@ -385,7 +382,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         Object managedObject = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
 
         // skip already managed services, for example if a route has been restarted
-        if (getStrategy().isManaged(managedObject, null)) {
+        if (getManagementStrategy().isManaged(managedObject, null)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("The error handler builder is already managed: " + errorHandlerBuilder);
             }
@@ -393,7 +390,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            getStrategy().manageObject(managedObject);
+            getManagementStrategy().manageObject(managedObject);
         } catch (Exception e) {
             LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandlerMBean.", e);
         }
@@ -444,7 +441,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // okay this is a processor we would like to manage so create the
         // performance counter that is the base for processors
-        ManagedPerformanceCounter pc = new ManagedPerformanceCounter(getStrategy());
+        ManagedPerformanceCounter pc = new ManagedPerformanceCounter(getManagementStrategy());
         // set statistics enabled depending on the option
         boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
         pc.setStatisticsEnabled(enabled);
@@ -481,15 +478,15 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         // only if custom id assigned
-        if (getStrategy().isOnlyManageProcessorWithCustomId()) {
+        if (getManagementStrategy().isOnlyManageProcessorWithCustomId()) {
             return processor.hasCustomIdAssigned();
         }
 
         // use customer filter
-        return getStrategy().manageProcessor(processor);
+        return getManagementStrategy().manageProcessor(processor);
     }
 
-    private ManagementStrategy getStrategy() {
+    private ManagementStrategy getManagementStrategy() {
         return context.getManagementStrategy();
     }
 

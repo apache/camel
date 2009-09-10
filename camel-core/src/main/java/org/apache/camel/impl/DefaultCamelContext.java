@@ -861,7 +861,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             doStartCamel();
         } catch (Exception e) {
             // fire event that we failed to start
-            EventHelper.notifyCamelContextStartingFailedEvent(this, e);
+            EventHelper.notifyCamelContextStartingFailed(this, e);
             // rethrown cause
             throw e;
         }
@@ -900,6 +900,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
 
+        // start management strategy before lifecycles are started
+        getManagementStrategy().start();
 
         Iterator<LifecycleStrategy> it = lifecycleStrategies.iterator();
         while (it.hasNext()) {
@@ -952,13 +954,23 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             LOG.warn("Cannot stop lifecycle strategies: " + e.getMessage());
         }
 
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
+
+        // stop management as the last one
+        stopServices(getManagementStrategy());
+
         EventHelper.notifyCamelContextStopped(this);
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }
 
     private void stopServices(Object service) throws Exception {
         // allow us to do custom work before delegating to service helper
-        ServiceHelper.stopService(service);
+        try {
+            ServiceHelper.stopService(service);
+        } catch (Exception e) {
+            LOG.warn("Error occurred while stopping service: " + service + ". This exception will be ignored.");
+            // fire event
+            EventHelper.notifyServiceStoppingFailed(this, service, e);
+        }
     }
 
     @SuppressWarnings("unchecked")

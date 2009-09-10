@@ -33,6 +33,7 @@ import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.management.event.ServiceStoppingFailedEvent;
 import org.apache.camel.spi.EventFactory;
 
 /**
@@ -58,6 +59,10 @@ public class DefaultEventFactory implements EventFactory {
 
     public EventObject createCamelContextStartingFailedEvent(CamelContext context, Exception cause) {
         return new CamelContextStartingFailedEvent(context, cause);
+    }
+
+    public EventObject createServiceStoppingFailedEvent(CamelContext context, Object service, Exception cause) {
+        return new ServiceStoppingFailedEvent(context, service, cause);
     }
 
     public EventObject createRouteStartedEvent(Route route) {
