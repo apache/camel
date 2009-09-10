@@ -71,7 +71,7 @@ public final class EventHelper {
         doNotifyEvent(notifier, event);
     }
 
-    public static void notifyCamelContextStartingFailed(CamelContext context, Exception cause) {
+    public static void notifyCamelContextStartupFailed(CamelContext context, Exception cause) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
         if (notifier == null) {
             return;
@@ -80,7 +80,7 @@ public final class EventHelper {
         if (factory == null) {
             return;
         }
-        EventObject event = factory.createCamelContextStartingFailedEvent(context, cause);
+        EventObject event = factory.createCamelContextStartupFailedEvent(context, cause);
         if (event == null) {
             return;
         }

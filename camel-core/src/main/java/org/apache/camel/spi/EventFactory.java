@@ -55,7 +55,7 @@ public interface EventFactory {
      * @param cause the cause exception that prevents Camel from starting
      * @return the created event
      */
-    EventObject createCamelContextStartingFailedEvent(CamelContext context, Exception cause);
+    EventObject createCamelContextStartupFailedEvent(CamelContext context, Exception cause);
 
     /**
      * Creates an {@link EventObject} for Camel is stopping.

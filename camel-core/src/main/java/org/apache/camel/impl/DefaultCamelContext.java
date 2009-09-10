@@ -861,7 +861,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             doStartCamel();
         } catch (Exception e) {
             // fire event that we failed to start
-            EventHelper.notifyCamelContextStartingFailed(this, e);
+            EventHelper.notifyCamelContextStartupFailed(this, e);
             // rethrown cause
             throw e;
         }

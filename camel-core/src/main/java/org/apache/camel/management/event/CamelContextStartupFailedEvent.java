@@ -23,12 +23,12 @@ import org.apache.camel.CamelContext;
 /**
  * @version $Revision$
  */
-public class CamelContextStartingFailedEvent extends EventObject {
+public class CamelContextStartupFailedEvent extends EventObject {
 
     private CamelContext context;
     private Exception cause;
 
-    public CamelContextStartingFailedEvent(CamelContext context, Exception cause) {
+    public CamelContextStartupFailedEvent(CamelContext context, Exception cause) {
         super(context);
         this.context = context;
         this.cause = cause;
