@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
@@ -95,6 +96,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private boolean routeDefinitionInitiated;
     private String name;  
     private final Map<String, Endpoint> endpoints = new LRUCache<String, Endpoint>(1000);
+    private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
@@ -1192,17 +1194,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         disableJMX = true;
     }
 
-    protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {
+    protected String getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint.isSingleton()) {
             return uri;
         } else {
-            // lets try find the first endpoint key which is free
-            for (int counter = 0; true; counter++) {
-                String key = (counter > 0) ? uri + ":" + counter : uri;
-                if (!endpoints.containsKey(key)) {
-                    return key;
-                }
-            }
+            int counter = endpointKeyCounter.incrementAndGet();
+            return uri + ":" + counter;
         }
     }
 

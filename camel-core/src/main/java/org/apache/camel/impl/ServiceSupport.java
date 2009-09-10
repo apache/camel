@@ -152,7 +152,7 @@ public abstract class ServiceSupport implements Service {
      *
      * @return true if the service should continue to run.
      */
-    protected boolean isRunAllowed() {
+    public boolean isRunAllowed() {
         return !(stopping.get() || stopped.get());
     }
 

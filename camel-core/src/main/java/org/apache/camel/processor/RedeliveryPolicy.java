@@ -143,7 +143,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * @param redeliveryDelay  previous redelivery delay
      * @param redeliveryCounter  number of previous redelivery attempts
      * @return the calculate delay
-     * @throws InterruptedException is thrown if the sleep is interruped likely because of shutdown
+     * @throws InterruptedException is thrown if the sleep is interrupted likely because of shutdown
      */
     public long sleep(long redeliveryDelay, int redeliveryCounter) throws InterruptedException {
         redeliveryDelay = calculateRedeliveryDelay(redeliveryDelay, redeliveryCounter);

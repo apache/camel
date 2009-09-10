@@ -18,11 +18,13 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.RejectedExecutionException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -94,15 +96,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      */
     protected void processErrorHandler(final Exchange exchange, final RedeliveryData data) throws Exception {
         while (true) {
-            // we can't keep retrying if the route is being shutdown.
-            if (!isRunAllowed()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Rejected execution as we are not started for exchange: " + exchange);
-                }
-                if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException());
-                    return;
-                }
+            // we can't keep retrying if the route is being shutdown
+            if (!isRunAllowed(exchange)) {
+                return;
             }
 
             // do not handle transacted exchanges that failed as this error handler does not support it
@@ -152,6 +148,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     continue;
                 }
 
+                // do a sanity check whether we are still allowed to run before continuing as we just woke up
+                if (!isRunAllowed(exchange)) {
+                    return;
+                }
+
                 // letting onRedeliver be executed
                 deliverToRedeliveryProcessor(exchange, data);
             }
@@ -170,6 +171,45 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // error occurred so loop back around.....
         }
 
+    }
+
+    /**
+     * Strategy the detect if we are allowed to run
+     * <p/>
+     * This implementation detects if Camel is shutting down as well
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if we can process the exchange, <tt>false</tt> to stop processing it
+     */
+    protected boolean isRunAllowed(Exchange exchange) {
+        // check if camel is stopping
+        boolean stoppingCamel = false;
+        CamelContext context = exchange.getContext();
+        if (context instanceof ServiceSupport) {
+            stoppingCamel = !((ServiceSupport) context).isRunAllowed();
+        }
+
+        if (stoppingCamel || !isRunAllowed()) {
+
+            if (log.isDebugEnabled()) {
+                boolean stopping = isStopping() || isStopped();
+                if (stopping) {
+                    log.debug("Rejected execution as we are stopping for exchange: " + exchange);
+                } else {
+                    log.debug("Rejected execution as we are not started for exchange: " + exchange);
+                }
+            }
+
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+
+            // and stop continue routing
+            exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+            return false;
+        }
+
+        return true;
     }
 
     /**

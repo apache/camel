@@ -107,10 +107,12 @@ public abstract class MainSupport extends ServiceSupport {
     /**
      * Runs this process with the given arguments
      */
-    public void run() {
+    public void run() throws Exception {
         if (!completed.get()) {
+            // if we have an issue starting the propagate exception to caller
+            start();
             try {
-                start();
+                // while running then just log errors
                 waitUntilCompleted();
                 stop();
             } catch (Exception e) {
@@ -265,7 +267,7 @@ public abstract class MainSupport extends ServiceSupport {
     /**
      * Parses the command line arguments then runs the program
      */
-    public void run(String[] args) {
+    public void run(String[] args) throws Exception {
         parseArguments(args);
         run();
     }

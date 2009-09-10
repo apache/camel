@@ -81,7 +81,7 @@ public class Main extends MainSupport {
 
         @Override
         public void run() {
-            log.info("Recieved hang up - stopping the main instance.");
+            log.info("Received hang up - stopping the main instance.");
             try {
                 mainInstance.stop();
             } catch (Exception ex) {
@@ -90,7 +90,7 @@ public class Main extends MainSupport {
         }
     }
     
-    public static void main(String... args) {
+    public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
         main.enableHangupSupport();
