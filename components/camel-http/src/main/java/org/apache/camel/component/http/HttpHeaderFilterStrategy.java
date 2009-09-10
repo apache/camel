@@ -31,7 +31,17 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
-        getOutFilter().add("transfer-encoding");
+        // Add the filter for the Generic Message header
+        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
+        getOutFilter().add("Cache-Control");
+        getOutFilter().add("Connection");
+        getOutFilter().add("Pragma");
+        getOutFilter().add("Trailer");
+        getOutFilter().add("Transfer-Encoding");
+        getOutFilter().add("Upgrade");
+        getOutFilter().add("Via");
+        getOutFilter().add("Warning");
+        
         setLowerCase(true);
         
         // filter headers begin with "Camel" or "org.apache.camel"
