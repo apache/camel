@@ -182,11 +182,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Object value = null;
             
             if (!data.equals("")) {
-            	try {
-            		value = format.parse(data);
-            	} catch (Exception e) {
-            		throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos, e);
-            	}
+                try {
+                    value = format.parse(data);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos, e);
+                }
             } else {
                 value = getDefaultValueforPrimitive(field.getType());
             }
@@ -218,20 +218,22 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
         Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
-        
+
         // Map containing the OUT position of the field
-        // The key is double and is created using the position of the field and 
+        // The key is double and is created using the position of the field and
         // location of the class in the message (using section)
         Map<Integer, String> positions = new TreeMap<Integer, String>();
 
         // Check if separator exists
-        ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
-        
+        ObjectHelper
+            .notNull(this.separator,
+                     "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
+
         char separator = Converter.getCharDelimitor(this.getSeparator());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : "
-                    + this.getSeparator());
+                      + this.getSeparator());
         }
 
         while (it.hasNext()) {
@@ -247,13 +249,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Class type = field.getType();
             String pattern = dataField.pattern();
             int precision = dataField.precision();
-            
+
             // Create format
             Format format = FormatFactory.getFormat(type, pattern, precision);
-            
+
             // Get field from model
             Object modelField = model.get(field.getDeclaringClass().getName());
-            
+
             if (modelField != null) {
                 // Get field value
                 Object value = field.get(modelField);
@@ -266,20 +268,22 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Integer key1 = sections.get(modelField.getClass().getName());
                     Integer key2 = dataField.position();
                     Integer keyGenerated = generateKey(key1, key2);
-                    
+
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
-                    }                    
-                    
+                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : "
+                                  + key1);
+                    }
+
                     if (value != null) {
                         // Format field value
-                    	try {
-                    		strValue = format.format(value);
-                    	} catch (Exception e) {
-                    		throw new IllegalArgumentException("Formating error detected for the value : " + value, e);
-                    	}
-                    } 
-                    
+                        try {
+                            strValue = format.format(value);
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException("Formating error detected for the value : "
+                                                               + value, e);
+                        }
+                    }
+
                     // Add the content to the TreeMap according to the
                     // position defined
                     positions.put(keyGenerated, strValue);
@@ -287,28 +291,29 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Positions size : " + positions.size());
                     }
-                        
+
                 } else {
                     // Get field value
-                    //Object value = field.get(modelField);
-                    //String strValue = null;
+                    // Object value = field.get(modelField);
+                    // String strValue = null;
 
                     // Add value to the list if not null
                     if (value != null) {
 
                         // Format field value
-                    	try {
-                    		strValue = format.format(value);
-                    	} catch (Exception e) {
-                    		throw new IllegalArgumentException("Formating error detected for the value : " + value, e);
-                    	}
-                        
+                        try {
+                            strValue = format.format(value);
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException("Formating error detected for the value : "
+                                                               + value, e);
+                        }
+
                     }
-                    
+
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Data : " + value + ", value : " + strValue);
                     }
-                    
+
                     builder.append(strValue);
 
                     if (it.hasNext()) {
@@ -317,27 +322,27 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 }
             }
         }
-        
+
         // Iterate through the list to generate
         // the message according to the order/position
         if (this.isMessageOrdered()) {
 
             Iterator<Integer> posit = positions.keySet().iterator();
-            
+
             while (posit.hasNext()) {
                 String value = positions.get(posit.next());
-                
+
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Value added at the position (" + posit + ") : " + value + separator);
                 }
-                
+
                 builder.append(value);
                 if (it.hasNext()) {
                     builder.append(separator);
                 }
             }
         }
-        
+
         return builder.toString();
     }
 

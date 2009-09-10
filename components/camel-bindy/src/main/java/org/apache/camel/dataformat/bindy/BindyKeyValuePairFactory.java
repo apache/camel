@@ -118,63 +118,64 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         int pos = 0;
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Data : " + data);
-		}
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Data : " + data);
+        }
 
-		while (pos < data.size()) {
+        while (pos < data.size()) {
 
-			if (!data.get(pos).equals("")) {
+            if (!data.get(pos).equals("")) {
 
-				// Separate the key from its value
-				// e.g 8=FIX 4.1 --> key = 8 and Value = FIX 4.1
-				ObjectHelper.notNull(this.keyValuePairSeparator,
-						"Key Value Pair not defined in the @Message annotation");
-				String[] keyValuePair = data.get(pos).split(this.getKeyValuePairSeparator());
+                // Separate the key from its value
+                // e.g 8=FIX 4.1 --> key = 8 and Value = FIX 4.1
+                ObjectHelper.notNull(this.keyValuePairSeparator,
+                                     "Key Value Pair not defined in the @Message annotation");
+                String[] keyValuePair = data.get(pos).split(this.getKeyValuePairSeparator());
 
-				int tag = Integer.parseInt(keyValuePair[0]);
-				String keyValue = keyValuePair[1];
+                int tag = Integer.parseInt(keyValuePair[0]);
+                String keyValue = keyValuePair[1];
 
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Key : " + tag + ", value : " + keyValue);
-				}
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key : " + tag + ", value : " + keyValue);
+                }
 
-				KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
-				ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag);
+                KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
+                ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag);
 
-				Field field = annotedFields.get(tag);
-				field.setAccessible(true);
+                Field field = annotedFields.get(tag);
+                field.setAccessible(true);
 
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Tag : " + tag + ", Data : " + keyValue + ", Field type : " + field.getType());
-				}
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Tag : " + tag + ", Data : " + keyValue + ", Field type : " + field.getType());
+                }
 
-				Format<?> format;
+                Format<?> format;
 
-				// Get pattern defined for the field
-				String pattern = keyValuePairField.pattern();
+                // Get pattern defined for the field
+                String pattern = keyValuePairField.pattern();
 
-				// Create format object to format the field
-				format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
+                // Create format object to format the field
+                format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
 
-				// field object to be set
-				Object modelField = model.get(field.getDeclaringClass().getName());
+                // field object to be set
+                Object modelField = model.get(field.getDeclaringClass().getName());
 
-				// format the value of the key received
-				Object value;
-				try {
-					value = format.parse(keyValue);
-				} catch (Exception e) {
-					throw new IllegalArgumentException("Parsing error detected for field defined at the tag : "
-							+ tag, e);
-				}
+                // format the value of the key received
+                Object value;
+                try {
+                    value = format.parse(keyValue);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(
+                                                       "Parsing error detected for field defined at the tag : "
+                                                           + tag, e);
+                }
 
-				field.set(modelField, value);
+                field.set(modelField, value);
 
-			}
+            }
 
-			pos++;
-		}
+            pos++;
+        }
 
     }
 
@@ -182,23 +183,25 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         StringBuilder builder = new StringBuilder();
 
-        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>(keyValuePairFields);
+        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>(
+                                                                                                           keyValuePairFields);
         Iterator<Integer> it = keyValuePairFieldsSorted.keySet().iterator();
-        
+
         // Map containing the OUT position of the field
-        // The key is double and is created using the position of the field and 
+        // The key is double and is created using the position of the field and
         // location of the class in the message (using section)
         Map<Integer, String> positions = new TreeMap<Integer, String>();
 
         // Check if separator exists
-        ObjectHelper.notNull(this.pairSeparator,
-                "The pair separator has not been instantiated or property not defined in the @Message annotation");
+        ObjectHelper
+            .notNull(this.pairSeparator,
+                     "The pair separator has not been instantiated or property not defined in the @Message annotation");
 
         char separator = Converter.getCharDelimitor(this.getPairSeparator());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : "
-                    + this.getPairSeparator());
+                      + this.getPairSeparator());
         }
 
         while (it.hasNext()) {
@@ -249,11 +252,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                         // Format field value
                         String valueFormated;
-                        
+
                         try {
-                        	valueFormated = format.format(keyValue);
+                            valueFormated = format.format(keyValue);
                         } catch (Exception e) {
-                        	throw new IllegalArgumentException("Formating error detected for the tag : " + keyValuePairField.tag(), e);
+                            throw new IllegalArgumentException("Formating error detected for the tag : "
+                                                               + keyValuePairField.tag(), e);
                         }
 
                         // Create the key value string
@@ -275,11 +279,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                         // Format field value
                         String valueFormated;
-                        
+
                         try {
-                        	valueFormated = format.format(keyValue);
+                            valueFormated = format.format(keyValue);
                         } catch (Exception e) {
-                        	throw new IllegalArgumentException("Formating error detected for the tag : " + keyValuePairField.tag(), e);
+                            throw new IllegalArgumentException("Formating error detected for the tag : "
+                                                               + keyValuePairField.tag(), e);
                         }
 
                         // Create the key value string
@@ -303,18 +308,17 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         if (this.isMessageOrdered()) {
 
             Iterator<Integer> posit = positions.keySet().iterator();
-            
+
             while (posit.hasNext()) {
                 String value = positions.get(posit.next());
-                
+
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Value added at the position (" + posit + ") : " + value + separator);
                 }
-                
+
                 builder.append(value + separator);
             }
         }
-
 
         return builder.toString();
     }
