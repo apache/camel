@@ -240,7 +240,7 @@ public final class EventHelper {
         if (factory == null) {
             return;
         }
-        EventObject event = factory.createExchangeFailedEvent(exchange);
+        EventObject event = factory.createExchangeFailureEvent(exchange);
         if (event == null) {
             return;
         }

@@ -553,8 +553,18 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     void disableJMX();
 
+    /**
+     * Gets the inflight repository
+     *
+     * @return the repository
+     */
     InflightRepository getInflightRepository();
 
+    /**
+     * Sets a custom inflight repository to use
+     *
+     * @param repository the repository
+     */
     void setInflightRepository(InflightRepository repository);
 
 }

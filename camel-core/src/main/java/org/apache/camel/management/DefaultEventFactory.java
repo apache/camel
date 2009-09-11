@@ -91,7 +91,7 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeCompletedEvent(exchange);
     }
 
-    public EventObject createExchangeFailedEvent(Exchange exchange) {
+    public EventObject createExchangeFailureEvent(Exchange exchange) {
         return new ExchangeFailureEvent(exchange);
     }
 

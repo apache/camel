@@ -140,7 +140,7 @@ public interface EventFactory {
      * @param exchange the exchange
      * @return the created event
      */
-    EventObject createExchangeFailedEvent(Exchange exchange);
+    EventObject createExchangeFailureEvent(Exchange exchange);
 
     /**
      * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has failed
