@@ -33,10 +33,11 @@ public class ManagedPerformanceCounter extends ManagedCounter {
     private Statistic maxProcessingTime;
     private Statistic totalProcessingTime;
     private Statistic lastProcessingTime;
-    private Statistic firstExchangeCompletedTime;
-    private Statistic firstExchangeFailureTime;
-    private Statistic lastExchangeCompletedTime;
-    private Statistic lastExchangeFailureTime;
+    private Statistic meanProcessingTime;
+    private Statistic firstExchangeCompletedTimestamp;
+    private Statistic firstExchangeFailureTimestamp;
+    private Statistic lastExchangeCompletedTimestamp;
+    private Statistic lastExchangeFailureTimestamp;
     private boolean statisticsEnabled = true;
 
     public ManagedPerformanceCounter(ManagementStrategy strategy) {
@@ -47,11 +48,12 @@ public class ManagedPerformanceCounter extends ManagedCounter {
         this.maxProcessingTime = strategy.createStatistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
         this.totalProcessingTime = strategy.createStatistic("org.apache.camel.totalProcessingTime", this, Statistic.UpdateMode.COUNTER);
         this.lastProcessingTime = strategy.createStatistic("org.apache.camel.lastProcessingTime", this, Statistic.UpdateMode.VALUE);
+        this.meanProcessingTime = strategy.createStatistic("org.apache.camel.meanProcessingTime", this, Statistic.UpdateMode.VALUE);
 
-        this.firstExchangeCompletedTime = strategy.createStatistic("org.apache.camel.firstExchangeCompletedTime", this, Statistic.UpdateMode.VALUE);
-        this.firstExchangeFailureTime = strategy.createStatistic("org.apache.camel.firstExchangeFailureTime", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeCompletedTime = strategy.createStatistic("org.apache.camel.lastExchangeCompletedTime", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeFailureTime = strategy.createStatistic("org.apache.camel.lastExchangeFailureTime", this, Statistic.UpdateMode.VALUE);
+        this.firstExchangeCompletedTimestamp = strategy.createStatistic("org.apache.camel.firstExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.firstExchangeFailureTimestamp = strategy.createStatistic("org.apache.camel.firstExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.lastExchangeCompletedTimestamp = strategy.createStatistic("org.apache.camel.lastExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.lastExchangeFailureTimestamp = strategy.createStatistic("org.apache.camel.lastExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
     }
 
     @Override
@@ -64,10 +66,11 @@ public class ManagedPerformanceCounter extends ManagedCounter {
         maxProcessingTime.reset();
         totalProcessingTime.reset();
         lastProcessingTime.reset();
-        firstExchangeCompletedTime.reset();
-        firstExchangeFailureTime.reset();
-        lastExchangeCompletedTime.reset();
-        lastExchangeFailureTime.reset();
+        meanProcessingTime.reset();
+        firstExchangeCompletedTimestamp.reset();
+        firstExchangeFailureTimestamp.reset();
+        lastExchangeCompletedTimestamp.reset();
+        lastExchangeFailureTimestamp.reset();
     }
 
     @ManagedAttribute(description = "Number of completed exchanges")
@@ -87,8 +90,7 @@ public class ManagedPerformanceCounter extends ManagedCounter {
 
     @ManagedAttribute(description = "Mean Processing Time [milliseconds]")
     public long getMeanProcessingTime() throws Exception {
-        long count = exchangesCompleted.getValue();
-        return count > 0 ? totalProcessingTime.getValue() / count : 0;
+        return meanProcessingTime.getValue();
     }
 
     @ManagedAttribute(description = "Max Processing Time [milliseconds]")
@@ -107,26 +109,26 @@ public class ManagedPerformanceCounter extends ManagedCounter {
     }
 
     @ManagedAttribute(description = "Last Exchange Completed Timestamp")
-    public Date getLastExchangeCompletedTime() {
-        long value = lastExchangeCompletedTime.getValue();
+    public Date getLastExchangeCompletedTimestamp() {
+        long value = lastExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
     @ManagedAttribute(description = "First Exchange Completed Timestamp")
-    public Date getFirstExchangeCompletedTime() {
-        long value = firstExchangeCompletedTime.getValue();
+    public Date getFirstExchangeCompletedTimestamp() {
+        long value = firstExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
     @ManagedAttribute(description = "Last Exchange Failed Timestamp")
-    public Date getLastExchangeFailureTime() {
-        long value = lastExchangeFailureTime.getValue();
+    public Date getLastExchangeFailureTimestamp() {
+        long value = lastExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
     @ManagedAttribute(description = "First Exchange Failed Timestamp")
-    public Date getFirstExchangeFailureTime() {
-        long value = firstExchangeFailureTime.getValue();
+    public Date getFirstExchangeFailureTimestamp() {
+        long value = firstExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
@@ -155,11 +157,16 @@ public class ManagedPerformanceCounter extends ManagedCounter {
         lastProcessingTime.updateValue(time);
 
         long now = new Date().getTime();
-        if (firstExchangeCompletedTime.getUpdateCount() == 0) {
-            firstExchangeCompletedTime.updateValue(now);
+        if (firstExchangeCompletedTimestamp.getUpdateCount() == 0) {
+            firstExchangeCompletedTimestamp.updateValue(now);
         }
 
-        lastExchangeCompletedTime.updateValue(now);
+        lastExchangeCompletedTimestamp.updateValue(now);
+
+        // update mean
+        long count = exchangesCompleted.getValue();
+        long mean = count > 0 ? totalProcessingTime.getValue() / count : 0;
+        meanProcessingTime.updateValue(mean);
     }
 
     /**
@@ -170,11 +177,11 @@ public class ManagedPerformanceCounter extends ManagedCounter {
         exchangesFailed.increment();
 
         long now = new Date().getTime();
-        if (firstExchangeFailureTime.getUpdateCount() == 0) {
-            firstExchangeFailureTime.updateValue(now);
+        if (firstExchangeFailureTimestamp.getUpdateCount() == 0) {
+            firstExchangeFailureTimestamp.updateValue(now);
         }
 
-        lastExchangeFailureTime.updateValue(now);
+        lastExchangeFailureTimestamp.updateValue(now);
     }
 
 

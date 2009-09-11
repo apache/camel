@@ -150,10 +150,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertTrue(lastProcessingTime >= 0);
 
         assertNotNull("Expected first completion time to be available",
-                beanServer.getAttribute(pcob, "FirstExchangeCompletedTime"));
+                beanServer.getAttribute(pcob, "FirstExchangeCompletedTimestamp"));
 
         assertNotNull("Expected last completion time to be available",
-                beanServer.getAttribute(pcob, "LastExchangeCompletedTime"));
+                beanServer.getAttribute(pcob, "LastExchangeCompletedTimestamp"));
     }
 
     protected RouteBuilder createRouteBuilder() {
