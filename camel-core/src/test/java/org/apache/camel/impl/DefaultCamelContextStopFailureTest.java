@@ -44,7 +44,7 @@ public class DefaultCamelContextStopFailureTest extends ContextTestSupport {
         assertEquals("CBA", stopOrder);
     }
 
-    private class MyService implements Service {
+    private final class MyService implements Service {
 
         private String name;
         private boolean fail;

@@ -81,6 +81,7 @@ public interface Exchange {
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
 
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
+    String LOG_DEBUG_BODY_STREAMS   = "CamelLogDebugStreams";
     String LOOP_INDEX               = "CamelLoopIndex";
     String LOOP_SIZE                = "CamelLoopSize";
 

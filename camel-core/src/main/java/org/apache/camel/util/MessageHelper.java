@@ -16,9 +16,17 @@
  */
 package org.apache.camel.util;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.converter.jaxp.BytesSource;
+import org.apache.camel.converter.jaxp.StringSource;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
@@ -123,6 +131,34 @@ public final class MessageHelper {
      * @return the logging message
      */
     public static String extractBodyForLogging(Message message) {
+        Object obj = message.getBody();
+        if (obj == null) {
+            return "Message: [Body is null]";
+        }
+
+        // do not log streams by default
+        boolean streams = false;
+        if (message.getExchange() != null) {
+            String property = message.getExchange().getContext().getProperties().get(Exchange.LOG_DEBUG_BODY_STREAMS);
+            if (property != null) {
+                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, property);
+            }
+        }
+
+        if (obj instanceof StringSource || obj instanceof BytesSource) {
+            // these two are okay
+        } else if (!streams && obj instanceof StreamSource) {
+            return "Message: [Body is instance of java.xml.transform.StreamSource]";
+        } else if (!streams && obj instanceof InputStream) {
+            return "Message: [Body is instance of java.io.InputStream]";
+        } else if (!streams && obj instanceof OutputStream) {
+            return "Message: [Body is instance of java.io.OutputStream]";
+        } else if (!streams && obj instanceof Reader) {
+            return "Message: [Body is instance of java.io.Reader]";
+        } else if (!streams && obj instanceof Writer) {
+            return "Message: [Body is instance of java.io.Writer]";
+        }
+
         // default to 1000 chars
         int length = 1000;
 
@@ -131,11 +167,6 @@ public final class MessageHelper {
             if (property != null) {
                 length = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
             }
-        }
-
-        Object obj = message.getBody();
-        if (obj == null) {
-            return "Message: [Body is null]";
         }
 
         String body = obj.toString();
@@ -150,4 +181,5 @@ public final class MessageHelper {
 
         return "Message: " + body;
     }
+
 }
