@@ -114,7 +114,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         }
     }
 
-    public void bind(List<String> data, Map<String, Object> model) throws Exception {
+    public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
 
         int pos = 0;
 
@@ -140,7 +140,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 }
 
                 KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
-                ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag);
+                ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag + ", line nber : " + line);
 
                 Field field = annotedFields.get(tag);
                 field.setAccessible(true);
@@ -165,9 +165,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 try {
                     value = format.parse(keyValue);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException(
-                                                       "Parsing error detected for field defined at the tag : "
-                                                           + tag, e);
+                    throw new IllegalArgumentException("Parsing error detected for field defined at the tag : " + tag
+                    		                                + ", line nber : " + line, e);
                 }
 
                 field.set(modelField, value);
@@ -183,8 +182,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         StringBuilder builder = new StringBuilder();
 
-        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>(
-                                                                                                           keyValuePairFields);
+        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>( keyValuePairFields );
         Iterator<Integer> it = keyValuePairFieldsSorted.keySet().iterator();
 
         // Map containing the OUT position of the field

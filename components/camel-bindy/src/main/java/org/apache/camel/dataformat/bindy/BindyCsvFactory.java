@@ -24,12 +24,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.jar.JarException;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Section;
+import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -136,7 +136,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
     }
 
-    public void bind(List<String> tokens, Map<String, Object> model) throws Exception {
+    public void bind(List<String> tokens, Map<String, Object> model, int line) throws Exception {
 
         int pos = 0;
         int counterMandatoryFields = 0;
@@ -145,7 +145,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         
             // Get DataField from model
             DataField dataField = dataFields.get(pos);
-            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data);
+            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data + ", line nber : " + line);
             
             if (dataField.required()) {
                 // Increment counter of mandatory fields
@@ -155,7 +155,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // This is not possible for mandatory fields
                 if (data.equals("")) {
                     throw new IllegalArgumentException("The mandatory field defined at the position " + pos
-                                                       + " is empty !");
+                                                       + " is empty for the line nber : " + line);
                 }
             }
             
@@ -184,8 +184,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (!data.equals("")) {
                 try {
                     value = format.parse(data);
+                } catch (FormatException ie) {
+                	throw new IllegalArgumentException( ie.getMessage() + ", position : " + pos + ", line nber : " + line, ie);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos, e);
+                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos  + ", line nber : " + line, e);
                 }
             } else {
                 value = getDefaultValueforPrimitive(field.getType());
@@ -203,11 +205,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         
      
         if (pos < totalFields) {
-            throw new IllegalArgumentException("Some fields are missing (optional or mandatory) !!");
+            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line nber : " + line);
         }
 
         if (counterMandatoryFields < numberMandatoryFields) {
-            throw new IllegalArgumentException("Some mandatory fields are missing !!");
+            throw new IllegalArgumentException("Some mandatory fields are missing, line nber : " + line);
         }
         
     }

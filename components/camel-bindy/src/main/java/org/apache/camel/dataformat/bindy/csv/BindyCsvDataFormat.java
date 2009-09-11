@@ -93,6 +93,7 @@ public class BindyCsvDataFormat implements DataFormat {
         ObjectHelper.notEmpty(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
         int count = 0;
+        
         try {
 
             // If the first line of the CSV file contains columns name, then we skip this line
@@ -109,10 +110,9 @@ public class BindyCsvDataFormat implements DataFormat {
                     // skip if line is empty
                     continue;
                 }
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Counter " + count++ + " : content : " + line);
-                }
+                
+                // Increment counter
+                count++;
                 
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
@@ -133,7 +133,7 @@ public class BindyCsvDataFormat implements DataFormat {
                     }
 
                     // Bind data from CSV record with model classes
-                    factory.bind(result, model);
+                    factory.bind(result, model, count);
 
                     // Link objects together
                     factory.link(model);

@@ -94,41 +94,53 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
 
             while (scanner.hasNextLine()) {
 
-                // Read the line
-                String line = scanner.nextLine().trim();
+				// Read the line
+				String line = scanner.nextLine().trim();
 
-                if (ObjectHelper.isEmpty(line)) {
-                    // skip if line is empty
-                    continue;
-                }
+				if (ObjectHelper.isEmpty(line)) {
+					// skip if line is empty
+					continue;
+				}
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Counter " + count++ + " : content : " + line);
-                }
-                
-                // Create POJO
-                model = factory.factory();
+				// Increment counter
+				count++;
 
-                // Split the message according to the pair separator defined in
-                // annotated class @Message
-                List<String> result = Arrays.asList(line.split(separator));
-                
-                // Bind data from message with model classes
-                factory.bind(result, model);
+				// Create POJO
+				model = factory.factory();
 
-                // Link objects together
-                factory.link(model);
+				// Split the message according to the pair separator defined in
+				// annotated class @Message
+				List<String> result = Arrays.asList(line.split(separator));
 
-                // Add objects graph to the list
-                models.add(model);
+				if (result.size() == 0 || result.isEmpty()) {
+					throw new java.lang.IllegalArgumentException("No records have been defined in the KVP !");
+				}
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Graph of objects created : " + model);
-                }
+				if (result.size() > 0) {
 
+					// Bind data from message with model classes
+					factory.bind(result, model, count);
+
+					// Link objects together
+					factory.link(model);
+
+					// Add objects graph to the list
+					models.add(model);
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Graph of objects created : " + model);
+					}
+				}
+
+			}
+
+            // Test if models list is empty or not
+            // If this is the case (correspond to an empty stream, ...)
+            if (models.size() == 0) {
+                throw new java.lang.IllegalArgumentException("No records have been defined in the KVP !");
+            } else {
+                return models;
             }
-
-            return models;
 
         } finally {
             scanner.close();

@@ -49,16 +49,25 @@ public class DatePatternFormat implements PatternFormat<Date> {
 
         Date date;
         DateFormat df = this.getDateFormat();
-        LOG.info("Pattern : " + this.pattern);
-
+        
         ObjectHelper.notNull(this.pattern, "pattern");
+        
+        // Check length of the string with date pattern
+        // To avoid to parse a string date : 20090901-10:32:30 when 
+        // the pattern is yyyyMMdd
+       
+        if ( string.length() <= this.pattern.length() ) {
+        	
+            // Force the parser to be strict in the syntax of the date to be
+            // converted
+            df.setLenient(false);
+            date = df.parse(string);
 
-        // Force the parser to be strict in the syntax of the date to be
-        // converted
-        df.setLenient(false);
-        date = df.parse(string);
-
-        return date;
+            return date;
+        	
+        } else {
+        	throw new FormatException("Date provided does not fit the pattern defined");
+        }
 
     }
 

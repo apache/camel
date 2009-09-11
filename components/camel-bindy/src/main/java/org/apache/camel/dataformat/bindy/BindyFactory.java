@@ -41,9 +41,10 @@ public interface BindyFactory {
      * @param model Map<String, object> is a collection of objects used to bind
      *            data. String is the the key name of the class link to POJO
      *            objects
+     * @param line is the position of the record into the file           
      * @throws Exception can be thrown
      */
-    void bind(List<String> data, Map<String, Object> model) throws Exception;
+    void bind(List<String> data, Map<String, Object> model, int line) throws Exception;
 
     /**
      * The unbind is used to transform the content of the classes model objects
