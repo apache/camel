@@ -279,7 +279,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     protected CamelServlet createServletForConnector(Server server, Connector connector, List<Handler> handlers) throws Exception {
-        CamelServlet camelServlet = new CamelServlet(isMatchOnUriPrefix());
+        CamelServlet camelServlet = new CamelServlet();
 
         Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});

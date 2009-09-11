@@ -39,7 +39,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
     protected HttpBinding httpBinding;
-    private boolean matchOnUriPrefix;
+   
     
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -103,7 +103,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
                     httpClientConfigurer, new ProxyHttpClientConfigurer(host, port));
             }
         }
-        matchOnUriPrefix = Boolean.parseBoolean(getAndRemoveParameter(parameters, "matchOnUriPrefix", String.class));
+        
     }
     
     @Override
@@ -121,6 +121,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // should we use an exception for failed error codes?
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
 
+        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
+        
+        Boolean matchOnUriPrefix = Boolean.parseBoolean(getAndRemoveParameter(parameters, "matchOnUriPrefix", String.class));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
         uri = httpUri.toString();
@@ -142,6 +145,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         setEndpointHeaderFilterStrategy(endpoint);
         if (throwExceptionOnFailure != null) {
             endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
+        }
+        if (bridgeEndpoint != null) {
+            endpoint.setBridgeEndpoint(bridgeEndpoint);
+        }
+        if (matchOnUriPrefix != null) {
+            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
         }
         setProperties(endpoint, parameters);
         return endpoint;
@@ -175,9 +184,5 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
-
-    public boolean isMatchOnUriPrefix() {
-        return matchOnUriPrefix;
-    }  
     
 }

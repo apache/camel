@@ -89,7 +89,6 @@ public class HttpProducer extends DefaultProducer {
                     throw populateHttpOperationFailedException(exchange, method, responseCode);
                 }
             }
-
         } finally {
             method.releaseConnection();
         }
@@ -192,7 +191,8 @@ public class HttpProducer extends DefaultProducer {
      * @return the created method as either GET or POST
      */
     protected HttpMethod createMethod(Exchange exchange) {
-        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
+        // is a query string provided in the endpoint URI or in a header (header
+        // overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
             queryString = ((HttpEndpoint)getEndpoint()).getHttpUri().getQuery();
@@ -213,15 +213,20 @@ public class HttpProducer extends DefaultProducer {
             methodToUse = requestEntity != null ? HttpMethods.POST : HttpMethods.GET;
         }
 
-        String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        String uri = null;
+        if (!((HttpEndpoint)getEndpoint()).isBridgeEndpoint()) {
+            uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        }
         if (uri == null) {
             uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
         }
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
+        // when the endpoint is not working as a bridge
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         if (path != null) {
-            // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
+            // make sure that there is exactly one "/" between HTTP_URI and
+            // HTTP_PATH
             if (!uri.endsWith("/")) {
                 uri = uri + "/";
             }

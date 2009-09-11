@@ -35,15 +35,9 @@ public class CamelHttpTransportServlet extends CamelServlet {
     private String servletName;
     private AbstractApplicationContext applicationContext;
     
-    public CamelHttpTransportServlet() {
-        super(false);        
-    }
-    
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         servletName = config.getServletName();
-        String matchOnUriPrefix = config.getInitParameter("matchOnUriPrefix");
-        this.setMatchOnUriPrefix(Boolean.valueOf(matchOnUriPrefix));
         // parser the servlet init parameters
         CAMEL_SERVLET_MAP.put(servletName, this);
         String contextConfigLocation = config.getInitParameter("contextConfigLocation");

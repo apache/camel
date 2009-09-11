@@ -35,12 +35,7 @@ public class CamelServlet extends HttpServlet {
     private static final long serialVersionUID = -7061982839117697829L;
 
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
-    private boolean matchOnUriPrefix;
-
-    public CamelServlet(boolean matchOnUriPrefix) {
-        this.matchOnUriPrefix = matchOnUriPrefix;
-    }
-    
+   
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -78,9 +73,9 @@ public class CamelServlet extends HttpServlet {
         }
         HttpConsumer answer = consumers.get(path);
                
-        if (answer == null && matchOnUriPrefix) {
+        if (answer == null) {
             for (String key : consumers.keySet()) {
-                if (path.startsWith(key)) {
+                if (consumers.get(key).getEndpoint().isMatchOnUriPrefix() && path.startsWith(key)) {
                     answer = consumers.get(key);
                     break;
                 }
@@ -96,12 +91,5 @@ public class CamelServlet extends HttpServlet {
     public void disconnect(HttpConsumer consumer) {
         consumers.remove(consumer.getPath());
     }
-
-    public boolean isMatchOnUriPrefix() {
-        return matchOnUriPrefix;
-    }
     
-    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
-        this.matchOnUriPrefix = matchOnUriPrefix;
-    }
 }

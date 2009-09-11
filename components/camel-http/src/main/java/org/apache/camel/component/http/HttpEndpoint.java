@@ -52,6 +52,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
     private boolean throwExceptionOnFailure = true;
+    private boolean bridgeEndpoint;
+    private boolean matchOnUriPrefix;
 
     public HttpEndpoint() {
     }
@@ -228,5 +230,21 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
+    }
+    
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+    
+    public void setBridgeEndpoint(boolean bridge) {
+        this.bridgeEndpoint = bridge;
+    }
+    
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+    
+    public void setMatchOnUriPrefix(boolean match) {
+        this.matchOnUriPrefix = match;
     }
 }

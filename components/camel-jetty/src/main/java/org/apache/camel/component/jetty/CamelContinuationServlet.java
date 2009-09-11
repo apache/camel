@@ -37,10 +37,6 @@ public class CamelContinuationServlet extends CamelServlet {
     // TODO: should use the new Async API and allow end users to define if they want Jetty continuation support or not
 
     private static final long serialVersionUID = 1L;
-
-    public CamelContinuationServlet(boolean matchOnUriPrefix) {
-        super(matchOnUriPrefix);
-    }
         
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

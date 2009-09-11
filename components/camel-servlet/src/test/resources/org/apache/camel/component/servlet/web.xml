@@ -31,10 +31,7 @@
     <servlet-class>
         org.apache.camel.component.servlet.CamelHttpTransportServlet
     </servlet-class>
-    <init-param> 
-      <param-name>matchOnUriPrefix</param-name> 
-      <param-value>true</param-value> 
-    </init-param>
+    
   </servlet>
 
   <servlet-mapping>

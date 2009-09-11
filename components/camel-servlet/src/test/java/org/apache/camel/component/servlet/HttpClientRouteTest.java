@@ -61,7 +61,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         public void configure() throws Exception {
             errorHandler(noErrorHandler());
             // START SNIPPET: route
-            from("servlet:///hello").process(new Processor() {
+            from("servlet:///hello?matchOnUriPrefix=true").process(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
                     String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
