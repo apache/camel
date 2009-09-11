@@ -172,11 +172,14 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     private InterceptStrategy getOrCreateTracer() {
         InterceptStrategy tracer = Tracer.getTracer(camelContext);
         if (tracer == null) {
-            // lookup in registry
-            Map<String, Tracer> map = camelContext.getRegistry().lookupByType(Tracer.class);
-            if (map.size() == 1) {
-                tracer = map.values().iterator().next();
-            } else {
+            if (camelContext.getRegistry() != null) {
+                // lookup in registry
+                Map<String, Tracer> map = camelContext.getRegistry().lookupByType(Tracer.class);
+                if (map.size() == 1) {
+                    tracer = map.values().iterator().next();
+                }
+            }
+            if (tracer == null) {
                 // fallback to use the default tracer
                 tracer = camelContext.getDefaultTracer();
             }
