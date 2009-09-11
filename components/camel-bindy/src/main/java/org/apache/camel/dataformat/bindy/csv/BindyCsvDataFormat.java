@@ -98,7 +98,11 @@ public class BindyCsvDataFormat implements DataFormat {
 
             // If the first line of the CSV file contains columns name, then we skip this line
             if (factory.getSkipFirstLine()) {
-                scanner.nextLine();
+            	
+            	// Check if scanner is empty
+            	if (scanner.hasNextLine()) {
+            		scanner.nextLine();
+            	}
             }
 
             while (scanner.hasNextLine()) {
