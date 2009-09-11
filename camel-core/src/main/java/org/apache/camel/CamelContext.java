@@ -28,6 +28,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
@@ -551,5 +552,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * Disables using JMX as {@link org.apache.camel.spi.ManagementStrategy}.
      */
     void disableJMX();
+
+    InflightRepository getInflightRepository();
+
+    void setInflightRepository(InflightRepository repository);
 
 }

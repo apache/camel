@@ -62,6 +62,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
@@ -232,6 +233,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (delayer != null) {
             LOG.info("Using custom Delayer: " + delayer);
             getContext().addInterceptStrategy(delayer);
+        }
+
+        InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
+        if (delayer != null) {
+            LOG.info("Using custom InflightRepository: " + inflightRepository);
+            getContext().setInflightRepository(inflightRepository);
         }
 
         ManagementStrategy managementStrategy = getBeanForType(ManagementStrategy.class);

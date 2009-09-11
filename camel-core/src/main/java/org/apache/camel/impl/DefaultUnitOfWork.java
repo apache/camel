@@ -64,6 +64,11 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
 
         // fire event
         EventHelper.notifyExchangeCreated(exchange.getContext(), exchange);
+
+        // register to inflight registry
+        if (exchange.getContext() != null) {
+            exchange.getContext().getInflightRepository().add(exchange);
+        }
     }
 
     public void start() throws Exception {
@@ -133,6 +138,12 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
                 }
             }
         }
+
+        // unregister from inflight registry
+        if (exchange.getContext() != null) {
+            exchange.getContext().getInflightRepository().remove(exchange);
+        }
+
     }
 
     public String getId() {

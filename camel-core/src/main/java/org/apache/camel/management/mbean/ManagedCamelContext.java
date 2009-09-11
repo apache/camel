@@ -76,6 +76,11 @@ public class ManagedCamelContext {
         context.setTracing(tracing);
     }
 
+    @ManagedAttribute(description = "Current number of inflight Exchanges")
+    public Integer getInflightExchanges() {
+        return context.getInflightRepository().size();
+    }
+
     @ManagedOperation(description = "Start Camel")
     public void start() throws Exception {
         context.start();

@@ -63,6 +63,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
@@ -133,6 +134,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private ServicePool<Endpoint, Producer> producerServicePool = new DefaultProducerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private Tracer defaultTracer;
+    private InflightRepository inflightRepository = new DefaultInflightRepository();
 
     public DefaultCamelContext() {
         super();
@@ -1204,6 +1206,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void disableJMX() {
         disableJMX = true;
+    }
+
+    public InflightRepository getInflightRepository() {
+        return inflightRepository;
+    }
+
+    public void setInflightRepository(InflightRepository repository) {
+        this.inflightRepository = repository;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {
