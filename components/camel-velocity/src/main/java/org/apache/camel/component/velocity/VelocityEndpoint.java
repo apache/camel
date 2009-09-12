@@ -101,13 +101,38 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         return encoding;
     }
 
+    public VelocityEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
+        String newUri = uri.replace(getResourceUri(), newResourceUri);
+        if (log.isDebugEnabled()) {
+            log.debug("Getting endpoint with URI: " + newUri);
+        }
+        return (VelocityEndpoint) getCamelContext().getEndpoint(newUri);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        Resource resource = getResource();
-        ObjectHelper.notNull(resource, "resource");
         String path = getResourceUri();
         ObjectHelper.notNull(path, "resourceUri");
+
+        String newResourceUri = exchange.getIn().getHeader(VelocityConstants.VELOCITY_RESOURCE_URI, String.class);
+        if (newResourceUri != null) {
+            exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
+
+            if (log.isDebugEnabled()) {
+                log.debug(VelocityConstants.VELOCITY_RESOURCE_URI + " set to " + newResourceUri + " creating new endpoint to handle exchange");
+            }
+            VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
+            newEndpoint.onExchange(exchange);
+            return;
+        }
+
+        Resource resource = getResource();
+        ObjectHelper.notNull(resource, "resource");
+
+        if (log.isDebugEnabled()) {
+            log.debug("Using resource: " + resource + " with resourceUri: " + path + " for endpoint " + getEndpointUri());
+        }
 
         // getResourceAsInputStream also considers the content cache
         Reader reader = encoding != null ? new InputStreamReader(getResourceAsInputStream(), encoding) : new InputStreamReader(getResourceAsInputStream());
@@ -128,7 +153,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         out.setBody(buffer.toString());
         out.setHeader(VelocityConstants.VELOCITY_RESOURCE, resource);
         out.setHeader(VelocityConstants.VELOCITY_RESOURCE_URI, path);
-        Map<String, Object> headers = (Map<String, Object>)velocityContext.get("headers");
+        Map<String, Object> headers = (Map<String, Object>) velocityContext.get("headers");
         for (String key : headers.keySet()) {
             out.setHeader(key, headers.get(key));
         }
