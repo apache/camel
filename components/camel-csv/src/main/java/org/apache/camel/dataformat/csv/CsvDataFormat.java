@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,20 +56,33 @@ public class CsvDataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         ObjectHelper.notNull(config, "config");
 
-        Map map = ExchangeHelper.convertToMandatoryType(exchange, Map.class, object);
         OutputStreamWriter out = new OutputStreamWriter(outputStream);
+        CSVWriter csv = new CSVWriter(config);
+        csv.setWriter(out);
+
         try {
-            if (autogenColumns) {
-                // no specific config has been set so lets add fields
-                Set set = map.keySet();
-                updateFieldsInConfig(set, exchange);
+            List list = ExchangeHelper.convertToType(exchange, List.class, object);
+            if (list != null) {
+                for (Object child : list) {
+                    Map row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, child);
+                    doMarshalRecord(exchange, row, out, csv);
+                }
+            } else {
+                Map row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, object);
+                doMarshalRecord(exchange, row, out, csv);
             }
-            CSVWriter writer = new CSVWriter(config);
-            writer.setWriter(out);
-            writer.writeRecord(map);
         } finally {
             out.close();
         }
+    }
+
+    private void doMarshalRecord(Exchange exchange, Map row, Writer out, CSVWriter csv) throws Exception {
+        if (autogenColumns) {
+            // no specific config has been set so lets add fields
+            Set set = row.keySet();
+            updateFieldsInConfig(set, exchange);
+        }
+        csv.writeRecord(row);
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
