@@ -79,6 +79,7 @@
     <saxon-version>9.1.0.1</saxon-version>
     <scala-version>2.7.3</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
+    <spring-ehcache-version>1.6.2</spring-ehcache-version>
     <testng-version>5.8</testng-version>
     <xbean-spring-version>3.5</xbean-spring-version>
     <xstream-version>1.3.1</xstream-version>
@@ -871,6 +872,12 @@
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-persistence-jdbc</artifactId>
         <version>${openjpa-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sourceforge.ehcache</groupId>
+        <artifactId>com.springsource.net.sf.ehcache</artifactId>
+        <version>${spring-ehcache-version}</version>
       </dependency>
 
       <!-- hibernate and other db systems -->
