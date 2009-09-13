@@ -69,6 +69,12 @@
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
   </feature>
+  <feature name='camel-cache' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:net.sourceforge.ehcache/com.springsource.net.sf.ehcache/${spring.ehcache.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle> 
+    <bundle>mvn:org.apache.camel/camel-cache/${pom.version}</bundle> 
+  </feature>
   <feature name='camel-http' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
