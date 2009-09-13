@@ -77,7 +77,6 @@
     <dependency>
       <groupId>org.fusesource.commonman</groupId>
       <artifactId>commons-management</artifactId>
-      <version>1.0</version>
     </dependency>
 
     <!-- to allow Spring annotations to be used for management -->
