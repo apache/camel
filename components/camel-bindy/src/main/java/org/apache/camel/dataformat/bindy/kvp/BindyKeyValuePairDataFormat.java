@@ -73,7 +73,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
-        
+
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
@@ -86,7 +86,8 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         Scanner scanner = new Scanner(in);
 
         // Retrieve the pair separator defined to split the record
-        ObjectHelper.notNull(factory.getPairSeparator(), "The pair separator property of the annotation @Message");
+        ObjectHelper.notNull(factory.getPairSeparator(),
+                             "The pair separator property of the annotation @Message");
         String separator = factory.getPairSeparator();
 
         int count = 0;
@@ -94,45 +95,45 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
 
             while (scanner.hasNextLine()) {
 
-				// Read the line
-				String line = scanner.nextLine().trim();
+                // Read the line
+                String line = scanner.nextLine().trim();
 
-				if (ObjectHelper.isEmpty(line)) {
-					// skip if line is empty
-					continue;
-				}
+                if (ObjectHelper.isEmpty(line)) {
+                    // skip if line is empty
+                    continue;
+                }
 
-				// Increment counter
-				count++;
+                // Increment counter
+                count++;
 
-				// Create POJO
-				model = factory.factory();
+                // Create POJO
+                model = factory.factory();
 
-				// Split the message according to the pair separator defined in
-				// annotated class @Message
-				List<String> result = Arrays.asList(line.split(separator));
+                // Split the message according to the pair separator defined in
+                // annotated class @Message
+                List<String> result = Arrays.asList(line.split(separator));
 
-				if (result.size() == 0 || result.isEmpty()) {
-					throw new java.lang.IllegalArgumentException("No records have been defined in the KVP !");
-				}
+                if (result.size() == 0 || result.isEmpty()) {
+                    throw new java.lang.IllegalArgumentException("No records have been defined in the KVP !");
+                }
 
-				if (result.size() > 0) {
+                if (result.size() > 0) {
 
-					// Bind data from message with model classes
-					factory.bind(result, model, count);
+                    // Bind data from message with model classes
+                    factory.bind(result, model, count);
 
-					// Link objects together
-					factory.link(model);
+                    // Link objects together
+                    factory.link(model);
 
-					// Add objects graph to the list
-					models.add(model);
+                    // Add objects graph to the list
+                    models.add(model);
 
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Graph of objects created : " + model);
-					}
-				}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Graph of objects created : " + model);
+                    }
+                }
 
-			}
+            }
 
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)

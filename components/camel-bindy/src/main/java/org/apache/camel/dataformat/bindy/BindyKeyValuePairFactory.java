@@ -166,7 +166,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     value = format.parse(keyValue);
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Parsing error detected for field defined at the tag : " + tag
-                    		                                + ", line nber : " + line, e);
+                        + ", line nber : " + line, e);
                 }
 
                 field.set(modelField, value);
@@ -182,7 +182,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         StringBuilder builder = new StringBuilder();
 
-        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>( keyValuePairFields );
+        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>(keyValuePairFields);
         Iterator<Integer> it = keyValuePairFieldsSorted.keySet().iterator();
 
         // Map containing the OUT position of the field

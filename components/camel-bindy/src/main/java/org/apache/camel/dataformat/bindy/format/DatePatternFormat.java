@@ -56,17 +56,17 @@ public class DatePatternFormat implements PatternFormat<Date> {
         // To avoid to parse a string date : 20090901-10:32:30 when 
         // the pattern is yyyyMMdd
        
-        if ( string.length() <= this.pattern.length() ) {
-        	
+        if (string.length() <= this.pattern.length()) {
+        
             // Force the parser to be strict in the syntax of the date to be
             // converted
             df.setLenient(false);
             date = df.parse(string);
 
             return date;
-        	
+        
         } else {
-        	throw new FormatException("Date provided does not fit the pattern defined");
+            throw new FormatException("Date provided does not fit the pattern defined");
         }
 
     }

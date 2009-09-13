@@ -185,7 +185,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 try {
                     value = format.parse(data);
                 } catch (FormatException ie) {
-                	throw new IllegalArgumentException( ie.getMessage() + ", position : " + pos + ", line nber : " + line, ie);
+                    throw new IllegalArgumentException(ie.getMessage() + ", position : " + pos + ", line nber : " + line, ie);
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos  + ", line nber : " + line, e);
                 }
