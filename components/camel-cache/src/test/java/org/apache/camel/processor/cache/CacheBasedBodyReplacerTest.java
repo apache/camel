@@ -43,13 +43,12 @@ public class CacheBasedBodyReplacerTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
 
-    
     @Test
     public void testCacheBasedBodyReplacer() throws Exception {
-    	LOG.info("Beginning Test ---> testCacheBasedBodyReplacer()");
-    	
-    	resultEndpoint.expectedMessageCount(1);
-        
+        LOG.info("Beginning Test ---> testCacheBasedBodyReplacer()");
+
+        resultEndpoint.expectedMessageCount(1);
+
         List<String> keys = new ArrayList<String>();
         keys.add("farewell");
         keys.add("greeting");
@@ -68,40 +67,36 @@ public class CacheBasedBodyReplacerTest extends CamelTestSupport {
                 }
             });
         }
-        
+
         resultEndpoint.assertIsSatisfied();
-    	LOG.info("Completed Test ---> testCacheBasedBodyReplacer()");
-        
+        LOG.info("Completed Test ---> testCacheBasedBodyReplacer()");
+
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cache://TestCache1").
-                    filter(header("CACHE_KEY").isEqualTo("greeting")).
-                    process (new CacheBasedMessageBodyReplacer("cache://TestCache1","farewell")).
-                    to("direct:next");
-                
-                from("direct:next").
-                    process (new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String key = (String) exchange.getIn().getHeader("CACHE_KEY");
-                            Object body = exchange.getIn().getBody();
-                            String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);                        
-                                
-                            LOG.info("------- Payload Replacement Results ---------");
-                            LOG.info("The following Payload was replaced from Cache: TestCache1");
-                            LOG.info("key = " + key);
-                            LOG.info("Before value = Hello World");
-                            LOG.info("After value = " + data);
-                            LOG.info("------ End  ------");   
-                        }
-                    }).
-                    to("mock:result");                 
-                
-                from("direct:start").
-                    to("cache://TestCache1");
+                from("cache://TestCache1").filter(header("CACHE_KEY").isEqualTo("greeting"))
+                    .process(new CacheBasedMessageBodyReplacer("cache://TestCache1", "farewell"))
+                    .to("direct:next");
+
+                from("direct:next").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String key = (String)exchange.getIn().getHeader("CACHE_KEY");
+                        Object body = exchange.getIn().getBody();
+                        String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
+
+                        LOG.info("------- Payload Replacement Results ---------");
+                        LOG.info("The following Payload was replaced from Cache: TestCache1");
+                        LOG.info("key = " + key);
+                        LOG.info("Before value = Hello World");
+                        LOG.info("After value = " + data);
+                        LOG.info("------ End  ------");
+                    }
+                }).to("mock:result");
+
+                from("direct:start").to("cache://TestCache1");
 
             }
         };

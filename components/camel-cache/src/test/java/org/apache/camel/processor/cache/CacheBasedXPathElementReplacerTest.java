@@ -41,32 +41,24 @@ public class CacheBasedXPathElementReplacerTest extends CamelTestSupport {
 
     @Produce(uri = "direct:loadcache")
     protected ProducerTemplate producerTemplate;
-    
-    String XML_FRAGMENT = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-                    + "<books>"
-                    + "<book1>"
-                    + "</book1>"
-                    + "<book2>"
-                    + "</book2>"
-                    + "</books>";
 
-    String book1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-                    + "<book1>" 
-                    + "<novel>My Man Jeeves</novel>" 
-                    + "<author>P.G Wodehouse</author>" 
-                    + "</book1>";
-    String book2 = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-                    + "<book2>" 
-                    + "<novel>The Jungle Book</novel>" 
-                    + "<author>Rudyard Kipling</author>" 
-                    + "</book2>";
-    
+    String xmlFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+        + "<books>" + "<book1>" + "</book1>"
+         + "<book2>" + "</book2>" + "</books>";
+
+    String book1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" 
+        + "<book1>" + "<novel>My Man Jeeves</novel>"
+        + "<author>P.G Wodehouse</author>" + "</book1>";
+    String book2 = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" 
+        + "<book2>" + "<novel>The Jungle Book</novel>" 
+        + "<author>Rudyard Kipling</author>" + "</book2>";
+
     @Test
     public void testCacheBasedXPathElementReplacer() throws Exception {
-    	LOG.info("Beginning Test ---> testCacheBasedXPathElementReplacer()");
-    	
-    	resultEndpoint.expectedMessageCount(1);
-        
+        LOG.info("Beginning Test ---> testCacheBasedXPathElementReplacer()");
+
+        resultEndpoint.expectedMessageCount(1);
+
         List<String> keys = new ArrayList<String>();
         keys.add("book1");
         keys.add("book2");
@@ -80,49 +72,45 @@ public class CacheBasedXPathElementReplacerTest extends CamelTestSupport {
                     in.setHeader("CACHE_KEY", key);
                     if (key.equalsIgnoreCase("book1")) {
                         in.setBody(book1);
-                    } else if(key.equalsIgnoreCase("book2")) {
+                    } else if (key.equalsIgnoreCase("book2")) {
                         in.setBody(book2);
                     } else {
-                        in.setBody(XML_FRAGMENT);
+                        in.setBody(xmlFragment);
                     }
                 }
             });
-        } 	
-            
+        }
+
         resultEndpoint.assertIsSatisfied();
-    	LOG.info("Completed Test ---> testCacheBasedXPathElementReplacer()");
-        
+        LOG.info("Completed Test ---> testCacheBasedXPathElementReplacer()");
+
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cache://TestCache1").
-                    filter(header("CACHE_KEY").isEqualTo("XML_FRAGMENT")).
-                    process (new CacheBasedXPathReplacer("cache://TestCache1","book1","/books/book1")).
-                    process (new CacheBasedXPathReplacer("cache://TestCache1","book2","/books/book2")).
-                    to("direct:next");
-                   
-                from("direct:next").
-                    process (new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String key = (String) exchange.getIn().getHeader("CACHE_KEY");
-                            Object body = exchange.getIn().getBody();
-                            String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);                                  
-                                
-                            LOG.info("------- Payload Replacement Results ---------");
-                            LOG.info("The following Payload was replaced from Cache: TestCache1");
-                            LOG.info("key = " + key);
-                            LOG.info("Before Value = " + XML_FRAGMENT);
-                            LOG.info("After value = " + data);
-                            LOG.info("------ End  ------");   
-                        }
-                    }).
-                    to("mock:result");                 
-                
-                from("direct:loadcache").
-                    to("cache://TestCache1");
+                from("cache://TestCache1").filter(header("CACHE_KEY").isEqualTo("XML_FRAGMENT"))
+                    .process(new CacheBasedXPathReplacer("cache://TestCache1", "book1", "/books/book1"))
+                    .process(new CacheBasedXPathReplacer("cache://TestCache1", "book2", "/books/book2"))
+                    .to("direct:next");
+
+                from("direct:next").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String key = (String)exchange.getIn().getHeader("CACHE_KEY");
+                        Object body = exchange.getIn().getBody();
+                        String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
+
+                        LOG.info("------- Payload Replacement Results ---------");
+                        LOG.info("The following Payload was replaced from Cache: TestCache1");
+                        LOG.info("key = " + key);
+                        LOG.info("Before Value = " + xmlFragment);
+                        LOG.info("After value = " + data);
+                        LOG.info("------ End  ------");
+                    }
+                }).to("mock:result");
+
+                from("direct:loadcache").to("cache://TestCache1");
 
             }
         };

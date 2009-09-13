@@ -21,15 +21,15 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 public class CacheProducerTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(CacheProducerTest.class);

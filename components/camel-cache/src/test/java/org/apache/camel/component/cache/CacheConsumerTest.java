@@ -17,15 +17,9 @@
 
 package org.apache.camel.component.cache;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,9 +28,10 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 public class CacheConsumerTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(CacheConsumerTest.class);
@@ -46,13 +41,12 @@ public class CacheConsumerTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
 
-
     @Test
     public void testReceivingFileFromCache() throws Exception {
-    	LOG.info("Beginning Test ---> testReceivingFileFromCache()");
-    	
+        LOG.info("Beginning Test ---> testReceivingFileFromCache()");
+
         resultEndpoint.expectedMessageCount(3);
-        
+
         List<String> operations = new ArrayList<String>();
         operations.add("ADD");
         operations.add("UPDATE");
@@ -70,21 +64,20 @@ public class CacheConsumerTest extends CamelTestSupport {
         }
 
         resultEndpoint.assertIsSatisfied();
-    	LOG.info("Completed Test ---> testReceivingFileFromCache()");
+        LOG.info("Completed Test ---> testReceivingFileFromCache()");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cache://TestCache1").
-                process(new Processor() {
+                from("cache://TestCache1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        String operation = (String) exchange.getIn().getHeader("CACHE_OPERATION");
-                        String key = (String) exchange.getIn().getHeader("CACHE_KEY");
+                        String operation = (String)exchange.getIn().getHeader("CACHE_OPERATION");
+                        String key = (String)exchange.getIn().getHeader("CACHE_KEY");
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
-               
+
                         LOG.info("------- Cache Event Notification ---------");
                         LOG.info("Received notification for the following activity in cache TestCache1:");
                         LOG.info("Operation = " + operation);
@@ -92,14 +85,12 @@ public class CacheConsumerTest extends CamelTestSupport {
                         LOG.info("value = " + data);
                         LOG.info("------ End Cache Event Notification ------");
                     }
-                    
-                }).
-                to("mock:result");
-            
-	            from("direct:start").
-	                to("cache://TestCache1");
+
+                }).to("mock:result");
+
+                from("direct:start").to("cache://TestCache1");
             }
         };
-    }    
-        
+    }
+
 }

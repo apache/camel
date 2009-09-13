@@ -42,19 +42,18 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
 
     @Produce(uri = "direct:loadcache")
     protected ProducerTemplate producerTemplate;
-    
-    String quote = "#novel# - #author#\n" +
-                     "'Tis all a Chequer-board of Nights and Days\n" +
-                     "Where Destiny with Men for Pieces plays:\n" +
-                     "Hither and thither moves, and mates, and slays,\n" + 
-                     "And #number# by #number# back in the Closet lays.";
-    
+
+    String quote = "#novel# - #author#\n" + "'Tis all a Chequer-board of Nights and Days\n"
+                   + "Where Destiny with Men for Pieces plays:\n"
+                   + "Hither and thither moves, and mates, and slays,\n"
+                   + "And #number# by #number# back in the Closet lays.";
+
     @Test
     public void testCacheBasedTokenReplacer() throws Exception {
-    	LOG.info("Beginning Test ---> testCacheBasedTokenReplacer()");
-    	
-    	resultEndpoint.expectedMessageCount(1);
-        
+        LOG.info("Beginning Test ---> testCacheBasedTokenReplacer()");
+
+        resultEndpoint.expectedMessageCount(1);
+
         List<String> keys = new ArrayList<String>();
         keys.add("novel");
         keys.add("author");
@@ -79,44 +78,38 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
                 }
             });
         }
-    	
-    	
-            
+
         resultEndpoint.assertIsSatisfied();
-    	LOG.info("Completed Test ---> testCacheBasedTokenReplacer()");
-        
+        LOG.info("Completed Test ---> testCacheBasedTokenReplacer()");
+
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cache://TestCache1").
-                    filter(header("CACHE_KEY").isEqualTo("quote")).
-                    process (new CacheBasedTokenReplacer("cache://TestCache1","novel","#novel#")).
-                    process (new CacheBasedTokenReplacer("cache://TestCache1","author","#author#")).
-                    process (new CacheBasedTokenReplacer("cache://TestCache1","number","#number#")).
-                    to("direct:next");
-                
-                from("direct:next").
-                    process (new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String key = (String) exchange.getIn().getHeader("CACHE_KEY");
-                            Object body = exchange.getIn().getBody();
-                            String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);                                  
-                                
-                            LOG.info("------- Payload Replacement Results ---------");
-                            LOG.info("The following Payload was replaced from Cache: TestCache1");
-                            LOG.info("key = " + key);
-                            LOG.info("Before Value = " + quote);
-                            LOG.info("After value = " + data);
-                            LOG.info("------ End  ------");   
-                        }
-                    }).
-                    to("mock:result");                 
-                
-                from("direct:loadcache").
-                    to("cache://TestCache1");
+                from("cache://TestCache1").filter(header("CACHE_KEY").isEqualTo("quote"))
+                    .process(new CacheBasedTokenReplacer("cache://TestCache1", "novel", "#novel#"))
+                    .process(new CacheBasedTokenReplacer("cache://TestCache1", "author", "#author#"))
+                    .process(new CacheBasedTokenReplacer("cache://TestCache1", "number", "#number#"))
+                    .to("direct:next");
+
+                from("direct:next").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String key = (String)exchange.getIn().getHeader("CACHE_KEY");
+                        Object body = exchange.getIn().getBody();
+                        String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
+
+                        LOG.info("------- Payload Replacement Results ---------");
+                        LOG.info("The following Payload was replaced from Cache: TestCache1");
+                        LOG.info("key = " + key);
+                        LOG.info("Before Value = " + quote);
+                        LOG.info("After value = " + data);
+                        LOG.info("------ End  ------");
+                    }
+                }).to("mock:result");
+
+                from("direct:loadcache").to("cache://TestCache1");
 
             }
         };
