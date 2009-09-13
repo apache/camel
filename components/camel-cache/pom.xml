@@ -56,7 +56,7 @@
       <artifactId>ehcache</artifactId>
       <version>1.6.0</version>
     </dependency>
-        <dependency>
+    <dependency>
         <groupId>xalan</groupId>
         <artifactId>xalan</artifactId>
         <version>${xalan-version}</version>
@@ -70,16 +70,7 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>jsch</groupId> <!-- com.jcraft -->
-      <artifactId>jsch</artifactId>
-      <version>0.1.40</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>2.0</version>
-    </dependency>
+    
 
     <!-- testing -->
     <dependency>
@@ -134,22 +125,6 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>ftp.enable</name>
-              <value>${ftp.enable}</value>
-            </property>
-            <property>
-              <name>ftp.server</name>
-              <value>${ftp.url}</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
