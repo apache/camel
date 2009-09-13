@@ -1,0 +1,112 @@
+package org.apache.camel.processor.cache;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.StringReader;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.component.cache.factory.CacheManagerFactory;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Document;
+
+public class CacheBasedXPathReplacer extends CacheValidate implements Processor {	
+    private static final transient Log LOG = LogFactory.getLog(CacheBasedXPathReplacer.class);
+	private String cacheName;
+	private String key;
+	private String xpath;
+    private CacheManager cacheManager;
+    private Ehcache cache;
+    private Document document;
+    private DOMSource source;
+    private DOMResult result;
+
+    public CacheBasedXPathReplacer(String cacheName, String key, String xpath) {
+        super();
+        if (cacheName.contains("cache://")) {
+            this.setCacheName(cacheName.replace("cache://", ""));
+        } else {
+            this.setCacheName(cacheName);
+        }
+        this.key = key;
+		this.xpath = xpath;
+    }
+
+
+    public void process(Exchange exchange) throws Exception {
+        // Cache the buffer to the specified Cache against the specified key 
+        cacheManager = new CacheManagerFactory().instantiateCacheManager();
+        
+        if (isValid(cacheManager, cacheName, key)) {
+            cache = cacheManager.getCache(cacheName);
+            LOG.info("Replacing XPath value " + xpath + "in Message with value stored against key " + key + " in CacheName " + cacheName);
+            exchange.getIn().setHeader("CACHE_KEY", key);
+            Object body = exchange.getIn().getBody();
+            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
+            try {
+                document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
+            } finally {
+                is.close();
+            }
+
+            InputStream cis = exchange.getContext().getTypeConverter().convertTo(InputStream.class,  cache.get(key).getObjectValue());   
+            try {
+                Document cacheValueDocument = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, cis);                    
+                    
+                //Create/setup the Transformer              
+                XmlConverter xmlConverter = new XmlConverter();
+                String xslString = IOConverter.toString(new File("./src/main/resources/xpathreplacer.xsl"));
+                xslString = xslString.replace("##match_token##", xpath);
+                Source xslSource = xmlConverter.toStreamSource(new StringReader(xslString));
+                TransformerFactory transformerFactory = xmlConverter.createTransformerFactory();
+                Transformer transformer = transformerFactory.newTransformer(xslSource);
+                source = xmlConverter.toSource(document);
+                result = new DOMResult();
+
+                transformer.setParameter("cacheValue", cacheValueDocument);
+                transformer.transform(source, result);
+            } finally {
+                cis.close();
+            }                
+        }
+        
+        exchange.getIn().setBody(IOConverter.toBytes(IOConverter.toInputStrean(new DOMSource(result.getNode()))));
+    }
+
+    public String getCacheName() {
+	    return cacheName;
+	}
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getXpath() {
+        return xpath;
+    }
+
+    public void setXpath(String xpath) {
+	    this.xpath = xpath;
+	}
+
+}

@@ -35,6 +35,7 @@
     <module>camel-bam</module>
     <module>camel-bindy</module>
     <module>camel-cometd</module>
+    <module>camel-cache</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
     <module>camel-flatpack</module>
