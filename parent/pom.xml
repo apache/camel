@@ -56,6 +56,7 @@
     <mina-version>1.1.7</mina-version>
     <uface-version>1.0-m1</uface-version>
     <jaxb-version>2.1.6</jaxb-version>
+    <javax-mail-version>1.4.1_1-SNAPSHOT</javax-mail-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <stax-api-version>1.0.1</stax-api-version>
     <log4j-version>1.2.14</log4j-version>
@@ -72,8 +73,9 @@
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <groovy-version>1.5.6</groovy-version>
-    <guiceyfruit-version>2.0-beta-4</guiceyfruit-version>
+    <guiceyfruit-version>2.0</guiceyfruit-version>
     <junit-version>3.8.2</junit-version>
+    <ognl-version>2.7.3_1</ognl-version>
     <saxon-version>9.1.0.1</saxon-version>
     <scala-version>2.7.3</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
@@ -752,6 +754,13 @@
         <artifactId>groovy-engine</artifactId>
         <version>20070112</version>
       </dependency>
+      
+      <!-- optional ognl support -->
+      <dependency>
+         <groupId>org.apache.servicemix.bundles</groupId>
+         <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
+         <version>${ognl-version}</version>
+      </dependency>
 
       <!-- optional Saxon support-->
       <dependency>
@@ -837,9 +846,9 @@
 
       <!-- optional JavaMail -->
       <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>1.4</version>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.javax.mail</artifactId>
+        <version>${javax-mail-version}</version>
       </dependency>
    
       <!-- optional XStream -->
