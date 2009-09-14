@@ -329,6 +329,12 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ognl/${pom.version}</bundle>
   </feature>
+  <feature name='camel-printer' version='${pom.version}'>
+    <bundle>mvn:commons-net/commons-net/${commons-net-version}</bundle>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-printer/${pom.version}</bundle>
+  </feature>
   <feature name='camel-quartz' version='${pom.version}'>
     <bundle>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${commons-dbcp-bundle-version}</bundle>
