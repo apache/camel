@@ -171,8 +171,12 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            Object me = getManagedObjectForEndpoint(endpoint);
-            getManagementStrategy().manageObject(me);
+            Object managedObject = getManagedObjectForEndpoint(endpoint);
+            if (managedObject == null) {
+                // endpoint should not be managed
+                return;
+            }
+            getManagementStrategy().manageObject(managedObject);
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
@@ -194,6 +198,11 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
     @SuppressWarnings("unchecked")
     private Object getManagedObjectForEndpoint(Endpoint endpoint) {
+        // we only want to manage singleton endpoints
+        if (!endpoint.isSingleton()) {
+            return null;
+        }
+
         if (endpoint instanceof ManagementAware) {
             return ((ManagementAware) endpoint).getManagedObject(endpoint);
         } else if (endpoint instanceof BrowsableEndpoint) {

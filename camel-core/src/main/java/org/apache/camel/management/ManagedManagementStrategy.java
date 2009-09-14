@@ -70,6 +70,10 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
     }
 
     public <T> T getManagedObjectName(Object managedObject, String customName, Class<T> nameType) throws Exception {
+        if (managedObject == null) {
+            return null;
+        }
+
         ObjectName objectName = null;
 
         if (managedObject instanceof ManagedCamelContext) {
