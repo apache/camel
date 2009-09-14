@@ -54,6 +54,7 @@
     <spring-version>2.5.6</spring-version>
     <spring-osgi-version>1.2.0</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
+    <javax-mail-version>1.4.1_1-SNAPSHOT</javax-mail-version>
     <jaxb-version>2.1.10</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <stax-api-version>1.0.1</stax-api-version>
@@ -74,6 +75,7 @@
     <groovy-version>1.6.3</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <junit-version>4.4</junit-version>
+    <ognl-version>2.7.3_1</ognl-version>
     <pax-exam-version>1.0.0</pax-exam-version>
     <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
     <saxon-version>9.1.0.1</saxon-version>
@@ -793,6 +795,13 @@
         <artifactId>groovy-engine</artifactId>
         <version>20070112</version>
       </dependency>
+      
+      <!-- optional ognl support -->
+      <dependency>
+         <groupId>org.apache.servicemix.bundles</groupId>
+         <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
+         <version>${ognl-version}</version>
+      </dependency>
 
       <!-- optional Pax support-->
       <dependency>
@@ -910,9 +919,9 @@
 
       <!-- optional JavaMail -->
       <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>${javamail-version}</version>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.javax.mail</artifactId>
+        <version>${javax-mail-version}</version>
       </dependency>
    
       <!-- optional XStream -->

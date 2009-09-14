@@ -181,7 +181,7 @@
     <bundle>mvn:org.apache.camel/camel-ftp/${pom.version}</bundle>
   </feature>
   <feature name='camel-guice' version='${pom.version}'>
-    <bundle>mvn:org.guiceyfruit/guiceyfruit-core/${guicyfruit-version}</bundle>
+    <bundle>mvn:org.guiceyfruit/guiceyfruit-core/${guiceyfruit-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-guice/${pom.version}</bundle>
   </feature>
@@ -307,8 +307,7 @@
   <feature name='camel-mail' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-context/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-context-support/${spring-version}</bundle>
-    <bundle>mvn:javax.activation/com.springsource.javax.activation/${spring-javax-activation-version}</bundle>
-    <bundle>mvn:javax.mail/com.springsource.javax.mail/${spring-javax-mail-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax.mail/${javax-mail-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${pom.version}</bundle>
   </feature>
@@ -327,8 +326,8 @@
   </feature>
   <feature name='camel-ognl' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-bundle-version></bundle>
-    <bundle>mvn:org.apache.camel/camel-ognl/${pom.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version></bundle>
+    <bundle>mvn:org.apache.camel/camel-ognl/'${pom.version}'</bundle>
   </feature>
   <feature name='camel-quartz' version='${pom.version}'>
     <bundle>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
