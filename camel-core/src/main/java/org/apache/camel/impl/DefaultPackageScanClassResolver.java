@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -214,7 +216,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
 
                 // If it's a file in a directory, trim the stupid file: spec
                 if (urlPath.startsWith("file:")) {
-                    urlPath = urlPath.substring(5);
+                    // file path can be temporary folder which uses characters that the URLDecoder decodes wrong
+                    // for example + being decoded to something else (+ can be used in temp folders on Mac OS)
+                    // to remedy this then create new path without using the URLDecoder
+                    urlPath = new URI(url.getFile()).getPath();
+
+                    if (urlPath.startsWith("file:")) {
+                        urlPath = urlPath.substring(5);
+                    }
                     isLocalFileSystem = true;
                 }
 
@@ -258,8 +267,10 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     }
                     loadImplementationsInJar(test, packageName, stream, urlPath, classes);
                 }
-            } catch (IOException ioe) {
-                log.warn("Could not read entries in url: " + url, ioe);
+            } catch (IOException e) {
+                log.warn("Could not read entries in url: " + url, e);
+            } catch (URISyntaxException e) {
+                log.warn("Could not read entries in url: " + url, e);
             }
         }
     }

@@ -124,8 +124,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
     }
     
     public void testFindByFilterPackageInJarUrl() throws Exception {
-        
-        ClassLoader savedClassLoader = null; 
+        ClassLoader savedClassLoader = null;
         try {
             savedClassLoader = Thread.currentThread().getContextClassLoader();
             URL url = getClass().getResource("/package_scan_test.jar");
@@ -145,8 +144,29 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
                 Thread.currentThread().setContextClassLoader(savedClassLoader);
             } 
         }
-
     }
     
+    public void testFindByFilterPackageInJarUrlWithPlusChars() throws Exception {
+        ClassLoader savedClassLoader = null;
+        try {
+            savedClassLoader = Thread.currentThread().getContextClassLoader();
+            URL url = getClass().getResource("/package+scan+test.jar");
+
+            URL urls[] = {new URL("jar:" + url.toString() + "!/")};
+            URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
+
+            Thread.currentThread().setContextClassLoader(classLoader);
+
+            filter.addIncludePattern("a.*.c.*");
+            resolver.addFilter(filter);
+            Set<Class> scanned = resolver.findByFilter(filter, "a.b.c");
+            assertEquals(1, scanned.size());
+            assertEquals("class a.b.c.Test", scanned.iterator().next().toString());
+        } finally {
+            if (savedClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(savedClassLoader);
+            }
+        }
+    }
 
 }
