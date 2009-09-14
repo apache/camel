@@ -47,7 +47,6 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends SpringTestSu
             // use the same endpoint but provide a header with the dynamic queue we send to
             // this allows us to reuse endpoints and not create a new endpoint for each and every jms queue
             // we send to
-            Thread.sleep(50);
             if (i > 0 && i % 50 == 0) {
                 LOG.info("Send " + i + " messages so far");
             }

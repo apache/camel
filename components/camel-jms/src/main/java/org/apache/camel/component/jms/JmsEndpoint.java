@@ -305,8 +305,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.selector = selector;
     }
 
+    @ManagedAttribute
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public synchronized Requestor getRequestor() throws Exception {
