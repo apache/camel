@@ -60,6 +60,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     private Boolean trace;
     private Boolean handleFault;
     private Long delayer;
+    private Boolean autoStartup = Boolean.TRUE;
 
     public RouteDefinition() {
     }
@@ -285,6 +286,14 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
+    /**
+     * Disables this route from being auto started when Camel starts.
+     */
+    public RouteDefinition noAutoStartup() {
+        setAutoStartup(Boolean.FALSE);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -372,10 +381,19 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         this.delayer = delayer;
     }
 
+    public Boolean isAutoStartup() {
+        return autoStartup;
+    }
+
+    @XmlAttribute
+    public void setAutoStartup(Boolean autoStartup) {
+        this.autoStartup = autoStartup;
+    }
+
     /**
      * Sets the bean ref name of the error handler builder to use on this route
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     public void setErrorHandlerRef(String errorHandlerRef) {
         this.errorHandlerRef = errorHandlerRef;
         // we use an specific error handler ref (from Spring DSL) then wrap that
@@ -456,6 +474,11 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
                     }
                 }
             }
+        }
+
+        // configure auto startup
+        if (autoStartup != null) {
+            routeContext.setAutoStartup(isAutoStartup());
         }
 
         // should inherit the intercept strategies we have defined

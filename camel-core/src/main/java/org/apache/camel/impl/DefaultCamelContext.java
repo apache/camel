@@ -838,7 +838,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // starting routes is done after, not during context startup
         synchronized (this) {
             for (RouteService routeService : routeServices.values()) {
-                routeService.start();
+                Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
+                if (autoStart == null || autoStart) {
+                    routeService.start();
+                } else {
+                    // should not start on startup
+                    LOG.info("Cannot start route " + routeService.getId() + " as it is configured with auto startup disabled.");
+                }
             }
         }
         if (LOG.isDebugEnabled()) {
@@ -1005,9 +1011,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         ServiceStatus status = getRouteStatus(key);
 
         if (status != null && status.isStarted()) {
-            // already started, then stop it
             LOG.debug("Route " + key + " is already started");
-            return;
         } else {
             routeServices.put(key, routeService);
             if (shouldStartRoutes()) {
@@ -1214,6 +1218,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setInflightRepository(InflightRepository repository) {
         this.inflightRepository = repository;
+    }
+
+    public void setAutoStartup(Boolean autoStartup) {
+        // noop as Camel always starts up
+    }
+
+    public boolean isAutoStartup() {
+        // Camel always starts up
+        return true;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

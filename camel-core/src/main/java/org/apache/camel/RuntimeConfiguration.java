@@ -89,4 +89,22 @@ public interface RuntimeConfiguration {
      */
     Long getDelayer();
 
+    /**
+     * Sets whether it should automatic start when Camel starts.
+     * <p/>
+     * Currently only routes can be disabled, as {@link CamelContext} itself are always started}
+     * <br/>
+     * Default is true to always startup.
+     *
+     * @param autoStartup  whether to auto startup.
+     */
+    void setAutoStartup(Boolean autoStartup);
+
+    /**
+     * Gets whether it should automatic start when Camel starts.
+     *
+     * @return true if should auto start
+     */
+    boolean isAutoStartup();
+
 }

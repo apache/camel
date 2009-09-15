@@ -55,6 +55,7 @@ public class DefaultRouteContext implements RouteContext {
     private Boolean stramCache;
     private Boolean handleFault;
     private Long delay;
+    private Boolean autoStartup = Boolean.TRUE;
 
     public DefaultRouteContext(RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.route = route;
@@ -239,6 +240,18 @@ public class DefaultRouteContext implements RouteContext {
             // fallback to the option from camel context
             return getCamelContext().getDelayer();
         }
+    }
+
+    public void setAutoStartup(Boolean autoStartup) {
+        this.autoStartup = autoStartup;
+    }
+
+    public boolean isAutoStartup() {
+        if (autoStartup != null) {
+            return autoStartup;
+        }
+        // default to true
+        return true;
     }
 
     public DataFormatDefinition getDataFormat(String ref) {
