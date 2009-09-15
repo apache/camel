@@ -46,7 +46,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     
     @Test
     public void testGetConstumerWithClientProxyAPI() {
-        // START SNIPPET: example
+        // START SNIPPET: ProxyExample
         Exchange exchange = template.send("direct://proxy", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
@@ -69,12 +69,12 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
-        // END SNIPPET: example        
+        // END SNIPPET: ProxyExample     
     }
     
     @Test
     public void testGetConstumerWithHttpCentralClientAPI() {
-     // START SNIPPET: example-http
+     // START SNIPPET: HttpExample
         Exchange exchange = template.send("direct://http", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
@@ -100,14 +100,14 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
-        // END SNIPPET: example-http 
+        // END SNIPPET: HttpExample 
     }
     
     @Test
     public void testGetConstumerWithCxfRsEndpoint() {
         
         Exchange exchange = template.send("cxfrs://http://localhost:9002?httpClientAPI=true", new Processor() {
-
+       
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
@@ -134,9 +134,10 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     
     @Test
     public void testProducerWithQueryParameters() {
-        
-        Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13", new Processor() {
-
+        // START SNIPPET: QueryExample
+        Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13"
+        // END SNIPPET: QueryExample                                   
+            , new Processor() {        
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
