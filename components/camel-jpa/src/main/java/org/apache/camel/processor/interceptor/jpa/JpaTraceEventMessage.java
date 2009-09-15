@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.interceptor;
+package org.apache.camel.processor.interceptor.jpa;
 
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.apache.camel.processor.interceptor.TraceEventMessage;
 
 /**
  * A JPA based {@link org.apache.camel.processor.interceptor.TraceEventMessage} that is capable of persisting

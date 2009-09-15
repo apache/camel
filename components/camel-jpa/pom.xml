@@ -33,7 +33,7 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.jpa.*,
       org.apache.camel.processor.idempotent.jpa.*,
-      org.apache.camel.processor.interceptor.*
+      org.apache.camel.processor.interceptor.jpa.*
     </camel.osgi.export.pkg>
   </properties>
 

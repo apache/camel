@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;

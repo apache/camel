@@ -50,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
     private static final transient Log LOG = LogFactory.getLog(TraceInterceptor.class);
-    private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.JpaTraceEventMessage";
+    private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";
     private Logger logger;
     private Producer traceEventProducer;
     private final ProcessorDefinition node;
