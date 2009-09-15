@@ -50,6 +50,12 @@
        <from uri="direct://http"/>
        <to uri="cxfrs://bean://rsClientHttp"/>
     </route>
+    <route>
+       <from uri="jetty://http://localhost:9003/testQuery"/>
+       <process ref="myProcessor" />
+    </route>
   </camelContext>
 
+  <bean id="myProcessor" class="org.apache.camel.component.cxf.jaxrs.CxfRsProducerTest$JettyProcessor"/>
+  
 </beans>

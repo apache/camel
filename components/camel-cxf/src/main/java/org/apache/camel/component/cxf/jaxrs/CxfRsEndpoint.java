@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -43,9 +44,11 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Log LOG = LogFactory.getLog(CxfRsEndpoint.class);
 
+    private Map<String, String> parameters;
     private List<Class<?>> resourceClasses;    
     private HeaderFilterStrategy headerFilterStrategy;
     private CxfRsBinding binding;
+    private boolean httpClientAPI;
 
     private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
     
@@ -55,6 +58,27 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     public CxfRsEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+    
+    public void setParameters(Map<String, String> param) {
+        parameters = param;
+    }
+    
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+    
+    public void setHttpClientAPI(boolean clientAPI) {
+        httpClientAPI = clientAPI;
+    }
+    
+    public boolean isHttpClientAPI() {
+        return httpClientAPI;
+    }
+    
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
     
     public HeaderFilterStrategy getHeaderFilterStrategy() {    

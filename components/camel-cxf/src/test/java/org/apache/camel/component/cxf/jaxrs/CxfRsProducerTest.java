@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.io.InputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -28,6 +30,14 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfRsProducerTest extends CamelSpringTestSupport {
+    
+    public static class JettyProcessor implements Processor {
+        public void process(Exchange exchange) throws Exception {
+            // check the query
+            Message inMessage = exchange.getIn();
+            exchange.getOut().setBody(inMessage.getHeader(Exchange.HTTP_QUERY, String.class));
+        }
+    }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {        
@@ -91,6 +101,60 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
         // END SNIPPET: example-http 
+    }
+    
+    @Test
+    public void testGetConstumerWithCxfRsEndpoint() {
+        
+        Exchange exchange = template.send("cxfrs://http://localhost:9002?httpClientAPI=true", new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                Message inMessage = exchange.getIn();
+                // set the Http method
+                inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                // set the relative path
+                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");                
+                // Specify the response class , cxfrs will use InputStream as the response object type 
+                inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
+                // since we use the Get method, so we don't need to set the message body
+                inMessage.setBody(null);                
+            }
+            
+        });
+     
+        // get the response message 
+        Customer response = (Customer) exchange.getOut().getBody();
+        
+        assertNotNull("The response should not be null ", response);
+        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
+        assertEquals("Get a wrong customer name", response.getName(), "John");
+        
+    }
+    
+    @Test
+    public void testProducerWithQueryParameters() {
+        
+        Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13", new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                Message inMessage = exchange.getIn();
+                // set the Http method
+                inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
+                inMessage.setBody(null);                
+            }
+            
+        });
+     
+        // get the response message 
+        String response = exchange.getOut().getBody(String.class);
+        
+        assertNotNull("The response should not be null ", response);
+        assertEquals("The response value is wrong", "q1=12&q2=13", response);
+        
+        
     }
     
 

@@ -88,7 +88,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             }
 
             // if endpoint is strict (not lenient) and we have unknown parameters configured then
-            // fail if there are parameters that could not be set, then they are probably miss spelt or not supported at all
+            // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
             if (!endpoint.isLenientProperties()) {
                 validateParameters(uri, parameters, null);
             }

@@ -19,6 +19,8 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
@@ -57,7 +59,11 @@ public class CxfRsProducer extends DefaultProducer {
         
         Message inMessage = exchange.getIn();
         Boolean httpClientAPI = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.class);
-        if (httpClientAPI != null && httpClientAPI.booleanValue()) {
+        // set the value with endpoint's option
+        if (httpClientAPI == null) {
+            httpClientAPI = ((CxfRsEndpoint)getEndpoint()).isHttpClientAPI();
+        }
+        if (httpClientAPI.booleanValue()) {
             invokeHttpClient(exchange);
         } else {
             invokeProxyClient(exchange);            
@@ -83,9 +89,17 @@ public class CxfRsProducer extends DefaultProducer {
         // set the path
         if (path != null) {
             client.path(path);
-        } 
+        }
         
-        CxfRsBinding binding = ((CxfRsEndpoint)getEndpoint()).getBinding();
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint)getEndpoint();
+        Map<String, String> maps = cxfRsEndpoint.getParameters();
+        if (maps != null) {
+            for (Map.Entry<String, String> entry : maps.entrySet()) {
+                client.query(entry.getKey(), entry.getValue());
+            }            
+        }
+        
+        CxfRsBinding binding = cxfRsEndpoint.getBinding();
 
         // set the body
         Object body = null;
