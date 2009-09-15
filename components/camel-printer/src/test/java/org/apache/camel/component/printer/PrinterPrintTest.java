@@ -21,17 +21,29 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class PrinterPrintTest extends ContextTestSupport {
+public class PrinterPrintTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+    
+    // Check if there is an awt library
+    private boolean isAwtHeadless() {
+                
+        if (Boolean.getBoolean("java.awt.headless")) {
+            System.out.println("Running headless. Skipping test as Images may not work.");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void sendFile() throws Exception {
@@ -101,7 +113,11 @@ public class PrinterPrintTest extends ContextTestSupport {
         });       
     }
 
+    @Test
     public void testSendingFileToPrinter() throws Exception {
+        if (isAwtHeadless()) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").
@@ -113,7 +129,11 @@ public class PrinterPrintTest extends ContextTestSupport {
         sendFile();
     }
     
+    @Test
     public void testSendingGIFToPrinter() throws Exception {
+        if (isAwtHeadless()) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").
@@ -125,7 +145,11 @@ public class PrinterPrintTest extends ContextTestSupport {
         sendGIF();
     }
     
+    @Test
     public void testSendingJPEGToPrinter() throws Exception {
+        if (isAwtHeadless()) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").
