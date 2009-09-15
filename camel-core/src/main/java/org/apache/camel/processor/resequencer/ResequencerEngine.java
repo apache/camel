@@ -223,7 +223,7 @@ public class ResequencerEngine<E> {
     /**
      * Attempts to deliver a single element from the head of the resequencer
      * queue (sequence). Only elements which have not been scheduled for timing
-     * out or which already timed out can be delivered. Elements are deliveref via
+     * out or which already timed out can be delivered. Elements are delivered via
      * {@link SequenceSender#sendElement(Object)}.
      *
      * @return <code>true</code> if the element has been delivered

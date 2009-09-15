@@ -193,7 +193,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         
         @Override
         public void run() {
-            while (true) {
+            while (isRunAllowed()) {
                 try {
                     deliveryRequestLock.lock();
                     try {
