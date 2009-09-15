@@ -45,7 +45,18 @@ public class WhenDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "When[" + getExpression() + " -> " + getOutputs() + "]";
+        StringBuilder sb = new StringBuilder();
+        if (getExpression() != null) {
+            String language = getExpression().getLanguage();
+            if (language != null) {
+                sb.append(language).append("{");
+            }
+            sb.append(getExpression().getLabel());
+            if (language != null) {
+                sb.append("}");
+            }
+        }       
+        return "When[" + sb.toString() + " -> " + getOutputs() + "]";
     }
 
     @Override
