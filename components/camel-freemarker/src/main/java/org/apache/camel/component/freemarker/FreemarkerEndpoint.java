@@ -81,12 +81,32 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
         this.configuration = configuration;
     }
 
+    public FreemarkerEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
+        String newUri = uri.replace(getResourceUri(), newResourceUri);
+        if (log.isDebugEnabled()) {
+            log.debug("Getting endpoint with URI: " + newUri);
+        }
+        return (FreemarkerEndpoint) getCamelContext().getEndpoint(newUri);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
         ObjectHelper.notNull(configuration, "configuration");
         ObjectHelper.notNull(path, "resourceUri");
+
+        String newResourceUri = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI, String.class);
+        if (newResourceUri != null) {
+            exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI);
+
+            if (log.isDebugEnabled()) {
+                log.debug(FreemarkerConstants.FREEMARKER_RESOURCE_URI + " set to " + newResourceUri + " creating new endpoint to handle exchange");
+            }
+            FreemarkerEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
+            newEndpoint.onExchange(exchange);
+            return;
+        }
 
         Map variableMap = ExchangeHelper.createVariableMap(exchange);
 
