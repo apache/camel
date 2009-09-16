@@ -150,7 +150,11 @@
     <bundle>mvn:org.apache.camel/camel-ftp/${pom.version}</bundle>
   </feature>
   <feature name='camel-guice' version='${pom.version}'>
-    <bundle>mvn:org.guiceyfruit/guiceyfruit-core/${guiceyfruit-version}</bundle>
+    <bundle>wrap:mvn:org.guiceyfruit/guiceyfruit-core/${guiceyfruit-version}</bundle>
+    <bundle>wrap:mvn:org.guiceyfruit/guice-jsr250/${guiceyfruit-version}</bundle>
+    <bundle>wrap:mvn:org.guiceyfruit/guice-core/${guiceyfruit-version}</bundle>
+    <bundle>wrap:mvn:com.google.code.google-collections/google-collect/${google-collection-version}</bundle>
+    <bundle>wrap:mvn:cglib:cglib-nodep/${cglib-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-guice/${pom.version}</bundle>
   </feature>
