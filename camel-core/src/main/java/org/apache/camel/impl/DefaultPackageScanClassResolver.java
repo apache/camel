@@ -219,7 +219,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     // file path can be temporary folder which uses characters that the URLDecoder decodes wrong
                     // for example + being decoded to something else (+ can be used in temp folders on Mac OS)
                     // to remedy this then create new path without using the URLDecoder
-                    urlPath = new URI(url.getFile()).getPath();
+                    try {
+                        urlPath = new URI(url.getFile()).getPath();
+                    } catch (URISyntaxException e) {
+                        // fallback to use as it was given from the URLDecoder
+                        // this allows us to work on Windows if users have spaces in paths
+                    }
 
                     if (urlPath.startsWith("file:")) {
                         urlPath = urlPath.substring(5);
@@ -244,8 +249,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Loading from directory: " + file);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Loading from directory: " + file);
                     }
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
@@ -262,15 +267,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                         stream = new FileInputStream(file);
                     }
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("Loading from jar: " + file);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Loading from jar: " + file);
                     }
                     loadImplementationsInJar(test, packageName, stream, urlPath, classes);
                 }
             } catch (IOException e) {
-                log.warn("Could not read entries in url: " + url, e);
-            } catch (URISyntaxException e) {
-                log.warn("Could not read entries in url: " + url, e);
+                // use debug logging to avoid being to noisy in logs
+                log.debug("Could not read entries in url: " + url, e);
             }
         }
     }
@@ -370,7 +374,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 }
             }
         } catch (IOException ioe) {
-            log.error("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
+            log.warn("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
                 + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
             ObjectHelper.close(jarStream, urlPath, log);
@@ -393,7 +397,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             boolean found = false;
             for (ClassLoader classLoader : set) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Testing for class " + externalName + " matches criteria [" + test + "] using ClassLoader:" + classLoader);
+                    log.trace("Testing for class " + externalName + " matches criteria [" + test + "] using classloader:" + classLoader);
                 }
                 try {
                     Class type = classLoader.loadClass(externalName);
@@ -412,12 +416,13 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     log.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
                         + ". Reason: " + e, e);
                 } catch (NoClassDefFoundError e) {
-                    log.debug("Could not find the class defintion '" + fqn + "' in classloader: " + classLoader
-                              + ". Reason: " + e, e);
+                    log.debug("Could not find the class definition '" + fqn + "' in classloader: " + classLoader
+                        + ". Reason: " + e, e);
                 }
             }
             if (!found) {
-                log.warn("Could not find class '" + fqn + "' in any classloaders: " + set);
+                // use debug to avoid being noisy in logs
+                log.debug("Could not find class '" + fqn + "' in any classloaders: " + set);
             }
         } catch (Exception e) {
             log.warn("Could not examine class '" + fqn + "' due to a " + e.getClass().getName()
