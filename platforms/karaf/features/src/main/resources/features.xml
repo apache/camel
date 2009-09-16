@@ -182,6 +182,9 @@
   </feature>
   <feature name='camel-guice' version='${pom.version}'>
     <bundle>mvn:org.guiceyfruit/guiceyfruit-core/${guiceyfruit-version}</bundle>
+    <bundle>mvn:org.guiceyfruit/guice-all/${guiceyfruit-version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${gernimo-annotation-spec-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/${aopalliance-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-guice/${pom.version}</bundle>
   </feature>
