@@ -30,6 +30,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.camel.Component;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,7 +95,15 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         }
     }
 
-    protected synchronized void addComponentEntry(String entryPath, Bundle bundle, Map<String, ComponentEntry> entries) {
+    protected synchronized void addComponentEntry(String entryPath, Bundle bundle, Map<String, ComponentEntry> entries, Class clazz) {
+        // Check bundle compatibility
+        try {
+            if (bundle.loadClass(clazz.getName()) != clazz) {
+                return;
+            }
+        } catch (Throwable t) {
+            return;
+        }
         Enumeration e = bundle.getEntryPaths(entryPath);
         if (e != null) {
             while (e.hasMoreElements()) {
@@ -110,12 +122,21 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     }
 
     protected void mayBeAddComponentAndLanguageFor(Bundle bundle) {        
-        addComponentEntry(META_INF_COMPONENT, bundle, COMPONENTS);
-        addComponentEntry(META_INF_LANGUAGE, bundle, LANGUAGES);
-        addComponentEntry(META_INF_LANGUAGE_RESOLVER, bundle, LANGUAGE_RESOLVERS);
+        addComponentEntry(META_INF_COMPONENT, bundle, COMPONENTS, Component.class);
+        addComponentEntry(META_INF_LANGUAGE, bundle, LANGUAGES, Language.class);
+        addComponentEntry(META_INF_LANGUAGE_RESOLVER, bundle, LANGUAGE_RESOLVERS, LanguageResolver.class);
     }
     
     protected synchronized void mayBeAddTypeConverterFor(Bundle bundle) {
+        // Check bundle compatibility
+        try {
+            Class clazz = TypeConverter.class;
+            if (bundle.loadClass(clazz.getName()) != clazz) {
+                return;
+            }
+        } catch (Throwable t) {
+            return;
+        }
         try {
             Enumeration e = bundle.getResources(META_INF_TYPE_CONVERTER);
             if (e != null) {

@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>1.6.1</version>
+      <version>${velocity-version}</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>

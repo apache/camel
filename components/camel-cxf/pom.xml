@@ -33,7 +33,6 @@
   <description>Camel CXF support</description>
 
   <properties>
-     <camel.osgi.import.pkg>org.apache.cxf*;version="[2.2,3.0.0)",*</camel.osgi.import.pkg>
      <camel.osgi.export.pkg>org.apache.camel.component.cxf.*</camel.osgi.export.pkg>
   </properties>
 

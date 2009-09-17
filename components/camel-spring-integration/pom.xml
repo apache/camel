@@ -35,7 +35,6 @@
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
-    <spring-integration-version>1.0.1.RELEASE</spring-integration-version>
   </properties>
 
   <version>1.6.2-SNAPSHOT</version>

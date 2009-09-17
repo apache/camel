@@ -40,6 +40,7 @@
       <aopalliance-bundle-version>1.0_1</aopalliance-bundle-version>
       <asm-bundle-version>2.2.3_1</asm-bundle-version>
       <dom4j-bundle-version>1.6_1</dom4j-bundle-version>
+      <cglib-version>2.1_3_2</cglib-version>
       <commons-beanutils-bundle-version>1.7.0_1</commons-beanutils-bundle-version>
       <commons-dbcp-bundle-version>1.2.2_3</commons-dbcp-bundle-version>
       <commons-csv-version>1.0-r706899_1</commons-csv-version>
@@ -84,6 +85,8 @@
       <servicemix-specs-version>1.4-SNAPSHOT</servicemix-specs-version>
       <servlet-api-2.5-version>2.5-20081211</servlet-api-2.5-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>      
+      <spring-version>2.5.6.SEC01</spring-version>
+      <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-commons-collections-version>3.2.1</spring-commons-collections-version>
       <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
       <spring-javax-persistence-version>1.99.0</spring-javax-persistence-version>
