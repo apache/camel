@@ -19,9 +19,6 @@ package org.apache.camel.osgi;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
 public class CamelNamespaceHandler extends org.apache.camel.spring.handler.CamelNamespaceHandler {
 
     public void init() {
@@ -29,8 +26,7 @@ public class CamelNamespaceHandler extends org.apache.camel.spring.handler.Camel
         registerParser("camelContext", new CamelContextBeanDefinitionParser(CamelContextFactoryBean.class));
     }
 
-    // TODO: This does not look correct with the code below, why are the so few jaxb packages?
-    
+    // It just add the package of the class for initiate the JAXB context
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.osgi.CamelContextFactoryBean.class);

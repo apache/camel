@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.remoting;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;

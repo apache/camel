@@ -18,7 +18,6 @@ package org.apache.camel.component.feed;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**

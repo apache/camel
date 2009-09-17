@@ -24,7 +24,6 @@ import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.DataQueue;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;

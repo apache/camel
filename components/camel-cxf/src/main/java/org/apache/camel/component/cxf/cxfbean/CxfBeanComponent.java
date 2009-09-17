@@ -19,9 +19,8 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
+import org.apache.camel.Endpoint;       
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * CXF Bean component creates {@link CxfBeanEndpoint} which represents a

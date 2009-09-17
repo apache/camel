@@ -25,17 +25,15 @@ import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
-import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
-import org.apache.cxf.configuration.spring.BusWiringType;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.model.UserResource;
-import org.apache.cxf.jaxrs.spring.JAXRSClientFactoryBeanDefinitionParser;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
 
 public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
     public CxfRsClientFactoryBeanDefinitionParser() {

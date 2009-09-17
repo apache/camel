@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.spring.spi.TransactionErrorHandler;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

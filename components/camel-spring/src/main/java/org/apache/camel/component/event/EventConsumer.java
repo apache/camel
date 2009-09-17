@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.event;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 

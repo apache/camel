@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;

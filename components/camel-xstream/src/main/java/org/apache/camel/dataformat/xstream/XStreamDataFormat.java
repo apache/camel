@@ -31,7 +31,6 @@ import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.DataFormat;
 
 /**

@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
-import org.apache.camel.component.http.HttpMessage;
 import org.mortbay.util.ajax.Continuation;
 import org.mortbay.util.ajax.ContinuationSupport;
 

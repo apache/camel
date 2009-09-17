@@ -18,7 +18,6 @@ package org.apache.camel.web.util;
 
 import java.util.List;
 
-import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;

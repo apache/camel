@@ -39,7 +39,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import com.sun.jersey.api.view.Viewable;
-
 import groovy.lang.GroovyClassLoader;
 
 import org.apache.camel.CamelContext;
@@ -48,7 +47,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
-import org.apache.camel.web.util.GroovyRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -27,7 +27,6 @@ import com.ibm.as400.access.IllegalObjectTypeException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultExchange;

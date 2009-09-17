@@ -18,8 +18,6 @@
 package org.apache.camel.component.spring.integration.adapter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 
 /**
  * The Abstract class for the Spring Integration Camel Adapter

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.feed;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;

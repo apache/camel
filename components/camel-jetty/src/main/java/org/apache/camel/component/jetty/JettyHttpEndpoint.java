@@ -20,15 +20,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.component.http.HttpPollingConsumer;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.mortbay.jetty.Handler;

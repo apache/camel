@@ -18,10 +18,8 @@ package org.apache.camel.component.xmpp;
 
 import java.util.Map;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
-
 import org.jivesoftware.smack.packet.Message;
 
 /**

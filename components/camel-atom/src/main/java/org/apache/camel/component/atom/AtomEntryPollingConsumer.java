@@ -18,13 +18,10 @@ package org.apache.camel.component.atom;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;

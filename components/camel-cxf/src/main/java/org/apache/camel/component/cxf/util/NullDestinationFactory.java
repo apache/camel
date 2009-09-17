@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.cxf.binding.AbstractBindingFactory;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.DestinationFactory;

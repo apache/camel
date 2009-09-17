@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;

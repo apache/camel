@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.Message;
 
 /**
  * Represents a JAXB2 representation of a Camel {@link Message} header

@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.Producer;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;

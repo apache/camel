@@ -17,7 +17,6 @@
 package org.apache.camel.language.jxpath;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.commons.jxpath.CompiledExpression;

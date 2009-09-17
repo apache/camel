@@ -17,12 +17,12 @@
 package org.apache.camel.osgi;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;

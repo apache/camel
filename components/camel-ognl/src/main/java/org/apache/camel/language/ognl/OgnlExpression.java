@@ -20,7 +20,6 @@ import ognl.Ognl;
 import ognl.OgnlContext;
 import ognl.OgnlException;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.impl.ExpressionSupport;

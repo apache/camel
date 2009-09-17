@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.spring.integration;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultMessage;
-import org.springframework.integration.core.MessageHeaders;
 
 /**
  * The Message {@link DefaultMessage} implementation

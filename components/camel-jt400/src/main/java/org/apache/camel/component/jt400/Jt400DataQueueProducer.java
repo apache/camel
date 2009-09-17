@@ -18,7 +18,6 @@ package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.DataQueue;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;

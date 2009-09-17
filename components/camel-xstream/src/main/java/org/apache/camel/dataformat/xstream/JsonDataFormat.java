@@ -30,7 +30,6 @@ import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.DataFormat;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 

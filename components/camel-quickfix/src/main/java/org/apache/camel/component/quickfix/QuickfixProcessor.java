@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 
 public class QuickfixProcessor implements Processor {
 

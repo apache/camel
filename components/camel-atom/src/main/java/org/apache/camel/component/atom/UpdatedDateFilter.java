@@ -18,9 +18,7 @@ package org.apache.camel.component.atom;
 
 import java.util.Date;
 
-import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.commons.logging.Log;

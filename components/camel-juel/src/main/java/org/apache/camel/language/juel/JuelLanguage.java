@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.juel;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;

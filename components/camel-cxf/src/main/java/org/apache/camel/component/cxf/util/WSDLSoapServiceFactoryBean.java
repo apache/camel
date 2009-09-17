@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.util;
 
 import javax.xml.namespace.QName;
 
-import org.apache.cxf.binding.AbstractBindingFactory;
 import org.apache.cxf.binding.soap.interceptor.CheckFaultInterceptor;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
 import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
