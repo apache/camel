@@ -133,21 +133,21 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         @SuppressWarnings("unchecked")
         static Set<String> getImplementationsInBundle(PackageScanFilter test, String packageName, ClassLoader loader, Method mth) {
             try {
-                org.osgi.framework.Bundle bundle = (org.osgi.framework.Bundle) mth.invoke(loader);
-                org.osgi.framework.Bundle[] bundles = null;
+                Bundle bundle = (Bundle) mth.invoke(loader);
+                Bundle[] bundles = null;
                 
                 BundleContext bundleContext = bundle.getBundleContext();
                 
                 if (bundleContext == null) {
                     // Bundle is not in STARTING|ACTIVE|STOPPING state
                     // (See OSGi 4.1 spec, section 4.3.17)
-                    bundles = new org.osgi.framework.Bundle[] {bundle};
+                    bundles = new Bundle[] {bundle};
                 } else {
                     bundles = bundleContext.getBundles();
                 }
                 
                 Set<String> urls = new HashSet<String>();
-                for (org.osgi.framework.Bundle bd : bundles) {
+                for (Bundle bd : bundles) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Searching in bundle:" + bd);
                     }

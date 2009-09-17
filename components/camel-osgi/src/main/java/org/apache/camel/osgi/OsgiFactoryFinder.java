@@ -79,12 +79,12 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
        
     public BundleEntry getResource(String name) {
         BundleEntry entry = null;
-        org.osgi.framework.Bundle[] bundles = null;       
+        Bundle[] bundles = null;       
         BundleContext bundleContext = Activator.getBundle().getBundleContext();
         if (bundleContext == null) {
             // Bundle is not in STARTING|ACTIVE|STOPPING state
             // (See OSGi 4.1 spec, section 4.3.17)
-            bundles = new org.osgi.framework.Bundle[] {Activator.getBundle()};
+            bundles = new Bundle[] {Activator.getBundle()};
         } else {
             bundles = bundleContext.getBundles();
         }
