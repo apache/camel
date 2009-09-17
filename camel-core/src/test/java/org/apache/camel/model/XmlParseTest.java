@@ -30,6 +30,7 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
  * @version $Revision$
  */
 public class XmlParseTest extends XmlTestSupport {
+
     public void testParseSimpleRouteXml() throws Exception {
         RouteDefinition route = assertOneRoute("simpleRoute.xml");
         assertFrom(route, "seda:a");
@@ -233,6 +234,66 @@ public class XmlParseTest extends XmlTestSupport {
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
         assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
         assertTrue("The loadBalancer shoud be TopicLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof TopicLoadBalancerDefinition);
+    }
+
+    public void testParseHL7DataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithHL7DataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseXStreamDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithXStreamDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseXMLBeansDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithXMLBeansDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseXMLSecurityDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithXMLSecurityDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseTidyMarkupDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithTidyMarkupDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseRSSDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithRSSDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseJSonDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithJSonDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseJaxbDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithJSonDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseFlatpackDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithFlatpackDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseCvsDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithCvsDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseBindyDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithBindyDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
+    public void testParseArtixDSDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithArtixDSDataFormat.xml");
+        assertFrom(route, "seda:a");
     }
 
     public void testParseBatchResequencerXml() throws Exception {

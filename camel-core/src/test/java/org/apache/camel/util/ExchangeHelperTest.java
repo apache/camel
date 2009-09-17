@@ -18,20 +18,18 @@ package org.apache.camel.util;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
-public class ExchangeHelperTest extends TestCase {
-    private static final transient Log LOG = LogFactory.getLog(ExchangeHelperTest.class);
+public class ExchangeHelperTest extends ContextTestSupport {
 
     protected Exchange exchange;
 
@@ -45,7 +43,7 @@ public class ExchangeHelperTest extends TestCase {
             String value = ExchangeHelper.getMandatoryProperty(exchange, "bar", String.class);
             fail("Should have failed but got: " + value);
         } catch (NoSuchPropertyException e) {
-            LOG.debug("Caught expected: " + e, e);
+            assertEquals("bar", e.getPropertyName());
         }
     }
 
@@ -54,12 +52,42 @@ public class ExchangeHelperTest extends TestCase {
             List value = ExchangeHelper.getMandatoryProperty(exchange, "foo", List.class);
             fail("Should have failed but got: " + value);
         } catch (NoSuchPropertyException e) {
-            LOG.debug("Caught expected: " + e, e);
+            assertEquals("foo", e.getPropertyName());
+        }
+    }
+
+    public void testMissingHeader() throws Exception {
+        try {
+            String value = ExchangeHelper.getMandatoryHeader(exchange, "unknown", String.class);
+            fail("Should have failed but got: " + value);
+        } catch (NoSuchHeaderException e) {
+            assertEquals("unknown", e.getHeaderName());
+        }
+    }
+
+    public void testHeaderOfIncompatibleType() throws Exception {
+        exchange.getIn().setHeader("foo", 123);
+        try {
+            List value = ExchangeHelper.getMandatoryHeader(exchange, "foo", List.class);
+            fail("Should have failed but got: " + value);
+        } catch (NoSuchHeaderException e) {
+            assertEquals("foo", e.getHeaderName());
+        }
+    }
+
+    public void testNoSuchBean() throws Exception {
+        try {
+            ExchangeHelper.lookupMandatoryBean(exchange, "foo");
+            fail("Should have thrown an exception");
+        } catch (NoSuchBeanException e) {
+            assertEquals("No bean could be found in the registry for: foo", e.getMessage());
+            assertEquals("foo", e.getName());
         }
     }
 
     @Override
     protected void setUp() throws Exception {
+        super.setUp();
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.setProperty("foo", 123);
     }
