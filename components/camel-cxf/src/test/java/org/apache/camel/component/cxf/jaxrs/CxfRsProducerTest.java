@@ -138,16 +138,16 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13"
         // END SNIPPET: QueryExample                                   
             , new Processor() {        
-            public void process(Exchange exchange) throws Exception {
-                exchange.setPattern(ExchangePattern.InOut);
-                Message inMessage = exchange.getIn();
-                // set the Http method
-                inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
-                inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
-                inMessage.setBody(null);                
-            }
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setPattern(ExchangePattern.InOut);
+                    Message inMessage = exchange.getIn();
+                    // set the Http method
+                    inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                    inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
+                    inMessage.setBody(null);                
+                }
             
-        });
+            });
      
         // get the response message 
         String response = exchange.getOut().getBody(String.class);
