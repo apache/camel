@@ -22,16 +22,12 @@ import java.lang.reflect.Method;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spring.Main;
-import org.apache.camel.util.ObjectHelper;
 
 public class CamelRouterBuilder extends RouteBuilder {
     private static final String SOAP_ENDPOINT_URI = "cxf://http://localhost:9006/soap"

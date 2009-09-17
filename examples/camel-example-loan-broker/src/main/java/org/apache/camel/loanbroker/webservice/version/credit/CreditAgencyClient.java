@@ -19,7 +19,6 @@ package org.apache.camel.loanbroker.webservice.version.credit;
 import org.apache.camel.loanbroker.webservice.version.Constants;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 
 public class CreditAgencyClient {

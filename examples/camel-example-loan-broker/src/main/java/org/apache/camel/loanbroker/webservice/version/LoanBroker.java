@@ -20,26 +20,18 @@ package org.apache.camel.loanbroker.webservice.version;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.ConnectionFactory;
-
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.camel.component.jms.JmsComponent;
-
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.loanbroker.webservice.version.bank.BankServer;
 import org.apache.camel.loanbroker.webservice.version.credit.CreditAgencyServer;
 import org.apache.camel.loanbroker.webservice.version.credit.CreditAgencyWS;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.spring.Main;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 
 

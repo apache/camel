@@ -16,10 +16,8 @@
  */
 package org.apache.camel.example.bam;
 
-import org.apache.camel.Processor;
 import org.apache.camel.bam.ActivityBuilder;
 import org.apache.camel.bam.ProcessBuilder;
-
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 

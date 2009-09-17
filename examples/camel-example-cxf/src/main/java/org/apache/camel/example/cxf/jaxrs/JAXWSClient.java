@@ -18,7 +18,6 @@
 package org.apache.camel.example.cxf.jaxrs;
 
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
-import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 
 public final class JAXWSClient {

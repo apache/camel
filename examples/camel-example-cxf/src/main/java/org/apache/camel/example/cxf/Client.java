@@ -19,8 +19,9 @@ package org.apache.camel.example.cxf;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.ProtocolException;
+
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.SOAPService;

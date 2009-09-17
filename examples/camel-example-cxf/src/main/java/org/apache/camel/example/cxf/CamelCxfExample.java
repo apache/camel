@@ -17,11 +17,8 @@
 package org.apache.camel.example.cxf;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.example.jms.JmsBroker;
-
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**

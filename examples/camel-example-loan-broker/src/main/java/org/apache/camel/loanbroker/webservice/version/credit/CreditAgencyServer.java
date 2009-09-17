@@ -20,8 +20,6 @@ package org.apache.camel.loanbroker.webservice.version.credit;
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.loanbroker.webservice.version.Constants;
-import org.apache.camel.loanbroker.webservice.version.bank.Bank;
-import org.apache.camel.loanbroker.webservice.version.bank.BankServer;
 
 public class CreditAgencyServer {
     private Endpoint endpoint;

@@ -24,11 +24,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
-import org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
-import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 
 public final class JAXRSClient {
     
