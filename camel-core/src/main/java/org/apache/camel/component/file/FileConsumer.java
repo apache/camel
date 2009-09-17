@@ -55,7 +55,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             return;
         }
         for (File file : files) {
-            // createa a generic file
+            // creates a generic file
             GenericFile<File> gf = asGenericFile(endpointPath, file);
 
             if (file.isDirectory()) {

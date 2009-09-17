@@ -18,19 +18,17 @@ package org.apache.camel.language;
 
 import org.apache.camel.LanguageTestSupport;
 
-public class ConstantTest extends LanguageTestSupport {
+public class HeaderTest extends LanguageTestSupport {
 
-    public void testConstantExpressions() throws Exception {
-        // We can put anything in here, the expression will 
-        // always evaluate to itself
-        assertExpression("a value", "a value");
+    public void testHeaderExpressions() throws Exception {
+        assertExpression("foo", "abc");
     }
- 
+
     public void testPredicates() throws Exception {
-        assertPredicate("another value");
+        assertPredicate("foo");
     }
 
     protected String getLanguageName() {
-        return "constant";
+        return "header";
     }
 }

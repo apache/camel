@@ -24,8 +24,8 @@ import org.apache.camel.util.ExchangeHelper;
  * @version $Revision$
  */
 public abstract class LanguageTestSupport extends ExchangeTestSupport {
-    protected abstract String getLanguageName();
 
+    protected abstract String getLanguageName();
 
     /**
      * Asserts that the given predicate expression evaluated on the current language and message

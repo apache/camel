@@ -17,20 +17,25 @@
 package org.apache.camel.language;
 
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.Exchange;
 
-public class ConstantTest extends LanguageTestSupport {
+public class PropertyTest extends LanguageTestSupport {
 
-    public void testConstantExpressions() throws Exception {
-        // We can put anything in here, the expression will 
-        // always evaluate to itself
-        assertExpression("a value", "a value");
+    public void testProertyExpressions() throws Exception {
+        assertExpression("quote", "Camel rocks");
     }
- 
+
     public void testPredicates() throws Exception {
-        assertPredicate("another value");
+        assertPredicate("quote");
     }
 
     protected String getLanguageName() {
-        return "constant";
+        return "property";
+    }
+
+    @Override
+    protected void populateExchange(Exchange exchange) {
+        super.populateExchange(exchange);
+        exchange.setProperty("quote", "Camel rocks");
     }
 }
