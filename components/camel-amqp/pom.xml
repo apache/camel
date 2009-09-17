@@ -32,7 +32,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.amqp.*</camel.osgi.export.pkg>
-    <qpid-version>0.5.0</qpid-version>
   </properties>
 
   <repositories>

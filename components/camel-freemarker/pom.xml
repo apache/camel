@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.15</version>
+            <version>${freemarker-version}</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

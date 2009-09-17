@@ -36,17 +36,20 @@
     </camel.osgi.export.pkg>
 	<camel.osgi.import>
 		!javax.xml.bind.annotation.adapters,
+	    !org.apache.camel.*,
 		org.apache.xalan.xsltc.trax;resolution:=optional,
         javax.activation;resolution:=optional,
         javax.xml.bind;resolution:=optional,
         javax.xml.bind.annotation;resolution:=optional,
         javax.xml.stream;resolution:=optional,
-        org.apache.camel.spring.util;resolution:=optional,
         org.springframework.jmx.export.annotation;resolution:=optional,
         org.springframework.jmx.export.assembler;resolution:=optional,
         org.springframework.jmx.export.metadata;resolution:=optional,
 		*
     </camel.osgi.import>
+    <camel.osgi.dynamic>
+        org.apache.camel.spring.util;${camel.osgi.import.strict.version},org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version}
+    </camel.osgi.dynamic>
   </properties>
 
   <repositories>

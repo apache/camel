@@ -47,7 +47,7 @@
     <dependency>
       <groupId>net.sf.flatpack</groupId>
       <artifactId>flatpack</artifactId>
-      <version>3.1.1</version>
+      <version>${flatpack-version}</version>
     </dependency>
 
     <!-- testing -->

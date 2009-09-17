@@ -43,7 +43,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
     <cxf-version>2.2.2</cxf-version>
-    <felix-version>1.4.1</felix-version>
+    <felix-version>2.0.0</felix-version>
     <jetty-version>6.1.18</jetty-version>
   </properties>
 
@@ -275,12 +275,14 @@
 	      <instructions>
 	        <Bundle-Name>${artifactId}</Bundle-Name>
 	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
-                <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
+            <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
 	        <Export-Package>${camel.osgi.export}</Export-Package>
 	        <Import-Package>${camel.osgi.import}</Import-Package>
+	        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
 	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
 	        <Implementation-Title>Apache Camel</Implementation-Title>
 	        <Implementation-Version>${project.version}</Implementation-Version>
+            <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
 	      </instructions>
 	    </configuration>
       </plugin>

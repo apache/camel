@@ -40,7 +40,6 @@
     <apacheds-version>1.5.4</apacheds-version>
     <axiom-version>1.2.8</axiom-version>
     <cxf-version>2.2.3</cxf-version>
-    <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
@@ -68,6 +67,8 @@
     <commons-dbcp-version>1.2.2</commons-dbcp-version>
     <derby-version>10.4.2.0</derby-version>
     <easymock-version>2.4</easymock-version>
+    <flatpack-version>3.1.1</flatpack-version>
+    <freemarker-version>2.3.15</freemarker-version>
     <hamcrest-version>1.2-dev1</hamcrest-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
@@ -78,28 +79,65 @@
     <ognl-version>2.7.3_1</ognl-version>
     <pax-exam-version>1.0.0</pax-exam-version>
     <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
+    <qpid-version>0.5.0</qpid-version>
     <saxon-version>9.1.0.1</saxon-version>
     <scala-version>2.7.3</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
+    <smack-version>3.0.4</smack-version>
     <spring-ehcache-version>1.6.2</spring-ehcache-version>
+    <spring-integration-version>1.0.3.RELEASE</spring-integration-version>
+    <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
+    <stringtemplate-version>3.0</stringtemplate-version>
+    <tagsoup-version>1.2</tagsoup-version>
     <testng-version>5.8</testng-version>
+    <velocity-version>1.6.2</velocity-version>
     <xbean-spring-version>3.5</xbean-spring-version>
     <xstream-version>1.3.1</xstream-version>
     <xmlsec-version>1.4.2</xmlsec-version>
     <javamail-version>1.4.1</javamail-version>
     <xerces-version>2.8.0</xerces-version>
     <xalan-version>2.7.1</xalan-version>
+    <xmlbeans-version>2.4.0</xmlbeans-version>
 
     <!-- OSGi bundles properties -->
-    <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
+    <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
+    <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
+    <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
+    <camel.osgi.import.defaults>
+        org.apache.commons.logging.*;version="[1.1,2)",
+        org.apache.cxf.*;version="[2.2,3)",
+        org.apache.qpid.*;version="[0.5,0.6)",
+        org.apache.abdera.*;version="[0.4,0.5)",
+        org.apache.commons.httpclient.*;version="[3.1,4.0)",
+        org.apache.mina.*;version="[1.1.7,2.0)",
+        org.apache.velocity.*;version="[1.6.2,2)",
+        org.apache.xmlbeans.*;version="[2.4,3)",
+        com.thoughtworks.xstream.*;version="[1.3,2)",
+        org.antlr.stringtemplate.*;version="[3.0,4)",
+        org.jivesoftware.smack.*;version="[3.0,4)",
+        org.ccil.cowan.tagsoup.*;version="[1.2,2)",
+        org.mortbay.cometd.*;version="[6.1,7)",
+        net.sf.flatpack.*;version="[3.1.1,4)",
+        freemarker.*;version="[2.3.15,3)",
+    </camel.osgi.import.defaults>
+    <camel.osgi.import.additional />
+    <camel.osgi.import.pkg>
+        !javax.xml.bind.annotation.adapters,
+        !${camel.osgi.export.pkg},
+        org.apache.camel.*;${camel.osgi.import.camel.version},
+        ${camel.osgi.import.defaults},
+        ${camel.osgi.import.additional},
+        *
+    </camel.osgi.import.pkg>
     <camel.osgi.activator />
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
     <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
+    <camel.osgi.dynamic />
     <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
-    <camel.osgi.exclude.dependencies>true</camel.osgi.exclude.dependencies>
+    <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
 
     <!-- encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -945,7 +983,7 @@
       <dependency>
         <groupId>org.ccil.cowan.tagsoup</groupId>
         <artifactId>tagsoup</artifactId>
-        <version>1.2</version>
+        <version>${tagsoup-version}</version>
       </dependency>
 
       <!-- optional Axiom -->
@@ -959,6 +997,74 @@
   </dependencyManagement>
 
   <build>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <version>1.2</version>
+              <inherited>true</inherited>
+              <executions>
+                  <execution>
+                      <id>create-prop</id>
+                      <phase>initialize</phase>
+                      <configuration>
+                          <tasks>
+                              <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
+                              <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp"/>
+                              <property name="mv" value="${project.version}"/>
+                              <echo message="Maven version:   ${mv}" />
+                              <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0"/>
+                              <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0"/>
+                              <propertyregex property="ov.p3" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\3" defaultValue=".0"/>
+                              <propertyregex property="ov.p4" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\4" defaultValue=""/>
+                              <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0"/>
+                              <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0"/>
+                              <propertyregex property="ov.p3a" input="${ov.p3}" regexp="(\..+)" replace="\1" defaultValue=".0"/>
+                              <propertyregex property="ov.p4a" input="${ov.p4}" regexp="(\..+)" replace="\1" defaultValue=""/>
+                              <property name="ov" value="${ov.p1a}${ov.p2a}${ov.p3a}${ov.p4a}"/>
+                              <echo message="OSGi version:    ${ov}" />
+                              <mkdir dir="target"/>
+                              <echo message="camel.osgi.version.clean = ${ov}" file="target/camel.osgi.version.txt"/>
+                          </tasks>
+                      </configuration>
+                      <goals>
+                          <goal>run</goal>
+                      </goals>
+                  </execution>
+              </executions>
+              <dependencies>
+                  <dependency>
+                      <groupId>ant-contrib</groupId>
+                      <artifactId>ant-contrib</artifactId>
+                      <version>1.0b3</version>
+                  </dependency>
+                  <dependency>
+                      <groupId>ant</groupId>
+                      <artifactId>ant-optional</artifactId>
+                      <version>1.5.3-1</version>
+                  </dependency>
+             </dependencies>
+          </plugin>
+          <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>properties-maven-plugin</artifactId>
+              <version>1.0-alpha-2</version>
+              <inherited>true</inherited>
+              <executions>
+                <execution>
+                  <phase>initialize</phase>
+                  <goals>
+                    <goal>read-project-properties</goal>
+                  </goals>
+                  <configuration>
+                    <files>
+                      <file>target/camel.osgi.version.txt</file>
+                    </files>
+                  </configuration>
+                </execution>
+              </executions>
+          </plugin>
+     </plugins>
     <pluginManagement>
             <plugins>
                 <plugin>
