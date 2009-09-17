@@ -20,8 +20,11 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 
 /**
  * @version $Revision$
@@ -204,6 +207,32 @@ public class XmlParseTest extends XmlTestSupport {
         assertTrue("The loadBalancer shoud be StickyLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof StickyLoadBalancerDefinition);
         StickyLoadBalancerDefinition strategy = (StickyLoadBalancerDefinition)loadBalance.getLoadBalancerType();
         assertNotNull("the expression should not be null ", strategy.getCorrelationExpression());
+    }
+
+    public void testParseFailoverLoadBalance() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithFailoverLoadBalance.xml");
+        assertFrom(route, "seda:a");
+        LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
+        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
+        assertTrue("The loadBalancer shoud be FailoverLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition);
+        FailoverLoadBalancerDefinition strategy = (FailoverLoadBalancerDefinition)loadBalance.getLoadBalancerType();
+        assertEquals("there should be 2 exceptions", 2, strategy.getExceptions().size());
+    }
+
+    public void testParseRandomLoadBalance() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithRandomLoadBalance.xml");
+        assertFrom(route, "seda:a");
+        LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
+        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
+        assertTrue("The loadBalancer shoud be RandomLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof RandomLoadBalancerDefinition);
+    }
+
+    public void testParseTopicLoadBalance() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithTopicLoadBalance.xml");
+        assertFrom(route, "seda:a");
+        LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
+        assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
+        assertTrue("The loadBalancer shoud be TopicLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof TopicLoadBalancerDefinition);
     }
 
     public void testParseBatchResequencerXml() throws Exception {
