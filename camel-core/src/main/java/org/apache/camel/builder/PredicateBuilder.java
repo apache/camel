@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.compare;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 

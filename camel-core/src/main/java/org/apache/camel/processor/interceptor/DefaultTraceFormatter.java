@@ -18,12 +18,9 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.TraceableUnitOfWork;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
 
 /**

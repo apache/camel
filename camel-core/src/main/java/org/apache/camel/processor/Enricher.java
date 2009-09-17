@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
-
 /**
  * A content enricher that enriches input data by first obtaining additional
  * data from a <i>resource</i> represented by an endpoint <code>producer</code>

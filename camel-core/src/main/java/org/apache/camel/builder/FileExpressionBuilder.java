@@ -22,7 +22,6 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spi.Language;
 
