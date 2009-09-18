@@ -36,7 +36,7 @@
    
         <repositories>
             <repository>
-               <id>open.iona.m2-mirror</id>
+               <id>open.iona.m2-all</id>
                <name>Fuse Source Maven Repo</name>
                <url>http://repo.fusesource.com/maven2-all</url>
             </repository>
