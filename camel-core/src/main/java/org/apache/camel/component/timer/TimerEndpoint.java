@@ -29,7 +29,7 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- * Represents a timer endpoint that can generate periodic inbound PojoExchanges.
+ * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.
  *
  * @version $Revision$
  */
@@ -48,7 +48,6 @@ public class TimerEndpoint extends DefaultEndpoint implements ManagementAware<Ti
 
     public TimerEndpoint(String fullURI, TimerComponent component, String timerName) {
         super(fullURI, component);
-        this.timer = component.getTimer(this);
         this.timerName = timerName;
     }
 
@@ -141,7 +140,8 @@ public class TimerEndpoint extends DefaultEndpoint implements ManagementAware<Ti
 
     public Timer getTimer() {
         if (timer == null) {
-            timer = new Timer();
+            TimerComponent tc = (TimerComponent) getComponent();
+            timer = tc.getTimer(this);
         }
         return timer;
     }
