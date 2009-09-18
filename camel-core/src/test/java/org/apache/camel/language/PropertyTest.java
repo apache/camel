@@ -16,8 +16,8 @@
  */
 package org.apache.camel.language;
 
-import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.LanguageTestSupport;
 
 public class PropertyTest extends LanguageTestSupport {
 
