@@ -397,7 +397,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unregistered default: " + definition.getBeanClassName() + " with id: " + id
                     + " as we have multiple camel contexts and they must use unique ids."
-                    + " You must define the defintion in the XML file manually to avoid id clashes when using multiple camel contexts");
+                    + " You must define the definition in the XML file manually to avoid id clashes when using multiple camel contexts");
             }
 
             parserContext.getRegistry().removeBeanDefinition(id);

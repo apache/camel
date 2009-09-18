@@ -29,7 +29,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 
 /**
- * A helper class which will find all {@link RouteBuilder} instances on the classpath
+ * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the classpath
  *
  * @version $Revision$
  */
@@ -62,7 +62,7 @@ public class RouteBuilderFinder {
     }
 
     /**
-     * Appends all the {@link RouteBuilder} instances that can be found on the classpath
+     * Appends all the {@link org.apache.camel.builder.RouteBuilder} instances that can be found on the classpath
      */
     public void appendBuilders(List<RoutesBuilder> list) throws IllegalAccessException, InstantiationException {
         Set<Class> classes = resolver.findImplementations(RoutesBuilder.class, packages);
