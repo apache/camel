@@ -171,8 +171,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // init the channel
         channel.initChannel(this, routeContext);
 
+        ProcessorDefinition defn = (ProcessorDefinition) this;
+
         // set the error handler, must be done after init as we can set the error handler as first in the chain
-        if (this instanceof TryDefinition || this instanceof CatchDefinition || this instanceof FinallyDefinition) {
+        if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             return channel;
         } else {
@@ -784,7 +786,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
-        if (this instanceof TryDefinition) {
+        ProcessorDefinition defn = (ProcessorDefinition) this;
+        if (defn instanceof TryDefinition) {
             popBlock();
         }
 
