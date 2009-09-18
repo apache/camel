@@ -66,10 +66,12 @@
 			<from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD" />
 			<to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD" />
 		</route>
+		<!-- START SNIPPET: routeDefinition -->
 		<route>
 			<from uri="jetty:http://localhost:9000?matchOnUriPrefix=true" />
 			<to uri="cxfbean:customerServiceBean" />
 		</route>
+		<!-- END SNIPPET: routeDefinition -->	
 		<route>
 			<from uri="jetty:http://localhost:9090?matchOnUriPrefix=true" />
 			<to uri="cxfbean:jaxwsBean" />
