@@ -43,6 +43,11 @@
       <url>http://download.java.net/maven/2</url>
     </repository>
     <repository>
+      <id>glassfish-repository</id>
+      <name>java.net Maven 2 Glassfish Repo</name>
+      <url>http://download.java.net/maven/glassfish</url>
+    </repository>
+    <repository>
       <id>release.openqa.org</id>
       <name>OpenQA Releases</name>
       <url>http://archiva.openqa.org/repository/releases</url>
