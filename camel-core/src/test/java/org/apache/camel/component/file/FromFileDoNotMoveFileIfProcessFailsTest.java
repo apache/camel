@@ -41,12 +41,13 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/movefile", body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedBodiesReceived(body);
+        mock.expectedMessageCount(1);
+        mock.message(0).body(String.class).isEqualTo(body);
 
         mock.assertIsSatisfied();
 
         // give time to NOT delete file
-        Thread.sleep(200);
+        Thread.sleep(1000);
 
         // assert the file is not moved
         File file = new File("./target/movefile/hello.txt");
