@@ -281,8 +281,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     Client createClient() throws Exception {
 
         // get service class
-        ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);      
-        Class<?> cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
+        if (getDataFormat().equals(DataFormat.POJO)) { 
+            ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);      
+        }
+        
+        Class<?> cls = null;
+        if (getServiceClass() != null) {
+            cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
+        }
 
         // create client factory bean
         ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
@@ -290,7 +296,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         // setup client factory bean
         setupClientFactoryBean(factoryBean, cls);
         
-        return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
+        if (cls == null) {
+            return (Client)factoryBean.create();
+        } else {
+            return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
+        }
+        
     }
 
 
@@ -298,10 +309,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a CXF server factory bean
      */
     ServerFactoryBean createServerFactoryBean() throws Exception {
- 
-        // get service class
-        ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);      
-        Class<?> cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
+
+        Class<?> cls = null;
+        if (getDataFormat() == DataFormat.POJO || getServiceClass() != null) { 
+            // get service class
+            ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);      
+            cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
+        }
         
         // create server factory bean
         // Shouldn't use CxfEndpointUtils.getServerFactoryBean(cls) as it is for

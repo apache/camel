@@ -22,49 +22,45 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
-
-    private Endpoint endpoint1;
-    private Endpoint endpoint2;
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlOnlyBeans.xml");
-    }
-
-    protected void assertValidContext(CamelContext context) {
-        assertNotNull("No context found!", context);
-    }
+public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
+    
+    private Endpoint endpoint;
 
     @Before
-    public void startServices() {
-        Object implementor = new PersonImpl();
-        String address = "http://localhost:9000/PersonService/";
-        endpoint1 = Endpoint.publish(address, implementor);
-
-        address = "http://localhost:9001/PersonService/";
-        endpoint2 = Endpoint.publish(address, implementor);
+    public void startService() {
+        endpoint = Endpoint.publish("http://localhost:8092/PersonService/", new PersonImpl());
     }
     
     @After
-    public void stopServices() {
-        if (endpoint1 != null) {
-            endpoint1.stop();
+    public void stopService() {
+        if (endpoint != null) {
+            endpoint.stop();
         }
-        
-        if (endpoint2 != null) {
-            endpoint2.stop();
-        }
+
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("cxf://http://localhost:8092/PersonService?wsdlURL=classpath:person.wsdl&dataFormat=" + getDataFormat())
+                    .to("cxf://http://localhost:8093/PersonService?wsdlURL=classpath:person.wsdl&dataFormat=" + getDataFormat());
+            }
+        };
+    }
+ 
+    protected String getDataFormat() {
+        return "PAYLOAD";
     }
 
     @Test
@@ -80,14 +76,6 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         client.getPerson(personId, ssn, name);
         assertEquals("Bonjour", name.value);
 
-        Person client2 = ss.getSoap2();
-        Holder<String> personId2 = new Holder<String>();
-        personId2.value = "hello";
-        Holder<String> ssn2 = new Holder<String>();
-        Holder<String> name2 = new Holder<String>();
-        client2.getPerson(personId2, ssn2, name2);
-        assertEquals("Bonjour", name2.value);
     }
-
-
+    
 }
