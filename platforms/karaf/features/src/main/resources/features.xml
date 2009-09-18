@@ -209,11 +209,6 @@
     <bundle>mvn:org.codehaus.groovy/groovy-all/1.6.1</bundle>
     <bundle>mvn:org.apache.camel/camel-groovy/${pom.version}</bundle>
   </feature>
-  <feature name='camel-hamcrest' version='${pom.version}'>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hamcrest/${hamcrest-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-hamcrest/${pom.version}</bundle>
-  </feature>
   <feature name='camel-hl7' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
@@ -248,11 +243,6 @@
     <bundle>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jcr/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-jhc' version='${pom.version}'>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.httpcore/${httpcore-bundle-version}</bundle>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-jhc/${pom.version}</bundle>
   </feature>
   <feature name='camel-jing' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring</feature>
