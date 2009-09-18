@@ -23,6 +23,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.validation.NoXmlBodyValidationException;
 import org.apache.camel.processor.validation.SchemaValidationException;
 import org.apache.camel.processor.validation.ValidatingProcessor;
 
@@ -71,6 +72,20 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof SchemaValidationException);
             // expected
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNoXMLBody() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:invalid");
+        mock.expectedMessageCount(1);
+
+        try {
+            template.sendBody("direct:start", null);
+            fail("Should have thrown a RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertIsInstanceOf(NoXmlBodyValidationException.class, e.getCause());
         }
 
         assertMockEndpointsSatisfied();
