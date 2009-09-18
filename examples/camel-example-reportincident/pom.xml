@@ -32,19 +32,6 @@
     </description>
     <packaging>war</packaging>
     
-    <repositories>
-      <repository>
-        <id>biz.aQute</id>
-        <url>http://www.aqute.biz/repo</url>
-      </repository>
-    </repositories>
-    
-	<properties>
-		<pax-exam-version>1.0.0</pax-exam-version>
-		<pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>
-	</properties>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -109,49 +96,15 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.ops4j.pax.exam</groupId>
-			<artifactId>pax-exam</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.ops4j.pax.exam</groupId>
-			<artifactId>pax-exam-junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.ops4j.pax.exam</groupId>
-			<artifactId>pax-exam-container-default</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.ops4j.pax.exam</groupId>
-			<artifactId>pax-exam-junit-extender-impl</artifactId>
-			<scope>test</scope>
-		</dependency>
-	    <dependency>
-		   <groupId>org.ops4j.pax.swissbox</groupId>
-		   <artifactId>pax-swissbox-tinybundles</artifactId>
-		   <scope>test</scope>
+
+        <!-- unit testing mail using mock -->
+        <dependency>
+            <groupId>org.jvnet.mock-javamail</groupId>
+            <artifactId>mock-javamail</artifactId>
+            <version>1.7</version>
+            <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>org.apache.camel.karaf</groupId>
-			<artifactId>features</artifactId>
-			<version>${version}</version>
-			<type>pom</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-osgi</artifactId>
-			<scope>test</scope>
-		</dependency>
-	    <dependency>
-		    <groupId>org.apache.camel.tests</groupId>
-		    <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-		    <scope>test</scope>
-	    </dependency>
+
 	</dependencies>
 
     <build>
@@ -218,16 +171,6 @@
                    </connectors>                   
                 </configuration>
             </plugin>
-
-	        <plugin>
-		         <artifactId>maven-surefire-plugin</artifactId>
-		         <configuration>
-			        <excludes>
-				      <!-- TODO: temporary disable unit test to let TC not hang -->
-				      <exclude>**/*OSGiTest.*</exclude>
-			        </excludes>
-		         </configuration>
-	         </plugin>
 
         </plugins>
     </build>
