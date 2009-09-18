@@ -31,7 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class RoutePerformanceTest extends ContextTestSupport {
 
-    private int size = 10000;
+    private int size = 500;
     private SimpleDataSet dataSet = new SimpleDataSet(size);
     private String uri = "mock:results";
 

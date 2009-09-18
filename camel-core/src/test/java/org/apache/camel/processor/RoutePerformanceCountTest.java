@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class RoutePerformanceCountTest extends ContextTestSupport {
 
     private CountProcessor processor = new CountProcessor();
-    private int size = 50000;
+    private int size = 500;
     private String url = "direct:start";
 
     public void testSendMessages() throws Exception {
