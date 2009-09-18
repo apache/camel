@@ -36,18 +36,17 @@ public class ServletComponent extends HttpComponent {
     public void setCamelServlet(CamelServlet servlet) {
         camelServlet = servlet;
     }
-        
-    
+
     public CamelServlet getCamelServlet(String servletName) {
-        CamelServlet answer = null;
+        CamelServlet answer;
         if (camelServlet == null) {
             answer = CamelHttpTransportServlet.getCamelServlet(servletName);
         } else {
             answer = camelServlet;
         }
         if (answer == null) {
-            throw new IllegalArgumentException("Can't find the deployied servlet, please set the ServletComponent with it"
-                + " or delopy a CamelHttpTransportServlet int the web container");
+            throw new IllegalArgumentException("Cannot find the deployed servlet, please configure the ServletComponent"
+                + " or configure a org.apache.camel.component.servlet.CamelHttpTransportServlet servlet in web.xml ");
         }
         return answer;
     }
@@ -75,8 +74,6 @@ public class ServletComponent extends HttpComponent {
         return result;
     }
 
-    
- 
     public void connect(HttpConsumer consumer) throws Exception {
         ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
         CamelServlet servlet = getCamelServlet(endpoint.getServletName());
