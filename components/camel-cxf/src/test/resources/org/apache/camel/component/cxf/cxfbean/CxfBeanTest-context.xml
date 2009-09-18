@@ -17,21 +17,72 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:cxf="http://camel.apache.org/schema/cxf"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:camel="http://cxf.apache.org/transports/camel"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring  http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+       http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
     ">
-    
-	<camelContext id="camelContext"
-		xmlns="http://camel.apache.org/schema/spring">
-	</camelContext>
+    <import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
 	
 	<!-- START SNIPPET: beanDefinition -->
 	<util:list id="customerServiceBean">
 		<bean class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 	</util:list>
-	<!-- END SNIPPET: beanDefinition -->
+	
+	<bean class="org.apache.camel.wsdl_first.PersonImpl" id="jaxwsBean" />
+	
+	<!-- END SNIPPET: beanDefinition -->	
+    
+	<cxf:cxfEndpoint id="routerEndpoint"
+		address="http://localhost:8092/PersonService/" serviceClass="org.apache.camel.wsdl_first.Person"
+		endpointName="person:soap" serviceName="person:PersonService" wsdlURL="person.wsdl"
+		xmlns:person="http://camel.apache.org/wsdl-first">
+	</cxf:cxfEndpoint>
+	
+	<cxf:cxfEndpoint id="serviceEndpoint"
+		address="camel://direct:camel.apache.org.wsdl-first.PersonService" serviceClass="org.apache.camel.wsdl_first.Person"
+		endpointName="person:soap3" serviceName="person:PersonService"
+		wsdlURL="person.wsdl"
+		xmlns:person="http://camel.apache.org/wsdl-first">
+	</cxf:cxfEndpoint>
+
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+        <property name="redeliveryPolicy" ref="myRedeliveryPolicy"/>
+        <property name="handled" value="false"/>
+    </bean>
+
+    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
+        <property name="maximumRedeliveries" value="5"/>
+        <property name="redeliverDelay" value="0"/>
+    </bean>
+
+	<camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+		<route>
+			<from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD" />
+			<to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD" />
+		</route>
+		<route>
+			<from uri="jetty:http://localhost:9000?matchOnUriPrefix=true" />
+			<to uri="cxfbean:customerServiceBean" />
+		</route>
+		<route>
+			<from uri="jetty:http://localhost:9090?matchOnUriPrefix=true" />
+			<to uri="cxfbean:jaxwsBean" />
+		</route>				
+	</camelContext>
+	
+	  <camel:conduit name="{http://camel.apache.org/wsdl-first}soap3.camel-conduit">
+       <camelContext id="PersonServiceClientContext" xmlns="http://camel.apache.org/schema/spring">
+           <route>
+               <from uri="direct:camel.apache.org.wsdl-first.PersonService"/>
+               <to uri="cxfbean:jaxwsBean"/>
+          </route>
+      </camelContext>
+  </camel:conduit>
 	
 </beans>

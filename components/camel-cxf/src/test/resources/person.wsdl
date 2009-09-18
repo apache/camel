@@ -98,6 +98,21 @@
 			</wsdl:fault>
        </wsdl:operation>
    </wsdl:binding>
+   
+       <wsdl:binding name="PersonSOAPBinding2" type="tns:Person">
+    	<soap:binding style="document" transport="http://cxf.apache.org/transports/camel" />
+		<wsdl:operation name="GetPerson">
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="UnknownPerson">
+				<soap:fault use="literal" name="UnknownPerson" />
+			</wsdl:fault>
+       </wsdl:operation>
+   </wsdl:binding>
 
 	<wsdl:service name="PersonService">
     	<wsdl:port binding="tns:PersonSOAPBinding" name="soap">
@@ -105,6 +120,9 @@
        </wsdl:port>
        <wsdl:port binding="tns:PersonSOAPBinding" name="soap2">
            <soap:address location="http://localhost:8093/PersonService/" />
+       </wsdl:port>
+       <wsdl:port binding="tns:PersonSOAPBinding2" name="soap3">
+       <soap:address location="camel://direct:camel.apache.org.wsdl-first.PersonService"/>
        </wsdl:port>
    </wsdl:service>
 

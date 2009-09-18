@@ -19,9 +19,14 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.Holder;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.util.CxfUtils;
+import org.apache.camel.wsdl_first.Person;
+import org.apache.camel.wsdl_first.PersonService;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
@@ -44,30 +49,6 @@ import static org.junit.Assert.assertEquals;
 public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>113</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
-    
-    @Autowired
-    protected CamelContext context;
-    
-    @Before
-    public void setUp() throws Exception {
-        RouteBuilder builder = createRouteBuilder();
-        context.addRoutes(builder);
-    }
-    
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                // START SNIPPET: routeDefinition
-                from("jetty:http://localhost:9000?matchOnUriPrefix=true").
-                        to("cxfbean:customerServiceBean");
-                // END SNIPPET: routeDefinition
-
-            }
-            
-        };
-    }   
     
     @Test
     public void testGetConsumer() throws Exception {
@@ -134,6 +115,46 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             post.releaseConnection();
         }
 
+    }
+
+    @Test
+    public void testJaxWsBean() throws Exception {        
+        PostMethod post = new PostMethod("http://localhost:9090/customerservice/customers");
+        post.addRequestHeader("Accept" , "text/xml");
+        String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+            + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
+            + "<personId>hello</personId></GetPerson></soap:Body></soap:Envelope>";
+        
+        RequestEntity entity = new StringRequestEntity(body, "text/xml", "ISO-8859-1");
+        post.setRequestEntity(entity);
+        HttpClient httpclient = new HttpClient();
+
+        try {
+            assertEquals(200, httpclient.executeMethod(post));
+            String response = post.getResponseBodyAsString();
+            String correct = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
+                + "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
+                + "<personId>hello</personId><ssn>000-000-0000</ssn><name>Bonjour</name></GetPersonResponse></soap:Body></soap:Envelope>";
+            
+            assertEquals("Get a wrong response", correct, response);
+        } finally {
+            post.releaseConnection();
+        }
+    }
+    
+    @Test
+    public void testJaxWsBeanFromCxfRoute() throws Exception {
+        URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
+        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
+        Person client = ss.getSoap();
+        Holder<String> personId = new Holder<String>();
+        personId.value = "hello";
+        Holder<String> ssn = new Holder<String>();
+        Holder<String> name = new Holder<String>();
+        client.getPerson(personId, ssn, name);
+        assertEquals("Get a wrong personId", "hello", personId.value);
+        assertEquals("Get a wrong SSN", "000-000-0000", ssn.value);
+        assertEquals("Get a wrong name", "Bonjour", name.value);
     }
 
 }

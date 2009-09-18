@@ -19,6 +19,8 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jws.WebService;
+
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -27,7 +29,9 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
 
@@ -78,9 +82,9 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
             BusFactory.setDefaultBus(bus);
         }
         
-        registerTransportFactory((CxfBeanComponent)this.getComponent());
-        server = createServerFactoryBean(serviceBeans).create();
+        registerTransportFactory((CxfBeanComponent)this.getComponent());       
         
+        createServer(serviceBeans);
     }
     
     @Override
@@ -88,15 +92,26 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         return URI_PREFIX + ":" + getEndpointUri();
     }
     
-    private JAXRSServerFactoryBean createServerFactoryBean(List<Object> serviceBeans) {
-        JAXRSServerFactoryBean answer = new JAXRSServerFactoryBean();
-        answer.setServiceBeans(serviceBeans);
-        answer.setAddress("camel://" + createEndpointUri());
-        answer.setStart(true);
-        answer.setTransportId(CxfBeanTransportFactory.TRANSPORT_ID);
-        answer.setBus(bus);
-        return answer;
-        
+    private void createServer(List<Object> serviceBeans) {
+        Object obj = serviceBeans.get(0).getClass().getAnnotation(WebService.class);
+
+        if (obj != null) {
+            JaxWsServerFactoryBean bean = new JaxWsServerFactoryBean();
+            bean.setTransportId(CxfBeanTransportFactory.TRANSPORT_ID);
+            bean.setServiceClass(serviceBeans.get(0).getClass());
+            bean.setBus(bus);
+            bean.setStart(true);
+            bean.setAddress("camel://" + createEndpointUri());
+            server = bean.create();
+        } else {
+            JAXRSServerFactoryBean answer = new JAXRSServerFactoryBean();
+            answer.setServiceBeans(serviceBeans);
+            answer.setAddress("camel://" + createEndpointUri());
+            answer.setStart(true);
+            answer.setTransportId(CxfBeanTransportFactory.TRANSPORT_ID);
+            answer.setBus(bus);
+            server = answer.create();
+        }
     }
     
     /**
