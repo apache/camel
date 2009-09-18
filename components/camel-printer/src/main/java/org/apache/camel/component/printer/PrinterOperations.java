@@ -14,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.printer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
-
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -42,26 +37,23 @@ import org.apache.commons.logging.LogFactory;
 
 public class PrinterOperations implements PrinterOperationsInterface {
     private static final transient Log LOG = LogFactory.getLog(PrinterOperations.class);
-    PrintService printService;
-    DocPrintJob job;
-    DocFlavor flavor;
-    PrintRequestAttributeSet printRequestAttributeSet;
-    Doc doc;
+    private PrintService printService;
+    private DocPrintJob job;
+    private DocFlavor flavor;
+    private PrintRequestAttributeSet printRequestAttributeSet;
+    private Doc doc;
 
     public PrinterOperations() throws PrintException {        
         printService = PrintServiceLookup.lookupDefaultPrintService();
         if (printService == null) {
-            LOG.error("PrintServiceLookup failed. No Default printer set up for this host: ");
             throw new PrintException("Printer Lookup Failure. No Default printer set up for this host");
         }
         job = printService.createPrintJob(); 
         flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-        printRequestAttributeSet = 
-            new HashPrintRequestAttributeSet();
+        printRequestAttributeSet = new HashPrintRequestAttributeSet();
         printRequestAttributeSet.add(new Copies(1));
         printRequestAttributeSet.add(MediaSizeName.NA_LETTER);
         printRequestAttributeSet.add(Sides.ONE_SIDED);
-
     }
 
     public PrinterOperations(PrintService printService, DocPrintJob job, DocFlavor flavor, PrintRequestAttributeSet printRequestAttributeSet) throws PrintException {
@@ -94,13 +86,13 @@ public class PrinterOperations implements PrinterOperationsInterface {
         byte[] buffer = null;
         File file;
         
-        LOG.info("In printerOperations.print()");
-        LOG.info("Print Service = " + this.printService.getName());
-        LOG.info("About to print " + copies + " copy(s)");
+        LOG.trace("In printerOperations.print()");
+        LOG.trace("Print Service = " + this.printService.getName());
+        LOG.trace("About to print " + copies + " copy(s)");
         
         for (int i = 0; i < copies; i++) {
             if (!sendToPrinter) {
-                LOG.info("\tPrint Flag is set to false. This job(s) will not be printed until this setting remains in effect. Please set the flag to true or remove the setting");
+                LOG.debug("\tPrint Flag is set to false. This job(s) will not be printed until this setting remains in effect. Please set the flag to true or remove the setting");
                 if (mimeType.equalsIgnoreCase("GIF") || mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
                     file = new File("./target/TestPrintJobNo" + i + "_" + UUID.randomUUID() + ".gif");
                 } else if (mimeType.equalsIgnoreCase("JPEG")) {
@@ -110,7 +102,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
                 } else {
                     file = new File("./target/TestPrintJobNo" + i + "_" + UUID.randomUUID() + ".txt");
                 }
-                LOG.info("\tWriting Print Job to File: " + file.getAbsolutePath());
+                LOG.debug("\tWriting Print Job to File: " + file.getAbsolutePath());
                 try {
                     if (buffer == null) {
                         InputStream stream = doc.getStreamForBytes();
@@ -128,7 +120,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
                     throw new PrintException("Error writing Document to the target file " + file.getAbsolutePath());
                 }    
             } else {
-                LOG.info("\tIssuing Job " + i + " to Printer: " + this.printService.getName());
+                LOG.debug("\tIssuing Job " + i + " to Printer: " + this.printService.getName());
                 print(doc);
             }
         }
@@ -166,8 +158,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
         return printRequestAttributeSet;
     }
 
-    public void setPrintRequestAttributeSet(
-            PrintRequestAttributeSet printRequestAttributeSet) {
+    public void setPrintRequestAttributeSet(PrintRequestAttributeSet printRequestAttributeSet) {
         this.printRequestAttributeSet = printRequestAttributeSet;
     }
 

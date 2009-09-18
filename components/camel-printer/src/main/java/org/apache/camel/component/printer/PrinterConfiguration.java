@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.printer;
 
 import java.net.URI;
@@ -31,20 +30,20 @@ import org.apache.commons.logging.LogFactory;
 
 public class PrinterConfiguration {
     private static final transient Log LOG = LogFactory.getLog(PrinterConfiguration.class);
-    URI uri;
-    String hostname;
-    int port;
-    String printername;
-    int copies = 1;
-    String flavor;
-    DocFlavor docFlavor;
-    String mimeType;
-    String mediaSize;
-    MediaSizeName mediaSizeName;
-    String sides;
-    Sides internalSides;
-    boolean sendToPrinter = true;
-    Map printSettings;
+    private URI uri;
+    private String hostname;
+    private int port;
+    private String printername;
+    private int copies = 1;
+    private String flavor;
+    private DocFlavor docFlavor;
+    private String mimeType;
+    private String mediaSize;
+    private MediaSizeName mediaSizeName;
+    private String sides;
+    private Sides internalSides;
+    private boolean sendToPrinter = true;
+    private Map printSettings;
     
     public PrinterConfiguration() {
     }
@@ -71,14 +70,14 @@ public class PrinterConfiguration {
         setDocFlavor(assignDocFlavor(flavor, mimeType));
         
         if (printSettings.containsKey("copies")) {
-            setCopies(Integer.valueOf((String) printSettings.get("copies")).intValue());
+            setCopies(Integer.valueOf((String) printSettings.get("copies")));
         }
         setMediaSize((String)printSettings.get("mediaSize"));
         setSides((String)printSettings.get("sides"));
         setMediaSizeName(assignMediaSize(mediaSize));       
         setInternalSides(assignSides(sides));
         if (printSettings.containsKey("sendToPrinter")) {
-            if (!(Boolean.valueOf((String)printSettings.get("sendToPrinter")).booleanValue())) {
+            if (!(Boolean.valueOf((String) printSettings.get("sendToPrinter")))) {
                 setSendToPrinter(false);
             }
         }
@@ -258,7 +257,6 @@ public class PrinterConfiguration {
         this.sides = sides;
     }
 
-    
     public MediaSizeName getMediaSizeName() {
         return mediaSizeName;
     }

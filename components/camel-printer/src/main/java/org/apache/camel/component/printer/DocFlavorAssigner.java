@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.printer;
 
 import javax.print.DocFlavor;
 
 public class DocFlavorAssigner {
-    DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+    private DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
     
     public DocFlavor forMimeTypeAUTOSENSE(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {

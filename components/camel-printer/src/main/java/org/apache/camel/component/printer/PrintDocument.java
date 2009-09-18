@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.printer;
 
 import java.io.ByteArrayInputStream;
@@ -53,8 +52,7 @@ class PrintDocument implements Doc {
         return getStreamForBytes();
     }
 
-    public Reader getReaderForText()
-        throws UnsupportedEncodingException, IOException {
+    public Reader getReaderForText() throws IOException {
         synchronized (this) {
             if (reader != null) {
                 return reader;

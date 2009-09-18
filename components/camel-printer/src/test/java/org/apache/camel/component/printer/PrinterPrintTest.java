@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.printer;
 
 import java.io.BufferedInputStream;
@@ -26,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PrinterPrintTest extends CamelTestSupport {
@@ -37,7 +37,6 @@ public class PrinterPrintTest extends CamelTestSupport {
     
     // Check if there is an awt library
     private boolean isAwtHeadless() {
-                
         if (Boolean.getBoolean("java.awt.headless")) {
             System.out.println("Running headless. Skipping test as Images may not work.");
             return true;
@@ -114,6 +113,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
 
     @Test
+    @Ignore
     public void testSendingFileToPrinter() throws Exception {
         if (isAwtHeadless()) {
             return;
@@ -130,6 +130,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
     
     @Test
+    @Ignore
     public void testSendingGIFToPrinter() throws Exception {
         if (isAwtHeadless()) {
             return;
@@ -146,6 +147,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
     
     @Test
+    @Ignore
     public void testSendingJPEGToPrinter() throws Exception {
         if (isAwtHeadless()) {
             return;

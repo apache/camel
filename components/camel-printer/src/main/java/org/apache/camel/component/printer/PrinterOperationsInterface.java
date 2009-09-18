@@ -14,12 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.printer;
 
 import javax.print.Doc;
 import javax.print.PrintException;
 
 public interface PrinterOperationsInterface {
+
+    /**
+     * Prints the document.
+     *
+     * @param doc document to print
+     * @throws PrintException is thrown if printing failed
+     */
     void print(Doc doc) throws PrintException;
+
 }
