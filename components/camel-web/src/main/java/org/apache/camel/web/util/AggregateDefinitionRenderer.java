@@ -28,7 +28,7 @@ public final class AggregateDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         
         AggregateDefinition aggregate = (AggregateDefinition)processor;
         buffer.append(".").append(aggregate.getShortName()).append("()");

@@ -31,7 +31,7 @@ public final class OnCompletionDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         // if not a global onCompletion, add a period
         boolean notGlobal = buffer.toString().endsWith(")");
         if (notGlobal) {

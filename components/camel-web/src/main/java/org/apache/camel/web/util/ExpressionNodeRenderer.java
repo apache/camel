@@ -46,7 +46,7 @@ public final class ExpressionNodeRenderer {
         // Utility class, no public or protected default constructor
     }
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         ExpressionNode expNode = (ExpressionNode)processor;
         buffer.append(".").append(expNode.getShortName());
         if (expNode instanceof DelayDefinition) {

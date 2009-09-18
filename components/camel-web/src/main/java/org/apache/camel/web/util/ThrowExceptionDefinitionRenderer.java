@@ -28,7 +28,7 @@ public final class ThrowExceptionDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         ThrowExceptionDefinition throwExp = (ThrowExceptionDefinition)processor;
         buffer.append(".").append(throwExp.getShortName()).append("(");
         String expName = throwExp.getException().getClass().getSimpleName();

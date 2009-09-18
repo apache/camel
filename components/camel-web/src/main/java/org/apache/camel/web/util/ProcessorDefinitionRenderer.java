@@ -45,7 +45,7 @@ public final class ProcessorDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         if (processor instanceof AggregateDefinition) {
             AggregateDefinitionRenderer.render(buffer, processor);
         } else if (processor instanceof CatchDefinition) {

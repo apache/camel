@@ -28,7 +28,7 @@ public final class ConvertBodyDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         ConvertBodyDefinition convertBody = (ConvertBodyDefinition)processor;
         buffer.append(".").append(convertBody.getShortName()).append("(");
         if (convertBody.getType().equals("[B")) {

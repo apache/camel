@@ -28,7 +28,7 @@ public final class RoutingSlipDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         RoutingSlipDefinition routingSlip = (RoutingSlipDefinition)processor;
         buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName()).append("\", \"").append(routingSlip.getUriDelimiter())
             .append("\")");

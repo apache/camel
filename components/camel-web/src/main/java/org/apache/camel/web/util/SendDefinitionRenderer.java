@@ -29,9 +29,9 @@ public final class SendDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         buffer.append(".");
-        SendDefinition<?> send = (SendDefinition<?>)processor;
+        SendDefinition send = (SendDefinition)processor;
         if (send instanceof WireTapDefinition) {
             // for wireTap
             buffer.append(send.getShortName());

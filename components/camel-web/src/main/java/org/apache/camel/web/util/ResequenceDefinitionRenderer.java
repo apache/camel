@@ -31,7 +31,7 @@ public final class ResequenceDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         ResequenceDefinition resequence = (ResequenceDefinition)processor;
         buffer.append(".").append(processor.getShortName()).append("(");
 

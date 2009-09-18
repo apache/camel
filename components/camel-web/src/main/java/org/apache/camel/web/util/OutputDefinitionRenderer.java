@@ -57,7 +57,7 @@ public final class OutputDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         OutputDefinition out = (OutputDefinition)processor;
         boolean notGlobal = buffer.toString().endsWith(")");
         if (notGlobal) {
@@ -157,7 +157,7 @@ public final class OutputDefinitionRenderer {
         }
     }
 
-    private static void renderBean(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    private static void renderBean(StringBuilder buffer, ProcessorDefinition processor) {
         BeanDefinition beanDef = (BeanDefinition)processor;
         if (beanDef.getRef() != null) {
             buffer.append("Ref(\"").append(beanDef.getRef()).append("\"");

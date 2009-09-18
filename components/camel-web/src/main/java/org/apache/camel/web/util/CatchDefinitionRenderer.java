@@ -30,7 +30,7 @@ public final class CatchDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
     
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         CatchDefinition catchDef = (CatchDefinition)processor;
         buffer.append(".").append(catchDef.getShortName()).append("(");
         List<Class> exceptions = catchDef.getExceptionClasses();

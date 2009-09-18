@@ -36,7 +36,7 @@ public final class LoadBalanceDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         LoadBalanceDefinition loadB = (LoadBalanceDefinition)processor;
         // buffer.append(".").append(output.getShortName()).append("()");
         buffer.append(".").append("loadBalance").append("()");
