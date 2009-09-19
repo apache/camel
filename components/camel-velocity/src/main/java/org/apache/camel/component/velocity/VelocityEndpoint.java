@@ -18,6 +18,7 @@ package org.apache.camel.component.velocity;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
 
@@ -127,15 +128,28 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             return;
         }
 
-        Resource resource = getResource();
-        ObjectHelper.notNull(resource, "resource");
-
-        if (log.isDebugEnabled()) {
-            log.debug("Using resource: " + resource + " with resourceUri: " + path + " for endpoint " + getEndpointUri());
+        Resource resource = null;
+        Reader reader;
+        String content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
+        if (content != null) {
+            // use content from header
+            reader = new StringReader(content);
+            if (log.isDebugEnabled()) {
+                log.debug("Velocity content read from header " + VelocityConstants.VELOCITY_TEMPLATE + " for endpoint " + getEndpointUri());
+            }
+            // remove the header to avoid it being propagated in the routing
+            exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
+        } else {
+            // use resource from endpoint configuration
+            resource = getResource();
+            ObjectHelper.notNull(resource, "resource");
+            if (log.isDebugEnabled()) {
+                log.debug("Velocity content read from resource " + resource + " with resourceUri: " + path + " for endpoint " + getEndpointUri());
+            }
+            reader = encoding != null ? new InputStreamReader(getResourceAsInputStream(), encoding) : new InputStreamReader(getResourceAsInputStream());
         }
 
         // getResourceAsInputStream also considers the content cache
-        Reader reader = encoding != null ? new InputStreamReader(getResourceAsInputStream(), encoding) : new InputStreamReader(getResourceAsInputStream());
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
         Map variableMap = ExchangeHelper.createVariableMap(exchange);
@@ -151,8 +165,10 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-        out.setHeader(VelocityConstants.VELOCITY_RESOURCE, resource);
-        out.setHeader(VelocityConstants.VELOCITY_RESOURCE_URI, path);
+        if (resource != null) {
+            out.setHeader(VelocityConstants.VELOCITY_RESOURCE, resource);
+            out.setHeader(VelocityConstants.VELOCITY_RESOURCE_URI, path);
+        }
         Map<String, Object> headers = (Map<String, Object>) velocityContext.get("headers");
         for (String key : headers.keySet()) {
             out.setHeader(key, headers.get(key));
