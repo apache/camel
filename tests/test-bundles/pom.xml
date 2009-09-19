@@ -143,6 +143,8 @@
     </build>
    
    <modules>
+<!-- TODO: Does not work with maven 2.0.9 
      <module>mock-javamail_1.7</module>
+-->
    </modules>
 </project>

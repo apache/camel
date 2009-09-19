@@ -508,12 +508,11 @@
         <version>${project.version}</version>
       </dependency>
       
-      <!-- this one fails on maven 2.0.9 when assembling
       <dependency>
         <groupId>org.apache.camel.tests</groupId>
         <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
         <version>${project.version}</version>
-      </dependency> -->
+      </dependency>
 
       <!-- testing jars -->
       <dependency>
