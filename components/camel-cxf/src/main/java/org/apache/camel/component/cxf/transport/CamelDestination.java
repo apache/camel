@@ -98,7 +98,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
         try {
             getLogger().log(Level.FINE, "establishing Camel connection");
-            distinationEndpoint = camelContext.getEndpoint(camelDestinationUri);
+            distinationEndpoint = getCamelContext().getEndpoint(camelDestinationUri);
             consumer = distinationEndpoint.createConsumer(new ConsumerProcessor());
             consumer.start();
 
