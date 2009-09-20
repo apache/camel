@@ -140,7 +140,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         this.applicationContext = applicationContext;
 
         if (applicationContext instanceof ConfigurableApplicationContext) {
-            addComponent("spring-event", new EventComponent(applicationContext));
+            // only add if not already added
+            if (hasComponent("spring-event") == null) {
+                addComponent("spring-event", new EventComponent(applicationContext));
+            }
         }
     }
 

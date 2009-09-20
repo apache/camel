@@ -417,7 +417,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
-        RouteContext routeContext = new DefaultRouteContext(this, fromType, routes);
+        RouteContext routeContext = new DefaultRouteContext(getCamelContext(), this, fromType, routes);
 
         // configure tracing
         if (trace != null) {

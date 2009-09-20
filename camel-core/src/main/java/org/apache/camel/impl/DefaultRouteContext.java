@@ -57,7 +57,8 @@ public class DefaultRouteContext implements RouteContext {
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
 
-    public DefaultRouteContext(RouteDefinition route, FromDefinition from, Collection<Route> routes) {
+    public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
+        this.camelContext = camelContext;
         this.route = route;
         this.from = from;
         this.routes = routes;
@@ -68,8 +69,8 @@ public class DefaultRouteContext implements RouteContext {
      */
     public DefaultRouteContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        routes = new ArrayList<Route>();
-        route = new RouteDefinition("temporary");
+        this.routes = new ArrayList<Route>();
+        this.route = new RouteDefinition("temporary");
     }
 
     public Endpoint getEndpoint() {

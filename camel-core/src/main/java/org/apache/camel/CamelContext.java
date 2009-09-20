@@ -75,6 +75,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     void addComponent(String componentName, Component component);
 
     /**
+     * Is the given component already registered?
+     *
+     * @param componentName the name of the component
+     * @return the registered Component or <tt>null</tt> if not registered
+     */
+    Component hasComponent(String componentName);
+
+    /**
      * Gets a component from the context by name.
      *
      * @param componentName the name of the component

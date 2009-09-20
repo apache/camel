@@ -177,6 +177,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.name = name;
     }
 
+    public Component hasComponent(String componentName) {
+        return components.get(componentName);
+    }
+
     public void addComponent(String componentName, final Component component) {
         ObjectHelper.notNull(component, "component");
         synchronized (components) {

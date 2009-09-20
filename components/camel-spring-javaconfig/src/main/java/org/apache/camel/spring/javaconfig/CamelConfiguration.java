@@ -52,7 +52,7 @@ public abstract class CamelConfiguration extends ConfigurationSupport {
      */
     @Bean
     public CamelContext camelContext() throws Exception {
-        SpringCamelContext camelContext = new SpringCamelContext();        
+        SpringCamelContext camelContext = new SpringCamelContext(getApplicationContext());
         setupCamelContext(camelContext);
         List<RouteBuilder> routes = routes();
         for (RoutesBuilder route : routes) {
