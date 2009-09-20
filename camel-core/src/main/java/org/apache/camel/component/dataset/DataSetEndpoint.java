@@ -41,7 +41,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private DataSet dataSet;
     private AtomicInteger receivedCounter = new AtomicInteger();
     private int minRate;
-    private long produceDelay;
+    private long produceDelay = 3;
     private long consumeDelay;
     private long preloadSize;
     private Processor reporter;
