@@ -17,6 +17,8 @@
 package org.apache.camel.processor.jpa;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -118,6 +120,18 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
         sendMessage("3", "three");
 
         assertMockEndpointsSatisfied();
+
+        // all 3 messages should be in jpa repo
+        Set<String> ids = new HashSet<String>();
+        List<MessageProcessed> list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
+        for (MessageProcessed item : list) {
+            ids.add(item.getMessageId());
+        }
+
+        assertEquals(3, ids.size());
+        assertTrue("Should contain message 1", ids.contains("1"));
+        assertTrue("Should contain message 2", ids.contains("2"));
+        assertTrue("Should contain message 3", ids.contains("3"));
     }
 
     @Test
@@ -125,7 +139,7 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
         context.addRoutes(new SpringRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(0).logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).redeliverDelay(0).logStackTrace(false));
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
@@ -134,7 +148,7 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damm I cannot handle id 2");
+                            throw new IllegalArgumentException("Damn I cannot handle id 2");
                         }
                     }
                 }).to("mock:result");
@@ -154,6 +168,17 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
         sendMessage("3", "three");
 
         assertMockEndpointsSatisfied();
+
+        // only message 1 and 3 should be in jpa repo
+        Set<String> ids = new HashSet<String>();
+        List<MessageProcessed> list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
+        for (MessageProcessed item : list) {
+            ids.add(item.getMessageId());
+        }
+
+        assertEquals(2, ids.size());
+        assertTrue("Should contain message 1", ids.contains("1"));
+        assertTrue("Should contain message 3", ids.contains("3"));
     }
 
     protected void sendMessage(final Object messageId, final Object body) {

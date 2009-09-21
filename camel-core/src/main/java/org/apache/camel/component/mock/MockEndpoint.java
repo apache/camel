@@ -893,7 +893,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             List<Exchange> list = getReceivedExchanges();
             int index = 0;
             for (Exchange exchange : list) {
-                LOG.debug("Received[" + (++index) + "]: " + exchange);
+                LOG.debug(getEndpointUri() + " failed and received[" + (++index) + "]: " + exchange);
             }
         }
         throw new AssertionError(getEndpointUri() + " " + message);
