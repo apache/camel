@@ -47,6 +47,11 @@ public class ManagedCamelContext {
         return context.getName();
     }
 
+    @ManagedAttribute(description = "Camel Version")
+    public String getCamelVersion() {
+        return context.getVersion();
+    }
+
     @ManagedAttribute(description = "Camel State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.

@@ -27,10 +27,6 @@ public class InterceptEndpointProcessor extends DelegateProcessor {
 
     private final String uri;
 
-    public InterceptEndpointProcessor(String uri) {
-        this.uri = uri;
-    }
-
     public InterceptEndpointProcessor(String uri, Processor processor) {
         super(processor);
         this.uri = uri;
