@@ -17,10 +17,14 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Navigate;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
@@ -47,6 +51,8 @@ public class RouteService extends ServiceSupport {
     private final List<RouteContext> routeContexts;
     private final List<Route> routes;
     private final String id;
+    private boolean startInputs = true;
+    private final Map<Route, Consumer> inputs = new HashMap<Route, Consumer>();
 
     public RouteService(DefaultCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
         this.camelContext = camelContext;
@@ -76,6 +82,26 @@ public class RouteService extends ServiceSupport {
         return routes;
     }
 
+    /**
+     * Sets whether inputs (consumers) should be started when starting the routes
+     * <p/>
+     * By default inputs are started.
+     *
+     * @param flag flag to either start inputs or not
+     */
+    public void startInputs(boolean flag) {
+        this.startInputs = flag;
+    }
+
+    /**
+     * Gets the inputs to the routes.
+     *
+     * @return list of {@link Consumer} as inputs for the routes
+     */
+    public Map<Route, Consumer> getInputs() {
+        return inputs;
+    }
+
     protected void doStart() throws Exception {
         camelContext.addRouteCollection(routes);
 
@@ -85,7 +111,7 @@ public class RouteService extends ServiceSupport {
 
         for (Route route : routes) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Starting route: " + route);
+                LOG.trace("Starting route services: " + route);
             }
 
             List<Service> services = route.getServices();
@@ -99,7 +125,17 @@ public class RouteService extends ServiceSupport {
                 doGetChildServies(list, service);
             }
 
-            startChildService(route, list);
+            // split into consumers and child services as we need to start the consumers
+            // afterwards to avoid them being active while the others start
+            List<Service> childServices = new ArrayList<Service>();
+            for (Service service : list) {
+                if (service instanceof Consumer) {
+                    inputs.put(route, (Consumer) service);
+                } else {
+                    childServices.add(service);
+                }
+            }
+            startChildService(route, childServices);
 
             // start the route itself
             ServiceHelper.startService(route);
@@ -107,9 +143,21 @@ public class RouteService extends ServiceSupport {
             // fire event
             EventHelper.notifyRouteStarted(camelContext, route);
         }
+
+        if (startInputs) {
+            // start the input consumers
+            for (Map.Entry<Route, Consumer> entry : inputs.entrySet()) {
+                Route route = entry.getKey();
+                Consumer consumer = entry.getValue();
+                startChildService(route, consumer);
+            }
+        }
     }
 
     protected void doStop() throws Exception {
+        // clear inputs
+        inputs.clear();
+
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRoutesRemove(routes);
         }
@@ -136,6 +184,11 @@ public class RouteService extends ServiceSupport {
         }
 
         camelContext.removeRouteCollection(routes);
+    }
+
+    protected void startChildService(Route route, Service... services) throws Exception {
+        List<Service> list = new ArrayList<Service>(Arrays.asList(services));
+        startChildService(route, list);
     }
 
     protected void startChildService(Route route, List<Service> services) throws Exception {

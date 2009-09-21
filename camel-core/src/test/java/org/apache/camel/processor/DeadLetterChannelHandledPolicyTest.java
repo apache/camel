@@ -29,14 +29,18 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DeadLetterChannelHandledPolicyTest extends ContextTestSupport {
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     public void testHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).redeliverDelay(0).logStackTrace(false).handled(true));
 
-                from("direct:start")
-                    .process(new MyThrowExceptionProcessor());
+                from("direct:start").process(new MyThrowExceptionProcessor());
             }
         });
         context.start();
@@ -55,8 +59,7 @@ public class DeadLetterChannelHandledPolicyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1).redeliverDelay(0).logStackTrace(false).handled(false));
 
-                from("direct:start")
-                    .process(new MyThrowExceptionProcessor());
+                from("direct:start").process(new MyThrowExceptionProcessor());
             }
         });
         context.start();

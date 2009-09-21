@@ -31,6 +31,7 @@ import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.IsSingleton;
@@ -95,7 +96,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private static final String NAME_PREFIX = "camel-";
     private static int nameSuffix;
     private boolean routeDefinitionInitiated;
-    private String name;  
+    private String name;
     private final Map<String, Endpoint> endpoints = new LRUCache<String, Endpoint>(1000);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
@@ -438,7 +439,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         return answer;
     }
-    
+
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
 
@@ -673,7 +674,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
         this.typeConverterRegistry = typeConverterRegistry;
     }
-    
+
     public Injector getInjector() {
         if (injector == null) {
             injector = createInjector();
@@ -835,27 +836,56 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public void start() throws Exception {
         super.start();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting routes");
-        }
+        LOG.debug("Starting routes...");
+
         // the context is now considered started (i.e. isStarted() == true))
         // starting routes is done after, not during context startup
         synchronized (this) {
+            // list of inputs to start when all the routes have been preparated for start
+            Map<Route, Consumer> inputs = new HashMap<Route, Consumer>();
+
             for (RouteService routeService : routeServices.values()) {
                 Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
                 if (autoStart == null || autoStart) {
-                    routeService.start();
+                    // defer starting inputs till later as we want to prepare the routes by starting
+                    // all their processors and child services etc.
+                    // then later we open the floods to Camel by starting the inputs
+                    // what this does is to ensure Camel is more robust on starting routes as all routes
+                    // will then be prepared in time before we start inputs which will consume messages to be routed
+                    routeService.startInputs(false);
+                    try {
+                        routeService.start();
+                        // add the inputs from this route service to the list to start afterwards
+                        inputs.putAll(routeService.getInputs());
+                    } finally {
+                        routeService.startInputs(true);
+                    }
                 } else {
                     // should not start on startup
                     LOG.info("Cannot start route " + routeService.getId() + " as it is configured with auto startup disabled.");
                 }
             }
+
+            // now start the inputs for all the route services as we have prepared Camel
+            // yeah open the floods so messages can start flow into Came;
+            for (Map.Entry<Route, Consumer> entry : inputs.entrySet()) {
+                Route route = entry.getKey();
+                Consumer consumer = entry.getValue();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Starting consumer on route: " + route.getId());
+                }
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onServiceAdd(this, consumer, route);
+                }
+                ServiceHelper.startService(consumer);
+            }
         }
+
         if (LOG.isDebugEnabled()) {
             for (int i = 0; i < getRoutes().size(); i++) {
                 LOG.debug("Route " + i + ": " + getRoutes().get(i));
             }
-            LOG.debug("Started routes");
+            LOG.debug("... Routes started");
         }
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
@@ -931,8 +961,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         forceLazyInitialization();
         startServices(components.values());
 
-         // To avoid initiating the routeDefinitions after stopping the camel context
-        if (!routeDefinitionInitiated) {            
+        // To avoid initiating the routeDefinitions after stopping the camel context
+        if (!routeDefinitionInitiated) {
             startRouteDefinitions(routeDefinitions);
             routeDefinitionInitiated = true;
         }

@@ -269,9 +269,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param route the route to start
      * @throws Exception is thrown if the route could not be started for whatever reason
-     * @deprecated will be removed in Camel 2.2
      */
-    @Deprecated
     void startRoute(RouteDefinition route) throws Exception;
 
     /**
@@ -288,9 +286,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param route the route to stop
      * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @deprecated will be removed in Camel 2.2
      */
-    @Deprecated
     void stopRoute(RouteDefinition route) throws Exception;
 
     /**
