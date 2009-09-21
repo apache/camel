@@ -44,6 +44,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long produceDelay = 3;
     private long consumeDelay;
     private long preloadSize;
+    private long initialDelay = 1000;
     private Processor reporter;
 
     public DataSetEndpoint() {
@@ -170,6 +171,13 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.reporter = reporter;
     }
 
+    public long getInitialDelay() {
+        return initialDelay;
+    }
+
+    public void setInitialDelay(long initialDelay) {
+        this.initialDelay = initialDelay;
+    }
 
     // Implementation methods
     //-------------------------------------------------------------------------

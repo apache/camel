@@ -49,6 +49,15 @@ public class DataSetConsumer extends DefaultConsumer {
 
         endpoint.getExecutorService().execute(new Runnable() {
             public void run() {
+                if (endpoint.getInitialDelay() > 0) {
+                    try {
+                        Thread.sleep(endpoint.getInitialDelay());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
+
                 sendMessages(preloadSize, dataSet.getSize());
             }
         });
