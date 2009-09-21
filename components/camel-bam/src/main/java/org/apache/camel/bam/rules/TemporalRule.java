@@ -93,7 +93,7 @@ public class TemporalRule extends ServiceSupport {
             ArrayList<Route> list = new ArrayList<Route>();
             RouteDefinition route = new RouteDefinition();
             route.setCamelContext(first.getBuilder().getProcessBuilder().getContext());
-            RouteContext routeContext = new DefaultRouteContext(route, null, list);
+            RouteContext routeContext = new DefaultRouteContext(first.getBuilder().getProcessBuilder().getContext(), route, null, list);
 
             overdueAction = overdueProcessors.createOutputsProcessor(routeContext);
         }
