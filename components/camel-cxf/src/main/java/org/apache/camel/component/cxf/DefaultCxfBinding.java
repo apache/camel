@@ -227,7 +227,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate contexts
         if (dataFormat != DataFormat.POJO) {
             // copying response context to out message seems to cause problem in POJO mode
-            outMessage.putAll(responseContext);            
+            outMessage.putAll(responseContext);
         }
         outMessage.put(Client.RESPONSE_CONTEXT, responseContext);      
         
@@ -358,7 +358,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             }
         }
-
+        
         
         // propagate SOAP/protocol header list
         String key = Header.HEADER_LIST;
@@ -373,7 +373,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 ((List<?>)value).clear();
             }
         }
-              
     }
 
     protected void propagateHeadersFromCamelToCxf(Exchange camelExchange, 
@@ -433,6 +432,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 listValue.add(entry.getValue().toString());
                 transportHeaders.put(entry.getKey(), listValue);
             }
+            
         }
         
         if (transportHeaders.size() > 0) {
@@ -489,6 +489,27 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             answer = out.getBody(InputStream.class);
         }
         return answer;
+    }
+
+    public void copyJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
+        if (cxfExchange.getOutMessage() != null) {
+            org.apache.cxf.message.Message outMessage = cxfExchange.getOutMessage();
+            for (Map.Entry<String, Object> entry : context.entrySet()) {
+                if (outMessage.get(entry.getKey()) == null) {
+                    outMessage.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+    }
+
+    public void extractJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
+        org.apache.cxf.message.Message inMessage = cxfExchange.getInMessage();
+        for (Map.Entry<String, Object> entry : inMessage.entrySet()) {
+            if (entry.getKey().startsWith("javax.xml.ws")) {
+                context.put(entry.getKey(), entry.getValue());
+            }
+        }
+        
     }
 
 }

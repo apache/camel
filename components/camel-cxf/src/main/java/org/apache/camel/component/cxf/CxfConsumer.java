@@ -17,13 +17,20 @@
 package org.apache.camel.component.cxf;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.ws.handler.MessageContext.Scope;
+
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
@@ -79,7 +86,10 @@ public class CxfConsumer extends DefaultConsumer {
                 
                 // bind the CXF request into a Camel exchange
                 binding.populateExchangeFromCxfRequest(cxfExchange, camelExchange);
-                                
+                
+                // extract the javax.xml.ws header
+                Map<String, Object> context = new HashMap<String, Object>();
+                binding.extractJaxWsContext(cxfExchange, context);                 
                 // send Camel exchange to the target processor
                 try {
                     getProcessor().process(camelExchange);
@@ -98,15 +108,17 @@ public class CxfConsumer extends DefaultConsumer {
                 // bind the Camel response into a CXF response
                 if (camelExchange.getPattern().isOutCapable()) {
                     binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
-                } 
+                }
                 
+                // copy the headers javax.xml.ws header back
+                binding.copyJaxWsContext(cxfExchange, context);
                 // response should have been set in outMessage's content
                 return null;
             }
             
         });
         server = svrBean.create();        
-    }
+    }   
     
     @Override
     protected void doStart() throws Exception {
