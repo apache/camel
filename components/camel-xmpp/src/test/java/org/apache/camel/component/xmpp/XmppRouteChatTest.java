@@ -62,16 +62,6 @@ public class XmppRouteChatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                Processor stringConverter = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        XmppMessage xmppMessage = (XmppMessage)exchange.getIn();
-                        Message message = xmppMessage.getXmppMessage();
-                        String body = message.getBody();
-                        LOG.debug("Converting message - " + body);
-                        exchange.getIn().setBody(body);
-                    }
-                };
-
                 from("direct:toConsumer")
                     .to(getConsumerUri());
 
@@ -79,11 +69,9 @@ public class XmppRouteChatTest extends CamelTestSupport {
                     .to(getProducerUri());
 
                 from(getConsumerUri())
-                    .process(stringConverter)
                     .to("mock:out1");
 
                 from(getProducerUri())
-                    .process(stringConverter)
                     .to("mock:out2");
             }
         };

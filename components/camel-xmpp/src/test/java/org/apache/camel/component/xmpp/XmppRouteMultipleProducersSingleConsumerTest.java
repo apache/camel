@@ -60,16 +60,6 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
 
                 //getContext().setTracing(true);
 
-                Processor stringConverter = new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        XmppMessage xmppMessage = (XmppMessage)exchange.getIn();
-                        Message message = xmppMessage.getXmppMessage();
-                        String body = message.getBody();
-                        LOG.debug("Converting message - " + body);
-                        exchange.getIn().setBody(body);
-                    }
-                };
-
                 from("direct:toProducer1")
                     .to(getProducer1Uri());
 
@@ -77,15 +67,12 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
                     .to(getProducer2Uri());
 
                 from(getConsumerUri())
-                    .process(stringConverter)
                     .to(getConsumerUri());
 
                 from(getProducer1Uri())
-                    .process(stringConverter)
                     .to("mock:good");
 
                 from(getProducer2Uri())
-                    .process(stringConverter)
                     .to("mock:bad");
             }
         };

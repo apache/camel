@@ -68,7 +68,7 @@ public class XmppMessage extends DefaultMessage {
         if (xmppMessage != null) {
             XmppBinding binding = ExchangeHelper.getBinding(getExchange(), XmppBinding.class);
             if (binding != null) {
-                binding.extractBodyFromXmpp(getExchange(), xmppMessage);
+                return binding.extractBodyFromXmpp(getExchange(), xmppMessage);
             }
         }
         return null;
