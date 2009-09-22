@@ -29,7 +29,7 @@ import org.springframework.core.io.Resource;
  */
 public class FreemarkerComponent extends DefaultComponent {
 
-    private Configuration configuraiton;
+    private Configuration configuration;
     private Configuration noCacheConfiguration;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
@@ -49,16 +49,16 @@ public class FreemarkerComponent extends DefaultComponent {
     }
 
     public synchronized Configuration getConfiguraiton() {
-        if (configuraiton == null) {
-            configuraiton = new Configuration();
+        if (configuration == null) {
+            configuration = new Configuration();
             // use class template loader using Spring Resource class and / as root in classpath
-            configuraiton.setTemplateLoader(new ClassTemplateLoader(Resource.class, "/"));
+            configuration.setTemplateLoader(new ClassTemplateLoader(Resource.class, "/"));
         }
-        return (Configuration) configuraiton.clone();
+        return (Configuration) configuration.clone();
     }
 
-    public void setConfiguraiton(Configuration configuraiton) {
-        this.configuraiton = configuraiton;
+    public void setConfiguraiton(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     private synchronized Configuration getNoCacheConfiguration() {

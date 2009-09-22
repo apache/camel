@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.freemarker;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
 
@@ -108,18 +110,33 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
             return;
         }
 
-        Map variableMap = ExchangeHelper.createVariableMap(exchange);
-
-        if (log.isDebugEnabled()) {
-            log.debug("Freemarker is evaluating " + path + " using context: " + variableMap);
+        Reader reader = null;
+        String content = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_TEMPLATE, String.class);
+        if (content != null) {
+            // use content from header
+            reader = new StringReader(content);
+            // remove the header to avoid it being propagated in the routing
+            exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
         }
 
+        Map variableMap = ExchangeHelper.createVariableMap(exchange);
         // let freemarker parse and generate the result in buffer
         Template template;
-        if (encoding != null) {
-            template = configuration.getTemplate(path, encoding);
+
+        if (reader != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Freemarker is evaluating template read from header " + FreemarkerConstants.FREEMARKER_TEMPLATE + " using context: " + variableMap);
+            }
+            template = new Template("temp", reader, new Configuration());
         } else {
-            template = configuration.getTemplate(path);
+            if (log.isDebugEnabled()) {
+                log.debug("Freemarker is evaluating " + path + " using context: " + variableMap);
+            }
+            if (encoding != null) {
+                template = configuration.getTemplate(path, encoding);
+            } else {
+                template = configuration.getTemplate(path);
+            }
         }
         StringWriter buffer = new StringWriter();
         template.process(variableMap, buffer);
