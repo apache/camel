@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 import org.apache.camel.Component;
@@ -25,6 +26,9 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.component.log.LogComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -60,6 +64,13 @@ public class DefaultCamelContextTest extends TestCase {
         DefaultCamelContext ctx = new DefaultCamelContext();
         Endpoint endpoint = ctx.getEndpoint("log:foo");
         assertNotNull(endpoint);
+
+        try {
+            ctx.getEndpoint(null);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     public void testGetEndpointNotFound() throws Exception {
@@ -81,14 +92,14 @@ public class DefaultCamelContextTest extends TestCase {
             // expected
         }
     }
-    
+
     public void testRestartCamelContext() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:endpointA").to("mock:endpointB");                
-            }            
+                from("direct:endpointA").to("mock:endpointB");
+            }
         });
         ctx.start();
         assertEquals("Should have one RouteService", 1, ctx.getRouteServices().size());
@@ -100,6 +111,67 @@ public class DefaultCamelContextTest extends TestCase {
         assertEquals("The Routes should be same", routesString, ctx.getRoutes().toString());
         ctx.stop();
         assertEquals("The RouteService should NOT be removed even when we stop", 1, ctx.getRouteServices().size());
+    }
+
+    public void testName() {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        assertNotNull("Should have a default name", ctx.getName());
+        ctx.setName("foo");
+        assertEquals("foo", ctx.getName());
+
+        assertNotNull(ctx.toString());
+        assertTrue(ctx.isAutoStartup());
+    }
+
+    public void testVersion() {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        assertNotNull("Should have a version", ctx.getVersion());
+    }
+
+    public void testHasComponent() {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        assertNull(ctx.hasComponent("log"));
+
+        ctx.addComponent("log", new LogComponent());
+        assertNotNull(ctx.hasComponent("log"));
+    }
+
+    public void testGetComponent() {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.addComponent("log", new LogComponent());
+
+        LogComponent log = ctx.getComponent("log", LogComponent.class);
+        assertNotNull(log);
+        try {
+            ctx.addComponent("direct", new DirectComponent());
+            ctx.getComponent("log", DirectComponent.class);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    public void testGetEndpointMap() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.addEndpoint("mock://foo", new MockEndpoint("mock://foo"));
+
+        Map map = ctx.getEndpointMap();
+        assertEquals(1, map.size());
+    }
+
+    public void testHasEndpoint() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.addEndpoint("mock://foo", new MockEndpoint("mock://foo"));
+
+        assertNotNull(ctx.hasEndpoint("mock://foo"));
+        assertNull(ctx.hasEndpoint("mock://bar"));
+
+        try {
+            ctx.hasEndpoint(null);
+            fail("Should have thrown exception");
+        } catch (ResolveEndpointFailedException e) {
+            // expected
+        }
     }
 
 }

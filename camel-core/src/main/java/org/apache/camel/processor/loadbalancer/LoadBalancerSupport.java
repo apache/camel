@@ -58,10 +58,13 @@ public abstract class LoadBalancerSupport extends ServiceSupport implements Load
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processors);        
+        ServiceHelper.startServices(processors);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processors);       
+        ServiceHelper.stopServices(processors);
+        for (Processor processor : processors) {
+            removeProcessor(processor);
+        }
     }
 }

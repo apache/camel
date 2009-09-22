@@ -339,7 +339,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return oldEndpoint;
     }
 
-    @Deprecated
     public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
         Collection<Endpoint> answer = new ArrayList<Endpoint>();
         synchronized (endpoints) {
@@ -365,16 +364,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
         return answer;
-    }
-
-    public Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception {
-        return addEndpoint(uri, endpoint);
-    }
-
-    @Deprecated
-    public Endpoint removeSingletonEndpoint(String uri) throws Exception {
-        Collection<Endpoint> answer = removeEndpoints(uri);
-        return (Endpoint) (answer.size() > 0 ? answer.toArray()[0] : null);
     }
 
     public Endpoint getEndpoint(String uri) {

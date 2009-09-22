@@ -27,6 +27,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
     public void testMarshal() throws Exception {
         DefaultExchangeHolder holder = createHolder();
         assertNotNull(holder);
+        assertNotNull(holder.toString());
     }
 
     public void testUnmarshal() throws Exception {

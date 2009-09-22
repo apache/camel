@@ -35,7 +35,6 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * Default component to use for base for components implementations.
  *
@@ -229,7 +228,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     /**
      * Converts the given value to the requested type
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     public <T> T convertTo(Class<T> type, Object value) {
         return CamelContextHelper.convertTo(getCamelContext(), type, value);
     }
@@ -237,7 +238,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Converts the given value to the specified type throwing an {@link IllegalArgumentException}
      * if the value could not be converted to a non null value
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     public  <T> T mandatoryConvertTo(Class<T> type, Object value) {
         return CamelContextHelper.mandatoryConvertTo(getCamelContext(), type, value);
     }
@@ -245,7 +248,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Creates a new instance of the given type using the {@link org.apache.camel.spi.Injector} on the given
      * {@link CamelContext}
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     public  <T> T newInstance(Class<T> beanType) {
         return getCamelContext().getInjector().newInstance(beanType);
     }
@@ -253,7 +258,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext}
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     public Object lookup(String name) {
         return getCamelContext().getRegistry().lookup(name);
     }
@@ -261,7 +268,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext}
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     public <T> T lookup(String name, Class<T> beanType) {
         return getCamelContext().getRegistry().lookup(name, beanType);
     }
@@ -269,7 +278,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws exception if not found.
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     public Object mandatoryLookup(String name) {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), name);
     }
@@ -277,7 +288,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws exception if not found.
+     * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     public <T> T mandatoryLookup(String name, Class<T> beanType) {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), name, beanType);
     }
@@ -311,7 +324,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         if (value == null) {
             return null;
         }
-        return convertTo(type, value);
+
+        return CamelContextHelper.convertTo(getCamelContext(), type, value);
     }
 
     /**

@@ -187,7 +187,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param uri  the URI of the endpoints
      * @return  collection of endpoints
+     * @deprecated makes no sense, is removed in Camel 2.2
      */
+    @Deprecated
     Collection<Endpoint> getEndpoints(String uri);
 
     /**
@@ -215,7 +217,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param uri the URI to be used to remove
      * @return a collection of endpoints removed or null if there are no endpoints for this URI
      * @throws Exception if at least one endpoint could not be stopped
+     * @deprecated makes no sense, is removed in Camel 2.2
      */
+    @Deprecated
     Collection<Endpoint> removeEndpoints(String uri) throws Exception;
 
     /**
