@@ -47,18 +47,15 @@ public class CacheProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("In CacheProducer.start()");
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("In CacheProducer.stop()");
         super.doStop();
     }
 
     public void process(Exchange exchange) throws Exception {
-        LOG.info("In CacheProducer.process()");
         Object body = exchange.getIn().getBody();
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
         
@@ -72,10 +69,12 @@ public class CacheProducer extends DefaultProducer {
         // Cache the buffer to the specified Cache against the specified key 
         cacheManager = new CacheManagerFactory().instantiateCacheManager();
         
-        LOG.info("Cache Name: " + config.getCacheName());
+        LOG.debug("Cache Name: " + config.getCacheName());
         if (cacheManager.cacheExists(config.getCacheName())) {
-            LOG.info("Found an existing cache: " + config.getCacheName());
-            LOG.info("Cache " + config.getCacheName() + " currently contains " + cacheManager.getCache(config.getCacheName()).getSize() + " elements");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found an existing cache: " + config.getCacheName());
+                LOG.debug("Cache " + config.getCacheName() + " currently contains " + cacheManager.getCache(config.getCacheName()).getSize() + " elements");
+            }
             cache = cacheManager.getCache(config.getCacheName());
         } else {
             cache = new Cache(config.getCacheName(), 
@@ -90,7 +89,7 @@ public class CacheProducer extends DefaultProducer {
                     config.getDiskExpiryThreadIntervalSeconds(), 
                     null);
             cacheManager.addCache(cache);
-            LOG.info("Added a new cache: " + cache.getName());            
+            LOG.debug("Added a new cache: " + cache.getName());            
         }
        
         
@@ -109,16 +108,16 @@ public class CacheProducer extends DefaultProducer {
 
     private void performCacheOperation(String operation, String key, byte[] buffer) {
         if (operation.equalsIgnoreCase("DELETEALL")) {
-            LOG.info("Deleting All elements from the Cache");
+            LOG.debug("Deleting All elements from the Cache");
             cache.removeAll();
         } else if (operation.equalsIgnoreCase("ADD")) {
-            LOG.info("Adding an element with key " + key + " into the Cache");
+            LOG.debug("Adding an element with key " + key + " into the Cache");
             cache.put(new Element(key, buffer), true);
         } else if (operation.equalsIgnoreCase("UPDATE")) {
-            LOG.info("Updating an element with key " + key + " into the Cache");
+            LOG.debug("Updating an element with key " + key + " into the Cache");
             cache.put(new Element(key, buffer), true);
         } else if (operation.equalsIgnoreCase("DELETE")) {
-            LOG.info("Deleting an element with key " + key + " into the Cache");
+            LOG.debug("Deleting an element with key " + key + " into the Cache");
             cache.remove(key, true);
         }
     }

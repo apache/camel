@@ -86,7 +86,7 @@ public class CacheProducerTest extends CamelTestSupport {
             }
         });
         context.start();
-        LOG.info("------------Beginning CacheProducer Add Test---------------");
+        LOG.debug("------------Beginning CacheProducer Add Test---------------");
         sendFile();
     }
     
@@ -101,7 +101,7 @@ public class CacheProducerTest extends CamelTestSupport {
             }
         });
         context.start();
-        LOG.info("------------Beginning CacheProducer Update Test---------------");
+        LOG.debug("------------Beginning CacheProducer Update Test---------------");
         sendUpdatedFile();
     }
     
@@ -116,7 +116,7 @@ public class CacheProducerTest extends CamelTestSupport {
             }
         });
         context.start();
-        LOG.info("------------Beginning CacheProducer Delete Test---------------");
+        LOG.debug("------------Beginning CacheProducer Delete Test---------------");
         sendUpdatedFile();
     }
     
@@ -138,7 +138,7 @@ public class CacheProducerTest extends CamelTestSupport {
             }
         });
         context.start();
-        LOG.info("------------Beginning CacheProducer Delete All Elements Test---------------");
+        LOG.debug("------------Beginning CacheProducer Delete All Elements Test---------------");
         sendUpdatedFile();
     }    
     

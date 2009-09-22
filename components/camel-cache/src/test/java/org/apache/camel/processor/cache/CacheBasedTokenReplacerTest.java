@@ -50,7 +50,7 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
 
     @Test
     public void testCacheBasedTokenReplacer() throws Exception {
-        LOG.info("Beginning Test ---> testCacheBasedTokenReplacer()");
+        LOG.debug("Beginning Test ---> testCacheBasedTokenReplacer()");
 
         resultEndpoint.expectedMessageCount(1);
 
@@ -80,7 +80,7 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
         }
 
         resultEndpoint.assertIsSatisfied();
-        LOG.info("Completed Test ---> testCacheBasedTokenReplacer()");
+        LOG.debug("Completed Test ---> testCacheBasedTokenReplacer()");
 
     }
 
@@ -100,12 +100,14 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 
-                        LOG.info("------- Payload Replacement Results ---------");
-                        LOG.info("The following Payload was replaced from Cache: TestCache1");
-                        LOG.info("key = " + key);
-                        LOG.info("Before Value = " + quote);
-                        LOG.info("After value = " + data);
-                        LOG.info("------ End  ------");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("------- Payload Replacement Results ---------");
+                            LOG.debug("The following Payload was replaced from Cache: TestCache1");
+                            LOG.debug("key = " + key);
+                            LOG.debug("Before Value = " + quote);
+                            LOG.debug("After value = " + data);
+                            LOG.debug("------ End  ------");
+                        }
                     }
                 }).to("mock:result");
 

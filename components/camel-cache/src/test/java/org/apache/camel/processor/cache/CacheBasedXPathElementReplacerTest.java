@@ -55,7 +55,7 @@ public class CacheBasedXPathElementReplacerTest extends CamelTestSupport {
 
     @Test
     public void testCacheBasedXPathElementReplacer() throws Exception {
-        LOG.info("Beginning Test ---> testCacheBasedXPathElementReplacer()");
+        LOG.debug("Beginning Test ---> testCacheBasedXPathElementReplacer()");
 
         resultEndpoint.expectedMessageCount(1);
 
@@ -82,7 +82,7 @@ public class CacheBasedXPathElementReplacerTest extends CamelTestSupport {
         }
 
         resultEndpoint.assertIsSatisfied();
-        LOG.info("Completed Test ---> testCacheBasedXPathElementReplacer()");
+        LOG.debug("Completed Test ---> testCacheBasedXPathElementReplacer()");
 
     }
 
@@ -101,12 +101,14 @@ public class CacheBasedXPathElementReplacerTest extends CamelTestSupport {
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 
-                        LOG.info("------- Payload Replacement Results ---------");
-                        LOG.info("The following Payload was replaced from Cache: TestCache1");
-                        LOG.info("key = " + key);
-                        LOG.info("Before Value = " + xmlFragment);
-                        LOG.info("After value = " + data);
-                        LOG.info("------ End  ------");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("------- Payload Replacement Results ---------");
+                            LOG.debug("The following Payload was replaced from Cache: TestCache1");
+                            LOG.debug("key = " + key);
+                            LOG.debug("Before Value = " + xmlFragment);
+                            LOG.debug("After value = " + data);
+                            LOG.debug("------ End  ------");
+                        }
                     }
                 }).to("mock:result");
 

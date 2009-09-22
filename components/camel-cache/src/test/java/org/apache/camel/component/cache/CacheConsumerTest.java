@@ -43,7 +43,7 @@ public class CacheConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReceivingFileFromCache() throws Exception {
-        LOG.info("Beginning Test ---> testReceivingFileFromCache()");
+        LOG.debug("Beginning Test ---> testReceivingFileFromCache()");
 
         resultEndpoint.expectedMessageCount(3);
 
@@ -64,7 +64,7 @@ public class CacheConsumerTest extends CamelTestSupport {
         }
 
         resultEndpoint.assertIsSatisfied();
-        LOG.info("Completed Test ---> testReceivingFileFromCache()");
+        LOG.debug("Completed Test ---> testReceivingFileFromCache()");
     }
 
     @Override
@@ -78,12 +78,14 @@ public class CacheConsumerTest extends CamelTestSupport {
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 
-                        LOG.info("------- Cache Event Notification ---------");
-                        LOG.info("Received notification for the following activity in cache TestCache1:");
-                        LOG.info("Operation = " + operation);
-                        LOG.info("key = " + key);
-                        LOG.info("value = " + data);
-                        LOG.info("------ End Cache Event Notification ------");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("------- Cache Event Notification ---------");
+                            LOG.debug("Received notification for the following activity in cache TestCache1:");
+                            LOG.debug("Operation = " + operation);
+                            LOG.debug("key = " + key);
+                            LOG.debug("value = " + data);
+                            LOG.debug("------ End Cache Event Notification ------");
+                        }
                     }
 
                 }).to("mock:result");
