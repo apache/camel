@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.util.CamelContextHelper;
@@ -127,6 +128,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {
             return createInjectionProducerTemplate(endpointUri, endpointRef, injectionPointName);
+        } else if (type.isAssignableFrom(ConsumerTemplate.class)) {
+            return createInjectionConsumerTemplate(endpointUri, endpointRef, injectionPointName);
         } else {
             Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, true);
             if (endpoint != null) {
@@ -159,6 +162,13 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // endpoint is optional for this injection point
         Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, false);
         return new DefaultProducerTemplate(getCamelContext(), endpoint);
+    }
+
+    /**
+     * Factory method to create a {@link org.apache.camel.ConsumerTemplate} to be injected into a POJO
+     */
+    protected ConsumerTemplate createInjectionConsumerTemplate(String endpointUri, String endpointRef, String injectionPointName) {
+        return new DefaultConsumerTemplate(getCamelContext());
     }
 
     /**
