@@ -39,82 +39,13 @@ public final class FileUtil {
      */
     public static String normalizePath(String path) {
         // special handling for Windows where we need to convert / to \\
-        if (path != null && System.getProperty("os.name").startsWith("Windows") && path.indexOf('/') >= 0) {
+        if (path != null && isWindows() && path.indexOf('/') >= 0) {
             return path.replace('/', '\\');
         }
         return path;
     }
     
-    public static void mkDir(File dir) {
-        if (dir == null) {
-            throw new IllegalArgumentException("dir attribute is required");
-        }
-
-        if (dir.isFile()) {
-            throw new RuntimeException("Unable to create directory as a file "
-                                    + "already exists with that name: " + dir.getAbsolutePath());
-        }
-
-        if (!dir.exists()) {
-            boolean result = doMkDirs(dir);
-            if (!result) {
-                String msg = "Directory " + dir.getAbsolutePath()
-                             + " creation was not successful for an unknown reason";
-                throw new RuntimeException(msg);
-            }
-        }
-    }
-
-    /**
-     * Attempt to fix possible race condition when creating directories on
-     * WinXP, also Windows2000. If the mkdirs does not work, wait a little and
-     * try again.
-     */
-    private static boolean doMkDirs(File f) {
-        if (!f.mkdirs()) {
-            try {
-                Thread.sleep(RETRY_SLEEP_MILLIS);
-                return f.mkdirs();
-            } catch (InterruptedException ex) {
-                return f.mkdirs();
-            }
-        }
-        return true;
-    }
-
-    public static void removeDir(File d) {
-        String[] list = d.list();
-        if (list == null) {
-            list = new String[0];
-        }
-        for (String s : list) {
-            File f = new File(d, s);
-            if (f.isDirectory()) {
-                removeDir(f);
-            } else {
-                delete(f);
-            }
-        }
-        delete(d);
-    }
-
-    public static void delete(File f) {
-        if (!f.delete()) {
-            if (isWindows()) {
-                System.gc();
-            }
-            try {
-                Thread.sleep(RETRY_SLEEP_MILLIS);
-            } catch (InterruptedException ex) {
-                // Ignore Exception
-            }
-            if (!f.delete()) {
-                f.deleteOnExit();
-            }
-        }
-    }
-
-    private static boolean isWindows() {
+    public static boolean isWindows() {
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
         return osName.indexOf("windows") > -1;
     }
@@ -217,6 +148,10 @@ public final class FileUtil {
      * Compacts a path by stacking it and reducing <tt>..</tt>
      */
     public static String compactPath(String path) {
+        if (path == null) {
+            return null;
+        }
+
         // only normalize path if it contains .. as we want to avoid: path/../sub/../sub2 as this can leads to trouble
         if (path.indexOf("..") == -1) {
             return path;
@@ -281,6 +216,38 @@ public final class FileUtil {
         Runtime.getRuntime().addShutdownHook(hook);
 
         return defaultTempDir;
+    }
+
+    private static void removeDir(File d) {
+        String[] list = d.list();
+        if (list == null) {
+            list = new String[0];
+        }
+        for (String s : list) {
+            File f = new File(d, s);
+            if (f.isDirectory()) {
+                removeDir(f);
+            } else {
+                delete(f);
+            }
+        }
+        delete(d);
+    }
+
+    private static void delete(File f) {
+        if (!f.delete()) {
+            if (isWindows()) {
+                System.gc();
+            }
+            try {
+                Thread.sleep(RETRY_SLEEP_MILLIS);
+            } catch (InterruptedException ex) {
+                // Ignore Exception
+            }
+            if (!f.delete()) {
+                f.deleteOnExit();
+            }
+        }
     }
 
 }

@@ -37,14 +37,6 @@ public class Time {
         return new Time(value, TimeUnit.MILLISECONDS);
     }
 
-    public static Time micros(long value) {
-        return new Time(value, TimeUnit.MICROSECONDS);
-    }
-
-    public static Time nanos(long value) {
-        return new Time(value, TimeUnit.NANOSECONDS);
-    }
-
     public static Time seconds(long value) {
         return new Time(value, TimeUnit.SECONDS);
     }

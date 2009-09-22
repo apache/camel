@@ -17,20 +17,19 @@
 package org.apache.camel.impl;
 
 import java.lang.reflect.Method;
-
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
 import org.apache.camel.Consumer;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
-import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.util.CamelContextHelper;
