@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.jivesoftware.smack.packet.Message;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -35,6 +32,7 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
 
+    @Ignore
     @Test
     public void testProducerGetsEverything() throws Exception {
 

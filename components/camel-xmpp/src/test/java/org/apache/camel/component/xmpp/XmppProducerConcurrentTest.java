@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -29,20 +30,22 @@ import org.junit.Test;
  */
 public class XmppProducerConcurrentTest extends CamelTestSupport {
 
-    // a disabled test... before enabling you must fill in your own gmail credentials in the route below
-    public void xtestNoConcurrentProducers() throws Exception {
+    @Ignore
+    @Test
+    public void testNoConcurrentProducers() throws Exception {
+        // a disabled test... before enabling you must fill in your own gmail credentials in the route below
+
         doSendMessages(1, 1);
     }
 
-    // a disabled test... before enabling you must fill in your own gmail credentials in the route below
-    public void xtestConcurrentProducers() throws Exception {
+    @Ignore
+    @Test
+    public void testConcurrentProducers() throws Exception {
+        // a disabled test... before enabling you must fill in your own gmail credentials in the route below
+
         doSendMessages(10, 5);
     }
 
-    // get around junit warning
-    @Test
-    public void testNothing() throws Exception {
-    }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(files);
@@ -68,8 +71,8 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").
-                    to("xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&user=fromuser&password=secret").
-                    to("mock:result");
+                        to("xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&user=fromuser&password=secret").
+                        to("mock:result");
             }
         };
     }
