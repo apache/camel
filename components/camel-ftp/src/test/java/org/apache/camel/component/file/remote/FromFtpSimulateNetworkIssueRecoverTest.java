@@ -24,8 +24,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
- * Simulate network issues by using a custom poll startegy to force exceptions
- * occuring during poll.
+ * Simulate network issues by using a custom poll strategy to force exceptions
+ * occurring during poll.
  *
  * @version $Revision$
  */
@@ -61,7 +61,9 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
 
         resultEndpoint.assertIsSatisfied();
 
-        assertEquals(3, counter);
+        Thread.sleep(2000);
+
+        assertTrue("Should have tried at least 3 times was " + counter, counter >= 3);
         assertEquals(2, rollback);
     }
 
