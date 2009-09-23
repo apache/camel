@@ -65,7 +65,7 @@ public final class IntrospectionSupport {
         try {
             return setProperties(target, properties, optionPrefix);
         } catch (Exception e) {
-            LOG.debug("Can not copy properties to target: " + target, e);
+            LOG.debug("Cannot copy properties to target: " + target, e);
             return false;
         }
     }

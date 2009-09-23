@@ -18,6 +18,8 @@ package org.apache.camel.component.file;
 
 import java.lang.reflect.Method;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedString;
 
@@ -26,8 +28,10 @@ import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedS
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  */
-public class AntPathMatcherGenericFileFilter implements GenericFileFilter {
+public class AntPathMatcherGenericFileFilter implements GenericFileFilter, CamelContextAware {
     private static final String ANTPATHMATCHER_CLASSNAME = "org.apache.camel.spring.util.SpringAntPathMatcherFileFilter";
+
+    private CamelContext context;
 
     private String[] excludes;
     private String[] includes;
@@ -63,8 +67,9 @@ public class AntPathMatcherGenericFileFilter implements GenericFileFilter {
     @SuppressWarnings("unchecked")
     private void init() throws NoSuchMethodException {
         // we must use reflection to invoke the AntPathMatcherFileFilter that reside in camel-spring.jar
-        // and we don't want camel-cone to have runtime dependency on camel-spring.jar
-        Class clazz = ObjectHelper.loadClass(ANTPATHMATCHER_CLASSNAME);
+        // and we don't want camel-core to have runtime dependency on camel-spring.jar
+        // use class resolver from CamelContext to ensure it works with OSGi as well
+        Class clazz = context.getClassResolver().resolveClass(ANTPATHMATCHER_CLASSNAME);
         ObjectHelper.notNull(clazz, ANTPATHMATCHER_CLASSNAME + " not found in classpath. camel-spring.jar is required in the classpath.");
 
         filter = ObjectHelper.newInstance(clazz);
@@ -102,6 +107,14 @@ public class AntPathMatcherGenericFileFilter implements GenericFileFilter {
      */
     public void setIncludes(String includes) {
         setIncludes(includes.split(","));
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.context = camelContext;
+    }
+
+    public CamelContext getCamelContext() {
+        return context;
     }
 
 }
