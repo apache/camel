@@ -23,15 +23,17 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Component;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.osgi.tracker.BundleTracker;
+import org.apache.camel.osgi.tracker.BundleTrackerCustomizer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -44,19 +46,21 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
-public class Activator implements BundleActivator, SynchronousBundleListener {
+public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_COMPONENT = "META-INF/services/org/apache/camel/component/";
     public static final String META_INF_LANGUAGE = "META-INF/services/org/apache/camel/language/";
     public static final String META_INF_LANGUAGE_RESOLVER = "META-INF/services/org/apache/camel/language/resolver/";
     
     private static final transient Log LOG = LogFactory.getLog(Activator.class);    
-    private static final Map<String, ComponentEntry> COMPONENTS = new HashMap<String, ComponentEntry>();
-    private static final Map<URL, TypeConverterEntry> TYPE_CONVERTERS = new HashMap<URL, TypeConverterEntry>();
-    private static final Map<String, ComponentEntry> LANGUAGES = new HashMap<String, ComponentEntry>();
-    private static final Map<String, ComponentEntry> LANGUAGE_RESOLVERS = new HashMap<String, ComponentEntry>();
+    private static final Map<String, ComponentEntry> COMPONENTS = new ConcurrentHashMap<String, ComponentEntry>();
+    private static final Map<URL, TypeConverterEntry> TYPE_CONVERTERS = new ConcurrentHashMap<URL, TypeConverterEntry>();
+    private static final Map<String, ComponentEntry> LANGUAGES = new ConcurrentHashMap<String, ComponentEntry>();
+    private static final Map<String, ComponentEntry> LANGUAGE_RESOLVERS = new ConcurrentHashMap<String, ComponentEntry>();
     private static Bundle bundle;
     
+    private BundleTracker tracker;
+
     private class ComponentEntry {
         Bundle bundle;
         String path;
@@ -70,32 +74,28 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         Set<String> converterPackages;
     }
     
-    public void bundleChanged(BundleEvent event) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Bundle changed: " + event);
-        }
+	public Object addingBundle(Bundle bundle, BundleEvent event) {
+		modifiedBundle(bundle, event, null);
+		return bundle;
+	}
 
-        try {
-            Bundle bundle = event.getBundle();
-            if (event.getType() == BundleEvent.RESOLVED) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Bundle resolved: " + bundle.getSymbolicName());
-                }
-                mayBeAddComponentAndLanguageFor(bundle);                
-                mayBeAddTypeConverterFor(bundle);
-            } else if (event.getType() == BundleEvent.UNRESOLVED) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Bundle unresolved: " + bundle.getSymbolicName());
-                }
-                mayBeRemoveComponentAndLanguageFor(bundle);                
-                mayBeRemoveTypeConverterFor(bundle);
-            }
-        } catch (Throwable e) {
-            LOG.fatal("Exception occured during bundleChanged for event: " + event, e);
+	public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Bundle started: " + bundle.getSymbolicName());
         }
-    }
+        mayBeAddComponentAndLanguageFor(bundle);                
+        mayBeAddTypeConverterFor(bundle);
+	}
 
-    protected synchronized void addComponentEntry(String entryPath, Bundle bundle, Map<String, ComponentEntry> entries, Class clazz) {
+	public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Bundle stopped: " + bundle.getSymbolicName());
+        }
+        mayBeRemoveComponentAndLanguageFor(bundle);                
+        mayBeRemoveTypeConverterFor(bundle);
+	}
+
+    protected void addComponentEntry(String entryPath, Bundle bundle, Map<String, ComponentEntry> entries, Class clazz) {
         // Check bundle compatibility
         try {
             if (bundle.loadClass(clazz.getName()) != clazz) {
@@ -127,7 +127,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         addComponentEntry(META_INF_LANGUAGE_RESOLVER, bundle, LANGUAGE_RESOLVERS, LanguageResolver.class);
     }
     
-    protected synchronized void mayBeAddTypeConverterFor(Bundle bundle) {
+    protected void mayBeAddTypeConverterFor(Bundle bundle) {
         // Check bundle compatibility
         try {
             Class clazz = TypeConverter.class;
@@ -175,7 +175,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         }        
     }
     
-    protected synchronized void mayBeRemoveTypeConverterFor(Bundle bundle) {
+    protected void mayBeRemoveTypeConverterFor(Bundle bundle) {
         TypeConverterEntry[] entriesArray = TYPE_CONVERTERS.values().toArray(new TypeConverterEntry[0]);
         for (TypeConverterEntry entry : entriesArray) {
             if (entry.bundle == bundle) {
@@ -194,19 +194,9 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Using bundle: " + bundle);
         }
-        context.addBundleListener(this);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Checking existing bundles for Camel components, languages and type converters");
-        }
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING
-                || bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STOPPING) {
-                mayBeAddComponentAndLanguageFor(bundle);
-                mayBeAddTypeConverterFor(bundle);
-            }
-        }
-
+        tracker = new BundleTracker(context, Bundle.ACTIVE, this);
+        tracker.open();
         LOG.info("Camel activator started");
     }
 
@@ -216,14 +206,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Removing Camel bundles");
         }
-        for (Bundle bundle : context.getBundles()) {
-            if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING 
-                || bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STOPPING) {
-                mayBeRemoveComponentAndLanguageFor(bundle);
-                mayBeRemoveTypeConverterFor(bundle);
-            }
-        }
-
+        tracker.close();
         LOG.info("Camel activator stopped");
     }
     
@@ -269,27 +252,27 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         return bundle;
     }
     
-    protected static synchronized TypeConverterEntry[] getTypeConverterEntries() {
+    protected static TypeConverterEntry[] getTypeConverterEntries() {
         Collection<TypeConverterEntry> entries = TYPE_CONVERTERS.values();
         return entries.toArray(new TypeConverterEntry[entries.size()]);
     }
         
-    public static synchronized Class getComponent(String name) throws Exception {
+    public static Class getComponent(String name) throws Exception {
         LOG.trace("Finding Component: " + name);
         return getClassFromEntries(name, COMPONENTS);
     }
     
-    public static synchronized Class getLanguage(String name) throws Exception {
+    public static Class getLanguage(String name) throws Exception {
         LOG.trace("Finding Language: " + name);
         return getClassFromEntries(name, LANGUAGES);
     }
     
-    public static synchronized Class getLanguageResolver(String name) throws Exception {
+    public static Class getLanguageResolver(String name) throws Exception {
         LOG.trace("Finding LanguageResolver: " + name);
         return getClassFromEntries(name, LANGUAGE_RESOLVERS);
     }
     
-    protected static synchronized Class getClassFromEntries(String name, Map<String, ComponentEntry> entries) throws Exception {
+    protected static Class getClassFromEntries(String name, Map<String, ComponentEntry> entries) throws Exception {
         ComponentEntry entry = entries.get(name);
         if (entry == null) {
             return null;
