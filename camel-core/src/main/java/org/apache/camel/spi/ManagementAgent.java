@@ -76,6 +76,13 @@ public interface ManagementAgent extends Service {
     MBeanServer getMBeanServer();
 
     /**
+     * Sets a custom mbean server to use
+     *
+     * @param mbeanServer the custom mbean server
+     */
+    void setMBeanServer(MBeanServer mbeanServer);
+
+    /**
      * Get domain name for Camel MBeans.
      * <p/>
      * <b>Notice:</b> That this can be different that the default domain name of the MBean Server.

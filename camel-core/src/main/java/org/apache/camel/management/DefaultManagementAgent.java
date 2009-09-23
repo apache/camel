@@ -173,8 +173,8 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         this.onlyRegisterProcessorWithCustomId = onlyRegisterProcessorWithCustomId;
     }
 
-    public void setServer(MBeanServer value) {
-        server = value;
+    public void setMBeanServer(MBeanServer mbeanServer) {
+        server = mbeanServer;
     }
 
     public MBeanServer getMBeanServer() {
