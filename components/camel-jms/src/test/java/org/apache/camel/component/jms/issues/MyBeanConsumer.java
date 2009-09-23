@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.ConsumerTemplate;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 
 /**
@@ -36,7 +35,7 @@ public class MyBeanConsumer {
 
         String received;
         do {
-            received = consumer.receiveBodyNoWait("activemq:queue:foo", String.class);
+            received = consumer.receiveBody("activemq:queue:foo", 5000, String.class);
             if (received != null) {
                 answer.add(received);
             }
