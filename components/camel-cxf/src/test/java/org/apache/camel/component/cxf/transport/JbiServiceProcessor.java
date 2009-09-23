@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.cxf.transport;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -31,12 +32,16 @@ public class JbiServiceProcessor implements Processor {
         + " xmlns:msg=\"http://cxf.component.camel.apache.org\" type=\"msg:echoResponse\"><jbi:part>"
         + "<ns1:return xmlns:ns1=\"http://cxf.component.camel.apache.org\">echo Hello World!</ns1:return>"
         + "</jbi:part></jbi:message>";
+    private static final String JBI_WRAPPER = "<jbi:message xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper";
     
 
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
-        LOG.info("Get the request " + in.getBody(String.class));
-        
+        String request = in.getBody(String.class);
+        LOG.info("Get the request " + request);
+        if (!request.startsWith(JBI_WRAPPER)) {
+            throw new CamelException("Get a wrong request");
+        }
         exchange.getOut().setBody(ECHO_RESPONSE);
         
     }

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.processor.jpa;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -32,7 +32,6 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;

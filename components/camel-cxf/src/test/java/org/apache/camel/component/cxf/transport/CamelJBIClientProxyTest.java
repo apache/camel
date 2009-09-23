@@ -40,8 +40,10 @@ public class CamelJBIClientProxyTest {
         assertNotNull("The proxy should not be null.", proxy);
     }
     
+    
     @Test
     public void testCallFromProxy() {
+        // The echo parameter will be ignore, since the service has the fix response
         String response = proxy.echo("Hello World!");
         assertEquals("Get a wrong response ", "echo Hello World!", response);
     }
@@ -51,7 +53,8 @@ public class CamelJBIClientProxyTest {
         // get camel context
         CamelContext context = (CamelContext) applicationContext.getBean("conduit_context");
         ProducerTemplate producer = context.createProducerTemplate();
-        String response = producer.requestBody("direct://jbiStart", "Hello", String.class);
+        // The echo parameter will be ignore, since the service has the fix response
+        String response = producer.requestBody("direct://jbiStart", "Hello World!", String.class);
         assertEquals("Get a wrong response ", "echo Hello World!", response);
     }
     
