@@ -89,6 +89,7 @@
       <saxon-bundle-version>9.1.0.1_1</saxon-bundle-version>
       <servicemix-specs-version>1.4-SNAPSHOT</servicemix-specs-version>
       <servlet-api-2.5-version>2.5-20081211</servlet-api-2.5-version>
+      <snmp4j-bundle-version>1.8.1_1</snmp4j-bundle-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>      
       <spring-commons-collections-version>3.2.1</spring-commons-collections-version>
       <spring-version>2.5.6.SEC01</spring-version>

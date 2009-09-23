@@ -98,6 +98,7 @@
     <xerces-version>2.8.0</xerces-version>
     <xalan-version>2.7.1</xalan-version>
     <xmlbeans-version>2.4.0</xmlbeans-version>
+    <snmp4j-version>1.8.1_1</snmp4j-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
@@ -378,6 +379,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-snmp</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -965,6 +971,13 @@
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.javax.mail</artifactId>
         <version>${javax-mail-version}</version>
+      </dependency>
+      
+      <!-- optional SNMP4J -->
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.snmp4j</artifactId>
+        <version>${snmp4j-version}</version>
       </dependency>
    
       <!-- optional XStream -->

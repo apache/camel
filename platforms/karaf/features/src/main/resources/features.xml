@@ -371,6 +371,11 @@
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-script/${pom.version}</bundle>
   </feature>
+  <feature name='camel-snmp' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.snmp4j/${snmp4j-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-snmp/${pom.version}</bundle>
+  </feature>
   <feature name='camel-spring-integration' version='${pom.version}'>
     <bundle>mvn:org.springframework.integration/org.springframework.integration/1.0.1.RELEASE</bundle>
     <feature version='${pom.version}'>camel-spring</feature>

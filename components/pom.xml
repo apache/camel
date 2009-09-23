@@ -77,6 +77,8 @@
     <module>camel-saxon</module>
     <module>camel-scala</module>
     <module>camel-script</module>
+    <module>camel-servlet</module>
+    <module>camel-snmp</module>
     <module>camel-spring</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-javaconfig</module>
@@ -92,6 +94,5 @@
     <module>camel-xstream</module>
     <module>camel-web</module>
     <module>camel-web-standalone</module>
-    <module>camel-servlet</module>
   </modules>
 </project>
