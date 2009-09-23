@@ -141,7 +141,7 @@ public abstract class TestSupport extends TestCase {
 
     public static void assertEndpointUri(Endpoint endpoint, String uri) {
         assertNotNull("Endpoint is null when expecting endpoint for: " + uri, endpoint);
-        assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
+        assertEquals("Endpoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
     }
 
     /**

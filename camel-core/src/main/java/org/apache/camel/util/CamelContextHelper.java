@@ -67,45 +67,6 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Returns a list of all endpoints of the given type
-     *
-     * @param camelContext the camel context
-     * @param type the type of the endpoints requested
-     * @return a list which may be empty of all the endpoint instances of the
-     *         given type
-     */    
-    public <T> List<T> getEndpoints(CamelContext camelContext, Class<T> type) {
-        return getEndpointsImpl(camelContext, type, false);
-    }        
-    
-    /**
-     * Returns a list of all singleton endpoints of the given type
-     *
-     * @param camelContext the camel context
-     * @param type the type of the endpoints requested
-     * @return a list which may be empty of all the endpoint instances of the
-     *         given type
-     */
-    public static <T> List<T> getSingletonEndpoints(CamelContext camelContext, Class<T> type) {
-        return getEndpointsImpl(camelContext, type, true);
-    }
-
-    /**
-     * Returns a list of all singleton or regular endpoints of the given type
-     */
-    private static <T> List<T> getEndpointsImpl(CamelContext camelContext, Class<T> type, boolean singleton) {
-        List<T> answer = new ArrayList<T>();
-        Collection<Endpoint> endpoints = singleton ? camelContext.getSingletonEndpoints() : camelContext.getEndpoints();
-        for (Endpoint endpoint : endpoints) {
-            if (type.isInstance(endpoint)) {
-                T value = type.cast(endpoint);
-                answer.add(value);
-            }
-        }
-        return answer;
-    }          
-    
-    /**
      * Converts the given value to the requested type
      */
     public static <T> T convertTo(CamelContext context, Class<T> type, Object value) {
@@ -167,35 +128,6 @@ public final class CamelContextHelper {
         T answer = lookup(context, name, beanType);
         notNull(answer, "registry entry called " + name + " of type " + beanType.getName());
         return answer;
-    }
-
-    /**
-     * Resolves the given language name into a {@link Language} or throws an exception if it could not be converted
-     */
-    public static Language resolveMandatoryLanguage(CamelContext camelContext, String languageName) {
-        notNull(camelContext, "camelContext");
-        notNull(languageName, "languageName");
-
-        Language language = camelContext.resolveLanguage(languageName);
-        if (language == null) {
-            throw new IllegalArgumentException("Could not resolve language: " + languageName);
-        }
-        return language;
-    }
-
-    /**
-     * Resolves the mandatory language name and expression text into a {@link Expression} instance
-     * throwing an exception if it could not be created
-     */
-    public static Expression resolveMandatoryExpression(CamelContext camelContext, String languageName, String expressionText) {
-        notNull(expressionText, "expressionText");
-
-        Language language = resolveMandatoryLanguage(camelContext, languageName);
-        Expression expression = language.createExpression(expressionText);
-        if (expression == null) {
-            throw new IllegalArgumentException("Could not create expression: " + expressionText + " with language: " + language);
-        }
-        return expression;
     }
 
     /**

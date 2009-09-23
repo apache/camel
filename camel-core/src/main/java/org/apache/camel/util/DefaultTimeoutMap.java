@@ -139,26 +139,13 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
     // Properties
     // -------------------------------------------------------------------------
+    
     public long getPurgePollTime() {
         return purgePollTime;
     }
 
-    /**
-     * Sets the next purge poll time in milliseconds
-     */
-    public void setPurgePollTime(long purgePollTime) {
-        this.purgePollTime = purgePollTime;
-    }
-
     public ScheduledExecutorService getExecutor() {
         return executor;
-    }
-
-    /**
-     * Sets the executor used to schedule purge events of inactive requests
-     */
-    public void setExecutor(ScheduledExecutorService executor) {
-        this.executor = executor;
     }
 
     // Implementation methods

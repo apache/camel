@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.browse;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.BrowsableEndpoint;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,13 +39,14 @@ public class BrowseTest extends ContextTestSupport {
         template.sendBody("browse:foo", body1);
         template.sendBody("browse:foo", body2);
 
-        List<BrowsableEndpoint> list = CamelContextHelper.getSingletonEndpoints(context, BrowsableEndpoint.class);
+        Collection<Endpoint> list = context.getEndpoints();
         assertEquals("number of endpoints", 2, list.size());
 
         Thread.sleep(2000);
 
-        for (BrowsableEndpoint endpoint : list) {
-            List<Exchange> exchanges = endpoint.getExchanges();
+        for (Endpoint endpoint : list) {
+
+            List<Exchange> exchanges = ((BrowseEndpoint) endpoint).getExchanges();
 
             LOG.debug(">>>> " + endpoint + " has: " + exchanges);
 

@@ -291,10 +291,6 @@ public abstract class ContextTestSupport extends TestSupport {
         assertNotNull("No context found!", context);
     }
 
-    protected <T> List<T> getSingletonEndpoints(Class<T> type) {
-        return CamelContextHelper.getSingletonEndpoints(context, type);
-    }
-
     protected <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
         T endpoint = context.getEndpoint(uri, type);
         assertNotNull("No endpoint found for uri: " + uri, endpoint);
