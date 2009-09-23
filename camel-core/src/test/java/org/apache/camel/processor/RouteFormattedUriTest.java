@@ -30,6 +30,12 @@ public class RouteFormattedUriTest extends ContextTestSupport {
     private String pattern = ".*txt$";
     private String result = "result";
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/toformat");
+        super.setUp();
+    }
+
     public void testFormattedUri() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:" + result);
         mock.expectedBodiesReceived("Hello World");
