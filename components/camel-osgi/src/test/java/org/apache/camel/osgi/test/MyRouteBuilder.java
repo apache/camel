@@ -23,7 +23,6 @@ public class MyRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         // Do nothing here
-        
     }
 
 }

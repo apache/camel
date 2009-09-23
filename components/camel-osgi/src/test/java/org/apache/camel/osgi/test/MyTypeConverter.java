@@ -16,15 +16,12 @@
  */
 package org.apache.camel.osgi.test;
 
-import java.util.Collection;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.ObjectHelper;
 
 @Converter
 public final class MyTypeConverter {

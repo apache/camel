@@ -81,13 +81,8 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
         this.camelContext = camelContext;
     }
 
-    public String getDefaultEndpoint() {
-        return defaultEndpoint;
-    }
-
     /**
-     * Sets the default endpoint URI used by default for sending message
-     * exchanges
+     * Sets the default endpoint URI used by default for sending message exchanges
      */
     public void setDefaultEndpoint(String defaultEndpoint) {
         this.defaultEndpoint = defaultEndpoint;

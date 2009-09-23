@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.osgi;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
 import org.springframework.osgi.mock.MockBundle;
-
 
 /**
  *  The mock bundle will make up a normal camel-components bundle
@@ -40,7 +37,7 @@ public class CamelMockBundle extends MockBundle {
         }
 
         public boolean hasMoreElements() {
-            return list == null ? false : index < list.size();
+            return list != null && index < list.size();
         }
 
         public Object nextElement() {

@@ -14,13 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.osgi;
-import junit.framework.TestCase;
-import org.junit.Test;
-import org.springframework.osgi.mock.MockBundle;
-import org.springframework.osgi.mock.MockBundleContext;
 
+import org.junit.Test;
 
 public class ActivatorTest extends CamelOsgiTestSupport {    
     
@@ -29,10 +25,8 @@ public class ActivatorTest extends CamelOsgiTestSupport {
         Class clazz = Activator.getComponent("timer");
         assertNull("Here should not find the timer component", clazz);
         
-        clazz = null;
         clazz = Activator.getComponent("timer_test");
         assertNotNull("The timer_test component should not be null", clazz);
-        
     }
     
     @Test
@@ -57,8 +51,7 @@ public class ActivatorTest extends CamelOsgiTestSupport {
         Activator.TypeConverterEntry[] entries = Activator.getTypeConverterEntries();
         assertTrue("We should find some converter packages here", entries.length > 0);        
         assertTrue("Here should contains org.apache.camel.osgi.test", containsPackageName("org.apache.camel.osgi.test", entries));
-        assertTrue("Here should contains org.apache.camel.spring.converter", containsPackageName("org.apache.camel.spring.converter", entries));
-        assertTrue("Here should contains org.apache.camel.osgi.test", containsPackageName("org.apache.camel.osgi.test", entries));        
+        assertTrue("Here should contains org.apache.camel.osgi.test", containsPackageName("org.apache.camel.osgi.test", entries));
     }
 
 }

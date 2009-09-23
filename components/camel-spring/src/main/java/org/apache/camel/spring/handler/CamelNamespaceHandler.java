@@ -125,17 +125,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         parentBuilder.addPropertyReference("beanPostProcessor", beanPostProcessorId);
     }
 
-    protected void registerScriptParser(String elementName, String engineName) {
-        registerParser(elementName, new ScriptDefinitionParser(engineName));
-    }
-
     protected void registerParser(String name, org.springframework.beans.factory.xml.BeanDefinitionParser parser) {
         parserElementNames.add(name);
         registerBeanDefinitionParser(name, parser);
-    }
-
-    public Set<String> getParserElementNames() {
-        return parserElementNames;
     }
 
     protected Object parseUsingJaxb(Element element, ParserContext parserContext, Binder<Node> binder) {

@@ -46,11 +46,6 @@ public class TestEndpoint extends MockEndpoint implements Service {
         this.expectedMessageEndpoint = expectedMessageEndpoint;
     }
 
-    public TestEndpoint(String endpointUri, Endpoint expectedMessageEndpoint) {
-        super(endpointUri);
-        this.expectedMessageEndpoint = expectedMessageEndpoint;
-    }
-
     @SuppressWarnings("unchecked")
     public void start() throws Exception {
         if (LOG.isDebugEnabled()) {

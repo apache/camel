@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
 public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
+
     @Test
     public void testOsgiResolverFindAnnotatedTest() throws IOException {
         BundleContext  context = getActivator().getBundle().getBundleContext();

@@ -25,26 +25,6 @@ public class TransactedRuntimeCamelException extends RuntimeCamelException {
 
     private final boolean handled;
 
-    public TransactedRuntimeCamelException() {
-        super();
-        this.handled = false;
-    }
-
-    public TransactedRuntimeCamelException(String message) {
-        super(message);
-        this.handled = false;
-    }
-
-    public TransactedRuntimeCamelException(String message, Throwable cause) {
-        super(message, cause);
-        this.handled = false;
-    }
-
-    public TransactedRuntimeCamelException(Throwable cause) {
-        super(cause);
-        this.handled = false;
-    }
-
     public TransactedRuntimeCamelException(Throwable cause, boolean handled) {
         super(cause);
         this.handled = handled;

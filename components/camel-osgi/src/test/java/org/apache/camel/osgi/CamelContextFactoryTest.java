@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.osgi;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -22,7 +21,8 @@ import org.apache.camel.osgi.test.MyService;
 import org.junit.Test;
 
 public class CamelContextFactoryTest extends CamelOsgiTestSupport {
-    @Test 
+
+    @Test
     public void osigServiceRegistryTest() throws Exception {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(getBundleContext());

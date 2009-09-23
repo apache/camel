@@ -16,10 +16,7 @@
  */
 package org.apache.camel.spring;
 
-import java.util.List;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.example.DummyBean;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -30,6 +27,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class EndpointReferenceTest extends SpringTestSupport {
     protected static Object body = "<hello>world!</hello>";
+
+    public void testContextToString() throws Exception {
+        assertNotNull(context.toString());
+    }
 
     public void testEndpointConfiguration() throws Exception {
         Endpoint endpoint = getMandatoryBean(Endpoint.class, "endpoint1");
@@ -62,13 +63,6 @@ public class EndpointReferenceTest extends SpringTestSupport {
         }
 
         testEndpointConfiguration();
-    }
-
-    protected void assertValidContext(SpringCamelContext context) {
-        super.assertValidContext(context);
-
-        List<Route> routes = context.getRoutes();
-        assertEquals("Number of routes defined", 1, routes.size());
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {

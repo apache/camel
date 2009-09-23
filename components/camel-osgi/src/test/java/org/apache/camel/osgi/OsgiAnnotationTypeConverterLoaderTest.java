@@ -27,7 +27,7 @@ public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport 
         MockTypeConverterRegistry registry = new MockTypeConverterRegistry();
         loader.load(registry);
         assertTrue("There should have at lest one fallback converter", registry.getFallbackTypeConverters().size() >= 1);        
-        assertTrue("There should have at lest one coverter", registry.getTypeConverters().size() >= 1);
+        assertTrue("There should have at lest one converter", registry.getTypeConverters().size() >= 1);
     }
 
 }

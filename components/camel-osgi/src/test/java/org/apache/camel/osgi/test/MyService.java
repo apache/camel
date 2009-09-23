@@ -17,6 +17,7 @@
 package org.apache.camel.osgi.test;
 
 public class MyService {
+
     public String sayHi() {
         return "Hello";
     }

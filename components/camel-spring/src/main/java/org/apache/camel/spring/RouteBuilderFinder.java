@@ -23,8 +23,6 @@ import java.util.Set;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 
@@ -34,7 +32,6 @@ import org.springframework.context.ApplicationContext;
  * @version $Revision$
  */
 public class RouteBuilderFinder {
-    private static final transient Log LOG = LogFactory.getLog(RouteBuilderFinder.class);
     private final SpringCamelContext camelContext;
     private final String[] packages;
     private PackageScanClassResolver resolver;
@@ -51,14 +48,6 @@ public class RouteBuilderFinder {
         this.resolver = resolver;
         // add our provided loader as well
         resolver.addClassLoader(classLoader);
-    }
-
-    public String[] getPackages() {
-        return packages;
-    }
-
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
     }
 
     /**
@@ -79,9 +68,6 @@ public class RouteBuilderFinder {
                 list.add(builder);
             }
         }
-    }
-
-    public void destroy() throws Exception {
     }
 
     /**

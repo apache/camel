@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring;
 
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -46,8 +45,6 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
     private CamelContext context;
     @XmlTransient
     private Endpoint endpoint;
-    @XmlTransient
-    private boolean singleton;
 
     public Object getObject() throws Exception {
         if (endpoint == null) {
@@ -61,7 +58,10 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
     }
 
     public boolean isSingleton() {
-        return singleton;
+        if (endpoint == null) {
+            this.endpoint = createEndpoint();
+        }
+        return endpoint.isSingleton();
     }
 
     public CamelContext getCamelContext() {
@@ -75,18 +75,6 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
      */
     public void setCamelContext(CamelContext context) {
         this.context = context;
-    }
-
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public void setSingleton(boolean singleton) {
-        this.singleton = singleton;
     }
 
     public String getUri() {

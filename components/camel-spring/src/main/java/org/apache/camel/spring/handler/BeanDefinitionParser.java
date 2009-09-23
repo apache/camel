@@ -26,7 +26,6 @@ import org.springframework.core.Conventions;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-
 /**
  * A base class for a parser for a bean.
  *
@@ -38,22 +37,12 @@ import org.springframework.util.StringUtils;
 public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     private Class type;
 
-    protected BeanDefinitionParser() {
-    }
-
     public BeanDefinitionParser(Class type) {
         this.type = type;
     }
 
     protected Class getBeanClass(Element element) {
-        if (type == null) {
-            type = loadType();
-        }
         return type;
-    }
-
-    protected Class loadType() {
-        throw new IllegalArgumentException("No type specified!");
     }
 
     protected boolean isEligibleAttribute(String attributeName) {

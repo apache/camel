@@ -145,9 +145,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlTransient
     private SpringCamelContext context;
     @XmlTransient
-    private RouteBuilder routeBuilder;
-    @XmlTransient
-    private List<RoutesBuilder> additionalBuilders = new ArrayList<RoutesBuilder>();
+    private List<RoutesBuilder> builders = new ArrayList<RoutesBuilder>();
     @XmlTransient
     private ApplicationContext applicationContext;
     @XmlTransient
@@ -176,10 +174,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return contextClassLoaderOnStart;
     }
     
-    public List<RoutesBuilder> getAdditionalBuilders() {
-        return additionalBuilders;
-    }
-
     public void afterPropertiesSet() throws Exception {
         if (properties != null) {
             getContext().setProperties(properties.asMap());
@@ -577,26 +571,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.interceptSendToEndpoints = interceptSendToEndpoints;
     }
 
-    public RouteBuilder getRouteBuilder() {
-        return routeBuilder;
-    }
-
-    /**
-     * Set a single {@link RouteBuilder} to be used to create the default routes
-     * on startup
-     */
-    public void setRouteBuilder(RouteBuilder routeBuilder) {
-        this.routeBuilder = routeBuilder;
-    }
-
-    /**
-     * Set a collection of {@link RouteBuilder} instances to be used to create
-     * the default routes on startup
-     */
-    public void setRouteBuilders(RouteBuilder[] builders) {
-        additionalBuilders.addAll(Arrays.asList(builders));
-    }
-
     public ApplicationContext getApplicationContext() {
         if (applicationContext == null) {
             throw new IllegalArgumentException("No applicationContext has been injected!");
@@ -793,10 +767,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     protected void installRoutes() throws Exception {
         List<RouteBuilder> builders = new ArrayList<RouteBuilder>();
 
-        if (routeBuilder != null) {
-            builders.add(routeBuilder);
-        }
-
         // lets add route builders added from references
         if (builderRefs != null) {
             for (RouteBuilderDefinition builderRef : builderRefs) {
@@ -807,7 +777,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                     // support to get the route here
                     RoutesBuilder routes = builderRef.createRoutes(getContext());
                     if (routes != null) {
-                        additionalBuilders.add(routes);
+                        this.builders.add(routes);
                     } else {
                         // Throw the exception that we can't find any build here
                         throw new CamelException("Cannot find any routes with this RouteBuilder reference: " + builderRef);
@@ -818,7 +788,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // install already configured routes
-        for (RoutesBuilder routeBuilder : additionalBuilders) {
+        for (RoutesBuilder routeBuilder : this.builders) {
             getContext().addRoutes(routeBuilder);
         }
 
@@ -850,7 +820,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             String[] normalized = normalizePackages(packageScanDef.getPackages());
             RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(),
                     getBeanPostProcessor(), getContext().getPackageScanClassResolver());
-            finder.appendBuilders(getAdditionalBuilders());
+            finder.appendBuilders(builders);
         }
     }
 

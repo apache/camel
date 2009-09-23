@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.osgi;
 
 import org.apache.camel.osgi.test.MyService;
@@ -22,9 +21,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.springframework.osgi.mock.MockBundleContext;
 
-/**
- * 
- */
 public class CamelMockBundleContext extends MockBundleContext {
     
     public Object getService(ServiceReference reference) {        
