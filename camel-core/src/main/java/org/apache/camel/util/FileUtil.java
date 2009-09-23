@@ -157,6 +157,11 @@ public final class FileUtil {
             return path;
         }
 
+        // only normalize if contains a path separator
+        if (path.indexOf(File.separator) == -1) {
+            return path;
+        }
+
         Stack<String> stack = new Stack<String>();
         String[] parts = path.split(File.separator);
         for (String part : parts) {
