@@ -166,7 +166,7 @@ public final class FileUtil {
         
         String separatorRegex = File.separator;
         if (FileUtil.isWindows()) {
-            separatorRegex = "////";
+            separatorRegex = "\\\\";
         }
         String[] parts = path.split(separatorRegex);
         for (String part : parts) {
