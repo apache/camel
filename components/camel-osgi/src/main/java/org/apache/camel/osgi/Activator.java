@@ -74,26 +74,26 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         Set<String> converterPackages;
     }
     
-	public Object addingBundle(Bundle bundle, BundleEvent event) {
-		modifiedBundle(bundle, event, null);
-		return bundle;
-	}
+    public Object addingBundle(Bundle bundle, BundleEvent event) {
+        modifiedBundle(bundle, event, null);
+        return bundle;
+    }
 
-	public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
+    public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Bundle started: " + bundle.getSymbolicName());
         }
-        mayBeAddComponentAndLanguageFor(bundle);                
+        mayBeAddComponentAndLanguageFor(bundle);
         mayBeAddTypeConverterFor(bundle);
-	}
+    }
 
-	public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
+    public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Bundle stopped: " + bundle.getSymbolicName());
         }
-        mayBeRemoveComponentAndLanguageFor(bundle);                
+        mayBeRemoveComponentAndLanguageFor(bundle);
         mayBeRemoveTypeConverterFor(bundle);
-	}
+    }
 
     protected void addComponentEntry(String entryPath, Bundle bundle, Map<String, ComponentEntry> entries, Class clazz) {
         // Check bundle compatibility
