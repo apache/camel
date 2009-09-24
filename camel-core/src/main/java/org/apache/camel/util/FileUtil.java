@@ -163,7 +163,12 @@ public final class FileUtil {
         }
 
         Stack<String> stack = new Stack<String>();
-        String[] parts = path.split(File.separator);
+        
+        String separatorRegex = File.separator;
+        if (FileUtil.isWindows()) {
+            separatorRegex = "////";
+        }
+        String[] parts = path.split(separatorRegex);
         for (String part : parts) {
             if (part.equals("..") && !stack.isEmpty()) {
                 // only pop if there is a previous path
