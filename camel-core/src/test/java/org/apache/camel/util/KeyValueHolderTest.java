@@ -34,6 +34,8 @@ public class KeyValueHolderTest extends TestCase {
 
         assertFalse("Should not be equals", foo.equals(bar));
 
+        assertNotSame(foo.hashCode(), bar.hashCode());
+
         KeyValueHolder bar2 = new KeyValueHolder("bar", 456);
         assertTrue("Should be equals", bar.equals(bar2));
 

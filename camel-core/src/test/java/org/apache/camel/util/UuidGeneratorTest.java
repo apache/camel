@@ -33,6 +33,10 @@ public class UuidGeneratorTest extends TestCase {
         assertNotSame("Should generate unique ids", generator.generateId(), generator.generateId());
     }
 
+    public void testHostName() {
+        assertNotNull(UuidGenerator.getHostName());
+    }
+
     public void testSimpleSanitizedId() {
         String out = UuidGenerator.generateSanitizedId("hello");
         assertTrue("Should not contain : ", out.indexOf(':') == -1);
@@ -41,6 +45,12 @@ public class UuidGeneratorTest extends TestCase {
 
     public void testNotFileFriendlySimpleSanitizedId() {
         String out = UuidGenerator.generateSanitizedId("c:\\helloworld");
+        assertTrue("Should not contain : ", out.indexOf(':') == -1);
+        assertTrue("Should not contain . ", out.indexOf('.') == -1);
+    }
+
+    public void testSanitizedId() {
+        String out = generator.generateSanitizedId();
         assertTrue("Should not contain : ", out.indexOf(':') == -1);
         assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }

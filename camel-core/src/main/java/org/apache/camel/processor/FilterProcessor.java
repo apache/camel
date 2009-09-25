@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -60,5 +61,17 @@ public class FilterProcessor extends DelegateProcessor implements Traceable {
 
     public Predicate getPredicate() {
         return predicate;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ServiceHelper.startService(predicate);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(predicate);
+        super.doStop();
     }
 }

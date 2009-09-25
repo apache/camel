@@ -52,25 +52,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Extracts the exchange property of the given name and type; if it is not present then the
-     * default value will be used
-     *
-     * @param exchange the message exchange
-     * @param propertyName the name of the property on the exchange
-     * @param type the expected type of the property
-     * @param defaultValue the default value to be used if the property name does not exist or could not be
-     * converted to the given type
-     * @return the property value as the given type or the defaultValue if it could not be found or converted
-     */
-    public static <T> T getExchangeProperty(Exchange exchange, String propertyName, Class<T> type, T defaultValue) {
-        T answer = exchange.getProperty(propertyName, type);
-        if (answer == null) {
-            return defaultValue;
-        }
-        return answer;
-    }
-
-    /**
      * Extracts the Exchange.BINDING of the given type or null if not present
      *
      * @param exchange the message exchange
@@ -92,8 +73,7 @@ public final class ExchangeHelper {
      * @return the endpoint
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
-    public static Endpoint resolveEndpoint(Exchange exchange, Object value)
-        throws NoSuchEndpointException {
+    public static Endpoint resolveEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint)value;
@@ -282,8 +262,7 @@ public final class ExchangeHelper {
      * Returns the message where to write results in an
      * exchange-pattern-sensitive way.
      * 
-     * @param exchange
-     *            message exchange.
+     * @param exchange message exchange.
      * @return result message.
      */
     public static Message getResultMessage(Exchange exchange) {
@@ -295,19 +274,7 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Returns true if the given exchange pattern (if defined) can support IN messagea
-     *
-     * @param exchange the exchange to interrogate
-     * @return true if the exchange is defined as an {@link ExchangePattern} which supports
-     * IN messages
-     */
-    public static boolean isInCapable(Exchange exchange) {
-        ExchangePattern pattern = exchange.getPattern();
-        return pattern != null && pattern.isInCapable();
-    }
-
-    /**
-     * Returns true if the given exchange pattern (if defined) can support OUT messagea
+     * Returns true if the given exchange pattern (if defined) can support OUT messages
      *
      * @param exchange the exchange to interrogate
      * @return true if the exchange is defined as an {@link ExchangePattern} which supports
@@ -329,7 +296,7 @@ public final class ExchangeHelper {
      * Creates a Map of the variables which are made available to a script or template
      *
      * @param exchange the exchange to make available
-     * @return a Map populated with the require dvariables
+     * @return a Map populated with the require variables
      */
     public static Map createVariableMap(Exchange exchange) {
         Map answer = new HashMap();

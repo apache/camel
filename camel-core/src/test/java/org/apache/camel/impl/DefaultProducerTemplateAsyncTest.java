@@ -277,6 +277,33 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertTrue("Should take longer than: " + delta, delta > 250);
     }
 
+    public void testAsyncProcessWithClassicAPIAndTimeout() throws Exception {
+        Endpoint endpoint = context.getEndpoint("direct:start");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody("Hello");
+
+        long start = System.currentTimeMillis();
+
+        // produce it async so we use a helper
+        Producer producer = endpoint.createProducer();
+        // normally you will use a shared exectutor service with pools
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        // send it async with the help of this helper
+        Future<Exchange> future = AsyncProcessorHelper.asyncProcess(executor, producer, exchange);
+
+        // you can do other stuff
+        String echo = template.requestBody("direct:echo", "Hi", String.class);
+        assertEquals("HiHi", echo);
+
+        String result = template.extractFutureBody(future, 5, TimeUnit.SECONDS, String.class);
+
+        assertMockEndpointsSatisfied();
+
+        long delta = System.currentTimeMillis() - start;
+        assertEquals("Hello World", result);
+        assertTrue("Should take longer than: " + delta, delta > 250);
+    }
+
     public void testAsyncCallbackExchangeInOnly() throws Exception {
         order = "";
 

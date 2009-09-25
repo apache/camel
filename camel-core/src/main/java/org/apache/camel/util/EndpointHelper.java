@@ -40,6 +40,7 @@ public final class EndpointHelper {
     private EndpointHelper() {
         //Utility Class
     }
+
     /**
      * Creates a {@link PollingConsumer} and polls all pending messages on the endpoint
      * and invokes the given {@link Processor} to process each {@link Exchange} and then closes

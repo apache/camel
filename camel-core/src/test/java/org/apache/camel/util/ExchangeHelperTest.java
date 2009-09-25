@@ -16,10 +16,14 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
@@ -83,6 +87,75 @@ public class ExchangeHelperTest extends ContextTestSupport {
             assertEquals("No bean could be found in the registry for: foo", e.getMessage());
             assertEquals("foo", e.getName());
         }
+    }
+
+    public void testNoSuchBeanType() throws Exception {
+        try {
+            ExchangeHelper.lookupMandatoryBean(exchange, "foo", String.class);
+            fail("Should have thrown an exception");
+        } catch (NoSuchBeanException e) {
+            assertEquals("No bean could be found in the registry for: foo", e.getMessage());
+            assertEquals("foo", e.getName());
+        }
+    }
+
+    public void testGetExchangeById() throws Exception {
+        List<Exchange> list = new ArrayList<Exchange>();
+        Exchange e1 = context.getEndpoint("mock:foo").createExchange();
+        Exchange e2 = context.getEndpoint("mock:foo").createExchange();
+        list.add(e1);
+        list.add(e2);
+
+        assertNull(ExchangeHelper.getExchangeById(list, "unknown"));
+        assertEquals(e1, ExchangeHelper.getExchangeById(list, e1.getExchangeId()));
+        assertEquals(e2, ExchangeHelper.getExchangeById(list, e2.getExchangeId()));
+    }
+
+    public void testPopulateVariableMap() throws Exception {
+        exchange.setPattern(ExchangePattern.InOut);
+        exchange.getOut().setBody("bar");
+        exchange.getOut().setHeader("quote", "Camel rocks");
+
+        Map map = new HashMap();
+        ExchangeHelper.populateVariableMap(exchange, map);
+
+        assertEquals(8, map.size());
+        assertSame(exchange, map.get("exchange"));
+        assertSame(exchange.getIn(), map.get("in"));
+        assertSame(exchange.getIn(), map.get("request"));
+        assertSame(exchange.getOut(), map.get("out"));
+        assertSame(exchange.getOut(), map.get("response"));
+        assertSame(exchange.getIn().getHeaders(), map.get("headers"));
+        assertSame(exchange.getIn().getBody(), map.get("body"));
+        assertSame(exchange.getContext(), map.get("camelContext"));
+    }
+
+    public void testCreateVariableMap() throws Exception {
+        exchange.setPattern(ExchangePattern.InOut);
+        exchange.getOut().setBody("bar");
+        exchange.getOut().setHeader("quote", "Camel rocks");
+
+        Map map = ExchangeHelper.createVariableMap(exchange);
+
+        assertEquals(8, map.size());
+        assertSame(exchange, map.get("exchange"));
+        assertSame(exchange.getIn(), map.get("in"));
+        assertSame(exchange.getIn(), map.get("request"));
+        assertSame(exchange.getOut(), map.get("out"));
+        assertSame(exchange.getOut(), map.get("response"));
+        assertSame(exchange.getIn().getHeaders(), map.get("headers"));
+        assertSame(exchange.getIn().getBody(), map.get("body"));
+        assertSame(exchange.getContext(), map.get("camelContext"));
+    }
+
+    public void testGetContentType() throws Exception {
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
+        assertEquals("text/xml", ExchangeHelper.getContentType(exchange));
+    }
+
+    public void testGetContentEncpding() throws Exception {
+        exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "iso-8859-1");
+        assertEquals("iso-8859-1", ExchangeHelper.getContentEncoding(exchange));
     }
 
     @Override

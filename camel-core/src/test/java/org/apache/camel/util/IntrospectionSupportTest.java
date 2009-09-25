@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.reflect.Method;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.jndi.ExampleBean;
@@ -86,6 +87,52 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(IntrospectionSupport.hasProperties(param, null));
         assertTrue(IntrospectionSupport.hasProperties(param, ""));
         assertTrue(IntrospectionSupport.hasProperties(param, "foo."));
+    }
+
+    public void testGetProperties() throws Exception {
+        ExampleBean bean = new ExampleBean();
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+
+        Map map = new HashMap();
+        IntrospectionSupport.getProperties(bean, map, null);
+        assertEquals(2, map.size());
+
+        assertEquals("Claus", map.get("name"));
+        String price = map.get("price").toString();
+        assertTrue(price.startsWith("10"));
+    }
+
+    public void testGetPropertiesOptionPrefix() throws Exception {
+        ExampleBean bean = new ExampleBean();
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+
+        Map map = new HashMap();
+        IntrospectionSupport.getProperties(bean, map, "bean.");
+        assertEquals(2, map.size());
+
+        assertEquals("Claus", map.get("bean.name"));
+        String price = map.get("bean.price").toString();
+        assertTrue(price.startsWith("10"));
+    }
+
+    public void testGetProperty() throws Exception {
+        ExampleBean bean = new ExampleBean();
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+
+        Object name = IntrospectionSupport.getProperty(bean, "name");
+        assertEquals("Claus", name);
+    }
+
+    public void testGetPropertyGetter() throws Exception {
+        ExampleBean bean = new ExampleBean();
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+
+        Method name = IntrospectionSupport.getPropertyGetter(ExampleBean.class, "name");
+        assertEquals("getName", name.getName());
     }
 
 }

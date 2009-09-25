@@ -17,6 +17,8 @@
 package org.apache.camel.util;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Arrays;
 
 import org.apache.camel.Service;
 import org.apache.commons.logging.Log;
@@ -76,26 +78,8 @@ public final class ServiceHelper {
      * Stops all of the given services, throwing the first exception caught
      */
     public static void stopServices(Object... services) throws Exception {
-        Exception firstException = null;
-        for (Object value : services) {
-            if (value instanceof Service) {
-                Service service = (Service)value;
-                try {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Stopping service: " + service);
-                    }
-                    service.stop();
-                } catch (Exception e) {
-                    LOG.debug("Caught exception shutting down: " + e, e);
-                    if (firstException == null) {
-                        firstException = e;
-                    }
-                }
-            }
-        }
-        if (firstException != null) {
-            throw firstException;
-        }
+        List list = Arrays.asList(services);
+        stopServices(list);
     }
 
     public static void stopService(Object value) throws Exception {

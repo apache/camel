@@ -16,9 +16,13 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -38,6 +42,37 @@ public class CollectionHelperTest extends TestCase {
         assertEquals("", CollectionHelper.collectionAsCommaDelimitedString((Collection) null));
 
         assertEquals("Claus", CollectionHelper.collectionAsCommaDelimitedString(new String[]{"Claus"}));
+    }
+
+    public void testSize() {
+        Map map = new HashMap();
+        map.put("foo", 123);
+        map.put("bar", 456);
+
+        assertEquals(2, CollectionHelper.size(map).intValue());
+
+        String[] array = new String[]{"Claus", "Willem"};
+        assertEquals(2, CollectionHelper.size(array).intValue());
+    }
+
+    public void testAppendValue() {
+        Map map = new HashMap();
+        CollectionHelper.appendValue(map, "foo", 123);
+        assertEquals(1, map.size());
+
+        CollectionHelper.appendValue(map, "foo", 456);
+        assertEquals(1, map.size());
+
+        CollectionHelper.appendValue(map, "bar", 789);
+        assertEquals(2, map.size());
+
+        List values = (List) map.get("foo");
+        assertEquals(2, values.size());
+        assertEquals(123, values.get(0));
+        assertEquals(456, values.get(1));
+
+        Integer value = (Integer) map.get("bar");
+        assertEquals(789, value.intValue());
     }
 
 }

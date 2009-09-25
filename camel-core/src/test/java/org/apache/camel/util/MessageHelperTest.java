@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import junit.framework.TestCase;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -58,4 +59,15 @@ public class MessageHelperTest extends TestCase {
         MessageHelper.resetStreamCache(message);
         assertTrue("Should have reset the stream cache", reset.get());
     }
+
+    public void testGetContentType() throws Exception {
+        message.setHeader(Exchange.CONTENT_TYPE, "text/xml");
+        assertEquals("text/xml", MessageHelper.getContentType(message));
+    }
+
+    public void testGetContentEncpding() throws Exception {
+        message.setHeader(Exchange.CONTENT_ENCODING, "iso-8859-1");
+        assertEquals("iso-8859-1", MessageHelper.getContentEncoding(message));
+    }
+
 }

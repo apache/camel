@@ -87,31 +87,14 @@ public final class CollectionHelper {
             } else {
                 list = new ArrayList();
                 list.add(oldValue);
+                // replace old entry with list
+                map.remove(key);
+                map.put(key, list);
             }
             list.add(value);
         } else {
             map.put(key, value);
         }
-    }
-
-    /**
-     * Filters the given list to skip instanceof filter objects.
-     * 
-     * @param list  the list
-     * @param filters  objects to skip
-     * @return a new list without the filtered objects
-     */
-    @SuppressWarnings("unchecked")
-    public static List filterList(List list, Object... filters) {
-        List answer = new ArrayList();
-        for (Object o : list) {
-            for (Object filter : filters) {
-                if (!o.getClass().isInstance(filter)) {
-                    answer.add(o);
-                }
-            }
-        }
-        return answer;
     }
 
     public static <T> Set<T> createSetContaining(T... contents) {
