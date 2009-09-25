@@ -45,6 +45,7 @@
         org.springframework.jmx.export.annotation;resolution:=optional,
         org.springframework.jmx.export.assembler;resolution:=optional,
         org.springframework.jmx.export.metadata;resolution:=optional,
+        org.springframework.util;resolution:=optional,
 		*
     </camel.osgi.import>
     <camel.osgi.dynamic>
