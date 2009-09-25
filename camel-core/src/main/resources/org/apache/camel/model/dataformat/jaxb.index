@@ -18,6 +18,7 @@ ArtixDSContentType
 ArtixDSDataFormat
 BindyDataFormat
 BindyType
+CastorDataFormat
 CsvDataFormat
 DataFormatsDefinition
 FlatpackDataFormat

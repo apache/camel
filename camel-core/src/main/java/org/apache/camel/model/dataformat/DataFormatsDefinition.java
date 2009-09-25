@@ -39,6 +39,7 @@ public class DataFormatsDefinition {
     @XmlElements({
         @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
+        @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),

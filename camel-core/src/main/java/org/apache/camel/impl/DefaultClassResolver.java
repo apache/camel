@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.io.InputStream;
+import java.net.URL;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -81,6 +82,11 @@ public class DefaultClassResolver implements ClassResolver {
     public InputStream loadResourceAsStream(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         return ObjectHelper.loadResourceAsStream(uri);
+    }
+
+    public URL loadResourceAsURL(String uri) {
+        ObjectHelper.notEmpty(uri, "uri");
+        return ObjectHelper.loadResourceAsURL(uri);
     }
 
     protected Class loadClass(String name, ClassLoader loader) {

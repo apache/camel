@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.net.URL;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -674,6 +675,27 @@ public final class ObjectHelper {
         }
 
         return in;
+    }
+
+    /**
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @return the stream or null if it could not be loaded
+     */
+    public static URL loadResourceAsURL(String name) {
+        URL url = null;
+
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null) {
+            url = contextClassLoader.getResource(name);
+        }
+        if (url == null) {
+            url = ObjectHelper.class.getClassLoader().getResource(name);
+        }
+
+        return url;
     }
 
     /**

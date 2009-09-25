@@ -26,6 +26,7 @@ import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
+import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -124,6 +125,45 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     }
 
     /**
+     * Uses the Castor data format
+     */
+    public T castor() {
+        return dataFormat(new CastorDataFormat());
+    }
+
+    /**
+     * Uses the Castor data format
+     *
+     * @param mappingFile name of mapping file to locate in classpath
+     */
+    public T castor(String mappingFile) {
+        CastorDataFormat castor = new CastorDataFormat();
+        castor.setMappingFile(mappingFile);
+        return dataFormat(castor);
+    }
+
+    /**
+     * Uses the Castor data format
+     *
+     * @param mappingFile name of mapping file to locate in classpath
+     * @param validation whether validation is enabled or not
+     */
+    public T castor(String mappingFile, boolean validation) {
+        CastorDataFormat castor = new CastorDataFormat();
+        castor.setMappingFile(mappingFile);
+        castor.setValidation(validation);
+        return dataFormat(castor);
+    }
+
+    /**
+     * Uses the GZIP deflater data format
+     */
+    public T gzip() {
+        GzipDataFormat gzdf = new GzipDataFormat();
+        return dataFormat(gzdf);
+    }
+
+    /**
      * Uses the HL7 data format
      */
     public T hl7() {
@@ -151,6 +191,34 @@ public class DataFormatClause<T extends ProcessorDefinition> {
      */
     public T jaxb(boolean prettyPrint) {
         return dataFormat(new JaxbDataFormat(prettyPrint));
+    }
+
+    /**
+     * Uses the JSON data format using the XStream json library
+     */
+    public T json() {
+        return dataFormat(new JsonDataFormat());
+    }
+
+    /**
+     * Uses the JSON data format
+     *
+     * @param library the json library to use
+     */
+    public T json(JsonLibrary library) {
+        return dataFormat(new JsonDataFormat(library));
+    }
+
+    /**
+     * Uses the JSON data format
+     *
+     * @param type the json type to use
+     * @param unmarshalType unmarshal type for json jackson type
+     */
+    public T json(JsonLibrary type, Class<?> unmarshalType) {
+        JsonDataFormat json = new JsonDataFormat(type);
+        json.setUnmarshalType(unmarshalType);
+        return dataFormat(json);
     }
 
     /**
@@ -184,13 +252,6 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     }
 
     /**
-     * Uses the JAXB data format
-     */
-    public T xmlBeans() {
-        return dataFormat(new XMLBeansDataFormat());
-    }
-
-    /**
      * Return WellFormed HTML (an XML Document) either 
      * {@link java.lang.String} or {@link org.w3c.dom.Node}
      */
@@ -206,7 +267,6 @@ public class DataFormatClause<T extends ProcessorDefinition> {
         return dataFormat(new TidyMarkupDataFormat(Node.class));
     }
 
-    
     /**
      * Uses the XStream data format
      */
@@ -214,34 +274,6 @@ public class DataFormatClause<T extends ProcessorDefinition> {
         return dataFormat(new XStreamDataFormat());
     }
     
-    /**
-     * Uses the JSON data format using the XStream json library
-     */
-    public T json() {
-        return dataFormat(new JsonDataFormat());
-    }
-
-    /**
-     * Uses the JSON data format
-     *
-     * @param library the json library to use
-     */
-    public T json(JsonLibrary library) {
-        return dataFormat(new JsonDataFormat(library));
-    }
-
-    /**
-     * Uses the JSON data format
-     *
-     * @param type the json type to use
-     * @param unmarshalType unmarshal type for json jackson type
-     */
-    public T json(JsonLibrary type, Class<?> unmarshalType) {
-        JsonDataFormat json = new JsonDataFormat(type);
-        json.setUnmarshalType(unmarshalType);
-        return dataFormat(json);
-    }
-
     /**
      * Uses the XML Security data format
      */
@@ -275,6 +307,13 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     }
 
     /**
+     * Uses the xmlBeans data format
+     */
+    public T xmlBeans() {
+        return dataFormat(new XMLBeansDataFormat());
+    }
+
+    /**
      * Uses the ZIP deflater data format
      */
     public T zip() {
@@ -290,14 +329,6 @@ public class DataFormatClause<T extends ProcessorDefinition> {
         return dataFormat(zdf);
     }
     
-    /**
-     * Uses the GZIP deflater data format
-     */
-    public T gzip() {
-        GzipDataFormat gzdf = new GzipDataFormat();
-        return dataFormat(gzdf);
-    }
-
     @SuppressWarnings("unchecked")
     private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {

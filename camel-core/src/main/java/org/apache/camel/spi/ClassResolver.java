@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * A class resolver for loading classes in a loosly coupled manner to cater for different platforms such
@@ -44,7 +45,7 @@ public interface ClassResolver {
     /**
      * Resolves the given class by its name
      *
-     * @param name full qualified name of class
+     * @param name   full qualified name of class
      * @param loader use the provided class loader
      * @return the class if resolved, <tt>null</tt> if not found.
      */
@@ -53,8 +54,8 @@ public interface ClassResolver {
     /**
      * Resolves the given class by its name
      *
-     * @param name full qualified name of class
-     * @param type the expected type of the class
+     * @param name   full qualified name of class
+     * @param type   the expected type of the class
      * @param loader use the provided class loader
      * @return the class if resolved, <tt>null</tt> if not found.
      */
@@ -82,9 +83,9 @@ public interface ClassResolver {
     /**
      * Resolves the given class by its name
      *
-     * @param name full qualified name of class
-     * @return the class if resolved, <tt>null</tt> if not found.
+     * @param name   full qualified name of class
      * @param loader use the provided class loader
+     * @return the class if resolved, <tt>null</tt> if not found.
      * @throws ClassNotFoundException is thrown if class not found
      */
     Class resolveMandatoryClass(String name, ClassLoader loader) throws ClassNotFoundException;
@@ -92,8 +93,8 @@ public interface ClassResolver {
     /**
      * Resolves the given class by its name
      *
-     * @param name full qualified name of class
-     * @param type the expected type of the class
+     * @param name   full qualified name of class
+     * @param type   the expected type of the class
      * @param loader use the provided class loader
      * @return the class if resolved, <tt>null</tt> if not found.
      * @throws ClassNotFoundException is thrown if class not found
@@ -102,9 +103,18 @@ public interface ClassResolver {
 
     /**
      * Loads the given resource as a stream
+     *
      * @param uri the uri of the resource
      * @return as a stream
      */
     InputStream loadResourceAsStream(String uri);
+
+    /**
+     * Loads the given resource as a URL
+     *
+     * @param uri the uri of the resource
+     * @return as a URL
+     */
+    URL loadResourceAsURL(String uri);
 
 }

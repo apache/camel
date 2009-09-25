@@ -25,10 +25,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
+import org.apache.camel.model.dataformat.BindyDataFormat;
+import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
@@ -54,10 +58,14 @@ public class UnmarshalDefinition extends OutputDefinition<ProcessorDefinition> {
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
     @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
+    @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
+    @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
     @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
+    @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
+    @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
     @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
     @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
