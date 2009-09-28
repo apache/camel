@@ -34,23 +34,25 @@
     <name>Camel :: Platforms :: Apache Karaf :: Features</name>
 
     <properties>
-      <abdera-bundle-version>0.4.0-incubating_1</abdera-bundle-version>
-      <ant-bundle-version>1.7.0_1</ant-bundle-version>
-      <antlr-bundle-version>3.0.1_1</antlr-bundle-version>
-      <aopalliance-bundle-version>1.0_1</aopalliance-bundle-version>
-      <asm-bundle-version>2.2.3_1</asm-bundle-version>
-      <dom4j-bundle-version>1.6_1</dom4j-bundle-version>
-      <cglib-version>2.1_3_2</cglib-version>
-      <commons-beanutils-bundle-version>1.7.0_1</commons-beanutils-bundle-version>
-      <commons-dbcp-bundle-version>1.2.2_3</commons-dbcp-bundle-version>
-      <commons-csv-version>1.0-r706899_1</commons-csv-version>
-      <commons-codec-bundle-version>1.2_1</commons-codec-bundle-version>
-      <commons-httpclient-bundle-version>3.1_1</commons-httpclient-bundle-version>
+      <abdera-bundle-version>0.4.0-incubating_2-SNAPSHOT</abdera-bundle-version>
+      <ant-bundle-version>1.7.0_2-SNAPSHOT</ant-bundle-version>
+      <antlr-bundle-version>3.0.1_2-SNAPSHOT</antlr-bundle-version>
+      <aopalliance-bundle-version>1.0_2-SNAPSHOT</aopalliance-bundle-version>
+      <asm-bundle-version>2.2.3_2-SNAPSHOT</asm-bundle-version>
+      <bcel-bundle-version>5.2_1-SNAPSHOT</bcel-bundle-version>
+      <dom4j-bundle-version>1.6.1_1-SNAPSHOT</dom4j-bundle-version>
+      <cglib-version>2.1_3_3-SNAPSHOT</cglib-version>
+      <commons-beanutils-bundle-version>1.7.0_2-SNAPSHOT</commons-beanutils-bundle-version>
+      <commons-dbcp-bundle-version>1.2.2_4-SNAPSHOT</commons-dbcp-bundle-version>
+      <commons-csv-version>1.0-r706899_2-SNAPSHOT</commons-csv-version>
+      <commons-codec-bundle-version>1.3_1-SNAPSHOT</commons-codec-bundle-version>
+      <commons-httpclient-bundle-version>3.1_2-SNAPSHOT</commons-httpclient-bundle-version>
       <commons-io-bundle-version>1.3.2_1</commons-io-bundle-version>
       <commons-jxpath-version>1.3</commons-jxpath-version>
       <commons-lang-version>2.4</commons-lang-version>
       <commons-net-version>2.0</commons-net-version>
       <commons-management-version>1.0</commons-management-version>
+      <el-api-1.0-version>1.0.1</el-api-1.0-version>
       <flatpack-bundle-version>3.1.1_2-SNAPSHOT</flatpack-bundle-version>
       <freemarker-bundle-version>2.3.15_2-SNAPSHOT</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
@@ -72,44 +74,44 @@
       <jdom-bundle-version>1.1_1</jdom-bundle-version>
       <jettison-bundle-version>1.0.1_1</jettison-bundle-version>
       <jetty-bundle-version>6.1.14_1</jetty-bundle-version>
-      <jetty-cometd-bundle-version>6.1.11_1</jetty-cometd-bundle-version>
+      <jetty-cometd-bundle-version>6.1.11_2-SNAPSHOT</jetty-cometd-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
       <jodatime-bundle-version>1.5.2_1</jodatime-bundle-version>
-      <josql-bundle-version>1.5_1</josql-bundle-version>
+      <josql-bundle-version>1.5_2-SNAPSHOT</josql-bundle-version>
       <jsch-bundle-version>0.1.31_1</jsch-bundle-version>
+      <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
       <juel-bundle-version>2.1.0_1</juel-bundle-version>
       <junit-bundle-version>4.4_1</junit-bundle-version>
-      <mvel-bundle-version>2.0.9_1</mvel-bundle-version>
+      <mvel-bundle-version>2.0.8_2-SNAPSHOT</mvel-bundle-version>
       <mina-bundle-version>1.1.7_2-SNAPSHOT</mina-bundle-version>
       <neethi-bundle-version>2.0.4_1</neethi-bundle-version>
-      <ognl-bundle-version>2.7.3_1</ognl-bundle-version>
-      <oro-bundle-version>2.0.8_1</oro-bundle-version>
+      <ognl-bundle-version>2.7.3_2-SNAPSHOT</ognl-bundle-version>
+      <oro-bundle-version>2.0.8_2-SNAPSHOT</oro-bundle-version>
       <openjpa-bundle-version>1.2.1_1-SNAPSHOT</openjpa-bundle-version>
-      <oscache-bundle-version>2.4_1</oscache-bundle-version>
-      <quartz-bundle-version>1.6.1_1</quartz-bundle-version>
-      <qpid-bundle-version>1.0-incubating-M2.1_1</qpid-bundle-version>
-      <saxon-bundle-version>9.1.0.1_1</saxon-bundle-version>
+      <oscache-bundle-version>2.4_2-SNAPSHOT</oscache-bundle-version>
+      <quartz-bundle-version>1.6.1_2-SNAPSHOT</quartz-bundle-version>
+      <qpid-bundle-version>0.5.0_1-SNAPSHOT</qpid-bundle-version>
+      <saxon-bundle-version>9.1.0.1_2-SNAPSHOT</saxon-bundle-version>
       <servicemix-specs-version>1.4-SNAPSHOT</servicemix-specs-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_1-SNAPSHOT</serp-bundle-version>
       <snmp4j-bundle-version>1.8.1_2-SNAPSHOT</snmp4j-bundle-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>      
-      <spring-commons-collections-version>3.2.1</spring-commons-collections-version>
       <spring-version>2.5.6.SEC01</spring-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
-      <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
-      <tagsoup-bundle-version>1.2_1</tagsoup-bundle-version>
-      <velocity-bundle-version>1.6.2_1</velocity-bundle-version>
-      <xalan-bundle-version>2.7.1_1</xalan-bundle-version>
-      <xerces-bundle-version>2.9.1_1</xerces-bundle-version>
+      <stringtemplate-bundle-version>3.2_2-SNAPSHOT</stringtemplate-bundle-version>
+      <tagsoup-bundle-version>1.2_2-SNAPSHOT</tagsoup-bundle-version>
+      <velocity-bundle-version>1.6.2_2-SNAPSHOT</velocity-bundle-version>
+      <xalan-bundle-version>2.7.1_2-SNAPSHOT</xalan-bundle-version>
+      <xerces-bundle-version>2.9.1_2-SNAPSHOT</xerces-bundle-version>
       <xmlbeans-bundle-version>2.4.0_2</xmlbeans-bundle-version>
       <xmlschema-version>1.4.5</xmlschema-version>
       <xmlsec-bundle-version>1.4.3_1-SNAPSHOT</xmlsec-bundle-version>
-      <xmlresolver-bundle-version>1.2_1</xmlresolver-bundle-version>
-      <xpp3-bundle-version>1.1.4c_1</xpp3-bundle-version>
-      <xstream-bundle-version>1.3_1</xstream-bundle-version>
+      <xmlresolver-bundle-version>1.2_2-SNAPSHOT</xmlresolver-bundle-version>
+      <xpp3-bundle-version>1.1.4c_2-SNAPSHOT</xpp3-bundle-version>
+      <xstream-bundle-version>1.3_2-SNAPSHOT</xstream-bundle-version>
       <werken-xpath-bundle-version>0.9.4_1</werken-xpath-bundle-version>
       <woodstox-bundle-version>3.2.7_1</woodstox-bundle-version>
       <wsdl4j-bundle-version>1.6.1_1</wsdl4j-bundle-version>
