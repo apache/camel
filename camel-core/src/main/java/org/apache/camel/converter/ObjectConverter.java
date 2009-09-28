@@ -44,7 +44,6 @@ public final class ObjectConverter {
     }
 
     public static boolean isCollection(Object value) {
-        // TODO we should handle primitive array types?
         return value instanceof Collection || (value != null && value.getClass().isArray());
     }
 
@@ -67,17 +66,6 @@ public final class ObjectConverter {
     @Converter
     public static Boolean toBoolean(Object value) {
         return ObjectHelper.toBoolean(value);
-    }
-
-    /**
-     * Returns the boolean value, or null if the value is null
-     */
-    @Converter
-    public static Boolean toBoolean(Boolean value) {
-        if (value != null) {
-            return value;
-        }
-        return Boolean.FALSE;
     }
 
     /**

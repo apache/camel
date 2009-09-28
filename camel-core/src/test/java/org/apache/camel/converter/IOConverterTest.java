@@ -16,18 +16,27 @@
  */
 package org.apache.camel.converter;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 
-import junit.framework.TestCase;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Test case for {@link IOConverter}
  */
-public class IOConverterTest extends TestCase {
+public class IOConverterTest extends ContextTestSupport {
 
     private static final byte[] TESTDATA = "My test data".getBytes();
 
@@ -58,6 +67,101 @@ public class IOConverterTest extends TestCase {
         for (int i = 0; i < data1.length; i++) {
             assertEquals(data1[i], data2[i]);
         }
+    }
+
+    public void testToOutputStreamFile() throws Exception {
+        template.sendBodyAndHeader("file://target/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = new File("target/test/hello.txt");
+
+        OutputStream os = IOConverter.toOutputStream(file);
+        assertNotNull(os);
+        os.close();
+    }
+
+    public void testToWriterFile() throws Exception {
+        template.sendBodyAndHeader("file://target/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = new File("target/test/hello.txt");
+
+        Writer writer = IOConverter.toWriter(file);
+        assertNotNull(writer);
+        writer.close();
+    }
+
+    public void testToReader() throws Exception {
+        Reader reader = IOConverter.toReader("Hello");
+        assertEquals("Hello", IOConverter.toString(reader));
+    }
+
+    public void testToInputStreamExchange() {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty(Exchange.CHARSET_NAME, ObjectHelper.getDefaultCharacterSet());
+
+        InputStream is = IOConverter.toInputStream("Hello World", exchange);
+        assertNotNull(is);
+    }
+
+    public void testToInputStreamBufferReader() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty(Exchange.CHARSET_NAME, ObjectHelper.getDefaultCharacterSet());
+
+        BufferedReader br = new BufferedReader(new StringReader("Hello World"));
+        InputStream is = IOConverter.toInputStream(br, exchange);
+        assertNotNull(is);
+    }
+
+    public void testToByteArrayFile() throws Exception {
+        template.sendBodyAndHeader("file://target/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = new File("target/test/hello.txt");
+
+        byte[] data = IOConverter.toByteArray(file);
+        assertNotNull(data);
+        assertEquals(11, data.length);
+    }
+
+    public void testToStringBufferReader() throws Exception {
+        BufferedReader br = new BufferedReader(new StringReader("Hello World"));
+        String s = IOConverter.toString(br);
+        assertNotNull(s);
+        assertEquals("Hello World", s);
+    }
+
+    public void testToByteArrayBufferReader() throws Exception {
+        BufferedReader br = new BufferedReader(new StringReader("Hello World"));
+        byte[] bytes = IOConverter.toByteArray(br);
+        assertNotNull(bytes);
+        assertEquals(11, bytes.length);
+    }
+
+    public void testToByteArrayReader() throws Exception {
+        Reader br = new BufferedReader(new StringReader("Hello World"));
+        byte[] bytes = IOConverter.toByteArray(br);
+        assertNotNull(bytes);
+        assertEquals(11, bytes.length);
+    }
+
+    public void testToByteArrayOutputStream() throws Exception {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        os.write("Hello World".getBytes());
+        byte[] bytes = IOConverter.toByteArray(os);
+        assertNotNull(bytes);
+        assertEquals(11, bytes.length);
+    }
+
+    public void testToStringOutputStream() throws Exception {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        os.write("Hello World".getBytes());
+        String s = IOConverter.toString(os);
+        assertNotNull(s);
+        assertEquals("Hello World", s);
+    }
+
+    public void testToInputStreamOutputStream() throws Exception {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        os.write("Hello World".getBytes());
+
+        InputStream is = IOConverter.toInputStream(os);
+        assertNotNull(is);
+        assertEquals("Hello World", IOConverter.toString(is));
     }
 
 }

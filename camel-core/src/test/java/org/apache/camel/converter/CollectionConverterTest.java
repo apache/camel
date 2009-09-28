@@ -18,10 +18,15 @@ package org.apache.camel.converter;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
+import org.apache.camel.util.CaseInsensitiveMap;
 
 /**
  * Test cases for {@link CollectionConverter}
@@ -50,5 +55,40 @@ public class CollectionConverterTest extends TestCase {
         for (String key : result) {
             assertTrue(SMURFS.contains(key));
         }
+    }
+
+    public void testToArray() {
+        assertEquals(null, CollectionConverter.toArray(null));
+        Object[] data = CollectionConverter.toArray(SMURFS);
+        assertEquals(4, data.length);
+    }
+
+    public void testToList() {
+        List out = CollectionConverter.toList(SMURFS);
+        assertEquals(4, out.size());
+    }
+
+    public void testToSet() {
+        Map map = new HashMap();
+        map.put("foo", "bar");
+
+        Set out = CollectionConverter.toSet(map);
+        assertEquals(1, out.size());
+    }
+
+    public void testToHashMap() {
+        Map map = new CaseInsensitiveMap();
+        map.put("foo", "bar");
+
+        HashMap out = CollectionConverter.toHashMap(map);
+        assertEquals(1, out.size());
+    }
+
+    public void testToHashtable() {
+        Map map = new CaseInsensitiveMap();
+        map.put("foo", "bar");
+
+        Hashtable out = CollectionConverter.toHashtable(map);
+        assertEquals(1, out.size());
     }
 }
