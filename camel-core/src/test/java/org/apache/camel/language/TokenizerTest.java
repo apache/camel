@@ -79,4 +79,24 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals("rocks", names.get(1));
     }
 
+    public void testTokenizeManualConfiguration() throws Exception {
+        TokenizeLanguage lan = new TokenizeLanguage();
+        lan.setHeaderName("names");
+        lan.setRegex(false);
+        lan.setToken(",");
+        Expression exp = lan.createExpression();
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(3, names.size());
+
+        assertEquals("Claus", names.get(0));
+        assertEquals("James", names.get(1));
+        assertEquals("Willem", names.get(2));
+
+        assertEquals("names", lan.getHeaderName());
+        assertEquals(",", lan.getToken());
+        assertEquals(false, lan.isRegex());
+        assertEquals(false, lan.isSingleton());
+    }
+
 }

@@ -272,7 +272,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     public void testParseJaxbDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithJSonDataFormat.xml");
+        RouteDefinition route = assertOneRoute("routeWithJaxbDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 
@@ -295,6 +295,12 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("routeWithArtixDSDataFormat.xml");
         assertFrom(route, "seda:a");
     }
+
+    public void testParseCastorDataFormat() throws Exception {
+        RouteDefinition route = assertOneRoute("routeWithCastorDataFormat.xml");
+        assertFrom(route, "seda:a");
+    }
+
 
     public void testParseBatchResequencerXml() throws Exception {
         RouteDefinition route = assertOneRoute("resequencerBatch.xml");

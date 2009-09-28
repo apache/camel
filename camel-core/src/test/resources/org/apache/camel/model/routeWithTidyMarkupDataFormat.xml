@@ -19,9 +19,9 @@
     <route>
         <from uri="seda:a"/>
         <pipeline>
-            <marshal>
+            <unmarshal>
                 <tidyMarkup/>
-            </marshal>
+            </unmarshal>
             <to uri="seda:b"/>
         </pipeline>
     </route>

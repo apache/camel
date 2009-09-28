@@ -20,7 +20,7 @@
         <from uri="seda:a"/>
         <pipeline>
             <marshal>
-                <cvs/>
+                <csv/>
             </marshal>
             <to uri="seda:b"/>
         </pipeline>

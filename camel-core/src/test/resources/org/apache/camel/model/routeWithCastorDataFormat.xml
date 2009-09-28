@@ -20,7 +20,7 @@
         <from uri="seda:a"/>
         <pipeline>
             <marshal>
-                <secureXML/>
+                <castor/>
             </marshal>
             <to uri="seda:b"/>
         </pipeline>

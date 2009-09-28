@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Date;
 
 import junit.framework.TestCase;
 
@@ -166,6 +167,77 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("foo bar", ObjectHelper.between("Hello 'foo bar' how are you", "'", "'"));
         assertEquals("foo bar", ObjectHelper.between("Hello ${foo bar} how are you", "${", "}"));
         assertEquals(null, ObjectHelper.between("Hello ${foo bar} how are you", "'", "'"));
+    }
+
+    public void testIsJavaIdentifier() {
+        assertEquals(true, ObjectHelper.isJavaIdentifier("foo"));
+        assertEquals(false, ObjectHelper.isJavaIdentifier("foo.bar"));
+        assertEquals(false, ObjectHelper.isJavaIdentifier(""));
+        assertEquals(false, ObjectHelper.isJavaIdentifier(null));
+    }
+
+    public void testGetDefaultCharSet() {
+        assertNotNull(ObjectHelper.getDefaultCharacterSet());
+    }
+
+    public void testConvertPrimitiveTypeToWrapper() {
+        assertEquals("java.lang.Integer", ObjectHelper.convertPrimitiveTypeToWrapperType(int.class).getName());
+        assertEquals("java.lang.Long", ObjectHelper.convertPrimitiveTypeToWrapperType(long.class).getName());
+        assertEquals("java.lang.Double", ObjectHelper.convertPrimitiveTypeToWrapperType(double.class).getName());
+        assertEquals("java.lang.Float", ObjectHelper.convertPrimitiveTypeToWrapperType(float.class).getName());
+        assertEquals("java.lang.Short", ObjectHelper.convertPrimitiveTypeToWrapperType(short.class).getName());
+        assertEquals("java.lang.Byte", ObjectHelper.convertPrimitiveTypeToWrapperType(byte.class).getName());
+        assertEquals("java.lang.Boolean", ObjectHelper.convertPrimitiveTypeToWrapperType(boolean.class).getName());
+        // non primitive just fall through
+        assertEquals("java.lang.Object", ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class).getName());
+    }
+
+    public void testAsString() {
+        String[] args = new String[] { "foo", "bar"};
+        String out = ObjectHelper.asString(args);
+        assertNotNull(out);
+        assertEquals("{foo, bar}", out);
+    }
+
+    public void testName() {
+        assertEquals("java.lang.Integer", ObjectHelper.name(Integer.class));
+        assertEquals(null, ObjectHelper.name(null));
+    }
+
+    public void testClassName() {
+        assertEquals("java.lang.Integer", ObjectHelper.className(Integer.valueOf("5")));
+        assertEquals(null, ObjectHelper.className(null));
+    }
+
+    public void testGetSystemPropertyDefault() {
+        assertEquals("foo", ObjectHelper.getSystemProperty("CamelFooDoesNotExist", "foo"));
+    }
+
+    public void testGetSystemPropertyBooleanDefault() {
+        assertEquals(true, ObjectHelper.getSystemProperty("CamelFooDoesNotExist", Boolean.TRUE));
+    }
+
+    public void testMatches() {
+        List data = new ArrayList();
+        data.add("foo");
+        data.add("bar");
+        assertEquals(true, ObjectHelper.matches(data));
+
+        data.clear();
+        data.add(Boolean.FALSE);
+        data.add("bar");
+        assertEquals(false, ObjectHelper.matches(data));
+
+        data.clear();
+        assertEquals(false, ObjectHelper.matches(data));
+    }
+
+    public void testToBoolean() {
+        assertEquals(Boolean.TRUE, ObjectHelper.toBoolean(Boolean.TRUE));
+        assertEquals(Boolean.TRUE, ObjectHelper.toBoolean("true"));
+        assertEquals(Boolean.TRUE, ObjectHelper.toBoolean(Integer.valueOf("1")));
+        assertEquals(Boolean.FALSE, ObjectHelper.toBoolean(Integer.valueOf("0")));
+        assertEquals(null, ObjectHelper.toBoolean(new Date()));
     }
 
 }

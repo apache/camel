@@ -861,10 +861,8 @@ public final class ObjectHelper {
                 rc = Short.class;
             } else if (type == byte.class) {
                 rc = Byte.class;
-                // TODO: Why is boolean disabled
-                /*
-                 * } else if (type == boolean.class) { rc = Boolean.class;
-                 */
+            } else if (type == boolean.class) {
+                rc = Boolean.class;
             }
         }
         return rc;
