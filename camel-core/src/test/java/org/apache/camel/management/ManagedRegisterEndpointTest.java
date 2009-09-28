@@ -51,6 +51,12 @@ public class ManagedRegisterEndpointTest extends ContextTestSupport {
         name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
         uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
+
+        String id = (String) mbeanServer.getAttribute(name, "CamelId");
+        assertEquals("camel-1", id);
+
+        Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
+        assertEquals(Boolean.TRUE, singleton);
     }
 
     @Override

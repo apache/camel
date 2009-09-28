@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.Date;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -67,6 +68,11 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
 
         assertTrue("Should take around 2 sec: was " + last, last > 1900);
         assertTrue("Should be around 4 sec now: was " + total, total > 3900);
+
+        Date lastFailed = (Date) mbeanServer.getAttribute(on, "LastExchangeFailureTimestamp");
+        Date firstFailed = (Date) mbeanServer.getAttribute(on, "FirstExchangeFailureTimestamp");
+        assertNull(lastFailed);
+        assertNull(firstFailed);
     }
 
     @Override

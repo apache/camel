@@ -52,6 +52,9 @@ public class ManagedUnregisterComponentTest extends ContextTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
+        String id = (String) mbeanServer.getAttribute(on, "CamelId");
+        assertEquals("camel-1", id);
+
         context.stop();
 
         assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));

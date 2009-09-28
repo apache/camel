@@ -155,7 +155,7 @@ public class ManagedTracer {
         if (tracer.getDefaultTraceFormatter() == null) {
             return false;
         }
-        return tracer.getDefaultTraceFormatter().isShowOutBodyType();
+        return tracer.getDefaultTraceFormatter().isShowBodyType();
     }
 
     @ManagedAttribute(description = "Formatter show body type")

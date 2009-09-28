@@ -70,6 +70,9 @@ public class ManagedUnregisterProducerTest extends ContextTestSupport {
 //        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
 //        assertEquals("route1", routeId);
 
+        Boolean singleton = (Boolean) mbeanServer.getAttribute(on, "Singleton");
+        assertEquals(Boolean.TRUE, singleton);
+
         context.stop();
 
         assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));

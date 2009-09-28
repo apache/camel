@@ -57,6 +57,27 @@ public class ManagedErrorHandlerRedeliveryTest extends ContextTestSupport {
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumRedeliveries");
         assertEquals(5, max.intValue());
 
+        Long delay = (Long) mbeanServer.getAttribute(on, "MaximumRedeliveryDelay");
+        assertEquals(60000, delay.longValue());
+
+        delay = (Long) mbeanServer.getAttribute(on, "RedeliveryDelay");
+        assertEquals(0, delay.longValue());
+
+        String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
+        assertEquals("camel-1", camelId);
+
+        Boolean dlc = (Boolean) mbeanServer.getAttribute(on, "DeadLetterChannel");
+        assertEquals(Boolean.FALSE, dlc);
+
+        Boolean dlcom = (Boolean) mbeanServer.getAttribute(on, "DeadLetterUseOriginalMessage");
+        assertEquals(Boolean.FALSE, dlcom);
+
+        Boolean tx = (Boolean) mbeanServer.getAttribute(on, "SupportTransactions");
+        assertEquals(Boolean.FALSE, tx);
+
+        String dlcUri = (String) mbeanServer.getAttribute(on, "DeadLetterChannelEndpointUri");
+        assertNull(dlcUri);
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 

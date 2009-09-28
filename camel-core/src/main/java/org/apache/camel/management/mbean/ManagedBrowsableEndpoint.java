@@ -45,6 +45,9 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
 
     @ManagedOperation(description = "Get Exchange from queue by index")
     public String browseExchange(Integer index) {
+        if (index >= endpoint.getExchanges().size()) {
+            return null;
+        }
         Exchange exchange = endpoint.getExchanges().get(index);
         if (exchange == null) {
             return null;

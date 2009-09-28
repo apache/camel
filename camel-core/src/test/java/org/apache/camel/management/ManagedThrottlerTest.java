@@ -60,6 +60,9 @@ public class ManagedThrottlerTest extends ContextTestSupport {
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
 
+        Long timePeriod = (Long) mbeanServer.getAttribute(throttlerName, "TimePeriodMillis");
+        assertEquals(1000, timePeriod.longValue());
+
         Long last = (Long) mbeanServer.getAttribute(routeName, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 

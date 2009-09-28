@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -54,6 +55,15 @@ public class ManagedScheduledPollConsumerTest extends ContextTestSupport {
 
         Long delay = (Long) mbeanServer.getAttribute(on, "Delay");
         assertEquals(4000, delay.longValue());
+
+        Long initialDelay = (Long) mbeanServer.getAttribute(on, "InitialDelay");
+        assertEquals(1000, initialDelay.longValue());
+
+        Boolean fixedDelay = (Boolean) mbeanServer.getAttribute(on, "UseFixedDelay");
+        assertEquals(Boolean.FALSE, fixedDelay);
+
+        String timeUnit = (String) mbeanServer.getAttribute(on, "TimeUnit");
+        assertEquals(TimeUnit.MILLISECONDS.toString(), timeUnit);
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);

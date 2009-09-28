@@ -21,6 +21,9 @@ import java.util.concurrent.Future;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.WaitForTaskToComplete;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -51,6 +54,28 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
 
         // and get the response with the future handle
         String response = future.get();
+        assertEquals("Bye World", response);
+    }
+
+    public void testAsyncProducerWait() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        // using the new async API we can fire a real async message
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello World");
+        exchange.setPattern(ExchangePattern.InOut);
+        exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
+        template.send("direct:start", exchange);
+
+        // I should not happen before mock
+        route = route + "send";
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("Send should occur before processor", "processsend", route);
+
+        String response = exchange.getOut().getBody(String.class);
         assertEquals("Bye World", response);
     }
 

@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -53,6 +54,12 @@ public class ManagedUnregisterConsumerTest extends ContextTestSupport {
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);
+
+        String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
+        assertEquals("camel-1", camelId);
+
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals(ServiceStatus.Started.name(), state);
 
         context.stop();
 

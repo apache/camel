@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -58,6 +59,18 @@ public class ManagedSendProcessorTest extends ContextTestSupport {
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);
+
+        String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
+        assertEquals("camel-1", camelId);
+
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals(ServiceStatus.Started.name(), state);
+
+        String destination = (String) mbeanServer.getAttribute(on, "Destination");
+        assertEquals("mock://result", destination);
+
+        String pattern = (String) mbeanServer.getAttribute(on, "MessageExchangePattern");
+        assertNull(pattern);
 
         // send it somewhere else
         mbeanServer.invoke(on, "changeDestination", new Object[]{"direct:foo"}, new String[]{"java.lang.String"});

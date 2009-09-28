@@ -16,19 +16,19 @@
  */
 package org.apache.camel.management;
 
-import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ServiceStatus;
-import org.apache.camel.TestSupport;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
  */
-public class ManagedUnregisterCamelContextTest extends TestSupport {
+public class ManagedCamelContextTest extends ContextTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -38,10 +38,7 @@ public class ManagedUnregisterCamelContextTest extends TestSupport {
         return context;
     }
 
-    public void testUnregisterCamelContext() throws Exception {
-        CamelContext context = createCamelContext();
-        context.start();
-
+    public void testManagedCamelContext() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
@@ -50,21 +47,31 @@ public class ManagedUnregisterCamelContextTest extends TestSupport {
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
-        String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals(ServiceStatus.Started.name(), state);
+        // invoke operations
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
 
-        String version = (String) mbeanServer.getAttribute(on, "CamelVersion");
-        assertNotNull(version);
+        mbeanServer.invoke(on, "sendBody", new Object[]{"direct:start", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
 
-        Map<String, String> properties = (Map) mbeanServer.getAttribute(on, "Properties");
-        assertNull(properties);
+        assertMockEndpointsSatisfied();
 
-        Integer num = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
-        assertEquals(0, num.intValue());
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertEquals("Bye World", reply);
 
-        context.stop();
+        // stop Camel
+        mbeanServer.invoke(on, "stop", null, null);
+    }
 
-        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("mock:result");
+
+                from("direct:foo").transform(constant("Bye World"));
+            }
+        };
     }
 
 }

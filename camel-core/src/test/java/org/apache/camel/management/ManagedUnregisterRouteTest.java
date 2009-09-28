@@ -46,6 +46,9 @@ public class ManagedUnregisterRouteTest extends ContextTestSupport {
         String id = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", id);
 
+        String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
+        assertEquals("camel-1", camelId);
+
         context.stop();
 
         assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
