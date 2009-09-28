@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-itest-karaf</artifactId>
+  <name>Camel :: Karaf Integration Tests</name>
+  <description>Performs Karaf compliance integration tests</description>
+
+  <properties>
+    <pax-exam-version>1.0.0</pax-exam-version>
+    <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>biz.aQute</id>
+      <url>http://www.aqute.biz/repo</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-container-default</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit-extender-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+	<dependency>
+		<groupId>org.ops4j.pax.swissbox</groupId>
+		<artifactId>pax-swissbox-tinybundles</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.osgi</groupId>
+		<artifactId>org.osgi.compendium</artifactId>
+		<version>4.0.1</version>
+		<scope>compile</scope>
+		<optional>true</optional>
+	</dependency> 
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>4.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.karaf</groupId>
+      <artifactId>features</artifactId>
+      <version>${version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.5</version>
+      <scope>test</scope>
+    </dependency>
+      <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-osgi</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- generate dependencies versions -->
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>depends-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-depends-file</id>
+            <goals>
+              <goal>generate-depends-file</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+              <forkMode>pertest</forkMode>
+              <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
+              <redirectTestOutputToFile>true</redirectTestOutputToFile>
+              <argLine>-Xmx256m</argLine>
+              <excludes>
+                  <exclude>**/*Test.*</exclude>
+                  <!--
+                  <exclude>**/*Amqp*.*</exclude>
+                  <exclude>**/*Bindy*.*</exclude>
+                  <exclude>**/*Freemarker*.*</exclude>
+                  <exclude>**/*Http*.*</exclude>
+                  <exclude>**/*Tagsoup*.*</exclude>
+                  <exclude>**/*Jaxb*.*</exclude>
+                  -->
+              </excludes>
+          </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <profiles>
+	<profile>
+        <id>ci-build-profile</id>
+        <activation>
+            <property>
+                <name>maven.repo.local</name>
+            </property>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <!--
+                            when the local repo location has been specified, we need to pass
+                            on this information to PAX mvn url
+                        -->
+                        <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <!-- TODO: temporary disable unit test to let TC not hang -->
+                            <exclude>**/*Test.*</exclude>
+                        </excludes>               
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+</profiles>
+
+</project>
