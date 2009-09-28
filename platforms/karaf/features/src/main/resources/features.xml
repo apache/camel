@@ -76,6 +76,11 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle> 
     <bundle>mvn:org.apache.camel/camel-cache/${pom.version}</bundle> 
   </feature>
+  <feature name='camel-castor' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.codehaus.castor/com.springsource.org.castor/${spring-castor-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-castor/${pom.version}</bundle>
+  </feature>
   <feature name='camel-http' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>

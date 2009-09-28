@@ -51,8 +51,8 @@
       <commons-lang-version>2.4</commons-lang-version>
       <commons-net-version>2.0</commons-net-version>
       <commons-management-version>1.0</commons-management-version>
-      <flatpack-bundle-version>3.1.1_1</flatpack-bundle-version>
-      <freemarker-bundle-version>2.3.15_1</freemarker-bundle-version>
+      <flatpack-bundle-version>3.1.1_2-SNAPSHOT</flatpack-bundle-version>
+      <freemarker-bundle-version>2.3.15_2-SNAPSHOT</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-jaxws-spec-version>1.0</geronimo-jaxws-spec-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
@@ -92,12 +92,13 @@
       <servicemix-specs-version>1.4-SNAPSHOT</servicemix-specs-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_1-SNAPSHOT</serp-bundle-version>
-      <snmp4j-bundle-version>1.8.1_1</snmp4j-bundle-version>
+      <snmp4j-bundle-version>1.8.1_2-SNAPSHOT</snmp4j-bundle-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>      
       <spring-commons-collections-version>3.2.1</spring-commons-collections-version>
       <spring-version>2.5.6.SEC01</spring-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
+      <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_1</tagsoup-bundle-version>
       <velocity-bundle-version>1.6.2_1</velocity-bundle-version>
