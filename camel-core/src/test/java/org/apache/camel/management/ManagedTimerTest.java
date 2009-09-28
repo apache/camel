@@ -50,6 +50,9 @@ public class ManagedTimerTest extends ContextTestSupport {
         Long period = (Long) mbeanServer.getAttribute(name, "Period");
         assertEquals(8000, period.longValue());
 
+        String camelId = (String) mbeanServer.getAttribute(name, "CamelId");
+        assertEquals("camel-1", camelId);
+
         // change period
         mbeanServer.setAttribute(name, new Attribute("Period", 1000));
         mbeanServer.setAttribute(name, new Attribute("Delay", 0));
