@@ -83,6 +83,9 @@
     <bundle>mvn:org.apache.camel/camel-jetty/${pom.version}</bundle>
   </feature>
   <feature name='camel-jms' version='${pom.version}'>
+    <bundle>mvn:org.springframework/spring-core/${spring-version}</bundle>
+    <bundle>mvn:org.springframework/spring-beans/${spring-version}</bundle>
+    <bundle>mvn:org.springframework/spring-context/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
@@ -162,6 +165,7 @@
   </feature>
   <feature name='camel-hl7' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hapi/${hapi-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hl7/${pom.version}</bundle>

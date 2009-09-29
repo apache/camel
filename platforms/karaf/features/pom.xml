@@ -78,7 +78,7 @@
       <jsch-bundle-version>0.1.31_1</jsch-bundle-version>
       <juel-bundle-version>2.1.0_1</juel-bundle-version>
       <junit-bundle-version>4.4_1</junit-bundle-version>
-      <mina-bundle-version>1.1.7_1</mina-bundle-version>
+      <mina-bundle-version>1.1.7_2-SNAPSHOT</mina-bundle-version>
       <mvel-bundle-version>2.0.9_1</mvel-bundle-version>
       <neethi-bundle-version>2.0.4_1</neethi-bundle-version>
       <ognl-bundle-version>2.7.3_1</ognl-bundle-version>
