@@ -17,7 +17,9 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 
 /**
  * @version $Revision$
@@ -149,6 +151,118 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         body = consumer.receiveBodyNoWait("seda:foo", String.class);
         assertEquals("Hello", body);
+    }
+
+    public void testConsumeReceiveEndpoint() throws Exception {
+        template.sendBody("seda:foo", "Hello");
+
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        Exchange out = consumer.receive(endpoint);
+        assertEquals("Hello", out.getIn().getBody());
+    }
+
+    public void testConsumeReceiveEndpointTimeout() throws Exception {
+        template.sendBody("seda:foo", "Hello");
+
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        Exchange out = consumer.receive(endpoint, 1000);
+        assertEquals("Hello", out.getIn().getBody());
+    }
+
+    public void testConsumeReceiveEndpointNoWait() throws Exception {
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        Exchange out = consumer.receiveNoWait(endpoint);
+        assertNull(out);
+
+        template.sendBody("seda:foo", "Hello");
+
+        // a little delay to let the consumer see it
+        Thread.sleep(200);
+
+        out = consumer.receiveNoWait(endpoint);
+        assertEquals("Hello", out.getIn().getBody());
+    }
+
+    public void testConsumeReceiveEndpointBody() throws Exception {
+        template.sendBody("seda:foo", "Hello");
+
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        Object body = consumer.receiveBody(endpoint);
+        assertEquals("Hello", body);
+    }
+
+    public void testConsumeReceiveEndpointBodyType() throws Exception {
+        template.sendBody("seda:foo", "Hello");
+
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        String body = consumer.receiveBody(endpoint, String.class);
+        assertEquals("Hello", body);
+    }
+
+    public void testConsumeReceiveEndpointBodyTimeoutType() throws Exception {
+        template.sendBody("seda:foo", "Hello");
+
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        String body = consumer.receiveBody(endpoint, 1000, String.class);
+        assertEquals("Hello", body);
+    }
+
+    public void testConsumeReceiveBodyTimeoutType() throws Exception {
+        template.sendBody("seda:foo", "Hello");
+
+        String body = consumer.receiveBody("seda:foo", 1000, String.class);
+        assertEquals("Hello", body);
+    }
+
+    public void testConsumeReceiveEndpointBodyNoWait() throws Exception {
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        String out = consumer.receiveBodyNoWait(endpoint, String.class);
+        assertNull(out);
+
+        template.sendBody("seda:foo", "Hello");
+
+        // a little delay to let the consumer see it
+        Thread.sleep(200);
+
+        out = consumer.receiveBodyNoWait(endpoint, String.class);
+        assertEquals("Hello", out);
+    }
+
+    public void testReceiveException() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setException(new IllegalArgumentException("Damn"));
+        template.send("seda:foo", exchange);
+
+        try {
+            consumer.receiveBody("seda:foo", String.class);
+            fail("Should have thrown an exception");
+        } catch (RuntimeCamelException e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Damn", e.getCause().getMessage());
+        }
+    }
+
+    public void testReceiveOut() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getOut().setBody("Bye World");
+        template.send("seda:foo", exchange);
+
+        String out = consumer.receiveBody("seda:foo", String.class);
+        assertEquals("Bye World", out);
     }
 
 }
