@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.maven;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * Registry for reporting type converters.
  * <p/>
  * Used by the camel-maven-plugin.
+ *
+ * @version $Revision$
  */
 public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
     private final List<String> errors = new ArrayList<String>();

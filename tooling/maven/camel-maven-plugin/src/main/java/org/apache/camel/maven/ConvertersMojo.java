@@ -32,9 +32,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
-import org.apache.camel.impl.ReportingTypeConverterLoader;
-import org.apache.camel.impl.ReportingTypeConverterLoader.TypeMapping;
-import org.apache.camel.impl.ReportingTypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -323,7 +320,7 @@ public class ConvertersMojo extends AbstractMavenReport {
         }
     }
 
-    private void generateReport(Sink sink, Locale locale, TypeMapping[] mappings)
+    private void generateReport(Sink sink, Locale locale, ReportingTypeConverterLoader.TypeMapping[] mappings)
         throws MojoExecutionException {
         beginReport(sink, locale);
 
@@ -335,7 +332,7 @@ public class ConvertersMojo extends AbstractMavenReport {
         sink.table();
         tableHeader(sink, locale);
 
-        for (TypeMapping mapping : mappings) {
+        for (ReportingTypeConverterLoader.TypeMapping mapping : mappings) {
             boolean ignored = false;
             Class<?> from = mapping.getFromType();
             Class<?> to = mapping.getToType();
