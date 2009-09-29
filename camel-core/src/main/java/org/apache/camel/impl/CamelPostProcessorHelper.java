@@ -103,7 +103,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
     }
 
-    public void startService(Service service) throws Exception {
+    /**
+     * Stats the given service
+     */
+    protected void startService(Service service) throws Exception {
         getCamelContext().addService(service);
     }
 

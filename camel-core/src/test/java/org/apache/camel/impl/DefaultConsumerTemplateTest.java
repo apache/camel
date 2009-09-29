@@ -199,6 +199,16 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         assertEquals("Hello", body);
     }
 
+    public void testConsumeReceiveEndpointBodyTimeout() throws Exception {
+        template.sendBody("seda:foo", "Hello");
+
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        Object body = consumer.receiveBody(endpoint, 1000);
+        assertEquals("Hello", body);
+    }
+
     public void testConsumeReceiveEndpointBodyType() throws Exception {
         template.sendBody("seda:foo", "Hello");
 
@@ -226,7 +236,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         assertEquals("Hello", body);
     }
 
-    public void testConsumeReceiveEndpointBodyNoWait() throws Exception {
+    public void testConsumeReceiveEndpointBodyTypeNoWait() throws Exception {
         assertNotNull(consumer.getCamelContext());
         Endpoint endpoint = context.getEndpoint("seda:foo");
 
@@ -239,6 +249,22 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
         Thread.sleep(200);
 
         out = consumer.receiveBodyNoWait(endpoint, String.class);
+        assertEquals("Hello", out);
+    }
+
+    public void testConsumeReceiveEndpointBodyNoWait() throws Exception {
+        assertNotNull(consumer.getCamelContext());
+        Endpoint endpoint = context.getEndpoint("seda:foo");
+
+        Object out = consumer.receiveBodyNoWait(endpoint);
+        assertNull(out);
+
+        template.sendBody("seda:foo", "Hello");
+
+        // a little delay to let the consumer see it
+        Thread.sleep(200);
+
+        out = consumer.receiveBodyNoWait(endpoint);
         assertEquals("Hello", out);
     }
 
