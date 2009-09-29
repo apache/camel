@@ -36,7 +36,7 @@
     <properties>
       <abdera-bundle-version>0.4.0-incubating_2-SNAPSHOT</abdera-bundle-version>
       <ant-bundle-version>1.7.0_2-SNAPSHOT</ant-bundle-version>
-      <antlr-bundle-version>3.0.1_2-SNAPSHOT</antlr-bundle-version>
+      <antlr-bundle-version>2.7.7_1-SNAPSHOT</antlr-bundle-version>
       <aopalliance-bundle-version>1.0_2-SNAPSHOT</aopalliance-bundle-version>
       <asm-bundle-version>2.2.3_2-SNAPSHOT</asm-bundle-version>
       <bcel-bundle-version>5.2_1-SNAPSHOT</bcel-bundle-version>
@@ -72,7 +72,7 @@
       <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <jcr-bundle-version>1.0_1</jcr-bundle-version>
       <jdom-bundle-version>1.1_1</jdom-bundle-version>
-      <jettison-bundle-version>1.0.1_1</jettison-bundle-version>
+      <jettison-bundle-version>1.1</jettison-bundle-version>
       <jetty-bundle-version>6.1.14_1</jetty-bundle-version>
       <jetty-cometd-bundle-version>6.1.11_2-SNAPSHOT</jetty-cometd-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
