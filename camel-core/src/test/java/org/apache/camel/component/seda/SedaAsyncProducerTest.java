@@ -20,12 +20,12 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * The new Async API version of doing async routing based on the old AsyncProcessor API

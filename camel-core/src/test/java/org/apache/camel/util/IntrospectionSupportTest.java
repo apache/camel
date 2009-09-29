@@ -16,10 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.reflect.Method;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.jndi.ExampleBean;

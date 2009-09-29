@@ -20,9 +20,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Date;
 
 import junit.framework.TestCase;
 
@@ -193,7 +193,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testAsString() {
-        String[] args = new String[] { "foo", "bar"};
+        String[] args = new String[] {"foo", "bar"};
         String out = ObjectHelper.asString(args);
         assertNotNull(out);
         assertEquals("{foo, bar}", out);

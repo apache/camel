@@ -16,9 +16,9 @@
  */
 package org.apache.camel.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Arrays;
 
 import org.apache.camel.Service;
 import org.apache.commons.logging.Log;

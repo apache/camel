@@ -69,11 +69,7 @@ public class CBRHeaderPredicateTest extends ContextTestSupport {
         public boolean checkHeader(Exchange exchange) {
             Message inMsg = exchange.getIn();
             String foo = (String) inMsg.getHeader("foo");
-            if (foo.equals("bar")) {
-                return true;
-            } else {
-                return false;
-            }
+            return foo.equals("bar");
         }
     }
 }

@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.seda;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 
 /**
  * @version $Revision$

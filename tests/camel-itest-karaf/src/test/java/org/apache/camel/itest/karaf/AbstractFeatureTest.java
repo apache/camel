@@ -16,28 +16,28 @@
  */
 package org.apache.camel.itest.karaf;
 
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
+import org.ops4j.pax.exam.Inject;
+import org.ops4j.pax.exam.Option;
+import org.osgi.framework.BundleContext;
+
+import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import org.ops4j.pax.exam.Inject;
-import org.ops4j.pax.exam.Option;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.cleanCaches;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import org.osgi.framework.BundleContext;
 
 public abstract class AbstractFeatureTest {
 
-    protected final transient Log LOG = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     @Inject
     protected BundleContext bundleContext;
@@ -122,7 +122,7 @@ public abstract class AbstractFeatureTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(bundleContext);
-        LOG.info("Get the bundleContext is " + bundleContext);
+        log.info("Get the bundleContext is " + bundleContext);
         return factory.createContext();
     }
 
@@ -150,8 +150,7 @@ public abstract class AbstractFeatureTest {
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("features").versionAsInProject().type("xml/features"),
                           "camel-osgi", "camel-" + feature),
-
-            cleanCaches(),
+                          //cleanCaches(),
 
             felix(), 
             equinox());

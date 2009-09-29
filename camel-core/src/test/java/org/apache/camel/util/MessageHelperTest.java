@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import junit.framework.TestCase;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
