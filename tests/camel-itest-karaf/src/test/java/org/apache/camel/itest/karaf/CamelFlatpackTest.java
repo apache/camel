@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -27,6 +29,11 @@ public class CamelFlatpackTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelFlatpackTest.class);
 
+    protected DataFormatDefinition createDataformatDefinition(String format) {
+        return new FlatpackDataFormat();
+    }
+    
+    
     @Test
     public void test() throws Exception {
         testDataFormat(COMPONENT);

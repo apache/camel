@@ -30,6 +30,7 @@ public class CamelFtpTest extends AbstractFeatureTest {
     @Test
     public void test() throws Exception {
         testComponent(COMPONENT);
+        testComponent("sftp");
     }
 
     @Configuration

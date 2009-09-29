@@ -30,6 +30,8 @@ public class CamelCxfTest extends AbstractFeatureTest {
     @Test
     public void test() throws Exception {
         testComponent(COMPONENT);
+        testComponent("cxfrs");
+        testComponent("cxfbean");
     }
 
     @Configuration

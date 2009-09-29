@@ -16,6 +16,9 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -27,6 +30,10 @@ public class CamelTagsoupTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelTagsoupTest.class);
 
+    protected DataFormatDefinition createDataformatDefinition(String format) {
+        return new TidyMarkupDataFormat();
+    }
+    
     @Test
     public void test() throws Exception {
         testDataFormat(COMPONENT);

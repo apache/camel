@@ -18,7 +18,10 @@ package org.apache.camel.itest.karaf;
 
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.osgi.CamelContextFactory;
+import org.apache.camel.spi.DataFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -28,10 +31,11 @@ import org.ops4j.pax.exam.Option;
 import org.osgi.framework.BundleContext;
 
 import static org.junit.Assert.assertNotNull;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
+//import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+//import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.cleanCaches;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
@@ -67,21 +71,27 @@ public abstract class AbstractFeatureTest {
     }
 
     protected void testDataFormat(String format) throws Exception {
-        // TODO: how to test data formats ?
-//        long max = System.currentTimeMillis() + 10000;
-//        while (true) {
-//            try {
-//                assertNotNull(createCamelContext().getDataFormats().get(format));
-//                return;
-//            } catch (Exception t) {
-//                if (System.currentTimeMillis() < max) {
-//                    Thread.sleep(1000);
-//                    continue;
-//                } else {
-//                    throw t;
-//                }
-//            }
-//        }
+        
+        long max = System.currentTimeMillis() + 10000;
+        while (true) {
+            try {
+                DataFormatDefinition dataFormatDefinition = createDataformatDefinition(format);                
+                assertNotNull(dataFormatDefinition);
+                assertNotNull(dataFormatDefinition.getDataFormat(new DefaultRouteContext(createCamelContext())));
+                return;
+            } catch (Exception t) {
+                if (System.currentTimeMillis() < max) {
+                    Thread.sleep(1000);
+                    continue;
+                } else {
+                    throw t;
+                }
+            }
+        }
+    }
+
+    protected DataFormatDefinition createDataformatDefinition(String format) {
+        return null;
     }
 
     protected void testLanguage(String lang) throws Exception {
@@ -152,8 +162,8 @@ public abstract class AbstractFeatureTest {
                           "camel-osgi", "camel-" + feature),
                           //cleanCaches(),
 
-            felix(), 
-            equinox());
+            felix());
+            //equinox());
 
         return options;
     }
