@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.RedeliveryErrorHandler;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -39,6 +40,10 @@ public class ManagedErrorHandler {
         this.routeContext = routeContext;
         this.errorHandler = errorHandler;
         this.errorHandlerBuilder = builder;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        // do nothing
     }
 
     public RouteContext getRouteContext() {

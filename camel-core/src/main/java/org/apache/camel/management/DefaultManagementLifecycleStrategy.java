@@ -96,6 +96,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             initialized = true;
 
             ManagedCamelContext mc = new ManagedCamelContext(context);
+            mc.init(context.getManagementStrategy());
             getManagementStrategy().manageObject(mc);
 
         } catch (Exception e) {
@@ -112,6 +113,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
         try {
             ManagedCamelContext mc = new ManagedCamelContext(context);
+            mc.init(context.getManagementStrategy());
             // the context could have been removed already
             if (getManagementStrategy().isManaged(null, mc)) {
                 getManagementStrategy().unmanageObject(mc);
@@ -152,7 +154,9 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         if (component instanceof ManagementAware) {
             return ((ManagementAware) component).getManagedObject(component);
         } else {
-            return new ManagedComponent(name, component);
+            ManagedComponent mc = new ManagedComponent(name, component);
+            mc.init(getManagementStrategy());
+            return mc;
         }
     }
 
@@ -206,9 +210,13 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         if (endpoint instanceof ManagementAware) {
             return ((ManagementAware) endpoint).getManagedObject(endpoint);
         } else if (endpoint instanceof BrowsableEndpoint) {
-            return new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
+            ManagedBrowsableEndpoint me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
+            me.init(getManagementStrategy());
+            return me;
         } else {
-            return new ManagedEndpoint(endpoint);
+            ManagedEndpoint me = new ManagedEndpoint(endpoint);
+            me.init(getManagementStrategy());
+            return me;
         }
     }
 
@@ -266,7 +274,9 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return ((ManagementAware) service).getManagedObject(service);
         } else if (service instanceof Tracer) {
             // special for tracer
-            return new ManagedTracer(context, (Tracer) service);
+            ManagedTracer mt = new ManagedTracer(context, (Tracer) service);
+            mt.init(getManagementStrategy());
+            return mt;
         } else if (service instanceof Producer) {
             answer = new ManagedProducer(context, (Producer) service);
         } else if (service instanceof ScheduledPollConsumer) {
@@ -280,6 +290,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         if (answer != null) {
             answer.setRoute(route);
+            answer.init(getManagementStrategy());
             return answer;
         } else {
             // not supported
@@ -336,6 +347,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         answer.setRoute(route);
+        answer.init(getManagementStrategy());
         return answer;
     }
 
@@ -346,7 +358,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(getManagementStrategy(), context, route);
+            ManagedRoute mr = new ManagedRoute(context, route);
+            mr.init(getManagementStrategy());
 
             // skip already managed routes, for example if the route has been restarted
             if (getManagementStrategy().isManaged(mr, null)) {
@@ -388,10 +401,11 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        Object managedObject = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
+        ManagedErrorHandler me = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
+        me.init(getManagementStrategy());
 
         // skip already managed services, for example if a route has been restarted
-        if (getManagementStrategy().isManaged(managedObject, null)) {
+        if (getManagementStrategy().isManaged(me, null)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("The error handler builder is already managed: " + errorHandlerBuilder);
             }
@@ -399,7 +413,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            getManagementStrategy().manageObject(managedObject);
+            getManagementStrategy().manageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandlerMBean.", e);
         }
@@ -450,7 +464,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // okay this is a processor we would like to manage so create the
         // performance counter that is the base for processors
-        ManagedPerformanceCounter pc = new ManagedPerformanceCounter(getManagementStrategy());
+        ManagedPerformanceCounter pc = new ManagedPerformanceCounter();
+        pc.init(getManagementStrategy());
         // set statistics enabled depending on the option
         boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
         pc.setStatisticsEnabled(enabled);

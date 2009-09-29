@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -27,6 +28,10 @@ public class ManagedEndpoint {
 
     public ManagedEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        // do nothing
     }
 
     public Endpoint getEndpoint() {

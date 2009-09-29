@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.impl.ServiceSupport;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -35,6 +36,10 @@ public class ManagedService {
     public ManagedService(CamelContext context, Service service) {
         this.context = context;
         this.service = service;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        // do nothing
     }
 
     public Service getService() {

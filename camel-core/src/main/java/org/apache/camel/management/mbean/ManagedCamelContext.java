@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -36,6 +37,10 @@ public class ManagedCamelContext {
 
     public ManagedCamelContext(CamelContext context) {
         this.context = context;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        // do nothing
     }
 
     public CamelContext getContext() {

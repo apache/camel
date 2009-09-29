@@ -40,8 +40,8 @@ public class ManagedPerformanceCounter extends ManagedCounter {
     private Statistic lastExchangeFailureTimestamp;
     private boolean statisticsEnabled = true;
 
-    public ManagedPerformanceCounter(ManagementStrategy strategy) {
-        super(strategy);
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
         this.exchangesCompleted = strategy.createStatistic("org.apache.camel.exchangesCompleted", this, Statistic.UpdateMode.COUNTER);
         this.exchangesFailed = strategy.createStatistic("org.apache.camel.exchangesFailed", this, Statistic.UpdateMode.COUNTER);
         this.minProcessingTime = strategy.createStatistic("org.apache.camel.minimumProcessingTime", this, Statistic.UpdateMode.MINIMUM);

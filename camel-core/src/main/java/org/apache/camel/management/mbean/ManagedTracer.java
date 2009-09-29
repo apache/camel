@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -35,6 +36,10 @@ public class ManagedTracer {
     public ManagedTracer(CamelContext camelContext, Tracer tracer) {
         this.camelContext = camelContext;
         this.tracer = tracer;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        // do nothing
     }
 
     public CamelContext getCamelContext() {

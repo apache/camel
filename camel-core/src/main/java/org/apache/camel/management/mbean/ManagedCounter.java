@@ -27,7 +27,7 @@ public class ManagedCounter {
 
     protected Statistic exchangesTotal;
 
-    public ManagedCounter(ManagementStrategy strategy) {
+    public void init(ManagementStrategy strategy) {
         this.exchangesTotal = strategy.createStatistic("org.apache.camel.exchangesTotal", this, Statistic.UpdateMode.COUNTER);
     }
 

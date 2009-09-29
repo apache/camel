@@ -34,8 +34,7 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     private String description;
     private CamelContext context;
 
-    public ManagedRoute(ManagementStrategy strategy, CamelContext context, Route route) {
-        super(strategy);
+    public ManagedRoute(CamelContext context, Route route) {
         this.route = route;
         this.context = context;
         this.description = route.toString();

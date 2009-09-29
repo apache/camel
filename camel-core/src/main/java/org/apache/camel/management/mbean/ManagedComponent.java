@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.Component;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -34,6 +35,10 @@ public class ManagedComponent {
     public ManagedComponent(String name, Component component) {
         this.name = name;
         this.component = component;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        // do nothing
     }
 
     public Component getComponent() {

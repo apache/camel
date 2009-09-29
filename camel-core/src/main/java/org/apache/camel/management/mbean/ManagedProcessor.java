@@ -39,7 +39,6 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
     private Route route;
 
     public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) {
-        super(context.getManagementStrategy());
         this.context = context;
         this.processor = processor;
         this.definition = definition;
