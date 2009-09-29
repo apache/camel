@@ -44,7 +44,7 @@
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
 
-    <felix-version>2.0.0</felix-version>
+    <felix-version>2.0.1</felix-version>
   </properties>
 
   <url>http://apache.apache.org/camel/</url>
