@@ -350,17 +350,24 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     strategy.onEndpointRemove(oldEndpoint);
                 }
             } else {
+                Collection<Map.Entry> worklist = new ArrayList<Map.Entry>();
                 for (Map.Entry entry : endpoints.entrySet()) {
                     oldEndpoint = (Endpoint) entry.getValue();
                     if (!oldEndpoint.isSingleton() && uri.equals(oldEndpoint.getEndpointUri())) {
-                        answer.add(oldEndpoint);
-                        stopServices(oldEndpoint);
-                        endpoints.remove(entry.getKey());
-                        for (LifecycleStrategy strategy : lifecycleStrategies) {
-                            strategy.onEndpointRemove(oldEndpoint);
-                        }
+                        // add to worklist to avoid concurrent modification exception
+                        worklist.add(entry);
                     }
                 }
+                for (Map.Entry entry : worklist) {
+                    oldEndpoint = (Endpoint) entry.getValue();
+                    answer.add(oldEndpoint);
+                    stopServices(oldEndpoint);
+                    endpoints.remove(entry.getKey());
+                    for (LifecycleStrategy strategy : lifecycleStrategies) {
+                        strategy.onEndpointRemove(oldEndpoint);
+                    }
+                }
+
             }
         }
         return answer;
