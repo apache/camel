@@ -691,6 +691,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
 
     /**
      * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
+     * Creates a {@link Pipeline} so that the message
+     * will get processed by each endpoint in turn and for request/response the
+     * output of one endpoint will be the input of the next endpoint
+     *
+     * @return the builder
+     */
+    public PipelineDefinition pipeline() {
+        PipelineDefinition answer = new PipelineDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
