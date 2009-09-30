@@ -320,7 +320,7 @@
     <bundle>mvn:org.apache.camel/camel-saxon/${pom.version}</bundle>
   </feature>
   <feature name='camel-scala' version='${pom.version}'>
-    <bundle>mvn:org.scala-lang/scala-bundle/${scala-version}</bundle>
+    <bundle>mvn:org.scala-lang-osgi/scala-library/${scala-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${pom.version}</bundle>
   </feature>
