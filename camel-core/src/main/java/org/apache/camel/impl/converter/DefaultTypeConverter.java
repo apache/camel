@@ -164,6 +164,12 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         // fallback converters
         for (TypeConverter fallback : fallbackConverters) {
             Object rc = fallback.convertTo(type, exchange, value);
+
+            if (Void.TYPE.equals(rc)) {
+                // it cannot be converted so give up
+                return Void.TYPE;
+            }
+
             if (rc != null) {
                 // add it as a known type converter since we found a fallback that could do it
                 if (LOG.isDebugEnabled()) {

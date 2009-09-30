@@ -45,6 +45,7 @@ public final class FutureTypeConverter implements TypeConverter {
         this.converter = converter;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T doConvertTo(Class<T> type, Exchange exchange, Object value) throws Exception {
         // do not convert to stream cache
         if (StreamCache.class.isAssignableFrom(value.getClass())) {
@@ -56,7 +57,8 @@ public final class FutureTypeConverter implements TypeConverter {
             Future future = (Future) value;
 
             if (future.isCancelled()) {
-                return null;
+                // return void to indicate its not possible to convert at this time
+                return (T) Void.TYPE;
             }
 
             // do some trace logging as the get is blocking until the response is ready
@@ -79,7 +81,8 @@ public final class FutureTypeConverter implements TypeConverter {
             }
 
             if (body == null) {
-                return null;
+                // return void to indicate its not possible to convert at this time
+                return (T) Void.TYPE;
             }
 
             // maybe from is already the type we want

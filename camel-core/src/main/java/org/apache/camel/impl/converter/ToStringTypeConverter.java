@@ -16,8 +16,11 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.concurrent.Future;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.file.GenericFile;
 
 /**
  * A simple converter that can convert any object to a String type by using the
@@ -30,6 +33,17 @@ public class ToStringTypeConverter implements TypeConverter {
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> toType, Object value) {
         if (value != null) {
+
+            // should not try to convert future
+            if (Future.class.isAssignableFrom(value.getClass())) {
+                return (T) Void.TYPE;
+            }
+
+            // should not try to convert files
+            if (GenericFile.class.isAssignableFrom(value.getClass())) {
+                return (T) Void.TYPE;
+            }
+
             if (toType.equals(String.class)) {
                 return (T)value.toString();
             }
