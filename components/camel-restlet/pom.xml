@@ -53,8 +53,7 @@
     <!-- test artifacts -->
     <dependency>
       <groupId>com.noelios.restlet</groupId>
-      <artifactId>com.noelios.restlet</artifactId>
-      <version>1.1.1</version>
+      <artifactId>com.noelios.restlet</artifactId>      
       <scope>test</scope>
     </dependency>
 

@@ -301,6 +301,7 @@
   <feature name='camel-restlet' version='${pom.version}'>
     <bundle>mvn:org.apache.camel/camel-restlet/${pom.version}</bundle>
     <bundle>mvn:org.restlet/org.restlet/${restlet-version}</bundle>
+    <bundle>mvn:com.noelios.restlet/com.noelios.restlet/${restlet-version}</bundle>
     <feature version='${pom.version}'>camel-http</feature>
   </feature>
   <feature name='camel-rmi' version='${pom.version}'>
