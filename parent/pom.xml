@@ -829,6 +829,11 @@
         <artifactId>org.restlet</artifactId>
         <version>${restlet-version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.noelios.restlet</groupId>
+        <artifactId>com.noelios.restlet</artifactId>      
+        <version>${restlet-version}</version>
+      </dependency>
 
       <!-- optional jakarta http core support -->
       <dependency>
