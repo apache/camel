@@ -48,13 +48,13 @@
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
+    <module>camel-jackson</module>
+    <module>camel-javaspace</module>
     <module>camel-jaxb</module>
     <module>camel-jdbc</module>
     <module>camel-jetty</module>
     <module>camel-jing</module>
     <module>camel-jms</module>
-    <module>camel-ldap</module>
-    <module>camel-jackson</module>
     <module>camel-josql</module>
     <module>camel-jcr</module>
     <!--<module>camel-jmxconnect</module>-->
@@ -62,6 +62,7 @@
     <module>camel-jt400</module>
     <module>camel-juel</module>
     <module>camel-jxpath</module>
+    <module>camel-ldap</module>
     <module>camel-mail</module>
     <module>camel-mina</module>
     <module>camel-msv</module>
