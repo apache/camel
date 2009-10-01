@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.browse;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -30,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -42,9 +41,10 @@ import org.apache.camel.spi.BrowsableEndpoint;
  */
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint, Service {
     private List<Exchange> exchanges;
-    private TopicLoadBalancer loadBalancer = new TopicLoadBalancer();
-    // TODO: firing of property changes not implemented
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private final LoadBalancer loadBalancer = new TopicLoadBalancer();
+
+    public BrowseEndpoint() {
+    }
 
     public BrowseEndpoint(String uri, CamelContext camelContext) {
         super(uri, camelContext);
@@ -63,19 +63,10 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     }
 
     public List<Exchange> getExchanges() {
+        if (exchanges == null) {
+            exchanges = createExchangeList();
+        }
         return exchanges;
-    }
-
-    public TopicLoadBalancer getLoadBalancer() {
-        return loadBalancer;
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     public Producer createProducer() throws Exception {
@@ -101,7 +92,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
      * @throws Exception is thrown if failed to process the exchange
      */
     protected void onExchange(Exchange exchange) throws Exception {
-        exchanges.add(exchange);
+        getExchanges().add(exchange);
 
         // lets fire any consumers
         loadBalancer.process(exchange);

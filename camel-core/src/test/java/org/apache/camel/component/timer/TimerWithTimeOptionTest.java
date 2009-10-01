@@ -55,6 +55,46 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testFiredInFutureWithTPatternNoPeriod() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                Date future = new Date(new Date().getTime() + 2000);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                String time = sdf.format(future);
+
+                fromF("timer://foo?period=0&time=%s", time).to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFiredInFutureWithTPatternFixedReat() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                Date future = new Date(new Date().getTime() + 2000);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                String time = sdf.format(future);
+
+                fromF("timer://foo?fixedRate=true&time=%s", time).to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testFiredInFutureWithoutTPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

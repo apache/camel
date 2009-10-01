@@ -69,13 +69,13 @@ public class TimerConsumer extends DefaultConsumer {
             }
         } else {
             if (endpoint.getTime() != null) {
-                if (endpoint.getPeriod() >= 0) {
+                if (endpoint.getPeriod() > 0) {
                     timer.schedule(task, endpoint.getTime(), endpoint.getPeriod());
                 } else {
                     timer.schedule(task, endpoint.getTime());
                 }
             } else {
-                if (endpoint.getPeriod() >= 0) {
+                if (endpoint.getPeriod() > 0) {
                     timer.schedule(task, endpoint.getDelay(), endpoint.getPeriod());
                 } else {
                     timer.schedule(task, endpoint.getDelay());
