@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,6 +35,7 @@ public class IrcOnReplyTest extends CamelTestSupport {
     protected String resultEnd = "End of WHO list";
     private boolean sentMessages;    
 
+    @Ignore("test manual")
     @Test
     public void testIrcMessages() throws Exception {
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
