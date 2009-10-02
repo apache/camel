@@ -291,16 +291,10 @@ public class XmlParseTest extends XmlTestSupport {
         assertFrom(route, "seda:a");
     }
 
-    public void testParseArtixDSDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithArtixDSDataFormat.xml");
-        assertFrom(route, "seda:a");
-    }
-
     public void testParseCastorDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithCastorDataFormat.xml");
         assertFrom(route, "seda:a");
     }
-
 
     public void testParseBatchResequencerXml() throws Exception {
         RouteDefinition route = assertOneRoute("resequencerBatch.xml");

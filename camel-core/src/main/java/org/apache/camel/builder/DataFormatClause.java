@@ -22,8 +22,6 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.dataformat.ArtixDSContentType;
-import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CastorDataFormat;
@@ -62,46 +60,6 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     public DataFormatClause(T processorType, Operation operation) {
         this.processorType = processorType;
         this.operation = operation;
-    }
-
-    /**
-     * Uses the
-     * <a href="http://camel.apache.org/artix-data-services.html">Artix Data Services</a>
-     * data format for dealing with lots of different message formats such as SWIFT etc.
-     */
-    public T artixDS() {
-        return dataFormat(new ArtixDSDataFormat());
-    }
-
-    /**
-     * Uses the
-     * <a href="http://camel.apache.org/artix-data-services.html">Artix Data Services</a>
-     * data format with the specified type of ComplexDataObject
-     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
-     */
-    public T artixDS(Class<?> dataObjectType) {
-        return dataFormat(new ArtixDSDataFormat(dataObjectType));
-    }
-
-
-    /**
-     * Uses the
-     * <a href="http://camel.apache.org/artix-data-services.html">Artix Data Services</a>
-     * data format with the specified type of ComplexDataObject
-     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
-     */
-    public T artixDS(Class<?> elementType, ArtixDSContentType contentType) {
-        return dataFormat(new ArtixDSDataFormat(elementType, contentType));
-    }
-
-    /**
-     * Uses the
-     * <a href="http://camel.apache.org/artix-data-services.html">Artix Data Services</a>
-     * data format with the specified content type
-     * for marshalling and unmarshalling messages
-     */
-    public T artixDS(ArtixDSContentType contentType) {
-        return dataFormat(new ArtixDSDataFormat(contentType));
     }
 
     /**
