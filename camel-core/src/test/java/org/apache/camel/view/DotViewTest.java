@@ -38,10 +38,15 @@ public class DotViewTest extends ContextTestSupport {
 
         context.addRoutes(new MulticastRoute());
         context.addRoutes(new PipelineRoute());
+        context.addRoutes(new AnotherPipelineRoute());
         context.addRoutes(new FromToRoute());
         context.addRoutes(new ChoiceRoute());
         context.addRoutes(new FilterRoute());
         context.addRoutes(new ComplexRoute());
+        context.addRoutes(new FromToBeanRoute());
+        context.addRoutes(new RoutingSlipRoute());
+        context.addRoutes(new AggreagateRoute());
+        context.addRoutes(new ResequenceRoute());
     }
 
     static class MulticastRoute extends RouteBuilder {
@@ -57,9 +62,39 @@ public class DotViewTest extends ContextTestSupport {
         }
     }
 
+    static class AnotherPipelineRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:pipeline.in").pipeline("seda:pipeline.out1", "seda:pipeline.out2", "seda:pipeline.out3");
+        }
+    }
+
     static class FromToRoute extends RouteBuilder {
         public void configure() throws Exception {
             from("seda:foo").to("seda:bar");
+        }
+    }
+
+    static class FromToBeanRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:foo").beanRef("myBean", "myMethod");
+        }
+    }
+
+    static class RoutingSlipRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:foo").routingSlip("splipHeader");
+        }
+    }
+
+    static class AggreagateRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:foo").aggregate(constant("messageId")).to("seda:aggregated");
+        }
+    }
+
+    static class ResequenceRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:foo").resequence(constant("seqNum")).to("seda:bar");
         }
     }
 

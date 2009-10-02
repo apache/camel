@@ -48,10 +48,9 @@ public abstract class GraphGeneratorSupport {
     protected int clusterCounter;
     protected String extension;
 
-    //private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
-    private String imagePrefix = "http://camel.apache.org/images/eip/";
-    private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
-    private boolean makeParentDirs = true;
+    private final String imagePrefix = "http://camel.apache.org/images/eip/";
+    private final Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
+    private final boolean makeParentDirs = true;
     private Map<String, List<RouteDefinition>> routeGroupMap;
 
     protected GraphGeneratorSupport(String dir, String extension) {
@@ -59,33 +58,10 @@ public abstract class GraphGeneratorSupport {
         this.extension = extension;
     }
 
-    public String getDir() {
-        return dir;
-    }
-
-    /**
-     * Sets the destination directory in which to create the diagrams
-     */
-    public void setDir(String dir) {
-        this.dir = dir;
-    }
-
-    public String getImagePrefix() {
-        return imagePrefix;
-    }
-
-    public void setImagePrefix(String imagePrefix) {
-        this.imagePrefix = imagePrefix;
-    }
-
     public String getRoutesText(CamelContext context) throws IOException {
+        // used by web console
         List<RouteDefinition> routes = context.getRouteDefinitions();
         routeGroupMap = createRouteGroupMap(routes);
-        return createRouteMapText();
-    }
-
-    public String getRouteText(RouteDefinition route) throws IOException {
-        routeGroupMap = createRouteGroupMap(route);
         return createRouteMapText();
     }
 
@@ -178,12 +154,6 @@ public abstract class GraphGeneratorSupport {
         for (RouteDefinition route : routes) {
             addRouteToMap(map, route);
         }
-        return map;
-    }
-
-    protected Map<String, List<RouteDefinition>> createRouteGroupMap(RouteDefinition route) {
-        Map<String, List<RouteDefinition>> map = new HashMap<String, List<RouteDefinition>>();
-        addRouteToMap(map, route);
         return map;
     }
 

@@ -74,16 +74,10 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
         }
     }
 
-    protected String escapeNodeId(String text) {
-        return text.replace('.', '_').replace("$", "_");
-    }
-
     protected void printRoute(PrintWriter writer, final RouteDefinition route, FromDefinition input) {
         NodeData nodeData = getNodeData(input);
 
         printNode(writer, nodeData);
-
-        // TODO we should add a transactional client / event driven consumer / polling client
 
         NodeData from = nodeData;
         for (ProcessorDefinition output : route.getOutputs()) {
