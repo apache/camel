@@ -37,6 +37,9 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST?showBodyType=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showBody=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showOut=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showOut=true&showHeaders=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showOut=true&showBodyType=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showOut=true&showBody=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showAll=true", "Hello World");
     }
 
@@ -104,6 +107,18 @@ public class LogFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    public void testSendCaughtExchangeWithExceptionAndMultiline() throws Exception {
+        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&multiline=true");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody("Hello World");
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new IllegalArgumentException("I am caught"));
+
+        Producer producer = endpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
+    }
+
     public void testSendExchangeWithExceptionAndStackTrace() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showException=true&showStackTrace=true");
         Exchange exchange = endpoint.createExchange();
@@ -126,6 +141,23 @@ public class LogFormatterTest extends ContextTestSupport {
         producer.start();
         producer.process(exchange);
         producer.stop();
+    }
+
+    public void testConfiguration() {
+        LogFormatter formatter = new LogFormatter();
+
+        assertFalse(formatter.isShowExchangeId());
+        assertFalse(formatter.isShowProperties());
+        assertFalse(formatter.isShowHeaders());
+        assertTrue(formatter.isShowBodyType());
+        assertTrue(formatter.isShowBody());
+        assertFalse(formatter.isShowOut());
+        assertFalse(formatter.isShowException());
+        assertFalse(formatter.isShowCaughtException());
+        assertFalse(formatter.isShowStackTrace());
+        assertFalse(formatter.isShowAll());
+        assertFalse(formatter.isMultiline());
+        assertEquals(0, formatter.getMaxChars());
     }
 
 }

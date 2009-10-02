@@ -81,6 +81,8 @@ public class SedaEndpointTest extends ContextTestSupport {
     public void testSedaEndpointSetQueue() throws Exception {
         SedaEndpoint seda = new SedaEndpoint();
         assertNotNull(seda);
+        assertNotNull(seda.getQueue());
+        // overwrite with a new queue
         seda.setQueue(new ArrayBlockingQueue<Exchange>(1000));
         seda.setConcurrentConsumers(2);
 
@@ -102,4 +104,17 @@ public class SedaEndpointTest extends ContextTestSupport {
 
         assertEquals(0, seda.getExchanges().size());
     }
+
+    public void testSedaConsumer() throws Exception {
+        SedaEndpoint seda = context.getEndpoint("seda://foo", SedaEndpoint.class);
+        Consumer consumer = (SedaConsumer) seda.createConsumer(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // do nothing
+            }
+        });
+
+        assertSame(seda, consumer.getEndpoint());
+        assertNotNull(consumer.toString());
+    }
+
 }

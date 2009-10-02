@@ -53,6 +53,7 @@ public class XPathTest extends LanguageTestSupport {
     protected Language assertResolveLanguage(String languageName) {
         XPathLanguage answer = new XPathLanguage();
         answer.setResultType(XPathConstants.STRING);
+        assertEquals(XPathConstants.STRING, answer.getResultType());
         return answer;
     }
 }

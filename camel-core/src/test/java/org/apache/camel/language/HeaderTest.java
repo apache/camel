@@ -17,6 +17,7 @@
 package org.apache.camel.language;
 
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.language.header.HeaderLanguage;
 
 public class HeaderTest extends LanguageTestSupport {
 
@@ -26,6 +27,11 @@ public class HeaderTest extends LanguageTestSupport {
 
     public void testPredicates() throws Exception {
         assertPredicate("foo");
+    }
+
+    public void testSingleton() {
+        HeaderLanguage prop = new HeaderLanguage();
+        assertTrue(prop.isSingleton());
     }
 
     protected String getLanguageName() {

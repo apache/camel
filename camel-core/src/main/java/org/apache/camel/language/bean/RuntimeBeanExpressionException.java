@@ -26,18 +26,18 @@ import org.apache.camel.RuntimeExpressionException;
  */
 public class RuntimeBeanExpressionException extends RuntimeExpressionException {
     private final Exchange exchange;
-    private final String bean;
+    private final String beanName;
     private final String method;
 
-    public RuntimeBeanExpressionException(Exchange exchange, String bean, String method, Throwable e) {
-        super("Failed to invoke method: " + method + " on " + bean + " due to: " + e, e);
+    public RuntimeBeanExpressionException(Exchange exchange, String beanName, String method, Throwable e) {
+        super("Failed to invoke method: " + method + " on " + beanName + " due to: " + e, e);
         this.exchange = exchange;
-        this.bean = bean;
+        this.beanName = beanName;
         this.method = method;
     }
 
-    public String getBean() {
-        return bean;
+    public String getBeanName() {
+        return beanName;
     }
 
     public Exchange getExchange() {

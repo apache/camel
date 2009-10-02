@@ -51,10 +51,6 @@ public class BeanExpression implements Expression, Predicate {
         return "BeanExpression[bean:" + (bean == null ? beanName : bean) + " method: " + method + "]";
     }
 
-    protected String assertionFailureMessage(Exchange exchange) {
-        return "bean: " + beanName + " method: " + method;
-    }
-
     public Object evaluate(Exchange exchange) {
         // either use registry lookup or a constant bean
         BeanHolder holder;
@@ -92,6 +88,4 @@ public class BeanExpression implements Expression, Predicate {
         return ObjectHelper.evaluateValuePredicate(value);
     }
 
-    public void assertMatches(String text, Exchange exchange) throws AssertionError {
-    }
 }

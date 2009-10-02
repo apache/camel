@@ -24,6 +24,7 @@ import org.apache.camel.Header;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
 import org.apache.camel.language.bean.BeanLanguage;
+import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 
 /**
  * @version $Revision$
@@ -63,6 +64,34 @@ public class BeanTest extends LanguageTestSupport {
 
         Object result = exp.evaluate(exchange, Object.class);
         assertEquals("Hello Claus", result);
+    }
+
+    public void testNoMethod() throws Exception {
+        MyUser user = new MyUser();
+        Expression exp = BeanLanguage.bean(user, "unknown");
+
+        Exchange exchange = createExchangeWithBody("Claus");
+
+        try {
+            exp.evaluate(exchange, Object.class);
+        } catch (RuntimeBeanExpressionException e) {
+            assertNull(e.getBeanName());
+            assertSame(exchange, e.getExchange());
+            assertEquals("unknown", e.getMethod());
+        }
+    }
+
+    public void testNoMethodBeanLookup() throws Exception {
+        Expression exp = BeanLanguage.bean("foo.cake");
+        Exchange exchange = createExchangeWithBody("Claus");
+
+        try {
+            exp.evaluate(exchange, Object.class);
+        } catch (RuntimeBeanExpressionException e) {
+            assertEquals("foo", e.getBeanName());
+            assertSame(exchange, e.getExchange());
+            assertEquals("cake", e.getMethod());
+        }
     }
 
     protected String getLanguageName() {

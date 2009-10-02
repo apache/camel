@@ -16,6 +16,10 @@
  */
 package org.apache.camel.language;
 
+import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.simple.SimpleLanguage;
@@ -34,7 +38,42 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("body", "<hello id='m123'>world!</hello>");
         assertExpression("in.body", "<hello id='m123'>world!</hello>");
         assertExpression("in.header.foo", "abc");
+        assertExpression("in.headers.foo", "abc");
         assertExpression("header.foo", "abc");
+        assertExpression("headers.foo", "abc");
+    }
+
+    public void testSimpleOutExpressions() throws Exception {
+        exchange.getOut().setBody("Bye World");
+        exchange.getOut().setHeader("quote", "Camel rocks");
+        assertExpression("out.body", "Bye World");
+        assertExpression("out.header.quote", "Camel rocks");
+        assertExpression("out.headers.quote", "Camel rocks");
+    }
+
+    public void testSimplePropertyExpressions() throws Exception {
+        exchange.setProperty("medal", "gold");
+        assertExpression("property.medal", "gold");
+    }
+
+    public void testSimpleSystemPropertyExpressions() throws Exception {
+        System.setProperty("who", "I was here");
+        assertExpression("sys.who", "I was here");
+    }
+
+    public void testDateExpressions() throws Exception {
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(1974, Calendar.APRIL, 20);
+        exchange.getIn().setHeader("birthday", cal.getTime());
+
+        assertExpression("date:header.birthday:yyyyMMdd", "19740420");
+
+        try {
+            assertExpression("date:yyyyMMdd", "19740420");
+            fail("Should thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            // expected
+        }
     }
 
     public void testLanguagesInContext() throws Exception {

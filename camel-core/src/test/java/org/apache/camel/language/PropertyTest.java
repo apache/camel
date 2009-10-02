@@ -18,6 +18,7 @@ package org.apache.camel.language;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.language.property.PropertyLanguage;
 
 public class PropertyTest extends LanguageTestSupport {
 
@@ -31,6 +32,11 @@ public class PropertyTest extends LanguageTestSupport {
 
     protected String getLanguageName() {
         return "property";
+    }
+
+    public void testSingleton() {
+        PropertyLanguage prop = new PropertyLanguage();
+        assertTrue(prop.isSingleton());
     }
 
     @Override
