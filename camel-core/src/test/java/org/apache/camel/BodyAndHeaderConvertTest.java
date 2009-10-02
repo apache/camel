@@ -29,8 +29,6 @@ import junit.framework.TestCase;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
-
-
 /**
  * @version $Revision$
  */
