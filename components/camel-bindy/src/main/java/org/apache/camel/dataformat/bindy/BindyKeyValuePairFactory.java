@@ -140,7 +140,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 }
 
                 KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
-                ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag + ", line nber : " + line);
+                ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag + ", line : " + line);
 
                 Field field = annotedFields.get(tag);
                 field.setAccessible(true);
@@ -166,7 +166,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     value = format.parse(keyValue);
                 } catch (Exception e) {
                     throw new IllegalArgumentException("Parsing error detected for field defined at the tag : " + tag
-                        + ", line nber : " + line, e);
+                        + ", line : " + line, e);
                 }
 
                 field.set(modelField, value);
@@ -261,6 +261,10 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         // Create the key value string
                         String value = keyValuePairField.tag() + this.getKeyValuePairSeparator()
                                        + valueFormated;
+                                       
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Value to be formatted : " + keyValue + ", for the tag : " + keyValuePairField.tag() + ", and its formated value : " + valueFormated);
+                        }
 
                         // Add the content to the TreeMap according to the
                         // position defined

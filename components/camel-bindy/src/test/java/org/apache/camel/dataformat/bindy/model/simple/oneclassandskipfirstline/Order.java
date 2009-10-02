@@ -25,37 +25,37 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 @CsvRecord(separator = ",", skipFirstLine = true)
 public class Order {
 
-    @DataField(pos = 0)
+    @DataField(pos = 1)
     private int orderNr;
 
-    @DataField(pos = 1)
+    @DataField(pos = 2)
     private String clientNr;
 
-    @DataField(pos = 2)
+    @DataField(pos = 3)
     private String firstName;
 
-    @DataField(pos = 3)
+    @DataField(pos = 4)
     private String lastName;
 
-    @DataField(pos = 4)
+    @DataField(pos = 5)
     private String instrumentCode;
 
-    @DataField(pos = 5)
+    @DataField(pos = 6)
     private String instrumentNumber;
 
-    @DataField(pos = 6)
+    @DataField(pos = 7)
     private String orderType;
 
-    @DataField(name = "Name", pos = 7)
+    @DataField(name = "Name", pos = 8)
     private String instrumentType;
 
-    @DataField(pos = 8, precision = 2)
+    @DataField(pos = 9, precision = 2)
     private BigDecimal amount;
 
-    @DataField(pos = 9)
+    @DataField(pos = 10)
     private String currency;
 
-    @DataField(pos = 10, pattern = "dd-MM-yyyy")
+    @DataField(pos = 11, pattern = "dd-MM-yyyy")
     private Date orderDate;
 
     public int getOrderNr() {

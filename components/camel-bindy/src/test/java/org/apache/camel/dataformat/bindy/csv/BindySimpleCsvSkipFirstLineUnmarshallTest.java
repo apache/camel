@@ -36,8 +36,8 @@ public class BindySimpleCsvSkipFirstLineUnmarshallTest extends AbstractJUnit4Spr
     protected ProducerTemplate template;
     
     private String record = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n"
-                            + "01,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
-                            + "02,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
+                            + "1,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
+                            + "2,A1,,Preud'Homme,ISIN,XD12345678,BUY,,2500,USD,08-01-2009\r\n"
                             + "03,A2,Jacques,,,BE12345678,SELL,,1500,EUR,08-01-2009\r\n"
                             + "04,A3,Michel,Dupond,,,BUY,,2500,USD,08-01-2009\r\n"
                             + "05,A4,Annie,Dutronc,ISIN,BE12345678,,,1500,EUR,08-01-2009\r\n"

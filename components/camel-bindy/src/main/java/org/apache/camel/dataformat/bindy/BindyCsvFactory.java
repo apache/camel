@@ -138,14 +138,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public void bind(List<String> tokens, Map<String, Object> model, int line) throws Exception {
 
-        int pos = 0;
+        int pos = 1;
         int counterMandatoryFields = 0;
  
         for (String data : tokens) {
         
             // Get DataField from model
             DataField dataField = dataFields.get(pos);
-            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data + ", line nber : " + line);
+            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data + ", line : " + line);
             
             if (dataField.required()) {
                 // Increment counter of mandatory fields
@@ -155,7 +155,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // This is not possible for mandatory fields
                 if (data.equals("")) {
                     throw new IllegalArgumentException("The mandatory field defined at the position " + pos
-                                                       + " is empty for the line nber : " + line);
+                                                       + " is empty for the line : " + line);
                 }
             }
             
@@ -185,9 +185,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 try {
                     value = format.parse(data);
                 } catch (FormatException ie) {
-                    throw new IllegalArgumentException(ie.getMessage() + ", position : " + pos + ", line nber : " + line, ie);
+                    throw new IllegalArgumentException(ie.getMessage() + ", position : " + pos + ", line : " + line, ie);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos  + ", line nber : " + line, e);
+                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos  + ", line : " + line, e);
                 }
             } else {
                 value = getDefaultValueforPrimitive(field.getType());
@@ -205,11 +205,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         
      
         if (pos < totalFields) {
-            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line nber : " + line);
+            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line : " + line);
         }
 
         if (counterMandatoryFields < numberMandatoryFields) {
-            throw new IllegalArgumentException("Some mandatory fields are missing, line nber : " + line);
+            throw new IllegalArgumentException("Some mandatory fields are missing, line : " + line);
         }
         
     }
@@ -261,7 +261,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (modelField != null) {
                 // Get field value
                 Object value = field.get(modelField);
-                String strValue = null;
+                String strValue = "";
 
                 if (this.isMessageOrdered()) {
 
@@ -311,9 +311,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         }
 
                     }
-
+                    
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Data : " + value + ", value : " + strValue);
+                        LOG.debug("Value to be formatted : " + value + ", position : " + dataField.pos() + ", and its formated value : " + strValue);
                     }
 
                     builder.append(strValue);

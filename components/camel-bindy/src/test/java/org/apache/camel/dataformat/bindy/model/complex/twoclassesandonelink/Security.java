@@ -22,10 +22,10 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 @Link
 public class Security {
 
-    @DataField(pos = 5)
+    @DataField(pos = 6)
     private String instrumentNumber;
 
-    @DataField(pos = 4)
+    @DataField(pos = 5)
     private String instrumentCode;
 
     public String getInstrumentNumber() {

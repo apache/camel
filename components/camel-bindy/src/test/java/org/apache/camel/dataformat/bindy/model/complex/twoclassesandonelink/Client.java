@@ -22,13 +22,13 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 @Link
 public class Client {
 
-    @DataField(pos = 1)
+    @DataField(pos = 2)
     private String clientNr;
 
-    @DataField(pos = 2)
+    @DataField(pos = 3)
     private String firstName;
 
-    @DataField(pos = 3)
+    @DataField(pos = 4)
     private String lastName;
 
     public String getClientNr() {
