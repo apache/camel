@@ -21,6 +21,7 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -31,11 +32,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoServiceConfig;
+import org.apache.mina.common.ThreadModel;
 import org.apache.mina.filter.LoggingFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
+import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
 import org.apache.mina.transport.socket.nio.DatagramAcceptorConfig;
 import org.apache.mina.transport.socket.nio.DatagramConnector;
@@ -153,14 +156,18 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         boolean sync = configuration.isSync();
+        final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
 
-        IoAcceptor acceptor = new SocketAcceptor();
+        IoAcceptor acceptor = new SocketAcceptor(processorCount, Executors.newCachedThreadPool());
+        IoConnector connector = new SocketConnector(processorCount, Executors.newCachedThreadPool());
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        IoConnector connector = new SocketConnector();
 
         // connector config
         SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
+        // must use manual thread model according to Mina documentation
+        connectorConfig.setThreadModel(ThreadModel.MANUAL);
         configureCodecFactory("MinaProducer", connectorConfig, configuration);
+        connectorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -172,6 +179,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         configureCodecFactory("MinaConsumer", acceptorConfig, configuration);
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
+        acceptorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -224,9 +232,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         boolean transferExchange = configuration.isTransferExchange();
         boolean sync = configuration.isSync();
 
-        IoAcceptor acceptor = new DatagramAcceptor();
+        IoAcceptor acceptor = new DatagramAcceptor(Executors.newCachedThreadPool());
+        IoConnector connector = new DatagramConnector(Executors.newCachedThreadPool());
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        IoConnector connector = new DatagramConnector();
 
         if (transferExchange) {
             throw new IllegalArgumentException("transferExchange=true is not supported for datagram protocol");
@@ -234,6 +242,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
         configureDataGramCodecFactory("MinaProducer", connectorConfig, configuration);
+        connectorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }

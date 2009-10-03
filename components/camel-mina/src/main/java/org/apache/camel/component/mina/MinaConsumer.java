@@ -74,7 +74,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
     }
 
     /**
-     * Handles comsuming messages and replying if the exchange is out capable.
+     * Handles consuming messages and replying if the exchange is out capable.
      */
     private final class ReceiveHandler extends IoHandlerAdapter {
 
