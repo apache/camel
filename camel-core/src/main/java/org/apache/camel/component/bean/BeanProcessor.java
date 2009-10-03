@@ -74,7 +74,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         BeanInfo beanInfo = beanHolder.getBeanInfo();
 
         // do we have a custom adapter for this POJO to a Processor
-        // should not be invoced if an explicit method has been set
+        // should not be invoked if an explicit method has been set
         Processor processor = getProcessor();
         if (!isExplicitMethod && processor != null) {
             if (LOG.isTraceEnabled()) {

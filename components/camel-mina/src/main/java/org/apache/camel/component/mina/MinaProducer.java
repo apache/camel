@@ -36,7 +36,7 @@ import org.apache.mina.common.IoSession;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 
 /**
- * A {@link Producer} implementation for MINA
+ * A {@link org.apache.camel.Producer} implementation for MINA
  *
  * @version $Revision$
  */
@@ -117,7 +117,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
             ResponseHandler handler = (ResponseHandler) session.getHandler();
             if (handler.getCause() != null) {
                 throw new CamelExchangeException("Response Handler had an exception", exchange, handler.getCause());
-            } else if (!handler.isMessageRecieved()) {
+            } else if (!handler.isMessageReceived()) {
                 // no message received
                 throw new CamelExchangeException("No response received from remote server: " + endpoint.getEndpointUri(), exchange);
             } else {
@@ -182,7 +182,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         private MinaEndpoint endpoint;
         private Object message;
         private Throwable cause;
-        private boolean messageRecieved;
+        private boolean messageReceived;
 
         private ResponseHandler(MinaEndpoint endpoint) {
             this.endpoint = endpoint;
@@ -191,7 +191,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         public void reset() {
             this.message = null;
             this.cause = null;
-            this.messageRecieved = false;
+            this.messageReceived = false;
         }
 
         @Override
@@ -200,7 +200,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
                 LOG.debug("Message received: " + message);
             }
             this.message = message;
-            messageRecieved = true;
+            messageReceived = true;
             cause = null;
             countDown();
         }
@@ -230,7 +230,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
             LOG.error("Exception on receiving message from address: " + this.endpoint.getAddress()
                     + " using connector: " + this.endpoint.getConnector(), cause);
             this.message = null;
-            this.messageRecieved = false;
+            this.messageReceived = false;
             this.cause = cause;
             if (ioSession != null) {
                 ioSession.close();
@@ -245,8 +245,8 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
             return this.message;
         }
 
-        public boolean isMessageRecieved() {
-            return messageRecieved;
+        public boolean isMessageReceived() {
+            return messageReceived;
         }
     }
 

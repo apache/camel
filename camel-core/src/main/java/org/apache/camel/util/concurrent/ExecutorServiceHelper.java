@@ -76,4 +76,14 @@ public final class ExecutorServiceHelper {
         });
     }
 
+    public static ExecutorService newCachedThreadPool(final String name, final boolean daemon) {
+        return Executors.newCachedThreadPool(new ThreadFactory() {
+            public Thread newThread(Runnable r) {
+                Thread answer = new Thread(r, getThreadName(name));
+                answer.setDaemon(daemon);
+                return answer;
+            }
+        });
+    }
+
 }
