@@ -301,7 +301,7 @@ public class JmsBinding {
 
     public void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
                                   String headerName, Object headerValue) throws JMSException {
-        if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
+        if (isStandardJMSHeader(headerName)) {
             if (headerName.equals("JMSCorrelationID")) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
@@ -338,6 +338,34 @@ public class JmsBinding {
                     + headerValue.getClass().getName() + " with value: " + headerValue);
             }
         }
+    }
+
+    /**
+     * Is the given header a standard JMS header
+     * @param headerName the header name
+     * @return <tt>true</tt> if its a standard JMS header
+     */
+    protected boolean isStandardJMSHeader(String headerName) {
+        if (!headerName.startsWith("JMS")) {
+            return false;
+        }
+        if (headerName.startsWith("JMSX")) {
+            return false;
+        }
+        // IBM WebSphereMQ uses JMS_IBM as special headers
+        if (headerName.startsWith("JMS_")) {
+            return false;
+        }
+
+        // the 4th char must be a letter to be a standard JMS header
+        if (headerName.length() > 3) {
+            Character fourth = headerName.charAt(3);
+            if (Character.isLetter(fourth)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
