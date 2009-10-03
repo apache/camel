@@ -250,7 +250,6 @@ public class MinaComponent extends DefaultComponent {
         boolean transferExchange = configuration.isTransferExchange();
         boolean sync = configuration.isSync();
         List<IoFilter> filters = configuration.getFilters();
-        final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
 
         IoAcceptor acceptor = new DatagramAcceptor(ExecutorServiceHelper.newCachedThreadPool("MinaDatagramAcceptor", true));
         IoConnector connector = new DatagramConnector(ExecutorServiceHelper.newCachedThreadPool("MinaDatagramConnector", true));
