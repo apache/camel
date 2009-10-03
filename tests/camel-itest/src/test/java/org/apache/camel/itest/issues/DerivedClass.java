@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean.issues;
+package org.apache.camel.itest.issues;
 
 /**
  * @version $Revision$
@@ -27,9 +27,7 @@ public class DerivedClass extends BaseClass {
         this.body = body;
     }
 
-    public String getAndClearBody() {
-        String answer = body;
-        body = null;
-        return answer;
+    public String getBody() {
+        return body;
     }
 }

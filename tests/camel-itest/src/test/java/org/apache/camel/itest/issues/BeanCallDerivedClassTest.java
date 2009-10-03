@@ -14,22 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean.issues;
+package org.apache.camel.itest.issues;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version $Revision$
  */
-public class DerivedClass extends BaseClass {
+@ContextConfiguration
+public class BeanCallDerivedClassTest extends AbstractJUnit38SpringContextTests {
 
-    private String body;
+    @Autowired
+    protected CamelContext context;
 
-    public void process(String body) {
-        this.body = body;
+    @EndpointInject
+    protected ProducerTemplate template;
+
+    public void testCallBean() throws Exception {
+        DerivedClass derived = context.getRegistry().lookup("derived", DerivedClass.class);
+
+        template.sendBody("direct:start", "Hello World");
+        assertEquals("Hello World", derived.getBody());
     }
 
-    public String getAndClearBody() {
-        String answer = body;
-        body = null;
-        return answer;
-    }
 }

@@ -14,22 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean.issues;
+package org.apache.camel.component.bean;
+
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
 
 /**
  * @version $Revision$
  */
-public class DerivedClass extends BaseClass {
+public class MethodNotFoundException extends CamelExchangeException {
 
-    private String body;
+    private final String methodName;
+    private final Object bean;
 
-    public void process(String body) {
-        this.body = body;
+    public MethodNotFoundException(Exchange exchange, Object pojo, String methodName) {
+        super("Method with name: " + methodName + " not found on bean: " + pojo, exchange);
+        this.methodName = methodName;
+        this.bean = pojo;
     }
 
-    public String getAndClearBody() {
-        String answer = body;
-        body = null;
-        return answer;
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public Object getBean() {
+        return bean;
     }
 }

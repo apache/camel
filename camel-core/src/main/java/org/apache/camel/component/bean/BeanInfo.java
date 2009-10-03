@@ -104,7 +104,7 @@ public class BeanInfo {
     }
 
     public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws RuntimeCamelException,
-        AmbiguousMethodCallException {
+        AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
 
         String name = exchange.getIn().getHeader(BeanProcessor.METHOD_NAME, String.class);
@@ -114,6 +114,9 @@ public class BeanInfo {
                 if (methods != null && methods.size() == 1) {
                     methodInfo = methods.get(0);
                 }
+            } else {
+                // a specific method was given to invoke but not found
+                throw new MethodNotFoundException(exchange, pojo, name);
             }
         }
         if (methodInfo == null) {
@@ -123,7 +126,14 @@ public class BeanInfo {
             methodInfo = defaultMethod;
         }
         if (methodInfo != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Chosen method to invoke: " + methodInfo + " on bean: " + pojo);
+            }
             return methodInfo.createMethodInvocation(pojo, exchange);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Cannot find suitable method to invoke on bean: " + pojo);
         }
         return null;
     }
@@ -152,7 +162,7 @@ public class BeanInfo {
 
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
-        // methods already registered should be prefered to use instead of super classes of existing methods
+        // methods already registered should be preferred to use instead of super classes of existing methods
         // we want to us the method from the sub class over super classes, so if we have already registered
         // the method then use it (we are traversing upwards: sub (child) -> super (farther) )
         MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
@@ -167,6 +177,7 @@ public class BeanInfo {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
         }
+
         if (operations.containsKey(opName)) {
             // we have an overloaded method so add the method info to the same key
             List<MethodInfo> existing = operations.get(opName);
