@@ -61,6 +61,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     private Boolean handleFault;
     private Long delayer;
     private Boolean autoStartup = Boolean.TRUE;
+    private Integer startupOrder;
 
     public RouteDefinition() {
     }
@@ -294,6 +295,20 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
+    /**
+     * Configures the startup order for this route
+     * <p/>
+     * Camel will reorder routes and star them ordered by 0..N where 0 is the lowest number and N the highest number.
+     * Camel will stop routes in reverse order when its stopping.
+     *
+     * @param order the order represented as a number
+     * @return this builder
+     */
+    public RouteDefinition starupOrder(int order) {
+        setStartupOrder(order);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -388,6 +403,15 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     @XmlAttribute
     public void setAutoStartup(Boolean autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public Integer getStartupOrder() {
+        return startupOrder;
+    }
+
+    @XmlAttribute
+    public void setStartupOrder(Integer startupOrder) {
+        this.startupOrder = startupOrder;
     }
 
     /**

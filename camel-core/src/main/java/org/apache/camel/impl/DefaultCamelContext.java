@@ -78,6 +78,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.EventHelper;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
@@ -136,6 +137,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private Tracer defaultTracer;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
+    private final List<Consumer> routeStartupOrder = new ArrayList<Consumer>();
+    private int defaultRouteStartupOrder = 1000;
 
     public DefaultCamelContext() {
         super();
@@ -480,6 +483,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     // Route Management Methods
     // -----------------------------------------------------------------------
+
+    /**
+     * Returns the order in which the route inputs was started.
+     *
+     * @return a list ordered by the starting order of the route inputs
+     */
+    public List<Consumer> getRouteStartupOrder() {
+        return routeStartupOrder;
+    }
+
     public synchronized List<Route> getRoutes() {
         if (routes == null) {
             routes = new ArrayList<Route>();
@@ -837,8 +850,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // the context is now considered started (i.e. isStarted() == true))
         // starting routes is done after, not during context startup
         synchronized (this) {
-            // list of inputs to start when all the routes have been preparated for start
-            Map<Route, Consumer> inputs = new HashMap<Route, Consumer>();
+            // list of inputs to start when all the routes have been prepared for starting
+            // we use a tree map so the routes will be ordered according to startup order defined on the route
+            Map<Integer, KeyValueHolder<Route, Consumer>> inputs = new TreeMap<Integer, KeyValueHolder<Route, Consumer>>();
 
             for (RouteService routeService : routeServices.values()) {
                 Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
@@ -852,7 +866,25 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     try {
                         routeService.start();
                         // add the inputs from this route service to the list to start afterwards
-                        inputs.putAll(routeService.getInputs());
+                        // should be ordered according to the startup number
+                        Integer startupOrder = routeService.getRouteDefinition().getStartupOrder();
+                        if (startupOrder == null) {
+                            // auto assign a default startup order
+                            startupOrder = defaultRouteStartupOrder++;
+                        }
+
+                        for (Map.Entry<Route, Consumer> entry : routeService.getInputs().entrySet()) {
+                            KeyValueHolder<Route, Consumer> holder = new KeyValueHolder<Route, Consumer>(entry.getKey(), entry.getValue());
+                            // check for startup order clash
+                            if (inputs.containsKey(startupOrder)) {
+                                if (LOG.isWarnEnabled()) {
+                                    LOG.warn("Another route has already startupOrder " + startupOrder + " which this route also want to use " + entry.getKey().getId()
+                                        + ". Please correct startupOrder to be unique among your routes.");
+                                }
+                                startupOrder = defaultRouteStartupOrder++;
+                            }
+                            inputs.put(startupOrder, holder);
+                        }
                     } finally {
                         routeService.startInputs(true);
                     }
@@ -863,17 +895,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
 
             // now start the inputs for all the route services as we have prepared Camel
-            // yeah open the floods so messages can start flow into Came;
-            for (Map.Entry<Route, Consumer> entry : inputs.entrySet()) {
-                Route route = entry.getKey();
-                Consumer consumer = entry.getValue();
+            // yeah open the floods so messages can start flow into Camel
+            for (Map.Entry<Integer, KeyValueHolder<Route, Consumer>> entry : inputs.entrySet()) {
+                Integer order = entry.getKey();
+                Route route = entry.getValue().getKey();
+                Consumer consumer = entry.getValue().getValue();
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Starting consumer on route: " + route.getId());
+                    LOG.trace("Starting consumer (order: " + order + ") on route: " + route.getId());
                 }
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
                     strategy.onServiceAdd(this, consumer, route);
                 }
                 ServiceHelper.startService(consumer);
+
+                // add to the order which they was started, so we know how to stop them in reverse order
+                routeStartupOrder.add(consumer);
             }
         }
 
@@ -970,6 +1006,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
         EventHelper.notifyCamelContextStopping(this);
 
+        // stop route inputs in the same order as they was started so we stop the very first inputs first
+        stopServices(getRouteStartupOrder(), false);
+        getRouteStartupOrder().clear();
+
         // the stop order is important
         stopServices(endpoints.values());
         endpoints.clear();
@@ -1011,12 +1051,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void stopServices(Collection services) throws Exception {
-        // close them in reverse order as they where added
-        List reverse = new ArrayList(services);
-        Collections.reverse(reverse);
-        for (Object service : reverse) {
+        // reverse stopping by default
+        stopServices(services, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void stopServices(Collection services, boolean reverse) throws Exception {
+        Collection list = services;
+        if (reverse) {
+            ArrayList reverseList = new ArrayList(services);
+            Collections.reverse(reverseList);
+            list = reverseList;
+        }
+
+        for (Object service : list) {
             stopServices(service);
         }
     }
