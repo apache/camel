@@ -76,7 +76,7 @@ public class DualPipelineTest extends ContextTestSupport {
                             .to("mock:e")
                         .end() //pipeline
                     .end()//multicast
-                .to("mock:result");
+                    .to("mock:result");
             }
         };
     }

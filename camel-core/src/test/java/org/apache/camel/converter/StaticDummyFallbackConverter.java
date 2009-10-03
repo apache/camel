@@ -27,7 +27,10 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * @version $Revision$
  */
 @Converter
-public class StaticDummyFallbackConverter {
+public final class StaticDummyFallbackConverter {
+
+    private StaticDummyFallbackConverter() {
+    }
 
     @FallbackConverter
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {

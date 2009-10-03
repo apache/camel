@@ -16,13 +16,11 @@
  */
 package org.apache.camel.language;
 
-import java.util.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.language.simple.SimpleLanguage;
 
 /**
  * @version $Revision$

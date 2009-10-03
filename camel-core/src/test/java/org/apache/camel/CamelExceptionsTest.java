@@ -37,8 +37,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
 
         ExpressionEvaluationException e = new ExpressionEvaluationException(exp, exchange, new IllegalArgumentException("Damn"));
-        assertSame(exchange ,e.getExchange());
-        assertSame(exp ,e.getExpression());
+        assertSame(exchange, e.getExchange());
+        assertSame(exp, e.getExpression());
         assertNotNull(e.getCause());
     }
 
