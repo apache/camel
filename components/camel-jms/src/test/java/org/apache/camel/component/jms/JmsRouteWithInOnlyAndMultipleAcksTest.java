@@ -113,7 +113,7 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends ContextTestSupport {
         public MyOrderServiceNotificationWithAckBean(String id) {
             this.id = id;
         }
-        public String handleOrder(String body) {
+        public String handleOrderNotificationWithAck(String body) {
             return "Ack-" + id + ":" + body;
         }
     }
