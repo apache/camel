@@ -29,7 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?sorter=#mySorter&initialDelay=1000";
+    private String fileUrl = "file://target/filesorter/?sorter=#mySorter&initialDelay=2000";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -70,7 +70,7 @@ public class FileSorterRefTest extends ContextTestSupport {
     // START SNIPPET: e1
     public class MyFileSorter implements Comparator<GenericFile> {
         public int compare(GenericFile o1, GenericFile o2) {
-            return o1.getFileName().compareTo(o2.getFileName());
+            return o1.getFileName().compareToIgnoreCase(o2.getFileName());
         }
     }
     // END SNIPPET: e1

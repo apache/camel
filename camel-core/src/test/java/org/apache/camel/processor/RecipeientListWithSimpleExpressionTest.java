@@ -51,16 +51,21 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
         context.start();
 
         for (int i = 0; i < 10; i++) {
-            getMockEndpoint("mock:" + i).expectedMessageCount(200);
+            getMockEndpoint("mock:" + i).expectedMessageCount(100);
         }
 
         // use concurrent producers to send a lot of messages
-        ExecutorService executors = Executors.newFixedThreadPool(20);
-        for (int i = 0; i < 200; i++) {
+        ExecutorService executors = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 100; i++) {
             executors.execute(new Runnable() {
                 public void run() {
                     for (int i = 0; i < 10; i++) {
                         template.sendBodyAndHeader("direct:start", "Hello " + i, "queue", i);
+                        try {
+                            Thread.sleep(5);
+                        } catch (Exception e) {
+                            // ignore
+                        }
                     }
                 }
             });
@@ -97,16 +102,21 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
         context.start();
 
         for (int i = 0; i < 10; i++) {
-            getMockEndpoint("mock:" + i).expectedMessageCount(200);
+            getMockEndpoint("mock:" + i).expectedMessageCount(100);
         }
 
         // use concurrent producers to send a lot of messages
-        ExecutorService executors = Executors.newFixedThreadPool(20);
-        for (int i = 0; i < 200; i++) {
+        ExecutorService executors = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 100; i++) {
             executors.execute(new Runnable() {
                 public void run() {
                     for (int i = 0; i < 10; i++) {
                         template.sendBodyAndHeader("direct:" + i, "Hello " + i, "queue", i);
+                        try {
+                            Thread.sleep(5);
+                        } catch (Exception e) {
+                            // ignore
+                        }
                     }
                 }
             });

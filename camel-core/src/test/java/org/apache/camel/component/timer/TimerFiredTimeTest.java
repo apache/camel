@@ -28,7 +28,7 @@ public class TimerFiredTimeTest extends ContextTestSupport {
 
     public void testFired() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
 

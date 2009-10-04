@@ -32,7 +32,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/idempotent");
         super.setUp();
-        template.sendBodyAndHeader("file://target/idempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/idempotent", "Hello World", Exchange.FILE_NAME, "report.txt");
     }
 
     @Override
@@ -48,11 +48,10 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedMessageCount(1);
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
         // reset mock and set new expectations
         mock.reset();
