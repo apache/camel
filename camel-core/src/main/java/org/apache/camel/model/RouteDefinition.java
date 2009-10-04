@@ -304,7 +304,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      * @param order the order represented as a number
      * @return this builder
      */
-    public RouteDefinition starupOrder(int order) {
+    public RouteDefinition startupOrder(int order) {
         setStartupOrder(order);
         return this;
     }

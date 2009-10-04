@@ -55,13 +55,13 @@ public class RouteStartupOrderWithDefaultTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").starupOrder(2).to("seda:foo");
+                from("direct:start").startupOrder(2).to("seda:foo");
 
-                from("seda:foo").starupOrder(1).to("mock:result");
+                from("seda:foo").startupOrder(1).to("mock:result");
 
-                from("direct:bar").starupOrder(9).to("seda:bar");
+                from("direct:bar").startupOrder(9).to("seda:bar");
 
-                from("seda:bar").starupOrder(5).to("mock:other");
+                from("seda:bar").startupOrder(5).to("mock:other");
 
                 // has no startup order then it should be last
                 from("direct:default").to("mock:default");

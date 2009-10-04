@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +36,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
@@ -852,7 +855,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         synchronized (this) {
             // list of inputs to start when all the routes have been prepared for starting
             // we use a tree map so the routes will be ordered according to startup order defined on the route
-            Map<Integer, KeyValueHolder<Route, Consumer>> inputs = new TreeMap<Integer, KeyValueHolder<Route, Consumer>>();
+            Map<Integer, StartupRouteHolder> inputs = new TreeMap<Integer, StartupRouteHolder>();
 
             for (RouteService routeService : routeServices.values()) {
                 Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
@@ -873,18 +876,30 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                             startupOrder = defaultRouteStartupOrder++;
                         }
 
+                        // create holder object that contains information about this route to be started
+                        StartupRouteHolder holder = null;
                         for (Map.Entry<Route, Consumer> entry : routeService.getInputs().entrySet()) {
-                            KeyValueHolder<Route, Consumer> holder = new KeyValueHolder<Route, Consumer>(entry.getKey(), entry.getValue());
-                            // check for startup order clash
-                            if (inputs.containsKey(startupOrder)) {
-                                if (LOG.isWarnEnabled()) {
-                                    LOG.warn("Another route has already startupOrder " + startupOrder + " which this route also want to use " + entry.getKey().getId()
-                                        + ". Please correct startupOrder to be unique among your routes.");
-                                }
-                                startupOrder = defaultRouteStartupOrder++;
+                            if (holder == null) {
+                                holder = new StartupRouteHolder(startupOrder, entry.getKey());
                             }
+                            // add the input consumer to the holder
+                            holder.addInput(entry.getValue());
+                        }
+
+                        // check for clash by startupOrder id
+                        StartupRouteHolder other = inputs.get(startupOrder);
+                        if (other != null) {
+                            String otherId = other.getRoute().getId();
+                            throw new FailedToStartRouteException(holder.getRoute().getId(), "starupOrder clash. Route " + otherId + " already has startupOrder "
+                                + startupOrder + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
+                        } else {
+                            // no clash then add the holder to the existing inputs of routes to be started
                             inputs.put(startupOrder, holder);
                         }
+                    } catch (FailedToStartRouteException e) {
+                        throw e;
+                    } catch (Exception e) {
+                        throw new FailedToStartRouteException(e);
                     } finally {
                         routeService.startInputs(true);
                     }
@@ -896,20 +911,22 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
             // now start the inputs for all the route services as we have prepared Camel
             // yeah open the floods so messages can start flow into Camel
-            for (Map.Entry<Integer, KeyValueHolder<Route, Consumer>> entry : inputs.entrySet()) {
+            for (Map.Entry<Integer, StartupRouteHolder> entry : inputs.entrySet()) {
                 Integer order = entry.getKey();
-                Route route = entry.getValue().getKey();
-                Consumer consumer = entry.getValue().getValue();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Starting consumer (order: " + order + ") on route: " + route.getId());
-                }
-                for (LifecycleStrategy strategy : lifecycleStrategies) {
-                    strategy.onServiceAdd(this, consumer, route);
-                }
-                ServiceHelper.startService(consumer);
+                Route route = entry.getValue().getRoute();
+                List<Consumer> consumers = entry.getValue().getInputs();
+                for (Consumer consumer : consumers) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Starting consumer (order: " + order + ") on route: " + route.getId());
+                    }
+                    for (LifecycleStrategy strategy : lifecycleStrategies) {
+                        strategy.onServiceAdd(this, consumer, route);
+                    }
+                    ServiceHelper.startService(consumer);
 
-                // add to the order which they was started, so we know how to stop them in reverse order
-                routeStartupOrder.add(consumer);
+                    // add to the order which they was started, so we know how to stop them in reverse order
+                    routeStartupOrder.add(consumer);
+                }
             }
         }
 

@@ -16,45 +16,40 @@
  */
 package org.apache.camel.processor;
 
-import java.util.List;
-
-import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  * @version $Revision$
  */
-public class RouteStartupOrderSimpleTest extends ContextTestSupport {
-
-    public void testRouteStartupOrder() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
-        // assert correct order
-        DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<Consumer> order = dcc.getRouteStartupOrder();
-
-        assertEquals(2, order.size());
-        assertEquals("direct://start", order.get(0).getEndpoint().getEndpointUri());
-        assertEquals("seda://foo", order.get(1).getEndpoint().getEndpointUri());
-    }
+public class RouteStartupOrderClashTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    public void testRouteStartupOrderClash() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("seda:foo").startupOrder(2).to("mock:result");
 
                 from("direct:start").startupOrder(1).to("seda:foo");
+
+                // clash as we got two routes with order 2
+                from("seda:bar").startupOrder(2).to("mock:bar");
             }
-        };
+        });
+
+        try {
+            context.start();
+            fail("Should have thrown an exception");
+        } catch (FailedToStartRouteException e) {
+            // expected
+            assertTrue(e.getMessage().contains("startupOrder 2"));
+        }
     }
+
 }
