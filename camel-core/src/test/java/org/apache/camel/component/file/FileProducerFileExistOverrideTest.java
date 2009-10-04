@@ -31,14 +31,13 @@ public class FileProducerFileExistOverrideTest extends ContextTestSupport {
         super.setUp();
         deleteDirectory("target/file");
         template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/file?fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
     }
 
     public void testOverride() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
         mock.expectedFileExists("target/file/hello.txt", "Bye World");
-
-        template.sendBodyAndHeader("file://target/file?fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
