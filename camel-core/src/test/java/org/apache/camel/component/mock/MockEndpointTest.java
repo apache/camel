@@ -18,6 +18,7 @@ package org.apache.camel.component.mock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -332,6 +333,94 @@ public class MockEndpointTest extends ContextTestSupport {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Forced", e.getCause().getMessage());
         }
+    }
+
+    public void testMinimumCount() throws Exception {
+        MockEndpoint mock = MockEndpoint.resolve(context, "mock:result");
+        mock.expectedMinimumMessageCount(2);
+
+        sendMessages(3, 4, 5);
+
+        mock.assertIsSatisfied();
+
+        assertEquals(2, mock.getExpectedMinimumCount());
+    }
+
+    public void testResolve() throws Exception {
+        MockEndpoint mock = MockEndpoint.resolve(context, "mock:result");
+        mock.expectedMessageCount(2);
+        mock.setResultWaitTime(500);
+
+        template.sendBody("direct:a", "Hello World");
+
+        // should only be 1 message
+        mock.assertIsNotSatisfied();
+        assertEquals(500, mock.getResultWaitTime());
+    }
+
+    public void testResolveTimeout() throws Exception {
+        MockEndpoint mock = MockEndpoint.resolve(context, "mock:result");
+        mock.expectedMessageCount(2);
+        mock.setResultWaitTime(500);
+
+        mock.assertIsNotSatisfied(1000);
+
+        assertEquals(2, mock.getExpectedCount());
+        assertEquals(500, mock.getResultWaitTime());
+    }
+
+    public void testSleepForEmptyTest() throws Exception {
+        MockEndpoint mock = MockEndpoint.resolve(context, "mock:result");
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(500);
+        
+        mock.assertIsSatisfied();
+
+        assertEquals(0, mock.getExpectedCount());
+        assertEquals(500, mock.getSleepForEmptyTest());
+    }
+
+    public void testSleepForEmptyTestAssert() throws Exception {
+        MockEndpoint mock = MockEndpoint.resolve(context, "mock:result");
+        mock.expectedMessageCount(0);
+
+        mock.assertIsSatisfied(400);
+
+        assertEquals(0, mock.getExpectedCount());
+        assertEquals(0, mock.getSleepForEmptyTest());
+        assertEquals(0, mock.getResultWaitTime());
+    }
+
+    public void testReporter() throws Exception {
+        final AtomicBoolean reported = new AtomicBoolean(false);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.setExpectedMessageCount(1);
+        mock.setReporter(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                reported.set(true);
+            }
+        });
+
+        template.sendBody("direct:a", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        assertNotNull(mock.getReporter());
+        assertTrue(reported.get());
+    }
+
+    public void testNoArgCtr() {
+        MockEndpoint mock = new MockEndpoint();
+        mock.setEndpointUriIfNotSpecified("mock:bar");
+        try {
+            mock.createConsumer(null);
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            // not possible
+        }
+        
+        assertEquals(0, mock.getFailures().size());
     }
 
     protected void sendMessages(int... counters) {

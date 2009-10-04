@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Date;
+
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 
@@ -64,6 +66,14 @@ public class CamelExceptionsTest extends ContextTestSupport {
         InvalidPayloadRuntimeException e = new InvalidPayloadRuntimeException(exchange, Integer.class);
         assertSame(exchange, e.getExchange());
         assertEquals(Integer.class, e.getType());
+
+        InvalidPayloadRuntimeException e2 = new InvalidPayloadRuntimeException(exchange, Integer.class, exchange.getIn());
+        assertSame(exchange, e2.getExchange());
+        assertEquals(Integer.class, e2.getType());
+
+        InvalidPayloadRuntimeException e3 = new InvalidPayloadRuntimeException(exchange, Integer.class, exchange.getIn(), new IllegalArgumentException("Damn"));
+        assertSame(exchange, e3.getExchange());
+        assertEquals(Integer.class, e3.getType());
     }
 
     public void testRuntimeTransformException() {
@@ -197,6 +207,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertTrue(ExchangePattern.InOnly.isInCapable());
         assertTrue(ExchangePattern.InOptionalOut.isInCapable());
         assertTrue(ExchangePattern.InOut.isInCapable());
+        assertFalse(ExchangePattern.RobustOutOnly.isInCapable());
 
         assertFalse(ExchangePattern.InOnly.isFaultCapable());
         assertTrue(ExchangePattern.InOptionalOut.isFaultCapable());
@@ -268,6 +279,35 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals(Integer.class, e.getType());
         assertEquals("foo", e.getPropertyName());
         assertSame(exchange, e.getExchange());
+    }
+
+    public void testRuntimeCamelException() {
+        RuntimeCamelException e = new RuntimeCamelException();
+        assertNull(e.getMessage());
+        assertNull(e.getCause());
+    }
+
+    public void testFailedToStartRouteException() {
+        FailedToStartRouteException e = new FailedToStartRouteException(new IllegalArgumentException("Forced"));
+        assertNotNull(e.getMessage());
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+    }
+
+    public void testNoTypeConversionAvailableException() {
+        NoTypeConversionAvailableException e = new NoTypeConversionAvailableException("foo", Date.class);
+        assertEquals("foo", e.getValue());
+        assertEquals(Date.class, e.getToType());
+        assertEquals(String.class, e.getFromType());
+
+        NoTypeConversionAvailableException e2 = new NoTypeConversionAvailableException(null, Date.class);
+        assertNull(e2.getValue());
+        assertEquals(Date.class, e2.getToType());
+        assertNull(null, e2.getFromType());
+    }
+
+    public void testResolveEndpointFailedException() {
+        ResolveEndpointFailedException e = new ResolveEndpointFailedException("foo:bar");
+        assertEquals("foo:bar", e.getUri());
     }
 
 }
