@@ -31,7 +31,7 @@ public class RouteStartupOrderWithDefaultTest extends ContextTestSupport {
 
     public void testRouteStartupOrder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
+        mock.expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
