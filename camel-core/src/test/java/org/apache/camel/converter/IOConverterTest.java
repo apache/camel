@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.net.URL;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -162,6 +163,18 @@ public class IOConverterTest extends ContextTestSupport {
         InputStream is = IOConverter.toInputStream(os);
         assertNotNull(is);
         assertEquals("Hello World", IOConverter.toString(is));
+    }
+
+    public void testToInputStreamUrl() throws Exception {
+        URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
+        InputStream is = IOConverter.toInputStream(url);
+        assertNotNull(is);
+    }
+
+    public void testStringUrl() throws Exception {
+        URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
+        String s = IOConverter.toString(url);
+        assertNotNull(s);
     }
 
 }

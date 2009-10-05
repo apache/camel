@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -90,5 +91,15 @@ public class CollectionConverterTest extends TestCase {
 
         Hashtable out = CollectionConverter.toHashtable(map);
         assertEquals(1, out.size());
+    }
+
+    public void testToProperties() {
+        Map map = new HashMap();
+        map.put("foo", "bar");
+
+        Properties prop = CollectionConverter.toProperties(map);
+        assertNotNull(prop);
+        assertEquals(1, prop.size());
+        assertEquals("bar", prop.get("foo"));
     }
 }

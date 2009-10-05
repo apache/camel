@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.apache.camel.Processor;
-
 /**
  * A simple DataSet that allows a static payload to be used to create each message exchange
  * along with using a pluggable transformer to randomize the message.
@@ -26,7 +24,6 @@ import org.apache.camel.Processor;
  */
 public class SimpleDataSet extends DataSetSupport {
     private Object defaultBody = "<hello>world!</hello>";
-    private Processor inputTransformer;
 
     public SimpleDataSet() {
     }
@@ -44,14 +41,6 @@ public class SimpleDataSet extends DataSetSupport {
 
     public void setDefaultBody(Object defaultBody) {
         this.defaultBody = defaultBody;
-    }
-
-    public Processor getInputTransformer() {
-        return inputTransformer;
-    }
-
-    public void setInputTransformer(Processor inputTransformer) {
-        this.inputTransformer = inputTransformer;
     }
 
     // Implementation methods
