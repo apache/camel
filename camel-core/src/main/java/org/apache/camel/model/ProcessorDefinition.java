@@ -171,10 +171,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // init the channel
         channel.initChannel(this, routeContext);
 
-        ProcessorDefinition defn = (ProcessorDefinition) this;
-
         // set the error handler, must be done after init as we can set the error handler as first in the chain
-        if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
+        if (this instanceof TryDefinition || this instanceof CatchDefinition || this instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             return channel;
         } else {

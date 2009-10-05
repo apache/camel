@@ -14,46 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 784513 $
+ * @version $Revision$
  */
-public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
+public class CoarseGrainedProcessorDefinitionIssueTest extends ContextTestSupport {
+
+    public void testCoarseGrainedProcessorDefinition() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        Route route = context.getRoutes().get(0);
+
+        // TODO: drill down the route and check that Channel have
+        // the fine grained processor definition assigned
+        // this also helps the tracer as it now can better pin point it exact location
+    }
 
     @Override
-    protected void setUp() throws Exception {
-        deleteDirectory("./target/movefile");
-        super.setUp();
-    }
-
-    public void testPollFileAndShouldNotBeMoved() throws Exception {
-        template.sendBodyAndHeader("file://target/movefile", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-        MockEndpoint mock = getMockEndpoint("mock:foo");
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/movefile/error/hello.txt", "Hello World");
-
-        mock.assertIsSatisfied();
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("file://target/movefile?moveFailed=error").to("mock:foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        throw new IllegalArgumentException("Forced by unittest");
-                    }
-                });
+                from("direct:start").delay(500).to("direct:foo").to("mock:result");
             }
         };
     }
-
-
 }
