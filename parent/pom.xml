@@ -1071,6 +1071,21 @@
               </executions>
               <dependencies>
                   <dependency>
+                      <groupId>javax.xml.bind</groupId>
+                      <artifactId>jaxb-api</artifactId>
+                      <version>2.1</version>
+                  </dependency>
+                  <dependency>
+                      <groupId>com.sun.xml.bind</groupId>
+                      <artifactId>jaxb-impl</artifactId>
+                      <version>2.1.5-dev</version>
+                  </dependency>
+                  <dependency>
+                      <groupId>com.sun.xml.bind</groupId>
+                      <artifactId>jaxb-xjc</artifactId>
+                      <version>2.1.5-dev</version>
+                  </dependency>
+                  <dependency>
                       <groupId>ant-contrib</groupId>
                       <artifactId>ant-contrib</artifactId>
                       <version>1.0b3</version>
