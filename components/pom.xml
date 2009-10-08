@@ -34,7 +34,7 @@
     <module>camel-atom</module>
     <module>camel-bam</module>
     <module>camel-bindy</module>
-    <module>camel-blueprint</module>
+    <!-- TODO: enable when blueprint works: module>camel-blueprint</module -->
     <module>camel-cometd</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
