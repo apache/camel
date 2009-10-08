@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -51,9 +52,10 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
         exchange.getIn().setBody("Hello World");
         producer.process(exchange);
 
-        Field field = producer.getClass().getDeclaredField("session");
+        Field field = producer.getClass().getDeclaredField("sessions");
         field.setAccessible(true);
-        IoSession session = (IoSession) field.get(producer);
+        BlockingQueue<IoSession> sessions = (BlockingQueue<IoSession>) field.get(producer); 
+        IoSession session = sessions.poll(); 
         assertTrue("There should be a logger filter", session.getFilterChain().contains("logger"));
 
         producer.stop();
@@ -81,9 +83,10 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
         exchange.getIn().setBody("Hello World");
         producer.process(exchange);
 
-        Field field = producer.getClass().getDeclaredField("session");
+        Field field = producer.getClass().getDeclaredField("sessions");
         field.setAccessible(true);
-        IoSession session = (IoSession) field.get(producer);
+        BlockingQueue<IoSession> sessions = (BlockingQueue<IoSession>) field.get(producer); 
+        IoSession session = sessions.poll(); 
         assertFalse("There should NOT be a logger filter", session.getFilterChain().contains("logger"));
 
         producer.stop();
@@ -111,9 +114,10 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
         exchange.getIn().setBody("Hello World");
         producer.process(exchange);
 
-        Field field = producer.getClass().getDeclaredField("session");
+        Field field = producer.getClass().getDeclaredField("sessions");
         field.setAccessible(true);
-        IoSession session = (IoSession) field.get(producer);
+        BlockingQueue<IoSession> sessions = (BlockingQueue<IoSession>) field.get(producer); 
+        IoSession session = sessions.poll(); 
         assertFalse("There should NOT default be a logger filter", session.getFilterChain().contains("logger"));
 
         producer.stop();

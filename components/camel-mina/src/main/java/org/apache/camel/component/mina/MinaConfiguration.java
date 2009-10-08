@@ -36,6 +36,7 @@ public class MinaConfiguration implements Cloneable {
     private boolean lazySessionCreation;
     private boolean transferExchange;
     private boolean minaLogger;
+    private int producerPoolSize = 16;
 
     /**
      * Returns a copy of this configuration
@@ -154,5 +155,13 @@ public class MinaConfiguration implements Cloneable {
 
     public void setMinaLogger(boolean minaLogger) {
         this.minaLogger = minaLogger;
+    }
+
+    public void setProducerPoolSize(int producerPoolSize) {
+        this.producerPoolSize = producerPoolSize;
+    }
+
+    public int getProducerPoolSize() {
+        return producerPoolSize;
     }
 }

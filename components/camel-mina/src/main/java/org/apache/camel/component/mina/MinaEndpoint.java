@@ -61,7 +61,10 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         if (!configuration.getProtocol().equalsIgnoreCase("vm")) {
             ObjectHelper.notNull(connectorConfig, "connectorConfig");
         }
-        return new MinaProducer(this);
+        // tcp uses a special producer which is thread safe and handles concurrency
+        return configuration.getProtocol().equalsIgnoreCase("tcp") 
+                ? new MinaSocketProducer(this) 
+                : new MinaProducer(this);
     }
 
     public Consumer<MinaExchange> createConsumer(Processor processor) throws Exception {
