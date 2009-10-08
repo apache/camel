@@ -38,6 +38,8 @@ public class JmsRouteEndpointTest extends CamelTestSupport {
 
         template.sendBody(jms, "Hello World");
 
+        assertEndpointUri(jms, "jms:queue:hello");
+        
         result.assertIsSatisfied();
     }
 

@@ -57,7 +57,7 @@ public class JmsMessage extends DefaultMessage {
     @Override
     public void copyFrom(org.apache.camel.Message that) {
         // must initialize headers before we set the JmsMessage to avoid Camel
-        // populateing it before we do the copy
+        // populating it before we do the copy
         getHeaders().clear();
 
         boolean copyMessageId = true;
