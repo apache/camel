@@ -163,6 +163,8 @@ public class HtmlToPdfMojo extends AbstractMojo {
             // Download
             String content = downloadContent();
             if (content == null) {
+                // create dummy file so the build can continue
+                storeDummyFile();
                 return;
             }
 
@@ -232,6 +234,14 @@ public class HtmlToPdfMojo extends AbstractMojo {
 
     private String getPDFFileName() {
         return pdf;
+    }
+
+    private void storeDummyFile() throws FileNotFoundException {
+        PrintWriter out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(getHTMLFileName())));
+        out.println("<html>");
+        out.println("<body>Download of " + page + " failed</body>");
+        out.close();
+        getLog().info("Stored dummy file: " + getHTMLFileName() + " since download of " + page + " failed.");
     }
 
     private void storeHTMLFile(String content) throws FileNotFoundException {
