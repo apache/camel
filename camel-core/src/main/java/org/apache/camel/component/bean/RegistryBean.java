@@ -43,11 +43,6 @@ public class RegistryBean implements BeanHolder {
         this.registry = context.getRegistry();
     }
 
-    public RegistryBean(CamelContext context, String name, ParameterMappingStrategy parameterMappingStrategy) {
-        this(context, name);
-        this.parameterMappingStrategy = parameterMappingStrategy;
-    }
-
     @Override
     public String toString() {
         return "bean: " + name;

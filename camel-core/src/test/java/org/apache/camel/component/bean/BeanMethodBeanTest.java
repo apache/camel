@@ -36,6 +36,7 @@ public class BeanMethodBeanTest extends TestSupport {
         assertEquals("hello", mb.getName());
         assertEquals(method, mb.getMethod());
         assertNotNull(mb.getParameterTypes());
+        assertEquals(MyFooBean.class, mb.getType());
     }
 
 }
