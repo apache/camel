@@ -16,6 +16,8 @@
 #
 
 http\://camel.apache.org/schema/spring/camel-spring.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring=camel-spring.xsd
+http\://camel.apache.org/schema/spring/v${camel.schema.version}=camel-spring-v${camel.schema.version}.xsd
 
 http\://camel.apache.org/schema/spring/camel-spring-2.0-M1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.0-M2.xsd=camel-spring.xsd

@@ -184,35 +184,6 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>process-sources</id>
-            <phase>process-sources</phase>
-            <configuration>
-              <tasks>
-                <echo>Copying to code together for the XSD generation</echo>
-
-                <mkdir dir="${project.build.directory}/schema-src" />
-                <copy todir="${project.build.directory}/schema-src">
-                  <fileset dir="${basedir}/src/main/java">
-                    <include name="org/apache/camel/spring/Camel*.java" />
-                    <include name="org/apache/camel/spring/Endpoint*.java" />
-                    <include name="org/apache/camel/spring/package-info.java" />
-                  </fileset>
-                  <fileset dir="${basedir}/../../camel-core/src/main/java">
-                    <include name="org/apache/camel/model/**/*.java" />
-                    <include name="org/apache/camel/ExchangePattern.java" />
-                    <include name="org/apache/camel/LoggingLevel.java" />
-                    <include name="org/apache/camel/ManagementStatisticsLevel.java" />
-                    <include name="org/apache/camel/package-info.java" />
-                  </fileset>
-                </copy>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-
-          <execution>
             <id>package</id>
             <phase>package</phase>
             <configuration>
@@ -272,45 +243,25 @@
     </plugins>
 
     <pluginManagement>
-      <plugins>
-          <plugin>
-            <groupId>com.sun.tools.jxc.maven2</groupId>
-            <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>process-sources</phase>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
-                  <destdir>${project.build.directory}/schema</destdir>
-                  <srcdir>${project.build.directory}/schema-src</srcdir>
-                  <schemas>
-                    <schema>
-                      <namespace>http://camel.apache.org/schema/spring</namespace>
-                      <file>camel-spring.xsd</file>
-                    </schema>
-                  </schemas>
-                  <!--<verbose>false</verbose>-->
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>camel-spring</artifactId>
+                            <version>${pom.version}</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                            <includes>*.xsd</includes>
+                        </artifactItem>
+                    </artifactItems>
                 </configuration>
-              </execution>
-            </executions>
-          </plugin>  
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>  
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.camel</groupId>
-                  <artifactId>camel-spring</artifactId>
-                  <version>${pom.version}</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/schema</outputDirectory>
-                  <includes>camel-spring.xsd</includes>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </plugin>          
-       </plugins>
+            </plugin>
+        </plugins>
     </pluginManagement>
   </build>
   
@@ -345,7 +296,6 @@
         </plugins>
       </build>
     </profile>
-    
     <!-- The next three profiles are used to bypass the schemagen plugin on HP and IBM JDKs.
 
          TODO: Whenever Maven supports profile activations based on multiple properties, we
@@ -355,22 +305,59 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+
       <build>
         <plugins>
           <plugin>
-            <groupId>com.sun.tools.jxc.maven2</groupId>
-            <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>process-sources</phase>
-                <goals>
-                  <goal>generate</goal>
-                </goals>
-              </execution>
-            </executions>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <executions>
+                  <execution>
+                      <id>process-sources</id>
+                      <phase>process-sources</phase>
+                      <configuration>
+                          <tasks>
+                              <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath"/>
+
+                              <echo>Copying to code together for the XSD generation</echo>
+                              <mkdir dir="${project.build.directory}/schema-src" />
+                              <copy todir="${project.build.directory}/schema-src">
+                                <fileset dir="${basedir}/src/main/java">
+                                  <include name="org/apache/camel/spring/Camel*.java" />
+                                  <include name="org/apache/camel/spring/Endpoint*.java" />
+                                  <include name="org/apache/camel/spring/package-info.java" />
+                                </fileset>
+                                <fileset dir="${basedir}/../../camel-core/src/main/java">
+                                  <include name="org/apache/camel/model/**/*.java" />
+                                  <include name="org/apache/camel/ExchangePattern.java" />
+                                  <include name="org/apache/camel/LoggingLevel.java" />
+                                  <include name="org/apache/camel/ManagementStatisticsLevel.java" />
+                                  <include name="org/apache/camel/package-info.java" />
+                                </fileset>
+                              </copy>
+
+                              <echo>Generating XSD schema</echo>
+                              <mkdir dir="${project.build.directory}/schema" />
+                              <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
+                                  <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd"/>
+                                  <classpath refid="maven.compile.classpath"/>
+                              </schemagen>
+                              <copy file="${project.build.directory}/schema/camel-spring.xsd"
+                                    tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"/>
+                              <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
+                                       token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}"/>
+
+                          </tasks>
+                      </configuration>
+                      <goals>
+                          <goal>run</goal>
+                      </goals>
+                  </execution>
+              </executions>
           </plugin>
         </plugins>
       </build>
+
     </profile>
     <profile>
       <id>on-ibmjdk</id>
@@ -386,6 +373,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
+
               <execution>
                 <id>unpack</id>
                 <phase>generate-sources</phase>
@@ -393,14 +381,12 @@
                   <goal>unpack</goal>
                 </goals>
               </execution>
+
             </executions>
           </plugin>                  
-          <plugin>
-            <groupId>com.sun.tools.jxc.maven2</groupId>
-            <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-          </plugin>
         </plugins>
       </build>
+
     </profile>    
     <profile>
       <id>on-hpjdk</id>
@@ -425,15 +411,11 @@
               </execution>
             </executions>
           </plugin>                          
-          <plugin>
-            <groupId>com.sun.tools.jxc.maven2</groupId>
-            <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-          </plugin>
         </plugins>
       </build>
     </profile>      
   </profiles>
-
+    
   <reporting>
     <plugins>
       <plugin>

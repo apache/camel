@@ -1059,9 +1059,11 @@
                               <propertyregex property="ov.p3a" input="${ov.p3}" regexp="(\..+)" replace="\1" defaultValue=".0"/>
                               <propertyregex property="ov.p4a" input="${ov.p4}" regexp="(\..+)" replace="\1" defaultValue=""/>
                               <property name="ov" value="${ov.p1a}${ov.p2a}${ov.p3a}${ov.p4a}"/>
+                              <property name="os" value="${ov.p1a}${ov.p2a}"/>
                               <echo message="OSGi version:    ${ov}" />
                               <mkdir dir="target"/>
-                              <echo message="camel.osgi.version.clean = ${ov}" file="target/camel.osgi.version.txt"/>
+                              <echo message="camel.osgi.version.clean = ${ov}${line.separator}" file="target/camel.osgi.version.txt"/>
+                              <echo message="camel.schema.version = ${os}${line.separator}" file="target/camel.osgi.version.txt" append="true"/>
                           </tasks>
                       </configuration>
                       <goals>

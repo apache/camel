@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -64,6 +65,21 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
+
+    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
+
+    public static void renameNamespaceRecursive(Node node) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Document doc = node.getOwnerDocument();
+            if (((Element) node).getNamespaceURI().startsWith(SPRING_NS + "/v")) {
+                doc.renameNode(node, SPRING_NS, node.getNodeName());
+            }
+        }
+        NodeList list = node.getChildNodes();
+        for (int i = 0; i < list.getLength(); ++i) {
+            renameNamespaceRecursive(list.item(i));
+        }
+    }
 
     public ModelFileGenerator createModelFileGenerator() throws JAXBException {
         return new ModelFileGenerator(getJaxbContext());
@@ -175,6 +191,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+			renameNamespaceRecursive(element);
             super.doParse(element, parserContext, builder);
 
             String contextId = element.getAttribute("id");
