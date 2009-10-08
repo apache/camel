@@ -232,6 +232,14 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.handledPolicy = handledPolicy;
     }
 
+    public ExpressionSubElementDefinition getHandled() {
+        return handled;
+    }
+
+    public void setHandled(ExpressionSubElementDefinition handled) {
+        this.handled = handled;
+    }
+
     protected List<Class> createExceptionClasses() {
         List<String> list = getExceptions();
         List<Class> answer = new ArrayList<Class>(list.size());
