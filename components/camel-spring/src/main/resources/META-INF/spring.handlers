@@ -16,3 +16,4 @@
 #
 
 http\://activemq.apache.org/camel/schema/spring=org.apache.camel.spring.handler.CamelNamespaceHandler
+http\://activemq.apache.org/camel/schema/spring/v${camel.schema.version}=org.apache.camel.spring.handler.CamelNamespaceHandler

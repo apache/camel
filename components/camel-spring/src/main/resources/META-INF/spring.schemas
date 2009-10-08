@@ -16,6 +16,8 @@
 #
 
 http\://activemq.apache.org/camel/schema/spring/camel-spring.xsd=camel-spring.xsd
+http\://activemq.apache.org/camel/schema/spring=camel-spring.xsd
+http\://activemq.apache.org/camel/schema/spring/v${camel.schema.version}=camel-spring-v${camel.schema.version}.xsd
 
 http\://activemq.apache.org/camel/schema/spring/camel-spring-1.0.0.xsd=camel-spring.xsd
 http\://activemq.apache.org/camel/schema/spring/camel-spring-1.1.0.xsd=camel-spring.xsd

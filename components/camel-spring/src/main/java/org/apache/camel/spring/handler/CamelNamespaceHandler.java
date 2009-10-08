@@ -27,6 +27,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -59,11 +60,26 @@ import org.springframework.beans.factory.xml.ParserContext;
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
     private static final transient Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
+    private static final String SPRING_NS = "http://activemq.apache.org/camel/schema/spring";
+
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
+
+    public static void renameNamespaceRecursive(Node node) {
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Document doc = node.getOwnerDocument();
+            if (((Element) node).getNamespaceURI().startsWith(SPRING_NS + "/v")) {
+                doc.renameNode(node, SPRING_NS, node.getNodeName());
+            }
+        }
+        NodeList list = node.getChildNodes();
+        for (int i = 0; i < list.getLength(); ++i) {
+            renameNamespaceRecursive(list.item(i));
+        }
+    }
 
     public ModelFileGenerator createModelFileGenerator() throws JAXBException {
         return new ModelFileGenerator(getJaxbContext());
@@ -183,6 +199,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            renameNamespaceRecursive(element);
             super.doParse(element, parserContext, builder);
 
             String contextId = element.getAttribute("id");
