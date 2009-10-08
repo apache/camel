@@ -88,14 +88,6 @@
             <!--<url>https://maven-repository.dev.java.net/nonav/repository</url>-->
             <layout>legacy</layout>
         </repository>
-        <!-- TODO: temp repo for aries blueprint -->
-        <repository>
-            <id>asf-snapshots</id>
-            <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <pluginRepositories>
