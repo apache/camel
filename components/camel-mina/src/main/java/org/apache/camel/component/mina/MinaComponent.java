@@ -176,6 +176,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         // acceptor connectorConfig
         SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
+        // must use manual thread model according to Mina documentation
+        acceptorConfig.setThreadModel(ThreadModel.MANUAL);
         configureCodecFactory("MinaConsumer", acceptorConfig, configuration);
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
@@ -241,6 +243,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         }
 
         DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
+        // must use manual thread model according to Mina documentation
+        connectorConfig.setThreadModel(ThreadModel.MANUAL);
         configureDataGramCodecFactory("MinaProducer", connectorConfig, configuration);
         connectorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
         if (minaLogger) {
@@ -250,9 +254,12 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         connectorConfig.setConnectTimeout((int) (timeout / 1000));
 
         DatagramAcceptorConfig acceptorConfig = new DatagramAcceptorConfig();
+        // must use manual thread model according to Mina documentation
+        acceptorConfig.setThreadModel(ThreadModel.MANUAL);
         configureDataGramCodecFactory("MinaConsumer", acceptorConfig, configuration);
         acceptorConfig.setDisconnectOnUnbind(true);
         // reuse address is default true for datagram
+        acceptorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()));
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
