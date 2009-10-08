@@ -338,7 +338,8 @@ public class MailBinding {
                     
                     if (attachmentFilename.toLowerCase().startsWith("cid:")) {
                         // add a Content-ID header to the attachment
-                        messageBodyPart.addHeader("Content-ID", attachmentFilename.substring(4));
+                        // must use angle brackets according to RFC: http://www.ietf.org/rfc/rfc2392.txt
+                        messageBodyPart.addHeader("Content-ID", "<" + attachmentFilename.substring(4) + ">");
                     }
 
                     // Set the filename
