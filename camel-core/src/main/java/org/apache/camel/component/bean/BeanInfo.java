@@ -283,6 +283,9 @@ public class BeanInfo {
             hasCustomAnnotation |= expression != null;
 
             ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Parameter #" + i + ": " + parameterInfo);
+            }
             parameters.add(parameterInfo);
             if (expression == null) {
                 boolean bodyAnnotation = ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);

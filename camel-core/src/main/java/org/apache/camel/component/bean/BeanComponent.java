@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
 
 /**
  * The <a href="http://activemq.apache.org/bean.html">Bean Component</a>
@@ -30,36 +29,8 @@ import org.apache.camel.impl.ProcessorEndpoint;
  * @version $Revision$
  */
 public class BeanComponent extends DefaultComponent {
-    private ParameterMappingStrategy parameterMappingStrategy;
 
     public BeanComponent() {
-    }
-
-    /**
-     * A helper method to create a new endpoint from a bean with a generated URI
-     */
-    public ProcessorEndpoint createEndpoint(Object bean) {
-        String uri = "bean:generated:" + bean;
-        return createEndpoint(bean, uri);
-    }
-
-    /**
-     * A helper method to create a new endpoint from a bean with a given URI
-     */
-    public ProcessorEndpoint createEndpoint(Object bean, String uri) {
-        BeanProcessor processor = new BeanProcessor(bean, getCamelContext(), getParameterMappingStrategy());
-        return createEndpoint(uri, processor);
-    }
-
-    public ParameterMappingStrategy getParameterMappingStrategy() {
-        if (parameterMappingStrategy == null) {
-            parameterMappingStrategy = createParameterMappingStrategy();
-        }
-        return parameterMappingStrategy;
-    }
-
-    public void setParameterMappingStrategy(ParameterMappingStrategy parameterMappingStrategy) {
-        this.parameterMappingStrategy = parameterMappingStrategy;
     }
 
     // Implementation methods
@@ -74,11 +45,4 @@ public class BeanComponent extends DefaultComponent {
         return endpoint;
     }
 
-    protected BeanEndpoint createEndpoint(String uri, BeanProcessor processor) {
-        return new BeanEndpoint(uri, this, processor);
-    }
-
-    protected ParameterMappingStrategy createParameterMappingStrategy() {
-        return BeanInfo.createParameterMappingStrategy(getCamelContext());
-    }
 }

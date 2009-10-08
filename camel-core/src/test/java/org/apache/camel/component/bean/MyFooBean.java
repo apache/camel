@@ -16,21 +16,13 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Expression;
-
 /**
- * A strategy for creating a default parameter expression for a given type
- *
  * @version $Revision$
  */
-public interface ParameterMappingStrategy {
+public class MyFooBean {
 
-    /**
-     * Gets an expression used for evaluation with the current Exchange and its result
-     * is used as parameter value for the given type
-     *
-     * @param parameterType the parameter type
-     * @return the expression to evaluate as value
-     */
-    Expression getDefaultParameterTypeExpression(Class parameterType);
+    public String hello(String s) {
+        return "Hello " + s;
+    }
+
 }

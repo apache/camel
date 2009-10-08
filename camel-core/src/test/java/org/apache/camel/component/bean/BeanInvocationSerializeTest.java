@@ -28,6 +28,7 @@ import org.apache.camel.TestSupport;
  * @version $Revision$
  */
 public class BeanInvocationSerializeTest extends TestSupport {
+
     public void testSerialize() throws Exception {
         Method method = getClass().getMethod("cheese", String.class, String.class);
         BeanInvocation invocation = new BeanInvocation(method, new Object[] {"a", "b"});
@@ -42,8 +43,24 @@ public class BeanInvocationSerializeTest extends TestSupport {
         log.debug("Received " + actual);
     }
 
+    public void testSerializeCtr() throws Exception {
+        Method method = getClass().getMethod("cheese", String.class, String.class);
+        BeanInvocation invocation = new BeanInvocation();
+        invocation.setArgs(new Object[] {"a", "b"});
+        invocation.setMethod(method);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(buffer);
+        out.writeObject(invocation);
+        out.close();
+
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
+        Object object = in.readObject();
+        BeanInvocation actual = assertIsInstanceOf(BeanInvocation.class, object);
+        log.debug("Received " + actual);
+    }
+
     public void cheese(String a, String b) {
         log.debug("Called with a: " + a + " b: " + b);
-
     }
+
 }

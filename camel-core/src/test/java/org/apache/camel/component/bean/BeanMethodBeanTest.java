@@ -16,21 +16,26 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Expression;
+import java.lang.reflect.Method;
+
+import org.apache.camel.TestSupport;
 
 /**
- * A strategy for creating a default parameter expression for a given type
- *
  * @version $Revision$
  */
-public interface ParameterMappingStrategy {
+public class BeanMethodBeanTest extends TestSupport {
 
-    /**
-     * Gets an expression used for evaluation with the current Exchange and its result
-     * is used as parameter value for the given type
-     *
-     * @param parameterType the parameter type
-     * @return the expression to evaluate as value
-     */
-    Expression getDefaultParameterTypeExpression(Class parameterType);
+    public void testBeanMethod() throws Exception {
+        Method method = MyFooBean.class.getMethod("hello", String.class);
+
+        MethodBean mb = new MethodBean();
+        mb.setName("hello");
+        mb.setType(MyFooBean.class);
+        mb.setParameterTypes(method.getParameterTypes());
+
+        assertEquals("hello", mb.getName());
+        assertEquals(method, mb.getMethod());
+        assertNotNull(mb.getParameterTypes());
+    }
+
 }
