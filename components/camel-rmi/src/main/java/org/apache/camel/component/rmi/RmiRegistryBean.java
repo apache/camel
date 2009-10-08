@@ -40,8 +40,9 @@ public class RmiRegistryBean extends RegistryBean {
     }
 
     public RmiRegistryBean(CamelContext context, String name, ParameterMappingStrategy parameterMappingStrategy, Registry registry) {
-        super(context, name, parameterMappingStrategy);
+        super(context, name);
         this.registry = registry;
+        setParameterMappingStrategy(parameterMappingStrategy);
     }
 
     @Override
