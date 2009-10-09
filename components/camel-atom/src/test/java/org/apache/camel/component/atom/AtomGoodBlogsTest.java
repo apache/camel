@@ -40,7 +40,7 @@ public class AtomGoodBlogsTest extends TestSupport {
     // We use a simple Hashtable for our bean registry. For more advanced usage Spring is supported out-of-the-box
     private Hashtable beans = new Hashtable();
 
-    // We iniitalize Camel
+    // We initialize Camel
     private void setupCamel() throws Exception {
         // First we register a blog service in our bean registry
         beans.put("blogService", new BlogService());
@@ -70,10 +70,10 @@ public class AtomGoodBlogsTest extends TestSupport {
                 // and restart - but as Camel by default uses the UpdatedDateFilter it will only deliver new
                 // blog entries to "seda:feeds". So only when James Straham updates his blog with a new entry
                 // Camel will create an exchange for the seda:feeds.
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=1000").to("seda:feeds");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=1000").to("log:mylog").to("seda:feeds");
 
                 // From the feeds we filter each blot entry by using our blog service class
-                from("seda:feeds").filter().method("blogService", "goodBlog").to("seda:goodBlogs");
+                from("seda:feeds").filter().method("blogService", "isGoodBlog").to("seda:goodBlogs");
 
                 // And the good blogs is moved to a mock queue as this sample is also used for unit testing
                 // this is one of the strengths in Camel that you can also use the mock endpoint for your
@@ -111,6 +111,7 @@ public class AtomGoodBlogsTest extends TestSupport {
         public boolean isGoodBlog(Exchange exchange) {
             Entry entry = exchange.getIn().getBody(Entry.class);
             String title = entry.getTitle();
+            System.out.println("Title is " + title);
 
             // We like blogs about Camel
             boolean good = title.toLowerCase().contains("camel");
