@@ -1062,8 +1062,10 @@
                               <property name="os" value="${ov.p1a}${ov.p2a}"/>
                               <echo message="OSGi version:    ${ov}" />
                               <mkdir dir="target"/>
-                              <echo message="camel.osgi.version.clean = ${ov}${line.separator}" file="target/camel.osgi.version.txt"/>
-                              <echo message="camel.schema.version = ${os}${line.separator}" file="target/camel.osgi.version.txt" append="true"/>
+                              <echo file="target/camel.osgi.version.txt">
+                                camel.osgi.version.clean = ${ov}
+                                camel.schema.version = ${os}
+                              </echo>
                           </tasks>
                       </configuration>
                       <goals>
