@@ -114,6 +114,9 @@ public class RouteService extends ServiceSupport {
                 LOG.trace("Starting route services: " + route);
             }
 
+            // TODO: We should also consider processors which are not services then we can manage all processors as well
+            // otherwise its only the processors which is a Service
+
             List<Service> services = route.getServices();
 
             // callback that we are staring these services

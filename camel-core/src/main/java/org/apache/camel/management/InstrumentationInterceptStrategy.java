@@ -37,10 +37,10 @@ import org.apache.camel.util.KeyValueHolder;
  */
 public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
-    private Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters;
+    private Map<ProcessorDefinition, PerformanceCounter> registeredCounters;
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors;
 
-    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters,
+    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, PerformanceCounter> registeredCounters,
                                             Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors) {
         this.registeredCounters = registeredCounters;
         this.wrappedProcessors = wrappedProcessors;
@@ -48,13 +48,13 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
                                                  Processor target, Processor nextTarget) throws Exception {
-        // dont double wrap it
+        // do not double wrap it
         if (target instanceof InstrumentationProcessor) {
             return target;
         }
 
         // only wrap a performance counter if we have it registered in JMX by the jmx agent
-        ManagedPerformanceCounter counter = registeredCounters.get(definition);
+        PerformanceCounter counter = registeredCounters.get(definition);
         if (counter != null) {
             InstrumentationProcessor wrapper = new InstrumentationProcessor(counter);
             wrapper.setProcessor(target);

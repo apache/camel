@@ -313,7 +313,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         // only manage if we have a name for it as otherwise we do not want to manage it anyway
         if (managedObject != null) {
             // is it a performance counter then we need to set our counter
-            if (managedObject instanceof ManagedPerformanceCounter) {
+            if (managedObject instanceof PerformanceCounter) {
                 InstrumentationProcessor counter = holder.getValue();
                 if (counter != null) {
                     // change counter to us
@@ -427,14 +427,12 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters =
-                new HashMap<ProcessorDefinition, ManagedPerformanceCounter>();
+        Map<ProcessorDefinition, PerformanceCounter> registeredCounters =
+                new HashMap<ProcessorDefinition, PerformanceCounter>();
 
-        // Each processor in a route will have its own performance counter
-        // The performance counter are MBeans that we register with MBeanServer.
-        // These performance counter will be embedded
-        // to InstrumentationProcessor and wrap the appropriate processor
-        // by InstrumentationInterceptStrategy.
+        // Each processor in a route will have its own performance counter.
+        // These performance counter will be embedded to InstrumentationProcessor
+        // and wrap the appropriate processor by InstrumentationInterceptStrategy.
         RouteDefinition route = routeContext.getRoute();
 
         // register performance counters for all processors and its children
@@ -449,7 +447,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
     @SuppressWarnings("unchecked")
     private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition processor,
-                                             Map<ProcessorDefinition, ManagedPerformanceCounter> registeredCounters) {
+                                             Map<ProcessorDefinition, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition> children = processor.getOutputs();
@@ -463,9 +461,9 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         // okay this is a processor we would like to manage so create the
-        // performance counter that is the base for processors
-        ManagedPerformanceCounter pc = new ManagedPerformanceCounter();
-        pc.init(getManagementStrategy());
+        // a delegate performance counter that acts as the placeholder in the interceptor
+        // that then delegates to the real mbean which we register later in the onServiceAdd method
+        DelegatePerformanceCounter pc = new DelegatePerformanceCounter();
         // set statistics enabled depending on the option
         boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
         pc.setStatisticsEnabled(enabled);

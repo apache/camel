@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import java.util.Date;
 
+import org.apache.camel.management.PerformanceCounter;
 import org.apache.camel.spi.ManagementStrategy;
 import org.fusesource.commons.management.Statistic;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -25,7 +26,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "PerformanceCounter")
-public class ManagedPerformanceCounter extends ManagedCounter {
+public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter {
 
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;

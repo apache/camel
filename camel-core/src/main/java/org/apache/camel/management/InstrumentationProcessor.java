@@ -31,13 +31,13 @@ import org.apache.commons.logging.LogFactory;
 public class InstrumentationProcessor extends DelegateProcessor {
 
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
-    private ManagedPerformanceCounter counter;
+    private PerformanceCounter counter;
     private String type;
 
     public InstrumentationProcessor() {
     }
 
-    public InstrumentationProcessor(ManagedPerformanceCounter counter) {
+    public InstrumentationProcessor(PerformanceCounter counter) {
         this.counter = counter;
     }
 
@@ -47,11 +47,11 @@ public class InstrumentationProcessor extends DelegateProcessor {
     }
 
     public void setCounter(ManagedPerformanceCounter counter) {
-        this.counter = counter;
-    }
-
-    public ManagedPerformanceCounter getCounter() {
-        return counter;
+        if (this.counter instanceof DelegatePerformanceCounter) {
+            ((DelegatePerformanceCounter) this.counter).setCounter(counter);
+        } else {
+            this.counter = counter;
+        }
     }
 
     public void process(Exchange exchange) throws Exception {

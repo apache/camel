@@ -23,7 +23,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Counter")
-public class ManagedCounter {
+public abstract class ManagedCounter {
 
     protected Statistic exchangesTotal;
 
