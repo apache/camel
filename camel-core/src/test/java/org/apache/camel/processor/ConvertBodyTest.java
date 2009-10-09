@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,7 +51,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testConvertCharset() throws Exception {
+    public void testConvertToBytesCharset() throws Exception {
         byte[] body = "Hello World".getBytes("iso-8859-1");
 
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -61,13 +62,39 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testConvertCharsetFail() throws Exception {
+    public void testConvertToStringCharset() throws Exception {
+
+        String body = "Hello World";
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived(body);
+
+        template.sendBody("direct:charset3", new ByteArrayInputStream(body.getBytes("utf-16")));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testConvertToBytesCharsetFail() throws Exception {
         byte[] body = "Hello World".getBytes("utf-8");
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(body);
 
         template.sendBody("direct:charset2", "Hello World");
+
+        // should NOT be okay as we expected utf-8 but got it in utf-16
+        result.assertIsNotSatisfied();
+    }
+
+    public void testConvertToStringCharsetFail() throws Exception {
+
+        String body = "Hellö Wörld";
+
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived(body);
+
+        template.sendBody("direct:charset3", new ByteArrayInputStream(body.getBytes("utf-8")));
 
         // should NOT be okay as we expected utf-8 but got it in utf-16
         result.assertIsNotSatisfied();
@@ -85,6 +112,8 @@ public class ConvertBodyTest extends ContextTestSupport {
                 from("direct:charset").convertBodyTo(byte[].class, "iso-8859-1").to("mock:result");
 
                 from("direct:charset2").convertBodyTo(byte[].class, "utf-16").to("mock:result");
+                
+                from("direct:charset3").convertBodyTo(String.class, "utf-16").to("mock:result");
             }
         };
     }

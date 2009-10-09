@@ -48,6 +48,12 @@
             <convertBodyTo type="java.lang.byte[]" charset="utf-16"/>
             <to uri="mock:result"/>
         </route>
+        
+        <route>
+            <from uri="direct:charset3"/>
+            <convertBodyTo type="java.lang.String" charset="utf-16"/>
+            <to uri="mock:result"/>
+        </route>
 
     </camelContext>
 

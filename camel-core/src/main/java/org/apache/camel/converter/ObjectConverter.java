@@ -96,26 +96,6 @@ public final class ObjectConverter {
     }
 
     @Converter
-    public static byte[] toByteArray(String value, Exchange exchange) {
-        byte[] bytes = null;
-        if (exchange != null) {
-            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-            if (charsetName != null) {
-                try {
-                    bytes = value.getBytes(charsetName);
-                } catch (UnsupportedEncodingException e) {
-                    LOG.warn("Cannot convert the byte to String with the charset " + charsetName, e);
-                }
-            }
-        }
-        if (bytes == null) {
-            bytes = value.getBytes();
-        }
-
-        return bytes;
-    }
-
-    @Converter
     public static char[] toCharArray(String value) {
         return value.toCharArray();
     }

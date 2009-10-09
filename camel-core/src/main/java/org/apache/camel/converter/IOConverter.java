@@ -42,6 +42,8 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.Charset;
+
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
@@ -80,9 +82,18 @@ public final class IOConverter {
         return new BufferedInputStream(new FileInputStream(file));
     }
 
-    @Converter
     public static BufferedReader toReader(File file) throws FileNotFoundException {
-        return new BufferedReader(new FileReader(file));
+        return toReader(file, null);
+    }
+
+    @Converter
+    public static BufferedReader toReader(File file, Exchange exchange) throws FileNotFoundException {
+        try {
+            return new BufferedReader(new EncodingFileReader(file, getCharsetName(exchange)));
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert File into BufferedReader with charset: " + getCharsetName(exchange), e);
+            return new BufferedReader(new FileReader(file));
+        }
     }
 
     @Converter
@@ -95,19 +106,46 @@ public final class IOConverter {
         return new BufferedOutputStream(new FileOutputStream(file));
     }
 
-    @Converter
     public static BufferedWriter toWriter(File file) throws IOException {
-        return new BufferedWriter(new FileWriter(file));
+        return toWriter(file, null);
+    }
+    
+    @Converter
+    public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
+        try {   
+            return new BufferedWriter(new EncodingFileWriter(file, getCharsetName(exchange)));
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert File into BufferedWriter with charset: " + getCharsetName(exchange), e);
+            return new BufferedWriter(new FileWriter(file));
+        }
     }
 
-    @Converter
     public static Reader toReader(InputStream in) {
-        return new InputStreamReader(in);
+        return toReader(in, null);
+    }
+        
+    @Converter
+    public static Reader toReader(InputStream in, Exchange exchange) {
+        try {
+            return new InputStreamReader(in, getCharsetName(exchange));
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert InputStream into InputStreamReader with charset: " + getCharsetName(exchange), e);
+            return new InputStreamReader(in);
+        }
     }
 
-    @Converter
     public static Writer toWriter(OutputStream out) {
-        return new OutputStreamWriter(out);
+        return toWriter(out, null);
+    }
+    
+    @Converter
+    public static Writer toWriter(OutputStream out, Exchange exchange) {
+        try {
+            return new OutputStreamWriter(out, getCharsetName(exchange));
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert OutputStream into OutputStreamWriter with charset: " + getCharsetName(exchange), e);
+            return new OutputStreamWriter(out);
+        }
     }
 
     @Converter
@@ -115,19 +153,22 @@ public final class IOConverter {
         return new StringReader(text);
     }
 
+    public static InputStream toInputStream(String text) {
+        return toInputStream(text, null);
+    }
+    
     @Converter
     public static InputStream toInputStream(String text, Exchange exchange) {
-        if (exchange != null) {
-            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-            if (charsetName != null) {
-                try {
-                    return toInputStream(text.getBytes(charsetName));
-                } catch (UnsupportedEncodingException e) {
-                    LOG.warn("Cannot convert the String into byte[] with the charset: " + charsetName, e);
-                }
-            }
+        try {
+            return toInputStream(text.getBytes(getCharsetName(exchange)));
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert String into InputStream with charset: " + getCharsetName(exchange), e);
+            return toInputStream(text.getBytes());
         }
-        return toInputStream(text.getBytes());
+    }
+    
+    public static InputStream toInputStream(BufferedReader buffer) throws IOException {
+        return toInputStream(buffer, null);
     }
     
     @Converter
@@ -148,44 +189,55 @@ public final class IOConverter {
         return xmlConverter;
     }
 
+    public static String toString(byte[] data) {
+        return toString(data, null);
+    }
+    
     @Converter
     public static String toString(byte[] data, Exchange exchange) {
-        if (exchange != null) {
-            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-            if (charsetName != null) {
-                try {
-                    return new String(data, charsetName);
-                } catch (UnsupportedEncodingException e) {
-                    LOG.warn("Cannot convert the byte[] to String with the charset: " + charsetName, e);
-                }
-            }
+        try {
+            return new String(data, getCharsetName(exchange));
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert byte[] into String with charset: " + getCharsetName(exchange), e);
+            return new String(data);
         }
-        return new String(data);
     }
 
 
-    @Converter
     public static String toString(File file) throws IOException {
-        return toString(toReader(file));
+        return toString(file, null);
+    }
+    
+    @Converter
+    public static String toString(File file, Exchange exchange) throws IOException {
+        return toString(toReader(file, exchange));
     }
 
     @Converter
     public static byte[] toByteArray(File file) throws IOException {
         return toBytes(toInputStream(file));
     }
-
-    @Converter
+    
     public static byte[] toByteArray(Reader reader) throws IOException {
+        return toByteArray(reader, null);
+    }
+    
+    @Converter
+    public static byte[] toByteArray(Reader reader, Exchange exchange) throws IOException {
         if (reader instanceof BufferedReader) {
-            return toByteArray((BufferedReader)reader);
+            return toByteArray((BufferedReader)reader, exchange);
         } else {
-            return toByteArray(new BufferedReader(reader));
+            return toByteArray(new BufferedReader(reader), exchange);
         }
     }
 
-    @Converter
     public static String toString(URL url) throws IOException {
-        return toString(toInputStream(url));
+        return toString(url, null);
+    }
+
+    @Converter
+    public static String toString(URL url, Exchange exchange) throws IOException {
+        return toString(toInputStream(url), exchange);
     }
 
     @Converter
@@ -220,16 +272,37 @@ public final class IOConverter {
 
         return sb.toString();
     }
-
-    @Converter
+    
     public static byte[] toByteArray(BufferedReader reader) throws IOException {
-        String s = toString(reader);
-        return s != null ? s.getBytes() : null;  
+        return toByteArray(reader, null);
+    }
+    
+    @Converter
+    public static byte[] toByteArray(BufferedReader reader, Exchange exchange) throws IOException {
+        return toByteArray(toString(reader), exchange);
+    }
+
+    public static byte[] toByteArray(String value) {
+        return toByteArray(value, null);
     }
 
     @Converter
+    public static byte[] toByteArray(String value, Exchange exchange) {
+        try {
+            return value != null ? value.getBytes(getCharsetName(exchange)) : null;
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert String into byte[] with charset: " + getCharsetName(exchange), e);
+            return value != null ? value.getBytes() : null;
+        }
+    }
+
     public static String toString(InputStream in) throws IOException {
-        return toString(toReader(in));
+        return toString(in, null);
+    }
+
+    @Converter
+    public static String toString(InputStream in, Exchange exchange) throws IOException {
+        return toString(toReader(in, exchange));
     }
 
     @Converter
@@ -271,9 +344,18 @@ public final class IOConverter {
         return os.toByteArray();
     }
 
-    @Converter
     public static String toString(ByteArrayOutputStream os) {
-        return os.toString();
+        return toString(os, null);
+    }
+
+    @Converter
+    public static String toString(ByteArrayOutputStream os, Exchange exchange) {
+        try {
+            return os.toString(getCharsetName(exchange));
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Cannot convert ByteArrayOutputStream into String with charset: " + getCharsetName(exchange), e);
+            return os.toString();
+        }
     }
 
     @Converter
@@ -281,4 +363,50 @@ public final class IOConverter {
         return new ByteArrayInputStream(os.toByteArray());
     }
 
+    private static String getCharsetName(Exchange exchange) {
+        if (exchange != null) {
+            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charsetName != null) {
+                return charsetName;
+            }
+        }
+        return getDefaultCharsetName();
+    }
+    
+    private static String getDefaultCharsetName() {
+        return Charset.defaultCharset().toString();
+    }
+    
+    /**
+     * Encoding-aware file reader. 
+     */
+    private static class EncodingFileReader extends InputStreamReader {
+
+        /**
+         * @param file file to read
+         * @param charset character set to use
+         */
+        public EncodingFileReader(File file, String charset)
+            throws FileNotFoundException, UnsupportedEncodingException {
+            super(new FileInputStream(file), charset);
+        }
+
+    }
+    
+    /**
+     * Encoding-aware file writer. 
+     */
+    private static class EncodingFileWriter extends OutputStreamWriter {
+
+        /**
+         * @param file file to write
+         * @param charset character set to use
+         */
+        public EncodingFileWriter(File file, String charset)
+            throws FileNotFoundException, UnsupportedEncodingException {
+            super(new FileOutputStream(file), charset);
+        }
+
+    }
+    
 }
