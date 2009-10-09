@@ -70,7 +70,7 @@ public class AtomGoodBlogsTest extends TestSupport {
                 // and restart - but as Camel by default uses the UpdatedDateFilter it will only deliver new
                 // blog entries to "seda:feeds". So only when James Straham updates his blog with a new entry
                 // Camel will create an exchange for the seda:feeds.
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=1000").to("log:mylog").to("seda:feeds");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=1000").to("seda:feeds");
 
                 // From the feeds we filter each blot entry by using our blog service class
                 from("seda:feeds").filter().method("blogService", "isGoodBlog").to("seda:goodBlogs");
@@ -111,8 +111,7 @@ public class AtomGoodBlogsTest extends TestSupport {
         public boolean isGoodBlog(Exchange exchange) {
             Entry entry = exchange.getIn().getBody(Entry.class);
             String title = entry.getTitle();
-            System.out.println("Title is " + title);
-
+            
             // We like blogs about Camel
             boolean good = title.toLowerCase().contains("camel");
             return good;
