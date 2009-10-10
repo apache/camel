@@ -25,8 +25,8 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 @CsvRecord(separator = ",")
 public class Order {
 
-	// Positions of the fields start from 1 and not from 0
-	
+    // Positions of the fields start from 1 and not from 0
+
     @DataField(pos = 1)
     private int orderNr;
 

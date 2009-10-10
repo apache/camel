@@ -16,10 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -41,30 +37,35 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import static org.junit.Assert.assertEquals;
+
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvUnmarshallPositionModifiedTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleCsvUnmarshallPositionModifiedTest extends AbstractJUnit4SpringContextTests {
 
     private static final transient Log LOG = LogFactory.getLog(BindySimpleCsvUnmarshallPositionModifiedTest.class);
 
-    private static final String uriMockResult = "mock:result";
-    private static final String uriMockError = "mock:error";  
-    private static final String uriDirectStart = "direct:start";
+    private static final String URI_MOCK_RESULT = "mock:result";
+    private static final String URI_MOCK_ERROR = "mock:error";  
+    private static final String URI_DIRECT_START = "direct:start";
+        
+    @Produce(uri = URI_DIRECT_START)
+    protected ProducerTemplate template;
+    
     private String record;
     
-    @EndpointInject(uri = uriMockResult)
+    @EndpointInject(uri = URI_MOCK_RESULT)
     private MockEndpoint result;
     
-    @EndpointInject(uri = uriMockError)
+    @EndpointInject(uri = URI_MOCK_ERROR)
     private MockEndpoint error;
 
-    @Produce(uri = uriDirectStart)
-    protected ProducerTemplate template;
+    
     
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-    	
-    	record = "1,25,Albert,Cartier,ISIN,BE12345678,SELL,Share,1500,EUR,08-01-2009\r\n";
+    
+        record = "1,25,Albert,Cartier,ISIN,BE12345678,SELL,Share,1500,EUR,08-01-2009\r\n";
 
         template.sendBody(record);
 
@@ -76,51 +77,51 @@ public class BindySimpleCsvUnmarshallPositionModifiedTest extends AbstractJUnit4
     @Test
     @DirtiesContext
     public void testUnmarshallErrorMessage() throws Exception {
-    	record = "1,25,Albert,Cartier,ISIN,BE12345678,SELL,Share,1500,EUR,08-01-2009-01\r\n";
-    	
+        record = "1,25,Albert,Cartier,ISIN,BE12345678,SELL,Share,1500,EUR,08-01-2009-01\r\n";
+    
         template.sendBody(record);
-    	
-    	// We don't expect to have a message as an error will be raised
-    	result.expectedMessageCount(0);
-    	
-    	// Message has been delivered to the mock error
+    
+        // We don't expect to have a message as an error will be raised
+        result.expectedMessageCount(0);
+        
+        // Message has been delivered to the mock error
         error.expectedMessageCount(1);
         
-    	result.assertIsSatisfied();
-    	error.assertIsSatisfied();
-    	
+        result.assertIsSatisfied();
+        error.assertIsSatisfied();
+        
         // and check that we have the caused exception stored
         Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         TestSupport.assertIsInstanceOf(FormatException.class, cause.getCause());
         assertEquals("Date provided does not fit the pattern defined, position : 11, line : 1", cause.getMessage());
-    	
+    
     }
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-    	
+    
         BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition");
 
         @Override
         @Bean
         public RouteBuilder route() {
             return new RouteBuilder() {
-            	
+            
                 @Override
                 public void configure() {
-            	
-                Tracer tracer = new Tracer();
-                tracer.setLogLevel(LoggingLevel.FATAL);
-                tracer.setLogName("org.apache.camel.bindy");
+            
+                    Tracer tracer = new Tracer();
+                    tracer.setLogLevel(LoggingLevel.FATAL);
+                    tracer.setLogName("org.apache.camel.bindy");
 
-                getContext().addInterceptStrategy(tracer);
-            	
-                // default should errors go to mock:error
-                errorHandler(deadLetterChannel(uriMockError).redeliverDelay(0));
+                    getContext().addInterceptStrategy(tracer);
+            
+                    // default should errors go to mock:error
+                    errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
                 
-                onException(Exception.class).maximumRedeliveries(0).handled(true);
+                    onException(Exception.class).maximumRedeliveries(0).handled(true);
 
-                from(uriDirectStart).unmarshal(orderBindyDataFormat).to(uriMockResult);
+                    from(URI_DIRECT_START).unmarshal(orderBindyDataFormat).to(URI_MOCK_RESULT);
                 
                 }
             };

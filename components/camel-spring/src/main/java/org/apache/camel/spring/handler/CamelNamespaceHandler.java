@@ -57,7 +57,7 @@ import org.springframework.beans.factory.xml.ParserContext;
  * Camel namespace for the spring XML configuration file.
  */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
-
+    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Log LOG = LogFactory.getLog(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
@@ -65,8 +65,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
-
-    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
+    
 
     public static void renameNamespaceRecursive(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -191,7 +190,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-			renameNamespaceRecursive(element);
+            renameNamespaceRecursive(element);
             super.doParse(element, parserContext, builder);
 
             String contextId = element.getAttribute("id");

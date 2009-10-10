@@ -41,8 +41,8 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
         tap.expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/xmldata/in",
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<sample>\n<test>Helloooo</test>\n</sample>", Exchange.FILE_NAME, "hello.xml");
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<sample>\n<test>Helloooo</test>\n</sample>", Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 
