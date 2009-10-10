@@ -268,6 +268,7 @@
               <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-antrun-plugin</artifactId>
+                  <inherited>true</inherited>
                   <executions>
                       <execution>
                           <id>process-sources</id>
