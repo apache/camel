@@ -17,7 +17,6 @@
 package org.apache.camel.converter.jaxp;
 
 import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,9 +59,6 @@ public final class DomConverter {
         } else if (node instanceof Element) {
             Element element = (Element) node;
             append(buffer, element.getChildNodes());
-        } else if (node instanceof Document) {
-            Document doc = (Document) node;
-            append(buffer, doc.getChildNodes());
         }
     }
 }
