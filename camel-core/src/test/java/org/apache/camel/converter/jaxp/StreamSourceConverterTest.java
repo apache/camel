@@ -20,26 +20,26 @@ import java.io.InputStream;
 import java.io.Reader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.Converter;
+import org.apache.camel.ContextTestSupport;
 
 /**
- * A converter from {@link StreamSource} objects
- *
  * @version $Revision$
  */
-@Converter
-public final class StreamSourceConverter {
+public class StreamSourceConverterTest extends ContextTestSupport {
 
-    private StreamSourceConverter() {
+    public void testToInputStream() throws Exception {
+        StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
+
+        InputStream out = StreamSourceConverter.toInputStream(source);
+        assertNotNull(out);
+        assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
 
-    @Converter
-    public static InputStream toInputStream(StreamSource source) {
-        return source.getInputStream();
-    }
+    public void testToReader() throws Exception {
+        StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
 
-    @Converter
-    public static Reader toReader(StreamSource source) {
-        return source.getReader();
+        Reader out = StreamSourceConverter.toReader(source);
+        assertNotNull(out);
+        assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
 }

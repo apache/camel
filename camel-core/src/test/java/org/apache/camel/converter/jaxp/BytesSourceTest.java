@@ -16,30 +16,30 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import java.io.InputStream;
-import java.io.Reader;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.camel.Converter;
+import org.apache.camel.ContextTestSupport;
 
 /**
- * A converter from {@link StreamSource} objects
- *
  * @version $Revision$
  */
-@Converter
-public final class StreamSourceConverter {
+public class BytesSourceTest extends ContextTestSupport {
 
-    private StreamSourceConverter() {
+    public void testBytesSourceCtr() {
+        BytesSource bs = new BytesSource("foo".getBytes());
+        assertNotNull(bs.getData());
+        assertEquals("BytesSource[foo]", bs.toString());
+        assertNull(bs.getSystemId());
+
+        assertNotNull(bs.getInputStream());
+        assertNotNull(bs.getReader());
     }
 
-    @Converter
-    public static InputStream toInputStream(StreamSource source) {
-        return source.getInputStream();
-    }
+    public void testBytesSourceCtrSystemId() {
+        BytesSource bs = new BytesSource("foo".getBytes(), "Camel");
+        assertNotNull(bs.getData());
+        assertEquals("BytesSource[foo]", bs.toString());
+        assertEquals("Camel", bs.getSystemId());
 
-    @Converter
-    public static Reader toReader(StreamSource source) {
-        return source.getReader();
+        assertNotNull(bs.getInputStream());
+        assertNotNull(bs.getReader());
     }
 }
