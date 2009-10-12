@@ -82,10 +82,12 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
         // register endpoint callback so we can proxy the endpoint
         routeContext.getCamelContext().addRegisterEndpointCallback(new EndpointStrategy() {
             public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
-                // only proxy if the uri is matched
-                boolean match = getUri() == null || EndpointHelper.matchEndpoint(uri, getUri()); 
-                if (match) {
-                    // decorate endpoint with our proxy
+                
+                if (endpoint instanceof InterceptSendToEndpoint) {
+                    // endpoint already decorated
+                    return endpoint;
+                } else if (getUri() == null || EndpointHelper.matchEndpoint(uri, getUri())) {
+                    // only proxy if the uri is matched decorate endpoint with our proxy
                     boolean skip = skipSendToOriginalEndpoint != null ? skipSendToOriginalEndpoint : false;
                     InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
                     proxy.setDetour(detour);

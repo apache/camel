@@ -16,7 +16,11 @@
  */
 package org.apache.camel.processor.intercept;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -180,4 +184,26 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testInterceptEndpointOnce() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("direct:intercept1").to("mock:detour1");
+                interceptSendToEndpoint("direct:intercept2").to("mock:detour2");
+                
+                from("direct:input1").to("direct:intercept1");
+                from("direct:input2").to("direct:intercept2");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:detour1").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:detour2").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:input1", "Hello World");
+        template.sendBody("direct:input2", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+    
 }

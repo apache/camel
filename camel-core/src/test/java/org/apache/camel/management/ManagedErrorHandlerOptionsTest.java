@@ -73,6 +73,8 @@ public class ManagedErrorHandlerOptionsTest extends ContextTestSupport {
         Double backoff = (Double) mbeanServer.getAttribute(on, "BackOffMultiplier");
         assertNotNull(backoff);
 
+        // TODO continue from here
+
         Double cf = (Double) mbeanServer.getAttribute(on, "CollisionAvoidanceFactor");
         assertNotNull(cf);
 
