@@ -99,6 +99,14 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof String);
     }
 
+    public void testStreamCachingInterceptorToString() {
+        StreamCachingInterceptor cache = new StreamCachingInterceptor();
+        assertNotNull(cache.toString());
+
+        StreamCaching caching = new StreamCaching();
+        assertNotNull(caching.toString());
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

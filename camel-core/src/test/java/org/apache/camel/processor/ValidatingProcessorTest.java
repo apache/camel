@@ -32,7 +32,7 @@ import org.apache.camel.processor.validation.ValidatingProcessor;
  */
 public class ValidatingProcessorTest extends ContextTestSupport {
 
-    private ValidatingProcessor validating;
+    protected ValidatingProcessor validating;
 
     @Override
     protected void setUp() throws Exception {
@@ -89,6 +89,23 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testValidatingOptions() throws Exception {
+        assertNotNull(validating.getErrorHandler());
+        assertNotNull(validating.getSchema());
+        assertNotNull(validating.getSchemaFactory());
+        assertNotNull(validating.getSchemaFile());
+        assertNotNull(validating.getSchemaLanguage());
+
+        assertNull(validating.getSchemaUrl());
+
+        try {
+            assertNotNull(validating.getSchemaSource());
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     protected RouteBuilder createRouteBuilder() {

@@ -29,10 +29,7 @@ import org.apache.camel.spi.InterceptStrategy;
 public class Delayer implements InterceptStrategy {
 
     private boolean enabled = true;
-    private long delay;
-
-    public Delayer() {
-    }
+    private final long delay;
 
     public Delayer(long delay) {
         this.delay = delay;
@@ -69,10 +66,6 @@ public class Delayer implements InterceptStrategy {
 
     public long getDelay() {
         return delay;
-    }
-
-    public void setDelay(long delay) {
-        this.delay = delay;
     }
 
     @Override

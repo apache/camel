@@ -70,10 +70,6 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         }
     }
 
-    public TraceInterceptor(ProcessorDefinition node, Processor target, Tracer tracer) {
-        this(node, target, null, tracer);
-    }
-
     @Override
     public String toString() {
         return "TraceInterceptor[" + node + "]";
@@ -128,7 +124,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             }
 
             // log and trace the processor
-            if (trace) {
+            if (shouldLog && trace) {
                 logExchange(exchange);
                 traceExchange(exchange);
             }
