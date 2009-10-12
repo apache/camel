@@ -28,6 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  * The separator (mandatory)
  * The name is optional and could be used in the future to bind a property which a different name
  * The skipfirstline (optional) allows to skip the first line of the file/content received
+ * The generateHeaderColumnNames (optional) allow to add in the CSV generated the header containing names of the columns
  * The crlf (optional) is used to add a new line after a record. By default, the value is WINDOWS 
  */
 @Documented
@@ -63,5 +64,15 @@ public @interface CsvRecord {
      * @return String
      */
     String crlf() default "WINDOWS";
+    
+    /**
+     * 
+     * The generateHeaderColumns parameter allow to add in the CSV generated
+     * the header containing names of the columns
+     * 
+     * @return boolean
+     */
+    boolean generateHeaderColumns() default false;
+    
 
 }

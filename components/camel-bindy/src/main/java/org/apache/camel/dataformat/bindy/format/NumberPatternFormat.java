@@ -21,10 +21,13 @@ import java.text.NumberFormat;
 
 import org.apache.camel.dataformat.bindy.PatternFormat;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
 
     private String pattern;
+    private DecimalFormat df;
 
     public NumberPatternFormat() {
     }
@@ -45,7 +48,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
     }
 
     protected NumberFormat getNumberFormat() {
-        return new DecimalFormat(pattern);
+    	return new DecimalFormat(pattern);
     }
 
     public String getPattern() {

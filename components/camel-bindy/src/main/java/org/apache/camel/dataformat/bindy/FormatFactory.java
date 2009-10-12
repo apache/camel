@@ -58,26 +58,37 @@ public final class FormatFactory {
     public static Format<?> getFormat(Class<?> clazz, String pattern, int precision) throws Exception {
         if (clazz == byte.class || clazz == Byte.class) {
             return pattern != null ? new BytePatternFormat(pattern) : new ByteFormat();
+            
         } else if (clazz == short.class || clazz == Short.class) {
             return pattern != null ? new ShortPatternFormat(pattern) : new ShortFormat();
+            
         } else if (clazz == int.class || clazz == Integer.class) {
             return pattern != null ? new IntegerPatternFormat(pattern) : new IntegerFormat();
+            
         } else if (clazz == long.class || clazz == Long.class) {
             return pattern != null ? new LongPatternFormat(pattern) : new LongFormat();
+            
         } else if (clazz == float.class || clazz == Float.class) {
             return pattern != null ? new FloatPatternFormat(pattern) : new FloatFormat();
+            
         } else if (clazz == double.class || clazz == Double.class) {
             return pattern != null ? new DoublePatternFormat(pattern) : new DoubleFormat();
+            
         } else if (clazz == BigDecimal.class) {
             return new BigDecimalFormat(precision);
+            
         } else if (clazz == BigInteger.class) {
             return new BigIntegerFormat();
+            
         } else if (clazz == String.class) {
             return new StringFormat();
+            
         } else if (clazz == Date.class) {
             return new DatePatternFormat(pattern);
+            
         } else if (clazz == char.class || clazz == Character.class) {
             return new CharacterFormat();
+            
         } else {
             throw new IllegalArgumentException("Can not find a suitable formatter for the type: " + clazz.getCanonicalName());
         }

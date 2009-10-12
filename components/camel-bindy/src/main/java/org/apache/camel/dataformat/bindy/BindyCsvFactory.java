@@ -55,6 +55,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     private String separator;
     private boolean skipFirstLine;
+    private boolean generateHeaderColumnNames;
     private boolean messageOrdered;
 
     public BindyCsvFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
@@ -237,7 +238,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : "
                       + this.getSeparator());
         }
-
+        
         while (it.hasNext()) {
 
             DataField dataField = dataFieldsSorted.get(it.next());
@@ -259,6 +260,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Object modelField = model.get(field.getDeclaringClass().getName());
 
             if (modelField != null) {
+           	
                 // Get field value
                 Object value = field.get(modelField);
                 String strValue = "";
@@ -295,9 +297,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
 
                 } else {
-                    // Get field value
-                    // Object value = field.get(modelField);
-                    // String strValue = null;
 
                     // Add value to the list if not null
                     if (value != null) {
@@ -344,31 +343,41 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 }
             }
         }
+        
+       	return builder.toString();
 
-        return builder.toString();
     }
+    
+    public String generateHeader() {
+    	
+        Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
+		Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
 
-    /**
-     * Find the separator used to delimit the CSV fields
-     */
-    public String getSeparator() {
-        return separator;
-    }
+		StringBuilder builderHeader = new StringBuilder();
 
-    /**
-     * Find the separator used to delimit the CSV fields
-     */
-    public boolean getSkipFirstLine() {
-        return skipFirstLine;
-    }
+		while (it.hasNext()) {
 
-    /**
-     * Flag indicating if the message must be ordered
-     * 
-     * @return boolean
-     */
-    public boolean isMessageOrdered() {
-        return messageOrdered;
+			DataField dataField = dataFieldsSorted.get(it.next());
+
+			// Retrieve the field
+			Field field = annotedFields.get(dataField.pos());
+			// Change accessibility to allow to read protected/private fields
+			field.setAccessible(true);
+
+			// Get dataField
+			if ( ! dataField.columnName().equals("") ) {
+				builderHeader.append(dataField.columnName());
+			} else {
+				builderHeader.append(field.getName());
+			}
+
+			if (it.hasNext()) {
+				builderHeader.append(separator);
+			}
+
+		} 
+        
+        return builderHeader.toString();
     }
 
     /**
@@ -379,6 +388,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private void initCsvRecordParameters() {
         if (separator == null) {
             for (Class<?> cl : models) {
+            	
                 // Get annotation @CsvRecord from the class
                 CsvRecord record = cl.getAnnotation(CsvRecord.class);
 
@@ -395,7 +405,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Skip First Line parameter of the CSV : " + skipFirstLine);
                     }
-
+                    
+                    // Get generateHeaderColumnNames parameter
+                    generateHeaderColumnNames = record.generateHeaderColumns();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Generate header column names parameter of the CSV : " + generateHeaderColumnNames);
+                    }
+                    
                     // Get Separator parameter
                     ObjectHelper.notNull(record.separator(),
                             "No separator has been defined in the @Record annotation !");
@@ -420,5 +436,35 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 }
             }
         }
+    }
+    
+    /**
+     * Find the separator used to delimit the CSV fields
+     */
+    public String getSeparator() {
+        return separator;
+    }
+
+    /**
+     * Flag indicating if the first line of the CSV must be skipped
+     */
+    public boolean getGenerateHeaderColumnNames() {
+        return generateHeaderColumnNames;
+    }
+    
+    /**
+     * Find the separator used to delimit the CSV fields
+     */
+    public boolean getSkipFirstLine() {
+        return skipFirstLine;
+    }
+
+    /**
+     * Flag indicating if the message must be ordered
+     * 
+     * @return boolean
+     */
+    public boolean isMessageOrdered() {
+        return messageOrdered;
     }
 }

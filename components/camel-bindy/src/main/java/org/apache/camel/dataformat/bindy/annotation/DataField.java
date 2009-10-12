@@ -25,6 +25,7 @@ import java.lang.annotation.RetentionPolicy;
  * a record (csv, ...).
  * The pos (mandatory) identifies the position of the data in the record
  * The name is optional and could be used in the future to bind a property which a different name
+ * The columnName (optional) represents the name of the column who will appear in the header
  * The pattern (optional) allows to define the pattern of the data (useful for Date, ...)
  * The length (optional) allows to define for fixed length message the size of the data's block
  * The precision(optional) reflects the precision to be used with BigDecimal number
@@ -48,6 +49,13 @@ public @interface DataField {
      * @return String
      */
     String name() default "";
+    
+    /**
+     * name of the header column (optional)
+     *  
+     * @return String
+     */
+    String columnName() default "";
 
     /**
      * pattern that the formater will use to transform the data (optional)
