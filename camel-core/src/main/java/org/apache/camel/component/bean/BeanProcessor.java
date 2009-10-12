@@ -110,12 +110,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         }
         if (invocation == null) {
             throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
-        } else {
-            // set method name if not explicit given
-            if (method == null) {
-                method = invocation.getMethod().getName();
-            }
-        }
+        } 
    
         Object value = null;
         try {
