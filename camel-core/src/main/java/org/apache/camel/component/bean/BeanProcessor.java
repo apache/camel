@@ -116,8 +116,8 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException("No method invocation could be created, no maching method could be found on: " + bean);
-        }
+            throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
+        } 
         Object value = null;
         try {
             value = invocation.proceed();            
