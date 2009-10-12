@@ -300,6 +300,7 @@
 
          TODO: Whenever Maven supports profile activations based on multiple properties, we
          should combine the on-ibmjdk and on-hpjdk profiles as they do exactly the same thing. -->
+
     <profile>
       <id>enable-schemagen</id>
       <activation>
@@ -355,10 +356,18 @@
                       </goals>
                   </execution>
               </executions>
+              <dependencies>
+                <dependency>
+                  <groupId>com.sun</groupId>
+                  <artifactId>tools</artifactId>
+                  <version>1.5.0</version>
+                  <scope>system</scope>
+                  <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                </dependency>
+              </dependencies>
           </plugin>
         </plugins>
       </build>
-
     </profile>
     <profile>
       <id>on-ibmjdk</id>

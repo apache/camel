@@ -20,7 +20,6 @@ import javax.naming.Context;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xquery.XQuery;
-import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
