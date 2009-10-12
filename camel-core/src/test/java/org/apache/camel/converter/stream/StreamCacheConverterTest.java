@@ -18,12 +18,10 @@ package org.apache.camel.converter.stream;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
@@ -36,7 +34,6 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultExchange;
-
 
 /**
  * Test cases for {@link StreamCacheConverter}
@@ -100,6 +97,19 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         }
     }
 
+    public void testConvertToSerializable() throws Exception {
+        InputStream is = getTestFileStream();
+        StreamCache cache = converter.convertToStreamCache(is, exchange);
+        Serializable ser = converter.convertToSerializable(cache, exchange);
+        assertNotNull(ser);
+    }
+
+    public void testConvertToByteArray() throws Exception {
+        InputStream is = getTestFileStream();
+        StreamCache cache = converter.convertToStreamCache(is, exchange);
+        byte[] bytes = converter.convertToByteArray(cache, exchange);
+        assertNotNull(bytes);
+    }
 
     protected InputStream getTestFileStream() {
         InputStream answer = getClass().getClassLoader().getResourceAsStream(TEST_FILE);

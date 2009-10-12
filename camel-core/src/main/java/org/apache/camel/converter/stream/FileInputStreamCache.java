@@ -75,10 +75,7 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
         return getInputStream().read();
     }
 
-    protected InputStream getInputStream() throws FileNotFoundException {
-        if (file != null && stream == null) {
-            stream = new FileInputStream(file);
-        }
+    protected InputStream getInputStream() {
         return stream;
     }
 

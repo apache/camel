@@ -33,7 +33,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class ManagedErrorHandlerRedeliveryTest extends ContextTestSupport {
+public class ManagedErrorHandlerOptionsTest extends ContextTestSupport {
 
     private static int counter;
 
@@ -46,7 +46,7 @@ public class ManagedErrorHandlerRedeliveryTest extends ContextTestSupport {
         return context;
     }
 
-    public void testManagedErrorHandlerRedelivery() throws Exception {
+    public void testManagedErrorHandlerOptions() throws Exception {
         counter = 0;
 
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
@@ -55,29 +55,20 @@ public class ManagedErrorHandlerRedeliveryTest extends ContextTestSupport {
         assertEquals(1, set.size());
         ObjectName on = set.iterator().next();
 
+        mbeanServer.setAttribute(on, new Attribute("MaximumRedeliveries", 3));
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumRedeliveries");
-        assertEquals(5, max.intValue());
+        assertEquals(3, max.intValue());
 
+        mbeanServer.setAttribute(on, new Attribute("MaximumRedeliveryDelay", Long.valueOf("20000")));
         Long delay = (Long) mbeanServer.getAttribute(on, "MaximumRedeliveryDelay");
-        assertEquals(60000, delay.longValue());
+        assertEquals(20000, delay.longValue());
 
+        mbeanServer.setAttribute(on, new Attribute("RedeliveryDelay", Long.valueOf("250")));
         delay = (Long) mbeanServer.getAttribute(on, "RedeliveryDelay");
-        assertEquals(0, delay.longValue());
+        assertEquals(250, delay.longValue());
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", camelId);
-
-        Boolean dlc = (Boolean) mbeanServer.getAttribute(on, "DeadLetterChannel");
-        assertEquals(Boolean.FALSE, dlc);
-
-        Boolean dlcom = (Boolean) mbeanServer.getAttribute(on, "DeadLetterUseOriginalMessage");
-        assertEquals(Boolean.FALSE, dlcom);
-
-        Boolean tx = (Boolean) mbeanServer.getAttribute(on, "SupportTransactions");
-        assertEquals(Boolean.FALSE, tx);
-
-        String dlcUri = (String) mbeanServer.getAttribute(on, "DeadLetterChannelEndpointUri");
-        assertNull(dlcUri);
 
         Double backoff = (Double) mbeanServer.getAttribute(on, "BackOffMultiplier");
         assertNotNull(backoff);

@@ -14,33 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.converter.stream;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+
+import org.apache.camel.ContextTestSupport;
 
 /**
- * Tagging interface to indicate that a type is capable of caching the underlying data stream.
- * <p/>
- * This is a useful feature for avoid message re-readability issues.
- * This interface is mainly used by the {@link org.apache.camel.processor.interceptor.StreamCachingInterceptor}
- * for determining if/how to wrap a stream-based message.
- *
  * @version $Revision$
  */
-public interface StreamCache {
+public class SourceCacheTest extends ContextTestSupport {
 
-    /**
-     * Resets the StreamCache for a new stream consumption.
-     */
-    void reset();
+    public void testSourceCache() throws Exception {
+        SourceCache cache = new SourceCache("<foo>bar</foo>");
 
-    /**
-     * Writes the stream to the given output
-     *
-     * @param os the destination to write to
-     * @throws java.io.IOException is thrown if write fails
-     */
-    void writeTo(OutputStream os) throws IOException;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        cache.writeTo(bos);
+
+        String s = context.getTypeConverter().convertTo(String.class, bos);
+        assertEquals("<foo>bar</foo>", s);
+
+        cache.reset();
+
+        s = context.getTypeConverter().convertTo(String.class, cache);
+        assertEquals("<foo>bar</foo>", s);
+    }
 
 }
