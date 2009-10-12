@@ -76,7 +76,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected Comparator<GenericFile<T>> sorter;
     protected Comparator<Exchange> sortBy;
     protected String readLock = "none";
-    protected long readLockTimeout;
+    protected long readLockTimeout = 10000;
     protected GenericFileExclusiveReadLockStrategy exclusiveReadLockStrategy;
 
     public GenericFileEndpoint() {

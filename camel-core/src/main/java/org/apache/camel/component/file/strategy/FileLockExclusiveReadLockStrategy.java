@@ -60,7 +60,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
                 if (timeout > 0) {
                     long delta = System.currentTimeMillis() - start;
                     if (delta > timeout) {
-                        LOG.debug("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
+                        LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
                         // we could not get the lock within the timeout period, so return false
                         return false;
                     }
