@@ -70,34 +70,41 @@ public class ManagedErrorHandlerOptionsTest extends ContextTestSupport {
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", camelId);
 
+        mbeanServer.setAttribute(on, new Attribute("BackOffMultiplier", Double.valueOf("3.5")));
         Double backoff = (Double) mbeanServer.getAttribute(on, "BackOffMultiplier");
         assertNotNull(backoff);
 
-        // TODO continue from here
-
+        mbeanServer.setAttribute(on, new Attribute("CollisionAvoidanceFactor", Double.valueOf("1.5")));
         Double cf = (Double) mbeanServer.getAttribute(on, "CollisionAvoidanceFactor");
         assertNotNull(cf);
 
+        mbeanServer.setAttribute(on, new Attribute("CollisionAvoidancePercent", Double.valueOf("75")));
         Double cp = (Double) mbeanServer.getAttribute(on, "CollisionAvoidancePercent");
         assertNotNull(cp);
 
+        mbeanServer.setAttribute(on, new Attribute("DelayPattern", "0:1000;5:5000"));
         String dp = (String) mbeanServer.getAttribute(on, "DelayPattern");
-        assertNull(dp);
+        assertNotNull(dp);
 
+        mbeanServer.setAttribute(on, new Attribute("RetriesExhaustedLogLevel", "WARN"));
         String ell = (String) mbeanServer.getAttribute(on, "RetriesExhaustedLogLevel");
-        assertEquals(LoggingLevel.DEBUG.name(), ell);
+        assertEquals(LoggingLevel.WARN.name(), ell);
 
+        mbeanServer.setAttribute(on, new Attribute("RetryAttemptedLogLevel", "WARN"));
         String rll = (String) mbeanServer.getAttribute(on, "RetryAttemptedLogLevel");
-        assertEquals(LoggingLevel.DEBUG.name(), rll);
+        assertEquals(LoggingLevel.WARN.name(), rll);
 
+        mbeanServer.setAttribute(on, new Attribute("LogStackTrace", Boolean.TRUE));
         Boolean lst = (Boolean) mbeanServer.getAttribute(on, "LogStackTrace");
-        assertEquals(false, lst.booleanValue());
+        assertEquals(true, lst.booleanValue());
 
+        mbeanServer.setAttribute(on, new Attribute("UseCollisionAvoidance", Boolean.TRUE));
         Boolean uca = (Boolean) mbeanServer.getAttribute(on, "UseCollisionAvoidance");
-        assertEquals(false, uca.booleanValue());
+        assertEquals(true, uca.booleanValue());
 
+        mbeanServer.setAttribute(on, new Attribute("UseExponentialBackOff", Boolean.TRUE));
         Boolean uebf = (Boolean) mbeanServer.getAttribute(on, "UseExponentialBackOff");
-        assertEquals(false, uebf.booleanValue());
+        assertEquals(true, uebf.booleanValue());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

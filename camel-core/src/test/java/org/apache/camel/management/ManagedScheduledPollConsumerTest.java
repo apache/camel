@@ -80,6 +80,19 @@ public class ManagedScheduledPollConsumerTest extends ContextTestSupport {
         delay = (Long) mbeanServer.getAttribute(on, "Delay");
         assertEquals(2000, delay.longValue());
 
+        // change some options
+        mbeanServer.setAttribute(on, new Attribute("UseFixedDelay", Boolean.TRUE));
+        fixedDelay = (Boolean) mbeanServer.getAttribute(on, "UseFixedDelay");
+        assertEquals(Boolean.TRUE, fixedDelay);
+
+        mbeanServer.setAttribute(on, new Attribute("TimeUnit", TimeUnit.SECONDS.name()));
+        timeUnit = (String) mbeanServer.getAttribute(on, "TimeUnit");
+        assertEquals(TimeUnit.SECONDS.toString(), timeUnit);
+
+        mbeanServer.setAttribute(on, new Attribute("InitialDelay", Long.valueOf("2000")));
+        initialDelay = (Long) mbeanServer.getAttribute(on, "InitialDelay");
+        assertEquals(2000, initialDelay.longValue());
+
         context.stop();
         assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
     }
