@@ -25,7 +25,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version $Revision: 817619 $
+ * @version $Revision$
  */
 public class XmppMultiUserChatTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(XmppRouteChatTest.class);
