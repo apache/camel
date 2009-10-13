@@ -35,7 +35,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 /**
  * Test cases for dealing with stream types in an exception handler
  * 
- * @version $Revision: 791456 $
+ * @version $Revision$
  */
 public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
 

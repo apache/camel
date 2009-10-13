@@ -163,10 +163,9 @@
       <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-              <excludes>
-	              <!-- TODO: temporary disable unit test to let TC not hang -->
-                  <exclude>**/*Test.*</exclude>
-              </excludes>               
+               <includes>
+                 <include>**/*Test.*</include>
+               </includes>               
           </configuration>
       </plugin>
 

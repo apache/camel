@@ -89,8 +89,7 @@
         <!-- for unit testing -->
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.2</version>
+            <artifactId>junit</artifactId>            
             <scope>test</scope>
         </dependency>
         <dependency>
