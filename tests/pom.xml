@@ -33,10 +33,19 @@
   <modules>
     <module>test-bundles</module>
     <module>camel-itest</module>
-    <module>camel-itest-osgi</module>
-    <module>camel-itest-karaf</module>
     <module>camel-itest-spring-2.0</module>
     <module>camel-partial-classpath-test</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <!-- default profile enables checkstyle and Xlint stuff -->
+      <id>osgi.test</id>
+      <modules>
+        <module>camel-itest-osgi</module>
+        <module>camel-itest-karaf</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>

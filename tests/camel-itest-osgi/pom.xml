@@ -163,9 +163,12 @@
       <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-               <includes>
-                 <include>**/*Test.*</include>
-               </includes>               
+              <includes>
+                  <include>**/*Test.*</include>
+              </includes>
+              <excludes>
+                  <exclude>**/XXXTest.*</exclude>
+              </excludes>               
           </configuration>
       </plugin>
 
@@ -200,7 +203,7 @@
                             <include>**/*Test.*</include>
                         </includes>
                         <excludes>
-			                <!-- TODO: temporary disable unit test to let TC not hang -->
+			    <!-- TODO: temporary disable unit test to let TC not hang -->
 		                    <exclude>**/*Test.*</exclude>
                             <!--There are some conflicts of the JAXB OSGi bundle and Hudson System jar
                                 so I comment out these JAXB related tests -->

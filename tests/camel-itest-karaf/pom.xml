@@ -126,8 +126,10 @@
               <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
               <redirectTestOutputToFile>true</redirectTestOutputToFile>
               <argLine>-Xmx256m</argLine>
+              <includes>
+                 <include>**/*Test.*</include>
+              </includes>
               <excludes>
-                  <exclude>**/*Test.*</exclude>
                   <!--
                   <exclude>**/*Amqp*.*</exclude>
                   <exclude>**/*Bindy*.*</exclude>

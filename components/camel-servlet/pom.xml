@@ -12,7 +12,7 @@
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-servlet</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel::Servlet</name>
+  <name>Camel :: Servlet</name>
   <description>Camel servlet transport support</description>
   
   <properties>

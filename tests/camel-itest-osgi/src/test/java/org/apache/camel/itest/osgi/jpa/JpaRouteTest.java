@@ -40,8 +40,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
@@ -87,7 +86,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new OsgiBundleXmlApplicationContext(
-            new String[]{"org/apache/camel/itest/osgi/jpa/springJpaRouteTest.xml"});
+            new String[]{"org/apache/camel/itest/osgi/jpa/springJpaRouteContext.xml"});
         if (bundleContext != null) {
             applicationContext.setBundleContext(bundleContext);
             applicationContext.refresh();
@@ -138,7 +137,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
                          artifactId("features").versionAsInProject().type("xml/features"),                         
                           "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-jpa"),
             
-            /* This the camel-jpa needed bundles
+            /* This the camel-jpa needed bundles 
             mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.java-persistence-api-1.1.1").version("1.4-SNAPSHOT"),
             mavenBundle().groupId("org.apache.servicemix.bundles").artifactId("org.apache.servicemix.bundles.openjpa").version("1.2.1_1-SNAPSHOT"),
             mavenBundle().groupId("org.apache.geronimo.specs").artifactId("geronimo-jta_1.1_spec").version("1.1.1"),
@@ -151,10 +150,9 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             mavenBundle().groupId("org.apache.servicemix.bundles").artifactId("org.apache.servicemix.bundles.ant").version("1.7.0_1"),    
             mavenBundle().groupId("commons-pool").artifactId("commons-pool").version("1.4"),
             mavenBundle().groupId("org.apache.geronimo.specs").artifactId("geronimo-jms_1.1_spec").version("1.1.1"),*/
-            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"),   
-            
-            
-            knopflerfish());
+            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"), 
+
+            equinox());
         
         return options;
     }
