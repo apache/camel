@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -27,6 +29,10 @@ public class CamelHl7Test extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelHl7Test.class);
 
+    protected DataFormatDefinition createDataformatDefinition(String format) {
+        return new HL7DataFormat();
+    }
+    
     @Test
     public void test() throws Exception {
         testDataFormat(COMPONENT);
