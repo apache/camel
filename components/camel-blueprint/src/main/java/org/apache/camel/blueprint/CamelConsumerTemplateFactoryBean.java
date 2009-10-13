@@ -30,7 +30,7 @@ import org.apache.camel.model.IdentifiedType;
  * A factory for creating a new {@link org.apache.camel.ConsumerTemplate}
  * instance with a minimum of XML
  *
- * @version $Revision: 800340 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

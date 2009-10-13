@@ -79,7 +79,7 @@ import org.apache.commons.logging.LogFactory;
  * Blueprint XML or found by searching the classpath for Java classes which extend
  * {@link RouteBuilder} using the nested {@link #setPackages(String[])}.
  *
- * @version $Revision: 813776 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)

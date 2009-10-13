@@ -24,7 +24,7 @@ import org.apache.camel.model.IdentifiedType;
 /**
  * The &lt;export&gt; tag element.
  *
- * @version $Revision: 750806 $
+ * @version $Revision$
 */
 @XmlRootElement(name = "export")
 public class CamelServiceExporterDefinition extends IdentifiedType {

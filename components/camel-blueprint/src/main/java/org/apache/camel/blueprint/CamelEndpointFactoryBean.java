@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A factory which instantiates {@link Endpoint} objects
  *
- * @version $Revision: 759657 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
