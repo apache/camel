@@ -19,6 +19,7 @@ package org.apache.camel.builder.xml;
 import java.io.InputStream;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
 import org.w3c.dom.Document;
@@ -62,6 +63,16 @@ public class XPathTest extends ContextTestSupport {
         assertExpression(xpath("$name").stringResult().variable("name", "Hiram"), "<foo/>", "Hiram");
     }
 
+    public void testInvalidXPath() throws Exception {
+        try {
+            assertPredicate("/foo/", "<foo><bar xyz='cheese'/></foo>", true);
+            fail("Should have thrown exception");
+        } catch (InvalidXPathExpression e) {
+            assertEquals("/foo/", e.getXpath());
+            assertIsInstanceOf(XPathExpressionException.class, e.getCause());
+        }
+    }
+
     public void testXPathBooleanResult() throws Exception {
         Object result = xpath("/foo/bar/@xyz").booleanResult().evaluate(createExchange("<foo><bar xyz='cheese'/></foo>"));
         Boolean bool = assertIsInstanceOf(Boolean.class, result);
@@ -77,11 +88,11 @@ public class XPathTest extends ContextTestSupport {
     }
 
     public void testXPathNodeSetResult() throws Exception {
-        Object result = xpath("/foo/bar").nodeSetResult().evaluate(createExchange("<foo><bar xyz='cheese'/><bar xyz='cake'/></foo>"));
+        Object result = xpath("/foo").nodeSetResult().evaluate(createExchange("<foo>bar</foo>"));
         NodeList node = assertIsInstanceOf(NodeList.class, result);
         assertNotNull(node);
         String s = context.getTypeConverter().convertTo(String.class, node);
-        assertEquals("<bar xyz=\"cheese\"/><bar xyz=\"cake\"/>", s);
+        assertEquals("bar", s);
     }
 
     public void testXPathNumberResult() throws Exception {
@@ -115,7 +126,7 @@ public class XPathTest extends ContextTestSupport {
         Object result = xpath("/foo").evaluate(createExchange(doc));
         assertNotNull(result);
         String s = context.getTypeConverter().convertTo(String.class, result);
-        assertEquals("<foo>bar</foo>", s);
+        assertEquals("bar", s);
     }
 
     public void testXPathWithDocumentTypeDOMSource() throws Exception {
@@ -127,7 +138,7 @@ public class XPathTest extends ContextTestSupport {
         Object result = builder.evaluate(createExchange(doc));
         assertNotNull(result);
         String s = context.getTypeConverter().convertTo(String.class, result);
-        assertEquals("<foo>bar</foo>", s);
+        assertEquals("bar", s);
     }
 
     public void testXPathWithDocumentTypeInputSource() throws Exception {
@@ -140,7 +151,7 @@ public class XPathTest extends ContextTestSupport {
         Object result = builder.evaluate(createExchange(doc));
         assertNotNull(result);
         String s = context.getTypeConverter().convertTo(String.class, result);
-        assertEquals("<foo>bar</foo>", s);
+        assertEquals("bar", s);
     }
 
     public void testXPathWithDocumentTypeInputSourceNoResultQName() throws Exception {

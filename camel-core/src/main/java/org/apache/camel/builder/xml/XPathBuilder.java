@@ -428,6 +428,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             // no avail in pool then create one
             try {
                 xpathExpression = createXPathExpression();
+            } catch (XPathExpressionException e) {
+                throw new InvalidXPathExpression(getText(), e);
             } catch (Exception e) {
                 throw new RuntimeExpressionException("Cannot create xpath expression", e);
             }

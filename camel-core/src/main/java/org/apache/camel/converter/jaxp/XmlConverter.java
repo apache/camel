@@ -200,19 +200,6 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the given input NodeList into text
-     */
-    @Converter
-    public String toString(NodeList list) throws TransformerException {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < list.getLength(); i++) {
-            Node node = list.item(i);
-            sb.append(toString(node));
-        }
-        return sb.toString();
-    }
-
-    /**
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      */
