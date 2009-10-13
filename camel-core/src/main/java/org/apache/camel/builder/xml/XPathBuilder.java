@@ -19,6 +19,8 @@ package org.apache.camel.builder.xml;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
@@ -43,9 +45,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.Service;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
@@ -55,13 +61,24 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
 /**
  * Creates an XPath expression builder which creates a nodeset result by default.
  * If you want to evaluate a String expression then call {@link #stringResult()}
+ * <p/>
+ * An XPath object is not thread-safe and not reentrant. In other words, it is the application's responsibility to make
+ * sure that one XPath object is not used from more than one thread at any given time, and while the evaluate method
+ * is invoked, applications may not recursively call the evaluate method.
+ * <p/>
+ * This implementation is thread safe by using thread locals and pooling to allow concurrency
  *
  * @see XPathConstants#NODESET
  *
  * @version $Revision$
  */
-public class XPathBuilder implements Expression, Predicate, NamespaceAware {
+public class XPathBuilder implements Expression, Predicate, NamespaceAware, Service {
+    private static final transient Log LOG = LogFactory.getLog(XPathBuilder.class);
+    private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
+    private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();
+    private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
+
     private XPathFactory xpathFactory;
     private Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
@@ -73,9 +90,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
     private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
     private XPathFunctionResolver functionResolver;
-    private XPathExpression expression;
-    private MessageVariableResolver variableResolver = new MessageVariableResolver();
-    private Exchange exchange;
     private XPathFunction bodyFunction;
     private XPathFunction headerFunction;
     private XPathFunction outBodyFunction;
@@ -242,7 +256,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
      * from XPath expressions
      */
     public XPathBuilder variable(String name, Object value) {
-        variableResolver.addVariable(name, value);
+        getVariableResolver().addVariable(name, value);
         return this;
     }
 
@@ -307,14 +321,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
         this.functionResolver = functionResolver;
     }
 
-    public XPathExpression getExpression() throws XPathFactoryConfigurationException,
-        XPathExpressionException {
-        if (expression == null) {
-            expression = createXPathExpression();
-        }
-        return expression;
-    }
-
     public void setNamespaces(Map<String, String> namespaces) {
         getNamespaceContext().setNamespaces(namespaces);
     }
@@ -326,7 +332,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
                     if (exchange == null) {
                         return null;
                     }
-                    return exchange.getIn().getBody();
+                    return exchange.get().getIn().getBody();
                 }
             };
         }
@@ -344,7 +350,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
                         if (value != null) {
-                            return exchange.getIn().getHeader(value.toString());
+                            return exchange.get().getIn().getHeader(value.toString());
                         }
                     }
                     return null;
@@ -362,8 +368,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
         if (outBodyFunction == null) {
             outBodyFunction = new XPathFunction() {
                 public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange != null && exchange.hasOut()) {
-                        return exchange.getOut().getBody();
+                    if (exchange.get() != null && exchange.get().hasOut()) {
+                        return exchange.get().getOut().getBody();
                     }
                     return null;
                 }
@@ -380,10 +386,10 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
         if (outHeaderFunction == null) {
             outHeaderFunction = new XPathFunction() {
                 public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange != null && !list.isEmpty()) {
+                    if (exchange.get() != null && !list.isEmpty()) {
                         Object value = list.get(0);
                         if (value != null) {
-                            return exchange.getOut().getHeader(value.toString());
+                            return exchange.get().getOut().getHeader(value.toString());
                         }
                     }
                     return null;
@@ -422,49 +428,77 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
     /**
      * Evaluates the expression as the given result type
      */
-    protected synchronized Object evaluateAs(Exchange exchange, QName resultQName) {
-        this.exchange = exchange;
-        variableResolver.setExchange(exchange);
+    protected Object evaluateAs(Exchange exchange, QName resultQName) {
+        // pool a pre compiled expression from pool
+        XPathExpression xpathExpression = pool.poll();
+        if (xpathExpression == null) {
+            LOG.trace("Creating new XPathExpression as none was available from pool");
+            // no avail in pool then create one
+            try {
+                xpathExpression = createXPathExpression();
+            } catch (Exception e) {
+                throw new RuntimeExpressionException("Cannot create xpath expression", e);
+            }
+        } else {
+            LOG.trace("Acquired XPathExpression from pool");
+        }
+        try {
+            return doInEvaluateAs(xpathExpression, exchange, resultQName);
+        } finally {
+            // release it back to the pool
+            pool.add(xpathExpression);
+            LOG.trace("Released XPathExpression back to pool");
+        }
+    }
+
+    protected Object doInEvaluateAs(XPathExpression xpathExpression, Exchange exchange, QName resultQName) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Evaluating exchange: " + exchange + " as: " + resultQName);
+        }
+
+        Object answer;
+
+        // set exchange and variable resolver as thread locals for concurrency
+        this.exchange.set(exchange);
+
         try {
             Object document = getDocument(exchange);
             if (resultQName != null) {
                 if (document instanceof InputSource) {
-                    InputSource inputSource = (InputSource)document;
-                    return getExpression().evaluate(inputSource, resultQName);
+                    InputSource inputSource = (InputSource) document;
+                    answer = xpathExpression.evaluate(inputSource, resultQName);
                 } else if (document instanceof DOMSource) {
                     DOMSource source = (DOMSource) document;
-                    return getExpression().evaluate(source.getNode(), resultQName);
+                    answer = xpathExpression.evaluate(source.getNode(), resultQName);
                 } else {
-                    return getExpression().evaluate(document, resultQName);
+                    answer = xpathExpression.evaluate(document, resultQName);
                 }
             } else {
                 if (document instanceof InputSource) {
-                    InputSource inputSource = (InputSource)document;
-                    return getExpression().evaluate(inputSource);
+                    InputSource inputSource = (InputSource) document;
+                    answer = xpathExpression.evaluate(inputSource);
                 } else if (document instanceof DOMSource) {
-                    DOMSource source = (DOMSource)document;
-                    return getExpression().evaluate(source.getNode());
+                    DOMSource source = (DOMSource) document;
+                    answer = xpathExpression.evaluate(source.getNode());
                 } else {
-                    return getExpression().evaluate(document);
+                    answer = xpathExpression.evaluate(document);
                 }
             }
         } catch (XPathExpressionException e) {
             throw new InvalidXPathExpression(getText(), e);
-        } catch (XPathFactoryConfigurationException e) {
-            throw new InvalidXPathExpression(getText(), e);
         }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Done evaluating exchange: " + exchange + " as: " + resultQName + " with result: " + answer);
+        }
+        return answer;
     }
 
-    protected XPathExpression createXPathExpression() throws XPathExpressionException,
-        XPathFactoryConfigurationException {
+    protected XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
         XPath xPath = getXPathFactory().newXPath();
 
-        // lets now clear any factory references to avoid keeping them around
-        xpathFactory = null;
-
         xPath.setNamespaceContext(getNamespaceContext());
-
-        xPath.setXPathVariableResolver(variableResolver);
+        xPath.setXPathVariableResolver(getVariableResolver());
 
         XPathFunctionResolver parentResolver = getFunctionResolver();
         if (parentResolver == null) {
@@ -545,9 +579,25 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
         if (answer instanceof String) {
             answer = new InputSource(new StringReader(answer.toString()));
         }
-        
+
         // call the reset if the in message body is StreamCache
         MessageHelper.resetStreamCache(exchange.getIn());
         return answer;
+    }
+
+    private MessageVariableResolver getVariableResolver() {
+        MessageVariableResolver resolver = variableResolver.get();
+        if (resolver == null) {
+            resolver = new MessageVariableResolver(exchange);
+            variableResolver.set(resolver);
+        }
+        return resolver;
+    }
+
+    public void start() throws Exception {
+    }
+
+    public void stop() throws Exception {
+        pool.clear();
     }
 }

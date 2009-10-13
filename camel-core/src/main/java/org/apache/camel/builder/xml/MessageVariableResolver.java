@@ -35,22 +35,20 @@ import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPAC
 
 /**
  * A variable resolver for XPath expressions which support properties on the
- * messge, exchange as well as making system properties and environment
+ * message, exchange as well as making system properties and environment
  * properties available.
+ * <p/>
+ * Implementations of this resolver must be thread safe
  *
  * @version $Revision$
  */
 public class MessageVariableResolver implements XPathVariableResolver {
     private static final transient Log LOG = LogFactory.getLog(MessageVariableResolver.class);
 
-    private Exchange exchange;
     private Map<String, Object> variables = new HashMap<String, Object>();
+    private final ThreadLocal<Exchange> exchange;
 
-    public Exchange getExchange() {
-        return exchange;
-    }
-
-    public void setExchange(Exchange exchange) {
+    public MessageVariableResolver(ThreadLocal<Exchange> exchange) {
         this.exchange = exchange;
     }
 
@@ -59,7 +57,7 @@ public class MessageVariableResolver implements XPathVariableResolver {
         String localPart = name.getLocalPart();
         Object answer = null;
 
-        Message in = exchange.getIn();
+        Message in = exchange.get().getIn();
         if (uri == null || uri.length() == 0) {
             answer = variables.get(localPart);
             if (answer == null) {
@@ -68,28 +66,27 @@ public class MessageVariableResolver implements XPathVariableResolver {
                     answer = message.getHeader(localPart);
                 }
                 if (answer == null) {
-                    answer = exchange.getProperty(localPart);
+                    answer = exchange.get().getProperty(localPart);
                 }
             }
         } else if (uri.equals(SYSTEM_PROPERTIES_NAMESPACE)) {
             try {
                 answer = System.getProperty(localPart);
             } catch (Exception e) {
-                LOG.debug("Security exception evaluating system property: " + localPart
-                          + ". Reason: " + e, e);
+                LOG.debug("Security exception evaluating system property: " + localPart + ". Reason: " + e, e);
             }
         } else if (uri.equals(ENVIRONMENT_VARIABLES)) {
             answer = System.getenv().get(localPart);
         } else if (uri.equals(EXCHANGE_PROPERTY)) {
-            answer = exchange.getProperty(localPart);
+            answer = exchange.get().getProperty(localPart);
         } else if (uri.equals(IN_NAMESPACE)) {
             answer = in.getHeader(localPart);
             if (answer == null && localPart.equals("body")) {
                 answer = in.getBody();
             }
         } else if (uri.equals(OUT_NAMESPACE)) {
-            if (exchange.hasOut()) {
-                Message out = exchange.getOut();
+            if (exchange.get().hasOut()) {
+                Message out = exchange.get().getOut();
                 answer = out.getHeader(localPart);
                 if (answer == null && localPart.equals("body")) {
                     answer = out.getBody();
