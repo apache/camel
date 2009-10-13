@@ -47,6 +47,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -196,6 +197,19 @@ public class XmlConverter {
     @Converter
     public String toString(Node node) throws TransformerException {
         return toString(new DOMSource(node));
+    }
+
+    /**
+     * Converts the given input NodeList into text
+     */
+    @Converter
+    public String toString(NodeList list) throws TransformerException {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.getLength(); i++) {
+            Node node = list.item(i);
+            sb.append(toString(node));
+        }
+        return sb.toString();
     }
 
     /**

@@ -16,20 +16,32 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.io.InputStream;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFunctionResolver;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.TestSupport;
-import org.apache.camel.impl.DefaultCamelContext;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * @version $Revision$
  */
-public class XPathTest extends TestSupport {
+public class XPathTest extends ContextTestSupport {
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     public void testXPathExpressions() throws Exception {
         assertExpression("/foo/bar/@xyz", "<foo><bar xyz='cheese'/></foo>", "cheese");
@@ -50,8 +62,126 @@ public class XPathTest extends TestSupport {
         assertExpression(xpath("$name").stringResult().variable("name", "Hiram"), "<foo/>", "Hiram");
     }
 
+    public void testXPathBooleanResult() throws Exception {
+        Object result = xpath("/foo/bar/@xyz").booleanResult().evaluate(createExchange("<foo><bar xyz='cheese'/></foo>"));
+        Boolean bool = assertIsInstanceOf(Boolean.class, result);
+        assertEquals(true, bool.booleanValue());
+    }
+
+    public void testXPathNodeResult() throws Exception {
+        Object result = xpath("/foo/bar").nodeResult().evaluate(createExchange("<foo><bar xyz='cheese'/></foo>"));
+        Node node = assertIsInstanceOf(Node.class, result);
+        assertNotNull(node);
+        String s = context.getTypeConverter().convertTo(String.class, node);
+        assertEquals("<bar xyz=\"cheese\"/>", s);
+    }
+
+    public void testXPathNodeSetResult() throws Exception {
+        Object result = xpath("/foo/bar").nodeSetResult().evaluate(createExchange("<foo><bar xyz='cheese'/><bar xyz='cake'/></foo>"));
+        NodeList node = assertIsInstanceOf(NodeList.class, result);
+        assertNotNull(node);
+        String s = context.getTypeConverter().convertTo(String.class, node);
+        assertEquals("<bar xyz=\"cheese\"/><bar xyz=\"cake\"/>", s);
+    }
+
+    public void testXPathNumberResult() throws Exception {
+        Object result = xpath("/foo/bar/@xyz").numberResult().evaluate(createExchange("<foo><bar xyz='123'/></foo>"));
+        Double num = assertIsInstanceOf(Double.class, result);
+        assertEquals("123.0", num.toString());
+    }
+
+    public void testXPathStringResult() throws Exception {
+        Object result = xpath("/foo/bar/@xyz").stringResult().evaluate(createExchange("<foo><bar xyz='123'/></foo>"));
+        String num = assertIsInstanceOf(String.class, result);
+        assertEquals("123", num);
+    }
+
+    public void testXPathCustomResult() throws Exception {
+        Object result = xpath("/foo/bar/@xyz").resultType(Integer.class).evaluate(createExchange("<foo><bar xyz='123'/></foo>"));
+        Integer num = assertIsInstanceOf(Integer.class, result);
+        assertEquals(123, num.intValue());
+    }
+
+    public void testXPathBuilder() throws Exception {
+        XPathBuilder builder = xpath("/foo/bar");
+        assertEquals("/foo/bar", builder.getText());
+        assertEquals(XPathConstants.NODESET, builder.getResultQName());
+        assertNull(builder.getResultType());
+    }
+
+    public void testXPathWithDocument() throws Exception {
+        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+
+        Object result = xpath("/foo").evaluate(createExchange(doc));
+        assertNotNull(result);
+        String s = context.getTypeConverter().convertTo(String.class, result);
+        assertEquals("<foo>bar</foo>", s);
+    }
+
+    public void testXPathWithDocumentTypeDOMSource() throws Exception {
+        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+
+        XPathBuilder builder = xpath("/foo");
+        builder.setDocumentType(DOMSource.class);
+
+        Object result = builder.evaluate(createExchange(doc));
+        assertNotNull(result);
+        String s = context.getTypeConverter().convertTo(String.class, result);
+        assertEquals("<foo>bar</foo>", s);
+    }
+
+    public void testXPathWithDocumentTypeInputSource() throws Exception {
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        InputSource doc = new InputSource(is);
+
+        XPathBuilder builder = xpath("/foo");
+        builder.setDocumentType(InputSource.class);
+
+        Object result = builder.evaluate(createExchange(doc));
+        assertNotNull(result);
+        String s = context.getTypeConverter().convertTo(String.class, result);
+        assertEquals("<foo>bar</foo>", s);
+    }
+
+    public void testXPathWithDocumentTypeInputSourceNoResultQName() throws Exception {
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        InputSource doc = new InputSource(is);
+
+        XPathBuilder builder = xpath("/foo");
+        builder.setDocumentType(InputSource.class);
+        builder.setResultQName(null);
+
+        Object result = builder.evaluate(createExchange(doc));
+        assertNotNull(result);
+        String s = context.getTypeConverter().convertTo(String.class, result);
+        assertEquals("bar", s);
+    }
+
+    public void testXPathWithDocumentTypeDOMSourceNoResultQName() throws Exception {
+        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+
+        XPathBuilder builder = xpath("/foo");
+        builder.setDocumentType(DOMSource.class);
+        builder.setResultQName(null);
+
+        Object result = builder.evaluate(createExchange(doc));
+        assertNotNull(result);
+        String s = context.getTypeConverter().convertTo(String.class, result);
+        assertEquals("bar", s);
+    }
+
+    public void testXPathWithStringTypeDOMSourceNoResultQName() throws Exception {
+        XPathBuilder builder = xpath("/foo");
+        builder.setResultQName(null);
+
+        Object result = builder.evaluate(createExchange("<foo>bar</foo>"));
+        assertNotNull(result);
+        String s = context.getTypeConverter().convertTo(String.class, result);
+        assertEquals("bar", s);
+    }
+
     public void testUsingJavaExtensions() throws Exception {
-        Object instance = null;
+        Object instance;
 
         // we may not have Xalan on the classpath
         try {
@@ -71,10 +201,6 @@ public class XPathTest extends TestSupport {
         }
     }
 
-    public static String func(String s) {
-        return "modified" + s;
-    }
-
     protected Object assertExpression(String xpath, String xml, String expected) {
         Expression expression = XPathBuilder.xpath(xpath).stringResult();
         return assertExpression(expression, xml, expected);
@@ -89,8 +215,8 @@ public class XPathTest extends TestSupport {
         assertPredicate(predicate, createExchange(xml), expected);
     }
 
-    protected Exchange createExchange(String xml) {
-        Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), xml);
+    protected Exchange createExchange(Object xml) {
+        Exchange exchange = createExchangeWithBody(context, xml);
         exchange.getIn().setHeader("name", "James");
         return exchange;
     }

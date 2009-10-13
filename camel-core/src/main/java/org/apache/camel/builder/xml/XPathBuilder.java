@@ -119,22 +119,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
     }
 
-    public void assertMatches(String text, Exchange exchange) throws AssertionError {
-        Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
-        Boolean answer = exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
-        if (answer == null) {
-            throw new AssertionError(this + " failed on " + exchange + " as returned <" + booleanResult + ">");
-        }
-    }
-
-    public Object evaluate(Exchange exchange) {
-        Object answer = evaluateAs(exchange, resultQName);
-        if (resultType != null) {
-            return ExchangeHelper.convertToType(exchange, resultType, answer);
-        }
-        return answer;
-    }
-
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);
@@ -424,6 +408,14 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    protected Object evaluate(Exchange exchange) {
+        Object answer = evaluateAs(exchange, resultQName);
+        if (resultType != null) {
+            return ExchangeHelper.convertToType(exchange, resultType, answer);
+        }
+        return answer;
+    }
 
     /**
      * Evaluates the expression as the given result type
