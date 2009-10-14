@@ -45,7 +45,7 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
             + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
 
     public void testConcurrent() throws Exception {
-        doSendMessages(999);
+        doSendMessages(333);
     }
 
     private void doSendMessages(int messageCount) throws Exception {
@@ -55,6 +55,10 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
         int forOther = messageCount - forResult;
 
         long now = System.currentTimeMillis();
+
+        // give more time on slow servers
+        getMockEndpoint("mock:result").setResultWaitTime(30000);
+        getMockEndpoint("mock:other").setResultWaitTime(30000);
 
         getMockEndpoint("mock:result").expectedMessageCount(forResult);
         getMockEndpoint("mock:other").expectedMessageCount(forOther);

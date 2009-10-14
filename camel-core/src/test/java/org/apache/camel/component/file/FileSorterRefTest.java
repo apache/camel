@@ -29,7 +29,12 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?sorter=#mySorter&initialDelay=2000";
+    private String fileUrl = "file://target/filesorter/?sorter=#mySorter";
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -54,17 +59,17 @@ public class FileSorterRefTest extends ContextTestSupport {
     }
 
     public void testSortFiles() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
-        assertMockEndpointsSatisfied();
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
                 from(fileUrl).to("mock:result");
             }
-        };
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
+        assertMockEndpointsSatisfied();
     }
 
     // START SNIPPET: e1

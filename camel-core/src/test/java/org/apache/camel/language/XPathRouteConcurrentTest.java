@@ -16,10 +16,6 @@
  */
 package org.apache.camel.language;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -61,27 +57,20 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
     }
 
     public void testNoConcurrent() throws Exception {
-        doSendMessages(1, 1);
+        doSendMessages(1);
     }
 
     public void testConcurrent() throws Exception {
-        doSendMessages(10, 5);
+        doSendMessages(10);
     }
 
-    private void doSendMessages(int files, int poolSize) throws Exception {
+    private void doSendMessages(int files) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(files);
         getMockEndpoint("mock:result").assertNoDuplicates(body());
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         for (int i = 0; i < files; i++) {
-            final int index = i;
-            executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    template.sendBody("seda:foo", "<person><id>" + index + "</id><name>Claus</name></person>");
-                    return null;
-                }
-            });
+            template.sendBody("seda:foo", "<person><id>" + i + "</id><name>Claus</name></person>");
         }
 
         assertMockEndpointsSatisfied();

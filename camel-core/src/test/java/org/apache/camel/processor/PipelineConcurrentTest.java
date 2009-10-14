@@ -33,7 +33,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
     private String uri = "seda:in?size=2000&concurrentConsumers=10";
 
     public void testConcurrentPipeline() throws Exception {
-        int total = 2000;
+        int total = 200;
         final int group = total / 20;
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
