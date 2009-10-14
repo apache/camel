@@ -241,7 +241,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         };
     }
 
-    public static XQueryBuilder xquery(File file, String characterSet) throws FileNotFoundException {
+    public static XQueryBuilder xquery(File file, String characterSet) throws IOException {
         return xquery(IOConverter.toInputStream(file), characterSet);
     }
 
@@ -249,7 +249,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return xquery(IOConverter.toInputStream(url), characterSet);
     }
 
-    public static XQueryBuilder xquery(File file) throws FileNotFoundException {
+    public static XQueryBuilder xquery(File file) throws IOException {
         return xquery(IOConverter.toInputStream(file), ObjectHelper.getDefaultCharacterSet());
     }
 
