@@ -48,7 +48,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
     }
 
     protected NumberFormat getNumberFormat() {
-    	return new DecimalFormat(pattern);
+        return new DecimalFormat(pattern);
     }
 
     public String getPattern() {

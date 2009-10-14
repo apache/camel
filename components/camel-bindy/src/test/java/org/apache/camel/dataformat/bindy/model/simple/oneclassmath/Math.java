@@ -25,31 +25,30 @@ import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 @CsvRecord(separator = ",")
 public class Math {
 
-	@DataField(pos = 1, pattern = "00")
+    @DataField(pos = 1, pattern = "00")
     private Integer intAmount;
-    
+
     @DataField(pos = 2, precision = 2, pattern = "00.00")
     private BigDecimal bigDecimal;
-    
+
     public Integer getIntAmount() {
-		return intAmount;
-	}
+        return intAmount;
+    }
 
-	public void setIntAmount(Integer intAmount) {
-		this.intAmount = intAmount;
-	}
+    public void setIntAmount(Integer intAmount) {
+        this.intAmount = intAmount;
+    }
 
-	public BigDecimal getBigDecimal() {
-		return bigDecimal;
-	}
+    public BigDecimal getBigDecimal() {
+        return bigDecimal;
+    }
 
-	public void setBigDecimal(BigDecimal bigDecimal) {
-		this.bigDecimal = bigDecimal;
-	}
-	
-	@Override
-	public String toString() {
-	        return "intAmount : " + this.intAmount + ", " +
-	               "bigDecimal : " + this.bigDecimal;
-	}
+    public void setBigDecimal(BigDecimal bigDecimal) {
+        this.bigDecimal = bigDecimal;
+    }
+
+    @Override
+    public String toString() {
+        return "intAmount : " + this.intAmount + ", " + "bigDecimal : " + this.bigDecimal;
+    }
 }

@@ -53,36 +53,35 @@ public class BindyCsvDataFormat implements DataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-    
+
         BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
-        
-        List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
+
+        List<Map<String, Object>> models = (ArrayList<Map<String, Object>>)body;
         byte[] bytesCRLF;
-    
-     
+
         // Get CRLF
         bytesCRLF = Converter.getByteReturn(factory.getCarriageReturn());
-        
-        if ( factory.getGenerateHeaderColumnNames() ) {
-        	
-        	String result = factory.generateHeader();
-        	byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
-            outputStream.write( bytes );
-            
+
+        if (factory.getGenerateHeaderColumnNames()) {
+
+            String result = factory.generateHeader();
+            byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
+            outputStream.write(bytes);
+
             // Add a carriage return
-            outputStream.write( bytesCRLF );
+            outputStream.write(bytesCRLF);
         }
-        
+
         // We iterate over the list of CSV record
         for (Map<String, Object> model : models) {
-        	
-        	String result = factory.unbind(model);
-        	byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
-            outputStream.write( bytes );
-            
+
+            String result = factory.unbind(model);
+            byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
+            outputStream.write(bytes);
+
             // Add a carriage return
-            outputStream.write( bytesCRLF );
+            outputStream.write(bytesCRLF);
         }
     }
 

@@ -260,7 +260,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Object modelField = model.get(field.getDeclaringClass().getName());
 
             if (modelField != null) {
-           	
+           
                 // Get field value
                 Object value = field.get(modelField);
                 String strValue = "";
@@ -344,39 +344,39 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
         }
         
-       	return builder.toString();
+        return builder.toString();
 
     }
     
     public String generateHeader() {
-    	
+
         Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
-		Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
+        Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
 
-		StringBuilder builderHeader = new StringBuilder();
+        StringBuilder builderHeader = new StringBuilder();
 
-		while (it.hasNext()) {
+        while (it.hasNext()) {
 
-			DataField dataField = dataFieldsSorted.get(it.next());
+            DataField dataField = dataFieldsSorted.get(it.next());
 
-			// Retrieve the field
-			Field field = annotedFields.get(dataField.pos());
-			// Change accessibility to allow to read protected/private fields
-			field.setAccessible(true);
+            // Retrieve the field
+            Field field = annotedFields.get(dataField.pos());
+            // Change accessibility to allow to read protected/private fields
+            field.setAccessible(true);
 
-			// Get dataField
-			if ( ! dataField.columnName().equals("") ) {
-				builderHeader.append(dataField.columnName());
-			} else {
-				builderHeader.append(field.getName());
-			}
+            // Get dataField
+            if (!dataField.columnName().equals("")) {
+                builderHeader.append(dataField.columnName());
+            } else {
+                builderHeader.append(field.getName());
+            }
 
-			if (it.hasNext()) {
-				builderHeader.append(separator);
-			}
+            if (it.hasNext()) {
+                builderHeader.append(separator);
+            }
 
-		} 
-        
+        }
+
         return builderHeader.toString();
     }
 
@@ -388,7 +388,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private void initCsvRecordParameters() {
         if (separator == null) {
             for (Class<?> cl : models) {
-            	
+            
                 // Get annotation @CsvRecord from the class
                 CsvRecord record = cl.getAnnotation(CsvRecord.class);
 

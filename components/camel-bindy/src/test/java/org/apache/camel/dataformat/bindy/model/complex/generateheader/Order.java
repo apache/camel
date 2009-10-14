@@ -22,12 +22,10 @@ import java.util.Date;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.dataformat.bindy.model.complex.generateheader.Client;
-import org.apache.camel.dataformat.bindy.model.complex.generateheader.Security;
 
 @CsvRecord(separator = ",", generateHeaderColumns = true)
 public class Order {
-	
+
     @DataField(pos = 1, columnName = "Order Nr")
     private int orderNr;
     
