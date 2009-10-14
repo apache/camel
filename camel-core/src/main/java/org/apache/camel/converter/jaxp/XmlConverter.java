@@ -574,6 +574,11 @@ public class XmlConverter {
         return new ByteArrayInputStream(s.getBytes());
     }
 
+    @Converter
+    public InputSource toInputSource(InputStream is) {
+        return new InputSource(is);
+    }
+
     // Properties
     //-------------------------------------------------------------------------
     public DocumentBuilderFactory getDocumentBuilderFactory() {

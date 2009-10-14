@@ -154,6 +154,18 @@ public class XPathTest extends ContextTestSupport {
         assertEquals("bar", s);
     }
 
+    public void testXPathWithDocumentTypeInputSourceFluentBuilder() throws Exception {
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+        InputSource doc = new InputSource(is);
+
+        XPathBuilder builder = xpath("/foo").documentType(InputSource.class);
+
+        Object result = builder.evaluate(createExchange(doc));
+        assertNotNull(result);
+        String s = context.getTypeConverter().convertTo(String.class, result);
+        assertEquals("bar", s);
+    }
+
     public void testXPathWithDocumentTypeInputSourceNoResultQName() throws Exception {
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
         InputSource doc = new InputSource(is);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
+import org.apache.camel.component.file.GenericFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -241,6 +243,23 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      */
     public XPathBuilder variable(String name, Object value) {
         getVariableResolver().addVariable(name, value);
+        return this;
+    }
+
+    /**
+     * Configures the document type to use.
+     * <p/>
+     * The document type controls which kind of Class Camel should convert the payload
+     * to before doing the xpath evaluation.
+     * <p/>
+     * For example you can set it to {@link InputSource} to use SAX streams.
+     * By default Camel uses {@link Document} as the type.
+     *
+     * @param documentType the document type
+     * @return the current builder
+     */
+    public XPathBuilder documentType(Class documentType) {
+        setDocumentType(documentType);
         return this;
     }
 
@@ -565,12 +584,17 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         if (type != null) {
             answer = in.getBody(type);
         }
+
         if (answer == null) {
             answer = in.getBody();
         }
 
         // lets try coerce some common types into something JAXP can deal with
-        if (answer instanceof String) {
+        if (answer instanceof GenericFile) {
+            // special for files so we can work with them out of the box
+            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, answer);
+            answer = new InputSource(is);
+        } else if (answer instanceof String) {
             answer = new InputSource(new StringReader(answer.toString()));
         }
 

@@ -26,13 +26,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 /**
  * @version $Revision$
@@ -360,6 +360,15 @@ public class XmlConverterTest extends ContextTestSupport {
 
         String s = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("<foo>bar</foo>", s);
+    }
+
+    public void testToInputSource() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
+        InputSource out = conv.toInputSource(is);
+        assertNotNull(out);
+        assertNotNull(out.getByteStream());
     }
 
 }
