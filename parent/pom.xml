@@ -75,7 +75,7 @@
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <groovy-version>1.6.3</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
-    <junit-version>4.4</junit-version>
+    <junit-version>4.6</junit-version>
     <ognl-version>2.7.3_1</ognl-version>
     <pax-exam-version>1.0.0</pax-exam-version>
     <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
