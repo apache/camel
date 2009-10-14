@@ -36,7 +36,7 @@
   <properties>
     <compiler.fork>false</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.2.0</activemq-version>
+    <activemq-version>5.3.0</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
     <axiom-version>1.2.8</axiom-version>
     <cxf-version>2.2.3</cxf-version>

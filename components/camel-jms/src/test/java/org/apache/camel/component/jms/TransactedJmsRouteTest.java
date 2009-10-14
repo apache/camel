@@ -224,7 +224,8 @@ public class TransactedJmsRouteTest extends CamelTestSupport {
      * This test seems to be fail every other run.
      */
     @Ignore
-    public void disabledtestSenarioF() throws Exception {
+    @Test
+    public void testSenarioF() throws Exception {
         String expected = "testSenarioF" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMinimumMessageCount(2);
@@ -260,7 +261,8 @@ public class TransactedJmsRouteTest extends CamelTestSupport {
     }
 
     @Ignore
-    public void disabledtestSenarioC() throws Exception {
+    @Test
+    public void testSenarioC() throws Exception {
         String expected = "testSenarioD" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         // Should only get 1 message the incoming transaction does not rollback.
@@ -277,7 +279,8 @@ public class TransactedJmsRouteTest extends CamelTestSupport {
     }
 
     @Ignore
-    public void disabledtestSenarioD() throws Exception {
+    @Test
+    public void testSenarioD() throws Exception {
         String expected = "testSenarioD" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(1);
         sendBody("activemq:queue:d", expected);
@@ -292,7 +295,8 @@ public class TransactedJmsRouteTest extends CamelTestSupport {
     }
 
     @Ignore
-    public void disabledtestSenarioE() throws Exception {
+    @Test
+    public void testSenarioE() throws Exception {
         String expected = "testSenarioE" + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         mockEndpointB.expectedMessageCount(1);

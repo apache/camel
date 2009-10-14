@@ -16,12 +16,18 @@
     limitations under the License.
 -->
 <!-- START SNIPPET: xbean -->
-<beans>
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:broker="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.3.0.xsd">
+
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <broker useJmx="false"  xmlns="http://activemq.org/config/1.0" persistent="false" brokerName="localhost">
-      
-  </broker>
+  <broker:broker useJmx="false" persistent="false" brokerName="localhost">
+
+  </broker:broker>
   
 </beans>
 <!-- END SNIPPET: xbean -->
