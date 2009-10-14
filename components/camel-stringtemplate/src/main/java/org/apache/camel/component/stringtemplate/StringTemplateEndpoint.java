@@ -26,7 +26,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.ResourceBasedEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
@@ -58,7 +57,7 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         Map variableMap = ExchangeHelper.createVariableMap(exchange);
 
         // getResourceAsInputStream also considers the content cache
-        String text = IOConverter.toString(getResourceAsInputStream());
+        String text = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, getResourceAsInputStream());
         StringTemplate template = new StringTemplate(text);
         template.setAttributes(variableMap);
         if (log.isDebugEnabled()) {

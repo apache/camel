@@ -56,6 +56,12 @@ public class IOConverterTest extends ContextTestSupport {
         assertEquals('\n', (char) data[data.length - 1]);
     }
 
+    public void testToByteArray() throws Exception {
+        String val = null;
+        assertNull(IOConverter.toByteArray(val));
+        assertNull(IOConverter.toByteArray(val, null));
+    }
+
     public void testCopy() throws Exception {
         ByteArrayInputStream bis = new ByteArrayInputStream(TESTDATA);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -83,7 +89,7 @@ public class IOConverterTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
         File file = new File("target/test/hello.txt");
 
-        Writer writer = IOConverter.toWriter(file);
+        Writer writer = IOConverter.toWriter(file, null);
         assertNotNull(writer);
         writer.close();
     }
@@ -93,7 +99,7 @@ public class IOConverterTest extends ContextTestSupport {
         assertEquals("Hello", IOConverter.toString(reader));
     }
 
-    public void testToInputStreamExchange() {
+    public void testToInputStreamExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, ObjectHelper.getDefaultCharacterSet());
 
@@ -151,7 +157,7 @@ public class IOConverterTest extends ContextTestSupport {
     public void testToStringOutputStream() throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         os.write("Hello World".getBytes());
-        String s = IOConverter.toString(os);
+        String s = IOConverter.toString(os, null);
         assertNotNull(s);
         assertEquals("Hello World", s);
     }
@@ -162,7 +168,7 @@ public class IOConverterTest extends ContextTestSupport {
 
         InputStream is = IOConverter.toInputStream(os);
         assertNotNull(is);
-        assertEquals("Hello World", IOConverter.toString(is));
+        assertEquals("Hello World", IOConverter.toString(is, null));
     }
 
     public void testToInputStreamUrl() throws Exception {
@@ -175,6 +181,21 @@ public class IOConverterTest extends ContextTestSupport {
         URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
         String s = IOConverter.toString(url);
         assertNotNull(s);
+    }
+
+    public void testStringByBufferedReader() throws Exception {
+        BufferedReader reader = null;
+        assertNull(IOConverter.toString(reader));
+
+        BufferedReader br = new BufferedReader(new StringReader("Hello World"));
+        assertEquals("Hello World", IOConverter.toString(br));
+    }
+
+    public void testByteArrayByBufferedReader() throws Exception {
+        Reader reader = new StringReader("Hello World");
+        byte[] data = IOConverter.toByteArray(reader);
+        assertNotNull(data);
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, data));
     }
 
 }

@@ -55,7 +55,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
         byte[] output = sendText();
 
         GZIPInputStream stream = new GZIPInputStream(new ByteArrayInputStream(output));
-        String result = IOConverter.toString(stream);
+        String result = IOConverter.toString(stream, null);
         assertEquals("Uncompressed something different than compressed", TEXT, result);
     }
 

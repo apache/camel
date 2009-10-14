@@ -80,10 +80,9 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
                 is.close();
             }
 
-            InputStream cis = exchange.getContext().getTypeConverter().convertTo(
-                                                                                 InputStream.class,
-                                                                                 cache.get(key)
-                                                                                     .getObjectValue());
+            InputStream cis = exchange.getContext().getTypeConverter()
+                .convertTo(InputStream.class, cache.get(key).getObjectValue());
+
             try {
                 Document cacheValueDocument = exchange.getContext().getTypeConverter()
                     .convertTo(Document.class, exchange, cis);
@@ -105,9 +104,9 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
             }
         }
 
-        exchange.getIn().setBody(
-                                 IOConverter.toBytes(IOConverter
-                                     .toInputStrean(new DOMSource(result.getNode()))));
+        // DOMSource can be coverted to byte[] by camel type converter mechanism
+        DOMSource dom = new DOMSource(result.getNode());
+        exchange.getIn().setBody(dom, byte[].class);
     }
 
     public String getCacheName() {

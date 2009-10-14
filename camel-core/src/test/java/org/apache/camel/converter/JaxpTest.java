@@ -85,7 +85,7 @@ public class JaxpTest extends TestCase {
         InputStream in = converter.convertTo(InputStream.class, source);
         assertNotNull("Could not convert from Source to InputStream!", in);
 
-        String actualText = IOConverter.toString(in);
+        String actualText = IOConverter.toString(in, null);
         assertEquals("Text", "<hello>world!</hello>", actualText);
 
     }

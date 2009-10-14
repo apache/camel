@@ -74,8 +74,8 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         InputStream is = getTestFileStream();
         InputStream cache = (InputStream)converter.convertToStreamCache(is, exchange);
         //assert re-readability of the cached InputStream
-        assertNotNull(IOConverter.toString(cache));
-        assertNotNull(IOConverter.toString(cache));
+        assertNotNull(IOConverter.toString(cache, null));
+        assertNotNull(IOConverter.toString(cache, null));
     }
     
     public void testConvertToStreamCacheInpuStreamWithFileCache() throws Exception {
@@ -85,7 +85,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         exchange.getContext().setProperties(properties);
         InputStream is = getTestFileStream();
         InputStream cache = (InputStream)converter.convertToStreamCache(is, exchange);
-        assertNotNull(IOConverter.toString(cache));
+        assertNotNull(IOConverter.toString(cache, null));
         try {
             // since the stream is closed you delete the temp file
             // reset will not work any more

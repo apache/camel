@@ -47,7 +47,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -567,6 +566,12 @@ public class XmlConverter {
         } else {
             throw new TransformerException("Unable to convert DOM node to a Document");
         }
+    }
+
+    @Converter
+    public InputStream toInputStrean(DOMSource source) throws TransformerException, IOException {
+        String s = toString(source);
+        return new ByteArrayInputStream(s.getBytes());
     }
 
     // Properties

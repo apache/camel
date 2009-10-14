@@ -35,7 +35,7 @@ public class NIOConverterTest extends ContextTestSupport {
         assertEquals(5, out.length);
     }
 
-    public void testToString() {
+    public void testToString() throws Exception {
         ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
         String out = NIOConverter.toString(bb, null);
         assertNotNull(out);
@@ -107,7 +107,7 @@ public class NIOConverterTest extends ContextTestSupport {
         InputStream is = NIOConverter.toInputStream(bb);
         assertNotNull(is);
 
-        assertEquals("Hello", IOConverter.toString(is));
+        assertEquals("Hello", IOConverter.toString(is, null));
     }
 
 }

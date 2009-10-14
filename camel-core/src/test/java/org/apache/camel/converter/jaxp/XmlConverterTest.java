@@ -351,4 +351,15 @@ public class XmlConverterTest extends ContextTestSupport {
         assertTrue(s.contains("<firstName>James</firstName>"));
     }
 
+    public void testToInputStreamByDomSource() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        DOMSource source = conv.toDOMSource("<foo>bar</foo>");
+        InputStream out = conv.toInputStrean(source);
+        assertNotSame(source, out);
+
+        String s = context.getTypeConverter().convertTo(String.class, out);
+        assertEquals("<foo>bar</foo>", s);
+    }
+
 }

@@ -35,7 +35,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.traversal.NodeIterator;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -84,12 +83,9 @@ public class XMLSecurityDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
 
-        // Retrieve the message body as byte array
-        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
-        if (is == null) {
-            throw new IllegalArgumentException("Cannot get the inputstream for XMLSecurityDataFormat mashalling");
-        }
-
+        // Retrieve the message body as input stream
+        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
+        // and covert that to XML
         Document document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
 
         Key keyEncryptionkey;
@@ -121,9 +117,10 @@ public class XMLSecurityDataFormat implements DataFormat {
             }
         }
 
-        DOMSource source = new DOMSource(document);
         try {
-            IOHelper.copy(IOConverter.toInputStrean(source), stream);
+            DOMSource source = new DOMSource(document);
+            InputStream sis = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, source);
+            IOHelper.copy(sis, stream);
         } finally {
             stream.close();
         }
@@ -158,11 +155,11 @@ public class XMLSecurityDataFormat implements DataFormat {
             }
         }
 
-        DOMSource source = new DOMSource(encodedDocument);
-
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            IOHelper.copy(IOConverter.toInputStrean(source), bos);
+            DOMSource source = new DOMSource(encodedDocument);
+            InputStream sis = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, source);
+            IOHelper.copy(sis, bos);
         } finally {
             bos.close();
         }
