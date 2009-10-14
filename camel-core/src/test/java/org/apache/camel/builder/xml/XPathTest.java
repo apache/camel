@@ -203,6 +203,59 @@ public class XPathTest extends ContextTestSupport {
         assertEquals("bar", s);
     }
 
+    public void testXPathWithNamespaceBooleanResult() throws Exception {
+        XPathBuilder builder = xpath("/c:person[@name='James']").namespace("c", "http://acme.com/cheese").booleanResult();
+        
+        Object result = builder.evaluate(createExchange("<person xmlns=\"http://acme.com/cheese\" name='James' city='London'/>"));
+        assertNotNull(result);
+        assertEquals(Boolean.TRUE, result);
+    }
+
+    public void testXPathWithNamespaceBooleanResultType() throws Exception {
+        XPathBuilder builder = xpath("/c:person[@name='James']").namespace("c", "http://acme.com/cheese");
+        builder.setResultType(Boolean.class);
+
+        Object result = builder.evaluate(createExchange("<person xmlns=\"http://acme.com/cheese\" name='James' city='London'/>"));
+        assertNotNull(result);
+        assertEquals(Boolean.TRUE, result);
+    }
+
+    public void testXPathWithNamespaceStringResult() throws Exception {
+        XPathBuilder builder = xpath("/c:person/@name").namespace("c", "http://acme.com/cheese").stringResult();
+        
+        Object result = builder.evaluate(createExchange("<person xmlns=\"http://acme.com/cheese\" name='James' city='London'/>"));
+        assertNotNull(result);
+        assertEquals("James", result);
+    }
+
+    public void testXPathWithNamespacesBooleanResult() throws Exception {
+        Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
+        XPathBuilder builder = xpath("/c:person[@name='James']").namespaces(ns).booleanResult();
+
+        Object result = builder.evaluate(createExchange("<person xmlns=\"http://acme.com/cheese\" name='James' city='London'/>"));
+        assertNotNull(result);
+        assertEquals(Boolean.TRUE, result);
+    }
+
+    public void testXPathWithNamespacesStringResult() throws Exception {
+        Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
+        XPathBuilder builder = xpath("/c:person/@name").namespaces(ns).stringResult();
+
+        Object result = builder.evaluate(createExchange("<person xmlns=\"http://acme.com/cheese\" name='James' city='London'/>"));
+        assertNotNull(result);
+        assertEquals("James", result);
+    }
+
+    public void testXPathWithNamespacesNodeResult() throws Exception {
+        Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
+        XPathBuilder builder = xpath("/c:person/@name").namespaces(ns);
+        builder.setResultType(Node.class);
+
+        Object result = builder.evaluate(createExchange("<person xmlns=\"http://acme.com/cheese\" name='James' city='London'/>"));
+        assertNotNull(result);
+        assertTrue(result.toString().contains("James"));
+    }
+
     public void testUsingJavaExtensions() throws Exception {
         Object instance;
 
