@@ -16,8 +16,19 @@
  */
 package org.apache.camel.component.cxf.converter;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
+import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,6 +44,43 @@ public class ConverterTest extends Assert {
         assertEquals("Get the wrong the class", classList.get(0), String.class);
         assertEquals("Get the wrong the class", classList.get(1), ConverterTest.class);
         assertEquals("Get the wrong the class", classList.get(2), StringBuffer.class);
+    }
+    
+    @Test
+    public void testToArray() throws Exception {
+        List<String> testList = new ArrayList<String>();
+        testList.add("string 1");
+        testList.add("string 2");
+        
+        Object[] array = CxfConverter.toArray(testList);
+        assertNotNull("The array should not be null", array);
+        assertEquals("The array size should not be wrong", 2, array.length);
+    }
+    
+    @Test
+    public void testToInputStream() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        Exchange exchange = new DefaultExchange(context);
+        
+        Response response = EasyMock.createMock(Response.class);
+        InputStream is = EasyMock.createMock(InputStream.class);
+        
+        response.getEntity();
+        EasyMock.expectLastCall().andReturn(is);
+        
+        EasyMock.replay(response);
+        InputStream result = CxfConverter.toInputStream(response, exchange);
+        assertEquals("We should get the inputStream here ", is, result);
+        EasyMock.verify(response);
+        
+        EasyMock.reset(response);
+        response.getEntity();
+        EasyMock.expectLastCall().andReturn("Hello World");
+        EasyMock.replay(response);
+        result = CxfConverter.toInputStream(response, exchange);
+        assertTrue("We should get the inputStream here ", result instanceof ByteArrayInputStream);
+        EasyMock.verify(response);
+        
     }
     
     
