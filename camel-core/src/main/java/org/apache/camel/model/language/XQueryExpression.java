@@ -25,9 +25,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * For XQuery expressions and predicates
@@ -37,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {
-    private static final transient Log LOG = LogFactory.getLog(XQueryExpression.class);
 
     @XmlAttribute(required = false)
     private String type;
@@ -74,7 +72,7 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @Override
     protected void configureExpression(RouteContext routeContext, Expression expression) {
         super.configureExpression(routeContext, expression);
-        updateResultType();
+        updateResultType(routeContext.getCamelContext().getClassResolver());
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
@@ -83,16 +81,16 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @Override
     protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
         super.configurePredicate(routeContext, predicate);
-        updateResultType();
+        updateResultType(routeContext.getCamelContext().getClassResolver());
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
     }
 
-    private void updateResultType() {
+    private void updateResultType(ClassResolver resolver) {
         if (resultType == null && type != null) {
             try {
-                resultType = Class.forName(type);
+                resultType = resolver.resolveMandatoryClass(type);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeCamelException(e);
             }

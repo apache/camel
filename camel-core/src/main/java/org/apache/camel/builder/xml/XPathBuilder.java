@@ -35,7 +35,6 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
-import org.apache.camel.component.file.GenericFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -48,6 +47,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Service;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;

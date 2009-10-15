@@ -14,37 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.processor;
 
-import java.net.URL;
-
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.apache.camel.builder.xml.XsltBuilder.xslt;
+import org.apache.camel.builder.xml.Namespaces;
 
 /**
  * @version $Revision$
  */
-public class XsltTest extends ContextTestSupport {
+public class XPathWithNamespaceBuilderFilterAndResultTypeTest extends XPathWithNamespaceBuilderFilterTest {
 
-    public void testXslt() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
-
-        sendBody("direct:start", "<hello>world!</hello>");
-
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                URL styleSheet = getClass().getResource("example.xsl");
+            public void configure() {
+                // START SNIPPET: example
+                // lets define the namespaces we'll need in our filters
+                Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
+                        .add("xsd", "http://www.w3.org/2001/XMLSchema");
 
-                from("direct:start").process(xslt(styleSheet)).to("mock:result");
+                // now lets create an xpath based Message Filter
+                from("direct:start").
+                        filter(ns.xpath("/c:person[@name='James']", String.class)).
+                        to("mock:result");
+                // END SNIPPET: example
             }
         };
     }
