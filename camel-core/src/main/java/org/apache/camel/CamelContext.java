@@ -581,5 +581,16 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param repository the repository
      */
     void setInflightRepository(InflightRepository repository);
+    
+    /**
+     * Gets the the application context class loader which may be helpful for running camel in other container     
+     * @return the application context class loader
+     */
+    ClassLoader getApplicationContextClassLoader();
 
+    /**
+     * Sets the application context class loader
+     * @param classLoader
+     */
+    void setApplicationContextClassLoader(ClassLoader classLoader);
 }

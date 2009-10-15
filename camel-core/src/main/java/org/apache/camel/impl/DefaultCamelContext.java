@@ -99,6 +99,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
     private static int nameSuffix;
+    private ClassLoader applicationContextClassLoader;
     private boolean routeDefinitionInitiated;
     private String name;
     private final Map<String, Endpoint> endpoints = new LRUCache<String, Endpoint>(1000);
@@ -1373,6 +1374,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     @Override
     public String toString() {
         return "CamelContext(" + getName() + ")";
+    }
+
+    public ClassLoader getApplicationContextClassLoader() {
+        return applicationContextClassLoader;
+    }
+
+    public void setApplicationContextClassLoader(ClassLoader classLoader) {
+        applicationContextClassLoader = classLoader;        
     }
 
 }

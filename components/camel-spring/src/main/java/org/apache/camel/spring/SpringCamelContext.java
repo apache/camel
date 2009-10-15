@@ -138,6 +138,20 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        ClassLoader cl = null;
+        // set the application context classloader
+        if (applicationContext != null && applicationContext.getClassLoader() != null) {
+            cl = applicationContext.getClassLoader();
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Canot find the class loader from application context, so us the thread context class loader");
+            }
+            cl = Thread.currentThread().getContextClassLoader();   
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Set the application context classloader with " + cl);
+        }
+        this.setApplicationContextClassLoader(cl);
 
         if (applicationContext instanceof ConfigurableApplicationContext) {
             // only add if not already added
