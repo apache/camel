@@ -45,7 +45,6 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
     public void testSplitParallelStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.allMessages().body().isNotEqualTo("Kaboom");
-        mock.allMessages().body().isNotEqualTo("Bye World");
 
         try {
             template.sendBody("direct:start", "Hello World,Goodday World,Kaboom,Bye World");

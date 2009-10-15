@@ -31,6 +31,10 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/xmldata");
         super.setUp();
+
+        template.sendBodyAndHeader("file://target/xmldata",
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<sample>\n<test>Helloooo</test>\n</sample>", Exchange.FILE_NAME, "hello.xml");
     }
 
     public void testWireTapXpathExpression() throws Exception {
@@ -39,10 +43,6 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
 
         MockEndpoint tap = getMockEndpoint("mock:wiretap");
         tap.expectedMessageCount(1);
-
-        template.sendBodyAndHeader("file://target/xmldata/in",
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<sample>\n<test>Helloooo</test>\n</sample>", Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 

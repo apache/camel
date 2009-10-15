@@ -51,12 +51,12 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
         context.start();
 
         for (int i = 0; i < 10; i++) {
-            getMockEndpoint("mock:" + i).expectedMessageCount(100);
+            getMockEndpoint("mock:" + i).expectedMessageCount(50);
         }
 
         // use concurrent producers to send a lot of messages
         ExecutorService executors = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             executors.execute(new Runnable() {
                 public void run() {
                     for (int i = 0; i < 10; i++) {
@@ -102,12 +102,12 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
         context.start();
 
         for (int i = 0; i < 10; i++) {
-            getMockEndpoint("mock:" + i).expectedMessageCount(100);
+            getMockEndpoint("mock:" + i).expectedMessageCount(50);
         }
 
         // use concurrent producers to send a lot of messages
         ExecutorService executors = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             executors.execute(new Runnable() {
                 public void run() {
                     for (int i = 0; i < 10; i++) {

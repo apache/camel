@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/poll/?consumer.delay=2500&consumer.delay=2000&sortBy=file:name&maxMessagesPerPoll=2";
+    private String fileUrl = "file://target/poll/?initialDelay=2000&delay=5000&sortBy=file:name&maxMessagesPerPoll=2";
 
     @Override
     protected void setUp() throws Exception {

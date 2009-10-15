@@ -38,7 +38,7 @@ public class RouteFormattedUriTest extends ContextTestSupport {
 
     public void testFormattedUri() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:" + result);
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
