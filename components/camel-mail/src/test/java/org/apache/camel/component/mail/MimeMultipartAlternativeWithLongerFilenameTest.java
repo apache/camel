@@ -18,7 +18,6 @@ package org.apache.camel.component.mail;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
-
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.internet.MimeMultipart;
@@ -31,9 +30,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
 
-public class MimeMultipartAlternativeTest extends CamelTestSupport {
+public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSupport {
     private String alternativeBody = "hello world! (plain text)";
-    private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:0001\"></body></html>";
+    private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";
 
     private void sendMultipartEmail(boolean useInlineattachments) throws Exception {
         // create an exchange with a normal body and attachment to be produced as email
@@ -46,7 +45,7 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         Message in = exchange.getIn();
         in.setBody(htmlBody);
         in.setHeader(MAIL_ALTERNATIVE_BODY, alternativeBody);
-        in.addAttachment("cid:0001", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
+        in.addAttachment("cid:myCoolLogo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
 
         // create a producer that can produce the exchange (= send the mail)
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -55,7 +54,7 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
 
         context.createProducerTemplate().send(endpoint, exchange);
     }
-    
+
     private void verifyTheRecivedEmail(String expectString) throws Exception {
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
         Thread.sleep(1000);
@@ -71,7 +70,7 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         if (log.isTraceEnabled()) {
             log.trace("multipart alternative: \n" + dumpedMessage);
         }
-         
+
         // plain text
         assertEquals(alternativeBody, out.getIn().getBody(String.class));
 
@@ -81,17 +80,17 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
         assertEquals(1, attachments.size());
         assertEquals("multipart body should have 2 parts", 2, out.getIn().getBody(MimeMultipart.class).getCount());
     }
-    
+
     @Test
     public void testMultipartEmailWithInlineAttachments() throws Exception {
         sendMultipartEmail(true);
-        verifyTheRecivedEmail("Content-Disposition: inline; filename=0001");
-    }    
-    
+        verifyTheRecivedEmail("Content-Disposition: inline; filename=myCoolLogo.jpeg");
+    }
+
     @Test
     public void testMultipartEmailWithRegularAttachments() throws Exception {
         sendMultipartEmail(false);
-        verifyTheRecivedEmail("Content-Disposition: attachment; filename=0001");
+        verifyTheRecivedEmail("Content-Disposition: attachment; filename=myCoolLogo.jpeg");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
