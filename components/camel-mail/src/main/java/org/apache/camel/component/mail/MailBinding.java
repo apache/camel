@@ -433,14 +433,9 @@ public class MailBinding {
 
         while (names.hasMoreElements()) {
             Header header = (Header)names.nextElement();
-            String[] value = mailMessage.getHeader(header.getName());
-            if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
-                if (value.length == 1) {
-                    CollectionHelper.appendValue(answer, header.getName(), value[0]);
-                } else {
-                    CollectionHelper.appendValue(answer, header.getName(), value);
-                }
+            String value = header.getValue();
+            if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
+                CollectionHelper.appendValue(answer, header.getName(), value);
             }
         }
 
