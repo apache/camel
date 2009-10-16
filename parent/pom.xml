@@ -54,7 +54,7 @@
     <spring-osgi-version>1.2.0</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
     <javax-mail-version>1.4.1_1-SNAPSHOT</javax-mail-version>
-    <jaxb-version>2.1.10</jaxb-version>
+    <jaxb-version>2.1.12</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <stax-api-version>1.0.1</stax-api-version>
     <log4j-version>1.2.14</log4j-version>
