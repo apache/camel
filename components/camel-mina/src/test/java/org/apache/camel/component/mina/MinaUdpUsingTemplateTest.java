@@ -70,7 +70,7 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:udp://127.0.0.1:4445?sync=false").to("mock:result");
+                from("mina:udp://127.0.0.1:4445?sync=false&minaLogger=true").to("mock:result");
             }
         };
     }
