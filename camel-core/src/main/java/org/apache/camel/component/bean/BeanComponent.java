@@ -34,10 +34,11 @@ public class BeanComponent extends DefaultComponent {
     public BeanComponent() {
     }
     
-        /**
+    /**
      * A helper method to create a new endpoint from a bean with a generated URI
      */
     public ProcessorEndpoint createEndpoint(Object bean) {
+        // used by servicemix-camel
         String uri = "bean:generated:" + bean;
         return createEndpoint(bean, uri);
     }
@@ -46,6 +47,7 @@ public class BeanComponent extends DefaultComponent {
      * A helper method to create a new endpoint from a bean with a given URI
      */
     public ProcessorEndpoint createEndpoint(Object bean, String uri) {
+        // used by servicemix-camel
         BeanProcessor processor = new BeanProcessor(bean, getCamelContext());
         return createEndpoint(uri, processor);
     }

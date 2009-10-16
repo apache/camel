@@ -25,4 +25,8 @@ public class MyFooBean {
         return "Hello " + s;
     }
 
+    @Override
+    public String toString() {
+        return "MyFooBean";
+    }
 }

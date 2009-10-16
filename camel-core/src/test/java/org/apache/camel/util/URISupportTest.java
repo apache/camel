@@ -16,6 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 
 /**
@@ -88,6 +92,17 @@ public class URISupportTest extends ContextTestSupport {
     public void testNormalizeUriWhereParamererIsFaulty() throws Exception {
         String out = URISupport.normalizeUri("stream:uri?file:///d:/temp/data/log/quickfix.log&scanStream=true");
         assertNotNull(out);
+    }
+
+    public void testCreateRemaingURI() throws Exception {
+        URI original = new URI("http://camel.apache.org");
+        Map param = new HashMap();
+        param.put("foo", "123");
+        URI newUri = URISupport.createRemainingURI(original, param);
+        assertNotNull(newUri);
+
+        String s = newUri.toString();
+        assertEquals("http://camel.apache.org?foo=123", s);
     }
 
 }
