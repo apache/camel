@@ -74,7 +74,21 @@ public class GenericFile<T> implements Serializable {
         result.setFile(source.getFile());
         result.setBody(source.getBody());
         result.setBinding(source.getBinding());
+
+        copyFromPopulateAdditional(source, result);
         return result;
+    }
+
+    /**
+     * Copies additional information from the source to the result.
+     * <p/>
+     * Inherited classes can override this method and copy their specific data.
+     *
+     * @param source  the source
+     * @param result  the result
+     */
+    public void copyFromPopulateAdditional(GenericFile source, GenericFile result) {
+        // noop
     }
 
     /**

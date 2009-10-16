@@ -100,9 +100,6 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         RemoteFileConfiguration config = (RemoteFileConfiguration) getConfiguration();
         ObjectHelper.notEmpty(config.getHost(), "host");
         ObjectHelper.notEmpty(config.getProtocol(), "protocol");
-        if (config.getPort() <= 0) {
-            throw new IllegalArgumentException("port is not assigned to a positive value");
-        }
     }
 
     /**

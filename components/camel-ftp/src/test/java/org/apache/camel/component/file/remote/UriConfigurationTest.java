@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -136,4 +138,24 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals(true, config.isBinary());
         assertEquals("/home/janstey/.ssh/known_hosts", config.getKnownHostsFile());
     }
+
+    @Test
+    public void testInvalidStartingDirectory() throws Exception {
+        Endpoint endpoint = context.getEndpoint("ftp://user@hostname?password=secret");
+        FtpEndpoint ftpEndpoint = assertIsInstanceOf(FtpEndpoint.class, endpoint);
+        FtpConfiguration config = (FtpConfiguration) ftpEndpoint.getConfiguration();
+        config.setHost("somewhere");
+        config.setDirectory("some/file.txt");
+        try {
+            ftpEndpoint.createConsumer(new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    // do nothing
+                }
+            });
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Only directory is supported. Endpoint must be configured with a valid directory: some/file.txt", e.getMessage());
+        }
+    }
+
 }

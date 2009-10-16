@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a remote file of some sort of backing object
@@ -65,34 +64,16 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
     protected String normalizePath(String name) {        
         return name;
     }
-    
-    @SuppressWarnings("unchecked")
-    public RemoteFile<T> copyFrom(RemoteFile<T> source) {
-        RemoteFile<T> result;
-        try {
-            result = source.getClass().newInstance();
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
 
-        // align these setters with GenericFile
-        result.setEndpointPath(source.getEndpointPath());
-        result.setAbsolute(source.isAbsolute());
-        result.setAbsoluteFilePath(source.getAbsoluteFilePath());
-        result.setRelativeFilePath(source.getRelativeFilePath());
-        result.setFileName(source.getFileName());
-        result.setFileNameOnly(source.getFileNameOnly());
-        result.setFileLength(source.getFileLength());
-        result.setLastModified(source.getLastModified());
-        result.setFile(source.getFile());
-        result.setBody(source.getBody());
-        result.setBinding(source.getBinding());
+    @Override
+    public void copyFromPopulateAdditional(GenericFile source, GenericFile result) {
+        RemoteFile remoteSource = (RemoteFile) source;
+        RemoteFile remoteResult = (RemoteFile) result;
 
-        result.setHostname(source.getHostname());
-        return result;
+        remoteResult.setHostname(remoteSource.getHostname());
     }
 
-    protected String normalizePathToProtocol(String path) {        
+    protected String normalizePathToProtocol(String path) {
         path = super.normalizePathToProtocol(path);        
         // strip leading / for FTP protocol to avoid files with absolute paths
         return FileUtil.stripLeadingSeparator(path);
