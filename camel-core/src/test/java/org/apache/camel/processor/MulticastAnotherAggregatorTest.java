@@ -17,13 +17,8 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -72,77 +67,12 @@ public class MulticastAnotherAggregatorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testMulticastLoadParallelly() throws Exception {
-        sendLoad(true);
-    }
-
-    public void testMulticastLoadSequentially() throws Exception {
-        sendLoad(false);
-    }
-
-    public void sendLoad(boolean isParallel) throws Exception {
-        final int numMsgs = 10;
-        final int numThreads = 10;
-        final AtomicLong total = new AtomicLong(0);
-        final String url = isParallel ? "direct:parallel" : "direct:sequential";
-        
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(numThreads * numMsgs);
-    
-        Runnable runner = new Runnable() {
-            public void run() {
-                try {
-                    Processor processor = new Processor() {
-                        public void process(Exchange exchange) {
-                            Message in = exchange.getIn();
-                            in.setBody("input");
-                            in.setHeader("foo", "bar");
-                        }
-                    };
-
-                    for (int count = 0; count < numMsgs; count++) {
-                        template.request(url, processor);
-                    }
-
-                    LOG.debug("Runner completed: " + total.incrementAndGet());
-                } catch (Exception e) {
-                    fail(e.getMessage());
-                }
-            }
-        };
-        ExecutorService executor = Executors.newCachedThreadPool();
-        
-        for (int count = 0; count < numThreads; count++) {
-            executor.execute(runner);
-        }
-        
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-            executor.awaitTermination(10, TimeUnit.SECONDS);
-        }
-
-        assertMockEndpointsSatisfied();
-    }
-    
-    private class WorkQueuePolicy implements RejectedExecutionHandler {
-        public void rejectedExecution(Runnable runnable, ThreadPoolExecutor executor) {
-            try {
-                executor.getQueue().put(runnable);
-            } catch (InterruptedException e) {
-                // should not happen
-                throw new RejectedExecutionException(e);
-            }
-        }
-    }
-    
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             public void configure() {
-                ThreadPoolExecutor tpExecutor = new ThreadPoolExecutor(1, 10, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(10));
-                tpExecutor.setRejectedExecutionHandler(new WorkQueuePolicy());
-                
-                
+                ThreadPoolExecutor tpExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(10));
+
                 // START SNIPPET: example
                 // The message will be sent parallelly to the endpoints
                 from("direct:parallel")
