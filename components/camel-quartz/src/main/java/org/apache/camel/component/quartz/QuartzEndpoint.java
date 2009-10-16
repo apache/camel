@@ -17,8 +17,6 @@
 package org.apache.camel.component.quartz;
 
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -62,20 +60,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     public QuartzEndpoint(final String endpointUri, final Scheduler scheduler) {
         super(endpointUri);
         this.scheduler = scheduler;
-    }
-
-    public void addTriggers(final Map<Trigger, JobDetail> triggerMap) throws SchedulerException {
-        if (triggerMap != null) {
-            Set<Map.Entry<Trigger, JobDetail>> entries = triggerMap.entrySet();
-            for (Map.Entry<Trigger, JobDetail> entry : entries) {
-                Trigger key = entry.getKey();
-                JobDetail value = entry.getValue();
-                ObjectHelper.notNull(key, "key");
-                ObjectHelper.notNull(value, "value");
-
-                addTrigger(key, value);
-            }
-        }
     }
 
     public void addTrigger(final Trigger trigger, final JobDetail detail) throws SchedulerException {

@@ -47,7 +47,6 @@ public class QuartzComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
     private SchedulerFactory factory;
     private Scheduler scheduler;
-    private Map<Trigger, JobDetail> triggers;
 
     public QuartzComponent() {
     }
@@ -151,14 +150,6 @@ public class QuartzComponent extends DefaultComponent {
 
     public void setScheduler(final Scheduler scheduler) {
         this.scheduler = scheduler;
-    }
-
-    public Map<Trigger, JobDetail> getTriggers() {
-        return triggers;
-    }
-
-    public void setTriggers(final Map<Trigger, JobDetail> triggers) {
-        this.triggers = triggers;
     }
 
     // Implementation methods

@@ -45,6 +45,9 @@ public class QuartzRouteTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             log.debug("Received: " + in + " with headers: " + in.getHeaders());
+            // should be quartz message
+            QuartzMessage qm = exchange.getIn(QuartzMessage.class);
+            assertNotNull(qm.getJobExecutionContext());
         }
     }
 
