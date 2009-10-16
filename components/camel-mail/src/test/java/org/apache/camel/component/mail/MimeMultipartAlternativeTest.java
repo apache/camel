@@ -89,12 +89,12 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
 
     public void testMultipartEmailWithInlineAttachments() throws Exception {
         sendMultipartEmail(true);
-        verifyTheRecivedEmail("Content-Disposition: inline; filename=\"cid:0001\"");
+        verifyTheRecivedEmail("Content-Disposition: inline; filename=0001");
     }    
         
     public void testMultipartEmailWithRegularAttachments() throws Exception {
         sendMultipartEmail(false);
-        verifyTheRecivedEmail("Content-Disposition: attachment; filename=\"cid:0001\"");
+        verifyTheRecivedEmail("Content-Disposition: attachment; filename=0001");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

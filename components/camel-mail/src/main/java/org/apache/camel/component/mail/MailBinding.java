@@ -266,10 +266,13 @@ public class MailBinding {
                     // add a Content-ID header to the attachment
                         // must use angle brackets according to RFC: http://www.ietf.org/rfc/rfc2392.txt
                         messageBodyPart.addHeader("Content-ID", "<" + attachmentFilename.substring(4) + ">");
+                        // Set the filename without the cid
+                        messageBodyPart.setFileName(attachmentFilename.substring(4));
+                    } else {
+                        // Set the filename
+                        messageBodyPart.setFileName(attachmentFilename);
                     }
 
-                    // Set the filename
-                    messageBodyPart.setFileName(attachmentFilename);
                     LOG.trace("Attachment #" + i + ": ContentType: " + messageBodyPart.getContentType());
 
                     if (contentTypeResolver != null) {
