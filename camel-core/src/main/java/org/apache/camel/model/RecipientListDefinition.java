@@ -66,24 +66,13 @@ public class RecipientListDefinition extends ExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expression = getExpression().createExpression(routeContext);
 
-        // add a tokenizer if we have a delimiter
         if (delimiter != null) {
-            expression = ExpressionBuilder.tokenizeExpression(expression, delimiter);
+            return new RecipientList(expression, delimiter);
+        } else {
+            return new RecipientList(expression);
         }
-
-        return new RecipientList(expression);
     }
     
-    // Fluent API
-    //-------------------------------------------------------------------------
-    /**
-     * Set the expression that RecipientListType will use
-     * @return the builder
-     */
-    public ExpressionClause<RecipientListDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
-
     // Properties
     //-------------------------------------------------------------------------
 

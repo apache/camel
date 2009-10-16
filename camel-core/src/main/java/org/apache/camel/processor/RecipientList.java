@@ -43,13 +43,23 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class RecipientList extends ServiceSupport implements Processor {
     private ProducerCache producerCache;
     private Expression expression;
+    private final String delimiter;
 
     public RecipientList() {
+        // use comma by default as delimiter
+        this.delimiter = ",";
     }
 
     public RecipientList(Expression expression) {
-        notNull(expression, "expression");
+        // use comma by default as delimiter
+        this(expression, ",");
+    }
+
+    public RecipientList(Expression expression, String delimiter) {
+        ObjectHelper.notNull(expression, "expression");
+        ObjectHelper.notEmpty(delimiter, "delimiter");
         this.expression = expression;
+        this.delimiter = delimiter;
     }
 
     @Override
@@ -66,7 +76,7 @@ public class RecipientList extends ServiceSupport implements Processor {
      * Sends the given exchange to the recipient list
      */
     public void sendToRecipientList(Exchange exchange, Object receipientList) throws Exception {
-        Iterator iter = ObjectHelper.createIterator(receipientList);
+        Iterator iter = ObjectHelper.createIterator(receipientList, delimiter);
         List<Processor> processors = new ArrayList<Processor>();
         while (iter.hasNext()) {
             Object recipient = iter.next();

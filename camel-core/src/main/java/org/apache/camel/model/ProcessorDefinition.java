@@ -962,7 +962,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
 
     /**
      * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a>
-     * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
+     * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients.
+     * <p/>
+     * Will use comma as default delimiter.
      *
      * @param recipients expression to decide the destinations
      * @return the builder
@@ -970,6 +972,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     @SuppressWarnings("unchecked")
     public Type recipientList(Expression recipients) {
         RecipientListDefinition answer = new RecipientListDefinition(recipients);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a>
+     * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
+     *
+     * @param recipients expression to decide the destinations
+     * @param delimiter  a custom delimiter to use
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type recipientList(Expression recipients, String delimiter) {
+        RecipientListDefinition answer = new RecipientListDefinition(recipients);
+        answer.setDelimiter(delimiter);
         addOutput(answer);
         return (Type) this;
     }
