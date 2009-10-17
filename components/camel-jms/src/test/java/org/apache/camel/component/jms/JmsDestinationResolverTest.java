@@ -30,10 +30,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision: 786464 $
  */
 public class JmsDestinationResolverTest extends CamelTestSupport {
+
     protected MockEndpoint resultEndpoint;
     protected String componentName = "activemq";
     protected String startEndpointUri;
-
+    private ClassPathXmlApplicationContext applicationContext;
+    
     @Test
     public void testSendAndReceiveMessage() throws Exception {
         assertSendAndReceiveBody("Hello there!");
@@ -62,8 +64,6 @@ public class JmsDestinationResolverTest extends CamelTestSupport {
 
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
     }
-
-    private ClassPathXmlApplicationContext applicationContext;
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
