@@ -42,7 +42,7 @@ public class DeferredRequestReplyMap  {
         private Object monitor;
 
         public DeferredMessageSentCallback(DeferredRequestReplyMap map, UuidGenerator uuidGenerator, Object monitor) {
-            transitionalID = uuidGenerator.generateId();
+            transitionalID = uuidGenerator.generateUuid();
             this.map = map;
             this.monitor = monitor;
         }

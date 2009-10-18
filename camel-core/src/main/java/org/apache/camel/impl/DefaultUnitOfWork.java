@@ -42,7 +42,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private static final transient Log LOG = LogFactory.getLog(DefaultUnitOfWork.class);
-    private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
 
     private String id;
     private List<Synchronization> synchronizations;
@@ -148,7 +147,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
 
     public String getId() {
         if (id == null) {
-            id = DEFAULT_ID_GENERATOR.generateId();
+            id = UuidGenerator.get().generateUuid();
         }
         return id;
     }

@@ -16,37 +16,33 @@
  */
 package org.apache.camel.util;
 
-import java.util.UUID;
-
 /**
- * Generator for Globally unique Strings.
+ * Helper methods for working with Strings. 
  */
-public class UuidGenerator {
+public final class StringHelper {
 
-    private static UuidGenerator instance = new UuidGenerator();
+    /**
+     * Constructor of utility class should be private.
+     */
+    private StringHelper() {
+    }
     
-    UuidGenerator() {
-    }
-
     /**
-     * Returns a UUID generator. The instance returned by this method makes use
-     * of {@link java.util.UUID#randomUUID()} for generating UUIDs. Other
-     * generation strategies are currently not supported (but maybe added in
-     * future versions).
+     * Ensures that <code>s</code> is friendly for a URL or file system.
      * 
-     * @return a UUID generator singleton.
+     * @param s
+     *            String to be sanitized.
+     * @return sanitized version of <code>s</code>.
+     * @throws NullPointerException
+     *             if <code>s</code> is <code>null</code>.
      */
-    public static UuidGenerator get() {
-        return instance;
-    }
-
-    /**
-     * Generates a UUID string representation.  
-     * 
-     * @return a UUID string.
-     */
-    public String generateUuid() {
-        return UUID.randomUUID().toString();
+    public static String sanitize(String s) {
+        return s
+            .replace(':', '-')
+            .replace('_', '-')
+            .replace('.', '-')
+            .replace('/', '-')
+            .replace('\\', '-');
     }
     
 }

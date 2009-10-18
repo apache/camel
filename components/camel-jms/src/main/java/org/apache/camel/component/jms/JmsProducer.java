@@ -186,7 +186,7 @@ public class JmsProducer extends DefaultProducer {
         String correlationId = in.getHeader("JMSCorrelationID", String.class);
 
         if (correlationId == null && !msgIdAsCorrId) {
-            in.setHeader("JMSCorrelationID", getUuidGenerator().generateId());
+            in.setHeader("JMSCorrelationID", getUuidGenerator().generateUuid());
         }
 
         final ValueHolder<FutureTask> futureHolder = new ValueHolder<FutureTask>();
@@ -420,7 +420,7 @@ public class JmsProducer extends DefaultProducer {
 
     public UuidGenerator getUuidGenerator() {
         if (uuidGenerator == null) {
-            uuidGenerator = new UuidGenerator();
+            uuidGenerator = UuidGenerator.get();
         }
         return uuidGenerator;
     }

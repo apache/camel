@@ -261,7 +261,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
 
     public static synchronized UuidGenerator getUuidGenerator() {
         if (uuidGenerator == null) {
-            uuidGenerator = new UuidGenerator();
+            uuidGenerator = UuidGenerator.get();
         }
         return uuidGenerator;
     }

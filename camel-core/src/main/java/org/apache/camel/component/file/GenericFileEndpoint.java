@@ -36,6 +36,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -107,7 +108,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * none is provided
      */
     public String getGeneratedFileName(Message message) {
-        return UuidGenerator.generateSanitizedId(message.getMessageId());
+        return StringHelper.sanitize(message.getMessageId());
     }
 
     public GenericFileProcessStrategy<T> getGenericFileProcessStrategy() {

@@ -40,7 +40,6 @@ import org.apache.camel.util.UuidGenerator;
  */
 public final class DefaultExchange implements Exchange {
 
-    private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
     protected final CamelContext context;
     private Map<String, Object> properties;
     private Message in;
@@ -335,7 +334,7 @@ public final class DefaultExchange implements Exchange {
             answer = in.createExchangeId();
         }
         if (answer == null) {
-            answer = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
+            answer = UuidGenerator.get().generateUuid();
         }
         return answer;
     }

@@ -16,37 +16,23 @@
  */
 package org.apache.camel.util;
 
-import java.util.UUID;
+import junit.framework.TestCase;
 
 /**
- * Generator for Globally unique Strings.
+ * Unit test for StringHelper
  */
-public class UuidGenerator {
+public class StringHelperTest extends TestCase {
 
-    private static UuidGenerator instance = new UuidGenerator();
-    
-    UuidGenerator() {
+    public void testSimpleSanitized() {
+        String out = StringHelper.sanitize("hello");
+        assertTrue("Should not contain : ", out.indexOf(':') == -1);
+        assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }
 
-    /**
-     * Returns a UUID generator. The instance returned by this method makes use
-     * of {@link java.util.UUID#randomUUID()} for generating UUIDs. Other
-     * generation strategies are currently not supported (but maybe added in
-     * future versions).
-     * 
-     * @return a UUID generator singleton.
-     */
-    public static UuidGenerator get() {
-        return instance;
+    public void testNotFileFriendlySimpleSanitized() {
+        String out = StringHelper.sanitize("c:\\helloworld");
+        assertTrue("Should not contain : ", out.indexOf(':') == -1);
+        assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }
 
-    /**
-     * Generates a UUID string representation.  
-     * 
-     * @return a UUID string.
-     */
-    public String generateUuid() {
-        return UUID.randomUUID().toString();
-    }
-    
 }

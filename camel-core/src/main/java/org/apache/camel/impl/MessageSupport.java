@@ -33,7 +33,6 @@ import org.apache.camel.util.UuidGenerator;
  * @version $Revision$
  */
 public abstract class MessageSupport implements Message {
-    private static final UuidGenerator DEFALT_ID_GENERATOR = new UuidGenerator();
     private Exchange exchange;
     private Object body;
     private String messageId;
@@ -190,6 +189,6 @@ public abstract class MessageSupport implements Message {
      * Lets allow implementations to auto-create a messageId
      */
     protected String createMessageId() {
-        return DEFALT_ID_GENERATOR.generateId();
+        return UuidGenerator.get().generateUuid();
     }
 }

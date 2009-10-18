@@ -23,34 +23,8 @@ import junit.framework.TestCase;
  */
 public class UuidGeneratorTest extends TestCase {
 
-    private UuidGenerator generator;
-
-    protected void setUp() throws Exception {
-        generator = new UuidGenerator("unittest");
-    }
-
-    public void testUniqueId() {
-        assertNotSame("Should generate unique ids", generator.generateId(), generator.generateId());
-    }
-
-    public void testHostName() {
-        assertNotNull(UuidGenerator.getHostName());
-    }
-
-    public void testSimpleSanitizedId() {
-        String out = UuidGenerator.generateSanitizedId("hello");
-        assertTrue("Should not contain : ", out.indexOf(':') == -1);
-        assertTrue("Should not contain . ", out.indexOf('.') == -1);
-    }
-
-    public void testNotFileFriendlySimpleSanitizedId() {
-        String out = UuidGenerator.generateSanitizedId("c:\\helloworld");
-        assertTrue("Should not contain : ", out.indexOf(':') == -1);
-        assertTrue("Should not contain . ", out.indexOf('.') == -1);
-    }
-
-    public void testSanitizedId() {
-        String out = generator.generateSanitizedId();
+    public void testSanitized() {
+        String out = UuidGenerator.get().generateUuid();
         assertTrue("Should not contain : ", out.indexOf(':') == -1);
         assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }

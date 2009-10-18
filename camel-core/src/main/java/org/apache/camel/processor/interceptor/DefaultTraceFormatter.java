@@ -259,8 +259,8 @@ public class DefaultTraceFormatter implements TraceFormatter {
         } else if (showExchangeId || showShortExchangeId) {
             id = getBreadCrumbID(exchange).toString();
             if (showShortExchangeId) {
-                // skip hostname for short exchange id
-                id = id.substring(id.indexOf('/') + 1);
+                // only output last part of id
+                id = id.substring(id.lastIndexOf('-') + 1);
             }
         }
 
