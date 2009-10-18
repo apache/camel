@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.spi.RouteContext;
@@ -85,13 +86,18 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
                 ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
                 String otherRef = other.getRef();
                 if (!isErrorHandlerBuilderConfigured(otherRef)) {
+                    // the other has also no explicit error handler configured then fallback to the handler
+                    // configured on the parent camel context
+                    answer = lookupErrorHandlerBuilder(routeContext.getCamelContext());
+                }
+                if (answer == null) {
                     // the other has also no explicit error handler configured then fallback to the default error handler
                     // otherwise we could recursive loop forever (triggered by createErrorHandler method)
                     answer = new DefaultErrorHandlerBuilder();
-                    // inherit the error handlers from the other as they are to be shared
-                    // this is needed by camel-spring when none error handler has been explicit configured
-                    answer.setErrorHandlers(other.getErrorHandlers());
                 }
+                // inherit the error handlers from the other as they are to be shared
+                // this is needed by camel-spring when none error handler has been explicit configured
+                answer.setErrorHandlers(other.getErrorHandlers());
             }
         } else {
             // use specific configured error handler
@@ -100,6 +106,21 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
         return answer;
     }
+
+    protected static ErrorHandlerBuilder lookupErrorHandlerBuilder(CamelContext camelContext) {
+        ErrorHandlerBuilder answer = camelContext.getErrorHandlerBuilder();
+        if (answer instanceof ErrorHandlerBuilderRef) {
+            ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
+            String otherRef = other.getRef();
+            if (isErrorHandlerBuilderConfigured(otherRef)) {
+                answer = camelContext.getRegistry().lookup(otherRef, ErrorHandlerBuilder.class);
+            }
+        }
+
+        return answer;
+    }
+
+
 
     /**
      * Returns whether a specific error handler builder has been configured or not.
