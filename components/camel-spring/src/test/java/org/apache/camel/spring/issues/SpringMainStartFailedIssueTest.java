@@ -19,14 +19,12 @@ package org.apache.camel.spring.issues;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.Main;
-import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class SpringMainStartFailedIssueTest extends TestSupport {
 
-    @Test
     public void testStartupFailed() throws Exception {
         Main main = new Main();
 

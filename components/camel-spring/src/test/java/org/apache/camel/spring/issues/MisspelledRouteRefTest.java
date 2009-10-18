@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.apache.camel.spring.Main;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
 
 /**
  * @version $Revision$
@@ -29,7 +28,6 @@ public class MisspelledRouteRefTest extends TestCase {
 
     private static final transient Log LOG = LogFactory.getLog(MisspelledRouteRefTest.class);
 
-    @Test    
     public void testApplicationContextFailed() {
         try {
             Main main = new Main();

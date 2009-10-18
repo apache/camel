@@ -19,7 +19,6 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -33,13 +32,11 @@ public class ProducerTemplateAutoRegisterBeanIdExistsTest extends AbstractJUnit3
     @Autowired
     private CamelContext context;
 
-    @Test
     public void testHasNoTemplate() {
         Object lookup = context.getRegistry().lookup("template");
         assertFalse("Should not be a producer template", lookup instanceof ProducerTemplate);
     }
 
-    @Test
     public void testHasConsumerTemplate() {
         Object lookup = context.getRegistry().lookup("consumerTemplate");
         assertTrue("Should be a consumer template", lookup instanceof ConsumerTemplate);

@@ -18,7 +18,6 @@ package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -35,7 +34,6 @@ public class ConsumerTemplateAlreadyExistTest extends AbstractJUnit38SpringConte
     @Autowired
     private CamelContext context;
 
-    @Test
     public void testHasExistingTemplate() {
         assertNotNull("Should have injected a consumer template", template);
 
