@@ -135,5 +135,57 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("getName", name.getName());
     }
 
+    public void testIsGetter() throws Exception {
+        ExampleBean bean = new ExampleBean();
+
+        Method name = bean.getClass().getMethod("getName", null);
+        assertEquals(true, IntrospectionSupport.isGetter(name));
+        assertEquals(false, IntrospectionSupport.isSetter(name));
+
+        Method price = bean.getClass().getMethod("getPrice", null);
+        assertEquals(true, IntrospectionSupport.isGetter(price));
+        assertEquals(false, IntrospectionSupport.isSetter(price));
+    }
+
+    public void testIsSetter() throws Exception {
+        ExampleBean bean = new ExampleBean();
+
+        Method name = bean.getClass().getMethod("setName", String.class);
+        assertEquals(false, IntrospectionSupport.isGetter(name));
+        assertEquals(true, IntrospectionSupport.isSetter(name));
+
+        Method price = bean.getClass().getMethod("setPrice", double.class);
+        assertEquals(false, IntrospectionSupport.isGetter(price));
+        assertEquals(true, IntrospectionSupport.isSetter(price));
+    }
+
+    public void testOtherIsGetter() throws Exception {
+        OtherExampleBean bean = new OtherExampleBean();
+
+        Method goldCustomer = bean.getClass().getMethod("isGoldCustomer", null);
+        assertEquals(true, IntrospectionSupport.isGetter(goldCustomer));
+        assertEquals(false, IntrospectionSupport.isSetter(goldCustomer));
+
+        Method silverCustomer = bean.getClass().getMethod("isSilverCustomer", null);
+        assertEquals(true, IntrospectionSupport.isGetter(silverCustomer));
+        assertEquals(false, IntrospectionSupport.isSetter(silverCustomer));
+
+        Method customerId = bean.getClass().getMethod("getCustomerId", null);
+        assertEquals(true, IntrospectionSupport.isGetter(customerId));
+        assertEquals(false, IntrospectionSupport.isSetter(customerId));
+
+        Method company = bean.getClass().getMethod("getCompany", null);
+        assertEquals(true, IntrospectionSupport.isGetter(company));
+        assertEquals(false, IntrospectionSupport.isSetter(company));
+
+        Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
+        assertEquals(false, IntrospectionSupport.isGetter(setupSomething));
+        assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
+    }
+
+    public void testOtherIsSetter() throws Exception {
+        OtherExampleBean bean = new OtherExampleBean();
+    }
+
 }
 

@@ -18,19 +18,17 @@ package org.apache.camel.util;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
@@ -43,11 +41,42 @@ import org.apache.commons.logging.LogFactory;
 public final class IntrospectionSupport {
 
     private static final transient Log LOG = LogFactory.getLog(IntrospectionSupport.class);
+    private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
+    private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
 
     /**
      * Utility classes should not have a public constructor.
      */
     private IntrospectionSupport() {
+    }
+
+    public static boolean isGetter(Method method) {
+        String name = method.getName();
+        Class type = method.getReturnType();
+        Class params[] = method.getParameterTypes();
+
+        if (!GETTER_PATTERN.matcher(name).matches()) {
+            return false;
+        }
+
+        // special for isXXX boolean
+        if (name.startsWith("is")) {
+            return params.length == 0 && type.getSimpleName().equalsIgnoreCase("boolean");
+        }
+
+        return params.length == 0 && !type.equals(Void.TYPE);
+    }
+
+    public static boolean isSetter(Method method) {
+        String name = method.getName();
+        Class type = method.getReturnType();
+        Class params[] = method.getParameterTypes();
+
+        if (!SETTER_PATTERN.matcher(name).matches()) {
+            return false;
+        }
+
+        return params.length == 1 && type.equals(Void.TYPE);
     }
 
     @SuppressWarnings("unchecked")
