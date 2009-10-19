@@ -24,11 +24,10 @@ import javax.persistence.Persistence;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
@@ -253,25 +252,27 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     protected Expression createProducerExpression() {
-        final Class<?> type = getEntityType();
-        if (type == null) {
-            return ExpressionBuilder.bodyExpression();
-        } else {
-            return new ExpressionAdapter() {
-                public Object evaluate(Exchange exchange) {
-                    Object answer = exchange.getIn().getBody(type);
-                    if (answer == null) {
-                        Object defaultValue = exchange.getIn().getBody();
-                        if (defaultValue != null) {
-                            throw new RuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
-                        }
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object answer;
 
-                        // if we don't have a body then lets instantiate and inject a new instance
-                        answer = exchange.getContext().getInjector().newInstance(type);
+                // must have a body
+                try {
+                    if (getEntityType() == null) {
+                        answer = exchange.getIn().getMandatoryBody();
+                    } else {
+                        answer = exchange.getIn().getMandatoryBody(getEntityType());
                     }
+                } catch (InvalidPayloadException e) {
+                    throw new InvalidPayloadRuntimeException(exchange, getEntityType());
+                }
+
+                if (answer == null) {
+                    throw new InvalidPayloadRuntimeException(exchange, getEntityType());
+                } else {
                     return answer;
                 }
-            };
-        }
+            }
+        };
     }
 }
