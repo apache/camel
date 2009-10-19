@@ -124,7 +124,7 @@
     <dependency>
       <groupId>org.jencks</groupId>
       <artifactId>jencks-amqpool</artifactId>
-      <version>2.1</version>
+      <version>2.2</version>
       <scope>test</scope>
     </dependency>
 
