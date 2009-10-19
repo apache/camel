@@ -53,7 +53,11 @@ public class CxfRsInvoker extends JAXRSInvoker {
         org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
         CxfRsBinding binding = endpoint.getBinding();
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
-        processor.process(camelExchange);
+        try {
+            processor.process(camelExchange);
+        } catch (Exception exception) {
+            camelExchange.setException(exception);
+        }
         if (camelExchange.getException() != null) {
             Throwable exception = camelExchange.getException();
             Object result = null;

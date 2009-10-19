@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
@@ -37,6 +42,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(new NoErrorHandlerBuilder());
                 from(CXF_RS_ENDPOINT_URI).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
@@ -48,13 +54,17 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                         if ("getCustomer".equals(operationName)) {
                             String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
                             assertEquals("Get a wrong http method", "GET", httpMethod);
-                            String uri = inMessage.getHeader(Exchange.HTTP_URI, String.class);                            
-                            assertEquals("Get a wrong http uri", "/customerservice/customers/126", uri);
-                            Customer customer = new Customer();
-                            customer.setId(Long.parseLong(id));
-                            customer.setName("Willem");
-                            // We just put the response Object into the out message body
-                            exchange.getOut().setBody(customer);
+                            String uri = inMessage.getHeader(Exchange.HTTP_URI, String.class);
+                            if ("/customerservice/customers/126".equals(uri)) {                            
+                                Customer customer = new Customer();
+                                customer.setId(Long.parseLong(id));
+                                customer.setName("Willem");
+                                // We just put the response Object into the out message body
+                                exchange.getOut().setBody(customer);
+                            } else {
+                                Response r = Response.status(404).entity("Can't found the customer with uri " + uri).build();
+                                throw new WebApplicationException(r);
+                            }
                         }
                     }
                     
@@ -71,6 +81,19 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         InputStream in = url.openStream();
         assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}", CxfUtils.getStringFromInputStream(in));
        
+    }
+    
+    @Test
+    public void testGetWrongCustomer() throws Exception {
+        URL url = new URL("http://localhost:9000/customerservice/customers/456");
+        try {
+            url.openStream();
+            fail("Expect to get exception here");
+        } catch (FileNotFoundException exception) {
+            // do nothing here
+        }
+        
+        
     }
         
 
