@@ -23,6 +23,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +43,7 @@ import org.apache.camel.Property;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -135,7 +137,16 @@ public class BeanInfo {
             if (operations.containsKey(name)) {
                 List<MethodInfo> methods = operations.get(name);
                 if (methods != null && methods.size() == 1) {
+                    // only one method then choose it
                     methodInfo = methods.get(0);
+                } else {
+                    // there are more methods with that name so we cannot decide which to use
+
+                    // but first lets try to choose a method and see if that comply with the name
+                    methodInfo = chooseMethod(pojo, exchange, name);
+                    if (!name.equals(methodInfo.getMethod().getName())) {
+                        throw new AmbiguousMethodCallException(exchange, methods);
+                    }
                 }
             } else {
                 // a specific method was given to invoke but not found
@@ -143,7 +154,7 @@ public class BeanInfo {
             }
         }
         if (methodInfo == null) {
-            methodInfo = chooseMethod(pojo, exchange);
+            methodInfo = chooseMethod(pojo, exchange, name);
         }
         if (methodInfo == null) {
             methodInfo = defaultMethod;
@@ -327,14 +338,27 @@ public class BeanInfo {
      *
      * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
+     * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
      * @return the method to invoke or null if no definitive method could be matched
      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
      */
-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange) throws AmbiguousMethodCallException {
+    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException {
         // @Handler should be select first
         // then any single method that has a custom @annotation
         // or any single method that has a match parameter type that matches the Exchange payload
         // and last then try to select the best among the rest
+
+        if (name != null) {
+            // filter all lists to only include methods with this name
+            removeNonMatchingMethods(operationsWithHandlerAnnotation, name);
+            removeNonMatchingMethods(operationsWithCustomAnnotation, name);
+            removeNonMatchingMethods(operationsWithBody, name);
+        } else {
+            // remove all getter/setter as we do not want to consider these methods
+            removeAllSetterOrGetterMethods(operationsWithHandlerAnnotation);
+            removeAllSetterOrGetterMethods(operationsWithCustomAnnotation);
+            removeAllSetterOrGetterMethods(operationsWithBody);
+        }
 
         if (operationsWithHandlerAnnotation.size() > 1) {
             // if we have more than 1 @Handler then its ambiguous
@@ -602,6 +626,31 @@ public class BeanInfo {
         }
 
         return null;
+    }
+
+    private static void removeAllSetterOrGetterMethods(List<MethodInfo> methods) {
+        Iterator<MethodInfo> it = methods.iterator();
+        while (it.hasNext()) {
+            MethodInfo info = it.next();
+            if (IntrospectionSupport.isGetter(info.getMethod())) {
+                // skip getters
+                it.remove();
+            } else if (IntrospectionSupport.isSetter(info.getMethod())) {
+                // skip setters
+                it.remove();
+            }
+        }
+    }
+
+    private static void removeNonMatchingMethods(List<MethodInfo> methods, String name) {
+        Iterator<MethodInfo> it = methods.iterator();
+        while (it.hasNext()) {
+            MethodInfo info = it.next();
+            if (!name.equals(info.getMethod().getName())) {
+                // name does not match so remove it
+                it.remove();
+            }
+        }
     }
 
 }
