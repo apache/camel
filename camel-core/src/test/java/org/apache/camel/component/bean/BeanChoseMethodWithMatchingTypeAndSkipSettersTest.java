@@ -63,11 +63,11 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         MockEndpoint mock = getMockEndpoint("mock:queue:order");
         mock.expectedBodiesReceived("77889,667,457");
 
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                "<order id=\"77889\">" +
-                    "<customer id=\"667\"/>" +
-                    "<confirm>457</confirm>" +
-                "</order>";
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
+                + "<order id=\"77889\">" 
+                +    "<customer id=\"667\"/>" 
+                +    "<confirm>457</confirm>" 
+                + "</order>";
         template.sendBody("seda:xml", xml);
 
         assertMockEndpointsSatisfied();
