@@ -44,15 +44,16 @@ public class SqlProducer extends DefaultProducer {
             public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
                 int argNumber = 1;
 
-                if (exchange.getIn().getBody() != null) {
+                // number of parameters must match
+                int expected = ps.getParameterMetaData().getParameterCount();
+
+                if (expected > 0 && exchange.getIn().getBody() != null) {
                     Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
                     while (iterator != null && iterator.hasNext()) {
                         ps.setObject(argNumber++, iterator.next());
                     }
                 }
 
-                // number of parameters must match
-                int expected = ps.getParameterMetaData().getParameterCount();
                 if (argNumber - 1 != expected) {
                     throw new SQLException("Number of parameters mismatch. Expected: " + expected + ", was:" + (argNumber - 1));
                 }

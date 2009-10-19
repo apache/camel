@@ -152,6 +152,18 @@ public class SqlRouteTest extends CamelTestSupport {
         assertEquals("Camel", row.get("PROJECT"));
     }
     
+    @Test
+    public void testBodyButNoParams() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:no-param", "Mock body");
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Camel", row.get("PROJECT"));
+    }
+
+    
     @Before
     public void setUp() throws Exception {
         Class.forName(driverClass);
