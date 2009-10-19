@@ -144,7 +144,7 @@ public class BeanInfo {
 
                     // but first lets try to choose a method and see if that comply with the name
                     methodInfo = chooseMethod(pojo, exchange, name);
-                    if (!name.equals(methodInfo.getMethod().getName())) {
+                    if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
                 }
