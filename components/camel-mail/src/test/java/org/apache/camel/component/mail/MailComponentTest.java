@@ -37,6 +37,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -49,6 +50,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -61,6 +63,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -81,6 +84,65 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("fetchSize", -1, config.getFetchSize());
         assertEquals("contentType", "text/plain", config.getContentType());
         assertEquals("unseen", true, config.isUnseen());
+        assertEquals(false, config.isDebugMode());
+        assertEquals(MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
+        assertEquals(false, config.isSecureProtocol());
+        assertEquals("smtp://myhost:25, folder=INBOX", config.getMailStoreLogInformation());
+    }
+
+    @Test
+    public void testDefaultSMTPSConfiguration() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtps://james@myhost?password=secret");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "smtps", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", MailUtils.DEFAULT_PORT_SMTPS, config.getPort());
+        assertEquals("getUsername()", "james", config.getUsername());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
+        assertEquals("folder", "INBOX", config.getFolderName());
+        assertEquals("encoding", null, config.getDefaultEncoding());
+        assertEquals("from", "camel@localhost", config.getFrom());
+        assertEquals("password", "secret", config.getPassword());
+        assertEquals(false, config.isDelete());
+        assertEquals(false, config.isIgnoreUriScheme());
+        assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals("contentType", "text/plain", config.getContentType());
+        assertEquals("unseen", true, config.isUnseen());
+        assertEquals(false, config.isDebugMode());
+        assertEquals(MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
+        assertEquals(true, config.isSecureProtocol());
+        assertEquals("smtps://myhost:465 (SSL enabled), folder=INBOX", config.getMailStoreLogInformation());
+    }
+
+    @Test
+    public void testDebugMode() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&debugMode=true");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals(true, config.isDebugMode());
+    }
+
+    @Test
+    public void testConnectionTimeout() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&connectionTimeout=2500");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals(2500, config.getConnectionTimeout());
+    }
+
+    @Test
+    public void testDummyTrustManager() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&dummyTrustManager=true");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals(true, config.isDummyTrustManager());
+        assertEquals(false, config.isSecureProtocol());
+    }
+
+    @Test
+    public void testDummyTrustManagerSecure() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtps://james@myhost?password=secret&dummyTrustManager=true");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals(true, config.isDummyTrustManager());
+        assertEquals(true, config.isSecureProtocol());
+        assertEquals("smtps://myhost:465 (SSL enabled using DummyTrustManager), folder=INBOX", config.getMailStoreLogInformation());
     }
 
     @Test
@@ -101,6 +163,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("fetchSize", -1, config.getFetchSize());
         assertEquals("contentType", "text/plain", config.getContentType());
         assertEquals("unseen", true, config.isUnseen());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -121,6 +184,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("fetchSize", -1, config.getFetchSize());
         assertEquals("contentType", "text/plain", config.getContentType());
         assertEquals("unseen", true, config.isUnseen());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -143,6 +207,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("fetchSize", -1, config.getFetchSize());
         assertEquals("unseen", false, config.isUnseen());
         assertEquals("contentType", "text/html", config.getContentType());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -161,6 +226,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals(false, config.isDelete());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -179,6 +245,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals(false, config.isDelete());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Test
@@ -192,6 +259,7 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
         assertEquals("fetchSize", 5, config.getFetchSize());
+        assertEquals(false, config.isDebugMode());
     }
 
     @Override
@@ -199,4 +267,52 @@ public class MailComponentTest extends CamelTestSupport {
         Endpoint endpoint = super.resolveMandatoryEndpoint(uri);
         return assertIsInstanceOf(MailEndpoint.class, endpoint);
     }
+
+    @Test
+    public void testMailComponentCtr() throws Exception {
+        MailComponent comp = new MailComponent();
+        comp.setCamelContext(context);
+        
+        assertNotNull(comp.getConfiguration());
+        assertNull(comp.getContentTypeResolver());
+
+        MailEndpoint endpoint = (MailEndpoint) comp.createEndpoint("smtp://myhost:25/?password=secret&username=james");
+        assertNotNull(endpoint);
+
+        // should be a copy of the configuration
+        assertNotSame(comp.getConfiguration(), endpoint.getConfiguration());
+    }
+
+    @Test
+    public void testMailComponentCtrCamelContext() throws Exception {
+        MailComponent comp = new MailComponent(context);
+
+        assertNotNull(comp.getConfiguration());
+        assertNull(comp.getContentTypeResolver());
+
+        MailEndpoint endpoint = (MailEndpoint) comp.createEndpoint("smtp://myhost:25/?password=secret&username=james");
+        assertNotNull(endpoint);
+
+        // should be a copy of the configuration
+        assertNotSame(comp.getConfiguration(), endpoint.getConfiguration());
+    }
+
+    @Test
+    public void testMailComponentCtrConfig() throws Exception {
+        MailConfiguration config = new MailConfiguration();
+        config.setUsername("james");
+        config.setPassword("secret");
+
+        MailComponent comp = new MailComponent(config);
+        comp.setCamelContext(context);
+
+        assertSame(config, comp.getConfiguration());
+        assertNull(comp.getContentTypeResolver());
+
+        MailEndpoint endpoint = (MailEndpoint) comp.createEndpoint("smtp://myhost/");
+        assertEquals("james", endpoint.getConfiguration().getUsername());
+        assertEquals("secret", endpoint.getConfiguration().getPassword());
+        assertEquals("myhost", endpoint.getConfiguration().getHost());
+    }
 }
+

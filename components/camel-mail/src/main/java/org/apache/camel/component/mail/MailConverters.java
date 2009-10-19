@@ -78,15 +78,10 @@ public final class MailConverters {
 
     /**
      * Converts the given JavaMail message to an InputStream.
-     * Can return null.
      */
     @Converter
     public static InputStream toInputStream(Message message) throws IOException, MessagingException {
-        String s = toString(message);
-        if (s == null) {
-            return null;
-        }
-        return IOConverter.toInputStream(s, null);
+        return message.getInputStream();
     }
 
     /**

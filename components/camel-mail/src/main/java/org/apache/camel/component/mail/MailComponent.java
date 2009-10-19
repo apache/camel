@@ -70,9 +70,6 @@ public class MailComponent extends DefaultComponent {
         // sanity check that we know the mail server
         ObjectHelper.notEmpty(config.getHost(), "host");
         ObjectHelper.notEmpty(config.getProtocol(), "protocol");
-        if (config.getPort() <= 0) {
-            throw new IllegalArgumentException("port mut be specified");
-        }
 
         return endpoint;
     }
@@ -105,14 +102,6 @@ public class MailComponent extends DefaultComponent {
      */
     public void setConfiguration(MailConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    /**
-     * A strategy method allowing the URI destination to be translated into the actual Mail destination name
-     * (say by looking up in JNDI or something)
-     */
-    protected String convertPathToActualDestination(String path) {
-        return path;
     }
 
     public ContentTypeResolver getContentTypeResolver() {

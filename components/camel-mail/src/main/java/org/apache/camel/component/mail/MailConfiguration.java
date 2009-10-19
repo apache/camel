@@ -204,10 +204,10 @@ public class MailConfiguration implements Cloneable {
     public String getMailStoreLogInformation() {
         String ssl = "";
         if (isSecureProtocol()) {
-            ssl = "(SSL enabled" + (dummyTrustManager ? " using DummyTrustManager)" : ")");
+            ssl = " (SSL enabled" + (dummyTrustManager ? " using DummyTrustManager)" : ")");
         }
 
-        return protocol + "//" + host + ":" + port + ssl + ", folder=" + folderName;
+        return protocol + "://" + host + ":" + port + ssl + ", folder=" + folderName;
     }
 
     // Properties
