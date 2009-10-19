@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.jpa;
 
-import org.apache.camel.Service;
 import org.springframework.orm.jpa.JpaCallback;
 
 /**
  * @version $Revision$
  */
-public interface TransactionStrategy extends Service {
+public interface TransactionStrategy {
+
+    /**
+     * Executes in a transaction.
+     *
+     * @param callback the callback
+     * @return the result
+     */
     Object execute(JpaCallback callback);
 }

@@ -242,8 +242,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
     }
 
     protected DeleteHandler<Object> createDeleteHandler() {
-        // TODO auto-discover an annotation in the entity bean to indicate the
-        // process completed method call?
+        // look for @Consumed to allow custom callback when the Entity has been consumed
         Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
             List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, Consumed.class);

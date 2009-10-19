@@ -35,7 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version $Revision$
  */
-public class JpaTemplateTransactionStrategy extends ServiceSupport implements TransactionStrategy {
+public class JpaTemplateTransactionStrategy implements TransactionStrategy {
     private final JpaTemplate jpaTemplate;
     private final TransactionTemplate transactionTemplate;
 
@@ -87,9 +87,4 @@ public class JpaTemplateTransactionStrategy extends ServiceSupport implements Tr
         });
     }
 
-    protected void doStart() throws Exception {
-    }
-
-    protected void doStop() throws Exception {
-    }
 }
