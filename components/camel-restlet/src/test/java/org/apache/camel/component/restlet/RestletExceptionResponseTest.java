@@ -29,7 +29,7 @@ import org.junit.Test;
  *
  * @version $Revision$
  */
-public class RestletFaultTest extends CamelTestSupport {
+public class RestletExceptionResponseTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -39,24 +39,23 @@ public class RestletFaultTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setFault(true);
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                        exchange.getOut().setBody("Application fault");
-                    }        
+                        exchange.setException(new IllegalArgumentException("Damn something went wrong"));
+                    }
                 });
             }
         };
     }
-    
+
     @Test
-    public void testFaultResponse() throws Exception {
+    public void testExceptionResponse() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         try {
             HttpClient client = new HttpClient();
-            assertEquals(404, client.executeMethod(method));
-            assertTrue(method.getResponseHeader("Content-Type").getValue()
-                    .startsWith("text/plain"));
+            assertEquals(500, client.executeMethod(method));
+            assertTrue(method.getResponseHeader("Content-Type").getValue().startsWith("text/plain"));
+            String body = method.getResponseBodyAsString();
+            assertTrue(body.contains("IllegalArgumentException"));
+            assertTrue(body.contains("Damn something went wrong"));
         } finally {
             method.releaseConnection();
         }
