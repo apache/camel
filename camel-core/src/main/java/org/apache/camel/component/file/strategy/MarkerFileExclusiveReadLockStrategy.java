@@ -24,6 +24,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,7 +65,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             LOG.trace("Unlocking file: " + lockFileName);
         }
 
-        boolean deleted = lock.delete();
+        boolean deleted = FileUtil.deleteFile(lock);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Lock file: " + lockFileName + " was deleted: " + deleted);
         }

@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,72 +54,13 @@ public class FileOperations implements GenericFileOperations<File> {
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {        
         File file = new File(name);
-
-        // do not try to delete non existing files
-        if (!file.exists()) {
-            return false;
-        }
-
-        // some OS such as Windows can have problem doing delete IO operations so we may need to
-        // retry a couple of times to let it work
-        boolean deleted = false;
-        int count = 0;
-        while (!deleted && count < 3) {
-            if (LOG.isDebugEnabled() && count > 0) {
-                LOG.debug("Retrying attempt " + count + " to delete file: " + name);
-            }
-
-            deleted = file.delete();
-            if (!deleted && count > 0) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
-            count++;
-        }
-
-
-        if (LOG.isDebugEnabled() && count > 0) {
-            LOG.debug("Tried " + count + " to delete file: " + name + " with result: " + deleted);
-        }
-        return deleted;
+        return FileUtil.deleteFile(file);
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         File file = new File(from);
         File target = new File(to);
-
-        // do not try to rename non existing files
-        if (!file.exists()) {
-            return false;
-        }
-
-        // some OS such as Windows can have problem doing rename IO operations so we may need to
-        // retry a couple of times to let it work
-        boolean renamed = false;
-        int count = 0;
-        while (!renamed && count < 3) {
-            if (LOG.isDebugEnabled() && count > 0) {
-                LOG.debug("Retrying attempt " + count + " to rename file from: " + from + " to: " + to);
-            }
-
-            renamed = file.renameTo(target);
-            if (!renamed && count > 0) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
-            count++;
-        }
-
-        if (LOG.isDebugEnabled() && count > 0) {
-            LOG.debug("Tried " + count + " to rename file: " + from + " to: " + to + " with result: " + renamed);
-        }
-        return renamed;
+        return FileUtil.renameFile(file, target);
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
@@ -204,7 +146,7 @@ public class FileOperations implements GenericFileOperations<File> {
 
         File file = new File(fileName);
 
-        // if an existing file already exsists what should we do?
+        // if an existing file already exists what should we do?
         if (file.exists()) {
             if (endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
@@ -267,7 +209,8 @@ public class FileOperations implements GenericFileOperations<File> {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Using local work file being renamed from: " + source + " to: " + file);
         }
-        return source.renameTo(file);
+
+        return FileUtil.renameFile(source, file);
     }
 
     private void writeFileByFile(File source, File target) throws IOException {

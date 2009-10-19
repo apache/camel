@@ -24,6 +24,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,11 +33,11 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
 
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // is we use excluse read then acquire the exclusive read (waiting until we got it)
+        // if we use exclusive read then acquire the exclusive read (waiting until we got it)
         if (exclusiveReadLockStrategy != null) {
             boolean lock = exclusiveReadLockStrategy.acquireExclusiveReadLock(operations, file, exchange);
             if (!lock) {
-                // do not begin sice we could not get the exclusive read lcok
+                // do not begin since we could not get the exclusive read lock
                 return false;
             }
         }
@@ -72,7 +73,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         // delete local work file, if it was used (eg by ftp component)
         File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
         if (local != null && local.exists()) {
-            boolean deleted = local.delete();
+            boolean deleted = FileUtil.deleteFile(local);
             if (log.isTraceEnabled()) {
                 log.trace("Local work file: " + local + " was deleted: " + deleted);
             }

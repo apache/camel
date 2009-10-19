@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * A manual test by copying a big file into the target/big/in folder and check
- * that it is copied completly, eg its file size is the same as the original file
+ * that it is copied completely, eg its file size is the same as the original file
  *
  * @version $Revision$
  */

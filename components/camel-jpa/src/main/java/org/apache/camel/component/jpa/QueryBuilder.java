@@ -46,7 +46,7 @@ public abstract class QueryBuilder implements QueryFactory {
 
             @Override
             public String toString() {
-                return "Query: " + query + " params: " + getParameterDescription();
+                return "Query: " + query + getParameterDescription();
             }
         };
     }

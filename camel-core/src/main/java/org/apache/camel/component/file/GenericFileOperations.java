@@ -63,7 +63,7 @@ public interface GenericFileOperations<T> {
      *
      * @param directory the directory path to build as a relative string name
      * @param absolute wether the directory is an absolute or relative path
-     * @return true if build or already exists, false if not possbile (could be lack of permissions)
+     * @return true if build or already exists, false if not possible (could be lack of permissions)
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException;

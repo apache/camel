@@ -23,11 +23,15 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Stack;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * File utilities
  */
 public final class FileUtil {
     
+    private static final transient Log LOG = LogFactory.getLog(FileUtil.class);
     private static final int RETRY_SLEEP_MILLIS = 10;
     private static File defaultTempDir;
 
@@ -259,5 +263,71 @@ public final class FileUtil {
             }
         }
     }
+
+    public static boolean renameFile(File from, File to) {
+        // do not try to rename non existing files
+        if (!from.exists()) {
+            return false;
+        }
+
+        // some OS such as Windows can have problem doing rename IO operations so we may need to
+        // retry a couple of times to let it work
+        boolean renamed = false;
+        int count = 0;
+        while (!renamed && count < 3) {
+            if (LOG.isDebugEnabled() && count > 0) {
+                LOG.debug("Retrying attempt " + count + " to rename file from: " + from + " to: " + to);
+            }
+
+            renamed = from.renameTo(to);
+            if (!renamed && count > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+            count++;
+        }
+
+        if (LOG.isDebugEnabled() && count > 0) {
+            LOG.debug("Tried " + count + " to rename file: " + from + " to: " + to + " with result: " + renamed);
+        }
+        return renamed;
+    }
+
+    public static boolean deleteFile(File file) {
+        // do not try to delete non existing files
+        if (!file.exists()) {
+            return false;
+        }
+
+        // some OS such as Windows can have problem doing delete IO operations so we may need to
+        // retry a couple of times to let it work
+        boolean deleted = false;
+        int count = 0;
+        while (!deleted && count < 3) {
+            if (LOG.isDebugEnabled() && count > 0) {
+                LOG.debug("Retrying attempt " + count + " to delete file: " + file);
+            }
+
+            deleted = file.delete();
+            if (!deleted && count > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+            count++;
+        }
+
+
+        if (LOG.isDebugEnabled() && count > 0) {
+            LOG.debug("Tried " + count + " to delete file: " + file + " with result: " + deleted);
+        }
+        return deleted;
+    }
+
 
 }

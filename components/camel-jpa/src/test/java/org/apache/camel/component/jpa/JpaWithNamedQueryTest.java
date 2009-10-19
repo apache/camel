@@ -133,6 +133,9 @@ public class JpaWithNamedQueryTest extends Assert {
                 return null;
             }
         });
+
+        JpaConsumer jpaConsumer = (JpaConsumer) consumer;
+        assertEquals("step1", jpaConsumer.getNamedQuery());
     }
 
     @Before
