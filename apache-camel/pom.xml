@@ -453,30 +453,30 @@
               <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
-          <!--<execution>-->
-            <!--<id>unix-src</id>-->
-            <!--<phase>package</phase>-->
-            <!--<goals>-->
-              <!--<goal>single</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-              <!--<descriptors>-->
-                <!--<descriptor>src/main/descriptors/unix-src.xml</descriptor>-->
-              <!--</descriptors>-->
-            <!--</configuration>-->
-          <!--</execution>-->
-          <!--<execution>-->
-            <!--<id>windows-src</id>-->
-            <!--<phase>package</phase>-->
-            <!--<goals>-->
-              <!--<goal>single</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-              <!--<descriptors>-->
-                <!--<descriptor>src/main/descriptors/windows-src.xml</descriptor>-->
-              <!--</descriptors>-->
-            <!--</configuration>-->
-          <!--</execution>-->
+          <execution>
+            <id>unix-src</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/descriptors/unix-src.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>windows-src</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/descriptors/windows-src.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
