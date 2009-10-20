@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.camel.Message;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -435,6 +436,11 @@ public final class ObjectHelper {
      */
     @SuppressWarnings("unchecked")
     public static Iterator createIterator(Object value, String delimiter) {
+        // if its a message than we want to iterate its body
+        if (value instanceof Message) {
+            value = ((Message) value).getBody();
+        }
+
         if (value == null) {
             return Collections.EMPTY_LIST.iterator();
         } else if (value instanceof Iterator) {
@@ -470,7 +476,7 @@ public final class ObjectHelper {
             // this code is optimized to only use a Scanner if needed, eg there is a delimiter
 
             if (s.contains(delimiter)) {
-                // use a scanner if it contains the delimtor
+                // use a scanner if it contains the delimiter
                 Scanner scanner = new Scanner((String)value);
                 scanner.useDelimiter(delimiter);
                 return scanner;

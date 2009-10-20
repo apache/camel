@@ -33,9 +33,7 @@ public class QuartzMessage extends DefaultMessage {
     public QuartzMessage(Exchange exchange, JobExecutionContext jobExecutionContext) {
         this.jobExecutionContext = jobExecutionContext;
         setExchange(exchange);
-        if (jobExecutionContext != null) {
-            setBody(jobExecutionContext.getJobDetail());
-        }
+        // do not set body as it should be null
     }
 
     public JobExecutionContext getJobExecutionContext() {

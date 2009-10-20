@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
 
 /**
  * @version $Revision$
@@ -238,6 +240,33 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(Boolean.TRUE, ObjectHelper.toBoolean(Integer.valueOf("1")));
         assertEquals(Boolean.FALSE, ObjectHelper.toBoolean(Integer.valueOf("0")));
         assertEquals(null, ObjectHelper.toBoolean(new Date()));
+    }
+
+    public void testIteratorWithMessage() {
+        Message msg = new DefaultMessage();
+        msg.setBody("a,b,c");
+
+        Iterator it = ObjectHelper.createIterator(msg);
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
+        assertEquals("c", it.next());
+        assertFalse(it.hasNext());
+    }
+
+    public void testIteratorWithEmptyMessage() {
+        Message msg = new DefaultMessage();
+        msg.setBody("");
+
+        Iterator it = ObjectHelper.createIterator(msg);
+        assertFalse(it.hasNext());
+    }
+
+    public void testIteratorWithNullMessage() {
+        Message msg = new DefaultMessage();
+        msg.setBody(null);
+
+        Iterator it = ObjectHelper.createIterator(msg);
+        assertFalse(it.hasNext());
     }
 
 }
