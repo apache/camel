@@ -47,7 +47,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time to delete file
-        Thread.sleep(200);
+        Thread.sleep(500);
 
         assertEquals(3, counter);
 
