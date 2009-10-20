@@ -83,7 +83,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String username = getAndRemoveParameter(parameters, "username", String.class);
         String password = getAndRemoveParameter(parameters, "password", String.class);
         if (username != null && password != null) {
-            
             httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
                 httpClientConfigurer, 
                 new BasicAuthenticationHttpClientConfigurer(username, password));
@@ -107,8 +106,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
     
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();

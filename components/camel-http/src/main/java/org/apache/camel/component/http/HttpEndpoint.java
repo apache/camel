@@ -80,16 +80,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return new HttpPollingConsumer(this);
     }
 
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(this, pattern);
-    }
-
-    public Exchange createExchange(HttpServletRequest request, HttpServletResponse response) {
-        DefaultExchange exchange = new DefaultExchange(this, ExchangePattern.InOut);
-        exchange.setIn(new HttpMessage(exchange, request, response));
-        return exchange;
-    }
-
     /**
      * Factory method used by producers and consumers to create a new {@link HttpClient} instance
      */
