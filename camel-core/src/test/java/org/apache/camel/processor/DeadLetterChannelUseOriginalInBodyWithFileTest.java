@@ -41,8 +41,8 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/originalexchange");
+        super.setUp();
     }
 
     @Override

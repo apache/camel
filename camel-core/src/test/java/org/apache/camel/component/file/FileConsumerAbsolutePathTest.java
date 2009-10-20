@@ -33,7 +33,7 @@ public class FileConsumerAbsolutePathTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/reports");
-        // use current dir as base as aboslute path
+        // use current dir as base as absolute path
         base = new File("").getAbsolutePath() + "/target/reports";
         super.setUp();
     }

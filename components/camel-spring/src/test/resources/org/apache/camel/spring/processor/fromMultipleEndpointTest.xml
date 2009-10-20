@@ -27,7 +27,6 @@
         <route>
             <from uri="direct:foo"/>
             <from uri="seda:bar"/>
-            <from uri="timer://baz?delay=500&amp;period=1000"/>
             <to uri="mock:results"/>
         </route>
         <!-- END SNIPPET: e1 -->

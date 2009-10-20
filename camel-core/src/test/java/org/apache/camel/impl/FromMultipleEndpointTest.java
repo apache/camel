@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * @version $Revision$
@@ -32,7 +31,7 @@ public class FromMultipleEndpointTest extends ContextTestSupport {
 
     public void testMultipleFromEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:results");
-        mock.expectedMessageCount(3);
+        mock.expectedMessageCount(2);
 
         template.sendBody("direct:foo", "foo");
         template.sendBody("seda:bar", "bar");
@@ -56,7 +55,7 @@ public class FromMultipleEndpointTest extends ContextTestSupport {
             public void configure() throws Exception {
                 getContext().setTracing(true);
 
-                from("direct:foo", "seda:bar", "timer://baz?delay=500&period=1000").to("mock:results");
+                from("direct:foo", "seda:bar").to("mock:results");
             }
         };
 
