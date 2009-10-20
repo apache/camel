@@ -17,20 +17,14 @@
 package org.apache.camel.component.jms.temp;
 
 
-import java.util.List;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.BrowsableQueueTest;
-import org.apache.camel.component.jms.JmsQueueEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.logging.Log;

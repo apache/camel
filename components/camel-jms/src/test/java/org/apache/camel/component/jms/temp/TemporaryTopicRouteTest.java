@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms.temp;
 
-import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.activemq.command.ActiveMQTempTopic;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
