@@ -180,8 +180,16 @@ public class DefaultHttpBinding implements HttpBinding {
                 // copy directly from input stream to output stream
                 IOHelper.copy(is, os);
             } finally {
-                os.close();
-                is.close();
+                try {
+                    os.close();
+                } catch (Exception e) {
+                    // ignore, maybe client have disconnected or timed out
+                }
+                try {
+                    is.close();
+                } catch (Exception e) {
+                    // ignore, maybe client have disconnected or timed out
+                }
             }
         } else {
             // not convertable as a stream so try as a String

@@ -48,16 +48,25 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     }
 
     public Exchange receive() {
-        return receiveNoWait();
+        return doReceive(-1);
     }
 
     public Exchange receive(long timeout) {
-        return receiveNoWait();
+        return doReceive((int) timeout);
     }
 
     public Exchange receiveNoWait() {
+        return doReceive(-1);
+    }
+
+    protected Exchange doReceive(int timeout) {
         Exchange exchange = endpoint.createExchange();
         HttpMethod method = createMethod();
+
+        // set optional timeout in millis
+        if (timeout > 0) {
+            method.getParams().setSoTimeout(timeout);
+        }
 
         try {
             int responseCode = httpClient.executeMethod(method);
