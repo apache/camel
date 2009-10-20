@@ -42,7 +42,7 @@ public class CamelJBIClientProxyTest {
     
     
     @Test
-    public void testCallFromProxy() {
+    public void testCallFromProxy() throws Exception {
         // The echo parameter will be ignore, since the service has the fix response
         String response = proxy.echo("Hello World!");
         assertEquals("Get a wrong response ", "echo Hello World!", response);

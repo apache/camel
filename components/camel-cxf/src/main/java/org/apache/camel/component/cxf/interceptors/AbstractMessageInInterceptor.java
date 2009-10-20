@@ -84,7 +84,7 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
         if (bi == null) {
             Endpoint ep = ex.get(Endpoint.class);
             bi = ep.getEndpointInfo().getBinding();
-            ex.put(BindingInfo.class, bi);
+            ex.put(BindingInfo.class, bi);            
         }
         
         BindingOperationInfo boi = ex.get(BindingOperationInfo.class);

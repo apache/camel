@@ -63,17 +63,7 @@ public class XMLMessageOutInterceptor extends AbstractMessageOutInterceptor<XMLM
         }
         
         if (bmi != null) {
-            Element header = message.get(Element.class);
-            if (header != null) {
-                //Headers -represent as -Element,
-                //Body -represent as StaxStream in CXF Runtime.
-                //Copy inbound Header parts to outbound payload
-                if (LOG.isLoggable(Level.INFO)) {
-                    LOG.info("DOMOutInterceptor Copy Message Part related Headers to Payload.");
-                }
-                moveHeaderPartToPayload(bmi, header, payload);
-            }
-    
+            
             XMLBindingMessageFormat msgFormat = 
                 bmi.getExtensor(XMLBindingMessageFormat.class);
             QName rootName = msgFormat != null ? msgFormat.getRootNode() : null;
@@ -97,24 +87,4 @@ public class XMLMessageOutInterceptor extends AbstractMessageOutInterceptor<XMLM
         }
     }
     
-    private void moveHeaderPartToPayload(BindingMessageInfo bmi,
-                                         Element header,
-                                         List<Element> payload) {
-        Collection<MessagePartInfo> bodyParts = bmi.getMessageParts();
-        NodeList nodes = header.getChildNodes();
-
-        for (int idx = 0; idx < nodes.getLength(); idx++) {
-            Node node = nodes.item(idx);
-            int index = 0;
-            for (MessagePartInfo mpi : bodyParts) {
-                QName name = mpi.getConcreteName();
-                if (name.getLocalPart().equals(node.getLocalName())
-                    && name.getNamespaceURI().equals(node.getNamespaceURI())) {
-                    payload.add(index, (Element)node);
-                    break;
-                } 
-                ++index;
-            }
-        }
-    }
 }

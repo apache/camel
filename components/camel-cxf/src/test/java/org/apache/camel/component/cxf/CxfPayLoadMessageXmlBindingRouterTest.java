@@ -14,28 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
+import java.util.List;
 
+import org.w3c.dom.Element;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class CxfSimpleRouterTest extends CamelTestSupport {    
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+
+public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
+    
     protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
     protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
-    protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
-
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
+       
+    protected AbstractXmlApplicationContext applicationContext;
+        
+    protected static String getBindingId() {
+        return "http://cxf.apache.org/bindings/xformat";
+    }
     
     @BeforeClass
     public static void startService() {       
@@ -45,45 +58,73 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
         svrBean.setAddress(SERVICE_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
+        svrBean.setBindingId(getBindingId());
     
         Server server = svrBean.create();
         server.start();
     }
     
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                errorHandler(noErrorHandler());
-                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
-            }
-        };
+    @Before
+    public void setUp() throws Exception {       
+        applicationContext = createApplicationContext();
+        super.setUp();
+        assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        
+        if (applicationContext != null) {
+            applicationContext.destroy();
+        }
+        super.tearDown();
+    }
+    
+    @Override
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext();
+        return SpringCamelContext.springCamelContext(applicationContext);
+    }
+
+
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/XmlBindingRouterContext.xml");
     }
     
     protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
-        clientBean.setServiceClass(HelloService.class); 
+        clientBean.setServiceClass(HelloService.class);
+        clientBean.setBindingId(getBindingId());
         
         HelloService client = (HelloService) proxyFactory.create();
         return client;
     }
-
+    
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {                
+                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
+                        List<Element> elements = payload.getBody();
+                        assertNotNull("We should get the elements here" , elements);
+                        assertEquals("Get the wrong elements size" , elements.size(), 1);
+                        assertEquals("Get the wrong namespace URI" , elements.get(0).getNamespaceURI(), "http://cxf.component.camel.apache.org/");
+                    }
+                    
+                })
+                .to("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD");
+                
+            }
+        };
+    }
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();
         String result = client.echo("hello world");
         assertEquals("we should get the right answer from router", result, "echo hello world");
 
-    }
-
-    @Test
-    public void testOnwayInvocation() throws Exception {
-        HelloService client = getCXFClient();
         int count = client.getInvocationCount();
         client.ping();
         //oneway ping invoked, so invocationCount ++

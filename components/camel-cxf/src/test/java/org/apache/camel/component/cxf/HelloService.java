@@ -23,7 +23,8 @@ public interface HelloService {
 
     int getInvocationCount();
 
-    String echo(String text);
+    String echo(String text) throws Exception;
 
     Boolean echoBoolean(Boolean bool);
+    
 }

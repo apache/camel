@@ -47,11 +47,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext; 
+       
+    protected String routerEndpointURI = "cxf:bean:routerEndpoint?dataFormat=PAYLOAD";
+    protected String serviceEndpointURI = "cxf:bean:serviceEndpoint?dataFormat=PAYLOAD";
+    
     private final QName serviceName = new QName("http://camel.apache.org/pizza", "PizzaService");
     
-    
-    private String routerEndpointURI = "cxf:bean:routerEndpoint?dataFormat=PAYLOAD";
-    private String serviceEndpointURI = "cxf:bean:serviceEndpoint?dataFormat=PAYLOAD";
     
     @Override
     protected RouteBuilder createRouteBuilder() {
