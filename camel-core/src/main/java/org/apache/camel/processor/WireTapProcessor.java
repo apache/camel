@@ -106,13 +106,17 @@ public class WireTapProcessor extends SendProcessor {
 
     @Override
     protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern) {
+        Exchange answer;
         if (newExchangeProcessor == null && newExchangeExpression == null) {
             // use a copy of the original exchange
-            return configureCopyExchange(exchange);
+            answer = configureCopyExchange(exchange);
         } else {
             // use a new exchange
-            return configureNewExchange(exchange);
+            answer = configureNewExchange(exchange);
         }
+        // set property which endpoint we send to
+        answer.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
+        return answer;
     }
 
     private Exchange configureCopyExchange(Exchange exchange) {

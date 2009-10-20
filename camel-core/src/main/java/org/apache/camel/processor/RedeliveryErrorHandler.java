@@ -304,7 +304,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (processor != null) {
                 data.failureProcessor = processor;
             }
-            // route specific on redelivey?
+            // route specific on redelivery?
             processor = exceptionPolicy.getOnRedelivery();
             if (processor != null) {
                 data.onRedeliveryProcessor = processor;
@@ -377,6 +377,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 log.trace("Failure processor " + processor + " is processing Exchange: " + exchange);
             }
             try {
+                // store the last to endpoint as the failure endpoint
+                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
                 processor.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
@@ -406,7 +408,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             } else {
                 // exception not handled, put exception back in the exchange
                 exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-            }
+                // and put failure endpoint back as well
+                exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+             }
             return;
         }
 
@@ -418,6 +422,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // exception not handled, put exception back in the exchange
             exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.FALSE);
             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+            // and put failure endpoint back as well
+            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("This exchange is handled so its marked as not failed: " + exchange);

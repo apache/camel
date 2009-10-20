@@ -84,7 +84,7 @@ public class TracerTest extends ContextTestSupport {
         assertNotNull(em.getExchangePattern());
         assertEquals("direct://start", em.getFromEndpointUri());
         assertNull(em.getHeaders());
-        assertNull(em.getProperties());
+        assertNotNull(em.getProperties());
         assertNull(em.getOutBody());
         assertNull(em.getOutBodyType());
         assertNull(em.getOutHeaders());

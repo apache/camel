@@ -58,6 +58,7 @@ public interface Exchange {
     String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
     String FAILURE_HANDLED      = "CamelFailureHandled";
+    String FAILURE_ENDPOINT     = "CamelFaulureEndpoint";
 
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
@@ -79,6 +80,7 @@ public interface Exchange {
     String HTTP_URL                = "CamelHttpUrl";
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
+    String TO_ENDPOINT          = "CamelToEndpoint";
 
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS   = "CamelLogDebugStreams";

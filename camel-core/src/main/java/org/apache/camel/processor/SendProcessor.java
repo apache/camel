@@ -110,6 +110,8 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
         if (pattern != null) {
             exchange.setPattern(pattern);
         }
+        // set property which endpoint we send to
+        exchange.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
         return exchange;
     }
 

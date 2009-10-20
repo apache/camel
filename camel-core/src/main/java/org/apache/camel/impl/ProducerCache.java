@@ -172,6 +172,10 @@ public class ProducerCache extends ServiceSupport {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(">>>> " + endpoint + " " + exchange);
                 }
+
+                // set property which endpoint we send to
+                exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
+
                 producer.process(exchange);
                 return exchange;
             }

@@ -76,6 +76,8 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
 
             getProducerCache(exchange).doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
                 public Object doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
+                    // set property which endpoint we send to
+                    exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
                     producer.process(exchange);
                     return exchange;
                 }

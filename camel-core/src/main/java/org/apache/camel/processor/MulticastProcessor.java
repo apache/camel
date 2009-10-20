@@ -33,6 +33,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -140,7 +141,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         final AtomicBoolean running = new AtomicBoolean(true);
 
         if (streaming) {
-            // execute tasks in paralle+streaming and aggregate in the order they are finished (out of order sequence)
+            // execute tasks in parallel+streaming and aggregate in the order they are finished (out of order sequence)
             completion = new ExecutorCompletionService<Exchange>(executorService);
         } else {
             // execute tasks in parallel and aggregate in the order the tasks are submitted (in order sequence)
@@ -162,6 +163,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                     }
 
                     try {
+                        // set property which endpoint we send to
+                        setToEndpoint(subExchange, producer);
                         producer.process(subExchange);
                     } catch (Exception e) {
                         subExchange.setException(e);
@@ -207,12 +210,14 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
             // process it sequentially
             try {
+                // set property which endpoint we send to
+                setToEndpoint(subExchange, producer);
                 producer.process(subExchange);
             } catch (Exception e) {
                 subExchange.setException(e);
             }
 
-            // should we stop in case of an exception occured during processing?
+            // should we stop in case of an exception occurred during processing?
             if (stopOnException && subExchange.getException() != null) {
                 throw new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException());
             }
@@ -280,6 +285,13 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         ServiceHelper.startServices(processors);
     }
     
+    private static void setToEndpoint(Exchange exchange, Processor processor) {
+        if (processor instanceof Producer) {
+            Producer producer = (Producer) processor;
+            exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+        }
+    }
+
     /**
      * Is the multicast processor working in streaming mode?
      * 
