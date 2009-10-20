@@ -34,6 +34,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -43,6 +44,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
+import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.component.cxf.MessageHeaderFilter;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.cxf.binding.soap.SoapHeader;
@@ -51,6 +53,7 @@ import org.apache.cxf.headers.Header;
 import org.apache.cxf.headers.Header.Direction;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.outofband.header.OutofBandHeader;
@@ -348,6 +351,43 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
                    result.getResponseType().equals("pass"));
         assertTrue("Expected in band response header *not* to propagate but did",
                    header.value == null);
+    }
+    
+    @Test
+    public void testInoutHeaderCXFClientNoServiceClassNoRelay() throws Exception {
+        QName qname = QName.valueOf("{http://apache.org/camel/component/cxf/soap/headers}SOAPHeaderInfo");
+        String uri = "cxf:bean:routerNoRelayNoServiceClassEndpoint?headerFilterStrategy=#dropAllMessageHeadersStrategy";
+        String requestHeader = "<ns2:SOAPHeaderInfo xmlns:ns2=\"http://apache.org/camel/" 
+            + "component/cxf/soap/headers\"><originator>CxfSoapHeaderRoutePropagationTest.testInOutHeader Requestor" 
+            + "</originator><message>Invoking CxfSoapHeaderRoutePropagationTest.testInOutHeader() Request" 
+            +   "</message></ns2:SOAPHeaderInfo>";
+        String requestBody = "<ns2:inoutHeader xmlns:ns2=\"http://apache.org/camel/component/cxf/soap/headers\">" 
+            + "<requestType>CXF user</requestType></ns2:inoutHeader>";
+        List<Element> elements = new ArrayList<Element>();
+        elements.add(DOMUtils.readXml(new StringReader(requestBody)).getDocumentElement());
+        final List<SoapHeader> headers = new ArrayList<SoapHeader>();
+        headers.add(new SoapHeader(qname,
+                                   DOMUtils.readXml(new StringReader(requestHeader)).getDocumentElement()));
+        final CxfPayload<SoapHeader> cxfPayload = new CxfPayload<SoapHeader>(headers, elements);
+        
+        Exchange exchange = template.send(uri, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(cxfPayload);
+                exchange.getIn().setHeader(Header.HEADER_LIST, headers);
+            }
+
+        });
+
+        CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
+        assertEquals(1, out.getBody().size());
+
+        assertEquals(0, out.getHeaders().size());
+        
+        String response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" 
+            + "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/" 
+            + "component/cxf/soap/headers\"><responseType>pass</responseType>" 
+            + "</ns2:inoutHeaderResponse>";
+        assertEquals(response, XMLUtils.toString(out.getBody().get(0)));
     }
 
     @Test
