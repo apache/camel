@@ -18,7 +18,6 @@ package org.apache.camel.component.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -32,11 +31,6 @@ import org.apache.commons.httpclient.methods.RequestEntity;
  */
 @Converter
 public class RequestEntityConverter {
-
-    @Converter
-    public RequestEntity toRequestEntity(ByteBuffer buffer, Exchange exchange) throws Exception {
-        return asRequestEntity(buffer.array(), exchange);
-    }
 
     @Converter
     public RequestEntity toRequestEntity(byte[] data, Exchange exchange) throws Exception {
