@@ -410,7 +410,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                 // and put failure endpoint back as well
                 exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-             }
+            }
             return;
         }
 

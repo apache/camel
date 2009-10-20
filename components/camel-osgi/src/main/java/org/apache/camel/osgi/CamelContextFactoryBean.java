@@ -70,7 +70,7 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
             context.setLanguageResolver(new OsgiLanguageResolver());
             addOsgiAnnotationTypeConverterLoader(context);
         } else {
-            // TODO: should we not thrown an excpetion to not allow it to startup
+            // TODO: should we not thrown an exception to not allow it to startup
             LOG.warn("BundleContext not set, cannot run in OSGI container");
         }
         

@@ -16,21 +16,26 @@
  */
 package org.apache.camel.osgi;
 
+import java.io.IOException;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.osgi.test.MyService;
+import org.apache.camel.spi.Language;
 import org.junit.Test;
+import org.osgi.framework.BundleContext;
 
-public class CamelContextFactoryTest extends CamelOsgiTestSupport {
-
+public class OsgiComponentResolverTest extends CamelOsgiTestSupport {
+    
     @Test
-    public void osigServiceRegistryTest() throws Exception {
-        CamelContextFactory factory = new CamelContextFactory();
-        factory.setBundleContext(getBundleContext());
-        DefaultCamelContext context = factory.createContext();
-        context.start();
-        MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
-        assertNotNull("MyService should not be null", myService);
-        context.stop();
+    public void testOsgiResolverFindLanguageTest() throws Exception {
+        BundleContext context = getActivator().getBundle().getBundleContext();        
+        CamelContext camelContext = new DefaultCamelContext();
+        OsgiComponentResolver resolver = new OsgiComponentResolver();
+        Component component = resolver.resolveComponent("file_test", camelContext);
+        assertNotNull("We should find file_test component", component);
+        assertTrue("We should get the file component here", component instanceof FileComponent);
     }
 
 }

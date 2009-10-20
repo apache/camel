@@ -24,8 +24,7 @@ import org.springframework.osgi.mock.MockBundleContext;
 public class CamelMockBundleContext extends MockBundleContext {
     
     public Object getService(ServiceReference reference) {        
-        String[] classNames = (String[]) reference.getProperty(Constants.OBJECTCLASS);
-        System.out.println("The class name is " + classNames[0]);
+        String[] classNames = (String[]) reference.getProperty(Constants.OBJECTCLASS);        
         if (classNames[0].equals("org.apache.camel.osgi.test.MyService")) {
             return new MyService();
         } else {
