@@ -50,14 +50,6 @@ public enum HttpMethods implements Expression {
         }
     }
 
-    public HttpMethod createMethod() {
-        try {
-            return clazz.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public final boolean isEntityEnclosing() {
         return entity;
     }

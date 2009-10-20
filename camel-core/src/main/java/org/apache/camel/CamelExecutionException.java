@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * Exception occured during execution/processing of an {@link Exchange}.
+ * Exception occurred during execution/processing of an {@link Exchange}.
  * <p/>
  * Is usually thrown to the caller when using the {@link org.apache.camel.ProducerTemplate}
  * to send messages to Camel.

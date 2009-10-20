@@ -1050,7 +1050,7 @@ public final class ObjectHelper {
             // don't double wrap
             return (CamelExecutionException)e;
         } else {
-            return new CamelExecutionException("Exception occured during execution", exchange, e);
+            return new CamelExecutionException("Exception occurred during execution", exchange, e);
         }
     }
 
