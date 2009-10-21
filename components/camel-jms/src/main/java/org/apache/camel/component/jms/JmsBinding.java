@@ -173,7 +173,7 @@ public class JmsBinding {
                 map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
                 map.put("JMSType", jmsMessage.getJMSType());
 
-                // TODO this works around a bug in the ActiveMQ property handling
+                // this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
             } catch (JMSException e) {
                 throw new RuntimeCamelException(e);
@@ -246,7 +246,7 @@ public class JmsBinding {
      * @param exchange the current exchange
      * @param camelMessage the body to make a javax.jms.Message as
      * @param session the JMS session used to create the message
-     * @param cause optional exception occured that should be sent as reply instead of a regular body
+     * @param cause optional exception occurred that should be sent as reply instead of a regular body
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
@@ -386,14 +386,12 @@ public class JmsBinding {
      * @return  the value to use, <tt>null</tt> to ignore this header
      */
     protected Object getValidJMSHeaderValue(String headerName, Object headerValue) {
-        if (headerValue.getClass().isPrimitive()) {
-            return headerValue;
-        } else if (headerValue instanceof String) {
+        if (headerValue instanceof String) {
             return headerValue;
         } else if (headerValue instanceof Number) {
             return headerValue;
         } else if (headerValue instanceof Character) {
-            return headerValue.toString();
+            return headerValue;
         } else if (headerValue instanceof CharSequence) {
             return headerValue.toString();
         } else if (headerValue instanceof Boolean) {
