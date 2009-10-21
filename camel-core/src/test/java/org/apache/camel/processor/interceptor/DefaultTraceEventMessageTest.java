@@ -58,7 +58,8 @@ public class DefaultTraceEventMessageTest extends ContextTestSupport {
         assertNotNull(em.getExchangeId());
         assertNotNull(em.getShortExchangeId());
         assertEquals("InOut", em.getExchangePattern());
-        assertEquals("{foo=123, CamelToEndpoint=direct://start}", em.getProperties());
+        assertTrue("{foo=123, CamelToEndpoint=direct://start}".equals(em.getProperties()) || 
+                   "{CamelToEndpoint=direct://start, foo=123}".equals(em.getProperties()));
         assertEquals("{bar=456}", em.getHeaders());
         assertEquals("Hello World", em.getBody());
         assertEquals("String", em.getBodyType());
