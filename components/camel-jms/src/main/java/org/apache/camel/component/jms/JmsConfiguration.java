@@ -1243,11 +1243,13 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public void setReplyTo(String replyToDestination) {
-        if (!replyToDestination.startsWith(QUEUE_PREFIX)) {
-            throw new IllegalArgumentException("ReplyTo destination value has to be of type queue; "
-                    + "e.g: \"queue:replyQueue\"");
+        if (replyToDestination.startsWith(QUEUE_PREFIX)) {
+            this.replyToDestination = removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
+        } else if (replyToDestination.startsWith(TOPIC_PREFIX)) {
+            this.replyToDestination = removeStartingCharacters(replyToDestination.substring(TOPIC_PREFIX.length()), '/');
+        } else {
+            this.replyToDestination = replyToDestination;
         }
-        this.replyToDestination = removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
     }
 
     public String getReplyToDestinationSelectorName() {

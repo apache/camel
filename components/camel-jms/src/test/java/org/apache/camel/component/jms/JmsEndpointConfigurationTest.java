@@ -162,16 +162,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(true, endpoint.getConfiguration().isLazyCreateTransactionManager());
     }
 
-    @Test
-    public void testInvalidReplyTo() throws Exception {
-        try {
-            resolveMandatoryEndpoint("jms:queue:Foo?replyTo=foo");
-            fail("Should have thrown exception");
-        } catch (ResolveEndpointFailedException e) {
-            // expected
-        }
-    }
-
     protected void assertCacheLevel(JmsEndpoint endpoint, int expected) throws Exception {
         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
 

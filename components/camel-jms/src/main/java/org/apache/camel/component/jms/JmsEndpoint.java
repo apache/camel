@@ -132,36 +132,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return new JmsProducer(this);
     }
 
-    /**
-     * Creates a producer using the given template for InOnly message exchanges
-     */
-    public JmsProducer createProducer(JmsOperations template) throws Exception {
-        JmsProducer answer = createProducer();
-        if (template instanceof JmsTemplate) {
-            JmsTemplate jmsTemplate = (JmsTemplate) template;
-            jmsTemplate.setPubSubDomain(pubSubDomain);
-            if (destinationName != null) {
-                jmsTemplate.setDefaultDestinationName(destinationName);
-            } else if (destination != null) {
-                jmsTemplate.setDefaultDestination(destination);
-            }
-            // TODO: Why is this destination resolver disabled for producer? Its enable for consumer!
-            /*
-            else {
-                DestinationResolver resolver = getDestinationResolver();
-                if (resolver != null) {
-                    jmsTemplate.setDestinationResolver(resolver);
-                }
-                else {
-                    throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
-                }
-            }
-            */
-        }
-        answer.setInOnlyTemplate(template);
-        return answer;
-    }
-
     public JmsConsumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer(this);
         return createConsumer(processor, listenerContainer);
@@ -367,15 +337,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             throw new IllegalArgumentException("No Metadata JmsTemplate supplied!");
         }
         return template;
-    }
-
-    public void checkValidTemplate(JmsTemplate template) {
-        if (template.getDestinationResolver() == null) {
-            if (this instanceof DestinationEndpoint) {
-                final DestinationEndpoint destinationEndpoint = (DestinationEndpoint) this;
-                template.setDestinationResolver(JmsConfiguration.createDestinationResolver(destinationEndpoint));
-            }
-        }
     }
 
     // Delegated properties from the configuration
@@ -909,10 +870,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @Override
     protected String createEndpointUri() {
         String scheme = "jms";
-        Component owner = getComponent();
-        if (owner != null) {
-            // TODO get the scheme of the component?
-        }
         if (destination != null) {
             return scheme + ":" + destination;
         } else if (destinationName != null) {
