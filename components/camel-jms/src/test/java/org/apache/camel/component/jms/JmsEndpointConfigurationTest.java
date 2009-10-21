@@ -37,6 +37,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  * @version $Revision$
  */
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
+
     private Processor dummyProcessor = new Processor() {
         public void process(Exchange exchange) throws Exception {
             log.info("Received: " + exchange);
@@ -133,6 +134,42 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertTrue("Wrong delivery mode on reply template; expected  " 
                      + " DeliveryMode.NON_PERSISTENT but was DeliveryMode.PERSISTENT", 
                      template.getDeliveryMode() == DeliveryMode.NON_PERSISTENT);
+    }
+
+    @Test
+    public void testMaxConcurrentConsumers() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?maxConcurrentConsumers=5");
+        assertEquals(5, endpoint.getMaxConcurrentConsumers());
+    }
+
+    @Test
+    public void testConcurrentConsumers() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4");
+        assertEquals(4, endpoint.getConcurrentConsumers());
+    }
+
+    @Test
+    public void testIdleTaskExecutionLimit() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?idleTaskExecutionLimit=50");
+        assertEquals(50, endpoint.getIdleTaskExecutionLimit());
+        assertEquals(ConsumerType.Default, endpoint.getConsumerType());
+        assertEquals(true, endpoint.isAutoStartup());
+    }
+
+    @Test
+    public void testLazyCreateTransactionManager() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?lazyCreateTransactionManager=true");
+        assertEquals(true, endpoint.getConfiguration().isLazyCreateTransactionManager());
+    }
+
+    @Test
+    public void testInvalidReplyTo() throws Exception {
+        try {
+            resolveMandatoryEndpoint("jms:queue:Foo?replyTo=foo");
+            fail("Should have thrown exception");
+        } catch (ResolveEndpointFailedException e) {
+            // expected
+        }
     }
 
     protected void assertCacheLevel(JmsEndpoint endpoint, int expected) throws Exception {

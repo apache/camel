@@ -986,9 +986,8 @@ public class JmsConfiguration implements Cloneable {
         } else if (destinationResolver != null) {
             container.setDestinationResolver(destinationResolver);
         }
-        if (autoStartup) {
-            container.setAutoStartup(true);
-        }
+        container.setAutoStartup(autoStartup);
+
         if (clientId != null) {
             container.setClientId(clientId);
         }

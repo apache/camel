@@ -21,13 +21,14 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
- * A {@link Consumer} which uses Spring's {@link AbstractMessageListenerContainer} implementations to consume JMS messages
+ * A {@link org.apache.camel.Consumer} which uses Spring's {@link AbstractMessageListenerContainer} implementations to consume JMS messages
  *
  * @version $Revision$
  */
 public class JmsConsumer extends DefaultConsumer {
     private AbstractMessageListenerContainer listenerContainer;
     private EndpointMessageListener messageListener;
+    private boolean initialized;
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
@@ -64,6 +65,15 @@ public class JmsConsumer extends DefaultConsumer {
         listenerContainer.setMessageListener(getEndpointMessageListener());
     }
 
+    /**
+     * Starts the JMS listener container
+     * <p/>
+     * Can be used to start this consumer later if it was configured to not auto startup.
+     */
+    public void startListenerContainer() {
+        listenerContainer.start();
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -74,7 +84,14 @@ public class JmsConsumer extends DefaultConsumer {
         }
 
         listenerContainer.afterPropertiesSet();
-        listenerContainer.start();
+
+        // only start listener if auto start is enabled or we are explicit invoking start later
+        if (initialized || getEndpoint().isAutoStartup()) {
+            startListenerContainer();
+        }
+
+        // mark as initialized for the first time
+        initialized = true;
     }
 
     @Override

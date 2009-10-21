@@ -129,7 +129,7 @@ public class EndpointMessageListener implements MessageListener {
         }
 
         if (rce != null) {
-            getExceptionHandler().handleException(rce);
+            handleException(rce);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("onMessage END throwing exception: " + rce.getMessage());
             }
@@ -295,7 +295,7 @@ public class EndpointMessageListener implements MessageListener {
 
     protected Object getReplyToDestination(Message message) throws JMSException {
         // lets send a response back if we can
-        Object destination = replyToDestination;
+        Object destination = getReplyToDestination();
         if (destination == null) {
             destination = message.getJMSReplyTo();
         }
