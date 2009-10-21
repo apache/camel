@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 
@@ -33,6 +34,11 @@ public class ToStringTypeConverter implements TypeConverter {
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> toType, Object value) {
         if (value != null) {
+
+            // should not try to convert Message
+            if (Message.class.isAssignableFrom(value.getClass())) {
+                return (T) Void.TYPE;
+            }
 
             // should not try to convert future
             if (Future.class.isAssignableFrom(value.getClass())) {
