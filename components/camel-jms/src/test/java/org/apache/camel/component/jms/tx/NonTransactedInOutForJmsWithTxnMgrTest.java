@@ -54,10 +54,11 @@ public class NonTransactedInOutForJmsWithTxnMgrTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:mainStage?replyTo=queue:mainStage.reply").to("activemq:queue:request?replyTo=queue:request.reply");
+                from("activemq:queue:mainStage").to("activemq:queue:request?replyTo=queue:request.reply");
             }
         };
     }
+
     @Override 
     @Before
     public void setUp() throws Exception {
@@ -67,6 +68,7 @@ public class NonTransactedInOutForJmsWithTxnMgrTest extends CamelTestSupport {
         Thread thread = new Thread(consumer);
         thread.start();
     }
+
     @Override
     @After
     public void tearDown() throws Exception {

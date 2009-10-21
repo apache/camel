@@ -51,7 +51,7 @@ public class EndpointMessageListener implements MessageListener {
     private Processor processor;
     private JmsBinding binding;
     private boolean eagerLoadingOfProperties;
-    private Destination replyToDestination;
+    private Object replyToDestination;
     private JmsOperations template;
     private boolean disableReplyTo;
 
@@ -70,7 +70,7 @@ public class EndpointMessageListener implements MessageListener {
 
         RuntimeCamelException rce = null;
         try {
-            Destination replyDestination = getReplyToDestination(message);
+            Object replyDestination = getReplyToDestination(message);
             final Exchange exchange = createExchange(message, replyDestination);
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();
@@ -116,7 +116,11 @@ public class EndpointMessageListener implements MessageListener {
             // send the reply if we got a response and the exchange is out capable
             if (rce == null && sendReply && !disableReplyTo && exchange.getPattern().isOutCapable()) {
                 LOG.trace("onMessage.sendReply START");
-                sendReply(replyDestination, message, exchange, body, cause);
+                if (replyDestination instanceof Destination) {
+                    sendReply((Destination)replyDestination, message, exchange, body, cause);
+                } else {
+                    sendReply((String)replyDestination, message, exchange, body, cause);
+                }
                 LOG.trace("onMessage.sendReply END");
             }
 
@@ -135,7 +139,7 @@ public class EndpointMessageListener implements MessageListener {
         LOG.trace("onMessage END");
     }
 
-    public Exchange createExchange(Message message, Destination replyDestination) {
+    public Exchange createExchange(Message message, Object replyDestination) {
         Exchange exchange = new DefaultExchange(endpoint, endpoint.getExchangePattern());
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
@@ -211,7 +215,7 @@ public class EndpointMessageListener implements MessageListener {
         this.disableReplyTo = disableReplyTo;
     }
 
-    public Destination getReplyToDestination() {
+    public Object getReplyToDestination() {
         return replyToDestination;
     }
 
@@ -220,8 +224,9 @@ public class EndpointMessageListener implements MessageListener {
      * any incoming value of {@link Message#getJMSReplyTo()}
      *
      * @param replyToDestination the destination that should be used to send replies to
+     * as either a String or {@link javax.jms.Destination} type.
      */
-    public void setReplyToDestination(Destination replyToDestination) {
+    public void setReplyToDestination(Object replyToDestination) {
         this.replyToDestination = replyToDestination;
     }
 
@@ -258,9 +263,39 @@ public class EndpointMessageListener implements MessageListener {
         });
     }
 
-    protected Destination getReplyToDestination(Message message) throws JMSException {
+    protected void sendReply(String replyDestination, final Message message, final Exchange exchange,
+                             final JmsMessage out, final Exception cause) {
+        if (replyDestination == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Cannot send reply message as there is no replyDestination for: " + out);
+            }
+            return;
+        }
+        getTemplate().send(replyDestination, new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
+
+                if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
+                    String messageID = exchange.getIn().getHeader("JMSMessageID", String.class);
+                    reply.setJMSCorrelationID(messageID);
+                } else {
+                    String correlationID = message.getJMSCorrelationID();
+                    if (correlationID != null) {
+                        reply.setJMSCorrelationID(correlationID);
+                    }
+                }
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(endpoint + " sending reply JMS message: " + reply);
+                }
+                return reply;
+            }
+        });
+    }
+
+    protected Object getReplyToDestination(Message message) throws JMSException {
         // lets send a response back if we can
-        Destination destination = replyToDestination;
+        Object destination = replyToDestination;
         if (destination == null) {
             destination = message.getJMSReplyTo();
         }

@@ -1091,6 +1091,10 @@ public class JmsConfiguration implements Cloneable {
         if (isEagerLoadingOfProperties()) {
             listener.setEagerLoadingOfProperties(true);
         }
+        if (getReplyTo() != null) {
+            listener.setReplyToDestination(getReplyTo());
+        }
+
         // TODO: REVISIT: We really ought to change the model and let JmsProducer
         // and JmsConsumer have their own JmsConfiguration instance
         // This way producer's and consumer's QoS can differ and be
@@ -1244,8 +1248,7 @@ public class JmsConfiguration implements Cloneable {
             throw new IllegalArgumentException("ReplyTo destination value has to be of type queue; "
                     + "e.g: \"queue:replyQueue\"");
         }
-        this.replyToDestination =
-                removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
+        this.replyToDestination = removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
     }
 
     public String getReplyToDestinationSelectorName() {

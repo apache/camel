@@ -99,7 +99,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     public static class MultiNodeReplyToRouteBuilder extends RouteBuilder {
         public void configure() throws Exception {
-            from(endpoingtReplyToUriA).to(endpoingtReplyToUriB);
+            from(endpoingUriA).to(endpoingtReplyToUriB);
             from(endpointUriB).process(new Processor() {
                 public void process(Exchange e) {
                     Message in = e.getIn();
