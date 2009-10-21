@@ -29,7 +29,6 @@ public class JavaScriptLanguageTest extends LanguageTestSupport {
             return;
         }
 
-        assertExpression("exchange.getIn()", "Message: <hello id='m123'>world!</hello>");
         assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
         assertExpression("request.headers.get('foo')", "abc");
     }
