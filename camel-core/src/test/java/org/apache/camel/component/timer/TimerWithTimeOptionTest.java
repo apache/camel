@@ -75,7 +75,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testFiredInFutureWithTPatternFixedReat() throws Exception {
+    public void testFiredInFutureWithTPatternFixedRate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

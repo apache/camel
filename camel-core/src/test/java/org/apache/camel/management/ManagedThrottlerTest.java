@@ -42,7 +42,11 @@ public class ManagedThrottlerTest extends ContextTestSupport {
     public void testManageThrottler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(10);
 
-        // send in 10 messages
+        // Send in a first batch of 10 messages and check that the endpoint
+        // gets them.  We'll check the total time of the second and third
+        // batches as it seems that there is some time required to prime
+        // things, which can vary significantly... particularly on slower
+        // machines. 
         for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Message " + i);
         }
@@ -57,16 +61,24 @@ public class ManagedThrottlerTest extends ContextTestSupport {
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        
+        // reset the counters
+        mbeanServer.invoke(routeName, "reset", null, null);
+        
+        // send in 10 messages
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("direct:start", "Message " + i);
+        }
+
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
 
         Long timePeriod = (Long) mbeanServer.getAttribute(throttlerName, "TimePeriodMillis");
         assertEquals(1000, timePeriod.longValue());
 
-        Long last = (Long) mbeanServer.getAttribute(routeName, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take at most 2.5 sec: was " + total, total < 2500);
+        assertTrue("Should take at most 1.5 sec: was " + total, total < 1500);
 
         // change the throttler using JMX
         mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequestsPerPeriod", (long) 2));

@@ -67,6 +67,12 @@ public class ManagedTimerTest extends ContextTestSupport {
         mbeanServer.invoke(on, "stop", null, null);
         mbeanServer.invoke(on, "start", null, null);
 
+        // Take the time to check the service is started to help avoid
+        // sporadic failure on slower machines.
+        String state = (String) mbeanServer.getAttribute(on, "State");
+        assertEquals("Should be started", 
+            org.apache.camel.ServiceStatus.Started.name(), state);
+        
         // start and we should be done in at most 3 second
         mock.expectedMinimumMessageCount(3);
         mock.setResultWaitTime(3900);

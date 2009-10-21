@@ -253,11 +253,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Validates that the assertions fail on this endpoint
      */
     public void assertIsNotSatisfied() throws InterruptedException {
+        boolean failed = false;
         try {
             assertIsSatisfied();
-            fail("Expected assertion failure!");
+            // did not throw expected error... fail!
+            failed = true;
         } catch (AssertionError e) {
             LOG.info("Caught expected failure: " + e);
+        }
+        if (failed) {
+            // fail() throws the AssertionError to indicate the test failed. 
+            fail("Expected assertion failure but test succeeded!");
         }
     }
 
@@ -268,11 +274,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      *        should wait for the test to be true
      */
     public void assertIsNotSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
+        boolean failed = false;
         try {
             assertIsSatisfied(timeoutForEmptyEndpoints);
-            fail("Expected assertion failure!");
+            // did not throw expected error... fail!
+            failed = true;
         } catch (AssertionError e) {
             LOG.info("Caught expected failure: " + e);
+        }
+        if (failed) { 
+            // fail() throws the AssertionError to indicate the test failed. 
+            fail("Expected assertion failure but test succeeded!");
         }
     }    
     

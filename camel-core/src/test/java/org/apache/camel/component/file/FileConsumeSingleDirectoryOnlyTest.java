@@ -37,6 +37,9 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
 
     public void testConsumeFileOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        // Default wait time of 10 sec is not quite long enough on slow
+        // machines.
+        mock.setResultWaitTime(15000L);
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
         assertMockEndpointsSatisfied();

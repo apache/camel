@@ -39,6 +39,7 @@ public class AtomEntrySortTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:sorted");
         mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
         mock.expectedMessageCount(10);
+        mock.setResultWaitTime(15000L);
         mock.assertIsSatisfied();
     }
 

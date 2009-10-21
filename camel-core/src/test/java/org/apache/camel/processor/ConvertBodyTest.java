@@ -88,7 +88,7 @@ public class ConvertBodyTest extends ContextTestSupport {
 
     public void testConvertToStringCharsetFail() throws Exception {
 
-        String body = "Hellö Wörld";
+        String body = "Hell\u00F6 W\u00F6rld";
 
 
         MockEndpoint result = getMockEndpoint("mock:result");

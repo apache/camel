@@ -109,7 +109,7 @@ public class MockEndpointTest extends ContextTestSupport {
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectedMessageCount(5);
-        resultEndpoint.assertIsNotSatisfied();
+        resultEndpoint.assertIsSatisfied();
     }
 
     public void testExpectationsAfterMessagesArriveFail() throws Exception {
@@ -176,8 +176,6 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.expectedHeaderReceived("number", 123);
         sendHeader("number", 123);
         resultEndpoint.assertIsSatisfied();
-
-        resultEndpoint.assertIsNotSatisfied();
     }
 
     public void testExpressionExpectationOfHeader() throws InterruptedException {

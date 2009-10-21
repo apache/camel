@@ -88,6 +88,13 @@ public class ValueBuilderTest extends ContextTestSupport {
 
         // send in a false test
         mock.reset();
+        mock.message(0).body().matches(new Expression() {
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                String body = exchange.getIn().getBody(String.class);
+                Boolean answer = body.contains("Camel");
+                return type.cast(answer);
+            }
+        });
         template.sendBody("direct:start", "Hello World");
         mock.assertIsNotSatisfied();
     }
