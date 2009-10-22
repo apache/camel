@@ -30,11 +30,13 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 public class BeanProxyTest extends ContextTestSupport {
 
     public void testBeanProxyStringReturnString() throws Exception {
+        // START SNIPPET: e2
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
 
         String reply = service.submitOrderStringReturnString("<order type=\"book\">Camel in action</order>");
         assertEquals("<order id=\"123\">OK</order>", reply);
+        // END SNIPPET: e2
     }
 
     public void testBeanProxyStringReturnDocument() throws Exception {
@@ -58,6 +60,7 @@ public class BeanProxyTest extends ContextTestSupport {
     }
 
     public void testBeanProxyDocumentReturnDocument() throws Exception {
+        // START SNIPPET: e3
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
 
@@ -67,6 +70,7 @@ public class BeanProxyTest extends ContextTestSupport {
         assertNotNull(reply);
         String s = context.getTypeConverter().convertTo(String.class, reply);
         assertEquals("<order id=\"123\">OK</order>", s);
+        // END SNIPPET: e3
     }
 
     public void testBeanProxyFailure() throws Exception {
@@ -123,6 +127,7 @@ public class BeanProxyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: e1
                 from("direct:start")
                     .choice()
                         .when(xpath("/order/@type = 'book'")).to("direct:book")
@@ -132,6 +137,7 @@ public class BeanProxyTest extends ContextTestSupport {
                 from("direct:book").transform(constant("<order id=\"123\">OK</order>"));
 
                 from("direct:other").transform(constant("<order>FAIL</order>"));
+                // END SNIPPET: e1
             }
         };
     }

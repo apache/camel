@@ -21,6 +21,7 @@ import org.w3c.dom.Document;
 /**
  * @version $Revision$
  */
+// START SNIPPET: e1
 public interface OrderService {
 
     String submitOrderStringReturnString(String order);
@@ -36,3 +37,4 @@ public interface OrderService {
     Integer invalidReturnType(String s);
 
 }
+// END SNIPPET: e1
