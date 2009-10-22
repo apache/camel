@@ -46,7 +46,7 @@
   <!-- END SNIPPET: example3 -->
   
   <!-- START SNIPPET: example4 -->
-  <camelContext id="camel4" xmlns="http://camel.apache.org/schema/spring" shouldStartContext="false">
+  <camelContext id="camel4" xmlns="http://camel.apache.org/schema/spring" autoStartup="false">
     <package>org.apache.camel.spring.example</package>
   </camelContext>
   <!-- END SNIPPET: example4 --> 

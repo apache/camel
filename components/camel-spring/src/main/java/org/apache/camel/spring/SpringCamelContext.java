@@ -26,7 +26,6 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -58,7 +57,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
-    private boolean shouldStartContext = ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE);
 
     public SpringCamelContext() {
     }
@@ -85,22 +83,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void afterPropertiesSet() throws Exception {
         maybeStart();
-    }
-
-    private void maybeStart() throws Exception {
-        if (!getShouldStartContext()) {
-            LOG.info("Not starting Apache Camel as property ShouldStartContext is false");
-            return;
-        }
-
-        if (!isStarted() && !isStarting()) {
-            // Make sure we will not get into the endless loop of calling star
-            LOG.info("Starting Apache Camel as property ShouldStartContext is true");
-            start();
-        } else {
-            // ignore as Camel is already started
-            LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
-        }
     }
 
     public void destroy() throws Exception {
@@ -138,18 +120,17 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        ClassLoader cl = null;
+        ClassLoader cl;
+
         // set the application context classloader
         if (applicationContext != null && applicationContext.getClassLoader() != null) {
             cl = applicationContext.getClassLoader();
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Canot find the class loader from application context, so us the thread context class loader");
-            }
-            cl = Thread.currentThread().getContextClassLoader();   
+            LOG.warn("Cannot find the class loader from application context, so using the thread context class loader instead");
+            cl = Thread.currentThread().getContextClassLoader();
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Set the application context classloader with " + cl);
+            LOG.debug("Set the application context classloader to: " + cl);
         }
         this.setApplicationContextClassLoader(cl);
 
@@ -174,15 +155,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     @Override
     protected void doStart() throws Exception {
-        maybeDoStart();
-    }
-
-    protected void maybeDoStart() throws Exception {
-        if (getShouldStartContext()) {
-            super.doStart();
-            if (eventEndpoint == null) {
-                eventEndpoint = createEventEndpoint();
-            }
+        super.doStart();
+        if (eventEndpoint == null) {
+            eventEndpoint = createEventEndpoint();
         }
     }
 
@@ -217,12 +192,13 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         return new ApplicationContextRegistry(getApplicationContext());
     }
 
-    public void setShouldStartContext(boolean shouldStartContext) {
-        this.shouldStartContext = shouldStartContext;
-    }
-
-    public boolean getShouldStartContext() {
-        return shouldStartContext;
+    private void maybeStart() throws Exception {
+        if (!isStarted() && !isStarting()) {
+            start();
+        } else {
+            // ignore as Camel is already started
+            LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
+        }
     }
 
     @Override

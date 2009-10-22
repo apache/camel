@@ -91,15 +91,15 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         assertValidContext(context);
     }
 
-    public void testShouldStartContext() throws Exception {
+    public void testAutoStartup() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
         SpringCamelContext context = (SpringCamelContext) applicationContext.getBean("camel4");
         assertNotNull("No context found!", context);        
-        assertFalse("The context should not start yet", context.getShouldStartContext());
+        assertFalse("The context should not start yet", context.isAutoStartup());
         assertEquals("There should have not route", context.getRoutes().size(), 0);
         context = (SpringCamelContext) applicationContext.getBean("camel3");
-        assertTrue("The context should started",  context.getShouldStartContext());
+        assertTrue("The context should started",  context.isAutoStartup());
         assertEquals("There should have one route", context.getRoutes().size(), 1);
     }
 

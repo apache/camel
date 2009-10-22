@@ -23,9 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -81,7 +79,6 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
@@ -121,6 +118,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private boolean firstStartDone;
+    private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
@@ -847,6 +846,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public void start() throws Exception {
+        boolean doNotStart = !firstStartDone && !isAutoStartup();
+        firstStartDone = true;
+
+        if (doNotStart) {
+            LOG.info("Cannot start Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") as it has been configured to not auto start");
+            return;
+        }
+
         super.start();
 
         LOG.debug("Starting routes...");
@@ -1318,12 +1325,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public void setAutoStartup(Boolean autoStartup) {
-        // noop as Camel always starts up
+        this.autoStartup = autoStartup;
     }
 
     public boolean isAutoStartup() {
-        // Camel always starts up
-        return true;
+        return autoStartup != null && autoStartup;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

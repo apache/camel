@@ -108,7 +108,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlAttribute(required = false)
     private String errorHandlerRef;
     @XmlAttribute(required = false)
-    private Boolean shouldStartContext = Boolean.TRUE;
+    private Boolean autoStartup = Boolean.TRUE;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
     @XmlElement(name = "package", required = false)
@@ -696,14 +696,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.errorHandlerRef = errorHandlerRef;
     }
 
-    public Boolean getShouldStartContext() {
-        return shouldStartContext;
-    }
-
-    public void setShouldStartContext(Boolean shouldStartContext) {
-        this.shouldStartContext = shouldStartContext;
-    }
-
     public void setDataFormats(DataFormatsDefinition dataFormats) {
         this.dataFormats = dataFormats;
     }
@@ -726,6 +718,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setOnCompletions(List<OnCompletionDefinition> onCompletions) {
         this.onCompletions = onCompletions;
+    }
+
+    public Boolean isAutoStartup() {
+        return autoStartup;
+    }
+
+    public void setAutoStartup(Boolean autoStartup) {
+        this.autoStartup = autoStartup;
     }
 
     // Implementation methods
@@ -752,11 +752,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (errorHandlerRef != null) {
             ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
         }
-
-        if (shouldStartContext != null) {
-            ctx.setShouldStartContext(shouldStartContext);
+        if (autoStartup != null) {
+            ctx.setAutoStartup(autoStartup);
         }
-
         return ctx;
     }
 
