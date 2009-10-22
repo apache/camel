@@ -283,6 +283,10 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.2
+     */
+    @Deprecated
     public static class CamelJmsTemplate102 extends JmsTemplate102 {
         private JmsConfiguration config;
 
@@ -565,10 +569,18 @@ public class JmsConfiguration implements Cloneable {
         this.templateConnectionFactory = templateConnectionFactory;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.2
+     */
+    @Deprecated
     public boolean isUseVersion102() {
         return useVersion102;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.2
+     */
+    @Deprecated
     public void setUseVersion102(boolean useVersion102) {
         this.useVersion102 = useVersion102;
     }
