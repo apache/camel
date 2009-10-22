@@ -16,72 +16,29 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.xml.namespace.QName;
-
-import org.apache.cxf.service.Service;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
-import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.service.model.ServiceInfo;
-import org.apache.cxf.wsdl11.WSDLServiceFactory;
+import org.apache.cxf.service.invoker.Invoker;
 
+/**
+ * A service factory bean class that create a service factory without requiring a service class
+ * (SEI).
+ *
+ * @version $Revision$
+ */
 public class WSDLServiceFactoryBean extends ReflectionServiceFactoryBean {
-    private QName serviceName;
-    private QName endpointName;
-
     @Override
-    public Service create() {
-
-        WSDLServiceFactory factory = new WSDLServiceFactory(getBus(), getWsdlURL(), getServiceQName());
-
-        setService(factory.create());
-        initializeDefaultInterceptors();
-        //disable the date interceptors
-        updateEndpointInfors();
-        createEndpoints();
-
-        return getService();
-    }
-
-
-    private void updateEndpointInfors() {
-        Service service = getService();
-
-        for (ServiceInfo inf : service.getServiceInfos()) {
-            for (EndpointInfo ei : inf.getEndpoints()) {
-                //setup the endpoint address
-                ei.setAddress("local://" + ei.getService().getName().toString() + "/" + ei.getName().getLocalPart());
-                // working as the dispatch mode, the binding factory will not add interceptor
-                //ei.getBinding().setProperty(AbstractBindingFactory.DATABINDING_DISABLED, Boolean.TRUE);
-            }
-        }
-
+    protected void initializeWSDLOperations() {
+        // skip this operation that requires service class
     }
     
+    @Override
     protected void checkServiceClassAnnotations(Class<?> sc) {
-        // do nothing here
+        // skip this operation that requires service class
     }
-
-    public void setServiceName(QName name) {
-        serviceName = name;
-    }
-
-    public String getServiceName() {
-        return serviceName.toString();
-    }
-
-    public QName getServiceQName() {
-        return serviceName;
-    }
-
-    public QName getEndpointName() {
-        // get the endpoint name if it is not set
-        if (endpointName == null) {
-            endpointName = getService().getEndpoints().keySet().iterator().next();
-        }
-        return endpointName;
-    }
-
-    public void setEndpointName(QName name) {
-        endpointName = name;
+    
+    @Override
+    protected Invoker createInvoker() {
+        // Camel specific invoker will be set 
+        return null;
     }
 }

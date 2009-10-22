@@ -29,6 +29,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -111,35 +112,60 @@ public class CxfSpringEndpoint extends CxfEndpoint {
             ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
         }
 
-        // create client factory bean
-        ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
-        
-        // configure client factory bean by CXF configurer
-        configure(factoryBean);
+        if (cls != null) {
+            // create client factory bean
+            ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
 
-        // setup client factory bean
-        setupClientFactoryBean(factoryBean, cls);
+            // configure client factory bean by CXF configurer
+            configure(factoryBean);
 
-        // fill in values that have not been filled.
-        QName serviceQName = null;
-        try {
-            serviceQName = factoryBean.getServiceName();
-        } catch (IllegalStateException e) {
-            // It throws IllegalStateException if serviceName has not been set.
-        }
-        
-        if (serviceQName == null && getServiceLocalName() != null) {
-            factoryBean.setServiceName(new QName(getServiceNamespace(), getServiceLocalName()));
-        }
-        if (factoryBean.getEndpointName() == null && getEndpointLocalName() != null) {
-            factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
-        }
-        
-        if (cls == null) {
+            // setup client factory bean
+            setupClientFactoryBean(factoryBean, cls);
+
+            // fill in values that have not been filled.
+            QName serviceQName = null;
+            try {
+                serviceQName = factoryBean.getServiceName();
+            } catch (IllegalStateException e) {
+                // It throws IllegalStateException if serviceName has not been set.
+            }
+
+            if (serviceQName == null && getServiceLocalName() != null) {
+                factoryBean.setServiceName(new QName(getServiceNamespace(), getServiceLocalName()));
+            }
+            if (factoryBean.getEndpointName() == null && getEndpointLocalName() != null) {
+                factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
+            }
+
+            return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
+        } else {
+            ClientFactoryBean factoryBean = createClientFactoryBean();
+
+            // configure client factory bean by CXF configurer
+            configure(factoryBean);
+            
+            // setup client factory bean
+            setupClientFactoryBean(factoryBean);
+            
+            // fill in values that have not been filled.
+            QName serviceQName = null;
+            try {
+                serviceQName = factoryBean.getServiceName();
+            } catch (IllegalStateException e) {
+                // It throws IllegalStateException if serviceName has not been set.
+            }
+            
+            if (serviceQName == null && getServiceLocalName() != null) {
+                factoryBean.setServiceName(new QName(getServiceNamespace(), getServiceLocalName()));
+            }
+            if (factoryBean.getEndpointName() == null && getEndpointLocalName() != null) {
+                factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
+            }
+            
+            ObjectHelper.notNull(factoryBean.getEndpointName(), "Please provide endpoint/port name");
+            ObjectHelper.notNull(factoryBean.getServiceName(), "Please provide service name");
             return (Client)factoryBean.create();
         }
-        
-        return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
     }
 
 
@@ -183,6 +209,10 @@ public class CxfSpringEndpoint extends CxfEndpoint {
             answer.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
         }
 
+        if (cls == null) {
+            ObjectHelper.notNull(answer.getEndpointName(), "Please provide endpoint/port name");
+            ObjectHelper.notNull(answer.getServiceName(), "Please provide service name");
+        }
         return answer;
     }
 

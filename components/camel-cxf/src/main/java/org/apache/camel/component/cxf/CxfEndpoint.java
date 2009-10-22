@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -41,7 +40,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.util.ClassHelper;
-import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
@@ -150,67 +148,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a client factory bean object.  Notice that the serviceClass <b>must</b> be
      * an interface.
      */
-    protected ClientProxyFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {        
-        if (cls == null && !getDataFormat().equals(DataFormat.POJO)) {
-            return new ClientProxyFactoryBean(new ClientFactoryBean(new WSDLServiceFactoryBean()) {
-                @Override
-                protected void createClient(Endpoint ep) {
-                    setClient(new CamelCxfClientImpl(getBus(), ep));
-                }    
-                
-                protected void initializeAnnotationInterceptors(Endpoint ep, Class<?> cls) {
-                    // Do nothing here
-                }
-                
-            })
-            {   // Override the ClientProxyFactoryBean's create method
-                // Don't create the proxy object
-                public Object create() {
-                
-                    if (getProperties() == null) {
-                        setProperties(new HashMap<String, Object>());
-                    }
-                    
-                    if (getUsername() != null) {
-                        AuthorizationPolicy authPolicy = new AuthorizationPolicy();
-                        authPolicy.setUserName(getUsername());
-                        authPolicy.setPassword(getPassword());
-                        getProperties().put(AuthorizationPolicy.class.getName(), authPolicy);
-                    }
-                    
-                    initFeatures();                
-                    getClientFactoryBean().setProperties(getProperties());
-                    
-                    if (bus != null) {
-                        getClientFactoryBean().setBus(bus);
-                    }
-
-                    if (getDataBinding() != null) {
-                        getClientFactoryBean().setDataBinding(getDataBinding());
-                    }
-                    
-                    Client c = getClientFactoryBean().create();
-                    if (getInInterceptors() != null) {
-                        c.getInInterceptors().addAll(getInInterceptors());
-                    }
-                    if (getOutInterceptors() != null) {
-                        c.getOutInterceptors().addAll(getOutInterceptors());
-                    }
-                    if (getInFaultInterceptors() != null) {
-                        c.getInFaultInterceptors().addAll(getInFaultInterceptors());
-                    }
-                    if (getOutFaultInterceptors() != null) {
-                        c.getOutFaultInterceptors().addAll(getOutFaultInterceptors());
-                    }
-
-                    return c;
-                }
-            };        
-        }
-        
-        // quick null point check for serviceClass
-        //ObjectHelper.notNull(cls, "Please provide endpoint service interface class");
-        
+    protected ClientProxyFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {               
         if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             return new JaxWsProxyFactoryBean(new JaxWsClientFactoryBean() {
                 @Override
@@ -227,6 +165,26 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             });
         }
     }
+    
+    /**
+     * 
+     * Create a client factory bean object without serviceClass interface.
+     */
+    protected ClientFactoryBean createClientFactoryBean() {
+        return new ClientFactoryBean(new WSDLServiceFactoryBean()) {
+                        
+            @Override
+            protected void createClient(Endpoint ep) {
+                setClient(new CamelCxfClientImpl(getBus(), ep));
+            }    
+            
+            @Override
+            protected void initializeAnnotationInterceptors(Endpoint ep, Class<?> cls) {
+                // Do nothing here
+            }
+            
+        };
+    }
 
     protected Bus doGetBus() {
         return BusFactory.getDefaultBus();
@@ -236,10 +194,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * 
      * Populate a client factory bean
      */
-    protected void setupClientFactoryBean(ClientProxyFactoryBean factoryBean, Class<?> cls) {
-        // quick null point check for serviceClass
-        //ObjectHelper.notNull(cls, "Please provide endpoint service interface class");
-        
+    protected void setupClientFactoryBean(ClientProxyFactoryBean factoryBean, Class<?> cls) {       
         // service class
         factoryBean.setServiceClass(cls);
         
@@ -271,6 +226,35 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         factoryBean.setBus(getBus());
         
     }
+
+    protected void setupClientFactoryBean(ClientFactoryBean factoryBean) {       
+        // address
+        factoryBean.setAddress(getEndpointUri());
+
+        // wsdl url
+        if (getWsdlURL() != null) {
+            factoryBean.setWsdlURL(getWsdlURL());
+        }
+        
+        // service name qname
+        if (getServiceName() != null) {
+            factoryBean.setServiceName(CxfEndpointUtils.getQName(getServiceName()));
+        }
+        
+        // port name qname
+        if (getPortName() != null) {
+            factoryBean.setEndpointName(CxfEndpointUtils.getQName(getPortName()));
+        }
+
+        // apply feature here
+        if (getDataFormat() == DataFormat.MESSAGE) {
+            factoryBean.getFeatures().add(new MessageDataFormatFeature());
+        } else if (getDataFormat() == DataFormat.PAYLOAD) {
+            factoryBean.getFeatures().add(new PayLoadDataFormatFeature());
+        }
+        
+        factoryBean.setBus(getBus());        
+    }
     
     // Package private methods
     // -------------------------------------------------------------------------
@@ -288,22 +272,21 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         Class<?> cls = null;
         if (getServiceClass() != null) {
             cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
-        }
-
-        // create client factory bean
-        ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
-        
-        // setup client factory bean
-        setupClientFactoryBean(factoryBean, cls);
-        
-        if (cls == null) {
-            return (Client)factoryBean.create();
-        } else {
+            // create client factory bean
+            ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
+            // setup client factory bean
+            setupClientFactoryBean(factoryBean, cls);
             return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
+        } else {
+            ObjectHelper.notNull(portName, "Please provide endpoint/port name");
+            ObjectHelper.notNull(serviceName, "Please provide service name");
+            ClientFactoryBean factoryBean = createClientFactoryBean();
+            // setup client factory bean
+            setupClientFactoryBean(factoryBean);
+            return factoryBean.create();
         }
         
     }
-
 
     /**
      * Create a CXF server factory bean
@@ -323,6 +306,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         ServerFactoryBean answer = null;
         
         if (cls == null) {
+            ObjectHelper.notNull(portName, "Please provide endpoint/port name");
+            ObjectHelper.notNull(serviceName, "Please provide service name");
             answer = new ServerFactoryBean(new WSDLServiceFactoryBean());
         } else if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             answer = new JaxWsServerFactoryBean();
@@ -488,8 +473,5 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 super.setParameters(params, message);
             }
         }
-
-
     }
-
 }
