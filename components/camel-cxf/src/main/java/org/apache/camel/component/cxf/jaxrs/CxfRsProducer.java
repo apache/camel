@@ -159,7 +159,7 @@ public class CxfRsProducer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private Method findRightMethod(List<Class> resourceClasses, String methodName, Class[] parameterTypes) throws NoSuchMethodException {        
+    private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class[] parameterTypes) throws NoSuchMethodException {        
         Method answer = null;
         for (Class<?> clazz : resourceClasses) {
             try {
