@@ -100,8 +100,6 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut(true);
         out.setBody(buffer.toString());
-        out.setHeader("org.apache.camel.freemarker.resource", getResource());
-        out.setHeader("org.apache.camel.freemarker.resourceUri", path);
         Map<String, Object> headers = (Map<String, Object>) variableMap.get("headers");
         for (String key : headers.keySet()) {
             out.setHeader(key, headers.get(key));
