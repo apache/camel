@@ -35,6 +35,7 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
+import org.apache.camel.component.bean.BeanInvocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -594,6 +595,13 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             // special for files so we can work with them out of the box
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, answer);
             answer = new InputSource(is);
+        } else if (answer instanceof BeanInvocation) {
+            // if its a null bean invocation then handle that
+            BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, answer);
+            if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
+                // its a null argument from the bean invocation so use null as answer
+                answer = null;
+            }
         } else if (answer instanceof String) {
             answer = new InputSource(new StringReader(answer.toString()));
         }

@@ -46,7 +46,7 @@ public class ToStringTypeConverter implements TypeConverter {
                 return (T) Void.TYPE;
             }
 
-            // should not try to bean invocations
+            // should not try to convert bean invocations
             if (BeanInvocation.class.isAssignableFrom(value.getClass())) {
                 return (T) Void.TYPE;
             }

@@ -26,6 +26,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a
@@ -34,6 +36,8 @@ import org.apache.camel.impl.DefaultExchange;
  * @version $Revision$
  */
 public class CamelInvocationHandler implements InvocationHandler {
+    private static final transient Log LOG = LogFactory.getLog(CamelInvocationHandler.class);
+
     private final Endpoint endpoint;
     private final Producer producer;
     private final MethodInfoCache methodInfoCache;
@@ -54,7 +58,13 @@ public class CamelInvocationHandler implements InvocationHandler {
         Exchange exchange = new DefaultExchange(endpoint, pattern);
         exchange.getIn().setBody(invocation);
 
+        // process the exchange
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Proxied method call " + method.getName() + " invoking producer: " + producer);
+        }
         producer.process(exchange);
+
+        // check if we had an exception
         Throwable fault = exchange.getException();
         if (fault != null) {
             if (fault instanceof RuntimeCamelException) {
@@ -67,12 +77,19 @@ public class CamelInvocationHandler implements InvocationHandler {
             throw new InvocationTargetException(fault);
         }
 
-        // TODO: type convert to method signature
-        if (pattern.isOutCapable()) {
-            return exchange.getOut().getBody();
-        } else {
+        // do not return a reply if the method is VOID or the MEP is not OUT capable
+        Class<?> to = method.getReturnType();
+        if (to == Void.TYPE || !pattern.isOutCapable()) {
             return null;
         }
+
+        // use type converter so we can convert output in the desired type defined by the method
+        // and let it be mandatory so we know wont return null if we cant convert it to the defined type
+        Object answer = exchange.getOut().getMandatoryBody(to);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Proxied method call " + method.getName() + " returning: " + answer);
+        }
+        return answer;
     }
 }
 
