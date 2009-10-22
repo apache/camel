@@ -221,7 +221,7 @@ public class JmsProducer extends DefaultProducer {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Message sent, now waiting for reply at: " + replyTo.toString());
                 }
-                if (requestTimeout < 0) {
+                if (requestTimeout <= 0) {
                     message = (Message)futureHolder.get().get();
                 } else {
                     message = (Message)futureHolder.get().get(requestTimeout, TimeUnit.MILLISECONDS);
@@ -242,9 +242,9 @@ public class JmsProducer extends DefaultProducer {
 
                 if (endpoint.isTransferException() && body instanceof Exception) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Reply recieved. Setting reply an Exception: " + body);
+                        LOG.debug("Reply recieved. Setting reply as an Exception: " + body);
                     }
-                    // we got an exception back and endpoint was configued to transfer exception
+                    // we got an exception back and endpoint was configured to transfer exception
                     // therefore set response as exception
                     exchange.setException((Exception) body);
                 } else {

@@ -573,6 +573,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().isUseMessageIDAsCorrelationID();
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.2
+     */
+    @Deprecated
     public boolean isUseVersion102() {
         return getConfiguration().isUseVersion102();
     }
@@ -813,6 +817,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setUseMessageIDAsCorrelationID(useMessageIDAsCorrelationID);
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.2
+     */
+    @Deprecated
     public void setUseVersion102(boolean useVersion102) {
         getConfiguration().setUseVersion102(useVersion102);
     }

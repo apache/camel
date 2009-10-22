@@ -295,6 +295,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setTransactionTimeout(transactionTimeout);
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.2
+     */
+    @Deprecated
     public void setUseVersion102(boolean useVersion102) {
         getConfiguration().setUseVersion102(useVersion102);
     }
