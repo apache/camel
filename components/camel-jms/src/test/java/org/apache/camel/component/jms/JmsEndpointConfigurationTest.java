@@ -18,6 +18,8 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -32,6 +34,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import org.springframework.jms.support.converter.SimpleMessageConverter;
 
 /**
  * @version $Revision$
@@ -160,6 +163,217 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     public void testLazyCreateTransactionManager() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?lazyCreateTransactionManager=true");
         assertEquals(true, endpoint.getConfiguration().isLazyCreateTransactionManager());
+    }
+
+    @Test
+    public void testDefaultEndpointOptions() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo");
+
+        assertNotNull(endpoint.getBinding());
+        assertNotNull(endpoint.getCamelContext());
+        assertEquals(-1, endpoint.getRecoveryInterval());
+        assertEquals(-1, endpoint.getTimeToLive());
+        assertEquals(-1, endpoint.getTransactionTimeout());
+        assertEquals(null, endpoint.getAcknowledgementModeName());
+        assertEquals(2, endpoint.getAcknowledgementMode());
+        assertEquals(-1, endpoint.getCacheLevel());
+        assertEquals(null, endpoint.getCacheLevelName());
+        assertNotNull(endpoint.getCamelId());
+        assertEquals(null, endpoint.getClientId());
+        assertNotNull(endpoint.getConnectionFactory());
+        assertEquals(1, endpoint.getConcurrentConsumers());
+        assertEquals(ConsumerType.Default, endpoint.getConsumerType());
+        assertNull(endpoint.getDestination());
+        assertEquals("Foo", endpoint.getDestinationName());
+        assertNull(endpoint.getDestinationResolver());
+        assertEquals(null, endpoint.getDurableSubscriptionName());
+        assertEquals("jms://queue:Foo", endpoint.getEndpointKey());
+        assertEquals("jms://queue:Foo", endpoint.getEndpointUri());
+        assertNull(endpoint.getExceptionListener());
+        assertEquals(1, endpoint.getIdleTaskExecutionLimit());
+        assertEquals(null, endpoint.getJmsMessageType());
+        assertNull(endpoint.getJmsOperations());
+        assertNotNull(endpoint.getListenerConnectionFactory());
+        assertEquals(1, endpoint.getMaxConcurrentConsumers());
+        assertEquals(-1, endpoint.getMaxMessagesPerTask());
+        assertEquals(null, endpoint.getMessageConverter());
+        assertNotNull(endpoint.getMetadataJmsOperations());
+        assertNotNull(endpoint.getPriority());
+        assertNotNull(endpoint.getProviderMetadata());
+        assertNotNull(endpoint.getReceiveTimeout());
+        assertNotNull(endpoint.getRecoveryInterval());
+        assertNull(endpoint.getReplyTo());
+        assertNull(endpoint.getReplyToDestinationSelectorName());
+        assertEquals(JmsConfiguration.REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT, endpoint.getReplyToTempDestinationAffinity());
+        assertEquals(1000, endpoint.getRequestMapPurgePollTimeMillis());
+        assertNotNull(endpoint.getRequestor());
+        assertEquals(20000, endpoint.getRequestTimeout());
+        assertNull(endpoint.getSelector());
+        assertEquals(-1, endpoint.getTimeToLive());
+        assertNull(endpoint.getTransactionName());
+        assertEquals(-1, endpoint.getTransactionTimeout());
+        assertNull(endpoint.getTaskExecutor());
+        assertNotNull(endpoint.getTemplateConnectionFactory());
+        assertNull(endpoint.getTransactionManager());
+
+        assertEquals(false, endpoint.isAcceptMessagesWhileStopping());
+        assertEquals(false, endpoint.isAlwaysCopyMessage());
+        assertEquals(true, endpoint.isAutoStartup());
+        assertEquals(true, endpoint.isDeliveryPersistent());
+        assertEquals(false, endpoint.isDisableReplyTo());
+        assertEquals(false, endpoint.isEagerLoadingOfProperties());
+        assertEquals(false, endpoint.isExplicitQosEnabled());
+        assertEquals(true, endpoint.isExposeListenerSession());
+        assertEquals(false, endpoint.isLenientProperties());
+        assertEquals(true, endpoint.isMessageIdEnabled());
+        assertEquals(true, endpoint.isMessageTimestampEnabled());
+        assertEquals(false, endpoint.isPreserveMessageQos());
+        assertEquals(false, endpoint.isPubSubDomain());
+        assertEquals(false, endpoint.isPubSubNoLocal());
+        assertEquals(true, endpoint.isReplyToDeliveryPersistent());
+        assertEquals(false, endpoint.isUseMessageIDAsCorrelationID());
+        assertEquals(false, endpoint.isUseVersion102());
+        assertEquals(true, endpoint.isSingleton());
+        assertEquals(false, endpoint.isSubscriptionDurable());
+        assertEquals(false, endpoint.isTransacted());
+        assertEquals(false, endpoint.isTransactedInOut());
+        assertEquals(false, endpoint.isTransferException());
+    }
+
+    @Test
+    public void testSettingEndpointOptions() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo");
+
+        endpoint.setAcceptMessagesWhileStopping(true);
+        assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
+
+        endpoint.setAcknowledgementMode(2);
+        assertEquals(2, endpoint.getAcknowledgementMode());
+
+        endpoint.setAcknowledgementModeName("CLIENT_ACKNOWLEDGE");
+        assertEquals("CLIENT_ACKNOWLEDGE", endpoint.getAcknowledgementModeName());
+
+        endpoint.setAlwaysCopyMessage(true);
+        assertEquals(true, endpoint.isAlwaysCopyMessage());
+
+        endpoint.setCacheLevel(2);
+        assertEquals(2, endpoint.getCacheLevel());
+
+        endpoint.setCacheLevelName("foo");
+        assertEquals("foo", endpoint.getCacheLevelName());
+
+        endpoint.setClientId("bar");
+        assertEquals("bar", endpoint.getClientId());
+
+        endpoint.setConcurrentConsumers(5);
+        assertEquals(5, endpoint.getConcurrentConsumers());
+
+        endpoint.setConsumerType(ConsumerType.Default);
+        assertEquals(ConsumerType.Default, endpoint.getConsumerType());
+
+        endpoint.setDeliveryPersistent(true);
+        assertEquals(true, endpoint.isDeliveryPersistent());
+
+        endpoint.setDestinationName("cool");
+        assertEquals("cool", endpoint.getDestinationName());
+
+        endpoint.setDisableReplyTo(true);
+        assertEquals(true, endpoint.isDisableReplyTo());
+
+        endpoint.setEagerLoadingOfProperties(true);
+        assertEquals(true, endpoint.isEagerLoadingOfProperties());
+
+        endpoint.setExceptionListener(new ExceptionListener() {
+            public void onException(JMSException exception) {
+            }
+        });
+        assertNotNull(endpoint.getExceptionListener());
+
+        endpoint.setExplicitQosEnabled(true);
+        assertEquals(true, endpoint.isExplicitQosEnabled());
+
+        endpoint.setExposeListenerSession(true);
+        assertEquals(true, endpoint.isExposeListenerSession());
+
+        endpoint.setIdleTaskExecutionLimit(5);
+        assertEquals(5, endpoint.getIdleTaskExecutionLimit());
+
+        endpoint.setMaxConcurrentConsumers(4);
+        assertEquals(4, endpoint.getMaxConcurrentConsumers());
+
+        endpoint.setMaxMessagesPerTask(9);
+        assertEquals(9, endpoint.getMaxMessagesPerTask());
+
+        endpoint.setMessageConverter(new SimpleMessageConverter());
+        assertNotNull(endpoint.getMessageConverter());
+
+        endpoint.setMessageIdEnabled(true);
+        assertEquals(true, endpoint.isMessageIdEnabled());
+
+        endpoint.setMessageTimestampEnabled(true);
+        assertEquals(true, endpoint.isMessageTimestampEnabled());
+
+        endpoint.setPreserveMessageQos(true);
+        assertEquals(true, endpoint.isPreserveMessageQos());
+
+        endpoint.setPriority(6);
+        assertEquals(6, endpoint.getPriority());
+
+        endpoint.setPubSubNoLocal(true);
+        assertEquals(true, endpoint.isPubSubNoLocal());
+
+        endpoint.setPubSubNoLocal(true);
+        assertEquals(true, endpoint.isPubSubNoLocal());
+
+        assertEquals(false, endpoint.isPubSubDomain());
+
+        endpoint.setReceiveTimeout(5000);
+        assertEquals(5000, endpoint.getReceiveTimeout());
+
+        endpoint.setRecoveryInterval(6000);
+        assertEquals(6000, endpoint.getRecoveryInterval());
+
+        endpoint.setReplyTo("bar");
+        assertEquals("bar", endpoint.getReplyTo());
+
+        endpoint.setReplyToDeliveryPersistent(true);
+        assertEquals(true, endpoint.isReplyToDeliveryPersistent());
+
+        endpoint.setReplyToDestinationSelectorName("me");
+        assertEquals("me", endpoint.getReplyToDestinationSelectorName());
+
+        endpoint.setReplyToTempDestinationAffinity("endpoint");
+        assertEquals("endpoint", endpoint.getReplyToTempDestinationAffinity());
+
+        endpoint.setRequestMapPurgePollTimeMillis(2000);
+        assertEquals(2000, endpoint.getRequestMapPurgePollTimeMillis());
+
+        endpoint.setRequestTimeout(3000);
+        assertEquals(3000, endpoint.getRequestTimeout());
+
+        endpoint.setSelector("you");
+        assertEquals("you", endpoint.getSelector());
+
+        endpoint.setTimeToLive(4000);
+        assertEquals(4000, endpoint.getTimeToLive());
+
+        endpoint.setTransacted(true);
+        assertEquals(true, endpoint.isTransacted());
+
+        endpoint.setTransactedInOut(true);
+        assertEquals(true, endpoint.isTransactedInOut());
+
+        endpoint.setTransferExchange(true);
+        assertEquals(true, endpoint.isTransferExchange());
+
+        endpoint.setTransferException(true);
+        assertEquals(true, endpoint.isTransferException());
+
+        endpoint.setJmsMessageType(JmsMessageType.Text);
+        assertEquals(JmsMessageType.Text, endpoint.getJmsMessageType());
+
+        endpoint.setUseVersion102(true);
+        assertEquals(true, endpoint.isUseVersion102());
     }
 
     protected void assertCacheLevel(JmsEndpoint endpoint, int expected) throws Exception {

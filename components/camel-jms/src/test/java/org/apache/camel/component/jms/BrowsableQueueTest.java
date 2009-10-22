@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-
 import java.util.List;
 
 import javax.jms.ConnectionFactory;
@@ -33,14 +32,12 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
-
 /**
  * @version $Revision$
  */
 public class BrowsableQueueTest extends CamelTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BrowsableQueueTest.class);
 
-    protected MockEndpoint resultEndpoint;
     protected String componentName = "activemq";
     protected String startEndpointUri;
     protected int counter;
@@ -55,10 +52,18 @@ public class BrowsableQueueTest extends CamelTestSupport {
         }
 
         // now lets browse the queue
-        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b", JmsQueueEndpoint.class);
+        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b?maximumBrowseSize=6", JmsQueueEndpoint.class);
+        assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 2, list.size());
+        assertEquals("Size of list", 2, endpoint.qeueSize());
+
+        // for JMX stuff
+        for (int i = 0; i < 2; i++) {
+            String data = endpoint.browseExchange(i);
+            assertNotNull(data);
+        }
+
         int index = -1;
         for (Exchange exchange : list) {
             String actual = exchange.getIn().getBody(String.class);
