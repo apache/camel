@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.file.GenericFile;
 
 /**
@@ -42,6 +43,11 @@ public class ToStringTypeConverter implements TypeConverter {
 
             // should not try to convert future
             if (Future.class.isAssignableFrom(value.getClass())) {
+                return (T) Void.TYPE;
+            }
+
+            // should not try to bean invocations
+            if (BeanInvocation.class.isAssignableFrom(value.getClass())) {
                 return (T) Void.TYPE;
             }
 

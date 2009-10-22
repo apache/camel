@@ -66,6 +66,8 @@ public class CamelInvocationHandler implements InvocationHandler {
             }
             throw new InvocationTargetException(fault);
         }
+
+        // TODO: type convert to method signature
         if (pattern.isOutCapable()) {
             return exchange.getOut().getBody();
         } else {
