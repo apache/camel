@@ -165,10 +165,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-        if (resource != null) {
-            out.setHeader(VelocityConstants.VELOCITY_RESOURCE, resource);
-            out.setHeader(VelocityConstants.VELOCITY_RESOURCE_URI, path);
-        }
+       
         Map<String, Object> headers = (Map<String, Object>) velocityContext.get("headers");
         for (String key : headers.keySet()) {
             out.setHeader(key, headers.get(key));
