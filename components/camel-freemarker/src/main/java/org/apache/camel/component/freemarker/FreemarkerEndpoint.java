@@ -145,8 +145,6 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-        out.setHeader(FreemarkerConstants.FREEMARKER_RESOURCE, getResource());
-        out.setHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI, path);
         Map<String, Object> headers = (Map<String, Object>) variableMap.get("headers");
         for (String key : headers.keySet()) {
             out.setHeader(key, headers.get(key));
