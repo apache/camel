@@ -26,7 +26,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * A set of converter methods for working with beans
  */
 @Converter
-public class BeanConverter {
+public final class BeanConverter {
 
     private BeanConverter() {
         // Helper Class

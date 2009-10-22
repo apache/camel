@@ -137,6 +137,10 @@
               <version>${project.version}</version>
             </dependency>
           </dependencies>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
+          </configuration>
         </plugin>
   
         <plugin>

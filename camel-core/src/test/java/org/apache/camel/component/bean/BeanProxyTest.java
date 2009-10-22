@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.InvalidPayloadException;
 import org.w3c.dom.Document;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
