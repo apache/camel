@@ -115,8 +115,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut(true);
         out.setBody(buffer.toString());
-        out.setHeader("org.apache.camel.velocity.resource", resource);
-        Map<String, Object> headers = (Map<String, Object>)velocityContext.get("headers");
+        Map<String, Object> headers = (Map<String, Object>) velocityContext.get("headers");
         for (String key : headers.keySet()) {
             out.setHeader(key, headers.get(key));
         }
