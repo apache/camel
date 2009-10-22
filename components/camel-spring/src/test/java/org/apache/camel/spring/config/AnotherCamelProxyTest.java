@@ -26,12 +26,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class AnotherCamelProxyTest extends TestCase {
 
     public void testAnotherCamelProxy() throws Exception {
+        // START SNIPPET: e1
         ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/AnotherCamelProxyTest.xml");
 
         MyProxySender sender = (MyProxySender) ac.getBean("myProxySender");
         String reply = sender.hello("Camel");
 
         assertEquals("Bye Camel", reply);
+        // END SNIPPET: e1
     }
 
 }
