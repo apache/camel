@@ -100,7 +100,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
                         if (log.isTraceEnabled()) {
                             log.trace("Deleting existing file: " + tempTarget);
                         }
-                        operations.deleteFile(target);
+                        if (!operations.deleteFile(target)) {
+                            throw new GenericFileOperationFailedException("Cannot delete file: " + target);
+                        }
+
                     }
                 }
 
@@ -109,7 +112,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
                     if (log.isTraceEnabled()) {
                         log.trace("Deleting existing temp file: " + tempTarget);
                     }
-                    operations.deleteFile(tempTarget);
+                    if (!operations.deleteFile(tempTarget)) {
+                        throw new GenericFileOperationFailedException("Cannot delete file: " + tempTarget);
+                    }
                 }
             }
 
