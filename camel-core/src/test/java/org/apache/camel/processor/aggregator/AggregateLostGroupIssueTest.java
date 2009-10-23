@@ -30,7 +30,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class AggregateLostGroupIssueTest extends ContextTestSupport {
 
-    private int messageIndex = 0;
+    private int messageIndex;
 
     public void testAggregateLostGroupIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
