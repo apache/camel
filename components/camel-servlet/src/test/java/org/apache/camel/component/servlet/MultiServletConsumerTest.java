@@ -24,6 +24,7 @@ import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.CamelServlet;
 import org.junit.Test;
 
 public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
@@ -50,8 +51,13 @@ public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
     
     @Test
     public void testMultiServletsConsumers() throws Exception {
-        String result = getService("/services2/hello");
-        assertEquals("Get a wrong response", "/mycontext/services2/hello", result);
+        // this bit is needed because the default servlet chosen (when none is specified)
+        // differs in various JDK versions
+        CamelServlet camelServlet = CamelHttpTransportServlet.getCamelServlet(null);
+        String helloServiceServlet = camelServlet.getServletName().contains("2") ? "2" : "1";
+        
+        String result = getService("/services" + helloServiceServlet + "/hello");
+        assertEquals("Get a wrong response", "/mycontext/services" + helloServiceServlet + "/hello", result);
         
         result = getService("/services1/echo");
         assertEquals("Get a wrong response", "/mycontext/services1/echo", result);
