@@ -80,9 +80,40 @@ public class GenericFileProducer<T> extends DefaultProducer {
             if (writeAsTempAndRename) {
                 // compute temporary name with the temp prefix
                 tempTarget = createTempFileName(target);
+
+                // cater for file exists option on the real target as
+                // the file operations code will work on the temp file
+
+                // if an existing file already exists what should we do?
+                if (operations.existsFile(target)) {
+                    if (endpoint.getFileExist() == GenericFileExist.Ignore) {
+                        // ignore but indicate that the file was written
+                        if (log.isTraceEnabled()) {
+                            log.trace("An existing file already exists: " + target + ". Ignore and do not override it.");
+                        }
+                        return;
+                    } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
+                        throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
+                    } else if (endpoint.getFileExist() == GenericFileExist.Override) {
+                        // we override the target so we do this by deleting it so the temp file can be renamed later
+                        // with success as the existing target file have been deleted
+                        if (log.isTraceEnabled()) {
+                            log.trace("Deleting existing file: " + tempTarget);
+                        }
+                        operations.deleteFile(target);
+                    }
+                }
+
+                // delete any pre existing temp file
+                if (operations.existsFile(tempTarget)) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Deleting existing temp file: " + tempTarget);
+                    }
+                    operations.deleteFile(tempTarget);
+                }
             }
 
-            // upload the file
+            // write/upload the file
             writeFile(exchange, tempTarget != null ? tempTarget : target);
 
             // if we did write to a temporary name then rename it to the real

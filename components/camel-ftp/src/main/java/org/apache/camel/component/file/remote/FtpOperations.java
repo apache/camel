@@ -205,7 +205,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             boolean success;
             try {
-                // maybe the full directory already exsits
+                // maybe the full directory already exists
                 success = client.changeWorkingDirectory(directory);
                 if (!success) {
                     if (LOG.isTraceEnabled()) {
@@ -273,12 +273,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             // delete any existing files
             if (temp.exists()) {
-                if (!temp.delete()) {
+                if (!FileUtil.deleteFile(temp)) {
                     throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + temp);
                 }
             }
             if (local.exists()) {
-                if (!local.delete()) {
+                if (!FileUtil.deleteFile(local)) {
                     throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + local);
                 }                
             }
@@ -310,13 +310,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }  finally {
             // need to close the stream before rename it
             ObjectHelper.close(os, "retrieve: " + name, LOG);
-        }   
-            
+        }
+
         // rename temp to local after we have retrieved the data
-        if (!temp.renameTo(local)) {                
+        if (!FileUtil.renameFile(temp, local)) {
             throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
         }
-        
 
         return result;
     }

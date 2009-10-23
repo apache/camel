@@ -91,6 +91,12 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     public GenericFileProducer<File> createProducer() throws Exception {
         ObjectHelper.notNull(operations, "operations");
+
+        // you cannot use temp prefix and file exists append
+        if (getFileExist() == GenericFileExist.Append && getTempPrefix() != null) {
+            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix options");
+        }
+
         return new GenericFileProducer<File>(this, operations);
     }
 

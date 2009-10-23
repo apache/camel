@@ -346,12 +346,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             // delete any existing files
             if (temp.exists()) {
-                if (!temp.delete()) {
+                if (!FileUtil.deleteFile(temp)) {
                     throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + temp);
                 }
             }
             if (local.exists()) {
-                if (!local.delete()) {
+                if (!FileUtil.deleteFile(local)) {
                     throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + local);
                 }
             }
@@ -376,7 +376,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.get(name, os);
 
             // rename temp to local after we have retrieved the data
-            if (!temp.renameTo(local)) {
+            if (!FileUtil.renameFile(temp, local)) {
                 throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
             }
         } catch (SftpException e) {
