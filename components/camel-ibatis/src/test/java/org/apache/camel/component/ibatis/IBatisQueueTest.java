@@ -52,6 +52,9 @@ public class IBatisQueueTest extends CamelTestSupport {
         template.sendBody("direct:start", account);
         
         assertMockEndpointsSatisfied();
+
+        // need a delay here on slower machines
+        Thread.sleep(1000);
         
         // now lets poll that the account has been inserted
         List body = template.requestBody("ibatis:selectProcessedAccounts?statementType=QueryForList", null, List.class);
