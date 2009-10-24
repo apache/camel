@@ -25,14 +25,16 @@ import org.apache.commons.httpclient.StatusLine;
 
 public class HttpOperationFailedException extends CamelException {
     private static final long serialVersionUID = -8721487434390572633L;
+    private final String uri;
     private final String redirectLocation;
     private final int statusCode;
     private final StatusLine statusLine;
     private final Header[] responseHeaders;
     private final InputStream responseBody;
 
-    public HttpOperationFailedException(int statusCode, StatusLine statusLine, String location, Header[] responseHeaders, InputStream responseBody) {
-        super("HTTP operation failed with statusCode: " + statusCode + ", status: " + statusLine + (location != null ? ", redirectLocation: " + location : ""));
+    public HttpOperationFailedException(String uri, int statusCode, StatusLine statusLine, String location, Header[] responseHeaders, InputStream responseBody) {
+        super("HTTP operation failed invoking " + uri + " with statusCode: " + statusCode + ", status: " + statusLine + (location != null ? ", redirectLocation: " + location : ""));
+        this.uri = uri;
         this.statusCode = statusCode;
         this.statusLine = statusLine;
         this.redirectLocation = location;
@@ -40,8 +42,12 @@ public class HttpOperationFailedException extends CamelException {
         this.responseBody = responseBody;
     }
 
-    public HttpOperationFailedException(int statusCode, StatusLine statusLine, Header[] responseHeaders, InputStream responseBody) {
-        this(statusCode, statusLine, null, responseHeaders, responseBody);
+    public HttpOperationFailedException(String uri, int statusCode, StatusLine statusLine, Header[] responseHeaders, InputStream responseBody) {
+        this(uri, statusCode, statusLine, null, responseHeaders, responseBody);
+    }
+
+    public String getUri() {
+        return uri;
     }
 
     public boolean isRedirectError() {

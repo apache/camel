@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.osgi;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import java.util.Map;
 import org.apache.camel.spi.Registry;
 
 /**
- * This registry will look up the object with the sequence of the registry list untill it find the Object.
+ * This registry will look up the object with the sequence of the registry list until it finds the Object.
  */
 public class CompositeRegistry implements Registry {
     private List<Registry> registryList;

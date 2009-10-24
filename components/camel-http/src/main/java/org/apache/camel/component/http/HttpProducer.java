@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -117,6 +118,7 @@ public class HttpProducer extends DefaultProducer {
 
     protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException {
         HttpOperationFailedException exception;
+        String uri = method.getURI().toString();
         Header[] headers = method.getResponseHeaders();
         InputStream is = extractResponseBody(method, exchange);
         // make a defensive copy of the response body in the exception so its detached from the cache
@@ -130,14 +132,14 @@ public class HttpProducer extends DefaultProducer {
             Header locationHeader = method.getResponseHeader("location");
             if (locationHeader != null) {
                 redirectLocation = locationHeader.getValue();
-                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, headers, copy);
+                exception = new HttpOperationFailedException(uri, responseCode, method.getStatusLine(), redirectLocation, headers, copy);
             } else {
                 // no redirect location
-                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, copy);
+                exception = new HttpOperationFailedException(uri, responseCode, method.getStatusLine(), headers, copy);
             }
         } else {
             // internal server error (error code 500)
-            exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, copy);
+            exception = new HttpOperationFailedException(uri, responseCode, method.getStatusLine(), headers, copy);
         }
 
         return exception;
