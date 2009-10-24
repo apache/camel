@@ -119,26 +119,31 @@ public class StreamProducer extends DefaultProducer {
 
     private void writeToStream(Exchange exchange) throws IOException, CamelExchangeException {
         Object body = exchange.getIn().getBody();
-        if (body instanceof String) {
-            Charset charset = endpoint.getCharset();
-            Writer writer = new OutputStreamWriter(outputStream, charset);
-            BufferedWriter bw = new BufferedWriter(writer);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing as text: " + body + " to " + outputStream + " using encoding:" + charset);
+
+        // if not a string then try as byte array first
+        if (!(body instanceof String)) {
+            byte[] bytes = exchange.getIn().getBody(byte[].class);
+            if (bytes != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing as byte[]: " + bytes + " to " + outputStream);
+                }
+                outputStream.write(bytes);
+                return;
             }
-            bw.write((String)body);
-            bw.write("\n");
-            bw.flush();
-            // important: do not close the writer as it will close the standard system.out etc.
-        } else if (body instanceof byte[]) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing as byte[]: " + body + " to " + outputStream);
-            }
-            outputStream.write((byte[])body);
-        } else {
-            throw new CamelExchangeException("The body is neither a String or byte array. "
-                + "Cannot write body to output stream", exchange);
         }
+
+        // okay now fallback to mandatory converterable to string
+        String s = exchange.getIn().getMandatoryBody(String.class);
+        Charset charset = endpoint.getCharset();
+        Writer writer = new OutputStreamWriter(outputStream, charset);
+        BufferedWriter bw = new BufferedWriter(writer);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Writing as text: " + body + " to " + outputStream + " using encoding:" + charset);
+        }
+        bw.write(s);
+        bw.write("\n");
+        bw.flush();
+        // important: do not close the writer as it will close the standard system.out etc.
     }
 
     private void validateUri(String uri) throws Exception {
