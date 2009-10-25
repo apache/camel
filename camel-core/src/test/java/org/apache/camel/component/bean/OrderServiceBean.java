@@ -46,6 +46,10 @@ public class OrderServiceBean {
     }
 
     public String handleXML(Document doc) {
+        if (doc == null) {
+            return null;
+        }
+
         String xml = converter.convertTo(String.class, doc);
 
         Integer orderId = 77889;

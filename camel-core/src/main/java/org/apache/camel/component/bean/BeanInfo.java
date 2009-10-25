@@ -311,8 +311,9 @@ public class BeanInfo {
                         // use exchange
                         expression = ExpressionBuilder.exchangeExpression();
                     } else {
-                        // lets assume its the body
-                        expression = ExpressionBuilder.bodyExpression(parameterType);
+                        // lets assume its the body and it must be mandatory convertable to the parameter type
+                        // so we dont pass in null as body in case Camel cannot convert to the parameter type
+                        expression = ExpressionBuilder.mandatoryBodyExpression(parameterType);
                     }
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Parameter #" + i + " is the body parameter using expression " + expression);

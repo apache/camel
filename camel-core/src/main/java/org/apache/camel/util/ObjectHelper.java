@@ -615,6 +615,8 @@ public final class ObjectHelper {
         // special for byte[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
             return byte[].class;
+        } else if ("java.lang.String".equals(name) || "String".equals(name)) {
+            return String.class;
         }
 
         // try context class loader first

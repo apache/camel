@@ -223,17 +223,17 @@ public class MethodInfo {
                     } else {
                         Expression expression = expressions[i];
                         if (expression != null) {
-                            // use object first to avoid type convertions so we know if there is a value or not
+                            // use object first to avoid type conversion so we know if there is a value or not
                             Object result = expression.evaluate(exchange, Object.class);
                             if (result != null) {
                                 // we got a value now try to convert it to the expected type
-                                value = exchange.getContext().getTypeConverter().convertTo(parameters.get(i).getType(), result);
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Parameter #" + i + " evaluated as: " + value + " type: " + ObjectHelper.type(value));
-                                }
-                                if (value == null) {
-                                    Exception e = new NoTypeConversionAvailableException(result, parameters.get(i).getType()); 
-                                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                                try {
+                                    value = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameters.get(i).getType(), result);
+                                    if (LOG.isTraceEnabled()) {
+                                        LOG.trace("Parameter #" + i + " evaluated as: " + value + " type: " + ObjectHelper.type(value));
+                                    }
+                                } catch (NoTypeConversionAvailableException e) {
+                                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                                 }
                             } else {
                                 if (LOG.isTraceEnabled()) {

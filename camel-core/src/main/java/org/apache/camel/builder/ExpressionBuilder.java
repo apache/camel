@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Producer;
@@ -430,6 +431,27 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "bodyAs[" + type.getName() + "]";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body converted
+     * to the given type
+     */
+    public static <T> Expression mandatoryBodyExpression(final Class<T> type) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                try {
+                    return exchange.getIn().getMandatoryBody(type);
+                } catch(InvalidPayloadException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "mandatoryBodyAs[" + type.getName() + "]";
             }
         };
     }
