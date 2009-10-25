@@ -25,6 +25,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="file://target/xmldata"/>
+            <convertBodyTo type="java.lang.String"/>
             <wireTap uri="mock:wiretap"/>
             <to uri="mock:result"/>
         </route>
