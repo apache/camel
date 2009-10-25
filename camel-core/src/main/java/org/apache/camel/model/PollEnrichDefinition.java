@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;pollEnrich/&gt; element
@@ -37,8 +38,11 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PollEnrichDefinition extends OutputDefinition<PollEnrichDefinition> {
 
-    @XmlAttribute(name = "uri", required = true)
+    @XmlAttribute(name = "uri")
     private String resourceUri;
+
+    @XmlAttribute(name = "ref")
+    private String resourceRef;
 
     @XmlAttribute(name = "timeout")
     private Long timeout;
@@ -58,26 +62,10 @@ public class PollEnrichDefinition extends OutputDefinition<PollEnrichDefinition>
         this.resourceUri = resourceUri;
         this.timeout = timeout;
     }
-    
-    public String getResourceUri() {
-        return resourceUri;
-    }
-
-    public Long getTimeout() {
-        return timeout;
-    }
-
-    public String getAggregationStrategyRef() {
-        return aggregationStrategyRef;
-    }
-
-    public AggregationStrategy getAggregationStrategy() {
-        return aggregationStrategy;
-    }
 
     @Override
     public String toString() {
-        return "PollEnrich[" + resourceUri + " " + aggregationStrategy + "]";
+        return "PollEnrich[" + (resourceUri != null ? resourceUri : "ref:" + resourceRef) + " " + aggregationStrategy + "]";
     }
 
     @Override
@@ -87,7 +75,17 @@ public class PollEnrichDefinition extends OutputDefinition<PollEnrichDefinition>
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Endpoint endpoint = routeContext.resolveEndpoint(resourceUri);
+        if (ObjectHelper.isEmpty(resourceUri) && ObjectHelper.isEmpty(resourceRef)) {
+            throw new IllegalArgumentException("Either uri or ref must be provided for resource endpoint");
+        }
+
+        // lookup endpoint
+        Endpoint endpoint;
+        if (resourceUri != null) {
+            endpoint = routeContext.resolveEndpoint(resourceUri);
+        } else {
+            endpoint = routeContext.resolveEndpoint(null, resourceRef);
+        }
 
         PollEnricher enricher;
         if (timeout != null) {
@@ -108,4 +106,43 @@ public class PollEnrichDefinition extends OutputDefinition<PollEnrichDefinition>
         return enricher;
     }
 
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
+    }
+
+    public String getResourceRef() {
+        return resourceRef;
+    }
+
+    public void setResourceRef(String resourceRef) {
+        this.resourceRef = resourceRef;
+    }
+
+    public Long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
+    }
+
+    public String getAggregationStrategyRef() {
+        return aggregationStrategyRef;
+    }
+
+    public void setAggregationStrategyRef(String aggregationStrategyRef) {
+        this.aggregationStrategyRef = aggregationStrategyRef;
+    }
+
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
 }

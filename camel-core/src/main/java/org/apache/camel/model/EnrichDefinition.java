@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;enrich/&gt; element
@@ -37,9 +38,12 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnrichDefinition extends OutputDefinition<EnrichDefinition> {
 
-    @XmlAttribute(name = "uri", required = true)
+    @XmlAttribute(name = "uri")
     private String resourceUri;
-    
+
+    @XmlAttribute(name = "ref")
+    private String resourceRef;
+
     @XmlAttribute(name = "strategyRef", required = false)
     private String aggregationStrategyRef;
     
@@ -49,7 +53,7 @@ public class EnrichDefinition extends OutputDefinition<EnrichDefinition> {
     public EnrichDefinition() {
         this(null, null);
     }
-    
+
     public EnrichDefinition(String resourceUri) {
         this(null, resourceUri);
     }
@@ -61,7 +65,7 @@ public class EnrichDefinition extends OutputDefinition<EnrichDefinition> {
     
     @Override
     public String toString() {
-        return "Enrich[" + resourceUri + " " + aggregationStrategy + "]";
+        return "Enrich[" + (resourceUri != null ? resourceUri : "ref:" + resourceRef) + " " + aggregationStrategy + "]";
     }
 
     @Override
@@ -71,7 +75,18 @@ public class EnrichDefinition extends OutputDefinition<EnrichDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Endpoint endpoint = routeContext.resolveEndpoint(resourceUri);
+        if (ObjectHelper.isEmpty(resourceUri) && ObjectHelper.isEmpty(resourceRef)) {
+            throw new IllegalArgumentException("Either uri or ref must be provided for resource endpoint");
+        }
+
+        // lookup endpoint
+        Endpoint endpoint;
+        if (resourceUri != null) {
+            endpoint = routeContext.resolveEndpoint(resourceUri);
+        } else {
+            endpoint = routeContext.resolveEndpoint(null, resourceRef);
+        }
+
         Enricher enricher = new Enricher(null, endpoint.createProducer());
         if (aggregationStrategyRef != null) {
             aggregationStrategy = routeContext.lookup(aggregationStrategyRef, AggregationStrategy.class);
@@ -83,5 +98,36 @@ public class EnrichDefinition extends OutputDefinition<EnrichDefinition> {
         }
         return enricher;
     }
-    
+
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
+    }
+
+    public String getResourceRef() {
+        return resourceRef;
+    }
+
+    public void setResourceRef(String resourceRef) {
+        this.resourceRef = resourceRef;
+    }
+
+    public String getAggregationStrategyRef() {
+        return aggregationStrategyRef;
+    }
+
+    public void setAggregationStrategyRef(String aggregationStrategyRef) {
+        this.aggregationStrategyRef = aggregationStrategyRef;
+    }
+
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
 }
