@@ -36,15 +36,30 @@ public class RouteIdTest extends ContextTestSupport {
         assertEquals("myCoolRoute", id);
     }
 
+    public void testRouteIdFailed() throws Exception {
+        getMockEndpoint("mock:error").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        template.sendBody("direct:start", "Kabom");
+
+        assertMockEndpointsSatisfied();
+
+        String id = context.getRouteDefinitions().get(0).getId();
+        assertEquals("myCoolRoute", id);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .id("myCoolRoute")
-                    .onException(Exception.class).to("mock:error").end()
-                    .to("mock:result");
+                from("direct:start").id("myCoolRoute")
+                    .onException(Exception.class).handled(true).to("mock:error").end()
+                    .choice()
+                        .when(body().contains("Kabom")).throwException(new IllegalArgumentException("Damn"))
+                    .otherwise()
+                        .to("mock:result")
+                    .end();
             }
         };
     }
