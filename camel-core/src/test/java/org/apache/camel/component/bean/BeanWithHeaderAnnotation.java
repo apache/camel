@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Header;
 import org.w3c.dom.Document;
+import org.apache.camel.Header;
 
 /**
  * @version $Revision$

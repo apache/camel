@@ -444,7 +444,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 try {
                     return exchange.getIn().getMandatoryBody(type);
-                } catch(InvalidPayloadException e) {
+                } catch (InvalidPayloadException e) {
                     throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                 }
             }
