@@ -22,6 +22,7 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
 
 /**
@@ -37,6 +38,10 @@ public class FreemarkerComponent extends DefaultComponent {
 
         // should we use regular configuration or no cache (content cache is default true)
         Configuration config;
+        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
+        if (ObjectHelper.isNotEmpty(encoding)) {
+            endpoint.setEncoding(encoding);
+        }
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
         if (cache) {
             config = getConfiguraiton();

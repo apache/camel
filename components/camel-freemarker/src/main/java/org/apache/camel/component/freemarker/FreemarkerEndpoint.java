@@ -132,8 +132,8 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
             if (log.isDebugEnabled()) {
                 log.debug("Freemarker is evaluating " + path + " using context: " + variableMap);
             }
-            if (encoding != null) {
-                template = configuration.getTemplate(path, encoding);
+            if (getEncoding() != null) {
+                template = configuration.getTemplate(path, getEncoding());
             } else {
                 template = configuration.getTemplate(path);
             }
