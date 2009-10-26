@@ -92,7 +92,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         } else {
             // no transaction error handler builder configure so create a temporary one as we got all
             // the needed information form the configured builder anyway this allow us to use transacted
-            // routes anway even though the error handler is not transactional, eg ease of configuration
+            // routes anyway even though the error handler is not transactional, eg ease of configuration
             if (LOG.isDebugEnabled()) {
                 if (builder != null) {
                     LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: " + builder);

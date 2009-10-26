@@ -27,6 +27,7 @@ import org.apache.camel.RollbackExchangeException;
  */
 public class RollbackProcessor implements Processor, Traceable {
 
+    private boolean markRollbackOnly;
     private String message;
 
     public RollbackProcessor() {
@@ -39,6 +40,12 @@ public class RollbackProcessor implements Processor, Traceable {
     public void process(Exchange exchange) throws Exception {
         // mark the exchange for rollback
         exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
+
+        if (markRollbackOnly) {
+            // do not do anything more as we should only mark the rollback
+            return;
+        }
+
         if (message != null) {
             exchange.setException(new RollbackExchangeException(message, exchange));
         } else {
@@ -58,4 +65,13 @@ public class RollbackProcessor implements Processor, Traceable {
     public String getTraceLabel() {
         return "Rollback";
     }
+
+    public boolean isMarkRollbackOnly() {
+        return markRollbackOnly;
+    }
+
+    public void setMarkRollbackOnly(boolean markRollbackOnly) {
+        this.markRollbackOnly = markRollbackOnly;
+    }
+
 }

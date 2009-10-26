@@ -16,18 +16,31 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler
  */
-public class SpringTransactionalClientDataSourceUsingTransactedTest extends SpringTransactionalClientDataSourceTransactedTest {
+public class SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransactedTest extends SpringTransactionalClientDataSourceTransactedTest {
+
+    public void testTransactionRollback() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:error");
+        mock.expectedMessageCount(1);
+
+        String out = template.requestBody("direct:fail", "Hello World", String.class);
+        assertEquals("Sorry", out);
+
+        assertMockEndpointsSatisfied();
+
+        int count = jdbc.queryForInt("select count(*) from books");
+        assertEquals("Number of books", 1, count);
+    }
 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceUsingTransacted.xml");
+            "/org/apache/camel/spring/interceptor/springTransactionalClientDataWithOnExceptionAndRollbackUsingTransacted.xml");
     }
 
 }

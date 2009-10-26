@@ -34,7 +34,9 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> {
 
-    @XmlAttribute(required = false)
+    @XmlAttribute
+    private Boolean markRollbackOnly;
+    @XmlAttribute
     private String message;
 
     public RollbackDefinition() {
@@ -64,12 +66,22 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        return new RollbackProcessor(message);
+        RollbackProcessor answer = new RollbackProcessor(message);
+        answer.setMarkRollbackOnly(markRollbackOnly != null ? markRollbackOnly : false);
+        return answer;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<ProcessorDefinition> getOutputs() {
         return Collections.EMPTY_LIST;
+    }
+
+    public Boolean isMarkRollbackOnly() {
+        return markRollbackOnly;
+    }
+
+    public void setMarkRollbackOnly(Boolean markRollbackOnly) {
+        this.markRollbackOnly = markRollbackOnly;
     }
 }

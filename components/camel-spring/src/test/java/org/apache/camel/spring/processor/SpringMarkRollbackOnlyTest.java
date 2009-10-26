@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.interceptor;
+package org.apache.camel.spring.processor;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.MarkRollbackOnlyTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * Easier transaction configuration as we do not have to setup a transaction error handler
- */
-public class SpringTransactionalClientDataSourceUsingTransactedTest extends SpringTransactionalClientDataSourceTransactedTest {
+public class SpringMarkRollbackOnlyTest extends MarkRollbackOnlyTest {
 
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceUsingTransacted.xml");
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/markrollbackonly.xml");
     }
 
 }

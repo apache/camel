@@ -69,7 +69,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     @Override
     public String toString() {
         if (output == null) {
-            // if no output then dont do any description
+            // if no output then don't do any description
             return "";
         }
         return "TransactionErrorHandler:"
@@ -87,7 +87,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
-                TransactedRuntimeCamelException rce;
+                TransactedRuntimeCamelException rce = null;
 
                 // find out if there is an actual transaction alive, and thus we are in transacted mode
                 boolean activeTx = TransactionSynchronizationManager.isActualTransactionActive();
@@ -118,7 +118,10 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
                 // after handling and still an exception or marked as rollback only then rollback
                 if (exchange.getException() != null || exchange.isRollbackOnly()) {
-                    rce = wrapTransactedRuntimeException(exchange.getException());
+                    // wrap exception in transacted exception
+                    if (exchange.getException() != null) {
+                        rce = wrapTransactedRuntimeException(exchange.getException());
+                    }
 
                     if (activeTx && !status.isRollbackOnly()) {
                         status.setRollbackOnly();
@@ -131,7 +134,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                         }
                     }
 
-                    // rethrow if an exception occured
+                    // rethrow if an exception occurred
                     if (rce != null) {
                         throw rce;
                     }
@@ -161,13 +164,12 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         if (exception instanceof TransactedRuntimeCamelException) {
             return (TransactedRuntimeCamelException) exception;
         } else {
-            // Mark as handled so we dont want to handle the same exception twice or more in other
+            // Mark as handled so we don't want to handle the same exception twice or more in other
             // wrapped transaction error handlers in this route.
-            // We need to mark this information in the exception as we need to propagage
+            // We need to mark this information in the exception as we need to propagate
             // the exception back by rehtrowing it. We cannot mark it on the exchange as Camel
-            // uses copies of exchanges in its pipeline and the data isnt copied back in case
-            // when an exception occured
-            // TODO: revist if/when we avoid doing the copying in the pipeline
+            // uses copies of exchanges in its pipeline and the data isn't copied back in case
+            // when an exception occurred
             return new TransactedRuntimeCamelException(exception, true);
         }
     }

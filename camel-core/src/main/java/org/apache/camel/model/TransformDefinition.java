@@ -61,7 +61,7 @@ public class TransformDefinition extends ExpressionNode {
     // Fluent API
     //-------------------------------------------------------------------------
     /**
-     * Set the expression that TransformType will use
+     * Set the expression to be used
      * @return the builder
      */
     public ExpressionClause<TransformDefinition> expression() {
