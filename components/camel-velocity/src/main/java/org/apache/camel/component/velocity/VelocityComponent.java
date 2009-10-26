@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
@@ -37,9 +38,15 @@ public class VelocityComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        String propertiesFile = getAndRemoveParameter(parameters, "propertiesFile", String.class);
+        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);        
         VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining);
         answer.setContentCache(cache);
+        answer.setPropertiesFile(propertiesFile);
+        if (ObjectHelper.isNotEmpty(encoding)) {
+            answer.setEncoding(encoding);
+        }
         answer.setVelocityEngine(velocityEngine);
         return answer;
     }

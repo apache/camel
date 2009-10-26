@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.velocity;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -42,6 +44,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
     private VelocityEngine velocityEngine;
     private boolean loaderCache = true;
     private String encoding;
+    private String propertiesFile;
 
     public VelocityEndpoint() {
     }
@@ -68,10 +71,20 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
     private synchronized VelocityEngine getVelocityEngine() throws Exception {
         if (velocityEngine == null) {
             velocityEngine = new VelocityEngine();
-            velocityEngine.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? Boolean.TRUE : Boolean.FALSE);
-            velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
-            velocityEngine.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
-            velocityEngine.init();
+            Properties properties = new Properties();
+            // load the velocity properties from property file
+            if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
+                Resource resource = getResourceLoader().getResource(getPropertiesFile());
+                InputStream reader = resource.getInputStream();               
+                properties.load(reader);
+                log.info("Loaded the velocity configuration file " + getPropertiesFile());
+            }
+            
+            properties.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
+            properties.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
+            properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
+            velocityEngine.init(properties);
+
         }
         return velocityEngine;
     }
@@ -100,6 +113,14 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
     public String getEncoding() {
         return encoding;
+    }
+    
+    public void setPropertiesFile(String file) {
+        propertiesFile = file;
+    }
+    
+    public String getPropertiesFile() {
+        return propertiesFile;
     }
 
     public VelocityEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
@@ -146,7 +167,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             if (log.isDebugEnabled()) {
                 log.debug("Velocity content read from resource " + resource + " with resourceUri: " + path + " for endpoint " + getEndpointUri());
             }
-            reader = encoding != null ? new InputStreamReader(getResourceAsInputStream(), encoding) : new InputStreamReader(getResourceAsInputStream());
+            reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
         }
 
         // getResourceAsInputStream also considers the content cache
