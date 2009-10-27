@@ -118,13 +118,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     public boolean matches(Exchange exchange) {
-        // only evaluate if there is some body
-        Object answer = exchange.getIn();
-        if (answer != null) {
-            answer = evaluateAs(exchange, XPathConstants.BOOLEAN);
-        }
-
-        return exchange.getContext().getTypeConverter().convertTo(Boolean.class, answer);
+        Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
+        return exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -435,18 +430,10 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     // -------------------------------------------------------------------------
 
     protected Object evaluate(Exchange exchange) {
-        // only evaluate if there is some body
-        Object answer = exchange.getIn();
-        if (answer != null) {
-            answer = evaluateAs(exchange, resultQName);
-        }
-
-        // let the type converter have a chance if we for example should convert to a boolean
-        // which a null body will result in false
+        Object answer = evaluateAs(exchange, resultQName);
         if (resultType != null) {
             return ExchangeHelper.convertToType(exchange, resultType, answer);
         }
-
         return answer;
     }
 
@@ -490,14 +477,6 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
         try {
             Object document = getDocument(exchange);
-
-            if (document == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Could not evaluate XPath as Exchange cannot be converted to a Document: " + exchange + ". Returning null.");
-                }
-                return null;
-            }
-
             if (resultQName != null) {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
