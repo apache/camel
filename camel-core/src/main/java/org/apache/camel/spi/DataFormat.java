@@ -37,7 +37,7 @@ public interface DataFormat {
      *
      * @param exchange  the current exchange
      * @param graph     the object to be marshalled
-     * @param stream    the output stream to write the marshalled rersult to
+     * @param stream    the output stream to write the marshalled result to
      * @throws Exception can be thrown
      */
     void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception;

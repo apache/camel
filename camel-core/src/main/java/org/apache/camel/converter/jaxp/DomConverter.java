@@ -42,6 +42,22 @@ public final class DomConverter {
         return buffer.toString();
     }
 
+    @Converter
+    public static Integer toInteger(NodeList nodeList) {
+        StringBuffer buffer = new StringBuffer();
+        append(buffer, nodeList);
+        String s = buffer.toString();
+        return Integer.valueOf(s);
+    }
+
+    @Converter
+    public static Long toLong(NodeList nodeList) {
+        StringBuffer buffer = new StringBuffer();
+        append(buffer, nodeList);
+        String s = buffer.toString();
+        return Long.valueOf(s);
+    }
+
     private static void append(StringBuffer buffer, NodeList nodeList) {
         int size = nodeList.getLength();
         for (int i = 0; i < size; i++) {

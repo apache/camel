@@ -131,7 +131,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type)) {
                 return Boolean.FALSE;
             }
             return null;

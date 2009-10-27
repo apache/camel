@@ -36,7 +36,7 @@ public interface ServicePool<Key, Service> extends org.apache.camel.Service {
     Service addAndAcquire(Key key, Service service);
 
     /**
-     * Tries to acquire the servie with the given key
+     * Tries to acquire the service with the given key
      * 
      * @param key the key
      * @return the acquired service, or <tt>null</tt> if no free in pool

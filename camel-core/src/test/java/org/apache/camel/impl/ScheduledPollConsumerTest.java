@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.PollingConsumerPollStrategy;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 public class ScheduledPollConsumerTest extends ContextTestSupport {
 

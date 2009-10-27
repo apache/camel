@@ -14,14 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spi;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 
 /**
  * Strategy for a {@link org.apache.camel.PollingConsumer} when polling an {@link org.apache.camel.Endpoint}.
  * <p/>
  * This pluggable strategy allows to plugin different implementations what to do, most noticeable what to
- * do in case the polling goes wrong. This can be handled in the {@link #rollback(Consumer, Endpoint, int, Exception) rollback}
- * method.
+ * do in case the polling goes wrong. This can be handled in the
+ * {@link #rollback(org.apache.camel.Consumer , org.apache.camel.Endpoint , int, Exception) rollback} method.
  *
  * @version $Revision$
  */
