@@ -74,7 +74,6 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         return bus;
     }
 
-    @Resource
     public void setActivationNamespaces(Collection<String> ans) {
         activationNamespaces = ans;
     }
