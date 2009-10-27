@@ -342,6 +342,15 @@ public class XmlConverterTest extends ContextTestSupport {
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
 
+    public void testToInputStreamFromDocument() throws Exception {
+        XmlConverter conv = new XmlConverter();
+        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
+
+        InputStream is = conv.toInputStrean(doc);
+        assertNotNull(is);
+        assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, is));
+    }
+
     public void testToDocumentFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
         File file = new File("./src/test/resources/org/apache/camel/converter/stream/test.xml").getAbsoluteFile();

@@ -63,6 +63,12 @@ public class RegistryBean implements BeanHolder {
             if (!ObjectHelper.equal(ObjectHelper.type(bean), ObjectHelper.type(value))) {
                 beanInfo = null;
             }
+
+            // could be a class then create an instance of it
+            if (bean instanceof Class) {
+                // bean is a class so create an instance of it
+                value = context.getInjector().newInstance((Class<Object>) bean);
+            }
         }
         return value;
     }

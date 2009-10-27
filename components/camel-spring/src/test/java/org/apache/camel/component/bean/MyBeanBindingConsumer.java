@@ -30,7 +30,7 @@ public class MyBeanBindingConsumer {
     private ProducerTemplate template;
 
     @Consume(uri = "direct:startBeanExpression")
-    public void doSomethingBeanExpression(String payload, @Bean("myCounter") int count) {
+    public void doSomethingBeanExpression(String payload, @Bean(ref = "myCounter") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 

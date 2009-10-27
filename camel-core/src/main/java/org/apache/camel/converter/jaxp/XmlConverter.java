@@ -575,6 +575,12 @@ public class XmlConverter {
     }
 
     @Converter
+    public InputStream toInputStrean(Document dom) throws TransformerException, IOException {
+        String s = toString(dom);
+        return new ByteArrayInputStream(s.getBytes());
+    }
+
+    @Converter
     public InputSource toInputSource(InputStream is) {
         return new InputSource(is);
     }

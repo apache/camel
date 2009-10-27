@@ -30,6 +30,7 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
+        jndi.bind("static", MyFooBean.class);
         return jndi;
     }
 
@@ -72,7 +73,19 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
         assertNotNull(rb.getRegistry());
     }
 
-    public class MyFooBean {
+    public void testLookupClass() throws Exception {
+        RegistryBean rb = new RegistryBean(context, "static");
+
+        Object bean = rb.getBean();
+        MyFooBean foo = assertIsInstanceOf(MyFooBean.class, bean);
+        assertEquals("foofoo", foo.echo("foo"));
+    }
+
+    public static class MyFooBean {
+
+        public String echo(String s) {
+            return s + s;
+        }
 
     }
 

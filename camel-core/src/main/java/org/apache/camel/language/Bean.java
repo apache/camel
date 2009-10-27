@@ -22,6 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.camel.component.bean.BeanAnnotationExpressionFactory;
+
 /**
  * Used to inject a bean expression into a field, property, method or parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
@@ -31,7 +33,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@LanguageAnnotation(language = "bean")
+@LanguageAnnotation(language = "bean", factory = BeanAnnotationExpressionFactory.class)
 public @interface Bean {
-    String value();
+    String ref();
+    String method() default "";
 }
