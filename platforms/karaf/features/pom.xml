@@ -165,20 +165,6 @@
           </executions>
         </plugin>
         <plugin>
-          <groupId>org.apache.felix.karaf.tooling</groupId>
-          <artifactId>features-maven-plugin</artifactId>
-          <version>${karaf-version}</version>
-          <executions>
-             <execution>
-                <id>validate</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>validate</goal>
-                </goals>
-             </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
             <executions>
@@ -203,4 +189,27 @@
       </plugins>
     </build>
 
+    <profiles>
+       <profile>
+          <id>validate</id>
+          <build>
+             <plugins>
+                <plugin>
+                   <groupId>org.apache.felix.karaf.tooling</groupId>
+                   <artifactId>features-maven-plugin</artifactId>
+                   <version>${karaf-version}</version>
+                   <executions>
+                     <execution>
+                       <id>validate</id>
+                       <phase>process-resources</phase>
+                       <goals>
+                         <goal>validate</goal>
+                       </goals>
+                     </execution>
+                   </executions>
+                 </plugin>
+              </plugins>
+           </build>
+        </profile>
+     </profiles>
 </project>
