@@ -93,55 +93,19 @@
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-core</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    
+        
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-    
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-local</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    
+        
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf-version}</version>
     </dependency>
     
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-management</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-tools-common</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-core</artifactId>
