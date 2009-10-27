@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?> <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!--
 
@@ -42,7 +41,7 @@
       <bcel-bundle-version>5.2_1-SNAPSHOT</bcel-bundle-version>
       <dom4j-bundle-version>1.6.1_1-SNAPSHOT</dom4j-bundle-version>
       <cglib-version>2.1_3_3-SNAPSHOT</cglib-version>
-      <commons-beanutils-bundle-version>1.7.0_2-SNAPSHOT</commons-beanutils-bundle-version>
+      <commons-beanutils-bundle-version>1.7.0_1</commons-beanutils-bundle-version>
       <commons-dbcp-bundle-version>1.2.2_4-SNAPSHOT</commons-dbcp-bundle-version>
       <commons-csv-version>1.0-r706899_2-SNAPSHOT</commons-csv-version>
       <commons-codec-bundle-version>1.3_1-SNAPSHOT</commons-codec-bundle-version>
@@ -60,7 +59,7 @@
       <geronimo-javamail-1.4-version>1.6_1</geronimo-javamail-1.4-version>
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
-      <hamcrest-bundle-version>1.2-dev1_1</hamcrest-bundle-version>
+      <hamcrest-bundle-version>1.2-dev1_3</hamcrest-bundle-version>
       <hapi-bundle-version>0.5.1_1</hapi-bundle-version>
       <ibatis-bundle-version>2.3.4.726_1</ibatis-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
@@ -81,9 +80,7 @@
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
       <juel-bundle-version>2.1.0_1</juel-bundle-version>
       <junit-bundle-version>4.4_1</junit-bundle-version>
-      <mvel-bundle-version>2.0.8_2-SNAPSHOT</mvel-bundle-version>
       <mina-bundle-version>1.1.7_2-SNAPSHOT</mina-bundle-version>
-      <mvel-bundle-version>2.0.9_1</mvel-bundle-version>
       <neethi-bundle-version>2.0.4_1</neethi-bundle-version>
       <ognl-bundle-version>2.7.3_2-SNAPSHOT</ognl-bundle-version>
       <oro-bundle-version>2.0.8_2-SNAPSHOT</oro-bundle-version>
@@ -115,6 +112,36 @@
       <woodstox-bundle-version>3.2.7_1</woodstox-bundle-version>
       <wsdl4j-bundle-version>1.6.1_1</wsdl4j-bundle-version>
     </properties>
+    
+    <repositories>
+      <!-- ServiceMix repo (for org.osgi:org.osgi.impl.bundle.jmx) -->
+      <repository>
+        <id>servicemix</id>
+        <name>Apache ServiceMix Repository</name>
+        <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </repository>   
+    </repositories>
+    
+    <dependencies>
+    	<dependency>
+    	    <groupId>org.osgi</groupId>
+    	    <artifactId>org.osgi.core</artifactId>
+    	    <version>4.2.0</version>
+    	    <scope>provided</scope>
+    	</dependency>        
+    	<dependency>
+    	    <groupId>org.ops4j.pax.logging</groupId>
+    	    <artifactId>pax-logging-api</artifactId>
+    	    <version>1.4</version>
+    	    <scope>provided</scope>
+    	</dependency>
+    </dependencies>
 
     <build>
       <resources>
@@ -133,6 +160,20 @@
                 <phase>generate-resources</phase>
                 <goals>
                   <goal>resources</goal>
+                </goals>
+             </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix.karaf.tooling</groupId>
+          <artifactId>features-maven-plugin</artifactId>
+          <version>${karaf-version}</version>
+          <executions>
+             <execution>
+                <id>validate</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>validate</goal>
                 </goals>
              </execution>
           </executions>
