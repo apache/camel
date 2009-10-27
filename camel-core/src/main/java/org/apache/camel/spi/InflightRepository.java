@@ -16,12 +16,14 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Service;
 
 /**
  * @version $Revision$
  */
-public interface InflightRepository {
+public interface InflightRepository extends Service {
 
     /**
      * Adds the exchange to the inflight registry
@@ -45,5 +47,15 @@ public interface InflightRepository {
      * @return number of exchanges currently in flight.
      */
     int size();
+
+    /**
+     * Current size of inflight exchanges which are from the given endpoint.
+     * <p/>
+     * Will return 0 if there are no inflight exchanges.
+     *
+     * @param endpoint the endpoint where the {@link Exchange} are from.
+     * @return number of exchanges currently in flight.
+     */
+    int size(Endpoint endpoint);
 
 }

@@ -39,10 +39,17 @@ public class InflightRepositoryRouteTest extends ContextTestSupport {
 
         assertEquals(1, context.getInflightRepository().size());
 
+        // must be 1 in flight from this endpoint
+        assertEquals(1, context.getInflightRepository().size(context.getEndpoint("direct:start")));
+
+        // but 0 from this endpoint
+        assertEquals(0, context.getInflightRepository().size(context.getEndpoint("mock:result")));
+
         // wait to be sure its done
         Thread.sleep(2000);
 
         assertEquals(0, context.getInflightRepository().size());
+        assertEquals(0, context.getInflightRepository().size(context.getEndpoint("direct:start")));
     }
 
     @Override

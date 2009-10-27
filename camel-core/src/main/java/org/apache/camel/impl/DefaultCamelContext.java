@@ -1017,6 +1017,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         forceLazyInitialization();
         startServices(components.values());
+        addService(inflightRepository);
 
         // To avoid initiating the routeDefinitions after stopping the camel context
         if (!routeDefinitionInitiated) {
@@ -1048,6 +1049,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
         stopServices(servicesToClose);
         servicesToClose.clear();
+
+        stopServices(inflightRepository);
 
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {

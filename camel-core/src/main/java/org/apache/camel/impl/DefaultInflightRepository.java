@@ -16,29 +16,76 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Default implement which just uses a counter
  *
  * @version $Revision$
  */
-public class DefaultInflightRepository implements InflightRepository {
+public class DefaultInflightRepository extends ServiceSupport implements InflightRepository  {
 
-    private final AtomicInteger count = new AtomicInteger();
+    private static final transient Log LOG = LogFactory.getLog(DefaultInflightRepository.class);
+    private final AtomicInteger totalCount = new AtomicInteger();
+    // us endpoint key as key so endpoints with lenient properties is registered using the same key (eg dynamic http endpoints)
+    private final ConcurrentHashMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();
 
     public void add(Exchange exchange) {
-        count.incrementAndGet();
+        totalCount.incrementAndGet();
+
+        if (exchange.getFromEndpoint() == null) {
+            return;
+        }
+
+        String key = exchange.getFromEndpoint().getEndpointKey();
+        AtomicInteger existing = endpointCount.putIfAbsent(key, new AtomicInteger(1));
+        if (existing != null) {
+            existing.addAndGet(1);
+        }
     }
 
     public void remove(Exchange exchange) {
-        count.decrementAndGet();
+        totalCount.decrementAndGet();
+
+        if (exchange.getFromEndpoint() == null) {
+            return;
+        }
+
+        String key = exchange.getFromEndpoint().getEndpointKey();
+        AtomicInteger existing = endpointCount.get(key);
+        if (existing != null) {
+            existing.addAndGet(-1);
+        }
     }
 
     public int size() {
-        return count.get();
+        return totalCount.get();
+    }
+
+    public int size(Endpoint endpoint) {
+        AtomicInteger answer = endpointCount.get(endpoint.getEndpointKey());
+        return answer != null ? answer.get() : 0;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        int count = size();
+        if (count > 0) {
+            LOG.warn("Shutting down while there are still " + count + " in flight exchanges.");
+        } else {
+            LOG.info("Shutting down with no inflight exchanges.");
+        }
+        endpointCount.clear();
     }
 }

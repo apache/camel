@@ -21,7 +21,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -79,6 +78,15 @@ public class ManagedRoute extends ManagedPerformanceCounter {
             status = ServiceStatus.Stopped;
         }
         return status.name();
+    }
+
+    @ManagedAttribute(description = "Current number of inflight Exchanges")
+    public Integer getInflightExchanges() {
+        if (route.getEndpoint() != null) {
+            return context.getInflightRepository().size(route.getEndpoint());
+        } else {
+            return null;
+        }
     }
 
     @ManagedAttribute(description = "Camel id")

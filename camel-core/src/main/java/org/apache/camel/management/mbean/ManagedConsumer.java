@@ -43,4 +43,9 @@ public class ManagedConsumer extends ManagedService {
         return consumer.getEndpoint().getEndpointUri();
     }
 
+    @ManagedAttribute(description = "Current number of inflight Exchanges")
+    public Integer getInflightExchanges() {
+        return getContext().getInflightRepository().size(consumer.getEndpoint());
+    }
+
 }

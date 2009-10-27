@@ -44,6 +44,10 @@ public class ManagedRegisterRouteTest extends ContextTestSupport {
         // the route has this starting endpoint uri
         assertEquals("direct://start", uri);
 
+        Integer val = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        // the route has no inflight exchanges
+        assertEquals(0, val.intValue());
+
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);

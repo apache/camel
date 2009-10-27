@@ -39,15 +39,22 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
     }
 
     public void testPerformanceCounterStats() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
         // get the stats for the route
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.asyncSendBody("direct:start", "Hello World");
+
+        Thread.sleep(500);
+
+        Integer inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        assertEquals(1, inFlight.longValue());
+
+        assertMockEndpointsSatisfied();
+
+        Thread.sleep(500);
 
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, completed.longValue());
@@ -73,6 +80,9 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
         Date firstFailed = (Date) mbeanServer.getAttribute(on, "FirstExchangeFailureTimestamp");
         assertNull(lastFailed);
         assertNull(firstFailed);
+
+        inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        assertEquals(0, inFlight.longValue());
     }
 
     @Override
