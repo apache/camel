@@ -38,14 +38,13 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 getContext().setTracing(true);
-
-                from("timer://kickoff?period=9999910000").
-                    setHeader("id").constant("foo").setBody().constant("a b c").
-                    split(body().tokenize(" ")).to("seda:splitted");
-
+                
                 from("seda:splitted").
                     aggregate(header("id")).
                     to("mock:result");
+                from("timer://kickoff?period=9999910000").
+                    setHeader("id").constant("foo").setBody().constant("a b c").
+                    split(body().tokenize(" ")).to("seda:splitted");
             }
         };
     }
