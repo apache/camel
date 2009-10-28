@@ -75,7 +75,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
         });
     }
 
-   
+    // START SNIPPET: consumer
     public static class MyProcessor implements Processor {
 
         @SuppressWarnings("unchecked")
@@ -122,4 +122,6 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
 
         }
     }
+    // END SNIPPET: consumer
+
 }

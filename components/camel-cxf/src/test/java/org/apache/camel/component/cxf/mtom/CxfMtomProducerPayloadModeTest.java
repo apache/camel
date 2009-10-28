@@ -84,6 +84,8 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
             return;
         }     
         
+        // START SNIPPET: producer
+
         Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint", new Processor() {
 
             public void process(Exchange exchange) throws Exception {
@@ -102,6 +104,8 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
             }
             
         });
+        
+        // process response 
         
         CxfPayload<SoapHeader> out = exchange.getOut().getBody(CxfPayload.class);
         Assert.assertEquals(1, out.getBody().size());
@@ -129,6 +133,8 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         BufferedImage image = ImageIO.read(dr.getInputStream());
         Assert.assertEquals(560, image.getWidth());
         Assert.assertEquals(300, image.getHeight());
+        
+        // END SNIPPET: producer
 
     }
     
