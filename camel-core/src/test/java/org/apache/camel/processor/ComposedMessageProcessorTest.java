@@ -83,9 +83,15 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e2
                 // split up the order so individual OrderItems can be validated by the appropriate bean
-                from("direct:start").split().body().choice() 
-                    .when().method("orderItemHelper", "isWidget").to("bean:widgetInventory", "seda:aggregate")
-                    .otherwise().to("bean:gadgetInventory", "seda:aggregate");
+                from("direct:start")
+                    .split().body()
+                    .choice() 
+                        .when().method("orderItemHelper", "isWidget")
+                            .to("bean:widgetInventory")
+                        .otherwise()
+                            .to("bean:gadgetInventory")
+                    .end()
+                    .to("seda:aggregate");
                 
                 // collect and re-assemble the validated OrderItems into an order again
                 from("seda:aggregate").aggregate(new MyOrderAggregationStrategy()).header("orderId").to("mock:result");
