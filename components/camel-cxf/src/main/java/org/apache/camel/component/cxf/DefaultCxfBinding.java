@@ -20,10 +20,12 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
@@ -34,6 +36,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
@@ -41,6 +44,7 @@ import org.apache.cxf.frontend.MethodDispatcher;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
+import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.service.Service;
@@ -81,6 +85,20 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, 
                 requestContext);
         
+        // propagate attachments
+        Set<Attachment> attachments = null;
+        for (Map.Entry<String, DataHandler> entry : camelExchange.getIn().getAttachments().entrySet()) {
+            if (attachments == null) {
+                attachments = new HashSet<Attachment>();
+            }
+            AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
+            attachment.setXOP(true); // only supports MTOM
+            attachments.add(attachment);
+        }
+        
+        if (attachments != null) {
+            requestContext.put(CxfConstants.ATTACHMENTS_PROP_KEY, attachments);
+        }
     }
     
     /**
@@ -113,6 +131,21 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate protocol headers
         propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getOut(), camelExchange);
+        
+        if (cxfMessage.getAttachments() != null) {
+            // TODO: workaround for CXF-2503
+            try {
+                cxfMessage.getAttachments().size();
+            } catch (java.util.ConcurrentModificationException e) {
+                // ignore
+            }
+            // end of workaround
+
+            // propagate attachments
+            for (Attachment attachment : cxfMessage.getAttachments()) {
+                camelExchange.getOut().addAttachment(attachment.getId(), attachment.getDataHandler());
+            }        
+        }
     }
     
     /**
@@ -197,6 +230,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (body != null) {
             camelExchange.getIn().setBody(body);
         }  
+        
+        // propagate attachments
+        if (cxfMessage.getAttachments() != null) {
+            for (Attachment attachment : cxfMessage.getAttachments()) {
+                camelExchange.getIn().addAttachment(attachment.getId(), attachment.getDataHandler());
+            }
+        }
     }
 
     /**
@@ -267,6 +307,21 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             }
         }         
+        
+        // propagate attachments
+        Set<Attachment> attachments = null;
+        for (Map.Entry<String, DataHandler> entry : camelExchange.getOut().getAttachments().entrySet()) {
+            if (attachments == null) {
+                attachments = new HashSet<Attachment>();
+            }
+            AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
+            attachment.setXOP(true); // only supports MTOM
+            attachments.add(attachment);
+        }
+        
+        if (attachments != null) {
+            outMessage.setAttachments(attachments);
+        }
        
         BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
         if (boi != null) {

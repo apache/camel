@@ -39,7 +39,6 @@ public class DOMOutInterceptor extends AbstractPhaseInterceptor<Message> {
         this.addBefore(MessageSenderInterceptor.class.getName());
     }
     
-    @SuppressWarnings("unchecked")
     public void handleMessage(Message message) throws Fault {
         if (message instanceof XMLMessage) {
             xmlInterceptor.handleMessage((XMLMessage)message);

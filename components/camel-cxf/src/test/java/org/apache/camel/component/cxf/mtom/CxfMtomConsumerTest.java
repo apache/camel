@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.component.cxf.mtom;
 
 import java.awt.Image;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.List;
 
@@ -35,7 +34,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.BusFactory;
 import org.junit.Test;
 
 
@@ -89,7 +87,6 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
     
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
-        System.out.println();
         
         if (Boolean.getBoolean("java.awt.headless") || System.getProperty("os.name").startsWith("Mac OS")) {
             System.out.println("Running headless. Skipping test as Images may not work.");

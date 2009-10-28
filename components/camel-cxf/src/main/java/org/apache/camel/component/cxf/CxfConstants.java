@@ -46,6 +46,7 @@ public interface CxfConstants {
     String CAMEL_CXF_RS_VAR_VALUES = "CamelCxfRsVarValues";
     String CAMEL_CXF_RS_RESPONSE_CLASS = "CamelCxfRsResponseClass";
     String CAMEL_CXF_RS_OPERATION_RESOURCE_INFO_STACK = "CamelCxfRsOperationResourceInfoStack";
+    String ATTACHMENTS_PROP_KEY = "CamelAttachments";
 }
 
 

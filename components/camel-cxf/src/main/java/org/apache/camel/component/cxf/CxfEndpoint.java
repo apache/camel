@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -51,6 +52,7 @@ import org.apache.cxf.headers.Header;
 import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 
 /**
@@ -176,7 +178,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             @Override
             protected void createClient(Endpoint ep) {
                 setClient(new CamelCxfClientImpl(getBus(), ep));
-            }    
+            }
             
             @Override
             protected void initializeAnnotationInterceptors(Endpoint ep, Class<?> cls) {
@@ -463,8 +465,16 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             super(bus, ep);
         }
         
+        @SuppressWarnings("unchecked")
         @Override
         protected void setParameters(Object[] params, Message message) {
+            
+            Object attachements = message.get(CxfConstants.ATTACHMENTS_PROP_KEY);
+            if (attachements != null) {
+                message.setAttachments((Collection<Attachment>)attachements);
+                message.remove(CxfConstants.ATTACHMENTS_PROP_KEY);
+            }
+            
             if (DataFormat.PAYLOAD == message.get(DataFormat.class)) {
                 CxfPayload<?> payload = (CxfPayload<?>)params[0];
                 message.put(List.class, payload.getBody());
@@ -472,6 +482,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 super.setParameters(params, message);
             }
+            
+            message.remove(DataFormat.class);
         }
     }
 }
