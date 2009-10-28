@@ -86,7 +86,7 @@ public class LoanBroker extends RouteBuilder {
             .process(new CreditScoreProcessor(Constants.CREDITAGENCY_ADDRESS))
                 // Using the thread pool to send out messages to three different banks in parallel                
                 .multicast(new BankResponseAggregationStrategy())
-                    // Camel will create a thread pool with the size of the send to endpoints
+                    // Camel will create a thread pool with the default size (10) 
                     // for sending the message in parallel
                     .parallelProcessing()
                     .to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
