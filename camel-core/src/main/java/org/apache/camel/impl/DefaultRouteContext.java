@@ -145,7 +145,7 @@ public class DefaultRouteContext implements RouteContext {
             Processor unitOfWorkProcessor = new UnitOfWorkProcessor(processor);
             Processor target = unitOfWorkProcessor;
 
-            // and then optionally and route policy processor
+            // and then optionally add route policy processor if a custom policy is set
             RoutePolicyProcessor routePolicyProcessor = null;
             if (getRoutePolicy() != null) {
                 routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, getRoutePolicy());

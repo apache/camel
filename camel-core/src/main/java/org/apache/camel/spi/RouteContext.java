@@ -181,8 +181,18 @@ public interface RouteContext extends RuntimeConfiguration {
      */
     DataFormatDefinition getDataFormat(String ref);
 
+    /**
+     * Gets the route policy
+     *
+     * @return the route policy if any
+     */
     RoutePolicy getRoutePolicy();
 
+    /**
+     * Sets a custom route policy
+     *
+     * @param routePolicy the custom route policy
+     */
     void setRoutePolicy(RoutePolicy routePolicy);
 
 }

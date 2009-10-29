@@ -72,7 +72,7 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
         }
 
         // reload size in case a race condition with too many at once being invoked
-        // so we need to ensure that we read the most current side and start the consumer if we hit to low
+        // so we need to ensure that we read the most current size and start the consumer if we are already to low
         size = getSize(consumer, exchange);
         if (size <= resumeInflightExchanges) {
             try {
