@@ -97,7 +97,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         
         if (attachments != null) {
-            requestContext.put(CxfConstants.ATTACHMENTS_PROP_KEY, attachments);
+            requestContext.put(CxfConstants.CAMEL_CXF_ATTACHMENTS, attachments);
         }
     }
     

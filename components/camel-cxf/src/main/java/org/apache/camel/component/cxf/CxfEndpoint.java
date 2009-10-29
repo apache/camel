@@ -469,10 +469,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         @Override
         protected void setParameters(Object[] params, Message message) {
             
-            Object attachements = message.get(CxfConstants.ATTACHMENTS_PROP_KEY);
+            Object attachements = message.get(CxfConstants.CAMEL_CXF_ATTACHMENTS);
             if (attachements != null) {
                 message.setAttachments((Collection<Attachment>)attachements);
-                message.remove(CxfConstants.ATTACHMENTS_PROP_KEY);
+                message.remove(CxfConstants.CAMEL_CXF_ATTACHMENTS);
             }
             
             if (DataFormat.PAYLOAD == message.get(DataFormat.class)) {
