@@ -15,6 +15,9 @@ To run the example of Camel transport type
 
 To run the example of using WebServiceProvider API
   mvn exec:java -PWebServiceProvider
+  
+To run the example of showing how to create CXF JAXRS endpoint
+  mvn exec:java -PJAXRS
 
 
 To run the example with Ant
@@ -50,6 +53,9 @@ To run the example with Ant
 
      To run the example of using WebServiceProvider API
     ant runWebServiceProvider
+    
+    To run the example of showing how to create CXF JAXRS endpoint
+    ant runJAXRS
 
 
 To stop the example hit ctrl + c

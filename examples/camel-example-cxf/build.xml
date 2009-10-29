@@ -78,6 +78,11 @@
 		description="Compile and run the sample of web sevice provider">
 		<camelrun mainClass="org.apache.camel.example.cxf.provider.CamelCxfExample" />
 	</target>
+	
+	<target name="runJAXRS" depends="generate.code,build"
+		description="Compile and run the sample of camel jaxrs ">
+		<camelrun mainClass="org.apache.camel.example.cxf.jaxrs.CamelRouterBuilder" />
+     </target>
 
 	<available property="wsdl.dir" value="${build.resources.dir}/wsdl" file="${build.resources.dir}/wsdl" />
 	<property name="wsdl.dir" location="."/>

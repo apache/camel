@@ -127,6 +127,13 @@
   			<target.main.class>org.apache.camel.example.cxf.provider.CamelCxfExample</target.main.class>
   		</properties>
   	</profile>
+  	<profile>
+  		<id>JAXRS</id>
+  		<properties>
+  			<!-- Starting the camel-cxf example of JAXRS -->
+  			<target.main.class>org.apache.camel.example.cxf.jaxrs.CamelRouterBuilder</target.main.class>
+  		</properties>
+  	</profile>  	
   </profiles>
 
   <build>
