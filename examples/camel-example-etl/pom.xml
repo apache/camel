@@ -28,8 +28,15 @@
   </parent>
 
   <artifactId>camel-example-etl</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: ETL</name>
   <description>An example showing how to use Camel as an Extract Transform and Load (ETL) tool</description>
+
+  <properties>
+     <camel.osgi.export.pkg>
+     	org.apache.camel.example.etl.*
+     </camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
     <dependency>

@@ -117,20 +117,7 @@
                     <target>1.5</target>
                 </configuration>
             </plugin>
-            
-	        <plugin>
-	            <groupId>org.apache.servicemix.tooling</groupId>
-	            <artifactId>depends-maven-plugin</artifactId>
-	            <executions>
-		            <execution>
-			            <id>generate-depends-file</id>
-			            <goals>
-				            <goal>generate-depends-file</goal>
-			            </goals>
-	                </execution>
-	            </executions>
-            </plugin>
- 
+       
             <!-- CXF wsdl2java generator, will plugin to the compile goal -->
             <plugin>
                 <groupId>org.apache.cxf</groupId>

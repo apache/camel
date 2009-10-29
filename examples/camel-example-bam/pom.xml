@@ -28,8 +28,15 @@
   </parent>
 
   <artifactId>camel-example-bam</artifactId>
-  <name>Camel :: Example :: BAM</name>
+  <packaging>bundle</packaging>
+  <name>Camel :: Example :: BAM</name>  
   <description>An example showing how to use Camel as a Business Activity Monitoring tool</description>
+
+   <properties>
+     <camel.osgi.export.pkg>
+     	org.apache.camel.example.bam.*
+     </camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
     <dependency>
