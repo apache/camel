@@ -45,7 +45,7 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
     private int resumePercentOfMax = 70;
     private int resumeInflightExchanges = 700;
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
-    private Logger logger = new Logger(LogFactory.getLog(getClass()));
+    private Logger logger;
 
     public ThrottlingRoutePolicy() {
     }
@@ -143,6 +143,9 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
     }
 
     public Logger getLogger() {
+        if (logger == null) {
+            logger = createLogger();
+        }
         return logger;
     }
 
@@ -166,6 +169,10 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
         this.loggingLevel = loggingLevel;
     }
 
+    protected Logger createLogger() {
+        return new Logger(LogFactory.getLog(ThrottlingRoutePolicy.class), getLoggingLevel());
+    }
+
     private int getSize(Consumer consumer, Exchange exchange) {
         if (scope == ThrottlingScope.Total) {
             return exchange.getContext().getInflightRepository().size();
@@ -178,15 +185,16 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
     private void startConsumer(int size, Consumer consumer) throws Exception {
         boolean started = super.startConsumer(consumer);
         if (started) {
-            logger.log("Throtteling consumer: " + size + " <= " + resumeInflightExchanges + " inflight exchange by resuming consumer.");
+            getLogger().log("Throttling consumer: " + size + " <= " + resumeInflightExchanges + " inflight exchange by resuming consumer.");
         }
     }
 
     private void stopConsumer(int size, Consumer consumer) throws Exception {
         boolean stopped = super.stopConsumer(consumer);
         if (stopped) {
-            logger.log("Throtteling consumer: " + size + " > " + maxInflightExchanges + " inflight exchange by suspending consumer.");
+            getLogger().log("Throttling consumer: " + size + " > " + maxInflightExchanges + " inflight exchange by suspending consumer.");
         }
     }
+
 
 }
