@@ -125,7 +125,7 @@ public class RouteService extends ServiceSupport {
             // gather list of services to start as we need to start child services as well
             List<Service> list = new ArrayList<Service>();
             for (Service service : services) {
-                doGetChildServies(list, service);
+                doGetChildServices(list, service);
             }
 
             // split into consumers and child services as we need to start the consumers
@@ -175,7 +175,7 @@ public class RouteService extends ServiceSupport {
             // gather list of services to stop as we need to start child services as well
             List<Service> list = new ArrayList<Service>();
             for (Service service : services) {
-                doGetChildServies(list, service);
+                doGetChildServices(list, service);
             }
             stopChildService(route, list);
 
@@ -217,7 +217,7 @@ public class RouteService extends ServiceSupport {
     /**
      * Need to recursive start child services for routes
      */
-    private static void doGetChildServies(List<Service> services, Service service) throws Exception {
+    private static void doGetChildServices(List<Service> services, Service service) throws Exception {
         services.add(service);
 
         if (service instanceof Navigate) {
@@ -226,7 +226,7 @@ public class RouteService extends ServiceSupport {
                 List<?> children = nav.next();
                 for (Object child : children) {
                     if (child instanceof Service) {
-                        doGetChildServies(services, (Service) child);
+                        doGetChildServices(services, (Service) child);
                     }
                 }
             }

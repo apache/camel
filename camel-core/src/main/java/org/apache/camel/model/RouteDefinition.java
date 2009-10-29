@@ -41,6 +41,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -62,6 +63,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     private Long delayer;
     private Boolean autoStartup = Boolean.TRUE;
     private Integer startupOrder;
+    private RoutePolicy routePolicy;
+    private String routePolicyRef;
 
     public RouteDefinition() {
     }
@@ -309,6 +312,24 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
+    /**
+     * Disables this route from being auto started when Camel starts.
+     */
+    public RouteDefinition routePolicy(RoutePolicy routePolicy) {
+        setRoutePolicy(routePolicy);
+        return this;
+    }
+
+    /**
+     * Configures a route policy for this route
+     *
+     * @param routePolicyRef reference to a {@link RoutePolicy} to lookup and use.
+     */
+    public RouteDefinition routePolicyRef(String routePolicyRef) {
+        setRoutePolicyRef(routePolicyRef);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -438,6 +459,24 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
     }
 
+    @XmlAttribute
+    public void setRoutePolicyRef(String routePolicyRef) {
+        this.routePolicyRef = routePolicyRef;
+    }
+
+    public String getRoutePolicyRef() {
+        return routePolicyRef;
+    }
+
+    @XmlTransient
+    public void setRoutePolicy(RoutePolicy routePolicy) {
+        this.routePolicy = routePolicy;
+    }
+
+    public RoutePolicy getRoutePolicy() {
+        return routePolicy;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
@@ -462,7 +501,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
                     log.debug("StramCaching is enabled on route: " + this);
                 }
                 // only add a new stream cache if not already a global configured on camel context
-                if (StreamCaching.getStreamCaching(camelContext) == null) {
+                if (StreamCaching.getStreamCaching(getCamelContext()) == null) {
                     addInterceptStrategy(new StreamCaching());
                 }
             }
@@ -476,7 +515,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
                     log.debug("HandleFault is enabled on route: " + this);
                 }
                 // only add a new handle fault if not already a global configured on camel context
-                if (HandleFault.getHandleFault(camelContext) == null) {
+                if (HandleFault.getHandleFault(getCamelContext()) == null) {
                     addInterceptStrategy(new HandleFault());
                 }
             }
@@ -498,6 +537,20 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
                     }
                 }
             }
+        }
+
+        // configure route policy
+        if (routePolicy != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("RoutePolicy is enabled: " + routePolicy + " on route: " + this);
+            }
+            routeContext.setRoutePolicy(getRoutePolicy());
+        } else if (routePolicyRef != null) {
+            RoutePolicy policy = CamelContextHelper.mandatoryLookup(getCamelContext(), routePolicyRef, RoutePolicy.class);
+            if (log.isDebugEnabled()) {
+                log.debug("RoutePolicy is enabled: " + policy + " on route: " + this);
+            }
+            routeContext.setRoutePolicy(policy);
         }
 
         // configure auto startup

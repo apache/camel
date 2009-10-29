@@ -40,6 +40,11 @@ public interface Route {
     Endpoint getEndpoint();
 
     /**
+     * Gets the inbound {@link Consumer}
+     */
+    Consumer getConsumer();
+
+    /**
      * This property map is used to associate information about the route.
      *
      * @return properties
@@ -57,12 +62,13 @@ public interface Route {
      * This property map is used to associate information about
      * the route. Gets all the services for this routes
      * </p>
-     * This implementation is used for initiali
+     * This implementation is used for initialization
      *
      * @return the services
      * @throws Exception is thrown in case of error
      * @deprecated will be removed in Camel 2.2
      */
+    @Deprecated
     List<Service> getServicesForRoute() throws Exception;
 
     /**

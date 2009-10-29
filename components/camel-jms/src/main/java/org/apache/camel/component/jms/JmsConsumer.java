@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.Processor;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
@@ -25,10 +26,11 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  *
  * @version $Revision$
  */
-public class JmsConsumer extends DefaultConsumer {
+public class JmsConsumer extends DefaultConsumer implements SuspendableService {
     private AbstractMessageListenerContainer listenerContainer;
     private EndpointMessageListener messageListener;
     private boolean initialized;
+    private boolean suspended;
 
     public JmsConsumer(JmsEndpoint endpoint, Processor processor, AbstractMessageListenerContainer listenerContainer) {
         super(endpoint, processor);
@@ -104,5 +106,23 @@ public class JmsConsumer extends DefaultConsumer {
         listenerContainer = null;
         messageListener = null;
         super.doStop();
+    }
+
+    public void suspend() {
+        if (listenerContainer != null) {
+            listenerContainer.stop();
+            suspended = true;
+        }
+    }
+
+    public void resume() {
+        if (listenerContainer != null) {
+            startListenerContainer();
+            suspended = false;
+        }
+    }
+
+    public boolean isSuspended() {
+        return suspended;
     }
 }

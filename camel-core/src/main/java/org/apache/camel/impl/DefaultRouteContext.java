@@ -32,9 +32,11 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.RoutePolicyProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RoutePolicy;
 
 /**
  * The context used to activate new routing rules
@@ -56,6 +58,7 @@ public class DefaultRouteContext implements RouteContext {
     private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
+    private RoutePolicy routePolicy;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -140,12 +143,20 @@ public class DefaultRouteContext implements RouteContext {
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             Processor unitOfWorkProcessor = new UnitOfWorkProcessor(processor);
+            Processor target = unitOfWorkProcessor;
+
+            // and then optionally and route policy processor
+            RoutePolicyProcessor routePolicyProcessor = null;
+            if (getRoutePolicy() != null) {
+                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, getRoutePolicy());
+                target = routePolicyProcessor;
+            }
 
             // and wrap it by a instrumentation processor that is to be used for performance stats
             // for this particular route
             InstrumentationProcessor wrapper = new InstrumentationProcessor();
             wrapper.setType("route");
-            wrapper.setProcessor(unitOfWorkProcessor);
+            wrapper.setProcessor(target);
 
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), wrapper);
@@ -153,6 +164,11 @@ public class DefaultRouteContext implements RouteContext {
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
+            }
+
+            // after the route is created then set the route on the policy processor so we get hold of it
+            if (routePolicyProcessor != null) {
+                routePolicyProcessor.setRoute(edcr);
             }
 
             routes.add(edcr);
@@ -264,4 +280,11 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    public RoutePolicy getRoutePolicy() {
+        return routePolicy;
+    }
+
+    public void setRoutePolicy(RoutePolicy routePolicy) {
+        this.routePolicy = routePolicy;
+    }
 }

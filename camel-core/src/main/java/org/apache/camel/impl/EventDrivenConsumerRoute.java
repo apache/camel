@@ -34,6 +34,7 @@ import org.apache.camel.spi.RouteContext;
  */
 public class EventDrivenConsumerRoute extends DefaultRoute {
     private final Processor processor;
+    private Consumer consumer;
 
     public EventDrivenConsumerRoute(RouteContext routeContext, Endpoint endpoint, Processor processor) {
         super(routeContext, endpoint);
@@ -56,7 +57,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
     @Override
     protected void addServices(List<Service> services) throws Exception {
         Endpoint endpoint = getEndpoint();
-        Consumer consumer = endpoint.createConsumer(processor);
+        consumer = endpoint.createConsumer(processor);
         if (consumer != null) {
             services.add(consumer);
         }
@@ -78,5 +79,9 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
             return (Navigate) answer;
         }
         return null;
+    }
+
+    public Consumer getConsumer() {
+        return consumer;
     }
 }
