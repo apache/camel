@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -53,8 +55,11 @@ public class RouteIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").id("myCoolRoute")
-                    .onException(Exception.class).handled(true).to("mock:error").end()
+                onException(Exception.class).handled(true).to("mock:error").end();
+
+                from("direct:start")
+                    .onException(IOException.class).maximumRedeliveries(5).end()
+                    .routeId("myCoolRoute")
                     .choice()
                         .when(body().contains("Kabom")).throwException(new IllegalArgumentException("Damn"))
                     .otherwise()

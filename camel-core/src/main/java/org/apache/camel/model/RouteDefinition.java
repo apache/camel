@@ -207,6 +207,17 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     }
 
     /**
+     * Set the route id for this route
+     *
+     * @param id  the route id
+     * @return the builder
+     */
+    public RouteDefinition routeId(String id) {
+        setId(id);
+        return this;
+    }
+
+    /**
      * Disable stream caching for this route.
      */
     public RouteDefinition noStreamCaching() {
