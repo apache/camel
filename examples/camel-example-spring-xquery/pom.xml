@@ -28,6 +28,7 @@
   </parent>
 
   <artifactId>camel-example-spring-xquery</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: Spring :: XQuery</name>
   <description>An example using Spring XML to transform a message using XQuery</description>
 

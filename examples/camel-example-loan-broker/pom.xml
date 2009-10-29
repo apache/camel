@@ -27,9 +27,17 @@
   </parent>
 
   <artifactId>camel-example-loan-broker</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: Loan-Broker</name>
   <description>An example that shows the EPI's loan broker demo</description>
 
+  <properties>
+    <camel.osgi.export.pkg>
+       org.apache.camel.loanbroker.queue.version;${camel.osgi.version},
+       org.apache.camel.loanbroker.webservice.version;${camel.osgi.version}
+    </camel.osgi.export.pkg>
+  </properties>
+    
    <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>

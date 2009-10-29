@@ -28,9 +28,17 @@
   </parent>
 
   <artifactId>camel-example-cxf</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: CXF</name>
   <description>An example which demonstrates the use of the Camel CXF component
   </description>
+  
+   <properties>
+     <camel.osgi.export.pkg>
+     	org.apache.camel.example.cxf.*;${camel.osgi.version},
+     	org.apache.camel.example.camel.transport.*;${camel.osgi.version}
+     </camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
     <dependency>

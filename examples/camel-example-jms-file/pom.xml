@@ -28,8 +28,13 @@
   </parent>
 
   <artifactId>camel-example-jms-file</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: JMS-File</name>
   <description>An example that persists messages from JMS to files</description>
+
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.example.jmstofile.*</camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 

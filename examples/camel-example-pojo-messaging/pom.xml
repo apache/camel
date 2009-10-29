@@ -28,9 +28,14 @@
   </parent>
 
   <artifactId>camel-example-pojo-messaging</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: POJO Messaging</name>
   <description>An example showing how to produce and consume messages from Camel endpoints using annotated POJOs</description>
 
+  <properties>
+     <camel.osgi.export.pkg>org.apache.camel.example.pojo_messaging.*</camel.osgi.export.pkg>
+   </properties>
+    
   <dependencies>
     <dependency>
       <groupId>org.apache.activemq</groupId>
