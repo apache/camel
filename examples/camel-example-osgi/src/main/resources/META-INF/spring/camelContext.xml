@@ -25,8 +25,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/osgi http://camel.apache.org/schema/osgi/camel-osgi.xsd">
 
-  <camelContext xmlns="http://camel.apache.org/schema/osgi">
-    <camel:package>org.apache.camel.example.osgi</camel:package>
+  <camelContext xmlns="http://camel.apache.org/schema/osgi">    
     <camel:route>
       <camel:from uri="timer://myTimer?fixedRate=true&amp;period=2000"/>
       <camel:bean ref="myTransform" method="transform"/>
