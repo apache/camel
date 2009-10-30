@@ -16,16 +16,29 @@
  */
 package org.apache.camel.example.spring.javaconfig;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 import org.apache.camel.spring.javaconfig.Main;
 
 /**
  * @version $Revision$
  */
 public class IntegrationTest extends TestCase {
-
+    
     public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
         // let's boot up the Spring application context for 2 seconds to check that it works OK
         Main.main("-duration", "2s", "-bp", "org.apache.camel.example.spring.javaconfig");
+    }
+    
+    public void testStartApplicationContext() throws Exception {
+        // test to boot up the application context from spring configuration
+        ApplicationContext context = new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
+        String[] names = context.getBeanNamesForType(CamelContext.class);
+        assertEquals("There should be a camel context ", 1, names.length);
+        CamelContext camelContext = (CamelContext) context.getBean(names[0]);
+        assertNotNull(camelContext);
+        Thread.sleep(2000);
     }
 }
