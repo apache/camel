@@ -37,7 +37,7 @@ public class ProviderClientServerTest extends CamelSpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         
-        return new ClassPathXmlApplicationContext(new String[]{"/org/apache/camel/example/cxf/provider/CamelCXFRouteConfig.xml"});
+        return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CamelCXFProviderRouteConfig.xml"});
     }
     
     

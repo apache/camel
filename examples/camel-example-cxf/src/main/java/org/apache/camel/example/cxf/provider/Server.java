@@ -18,24 +18,25 @@ package org.apache.camel.example.cxf.provider;
 
 import javax.xml.ws.Endpoint;
 
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 
 public class Server {
-    Endpoint endpoint;
+    AbstractApplicationContext applicationContext;
 
     public void start() throws Exception {
         // Setup the Camel context using Spring
-        SpringBusFactory bf = new SpringBusFactory();
-        BusFactory.setDefaultBus(null);
-        Bus bus = bf.createBus("/org/apache/camel/example/cxf/provider/CamelCXFRouteConfig.xml");
-        BusFactory.setDefaultBus(bus);          
+        applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/CamelCXFProviderRouteConfig.xml");
+                 
     }
     
     public void stop() {
-        if (endpoint != null) {
-            endpoint.stop();
+        if (applicationContext != null) {
+            applicationContext.stop();
         }    
     }
     

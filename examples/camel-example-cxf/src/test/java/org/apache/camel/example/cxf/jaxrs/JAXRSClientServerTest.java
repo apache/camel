@@ -16,19 +16,19 @@
  */
 package org.apache.camel.example.cxf.jaxrs;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JAXRSClientServerTest extends CamelTestSupport {
+public class JAXRSClientServerTest extends CamelSpringTestSupport {
     
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new CamelRouterBuilder();
-    }
+    
     
     @Test
     public void testJAXWSClient() throws BookNotFoundFault {
@@ -64,6 +64,11 @@ public class JAXRSClientServerTest extends CamelTestSupport {
         } catch (Exception exception) {
             assertTrue("The exception should be BookNotFoundFault", exception instanceof BookNotFoundFault);
         }
+    }
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/JAXRSCamelContext.xml"});
     }
 
 }

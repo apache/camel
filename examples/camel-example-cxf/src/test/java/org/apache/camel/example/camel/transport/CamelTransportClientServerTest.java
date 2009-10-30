@@ -18,6 +18,9 @@ package org.apache.camel.example.camel.transport;
 
 import java.net.MalformedURLException;
 
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
@@ -27,17 +30,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CamelTransportClientServerTest extends Assert {
-    private static Server server = new Server();
+    static AbstractApplicationContext context;
     
     @BeforeClass
     public static void startUpServer() throws Exception {
-        server.prepare();
-        server.start();
+        context = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CamelTransportSpringConfig.xml"});   
     }
     
     @AfterClass
     public static void shutDownServer() {
-        server.stop();
+        if (context != null) {
+            context.stop();
+        }
     }
     
     @Test
@@ -62,7 +66,6 @@ public class CamelTransportClientServerTest extends Assert {
         port.greetMeOneWay(System.getProperty("user.name"));
 
         try {
-            System.out.println("Invoking pingMe, expecting exception...");
             port.pingMe("hello");
             fail("expects the exception here");
         } catch (PingMeFault ex) {

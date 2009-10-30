@@ -18,40 +18,19 @@ package org.apache.camel.example.cxf;
 
 import java.net.MalformedURLException;
 
-import javax.xml.ws.ProtocolException;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.example.cxf.CamelCxfExample.MyRouteBuilder;
-import org.apache.camel.example.jms.JmsBroker;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfHttpJmsClientServerTest extends CamelTestSupport {
-    static JmsBroker broker = new JmsBroker();
-    static Server server = new Server();
+public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
     private static final String ROUTER_ADDRESS = "http://localhost:9001/SoapContext/SoapPort";
     
-    @BeforeClass
-    public static void startUpJmsBroker() throws Exception {
-        broker.start();
-        server.start();
-    }
-    
-    @AfterClass
-    public static void shutDownJmsBroker() throws Exception {
-        server.stop();
-        broker.stop();
-    }
-    
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new MyRouteBuilder();
-    }
     
     @Test
     public void testClientInvocation() throws MalformedURLException {
@@ -75,6 +54,11 @@ public class CxfHttpJmsClientServerTest extends CamelTestSupport {
             assertEquals("Wrong FaultDetail major:", 2, detail.getMajor());
             assertEquals("Wrong FaultDetail minor:", 1, detail.getMinor());
         }
+    }
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {        
+        return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CxfRouteCamelContext.xml"});
     }
     
     

@@ -32,7 +32,10 @@ public class GreeterImpl implements Greeter {
 
     private String suffix;
 
-    public GreeterImpl(String suffix) {
+    public GreeterImpl() {
+    }
+    
+    public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
 

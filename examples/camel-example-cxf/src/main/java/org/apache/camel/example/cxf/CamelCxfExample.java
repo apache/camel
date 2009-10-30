@@ -44,7 +44,7 @@ public final class CamelCxfExample {
     private CamelCxfExample() {
     }
     
-    static class MyRouteBuilder extends RouteBuilder {
+    public static class MyRouteBuilder extends RouteBuilder {
 
         @Override
         public void configure() throws Exception {

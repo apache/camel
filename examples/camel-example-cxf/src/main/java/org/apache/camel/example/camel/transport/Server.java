@@ -18,6 +18,8 @@ package org.apache.camel.example.camel.transport;
 
 import javax.xml.ws.Endpoint;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -40,11 +42,13 @@ public class Server {
         // start the endpoints
         System.out.println("Starting Server");
         // START SNIPPET: e2
-        Object implementor = new GreeterImpl("EndpointA");
+        GreeterImpl implementor = new GreeterImpl();
+        implementor.setSuffix("EndpointA");
         String address = "camel://direct:EndpointA";
         endpointA = Endpoint.publish(address, implementor);
 
-        implementor = new GreeterImpl("EndpointB");
+        implementor = new GreeterImpl();
+        implementor.setSuffix("EndpointB");
         address = "camel://direct:EndpointB";
         endpointB = Endpoint.publish(address, implementor);
         // END SNIPPET: e2
@@ -58,12 +62,13 @@ public class Server {
             endpointB.stop();
         }
     }
-
+    
 
     public static void main(String args[]) throws Exception {
         Server server = new Server();
         server.prepare();
         server.start();
+        
         System.out.println("Server ready...");
 
         Thread.sleep(5 * 60 * 1000);
