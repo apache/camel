@@ -75,11 +75,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
             preWriteCheck();
 
             // should we write to a temporary name and then afterwards rename to real target
-            boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempPrefix());
+            boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempFileName());
             String tempTarget = null;
             if (writeAsTempAndRename) {
                 // compute temporary name with the temp prefix
-                tempTarget = createTempFileName(target);
+                tempTarget = createTempFileName(exchange, target);
+
+                if (log.isTraceEnabled()) {
+                    log.trace("Writing using tempNameFile: " + tempTarget);
+                }
 
                 // cater for file exists option on the real target as
                 // the file operations code will work on the temp file
@@ -248,17 +252,28 @@ public class GenericFileProducer<T> extends DefaultProducer {
         return answer;
     }
 
-    protected String createTempFileName(String fileName) {
+    protected String createTempFileName(Exchange exchange, String fileName) {
         // must normalize path to cater for Windows and other OS
         fileName = normalizePath(fileName);
+
+        String tempName;
+        if (exchange.getIn().getHeader(Exchange.FILE_NAME) == null) {
+            // its a generated filename then add it to header so we can evaluate the expression
+            exchange.getIn().setHeader(Exchange.FILE_NAME, FileUtil.stripPath(fileName));
+            tempName = endpoint.getTempFileName().evaluate(exchange, String.class);
+            // and remove it again after evaluation
+            exchange.getIn().removeHeader(Exchange.FILE_NAME);
+        } else {
+            tempName = endpoint.getTempFileName().evaluate(exchange, String.class);
+        }
 
         int path = fileName.lastIndexOf(getFileSeparator());
         if (path == -1) {
             // no path
-            return endpoint.getTempPrefix() + fileName;
+            return tempName;
         } else {
-            StringBuilder sb = new StringBuilder(fileName);
-            sb.insert(path + 1, endpoint.getTempPrefix());
+            StringBuilder sb = new StringBuilder(fileName.substring(0, path + 1));
+            sb.append(tempName);
             return sb.toString();
         }
     }

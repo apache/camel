@@ -26,9 +26,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test for file producer option tempPrefix
  */
-public class FileProduceTempPrefixTest extends ContextTestSupport {
+public class FileProduceTempFileNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/tempandrename/?tempPrefix=inprogress.";
+    private String fileUrl = "file://target/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
 
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
@@ -37,7 +37,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
         String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/claus.txt");
-        assertDirectoryEquals("target/tempandrename/inprogress.claus.txt", tempFileName);
+        assertDirectoryEquals("target/tempandrename/inprogress-claus.tmp", tempFileName);
     }
 
     public void testNoPathCreateTempFileName() throws Exception {
@@ -47,10 +47,10 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
         String tempFileName = producer.createTempFileName(exchange, "./");
-        assertDirectoryEquals("./inprogress.claus.txt", tempFileName);
+        assertDirectoryEquals("./inprogress-claus.tmp", tempFileName);
     }
 
-    public void testTempPrefix() throws Exception {
+    public void testTempFileName() throws Exception {
         deleteDirectory("target/tempandrename");
 
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -59,12 +59,6 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         // use absolute file to let unittest pass on all platforms
         file = file.getAbsoluteFile();
         assertEquals("The generated file should exists: " + file, true, file.exists());
-    }
-
-    public void testTempPrefixUUIDFilename() throws Exception {
-        deleteDirectory("target/tempandrename");
-
-        template.sendBody("direct:a", "Bye World");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

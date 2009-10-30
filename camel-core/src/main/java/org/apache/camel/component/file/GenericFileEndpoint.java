@@ -37,7 +37,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -65,6 +64,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean flatten;
     protected int maxMessagesPerPoll;
     protected String tempPrefix;
+    protected Expression tempFileName;
     protected String include;
     protected String exclude;
     protected Expression fileName;
@@ -329,6 +329,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setTempPrefix(String tempPrefix) {
         this.tempPrefix = tempPrefix;
+        setTempFileName(tempPrefix + "${file:name}");
+    }
+
+    public Expression getTempFileName() {
+        return tempFileName;
+    }
+
+    public void setTempFileName(Expression tempFileName) {
+        this.tempFileName = tempFileName;
+    }
+
+    public void setTempFileName(String tempFileNameExpression) {
+        this.tempFileName = createFileLangugeExpression(tempFileNameExpression);
     }
 
     public GenericFileConfiguration getConfiguration() {
