@@ -40,6 +40,16 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         assertDirectoryEquals("target/tempandrename/inprogress.claus.txt", tempFileName);
     }
 
+    public void testCreateTempFileNameUsingComplexName() throws Exception {
+        Endpoint endpoint = context.getEndpoint(fileUrl);
+        GenericFileProducer producer = (GenericFileProducer) endpoint.createProducer();
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "foo/claus.txt");
+
+        String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/foo/claus.txt");
+        assertDirectoryEquals("target/tempandrename/foo/inprogress.claus.txt", tempFileName);
+    }
+
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
         GenericFileProducer producer = (GenericFileProducer) endpoint.createProducer();

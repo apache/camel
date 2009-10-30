@@ -329,7 +329,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setTempPrefix(String tempPrefix) {
         this.tempPrefix = tempPrefix;
-        setTempFileName(tempPrefix + "${file:name}");
+        // use only name as we set a prefix in from on the name
+        setTempFileName(tempPrefix + "${file:onlyname}");
     }
 
     public Expression getTempFileName() {

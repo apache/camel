@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.FileUtil;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a> based
@@ -55,7 +56,12 @@ public final class FileExpressionBuilder {
     public static Expression fileOnlyNameExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
+                String answer = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
+                if (answer == null) {
+                    answer = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                    answer = FileUtil.stripPath(answer);
+                }
+                return answer;
             }
 
             @Override
@@ -69,17 +75,7 @@ public final class FileExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-                if (name != null) {
-                    int pos = name.lastIndexOf('.');
-                    if (pos != -1) {
-                        return name.substring(0, pos);
-                    } else {
-                        // name does not have extension
-                        return name;
-                    }
-                } else {
-                    return null;
-                }
+                return FileUtil.stripExt(name);
             }
 
             @Override
@@ -92,18 +88,8 @@ public final class FileExpressionBuilder {
     public static Expression fileOnlyNameNoExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
-                if (name != null) {
-                    int pos = name.lastIndexOf('.');
-                    if (pos != -1) {
-                        return name.substring(0, pos);
-                    } else {
-                        // name does not have extension
-                        return name;
-                    }
-                } else {
-                    return null;
-                }
+                String name = fileOnlyNameExpression().evaluate(exchange, String.class);
+                return FileUtil.stripExt(name);
             }
 
             @Override
