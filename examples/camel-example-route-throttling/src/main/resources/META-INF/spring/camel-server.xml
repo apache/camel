@@ -41,17 +41,27 @@
     </bean>
 
     <bean id="myPolicy" class="org.apache.camel.impl.ThrottlingRoutePolicy">
-        <property name="scope" value="Route"/>
-        <property name="maxInflightExchanges" value="80"/>
-        <property name="loggingLevel" value="INFO"/>
+        <property name="scope" value="Context"/>
+        <property name="maxInflightExchanges" value="30"/>
+        <property name="resumePercentOfMax" value="10"/>
+        <property name="loggingLevel" value="WARN"/>
     </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <endpoint uri="seda:inbox?concurrentConsumers=40&amp;size=25000" id="bar"/>
+
         <route routePolicyRef="myPolicy">
             <from uri="jms:queue:inbox?concurrentConsumers=100"/>
             <transacted/>
+            <to uri="log:+++JMS +++?groupSize=100"/>
+            <to ref="bar"/>
+        </route>
+
+        <route>
+            <from ref="bar"/>
             <delay><constant>100</constant></delay>
-            <to uri="log:inbox?groupSize=50"/>
+            <to uri="log:+++SEDA+++?groupSize=100"/>
         </route>
     </camelContext>
 

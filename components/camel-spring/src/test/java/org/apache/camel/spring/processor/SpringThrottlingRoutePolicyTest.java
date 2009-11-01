@@ -17,13 +17,13 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.ThrottelingRoutePolicyTest;
+import org.apache.camel.processor.ThrottlingRoutePolicyTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  * @version $Revision$
  */
-public class SpringThrottlingRoutePolicyTest extends ThrottelingRoutePolicyTest {
+public class SpringThrottlingRoutePolicyTest extends ThrottlingRoutePolicyTest {
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/ThrottlingRoutePolicyTest.xml");

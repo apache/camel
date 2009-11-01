@@ -23,12 +23,12 @@ import org.apache.camel.impl.ThrottlingRoutePolicy;
 /**
  * @version $Revision$
  */
-public class ThrottelingRoutePolicyTest extends ContextTestSupport {
+public class ThrottlingRoutePolicyTest extends ContextTestSupport {
 
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;
 
-    public void testThrottelingRoutePolicy() throws Exception {
+    public void testThrottlingRoutePolicy() throws Exception {
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
         }

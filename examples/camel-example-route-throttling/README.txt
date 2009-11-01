@@ -12,6 +12,10 @@ The Server is required to be running when you start the client.
 You can see on the server it should log in the console how it adjust the
 throttling dynamically.
 
+The goal of this example is to illustrate that Camel throttles the JMS queue
+to be on same pace with the rest of the Camel routing. When running the example
+you should observe that the JMS route and the SEDA route completes nearly in sync.
+
 For the latest & greatest documentation on how to use this example please see:
   http://camel.apache.org/examples.html
 

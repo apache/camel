@@ -37,7 +37,9 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
 
     // TODO: need to be JMX enabled as well
 
-    public enum ThrottlingScope { Total, Route }
+    public enum ThrottlingScope {
+        Context, Route
+    }
 
     private final Lock lock = new ReentrantLock();
     private ThrottlingScope scope = ThrottlingScope.Route;
@@ -52,7 +54,7 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
 
     @Override
     public String toString() {
-        return "ThrottlingRoutePolicyp[" + maxInflightExchanges + " / " + resumePercentOfMax + "%" + "]";
+        return "ThrottlingRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope " + scope + "]";
     }
 
     public void onExchangeDone(Route route, Exchange exchange) {
@@ -174,7 +176,7 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
     }
 
     private int getSize(Consumer consumer, Exchange exchange) {
-        if (scope == ThrottlingScope.Total) {
+        if (scope == ThrottlingScope.Context) {
             return exchange.getContext().getInflightRepository().size();
         } else {
             Endpoint endpoint = consumer.getEndpoint();
