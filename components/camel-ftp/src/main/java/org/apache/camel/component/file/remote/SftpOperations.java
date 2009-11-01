@@ -370,19 +370,27 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
 
+
         try {
             // store the java.io.File handle as the body
             file.setBody(local);
             channel.get(name, os);
-
-            // rename temp to local after we have retrieved the data
-            if (!FileUtil.renameFile(temp, local)) {
-                throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
-            }
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             ObjectHelper.close(os, "retrieve: " + name, LOG);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Retrieve file to local work file result: true");
+        }
+
+        // operation went okay so rename temp to local after we have retrieved the data
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Renaming local in progress file from: " + temp + " to: " + local);
+        }
+        if (!FileUtil.renameFile(temp, local)) {
+            throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
         }
 
         return true;
