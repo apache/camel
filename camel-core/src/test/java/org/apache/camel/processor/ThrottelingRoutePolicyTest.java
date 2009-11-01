@@ -29,11 +29,11 @@ public class ThrottelingRoutePolicyTest extends ContextTestSupport {
     private int size = 100;
 
     public void testThrottelingRoutePolicy() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(size);
-
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
         }
+
+        getMockEndpoint("mock:result").expectedMessageCount(size);
 
         // now start the route
         context.startRoute("myRoute");

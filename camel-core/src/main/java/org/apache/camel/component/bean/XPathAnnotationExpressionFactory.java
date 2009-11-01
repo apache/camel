@@ -36,7 +36,7 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
     @Override
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
         String xpath = getExpressionFromAnnotation(annotation);
-        XPathBuilder builder = XPathBuilder.xpath(xpath);
+        XPathBuilder builder = XPathBuilder.xpath(xpath, getResultType(annotation));
         NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
         if (namespaces != null) {
             for (NamespacePrefix namespacePrefix : namespaces) {
@@ -46,14 +46,24 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
         }
         return builder;
     }
-    
+
+    protected Class<?> getResultType(Annotation annotation) {
+        try {
+            Method method = annotation.getClass().getMethod("resultType");
+            Object value = ObjectHelper.invokeMethod(method, annotation);
+            return (Class<?>) value;
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Cannot determine the annotation: " + annotation + " as it does not have an resultType() method", e);
+        }
+    }
+
     protected NamespacePrefix[] getExpressionNameSpacePrefix(Annotation annotation) {
         try {
             Method method = annotation.getClass().getMethod("namespaces");
             Object value = ObjectHelper.invokeMethod(method, annotation);
-            return (NamespacePrefix[])value;
+            return (NamespacePrefix[]) value;
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("Cannot determine the annotation: " + annotation + " as it does not have an namespaces() method", e);
-        }        
+        }
     }
 }
