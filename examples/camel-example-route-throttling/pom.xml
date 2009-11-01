@@ -85,6 +85,13 @@
                 <target.main.class>org.apache.camel.example.client.CamelClient</target.main.class>
             </properties>
         </profile>
+        <profile>
+            <id>CamelFileClient</id>
+            <properties>
+                <!-- we start using our own class to control what we do in the main -->
+                <target.main.class>org.apache.camel.example.client.CamelFileClient</target.main.class>
+            </properties>
+        </profile>
     </profiles>
     <build>
         <plugins>

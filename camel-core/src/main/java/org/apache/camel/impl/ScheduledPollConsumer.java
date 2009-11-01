@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
@@ -34,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable {
+public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService {
     private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
 
@@ -47,6 +48,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay;
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
+    private boolean suspended;
 
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -73,6 +75,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * Invoked whenever we should be polled
      */
     public void run() {
+        if (suspended) {
+            return;
+        }
+
         int retryCounter = -1;
         boolean done = false;
 
@@ -156,6 +162,18 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     public void setPollStrategy(PollingConsumerPollStrategy pollStrategy) {
         this.pollStrategy = pollStrategy;
+    }
+
+    public void suspend() {
+        suspended = true;
+    }
+
+    public void resume() {
+        suspended = false;
+    }
+
+    public boolean isSuspended() {
+        return suspended;
     }
 
     // Implementation methods

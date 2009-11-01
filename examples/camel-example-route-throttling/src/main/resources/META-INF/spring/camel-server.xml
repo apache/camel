@@ -49,17 +49,23 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
-        <endpoint uri="seda:inbox?concurrentConsumers=40&amp;size=25000" id="bar"/>
+        <endpoint uri="seda:inbox?concurrentConsumers=40&amp;size=25000" id="foo"/>
 
         <route routePolicyRef="myPolicy">
             <from uri="jms:queue:inbox?concurrentConsumers=100"/>
             <transacted/>
             <to uri="log:+++JMS +++?groupSize=100"/>
-            <to ref="bar"/>
+            <to ref="foo"/>
+        </route>
+
+        <route routePolicyRef="myPolicy">
+            <from uri="file://target/inbox?delete=true&amp;maxMessagesPerPoll=50"/>
+            <to uri="log:+++FILE+++?groupSize=100"/>
+            <to ref="foo"/>
         </route>
 
         <route>
-            <from ref="bar"/>
+            <from ref="foo"/>
             <delay><constant>100</constant></delay>
             <to uri="log:+++SEDA+++?groupSize=100"/>
         </route>
