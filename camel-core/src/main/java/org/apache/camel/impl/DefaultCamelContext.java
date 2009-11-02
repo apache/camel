@@ -628,6 +628,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         startServices(object);
     }
 
+    public boolean hasService(Object object) {
+        if (object instanceof Service) {
+            return servicesToClose.contains(object);
+        }
+        return false;
+    }
+
     // Helper methods
     // -----------------------------------------------------------------------
 

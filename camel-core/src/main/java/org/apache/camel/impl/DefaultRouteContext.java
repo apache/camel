@@ -37,6 +37,7 @@ import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The context used to activate new routing rules
@@ -147,8 +148,17 @@ public class DefaultRouteContext implements RouteContext {
 
             // and then optionally add route policy processor if a custom policy is set
             RoutePolicyProcessor routePolicyProcessor = null;
-            if (getRoutePolicy() != null) {
-                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, getRoutePolicy());
+            RoutePolicy policy = getRoutePolicy();
+            if (policy != null) {
+                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, policy);
+                // add it as service if we have not already done that (eg possible if two routes have the same service)
+                if (!camelContext.hasService(policy)) {
+                    try {
+                        camelContext.addService(policy);
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                }
                 target = routePolicyProcessor;
             }
 

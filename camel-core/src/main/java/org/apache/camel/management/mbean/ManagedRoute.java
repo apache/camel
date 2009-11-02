@@ -21,6 +21,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -102,6 +104,18 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     @ManagedAttribute(description = "Tracing")
     public void setTracing(Boolean tracing) {
         route.getRouteContext().setTracing(tracing);
+    }
+
+    @ManagedAttribute(description = "Route Policy")
+    public String getRoutePolicy() {
+        RoutePolicy policy = route.getRouteContext().getRoutePolicy();
+        if (policy != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(policy.getClass().getSimpleName());
+            sb.append("(").append(ObjectHelper.getIdentityHashCode(policy)).append(")");
+            return sb.toString();
+        }
+        return null;
     }
 
     @ManagedOperation(description = "Start Route")

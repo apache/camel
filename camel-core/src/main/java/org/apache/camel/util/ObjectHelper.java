@@ -1133,6 +1133,10 @@ public final class ObjectHelper {
         return scanner;
     }
 
+    public static String getIdentityHashCode(Object object) {
+        return "0x" + Integer.toHexString(System.identityHashCode(object));
+    }
+
     private static class ExceptionIterator implements Iterator<Throwable> {
         private List<Throwable> tree = new ArrayList<Throwable>();
         private Iterator<Throwable> it;

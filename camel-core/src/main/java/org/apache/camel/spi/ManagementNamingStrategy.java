@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.Service;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 
@@ -53,5 +54,7 @@ public interface ManagementNamingStrategy {
     ObjectName getObjectNameForProducer(CamelContext context, Producer producer) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException;
+
+    ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException;
 
 }

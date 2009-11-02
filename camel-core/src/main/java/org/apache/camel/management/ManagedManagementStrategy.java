@@ -27,6 +27,7 @@ import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementAgent;
@@ -79,48 +80,36 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         if (managedObject instanceof ManagedCamelContext) {
             ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForCamelContext(mcc.getContext());
-        }
-
-        if (managedObject instanceof ManagedComponent) {
+        } else if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
-        }
-
-        if (managedObject instanceof ManagedEndpoint) {
+        } else if (managedObject instanceof ManagedEndpoint) {
             ManagedEndpoint me = (ManagedEndpoint) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForEndpoint(me.getEndpoint());
         } else if (managedObject instanceof Endpoint) {
             objectName = getManagementNamingStrategy().getObjectNameForEndpoint((Endpoint) managedObject);
-        }
-
-        if (managedObject instanceof ManagedRoute) {
+        } else if (managedObject instanceof ManagedRoute) {
             ManagedRoute mr = (ManagedRoute) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForRoute(mr.getRoute());
-        }
-
-        if (managedObject instanceof ManagedErrorHandler) {
+        } else if (managedObject instanceof ManagedErrorHandler) {
             ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
-        }
-
-        if (managedObject instanceof ManagedProcessor) {
+        } else if (managedObject instanceof ManagedProcessor) {
             ManagedProcessor mp = (ManagedProcessor) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
-        }
-
-        if (managedObject instanceof ManagedConsumer) {
+        } else if (managedObject instanceof ManagedConsumer) {
             ManagedConsumer ms = (ManagedConsumer) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
-        }
-
-        if (managedObject instanceof ManagedProducer) {
+        } else if (managedObject instanceof ManagedProducer) {
             ManagedProducer ms = (ManagedProducer) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForProducer(ms.getContext(), ms.getProducer());
-        }
-
-        if (managedObject instanceof ManagedTracer) {
+        } else if (managedObject instanceof ManagedTracer) {
             ManagedTracer mt = (ManagedTracer) managedObject;
             objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getCamelContext(), mt.getTracer());
+        } else if (managedObject instanceof ManagedService) {
+            // check for managed service should be last
+            ManagedService ms = (ManagedService) managedObject;
+            objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
         }
 
         return nameType.cast(objectName);

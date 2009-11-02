@@ -44,23 +44,27 @@ public class RoutePolicyProcessor extends DelegateProcessor {
 
     @Override
     protected void processNext(Exchange exchange) throws Exception {
-        // invoke begin
-        routePolicy.onExchangeBegin(route, exchange);
+        // check whether the policy is enabled
+        if (isRoutePolicyRunAllowed()) {
 
-        // add on completion that invokes the policy callback on complete
-        // as the Exchange can be routed async and thus we need the callback to
-        // invoke when the route is completed
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                // do not invoke it if Camel is stopping as we don't want
-                // the policy to start a consumer during Camel is stopping
-                if (isCamelStopping(exchange.getContext())) {
-                    return;
+            // invoke begin
+            routePolicy.onExchangeBegin(route, exchange);
+
+            // add on completion that invokes the policy callback on complete
+            // as the Exchange can be routed async and thus we need the callback to
+            // invoke when the route is completed
+            exchange.addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onDone(Exchange exchange) {
+                    // do not invoke it if Camel is stopping as we don't want
+                    // the policy to start a consumer during Camel is stopping
+                    if (isCamelStopping(exchange.getContext())) {
+                        return;
+                    }
+                    routePolicy.onExchangeDone(route, exchange);
                 }
-                routePolicy.onExchangeDone(route, exchange);
-            }
-        });
+            });
+        }
 
         if (processor != null) {
             processor.process(exchange);
@@ -77,6 +81,14 @@ public class RoutePolicyProcessor extends DelegateProcessor {
             return ss.isStopping() || ss.isStopped();
         }
         return false;
+    }
+
+    private boolean isRoutePolicyRunAllowed() {
+        if (routePolicy instanceof ServiceSupport) {
+            ServiceSupport ss = (ServiceSupport) routePolicy;
+            return ss.isRunAllowed();
+        }
+        return true;
     }
 
 }

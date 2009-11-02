@@ -30,7 +30,7 @@
         <!-- and we want a low water mark value of 20% of the max which means that
              the route will be resumed when hitting low to <= 2 current inflight exchanges -->
         <property name="resumePercentOfMax" value="20"/>
-        <!-- and we want it to be scoped at this route: (can also be total scoped)
+        <!-- and we want it to be scoped at this route: (can also be context scoped)
              its default route scoped so we could omit this property -->
         <property name="scope" value="Route"/>
     </bean>

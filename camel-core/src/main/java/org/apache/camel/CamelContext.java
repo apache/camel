@@ -74,6 +74,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     void addService(Object object) throws Exception;
 
     /**
+     * Has the given service already been added?
+     *
+     * @param object the service
+     * @return <tt>true</tt> if already added, <tt>false</tt> if not.
+     */
+    boolean hasService(Object object);
+
+    /**
      * Adds a component to the context.
      *
      * @param componentName  the name the component is registered as

@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.Service;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
@@ -53,6 +54,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_COMPONENT = "components";
     public static final String TYPE_TRACER = "tracer";
     public static final String TYPE_ERRORHANDLER = "errorhandlers";
+    public static final String TYPE_SERVICE = "services";
 
     protected String domainName;
     protected String hostName = "localhost";
@@ -113,7 +115,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
             // create a name based on its instance
             buffer.append(KEY_NAME + "=")
                 .append(processor.getClass().getSimpleName())
-                .append("(").append(getIdentityHashCode(processor)).append(")");
+                .append("(").append(ObjectHelper.getIdentityHashCode(processor)).append(")");
         }
         return createObjectName(buffer);
     }
@@ -154,7 +156,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
             // create a name based on its instance
             buffer.append(KEY_NAME + "=")
                 .append(builder.getClass().getSimpleName())
-                .append("(").append(getIdentityHashCode(builder)).append(")");
+                .append("(").append(ObjectHelper.getIdentityHashCode(builder)).append(")");
         }
 
         return createObjectName(buffer);
@@ -172,7 +174,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         }
         buffer.append(KEY_NAME + "=")
             .append(name)
-            .append("(").append(getIdentityHashCode(consumer)).append(")");
+            .append("(").append(ObjectHelper.getIdentityHashCode(consumer)).append(")");
         return createObjectName(buffer);
     }
 
@@ -188,7 +190,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         }
         buffer.append(KEY_NAME + "=")
             .append(name)
-            .append("(").append(getIdentityHashCode(producer)).append(")");
+            .append("(").append(ObjectHelper.getIdentityHashCode(producer)).append(")");
         return createObjectName(buffer);
     }
 
@@ -199,7 +201,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_TYPE + "=" + TYPE_TRACER + ",");
         buffer.append(KEY_NAME + "=")
             .append("Tracer")
-            .append("(").append(getIdentityHashCode(tracer)).append(")");
+            .append("(").append(ObjectHelper.getIdentityHashCode(tracer)).append(")");
         return createObjectName(buffer);
     }
 
@@ -212,6 +214,17 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(id));
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
+        buffer.append(KEY_NAME + "=")
+            .append(service.getClass().getSimpleName())
+            .append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
         return createObjectName(buffer);
     }
 
@@ -243,13 +256,9 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
             String uri = ep.getEndpointKey();
             int pos = uri.indexOf('?');
             String id = (pos == -1) ? uri : uri.substring(0, pos);
-            id += "?id=" + getIdentityHashCode(ep);
+            id += "?id=" + ObjectHelper.getIdentityHashCode(ep);
             return id;
         }
-    }
-
-    private static String getIdentityHashCode(Object object) {
-        return "0x" + Integer.toHexString(System.identityHashCode(object));
     }
 
     /**

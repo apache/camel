@@ -35,8 +35,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ThrottlingRoutePolicy extends RoutePolicySupport {
 
-    // TODO: need to be JMX enabled as well
-
     public enum ThrottlingScope {
         Context, Route
     }
