@@ -34,6 +34,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.example.guice.jms.*</camel.osgi.export.pkg>
+    <camel.osgi.activator>org.apache.camel.example.guice.jms.MyActivator</camel.osgi.activator>
   </properties>
 
   <dependencies>
@@ -56,12 +57,18 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-core</artifactId>
     </dependency>
+    
+     <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>4.0.1</version>
+    </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
-
+    
     <!-- for testing -->
     <dependency>
       <groupId>junit</groupId>
