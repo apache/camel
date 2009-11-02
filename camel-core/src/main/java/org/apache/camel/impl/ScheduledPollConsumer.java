@@ -48,7 +48,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay;
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
-    private boolean suspended;
+    private volatile boolean suspended;
 
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -76,6 +76,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      */
     public void run() {
         if (suspended) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Cannot start to poll: " + this.getEndpoint() + " as its suspended");
+            }
             return;
         }
 
@@ -86,7 +89,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             try {
                 // eager assume we are done
                 done = true;
-                if (isRunAllowed()) {
+                if (isRunAllowed() && !isSuspended()) {
 
                     if (retryCounter == -1) {
                         if (LOG.isTraceEnabled()) {
@@ -105,6 +108,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     poll();
                     pollStrategy.commit(this, getEndpoint());
                 }
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Finished polling: " + this.getEndpoint());
+                }
             } catch (Exception e) {
                 try {
                     boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
@@ -115,10 +122,6 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     throw ObjectHelper.wrapRuntimeCamelException(re);
                 }
             }
-        }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Finished polling: " + this.getEndpoint());
         }
     }
 
