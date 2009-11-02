@@ -16,6 +16,8 @@
  */
 package org.apache.camel.loanbroker.webservice.version;
 
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.loanbroker.webservice.version.bank.BankServer;
@@ -26,36 +28,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class LoadBrokerTest extends Assert {
-    CamelContext camelContext;
-    CreditAgencyServer creditAgencyServer;
-    BankServer bankServer;
+    AbstractApplicationContext applicationContext;
     
     @Before
     public void startServices() throws Exception {
-        camelContext = new DefaultCamelContext();
-        creditAgencyServer = new CreditAgencyServer();
-        // Start the credit server
-        creditAgencyServer.start();
-
-        // Start the bank server
-        bankServer = new BankServer();
-        bankServer.start();
-
-        // Start the camel context
-        camelContext.addRoutes(new LoanBroker());
-        camelContext.start();
+        applicationContext = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/webServiceCamelContext.xml"});
     }
     
     @After
     public void stopServices() throws Exception {
-        if (camelContext != null) {
-            camelContext.stop();
-        }
-        if (bankServer != null) {
-            bankServer.stop();
-        }
-        if (creditAgencyServer != null) {
-            creditAgencyServer.stop();
+        if (applicationContext != null) {
+            applicationContext.stop();
         }
     }
     

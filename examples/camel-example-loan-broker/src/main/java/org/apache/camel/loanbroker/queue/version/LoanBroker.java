@@ -42,7 +42,7 @@ public class LoanBroker extends RouteBuilder {
         JmsBroker broker = new JmsBroker();
         broker.start();
         // Set up the ActiveMQ JMS Components
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:51616");
 
         // Note we can explicitly name the component
         context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));

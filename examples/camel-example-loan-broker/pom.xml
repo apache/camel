@@ -60,6 +60,20 @@
       <artifactId>activemq-core</artifactId>
     </dependency>
     <dependency>
+		<groupId>org.apache.activemq</groupId>
+		<artifactId>activemq-camel</artifactId>
+	</dependency>    
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-spring</artifactId>
+      <exclusions>
+      	<exclusion>
+      	  <groupId>org.springframework</groupId>
+      	  <artifactId>spring</artifactId>
+      	</exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>

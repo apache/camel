@@ -33,7 +33,7 @@ public class Client extends RouteBuilder {
     public static void main(String args[]) throws Exception {
         CamelContext context = new DefaultCamelContext();
         // Set up the ActiveMQ JMS Components
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:51616");
         // Note we can explicit name of the component
         context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
