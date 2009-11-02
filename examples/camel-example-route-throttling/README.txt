@@ -17,7 +17,7 @@ to be on same pace with the rest of the Camel routing. When running the example
 you should observe that the JMS route and the SEDA route completes nearly in sync.
 
 For the latest & greatest documentation on how to use this example please see:
-  http://camel.apache.org/examples.html
+  http://camel.apache.org/route-throttling-example.html
 
 You will need to compile this example first:
   mvn compile
