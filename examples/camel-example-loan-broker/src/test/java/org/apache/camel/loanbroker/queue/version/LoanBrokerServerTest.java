@@ -16,6 +16,7 @@
  */
 package org.apache.camel.loanbroker.queue.version;
 
+import org.apache.camel.CamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -25,10 +26,13 @@ public class LoanBrokerServerTest extends Assert {
     
     @Test
     public void startLoanBroker() throws Exception {
-        AbstractApplicationContext context = 
+        AbstractApplicationContext applicationContext = 
             new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/queueCamelContext.xml"});
-        Thread.sleep(4000);
-        context.start();        
+        CamelContext camelContext = (CamelContext)applicationContext.getBean("camelContext");
+        assertNotNull("The camel context should not be null", camelContext);
+        Thread.sleep(2000);        
+        camelContext.stop();
+        applicationContext.stop();        
     }
 
 }

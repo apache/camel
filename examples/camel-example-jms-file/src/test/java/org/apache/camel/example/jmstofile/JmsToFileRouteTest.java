@@ -16,6 +16,7 @@
  */
 package org.apache.camel.example.jmstofile;
 
+import org.apache.camel.CamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -24,11 +25,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JmsToFileRouteTest extends Assert {
     
     @Test
-    public void startRoute() throws InterruptedException {
+    public void startRoute() throws Exception {
         AbstractApplicationContext applicationContext =
             new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/camelContext.xml"});
-        
-        Thread.sleep(2000);
+        CamelContext camelContext = (CamelContext)applicationContext.getBean("camelContext");
+        assertNotNull("The camel context should not be null", camelContext);
+        Thread.sleep(2000);        
+        camelContext.stop();
         applicationContext.stop();
     }
 
