@@ -24,15 +24,19 @@ import java.lang.annotation.Target;
 import org.apache.camel.component.bean.XPathAnnotationExpressionFactory;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.NamespacePrefix;
+import org.w3c.dom.NodeList;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "xpath", factory = XPathAnnotationExpressionFactory.class)
 public @interface MyXPath {
     String value();
+
     // You can add the namespaces as the default value of the annotation
     NamespacePrefix[] namespaces() default {
     @NamespacePrefix(prefix = "n1", uri = "http://example.org/ns1"),
     @NamespacePrefix(prefix = "n2", uri = "http://example.org/ns2")};
+
+    Class<?> resultType() default NodeList.class;
 }
 //END SNIPPET: example
