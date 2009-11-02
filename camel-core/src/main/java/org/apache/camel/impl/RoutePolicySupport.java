@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ServiceHelper;
@@ -43,67 +42,19 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     }
 
     protected boolean startConsumer(Consumer consumer) throws Exception {
-        if (consumer instanceof SuspendableService) {
-            SuspendableService ss = (SuspendableService) consumer;
-            if (ss.isSuspended()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Resuming consumer " + consumer);
-                }
-                ss.resume();
-                return true;
-            } else {
-                return false;
-            }
-        } else if (consumer instanceof ServiceSupport) {
-            ServiceSupport ss = (ServiceSupport) consumer;
-            if (ss.getStatus().isStartable()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Stopping consumer " + consumer);
-                }
-                consumer.start();
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Stopping consumer " + consumer);
-            }
-            ServiceHelper.startService(consumer);
-            return true;
+        boolean resumed = ServiceHelper.resumeService(consumer);
+        if (resumed && log.isDebugEnabled()) {
+            log.debug("Resuming consumer " + consumer);
         }
+        return resumed;
     }
 
     protected boolean stopConsumer(Consumer consumer) throws Exception {
-        if (consumer instanceof SuspendableService) {
-            SuspendableService ss = (SuspendableService) consumer;
-            if (!ss.isSuspended()) {
-                ss.suspend();
-                if (log.isDebugEnabled()) {
-                    log.debug("Suspending consumer " + consumer);
-                }
-                return true;
-            } else {
-                return false;
-            }
-        } else if (consumer instanceof ServiceSupport) {
-            ServiceSupport ss = (ServiceSupport) consumer;
-            if (ss.getStatus().isStoppable()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Stopping consumer " + consumer);
-                }
-                consumer.stop();
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Stopping consumer " + consumer);
-            }
-            ServiceHelper.stopService(consumer);
-            return true;
+        boolean suspended = ServiceHelper.suspendService(consumer);
+        if (suspended && log.isDebugEnabled()) {
+            log.debug("Suspended consumer " + consumer);
         }
+        return suspended;
     }
 
     /**

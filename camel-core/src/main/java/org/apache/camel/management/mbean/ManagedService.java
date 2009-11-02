@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -96,4 +97,40 @@ public class ManagedService {
     public void stop() throws Exception {
         service.stop();
     }
+
+    @ManagedAttribute(description = "Whether this service supports suspension")
+    public boolean isSupportSuspension() {
+        return service instanceof SuspendableService;
+    }
+
+    @ManagedAttribute(description = "Whether this service is suspended")
+    public boolean isSuspended() {
+        if (service instanceof SuspendableService) {
+            SuspendableService ss = (SuspendableService) service;
+            return ss.isSuspended();
+        } else {
+            return false;
+        }
+    }
+
+    @ManagedOperation(description = "Suspend Service")
+    public void suspend() throws Exception {
+        if (service instanceof SuspendableService) {
+            SuspendableService ss = (SuspendableService) service;
+            ss.suspend();
+        } else {
+            throw new UnsupportedOperationException("suspend() is not a supported operation");
+        }
+    }
+
+    @ManagedOperation(description = "Resume Service")
+    public void resume() throws Exception {
+        if (service instanceof SuspendableService) {
+            SuspendableService ss = (SuspendableService) service;
+            ss.resume();
+        } else {
+            throw new UnsupportedOperationException("resume() is not a supported operation");
+        }
+    }
+
 }

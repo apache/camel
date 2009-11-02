@@ -32,6 +32,9 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public abstract class ServiceSupport implements Service {
+
+    // TODO: refactor and move me to org.apache.camel.util package
+
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicBoolean starting = new AtomicBoolean(false);
     private final AtomicBoolean stopping = new AtomicBoolean(false);
