@@ -22,7 +22,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.ThrottlingRoutePolicy;
+import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
@@ -30,7 +30,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted
 /**
  * @version $Revision$
  */
-public class JmsThrottlingRoutePolicyTest extends CamelTestSupport {
+public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
 
     private int size = 200;
 
@@ -41,7 +41,7 @@ public class JmsThrottlingRoutePolicyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testJmsThrottlingRoutePolicy() throws Exception {
+    public void testJmsThrottlingInflightRoutePolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(size);
 
@@ -57,10 +57,10 @@ public class JmsThrottlingRoutePolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ThrottlingRoutePolicy policy = new ThrottlingRoutePolicy();
+                ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
                 policy.setMaxInflightExchanges(10);
                 policy.setResumePercentOfMax(50);
-                policy.setScope(ThrottlingRoutePolicy.ThrottlingScope.Route);
+                policy.setScope(ThrottlingInflightRoutePolicy.ThrottlingScope.Route);
 
                 from("activemq:queue:foo?concurrentConsumers=20").routePolicy(policy)
                         .delay(100)
