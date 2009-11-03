@@ -42,7 +42,7 @@
         <property name="transactionManager" ref="jmsTransactionManager"/>
     </bean>
     
-    <bean id="myPolicy" class="org.apache.camel.impl.ThrottlingRoutePolicy">
+    <bean id="myPolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
         <property name="maxInflightExchanges" value="16"/>
         <property name="resumePercentOfMax" value="25"/>
     </bean>
