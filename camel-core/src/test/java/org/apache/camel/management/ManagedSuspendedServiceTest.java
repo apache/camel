@@ -102,11 +102,16 @@ public class ManagedSuspendedServiceTest extends ContextTestSupport {
 
     private class MyPolicy extends RoutePolicySupport {
 
+        private int counter;
+
         public void onExchangeDone(Route route, Exchange exchange) {
-            try {
-                super.stopConsumer(route.getConsumer());
-            } catch (Exception e) {
-                handleException(e);
+            // only stop it at first run
+            if (counter++ == 0) {
+                try {
+                    super.stopConsumer(route.getConsumer());
+                } catch (Exception e) {
+                    handleException(e);
+                }
             }
         }
 

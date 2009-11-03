@@ -79,14 +79,18 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
 
     private class MyPolicy extends RoutePolicySupport {
 
+        private int counter;
         private Consumer consumer;
 
         public void onExchangeDone(Route route, Exchange exchange) {
             this.consumer = route.getConsumer();
-            try {
-                super.stopConsumer(consumer);
-            } catch (Exception e) {
-                handleException(e);
+            // only stop it at first run
+            if (counter++ == 0) {
+                try {
+                    super.stopConsumer(consumer);
+                } catch (Exception e) {
+                    handleException(e);
+                }
             }
         }
 
