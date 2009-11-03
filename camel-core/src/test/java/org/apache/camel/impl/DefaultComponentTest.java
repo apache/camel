@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +78,58 @@ public class DefaultComponentTest extends ContextTestSupport {
         assertEquals(value.intValue(), 4);
     }
 
+    public void testResolveAndRemoveReferenceParameter() {
+        Map parameters = new HashMap();
+        parameters.put("date", "#beginning");
+        MyComponent my = new MyComponent(this.context);
+        Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
+        assertEquals(new Date(0), value);
+    }
+
+    public void testResolveAndRemoveReferenceParameterNotInRegistryDefault() {
+        Map parameters = new HashMap();
+        parameters.put("date", "#somewhen");
+        MyComponent my = new MyComponent(this.context);
+        Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class, new Date(1));
+        assertEquals(new Date(1), value);
+    }
+
+    public void testResolveAndRemoveReferenceParameterNotInRegistryNull() {
+        Map parameters = new HashMap();
+        parameters.put("date", "#somewhen");
+        MyComponent my = new MyComponent(this.context);
+        Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
+        assertNull(value);
+    }
+
+    public void testResolveAndRemoveReferenceParameterNotInMapDefault() {
+        Map parameters = new HashMap();
+        parameters.put("date", "#beginning");
+        MyComponent my = new MyComponent(this.context);
+        Date value = my.resolveAndRemoveReferenceParameter(parameters, "wrong", Date.class, new Date(1));
+        assertEquals(new Date(1), value);
+    }
+
+    public void testResolveAndRemoveReferenceParameterNotInMapNull() {
+        Map parameters = new HashMap();
+        parameters.put("date", "#beginning");
+        MyComponent my = new MyComponent(this.context);
+        Date value = my.resolveAndRemoveReferenceParameter(parameters, "wrong", Date.class);
+        assertNull(value);
+    }
+
+    public void testResolveAndRemoveInvalidReferenceParameter() {
+        Map parameters = new HashMap();
+        parameters.put("date", "beginning");
+        MyComponent my = new MyComponent(this.context);
+        try {
+            my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
+            fail("usage of invalid reference");
+        } catch (IllegalArgumentException e) {
+            // test passed
+        }
+    }
+
     public void testContextShouldBeSet() throws Exception {
         MyComponent my = new MyComponent(null);
         try {
@@ -85,6 +138,12 @@ public class DefaultComponentTest extends ContextTestSupport {
         } catch (IllegalArgumentException e) {
             assertEquals("camelContext must be specified", e.getMessage());
         }
+    }
+
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndiRegistry = super.createRegistry();
+        jndiRegistry.bind("beginning", new Date(0));
+        return jndiRegistry;
     }
 
 }

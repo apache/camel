@@ -172,7 +172,7 @@ public final class EndpointHelper {
             Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
             if (value != null && isReferenceParameter(value)) {
-                Object ref = context.getRegistry().lookup(value.substring(1));
+                Object ref = resolveReferenceParameter(context, value, Object.class);
                 String name = key.toString();
                 if (ref != null) {
                     boolean hit = IntrospectionSupport.setProperty(context.getTypeConverter(), bean, name, ref);
@@ -197,4 +197,19 @@ public final class EndpointHelper {
     public static boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.startsWith("#");
     }
+    
+    /**
+     * Resolves a reference parameter by making a lookup in the registry.
+     * 
+     * @param <T> type of object to lookup.
+     * @param context Camel content to use for lookup.
+     * @param value reference parameter value.
+     * @param type type of object to lookup.
+     * @return lookup result or <code>null</code>. 
+     */
+    public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type) {
+        assert isReferenceParameter(value);
+        return context.getRegistry().lookup(value.substring(1), type);
+    }
+    
 }

@@ -296,25 +296,29 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Gets the parameter and remove it from the parameter map.
+     * Gets the parameter and remove it from the parameter map. This method doesn't resolve
+     * reference parameters in the registry.
      * 
      * @param parameters the parameters
      * @param key        the key
      * @param type       the requested type to convert the value from the parameter
      * @return  the converted value parameter, <tt>null</tt> if parameter does not exists.
+     * @see #resolveAndRemoveReferenceParameter(Map, String, Class)
      */
     public <T> T getAndRemoveParameter(Map parameters, String key, Class<T> type) {
         return getAndRemoveParameter(parameters, key, type, null);
     }
 
     /**
-     * Gets the parameter and remove it from the parameter map.
+     * Gets the parameter and remove it from the parameter map. This method doesn't resolve
+     * reference parameters in the registry.
      *
      * @param parameters    the parameters
      * @param key           the key
      * @param type          the requested type to convert the value from the parameter
      * @param defaultValue  use this default value if the parameter does not contain the key
      * @return  the converted value parameter
+     * @see #resolveAndRemoveReferenceParameter(Map, String, Class, Object)
      */
     public <T> T getAndRemoveParameter(Map parameters, String key, Class<T> type, T defaultValue) {
         Object value = parameters.remove(key);
@@ -328,6 +332,43 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return CamelContextHelper.convertTo(getCamelContext(), type, value);
     }
 
+    /**
+     * Resolves a reference parameter in the registry and removes it from the map. 
+     * 
+     * @param <T>           type of object to lookup in th registry.
+     * @param parameters    parameter map.
+     * @param key           parameter map key.
+     * @param type          type of object to lookup in th registry.
+     * @return the referenced object or <code>null</code>.
+     */
+    public <T> T resolveAndRemoveReferenceParameter(Map parameters, String key, Class<T> type) {
+        return resolveAndRemoveReferenceParameter(parameters, key, type, null); 
+    }
+
+    /**
+     * Resolves a reference parameter in the registry and removes it from the map. 
+     * 
+     * @param <T>           type of object to lookup in th registry.
+     * @param parameters    parameter map.
+     * @param key           parameter map key.
+     * @param type          type of object to lookup in th registry.
+     * @param defaultValue  default value to use if neither the parameter map contains
+     *                      the key nor the registry contains an object of requested
+     *                      type.
+     * @return the referenced object, the default value or <code>null</code>.
+     */
+    public <T> T resolveAndRemoveReferenceParameter(Map parameters, String key, Class<T> type, T defaultValue) {
+        String value = getAndRemoveParameter(parameters, key, String.class);
+        if (EndpointHelper.isReferenceParameter(value)) {
+            T result = EndpointHelper.resolveReferenceParameter(getCamelContext(), value.toString(), type);
+            return result == null ? defaultValue : result;
+        } else if (value == null) {
+            return defaultValue;
+        } else {
+            throw new IllegalArgumentException("Parameter value " + value + " is not a valid reference");
+        }
+    }
+    
     /**
      * Returns the reminder of the text if it starts with the prefix.
      * <p/>
