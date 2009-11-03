@@ -45,9 +45,9 @@
         <!-- define the scope to be context scoped so we measure against total inflight exchanges
              that means for both route1, route2 and route3 all together -->
         <property name="scope" value="Context"/>
-        <!-- when we hit > 30 inflight exchanges then kick in and suspend the routes -->
-        <property name="maxInflightExchanges" value="30"/>
-        <!-- when we hit lower than 10% of the max = 3 then kick in and resume the routes
+        <!-- when we hit > 20 inflight exchanges then kick in and suspend the routes -->
+        <property name="maxInflightExchanges" value="20"/>
+        <!-- when we hit lower than 10% of the max = 2 then kick in and resume the routes
              the default percentage is 70% but in this demo we want a low value -->
         <property name="resumePercentOfMax" value="10"/>
         <!-- output throttling activity at WARN level -->
@@ -57,7 +57,7 @@
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
-        <endpoint uri="seda:inbox?concurrentConsumers=40&amp;size=25000" id="foo"/>
+        <endpoint uri="seda:inbox?concurrentConsumers=25&amp;size=25000" id="foo"/>
 
         <route routePolicyRef="myPolicy">
             <from uri="jms:queue:inbox?concurrentConsumers=100"/>
