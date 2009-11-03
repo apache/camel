@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class ThrottlingRoutePolicy extends RoutePolicySupport {
+public class ThrottlingInflightRoutePolicy extends RoutePolicySupport {
 
     public enum ThrottlingScope {
         Context, Route
@@ -47,12 +47,12 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     private Logger logger;
 
-    public ThrottlingRoutePolicy() {
+    public ThrottlingInflightRoutePolicy() {
     }
 
     @Override
     public String toString() {
-        return "ThrottlingRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope " + scope + "]";
+        return "ThrottlingInflightRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope " + scope + "]";
     }
 
     public void onExchangeDone(Route route, Exchange exchange) {
@@ -117,7 +117,7 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
      */
     public void setResumePercentOfMax(int resumePercentOfMax) {
         if (resumePercentOfMax < 0 || resumePercentOfMax > 100) {
-            throw new IllegalArgumentException("reconnectPercentOfMax must be a percentage between 0 and 100");
+            throw new IllegalArgumentException("Must be a percentage between 0 and 100, was: " + resumePercentOfMax);
         }
 
         this.resumePercentOfMax = resumePercentOfMax;
@@ -170,7 +170,7 @@ public class ThrottlingRoutePolicy extends RoutePolicySupport {
     }
 
     protected Logger createLogger() {
-        return new Logger(LogFactory.getLog(ThrottlingRoutePolicy.class), getLoggingLevel());
+        return new Logger(LogFactory.getLog(ThrottlingInflightRoutePolicy.class), getLoggingLevel());
     }
 
     private int getSize(Consumer consumer, Exchange exchange) {

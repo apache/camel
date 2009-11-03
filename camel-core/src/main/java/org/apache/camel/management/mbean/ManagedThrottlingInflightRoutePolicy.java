@@ -18,24 +18,24 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.impl.ThrottlingRoutePolicy;
+import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * @version $Revision$
  */
-@ManagedResource(description = "Managed ThrottlingRoutePolicy")
-public class ManagedThrottlingRoutePolicy extends ManagedService {
+@ManagedResource(description = "Managed ThrottlingInflightRoutePolicy")
+public class ManagedThrottlingInflightRoutePolicy extends ManagedService {
 
-    private final ThrottlingRoutePolicy policy;
+    private final ThrottlingInflightRoutePolicy policy;
 
-    public ManagedThrottlingRoutePolicy(CamelContext context, ThrottlingRoutePolicy policy) {
+    public ManagedThrottlingInflightRoutePolicy(CamelContext context, ThrottlingInflightRoutePolicy policy) {
         super(context, policy);
         this.policy = policy;
     }
 
-    public ThrottlingRoutePolicy getPolicy() {
+    public ThrottlingInflightRoutePolicy getPolicy() {
         return policy;
     }
 
@@ -66,7 +66,7 @@ public class ManagedThrottlingRoutePolicy extends ManagedService {
 
     @ManagedAttribute(description = "Scope")
     public void setScope(String scope) {
-        getPolicy().setScope(ThrottlingRoutePolicy.ThrottlingScope.valueOf(scope));
+        getPolicy().setScope(ThrottlingInflightRoutePolicy.ThrottlingScope.valueOf(scope));
     }
 
     @ManagedAttribute(description = "Logging Level")

@@ -18,22 +18,22 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ThrottlingRoutePolicy;
+import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 
 /**
  * @version $Revision$
  */
-public class ThrottlingRoutePolicyTest extends ContextTestSupport {
+public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
 
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;
 
     public void testThrottlingRoutePolicy() throws Exception {
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(size - 5);
+
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
         }
-
-        getMockEndpoint("mock:result").expectedMessageCount(size);
 
         // now start the route
         context.startRoute("myRoute");
@@ -46,7 +46,7 @@ public class ThrottlingRoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ThrottlingRoutePolicy policy = new ThrottlingRoutePolicy();
+                ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
                 policy.setMaxInflightExchanges(10);
 
                 from(url)

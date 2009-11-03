@@ -34,7 +34,7 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.camel.impl.ThrottlingRoutePolicy;
+import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
@@ -50,7 +50,7 @@ import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThrottler;
-import org.apache.camel.management.mbean.ManagedThrottlingRoutePolicy;
+import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -288,8 +288,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         } else if (service instanceof Processor) {
             // special for processors
             return getManagedObjectForProcessor(context, (Processor) service, route);
-        } else if (service instanceof ThrottlingRoutePolicy) {
-            answer = new ManagedThrottlingRoutePolicy(context, (ThrottlingRoutePolicy) service);
+        } else if (service instanceof ThrottlingInflightRoutePolicy) {
+            answer = new ManagedThrottlingInflightRoutePolicy(context, (ThrottlingInflightRoutePolicy) service);
         } else if (service != null) {
             // fallback as generic service
             answer = new ManagedService(context, service);
