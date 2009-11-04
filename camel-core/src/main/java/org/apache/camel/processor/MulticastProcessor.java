@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -48,6 +48,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class MulticastProcessor extends ServiceSupport implements Processor {
+    private static final int DEFAULT_THREADPOOL_SIZE = 10;
+    
     static class ProcessorExchangePair {
         private final Processor processor;
         private final Exchange exchange;
@@ -95,7 +97,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 this.executor = executor;
             } else { 
                 // setup default Executor
-                this.executor = new ThreadPoolExecutor(processors.size(), processors.size(), 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(processors.size()));
+                this.executor = new ThreadPoolExecutor(
+                        DEFAULT_THREADPOOL_SIZE, DEFAULT_THREADPOOL_SIZE,
+                        0L, TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<Runnable>());
             }
         }
         this.streaming = streaming;
