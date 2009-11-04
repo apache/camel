@@ -29,6 +29,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultClassResolver;
@@ -213,5 +214,18 @@ public class ConverterTest extends TestCase {
         MyBean bean = converter.convertTo(MyBean.class, e, values);
         assertEquals("converted using exchange", 5, bean.getFoo(), 5);
         assertEquals("converted using exchange", "foo-bar", bean.getBar());
+    }
+    
+    public void testMandatoryConvertTo() {
+        
+        CamelContext camel = new DefaultCamelContext();
+        Exchange e = new DefaultExchange(camel);
+        try {
+            converter.mandatoryConvertTo(InputStream.class, null);
+            fail("Expect exception here");
+        } catch (Exception ex) {
+            assertTrue("Expect to get a NoTypeConversionAvailableException here", ex instanceof NoTypeConversionAvailableException); 
+        }
+        
     }
 }

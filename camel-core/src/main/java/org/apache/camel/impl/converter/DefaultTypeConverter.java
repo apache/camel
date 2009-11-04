@@ -114,7 +114,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         } catch (Exception e) {
             throw new NoTypeConversionAvailableException(value, type, e);
         }
-        if (answer == Void.TYPE) {
+        if (answer == Void.TYPE || value == null) {
             // Could not find suitable conversion
             throw new NoTypeConversionAvailableException(value, type);
         } else {
