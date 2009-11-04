@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default data format resolver
@@ -28,32 +29,39 @@ import org.apache.camel.spi.DataFormatResolver;
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
 
-    @SuppressWarnings("unchecked")
-    public DataFormat resolveDataFormat(DataFormatDefinition definition, CamelContext context) {
-        Class type = context.getClassResolver().resolveClass(definition.getDataFormatName());
-        if (type == null) {
-            throw new IllegalArgumentException("The class " + definition.getDataFormatName()
-                + " is not on the classpath! Cannot use the dataFormat " + this);
+    public DataFormat resolveDataFormatByClassName(String name, CamelContext context) {
+        if (name != null) {
+            Class type = context.getClassResolver().resolveClass(name);
+            if (type == null) {
+                throw new IllegalArgumentException("The class " + name + " is not on the classpath! Cannot use the dataFormat " + this);
+            }
+            return (DataFormat) ObjectHelper.newInstance(type);
         }
-        return (DataFormat) context.getInjector().newInstance(type);
+        return null;
     }
 
-    public DataFormat resolveDataFormat(String ref, CamelContext context) {
-        DataFormat dataFormat = context.getRegistry().lookup(ref, DataFormat.class);
+    public DataFormat resolveDataFormatByRef(String ref, CamelContext context) {
+        DataFormat dataFormat = lookup(context, ref, DataFormat.class);
         if (dataFormat == null) {
             // lookup type and create the data format from it
-            DataFormatDefinition type = context.getRegistry().lookup(ref, DataFormatDefinition.class);
+            DataFormatDefinition type = lookup(context, ref, DataFormatDefinition.class);
             if (type == null && context.getDataFormats() != null) {
                 type = context.getDataFormats().get(ref);
             }
             if (type != null) {
-                dataFormat = resolveDataFormat(type, context);
+                dataFormat = type.getDataFormat();
             }
         }
-        if (dataFormat == null) {
-            throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
-        }
         return dataFormat;
+    }
+
+    private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
+        try {
+            return context.getRegistry().lookup(ref, type);
+        } catch (Exception e) {
+            // need to ignore not same type and return it as null
+            return null;
+        }
     }
 
 }

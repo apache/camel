@@ -27,21 +27,21 @@ import org.apache.camel.model.DataFormatDefinition;
 public interface DataFormatResolver {
 
     /**
-     * Resolves the given data format by its definition.
+     * Resolves the given data format by a reference.
      *
-     * @param definition the definition
+     * @param name the fully qualified classname
      * @param context the camel context
-     * @return the data format
+     * @return the data format or <tt>null</tt> if not possible to resolve
      */
-    DataFormat resolveDataFormat(DataFormatDefinition definition, CamelContext context);
+    DataFormat resolveDataFormatByClassName(String name, CamelContext context);
 
     /**
-     * Resolves the given data format by its name.
+     * Resolves the given data format by a reference.
      *
-     * @param name the name
+     * @param ref the reference to lookup in {@link org.apache.camel.spi.Registry}
      * @param context the camel context
-     * @return the data format
+     * @return the data format or <tt>null</tt> if not possible to resolve
      */
-    DataFormat resolveDataFormat(String name, CamelContext context);
+    DataFormat resolveDataFormatByRef(String ref, CamelContext context);
 
 }

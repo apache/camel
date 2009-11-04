@@ -1361,12 +1361,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.dataFormatResolver = dataFormatResolver;
     }
 
-    public DataFormat resolveDataFormat(DataFormatDefinition def) {
-        return dataFormatResolver.resolveDataFormat(def, this);
+    public DataFormat resolveDataFormatByRef(String ref) {
+        return dataFormatResolver.resolveDataFormatByRef(ref, this);
     }
 
-    public DataFormat resolveDataFormat(String ref) {
-        return dataFormatResolver.resolveDataFormat(ref, this);
+    public DataFormat resolveDataFormatByClassName(String name) {
+        return dataFormatResolver.resolveDataFormatByClassName(name, this);
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

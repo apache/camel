@@ -61,9 +61,39 @@ public class DataFormatDefinition extends IdentifiedType {
     public static DataFormat getDataFormat(RouteContext routeContext, DataFormatDefinition type, String ref) {
         if (type == null) {
             ObjectHelper.notNull(ref, "ref or dataFormat");
-            return routeContext.getCamelContext().resolveDataFormat(ref);
+
+            // try to let resolver see if it can resolve it, its not always possible
+            DataFormat dataFormat = routeContext.getCamelContext().resolveDataFormatByRef(ref);
+
+            if (dataFormat == null) {
+                // resolver could not then do a bit more leg work using the route context
+                // which can help instantiate data formats
+
+                type = lookup(routeContext, ref, DataFormatDefinition.class);
+                if (type == null) {
+                    type = routeContext.getDataFormat(ref);
+                }
+                if (type != null) {
+                    dataFormat = type.getDataFormat(routeContext);
+                }
+            }
+
+            if (dataFormat == null) {
+                throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
+            }
+
+            return dataFormat;
         } else {
-            return type.createDataFormat(routeContext);
+            return type.getDataFormat(routeContext);
+        }
+    }
+
+    private static <T> T lookup(RouteContext routeContext, String ref, Class<T> type) {
+        try {
+            return routeContext.lookup(ref, type);
+        } catch (Exception e) {
+            // need to ignore not same type and return it as null
+            return null;
         }
     }
 
@@ -82,7 +112,7 @@ public class DataFormatDefinition extends IdentifiedType {
     @SuppressWarnings("unchecked")
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (dataFormatName != null) {
-            return routeContext.getCamelContext().resolveDataFormat(this);
+            return routeContext.getCamelContext().resolveDataFormatByClassName(dataFormatName);
         }
         return null;
     }
