@@ -32,6 +32,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
+import javax.jms.MessageFormatException;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
@@ -41,6 +42,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.file.GenericFile;
@@ -475,7 +477,15 @@ public class JmsBinding {
                 return message;
             }
             case Object:
-                Serializable payload = context.getTypeConverter().convertTo(Serializable.class, exchange, body);
+                Serializable payload;
+                try {
+                    payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
+                } catch (NoTypeConversionAvailableException e) {
+                    // cannot convert to serializable then thrown an exception to avoid sending a null message
+                    JMSException cause = new MessageFormatException(e.getMessage());
+                    cause.initCause(e);
+                    throw cause;
+                }
                 return session.createObjectMessage(payload);
             default:
                 break;
