@@ -58,7 +58,7 @@ public interface Exchange {
     String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
     String FAILURE_HANDLED      = "CamelFailureHandled";
-    String FAILURE_ENDPOINT     = "CamelFaulureEndpoint";
+    String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
 
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
