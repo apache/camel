@@ -25,6 +25,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -446,6 +447,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
 
     /**
      * Sets the data formats that can be referenced in the routes.
+     *
      * @param dataFormats the data formats
      */
     void setDataFormats(Map<String, DataFormatDefinition> dataFormats);
@@ -457,6 +459,22 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     Map<String, DataFormatDefinition> getDataFormats();
     
+    /**
+     * Resolve a data format given its definition
+     *
+     * @param def the data format definition
+     * @return the resolved data format
+     */
+    DataFormat resolveDataFormat(DataFormatDefinition def);
+
+    /**
+     * Resolve a data format given its name
+     *
+     * @param name the data format name
+     * @return the resolved data format
+     */
+    DataFormat resolveDataFormat(String name);
+
     /**
      * Sets the properties that can be referenced in the camel context
      *
@@ -591,14 +609,16 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     void setInflightRepository(InflightRepository repository);
     
     /**
-     * Gets the the application context class loader which may be helpful for running camel in other container     
+     * Gets the the application context class loader which may be helpful for running camel in other containers
+     *
      * @return the application context class loader
      */
     ClassLoader getApplicationContextClassLoader();
 
     /**
      * Sets the application context class loader
-     * @param classLoader
+     *
+     * @param classLoader the class loader
      */
     void setApplicationContextClassLoader(ClassLoader classLoader);
 }

@@ -62,6 +62,8 @@ import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -127,6 +129,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
+    private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
     private Map<String, String> properties = new HashMap<String, String>();
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
@@ -1342,6 +1345,30 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return autoStartup != null && autoStartup;
     }
 
+    public ClassLoader getApplicationContextClassLoader() {
+        return applicationContextClassLoader;
+    }
+
+    public void setApplicationContextClassLoader(ClassLoader classLoader) {
+        applicationContextClassLoader = classLoader;
+    }
+
+    public DataFormatResolver getDataFormatResolver() {
+        return dataFormatResolver;
+    }
+
+    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
+        this.dataFormatResolver = dataFormatResolver;
+    }
+
+    public DataFormat resolveDataFormat(DataFormatDefinition def) {
+        return dataFormatResolver.resolveDataFormat(def, this);
+    }
+
+    public DataFormat resolveDataFormat(String ref) {
+        return dataFormatResolver.resolveDataFormat(ref, this);
+    }
+
     protected String getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint.isSingleton()) {
             return uri;
@@ -1390,14 +1417,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     @Override
     public String toString() {
         return "CamelContext(" + getName() + ")";
-    }
-
-    public ClassLoader getApplicationContextClassLoader() {
-        return applicationContextClassLoader;
-    }
-
-    public void setApplicationContextClassLoader(ClassLoader classLoader) {
-        applicationContextClassLoader = classLoader;        
     }
 
 }

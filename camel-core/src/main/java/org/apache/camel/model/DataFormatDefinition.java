@@ -52,43 +52,18 @@ public class DataFormatDefinition extends IdentifiedType {
 
     /**
      * Factory method to create the data format
+     *
      * @param routeContext route context
-     * @param type the data format type
-     * @param ref  reference to lookup for a data format
+     * @param type         the data format type
+     * @param ref          reference to lookup for a data format
      * @return the data format or null if not possible to create
      */
     public static DataFormat getDataFormat(RouteContext routeContext, DataFormatDefinition type, String ref) {
         if (type == null) {
             ObjectHelper.notNull(ref, "ref or dataFormat");
-
-            DataFormat dataFormat = lookup(routeContext, ref, DataFormat.class);
-            if (dataFormat == null) {
-                // lookup type and create the data format from it
-                type = lookup(routeContext, ref, DataFormatDefinition.class);
-                if (type == null) {
-                    type = routeContext.getDataFormat(ref);
-                }
-                if (type != null) {
-                    dataFormat = type.getDataFormat(routeContext);
-                }
-            }
-
-            if (dataFormat == null) {
-                throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
-            }
-
-            return dataFormat;
+            return routeContext.getCamelContext().resolveDataFormat(ref);
         } else {
-            return type.getDataFormat(routeContext);
-        }
-    }
-
-    private static <T> T lookup(RouteContext routeContext, String ref, Class<T> type) {
-        try {
-            return routeContext.lookup(ref, type);
-        } catch (Exception e) {
-            // need to ignore not same type and return it as null
-            return null;
+            return type.createDataFormat(routeContext);
         }
     }
 
@@ -107,11 +82,7 @@ public class DataFormatDefinition extends IdentifiedType {
     @SuppressWarnings("unchecked")
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (dataFormatName != null) {
-            Class type = routeContext.getCamelContext().getClassResolver().resolveClass(dataFormatName);
-            if (type == null) {
-                throw new IllegalArgumentException("The class " + dataFormatName + " is not on the classpath! Cannot use the dataFormat " + this);
-            }
-            return (DataFormat) ObjectHelper.newInstance(type);
+            return routeContext.getCamelContext().resolveDataFormat(this);
         }
         return null;
     }
@@ -148,5 +119,14 @@ public class DataFormatDefinition extends IdentifiedType {
     public void setDataFormat(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
     }
+
+    public String getShortName() {
+        String name = getClass().getSimpleName();
+        if (name.endsWith("DataFormat")) {
+            name = name.substring(0, name.indexOf("DataFormat"));
+        }
+        return name;
+    }
+
 }
 
