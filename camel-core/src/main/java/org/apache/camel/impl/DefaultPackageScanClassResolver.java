@@ -194,7 +194,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 log.trace("No URLs returned by classloader");
             }
         } catch (IOException ioe) {
-            log.warn("Could not read package: " + packageName, ioe);
+            log.warn("Cannot read package: " + packageName, ioe);
             return;
         }
 
@@ -209,7 +209,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
                 if (log.isTraceEnabled()) {
-                    log.trace("Decoded urlPath: " + urlPath);
+                    log.trace("Decoded urlPath: " + urlPath + " with protocol: " + url.getProtocol());
                 }
 
                 boolean isLocalFileSystem = "file".equals(url.getProtocol());
@@ -244,37 +244,40 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 }
 
                 if (log.isTraceEnabled()) {
+                    log.trace("isLocalFileSystem: " + isLocalFileSystem);
                     log.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
                 }
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
                     if (log.isTraceEnabled()) {
-                        log.trace("Loading from directory: " + file);
+                        log.trace("Loading from directory using file: " + file);
                     }
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
                     InputStream stream;
                     if (!isLocalFileSystem) {
-                        // load resources using http (and other protocols) such as java webstart 
-                        log.debug("The current jar is accessed via http");
+                        // load resources using http (and other protocols) such as java webstart
+                        if (log.isTraceEnabled()) {
+                            log.trace("Loading from jar using http/https: " + urlPath);
+                        }
                         URL urlStream = new URL(urlPath);
                         URLConnection con = urlStream.openConnection();
                         // disable cache mainly to avoid jar file locking on Windows
                         con.setUseCaches(false);
                         stream = con.getInputStream();
                     } else {
+                        if (log.isTraceEnabled()) {
+                            log.trace("Loading from jar using file: " + file);
+                        }
                         stream = new FileInputStream(file);
                     }
 
-                    if (log.isTraceEnabled()) {
-                        log.trace("Loading from jar: " + file);
-                    }
                     loadImplementationsInJar(test, packageName, stream, urlPath, classes);
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
-                log.debug("Could not read entries in url: " + url, e);
+                log.debug("Cannot read entries in url: " + url, e);
             }
         }
     }
@@ -374,7 +377,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 }
             }
         } catch (IOException ioe) {
-            log.warn("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
+            log.warn("Cannot search jar file '" + urlPath + "' for classes matching criteria: " + test
                 + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
             ObjectHelper.close(jarStream, urlPath, log);
@@ -413,19 +416,19 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     found = true;
                     break;
                 } catch (ClassNotFoundException e) {
-                    log.debug("Could not find class '" + fqn + "' in classloader: " + classLoader
+                    log.debug("Cannot find class '" + fqn + "' in classloader: " + classLoader
                         + ". Reason: " + e, e);
                 } catch (NoClassDefFoundError e) {
-                    log.debug("Could not find the class definition '" + fqn + "' in classloader: " + classLoader
+                    log.debug("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
                         + ". Reason: " + e, e);
                 }
             }
             if (!found) {
                 // use debug to avoid being noisy in logs
-                log.debug("Could not find class '" + fqn + "' in any classloaders: " + set);
+                log.debug("Cannot find class '" + fqn + "' in any classloaders: " + set);
             }
         } catch (Exception e) {
-            log.warn("Could not examine class '" + fqn + "' due to a " + e.getClass().getName()
+            log.warn("Cannot examine class '" + fqn + "' due to a " + e.getClass().getName()
                 + " with message: " + e.getMessage(), e);
         }
     }

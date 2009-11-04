@@ -114,7 +114,6 @@ public interface LifecycleStrategy {
      */
     void onRouteContextCreate(RouteContext routeContext);
 
-
     /**
      * Notification on adding error handler.
      *
