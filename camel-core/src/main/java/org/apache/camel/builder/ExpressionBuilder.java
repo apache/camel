@@ -437,11 +437,29 @@ public final class ExpressionBuilder {
 
     /**
      * Returns the expression for the exchanges inbound message body converted
-     * to the given type
+     * to the given type.
+     * <p/>
+     * Does <b>not</b> allow null bodies.
      */
     public static <T> Expression mandatoryBodyExpression(final Class<T> type) {
+        return mandatoryBodyExpression(type, false);
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body converted
+     * to the given type
+     *
+     * @param type the type
+     * @param nullBodyAllowed whether null bodies is allowed and if so a null is returned,
+     *                        otherwise an exception is thrown
+     */
+    public static <T> Expression mandatoryBodyExpression(final Class<T> type, final boolean nullBodyAllowed) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                if (nullBodyAllowed && exchange.getIn().getBody() == null) {
+                    return null;
+                }
+
                 try {
                     return exchange.getIn().getMandatoryBody(type);
                 } catch (InvalidPayloadException e) {

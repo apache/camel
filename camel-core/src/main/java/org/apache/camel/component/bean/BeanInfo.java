@@ -312,8 +312,8 @@ public class BeanInfo {
                         expression = ExpressionBuilder.exchangeExpression();
                     } else {
                         // lets assume its the body and it must be mandatory convertable to the parameter type
-                        // so we dont pass in null as body in case Camel cannot convert to the parameter type
-                        expression = ExpressionBuilder.mandatoryBodyExpression(parameterType);
+                        // but we allow null bodies in case the message really contains a null body
+                        expression = ExpressionBuilder.mandatoryBodyExpression(parameterType, true);
                     }
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Parameter #" + i + " is the body parameter using expression " + expression);
