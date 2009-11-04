@@ -257,6 +257,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             Exchange camelExchange = (Exchange)outMessage.get(CxfConstants.CAMEL_EXCHANGE);
             
             CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, camelExchange.getOut().getHeaders());
+            // check if the outMessage has the exception
+            Exception exception = outMessage.getContent(Exception.class);
+            if (exception != null) {
+                camelExchange.setException(exception);
+            }
+            
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
             camelExchange.getOut().setBody(outputStream.getBytes());
             getLogger().log(Level.FINE, "send the response message: " + outputStream);
