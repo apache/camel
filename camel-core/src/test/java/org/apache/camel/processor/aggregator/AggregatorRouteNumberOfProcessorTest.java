@@ -18,7 +18,6 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -54,7 +53,7 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
                             hasOut = newExchange.hasOut();
                             return newExchange;
                         }
-                    }).batchSize(2).batchTimeout(2000)
+                    }).batchSize(2).batchTimeout(5000)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String s = exchange.getIn().getBody(String.class);
@@ -99,7 +98,7 @@ public class AggregatorRouteNumberOfProcessorTest extends ContextTestSupport {
                             hasOut = newExchange.hasOut();
                             return newExchange;
                         }
-                    }).batchSize(2).batchTimeout(2000)
+                    }).batchSize(2).batchTimeout(5000)
                         .to("log:foo")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
