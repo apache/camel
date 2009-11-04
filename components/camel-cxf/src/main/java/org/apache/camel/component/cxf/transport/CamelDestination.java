@@ -271,6 +271,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             
             propagateResponseHeadersToCamel(outMessage, camelExchange);
             
+            // check if the outMessage has the exception
+            Exception exception = outMessage.getContent(Exception.class);
+            if (exception != null) {
+                camelExchange.setException(exception);
+            }
+            
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
             camelExchange.getOut().setBody(outputStream.getBytes());
             getLogger().log(Level.FINE, "send the response message: " + outputStream);
