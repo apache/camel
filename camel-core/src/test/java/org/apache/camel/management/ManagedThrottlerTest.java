@@ -99,7 +99,7 @@ public class ManagedThrottlerTest extends ContextTestSupport {
         assertEquals(10, completed.longValue());
         total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should be around 5 sec now: was " + total, total > 4500);
+        assertTrue("Should be around 5 sec now: was " + total, total > 3500);
     }
 
     @Override
