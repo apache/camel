@@ -247,11 +247,11 @@ public interface Exchange {
      * Is used to get the caused exception that typically have been wrapped in some sort
      * of Camel wrapper exception
      * <p/>
-     * The stategy is to look in the exception hieracy to find the first given cause that matches the type.
+     * The strategy is to look in the exception hierarchy to find the first given cause that matches the type.
      * Will start from the bottom (the real cause) and walk upwards.
      *
      * @param type the exception type
-     * @return the exception (or null if no faults or if no caused exception matched)
+     * @return the exception (or <tt>null</tt> if no caused exception matched)
      */
     <T> T getException(Class<T> type);
 

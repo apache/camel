@@ -179,17 +179,7 @@ public final class ExpressionBuilder {
                 Exception exception = exchange.getException(type);
                 if (exception == null) {
                     exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                    // must use exception iterator to walk it and find the type we are looking for
-                    Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
-                    while (it.hasNext()) {
-                        Throwable e = it.next();
-                        if (type.isInstance(e)) {
-                            return type.cast(e);
-                        }
-                    }
-                    // not found
-                    return null;
-
+                    return ObjectHelper.getException(type, exception);
                 }
                 return exception;
             }

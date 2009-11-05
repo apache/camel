@@ -226,19 +226,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public <T> T getException(Class<T> type) {
-        if (exception == null) {
-            return null;
-        }
-
-        Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
-        while (it.hasNext()) {
-            Throwable e = it.next();
-            if (type.isInstance(e)) {
-                return type.cast(e);
-            }
-        }
-        // not found
-        return null;
+        return ObjectHelper.getException(type, exception);
     }
 
     public void setException(Exception exception) {

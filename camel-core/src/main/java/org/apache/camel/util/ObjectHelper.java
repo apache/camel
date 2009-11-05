@@ -1087,6 +1087,37 @@ public final class ObjectHelper {
     }
 
     /**
+     * Retrieves the given exception type from the exception.
+     * <p/>
+     * Is used to get the caused exception that typically have been wrapped in some sort
+     * of Camel wrapper exception
+     * <p/>
+     * The strategy is to look in the exception hierarchy to find the first given cause that matches the type.
+     * Will start from the bottom (the real cause) and walk upwards.
+     *
+     * @param type the exception type wanted to retrieve
+     * @param exception the caused exception
+     * @return the exception found (or <tt>null</tt> if not found in the exception hierarchy)
+     */
+    public static <T> T getException(Class<T> type, Throwable exception) {
+        if (exception == null) {
+            return null;
+        }
+
+        // walk the hierarchy and look for it
+        Iterator<Throwable> it = createExceptionIterator(exception);
+        while (it.hasNext()) {
+            Throwable e = it.next();
+            if (type.isInstance(e)) {
+                return type.cast(e);
+            }
+        }
+
+        // not found
+        return null;
+    }
+
+    /**
      * Creates a {@link Scanner} for scanning the given value.
      *
      * @param exchange  the current exchange
