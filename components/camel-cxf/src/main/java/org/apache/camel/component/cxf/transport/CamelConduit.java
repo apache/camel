@@ -17,12 +17,14 @@
 package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
@@ -158,7 +160,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
 
 
-        private void commitOutputMessage() {
+        private void commitOutputMessage() throws IOException {
             ExchangePattern pattern;
             if (isOneWay) {
                 pattern = ExchangePattern.InOnly;
@@ -179,15 +181,25 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                 }
             });
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, outMessage.getExchange());
+            // Throw the exception that the template get
+            if (exchange.getException() != null) {
+                throw new IOException("Can't get the response message. Caused by " + exchange.getException());
+            }
             if (!isOneWay) {
                 handleResponse(exchange);
             }
 
         }
 
-        private void handleResponse(org.apache.camel.Exchange exchange) {
-            org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(headerFilterStrategy,
+        private void handleResponse(org.apache.camel.Exchange exchange) throws IOException {
+            org.apache.cxf.message.Message inMessage = null;
+            try {
+                inMessage = CxfSoapBinding.getCxfInMessage(headerFilterStrategy,
                     exchange, true);
+            } catch (Exception ex) {
+                // Throw IOException here
+                throw new IOException("Can't get the response message. Caused by: " + ex);
+            }
             incomingObserver.onMessage(inMessage);
         }
     }
