@@ -31,6 +31,7 @@ import org.apache.camel.component.cxf.CxfSoapBinding;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
@@ -180,7 +181,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             });
             // Throw the exception that the template get
             if (exchange.getException() != null) {
-                throw new IOException("Can't get the response message. Caused by " + exchange.getException());
+                throw IOHelper.createIOException("Can't send the request message.", exchange.getException());
             }
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, outMessage.getExchange());
             if (!isOneWay) {
@@ -196,7 +197,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                     exchange, true);
             } catch (Exception ex) {
                 // Throw IOException here
-                throw new IOException("Can't get the response message. Caused by: " + ex);
+                throw IOHelper.createIOException("Can't get the response message. ", ex);
             }
             incomingObserver.onMessage(inMessage);
         }
