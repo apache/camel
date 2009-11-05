@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.xml.transform.Source;
 
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -64,12 +65,13 @@ public final class CxfSoapBinding {
         }
 
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer);
-
+        
         try {
             InputStream body = message.getBody(InputStream.class);
             answer.setContent(InputStream.class, body);
         } catch (NoTypeConversionAvailableException ex) {
             LOG.warn("Can't get right InputStream object here, the message body is " + message.getBody());
+            throw new RuntimeCamelException(ex);
         }
 
         answer.putAll(message.getHeaders());

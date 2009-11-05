@@ -159,7 +159,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
 
 
-        private void commitOutputMessage() {
+        private void commitOutputMessage() throws IOException {
             ExchangePattern pattern;
             if (isOneWay) {
                 pattern = ExchangePattern.InOnly;
@@ -173,12 +173,15 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                     CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
                     // Send out the request message here, copy the protocolHeader back
                     CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, ex.getIn().getHeaders());
- 
                     // TODO support different encoding
                     ex.getIn().setBody(outputStream.getBytes());
                     getLogger().log(Level.FINE, "template sending request: ", ex.getIn());
                 }
             });
+            // Throw the exception that the template get
+            if (exchange.getException() != null) {
+                throw new IOException("Can't get the response message. Caused by " + exchange.getException());
+            }
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, outMessage.getExchange());
             if (!isOneWay) {
                 handleResponse(exchange);
@@ -186,9 +189,15 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
         }
 
-        private void handleResponse(org.apache.camel.Exchange exchange) {
-            org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(headerFilterStrategy,
+        private void handleResponse(org.apache.camel.Exchange exchange) throws IOException {
+            org.apache.cxf.message.Message inMessage = null;
+            try {
+                inMessage = CxfSoapBinding.getCxfInMessage(headerFilterStrategy,
                     exchange, true);
+            } catch (Exception ex) {
+                // Throw IOException here
+                throw new IOException("Can't get the response message. Caused by: " + ex);
+            }
             incomingObserver.onMessage(inMessage);
         }
     }
