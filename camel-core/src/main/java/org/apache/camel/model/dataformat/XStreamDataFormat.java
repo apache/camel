@@ -35,7 +35,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     private Boolean prettyPrint;
 
     public XStreamDataFormat() {
-        super("org.apache.camel.dataformat.xstream.XStreamDataFormat");
+        super("xstream");
     }
 
     public Boolean getPrettyPrint() {

@@ -32,7 +32,7 @@ import org.apache.camel.model.DataFormatDefinition;
 public class FlatpackDataFormat extends DataFormatDefinition {
 
     public FlatpackDataFormat() {
-        super("org.apache.camel.component.flatpack.FlatpackDataFormat");
+        super("flatpack");
     }
 
 }

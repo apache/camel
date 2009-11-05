@@ -460,20 +460,20 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     Map<String, DataFormatDefinition> getDataFormats();
     
     /**
-     * Resolve a data format given a reference to lookup in {@link Registry}
+     * Resolve a data format given its name
      *
      * @param name the data format name or a reference to it in the {@link Registry}
      * @return the resolved data format, or <tt>null</tt> if not found
      */
-    DataFormat resolveDataFormatByRef(String name);
+    DataFormat resolveDataFormat(String name);
 
     /**
-     * Resolve a data format given its class name
+     * Resolve a data format definition given its name
      *
-     * @param name the fully qualified class name
-     * @return the resolved data format, or <tt>null</tt> if not found
+     * @param name the data format definition name or a reference to it in the {@link Registry}
+     * @return the resolved data format definition, or <tt>null</tt> if not found
      */
-    DataFormat resolveDataFormatByClassName(String name);
+    DataFormatDefinition resolveDataFormatDefinition(String name);
 
     /**
      * Sets the properties that can be referenced in the camel context

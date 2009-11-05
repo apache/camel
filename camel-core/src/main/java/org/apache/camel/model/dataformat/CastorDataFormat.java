@@ -45,7 +45,7 @@ public class CastorDataFormat extends DataFormatDefinition {
     private String[] classes;
 
     public CastorDataFormat() {
-        super("org.apache.camel.dataformat.castor.CastorDataFormat");
+        super("castor");
     }
 
     public Boolean isValidation() {

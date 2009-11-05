@@ -39,7 +39,7 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     private Class<?> dataObjectType;
 
     public TidyMarkupDataFormat() {
-        super("org.apache.camel.dataformat.tagsoup.TidyMarkupDataFormat");
+        super("tidyMarkup");
         this.setDataObjectType(Node.class);
     }
 

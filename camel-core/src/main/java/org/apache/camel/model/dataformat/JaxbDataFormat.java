@@ -43,7 +43,7 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String encoding;
 
     public JaxbDataFormat() {
-        super("org.apache.camel.converter.jaxb.JaxbDataFormat");
+        super("jaxb");
     }
 
     public JaxbDataFormat(boolean prettyPrint) {

@@ -32,7 +32,7 @@ import org.apache.camel.model.DataFormatDefinition;
 public class CsvDataFormat extends DataFormatDefinition {
 
     public CsvDataFormat() {
-        super("org.apache.camel.dataformat.csv.CsvDataFormat");
+        super("csv");
     }
 
 }

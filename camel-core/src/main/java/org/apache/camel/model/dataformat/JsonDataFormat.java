@@ -69,9 +69,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
-            setProperty(this, "dataFormatName", "org.apache.camel.dataformat.xstream.JsonDataFormat");
+            setProperty(this, "dataFormatName", "json-xstream");
         } else {
-            setProperty(this, "dataFormatName", "org.apache.camel.component.jackson.JacksonDataFormat");
+            setProperty(this, "dataFormatName", "json-jackson");
         }
 
         if (unmarshalType == null && unmarshalTypeName != null) {

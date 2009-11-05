@@ -281,15 +281,6 @@ public class DefaultRouteContext implements RouteContext {
         return true;
     }
 
-    public DataFormatDefinition getDataFormat(String ref) {
-        Map<String, DataFormatDefinition> dataFormats = getCamelContext().getDataFormats();
-        if (dataFormats != null) {
-            return dataFormats.get(ref);
-        } else {
-            return null;
-        }
-    }
-
     public RoutePolicy getRoutePolicy() {
         return routePolicy;
     }

@@ -37,7 +37,7 @@ public class HL7DataFormat extends DataFormatDefinition {
     private Boolean validate = Boolean.TRUE;
 
     public HL7DataFormat() {
-        super("org.apache.camel.component.hl7.HL7DataFormat");
+        super("hl7");
     }
 
     public Boolean isValidate() {

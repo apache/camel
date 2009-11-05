@@ -174,14 +174,6 @@ public interface RouteContext extends RuntimeConfiguration {
     boolean isRouteAdded();
     
     /**
-     * Get a DataFormatType by ref name
-     *
-     * @param ref  the ref name to lookup
-     * @return the found object
-     */
-    DataFormatDefinition getDataFormat(String ref);
-
-    /**
      * Gets the route policy
      *
      * @return the route policy if any

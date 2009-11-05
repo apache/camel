@@ -43,7 +43,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     private boolean secureTagContents;
 
     public XMLSecurityDataFormat() {
-        super("org.apache.camel.dataformat.xmlsecurity.XMLSecurityDataFormat");
+        super("secureXML");
     }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents) {

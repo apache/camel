@@ -17,9 +17,12 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -29,30 +32,48 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
 
-    public DataFormat resolveDataFormatByClassName(String name, CamelContext context) {
-        if (name != null) {
-            Class type = context.getClassResolver().resolveClass(name);
-            if (type == null) {
-                throw new IllegalArgumentException("The class " + name + " is not on the classpath! Cannot use the dataFormat " + this);
+    public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";
+
+    protected FactoryFinder dataformatFactory;
+
+    public DataFormat resolveDataFormat(String name, CamelContext context) {
+        DataFormat dataFormat = lookup(context, name, DataFormat.class);
+        if (dataFormat == null) {
+            Class type = null;
+            try {
+                if (dataformatFactory == null) {
+                    dataformatFactory = context.getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
+                }
+                type = dataformatFactory.findClass(name);
+            } catch (NoFactoryAvailableException e) {
+                // ignore
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
             }
-            return (DataFormat) ObjectHelper.newInstance(type);
+
+            if (type == null) {
+                type = context.getClassResolver().resolveClass(name);
+            }
+
+            if (type != null) {
+                if (DataFormat.class.isAssignableFrom(type)) {
+                    dataFormat = (DataFormat) context.getInjector().newInstance(type);
+                } else {
+                    throw new IllegalArgumentException("Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
+                }
+            }
         }
-        return null;
+
+        return dataFormat;
     }
 
-    public DataFormat resolveDataFormatByRef(String ref, CamelContext context) {
-        DataFormat dataFormat = lookup(context, ref, DataFormat.class);
-        if (dataFormat == null) {
-            // lookup type and create the data format from it
-            DataFormatDefinition type = lookup(context, ref, DataFormatDefinition.class);
-            if (type == null && context.getDataFormats() != null) {
-                type = context.getDataFormats().get(ref);
-            }
-            if (type != null) {
-                dataFormat = type.getDataFormat();
-            }
+    public DataFormatDefinition resolveDataFormatDefinition(String name, CamelContext context) {
+        // lookup type and create the data format from it
+        DataFormatDefinition type = lookup(context, name, DataFormatDefinition.class);
+        if (type == null && context.getDataFormats() != null) {
+            type = context.getDataFormats().get(name);
         }
-        return dataFormat;
+        return type;
     }
 
     private static <T> T lookup(CamelContext context, String ref, Class<T> type) {

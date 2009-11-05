@@ -50,9 +50,9 @@ public class BindyDataFormat extends DataFormatDefinition {
 
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (type == BindyType.Csv) {
-            setProperty(this, "dataFormatName", "org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat");
+            setDataFormatName("bindy-csv");
         } else {
-            setProperty(this, "dataFormatName", "org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat");
+            setDataFormatName("bindy-kv");
         }
         return super.createDataFormat(routeContext);
     }

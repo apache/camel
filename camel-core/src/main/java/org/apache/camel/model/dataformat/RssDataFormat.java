@@ -30,7 +30,7 @@ import org.apache.camel.model.DataFormatDefinition;
 public class RssDataFormat extends DataFormatDefinition {
 
     public RssDataFormat() {
-        super("org.apache.camel.dataformat.rss.RssDataFormat");
+        super("rss");
     }
 
 }
