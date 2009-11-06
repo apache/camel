@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
@@ -61,6 +62,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected String sslPassword;
     protected String sslKeystore;
     protected Map<Integer, SslSocketConnector> sslSocketConnectors;
+    protected HttpClient httpClient;
 
     class ConnectorRef {
         Server server;
@@ -277,6 +279,14 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setSslSocketConnectors(Map <Integer, SslSocketConnector> connectors) {
         sslSocketConnectors = connectors;
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     // Implementation methods

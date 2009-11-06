@@ -14,30 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty;
+package org.apache.camel.component.jetty.jettyproducer;
+
+import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.component.http.HttpProducer;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Unit test for http client options.
+ * @version $Revision$
  */
-public class JettyHttpClientOptionsTest extends CamelTestSupport {
+public class JettyHttpProducerGoogleTest extends CamelTestSupport {
 
     @Test
-    public void testCustomHttpBinding() throws Exception {
-        // assert jetty was configured with our timeout
-        HttpEndpoint jettyEndpoint = context.getEndpoint("http://localhost:8080/myapp/myservice?httpClient.soTimeout=5555", HttpEndpoint.class);
-        assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
-        HttpProducer producer = (HttpProducer)jettyEndpoint.createProducer();
-        assertEquals("Get the wrong http client parameter", 5555, producer.getHttpClient().getParams().getSoTimeout());
+    public void testGoogleFrontPage() throws Exception {
+        String reply = template.requestBody("direct:start", null, String.class);
+        assertNotNull(reply);
+    }
 
-        // send and receive
-        Object out = template.requestBody("http://localhost:9080/myapp/myservice", "Hello World");
-        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
+    @Test
+    public void testGoogleFrontPageFutureTask() throws Exception {
+        Object body = null;
+        Future<String> reply = (Future<String>) template.requestBody("direct:start", body);
+        assertNotNull(reply);
+        assertNotNull(reply.get());
     }
 
     @Override
@@ -45,9 +46,10 @@ public class JettyHttpClientOptionsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice?httpClient.soTimeout=5555").transform().constant("Bye World");
+                // to prevent redirect being thrown as an exception
+                from("direct:start").to("jetty://http://www.google.com?throwExceptionOnFailure=false");
             }
         };
     }
-
 }
+

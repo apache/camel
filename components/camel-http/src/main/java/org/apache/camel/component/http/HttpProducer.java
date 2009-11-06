@@ -20,12 +20,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.GZIPHelper;
+import org.apache.camel.component.http.helper.HttpProducerHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -58,7 +58,7 @@ public class HttpProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();
-        HeaderFilterStrategy strategy = ((HttpEndpoint)getEndpoint()).getHeaderFilterStrategy();
+        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
         // propagate headers as HTTP headers
         for (String headerName : in.getHeaders().keySet()) {
@@ -93,6 +93,11 @@ public class HttpProducer extends DefaultProducer {
         } finally {
             method.releaseConnection();
         }
+    }
+
+    @Override
+    public HttpEndpoint getEndpoint() {
+        return (HttpEndpoint) super.getEndpoint();
     }
 
     protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
@@ -193,61 +198,27 @@ public class HttpProducer extends DefaultProducer {
      * @return the created method as either GET or POST
      */
     protected HttpMethod createMethod(Exchange exchange) {
-        // is a query string provided in the endpoint URI or in a header (header
-        // overrules endpoint)
+
+        String url = HttpProducerHelper.createURL(exchange, getEndpoint());
+
+        RequestEntity requestEntity = createRequestEntity(exchange);
+        HttpMethods methodToUse = HttpProducerHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
+        HttpMethod method = methodToUse.createMethod(url);
+
+        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
-            queryString = ((HttpEndpoint)getEndpoint()).getHttpUri().getQuery();
+            queryString = getEndpoint().getHttpUri().getQuery();
         }
-        RequestEntity requestEntity = createRequestEntity(exchange);
-
-        // compute what method to use either GET or POST
-        HttpMethods methodToUse;
-        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
-        if (m != null) {
-            // always use what end-user provides in a header
-            methodToUse = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            methodToUse = HttpMethods.GET;
-        } else {
-            // fallback to POST if data, otherwise GET
-            methodToUse = requestEntity != null ? HttpMethods.POST : HttpMethods.GET;
-        }
-
-        String uri = null;
-        if (!((HttpEndpoint)getEndpoint()).isBridgeEndpoint()) {
-            uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-        }
-        if (uri == null) {
-            uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
-        }
-
-        // append HTTP_PATH to HTTP_URI if it is provided in the header
-        // when the endpoint is not working as a bridge
-        String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
-        if (path != null) {
-            // make sure that there is exactly one "/" between HTTP_URI and
-            // HTTP_PATH
-            if (!uri.endsWith("/")) {
-                uri = uri + "/";
-            }
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            uri = uri.concat(path);
-        }
-
-        HttpMethod method = methodToUse.createMethod(uri);
-
         if (queryString != null) {
             method.setQueryString(queryString);
         }
+
         if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("No Content-Type provided for URI: " + uri + " with exchange: " + exchange);
+                    LOG.debug("No Content-Type provided for URL: " + url + " with exchange: " + exchange);
                 }
             }
         }

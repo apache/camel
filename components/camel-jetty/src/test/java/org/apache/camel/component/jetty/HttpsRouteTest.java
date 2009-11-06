@@ -106,7 +106,7 @@ public class HttpsRouteTest extends CamelTestSupport {
     public void testEndpointWithoutHttps() {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);    
         try {
-            template.sendBodyAndHeader("jetty:http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+            template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
@@ -140,8 +140,8 @@ public class HttpsRouteTest extends CamelTestSupport {
     }
     
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader("jetty:https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
-        template.sendBodyAndHeader("jetty:https://localhost:9090/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("https://localhost:9090/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override

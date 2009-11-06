@@ -64,7 +64,7 @@ public class HttpGetTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("jetty:http://www.google.com").to("mock:results");
+                from("direct:start").to("http://www.google.com").to("mock:results");
             }
         };
     }

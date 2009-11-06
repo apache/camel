@@ -28,14 +28,14 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  * A plugable strategy for configuring the http binding so reading request and writing response
  * can be customized using the Java Servlet API.
  * <p/>
- * This is used by the camel-jetty.
+ * This is also used by the camel-jetty by the JettyHttpConsumer.
  *
  * @version $Revision$
  */
 public interface HttpBinding {
 
     /**
-     * Startegy to read the given request and bindings it to the given message.
+     * Strategy to read the given request and bindings it to the given message.
      *
      * @param request  the request
      * @param message  the message to populate with data from request
@@ -45,6 +45,7 @@ public interface HttpBinding {
     /**
      * Parses the body from a {@link org.apache.camel.component.http.HttpMessage}
      *
+     * @param httpMessage the http message
      * @return the parsed body returned as either a {@link java.io.InputStream} or a {@link java.io.Reader}
      * depending on the {@link #setUseReaderForPayload(boolean)} property.
      * @throws java.io.IOException can be thrown
@@ -96,20 +97,37 @@ public interface HttpBinding {
      */
     void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException;
 
+    /**
+     * Should reader by used instead of input stream.
+     *
+     * @see #setUseReaderForPayload(boolean) for more details
+     * @return <tt>true</tt> if reader should be used
+     */
     boolean isUseReaderForPayload();
 
     /**
      * Should the {@link javax.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages in the Camel
      * {@link org.apache.camel.Message#getBody()} or not. If false then the {@link javax.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
+     * <p/>
+     * Is default <tt>false</tt>.
+     *
+     * @param useReaderForPayload whether to use reader or not
      */
     void setUseReaderForPayload(boolean useReaderForPayload);
 
+    /**
+     * Gets the header filter strategy
+     *
+     * @return the strategy
+     */
     HeaderFilterStrategy getHeaderFilterStrategy();
 
     /**
-     * Sets the header filter stratety to use.
+     * Sets the header filter strategy to use.
      * <p/>
      * Will default use {@link org.apache.camel.component.http.HttpHeaderFilterStrategy}
+     *
+     * @param headerFilterStrategy the custom strategy
      */
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
 

@@ -28,13 +28,18 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Handler;
+import org.mortbay.jetty.client.Address;
+import org.mortbay.jetty.client.HttpClient;
 
 /**
  * @version $Revision$
  */
 public class JettyHttpEndpoint extends HttpEndpoint {
 
+    private static final transient Log LOG = LogFactory.getLog(JettyHttpEndpoint.class);
     private boolean sessionSupport;
     private List<Handler> handlers;
 
@@ -43,9 +48,18 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         super(uri, component, httpURL, clientParams, httpConnectionManager, clientConfigurer);
     }
 
+    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
+        super(uri, component, httpURL);
+    }
+
+    @Override
+    public JettyHttpComponent getComponent() {
+        return (JettyHttpComponent) super.getComponent();
+    }
+
     @Override
     public Producer createProducer() throws Exception {
-        return super.createProducer();
+        return new JettyHttpProducer(this);
     }
 
     @Override
@@ -68,4 +82,31 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public void setHandlers(List<Handler> handlers) {
         this.handlers = handlers;
     }
+
+    /**
+     * Factory method used by producers and consumers to create a new {@link org.apache.commons.httpclient.HttpClient} instance
+     */
+    public HttpClient getJettyHttpClient() throws Exception {
+        HttpClient answer = getComponent().getHttpClient();
+        if (answer == null) {
+            answer = new HttpClient();
+            answer.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+
+            if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
+                String host = System.getProperty("http.proxyHost");
+                int port = Integer.parseInt(System.getProperty("http.proxyPort"));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: "
+                            + host + " port: " + port);
+                }
+                answer.setProxy(new Address(host, port));
+            }
+
+            // TODO: allow jetty producer configuration from uri
+
+            answer.start();
+        }
+        return answer;
+    }
+    
 }
