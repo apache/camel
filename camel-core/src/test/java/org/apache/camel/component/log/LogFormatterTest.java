@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.log;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -30,6 +34,7 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST", "Hello World");
     }
 
+    @SuppressWarnings("unchecked")
     public void testSendMessageToLogSingleOptions() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showProperties=true", "Hello World");
@@ -41,6 +46,17 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST?showOut=true&showBodyType=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showOut=true&showBody=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showAll=true", "Hello World");
+
+        template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(new Callable() {
+            public Object call() throws Exception {
+                return "foo";
+            }
+        }));
+        template.sendBody("log:org.apache.camel.TEST?showFuture=false", new MyFuture(new Callable() {
+            public Object call() throws Exception {
+                return "bar";
+            }
+        }));
     }
 
     public void testSendMessageToLogMultiOptions() throws Exception {
@@ -158,6 +174,32 @@ public class LogFormatterTest extends ContextTestSupport {
         assertFalse(formatter.isShowAll());
         assertFalse(formatter.isMultiline());
         assertEquals(0, formatter.getMaxChars());
+    }
+
+    private class MyFuture extends FutureTask {
+
+        public MyFuture(Callable callable) {
+            super(callable);
+        }
+
+        public MyFuture(Runnable runnable, Object o) {
+            super(runnable, o);
+        }
+
+        @Override
+        public boolean isDone() {
+            return true;
+        }
+
+        @Override
+        public Object get() throws InterruptedException, ExecutionException {
+            return "foo";
+        }
+
+        @Override
+        public String toString() {
+            return "ThisIsMyFuture";
+        }
     }
 
 }

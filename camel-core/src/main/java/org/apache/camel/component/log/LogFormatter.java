@@ -18,6 +18,7 @@ package org.apache.camel.component.log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -41,6 +42,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showStackTrace;
     private boolean showAll;
     private boolean multiline;
+    private boolean showFuture;
     private int maxChars;
 
     public Object format(Exchange exchange) {
@@ -260,9 +262,30 @@ public class LogFormatter implements ExchangeFormatter {
         this.multiline = multiline;
     }
 
+    public boolean isShowFuture() {
+        return showFuture;
+    }
+
+    /**
+     * If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.
+     * <p/>
+     * Is default disabled.
+     */
+    public void setShowFuture(boolean showFuture) {
+        this.showFuture = showFuture;
+    }
+
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBodyAsString(Message message) {
+        if (message.getBody() instanceof Future) {
+            if (!isShowFuture()) {
+                // just use a to string of the future object
+                return message.getBody().toString();
+            }
+        }
+
         StreamCache newBody = message.getBody(StreamCache.class);
         if (newBody != null) {
             message.setBody(newBody);
