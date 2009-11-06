@@ -17,20 +17,20 @@
 -->
 <!-- START SNIPPET: xbean -->
 <beans
-  xmlns="http://www.springframework.org/schema/beans"
-  xmlns:broker="http://activemq.apache.org/schema/core"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:broker="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+          http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
     <!-- you may want to use a specific activemq-core.xsd version
          that matches your broker, such as activemq-core-5.3.0.xsd -->
 
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <broker:broker useJmx="false" persistent="false" brokerName="localhost">
+    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
 
-  </broker:broker>
-  
+    </broker:broker>
+
 </beans>
 <!-- END SNIPPET: xbean -->

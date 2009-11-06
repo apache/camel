@@ -16,18 +16,20 @@
 -->
 <!-- START SNIPPET: example -->
 <beans
-  xmlns="http://www.springframework.org/schema/beans"
-  xmlns:broker="http://activemq.apache.org/schema/core"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.3.0.xsd">
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:broker="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+          http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
-    <broker:transportConnectors>
-       <broker:transportConnector name="openwire" uri="vm://localhost"/>
-    </broker:transportConnectors>
-  </broker:broker>
+    <!-- you may want to use a specific activemq-core.xsd version
+         that matches your broker, such as activemq-core-5.3.0.xsd -->
 
+    <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
+        <broker:transportConnectors>
+            <broker:transportConnector name="openwire" uri="vm://localhost"/>
+        </broker:transportConnectors>
+    </broker:broker>
 
 </beans>
 <!-- END SNIPPET: example -->
