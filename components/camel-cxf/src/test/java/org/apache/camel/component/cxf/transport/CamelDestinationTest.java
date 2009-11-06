@@ -23,7 +23,9 @@ import java.io.InputStream;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -46,6 +48,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                onException(RuntimeCamelException.class).handled(true).to("mock:error");
                 from("direct:Producer").to("direct:EndpointA");
             }
         };
@@ -136,7 +139,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         String reponse = new String(bytes);
         assertEquals("The reponse date should be equals", content, reponse);
     }
-
+    
     @Test
     public void testRoundTripDestination() throws Exception {
 
@@ -170,6 +173,8 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
                 }
             }
         };
+        MockEndpoint error = (MockEndpoint)context.getEndpoint("mock:error");
+        error.expectedMessageCount(0);
         //this call will active the camelDestination
         destination.setMessageObserver(observer);
         // set is oneway false for get response from destination
@@ -179,7 +184,60 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         // create the thread to handler the Destination incomming message
 
         verifyReceivedMessage(inMessage, "HelloWorld Response");
+        error.assertIsSatisfied();
+        destination.shutdown();
+    }
+    
+    @Test
+    public void testRoundTripDestinationWithFault() throws Exception {
 
+        inMessage = null;
+        EndpointInfo conduitEpInfo = new EndpointInfo();
+        conduitEpInfo.setAddress("camel://direct:Producer");
+        // set up the conduit send to be true
+        CamelConduit conduit = setupCamelConduit(conduitEpInfo, true, false);
+        final Message outMessage = new MessageImpl();
+
+        endpointInfo.setAddress("camel://direct:EndpointA");
+        final CamelDestination destination = setupCamelDestination(endpointInfo, true);
+        destination.setCheckException(true);
+
+        // set up MessageObserver for handlering the conduit message
+        MessageObserver observer = new MessageObserver() {
+            public void onMessage(Message m) {
+                try {
+                    Exchange exchange = new ExchangeImpl();
+                    exchange.setInMessage(m);
+                    m.setExchange(exchange);
+                    verifyReceivedMessage(m, "HelloWorld");
+                    //verifyHeaders(m, outMessage);
+                    // setup the message for
+                    Conduit backConduit;
+                    backConduit = destination.getBackChannel(m, null, null);
+                    // wait for the message to be got from the conduit
+                    Message replyMessage = new MessageImpl();
+                    replyMessage.setContent(Exception.class, new RuntimeCamelException());
+                    sendoutMessage(backConduit, replyMessage, true, "HelloWorld Fault");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        
+        MockEndpoint error = (MockEndpoint)context.getEndpoint("mock:error");
+        error.expectedMessageCount(1);
+        
+        //this call will active the camelDestination
+        destination.setMessageObserver(observer);
+        // set is oneway false for get response from destination
+        // need to use another thread to send the request message
+        sendoutMessage(conduit, outMessage, false, "HelloWorld");
+        // wait for the message to be got from the destination,
+        // create the thread to handler the Destination incomming message
+
+        verifyReceivedMessage(inMessage, "HelloWorld Fault");
+        error.assertIsSatisfied();
+        
         destination.shutdown();
     }
 
