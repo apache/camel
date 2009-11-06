@@ -82,10 +82,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // check the user name and password for basic authentication
         String username = getAndRemoveParameter(parameters, "username", String.class);
         String password = getAndRemoveParameter(parameters, "password", String.class);
+        String domain = getAndRemoveParameter(parameters, "domain", String.class);
         if (username != null && password != null) {
             httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
                 httpClientConfigurer, 
-                new BasicAuthenticationHttpClientConfigurer(username, password));
+                new BasicAuthenticationHttpClientConfigurer(username, password, domain));
         }
         
         // check the proxy details for proxy configuration
@@ -94,9 +95,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (host != null && port != null) {
             String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
             String proxyPassword = getAndRemoveParameter(parameters, "proxyPassword", String.class);
+            String proxyDomain = getAndRemoveParameter(parameters, "proxyDomain", String.class);
             if (proxyUsername != null && proxyPassword != null) {
                 httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port, proxyUsername, proxyPassword));
+                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port, proxyUsername, proxyPassword, proxyDomain));
             } else {
                 httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
                     httpClientConfigurer, new ProxyHttpClientConfigurer(host, port));

@@ -18,7 +18,7 @@ package org.apache.camel.component.http;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 
 /**
@@ -33,23 +33,25 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
     
     private final String username;
     private final String password;
+    private final String domain;
     
     public ProxyHttpClientConfigurer(String host, Integer port) {
-        this(host, port, null, null);
+        this(host, port, null, null, null);
     }
     
-    public ProxyHttpClientConfigurer(String host, Integer port, String username, String password) {
+    public ProxyHttpClientConfigurer(String host, Integer port, String username, String password, String domain) {
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.domain = domain;
     }
 
     public void configureHttpClient(HttpClient client) {
         client.getHostConfiguration().setProxy(host, port);
 
         if (username != null && password != null) {
-            Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
+            Credentials defaultcreds = new NTCredentials(username, password, null, domain);
             client.getState().setProxyCredentials(AuthScope.ANY, defaultcreds);
         }
     }
