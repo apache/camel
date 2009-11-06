@@ -18,23 +18,23 @@ package org.apache.camel.component.http;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 
 public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
     private final String username;
     private final String password;
+    private final String domain;
     
-    public BasicAuthenticationHttpClientConfigurer(String user, String pwd) {
+    public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain) {
         username = user;
         password = pwd;
+        this.domain = domain;
     }
 
     public void configureHttpClient(HttpClient client) {
-        
-        Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
+        Credentials defaultcreds = new NTCredentials(username, password, null, domain);
         client.getState().setCredentials(AuthScope.ANY, defaultcreds);
-
     }
 
 }
