@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -84,10 +85,14 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value);
-        } catch (CamelExecutionException e) {
-            // rethrow exception exception as its not due to failed convertion
-            throw e;
         } catch (Exception e) {
+            // if its a ExecutionException then we have rethrow it as its not due to failed conversion
+            boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null ||
+                    ObjectHelper.getException(CamelExecutionException.class, e) != null;
+            if (execution) {
+                throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+            }
+
             // we cannot convert so return null
             if (LOG.isDebugEnabled()) {
                 LOG.debug(NoTypeConversionAvailableException.createMessage(value, type)

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Converter;
@@ -66,16 +65,7 @@ public final class FutureTypeConverter implements TypeConverter {
                 LOG.trace("Getting future response");
             }
 
-            Object body;
-            try {
-                body = future.get();
-            } catch (ExecutionException e) {
-                if (e.getCause() instanceof Exception) {
-                    throw (Exception) e.getCause();
-                } else {
-                    throw e;
-                }
-            }
+            Object body = future.get();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Got future response");
             }

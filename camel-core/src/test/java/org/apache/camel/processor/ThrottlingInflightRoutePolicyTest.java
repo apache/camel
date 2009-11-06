@@ -29,14 +29,11 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
     private int size = 100;
 
     public void testThrottlingRoutePolicy() throws Exception {
-        getMockEndpoint("mock:result").expectedMinimumMessageCount(size - 5);
+        getMockEndpoint("mock:result").expectedMessageCount(size);
 
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
         }
-
-        // now start the route
-        context.startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
     }
@@ -50,7 +47,7 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
                 policy.setMaxInflightExchanges(10);
 
                 from(url)
-                    .routePolicy(policy).noAutoStartup().id("myRoute")
+                    .routePolicy(policy)
                     .to("log:foo?groupSize=10").to("mock:result");
             }
         };
