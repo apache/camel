@@ -85,6 +85,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         return LOG;
     }
 
+    public void setCheckException(boolean exception) {
+        checkException = exception;
+    }
+    
+    public boolean isCheckException() {
+        return checkException;
+    }
     /**
      * @param inMessage the incoming message
      * @return the inbuilt backchannel
