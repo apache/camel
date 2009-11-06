@@ -29,6 +29,7 @@ import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,15 +93,16 @@ public class JettyHttpComponent extends HttpComponent {
 
         configureParameters(parameters);
 
-        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
-        uri = httpUri.toString();
-
-        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
+        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, null, params, getHttpConnectionManager(), httpClientConfigurer);
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
         setProperties(result, parameters);
+
+        // create the http uri after we have configured all the parameters on the camel objects
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
+        result.setHttpUri(httpUri);
+
         return result;
     }
 

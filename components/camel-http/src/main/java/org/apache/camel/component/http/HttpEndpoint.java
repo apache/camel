@@ -195,4 +195,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     public URI getHttpUri() {
         return httpUri;
     }
+
+    public void setHttpUri(URI httpUri) {
+        this.httpUri = httpUri;
+    }
 }
