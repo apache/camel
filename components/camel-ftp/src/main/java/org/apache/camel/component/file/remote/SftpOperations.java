@@ -47,6 +47,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * SFTP remote file operations
  */
@@ -92,7 +93,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             } catch (Exception e) {
                 GenericFileOperationFailedException failed = new GenericFileOperationFailedException("Cannot connect to " + configuration.remoteServerInformation(), e);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Could not connect due: " + failed.getMessage());
+                    LOG.trace("Cannot connect due: " + failed.getMessage());
                 }
                 attempt++;
                 if (attempt > endpoint.getMaximumReconnectAttempts()) {
@@ -175,7 +176,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Deleteing file: " + name);
+            LOG.debug("Deleting file: " + name);
         }
         try {
             channel.rm(name);
@@ -203,7 +204,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
         String originalDirectory = getCurrentDirectory();
         try {
-            // maybe the full directory already exsits
+            // maybe the full directory already exists
             try {
                 channel.cd(directory);
                 success = true;
@@ -287,7 +288,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     public List<ChannelSftp.LsEntry> listFiles(String path) throws GenericFileOperationFailedException {
         if (ObjectHelper.isEmpty(path)) {
-            // list current dirctory if file path is not given
+            // list current directory if file path is not given
             path = ".";
         }
 
@@ -314,16 +315,19 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
+        OutputStream os = null;
         try {
-            GenericFile<ChannelSftp.LsEntry> target = 
+            os = new ByteArrayOutputStream();
+            GenericFile<ChannelSftp.LsEntry> target =
                 (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
-            OutputStream os = new ByteArrayOutputStream();
             target.setBody(os);
             channel.get(name, os);
             return true;
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
+        } finally {
+            ObjectHelper.close(os, "retrieve: " + name, LOG);
         }
     }
 
@@ -411,19 +415,22 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
         }
 
+        InputStream is = null;
         try {
-            InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+            is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
-                channel.put(in, name, ChannelSftp.APPEND);
+                channel.put(is, name, ChannelSftp.APPEND);
             } else {
                 // override is default
-                channel.put(in, name);
+                channel.put(is, name);
             }
             return true;
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+        } finally {
+            ObjectHelper.close(is, "store: " + name, LOG);
         }
     }
 

@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -108,7 +109,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 }
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Could not connect due: " + failed.getMessage());
+                    LOG.trace("Cannot connect due: " + failed.getMessage());
                 }
                 attempt++;
                 if (attempt > endpoint.getMaximumReconnectAttempts()) {
@@ -176,7 +177,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Deleteing file: " + name);
+            LOG.debug("Deleting file: " + name);
         }
         try {
             return this.client.deleteFile(name);
@@ -345,8 +346,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
         }
 
-        InputStream is = exchange.getIn().getBody(InputStream.class);
+        InputStream is = null;
         try {
+            is = exchange.getIn().getMandatoryBody(InputStream.class);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
                 return client.appendFile(name, is);
             } else {
@@ -354,6 +356,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        } catch (InvalidPayloadException e) {
+            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
             ObjectHelper.close(is, "store: " + name, LOG);
         }
