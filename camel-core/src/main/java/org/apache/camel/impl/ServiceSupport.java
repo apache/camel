@@ -57,7 +57,11 @@ public abstract class ServiceSupport implements Service {
                     ex = e;
                 } finally {
                     if (ex != null) {
-                        stop(childrenStarted);
+                    	try {
+                    		stop(childrenStarted);
+                    	} catch (Exception e) {
+                    		// Ignore exceptions as we want to show the original exception
+                    	}
                         throw ex;
                     } else {
                         started.set(true);
