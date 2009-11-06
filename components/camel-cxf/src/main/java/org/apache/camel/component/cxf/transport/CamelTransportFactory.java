@@ -50,6 +50,8 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     private Collection<String> activationNamespaces;
     
     private HeaderFilterStrategy headerFilterStrategy;
+    
+    private boolean checkException;
 
     static {
         URI_PREFIXES.add("camel://");        
@@ -86,6 +88,14 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
+    
+    public void setCheckException(boolean check) {
+        checkException = check;
+    }
+    
+    public boolean isCheckException() {
+        return checkException;
+    }
 
     public Conduit getConduit(EndpointInfo targetInfo) throws IOException {
         return getConduit(targetInfo, null);
@@ -96,7 +106,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     }
 
     public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        return new CamelDestination(camelContext, bus, this, endpointInfo, headerFilterStrategy);
+        return new CamelDestination(camelContext, bus, this, endpointInfo, headerFilterStrategy, checkException);
     }
 
     public Set<String> getUriPrefixes() {

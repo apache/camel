@@ -61,13 +61,14 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     private ProducerTemplate<Exchange> camelTemplate;
     private Endpoint distinationEndpoint;
     private HeaderFilterStrategy headerFilterStrategy;
+    private boolean checkException;
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) throws IOException {
-        this(camelContext, bus, ci, info, null);
+        this(camelContext, bus, ci, info, null, false);
     }
     
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info,
-            HeaderFilterStrategy headerFilterStrategy) throws IOException {
+            HeaderFilterStrategy headerFilterStrategy, boolean checkException) throws IOException {
         super(bus, getTargetReference(info, bus), info);
         this.camelContext = camelContext;
         conduitInitiator = ci;
@@ -77,6 +78,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         }
         initConfig();
         this.headerFilterStrategy = headerFilterStrategy;
+        this.checkException = checkException;
     }
 
     protected Logger getLogger() {
@@ -259,7 +261,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, camelExchange.getOut().getHeaders());
             // check if the outMessage has the exception
             Exception exception = outMessage.getContent(Exception.class);
-            if (exception != null) {
+            if (checkException && exception != null) {
                 camelExchange.setException(exception);
             }
             
