@@ -107,11 +107,7 @@ public class JettyHttpComponent extends HttpComponent {
         // configure regular parameters
         configureParameters(parameters);
 
-        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
-        uri = httpUri.toString();
-
-        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
+        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, null, params, getHttpConnectionManager(), httpClientConfigurer);
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
@@ -120,6 +116,11 @@ public class JettyHttpComponent extends HttpComponent {
             result.setHandlers(handlerList);
         }
         setProperties(result, parameters);
+
+        // create the http uri after we have configured all the parameters on the camel objects
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
+        result.setHttpUri(httpUri);
+
         return result;
     }
 
@@ -278,6 +279,8 @@ public class JettyHttpComponent extends HttpComponent {
         sslSocketConnectors = connectors;
     }
 
+    // Implementation methods
+    // -------------------------------------------------------------------------
     protected CamelServlet createServletForConnector(Server server, Connector connector, List<Handler> handlers) throws Exception {
         CamelServlet camelServlet = new CamelServlet();
 
@@ -299,8 +302,6 @@ public class JettyHttpComponent extends HttpComponent {
         return camelServlet;
     }
     
-    // Implementation methods
-    // -------------------------------------------------------------------------
     protected Server createServer() throws Exception {
         Server server = new Server();
         ContextHandlerCollection collection = new ContextHandlerCollection();
@@ -309,5 +310,4 @@ public class JettyHttpComponent extends HttpComponent {
         server.start();
         return server;
     }
-   
 }
