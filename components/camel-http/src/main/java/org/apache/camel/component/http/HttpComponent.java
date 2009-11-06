@@ -83,25 +83,27 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String username = getAndRemoveParameter(parameters, "username", String.class);
         String password = getAndRemoveParameter(parameters, "password", String.class);
         String domain = getAndRemoveParameter(parameters, "domain", String.class);
+        String host = getAndRemoveParameter(parameters, "host", String.class);
         if (username != null && password != null) {
             httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
                 httpClientConfigurer, 
-                new BasicAuthenticationHttpClientConfigurer(username, password, domain));
+                new BasicAuthenticationHttpClientConfigurer(username, password, domain, host));
         }
         
         // check the proxy details for proxy configuration
-        String host = getAndRemoveParameter(parameters, "proxyHost", String.class);
-        Integer port = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
-        if (host != null && port != null) {
+        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
+        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        if (proxyHost != null && proxyPort != null) {
             String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
             String proxyPassword = getAndRemoveParameter(parameters, "proxyPassword", String.class);
             String proxyDomain = getAndRemoveParameter(parameters, "proxyDomain", String.class);
+            String proxyNtHost = getAndRemoveParameter(parameters, "proxyNtHost", String.class);
             if (proxyUsername != null && proxyPassword != null) {
                 httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port, proxyUsername, proxyPassword, proxyDomain));
+                    httpClientConfigurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort, proxyUsername, proxyPassword, proxyDomain, proxyNtHost));
             } else {
                 httpClientConfigurer = CompositeHttpConfigurer.combineConfigurers(
-                    httpClientConfigurer, new ProxyHttpClientConfigurer(host, port));
+                    httpClientConfigurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort));
             }
         }
         
