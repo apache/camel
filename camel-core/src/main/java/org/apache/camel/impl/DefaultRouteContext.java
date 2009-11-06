@@ -135,8 +135,7 @@ public class DefaultRouteContext implements RouteContext {
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return getCamelContext().getRegistry().lookupByType(type);
     }
-
-    @SuppressWarnings("unchecked")
+    
     public void commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {

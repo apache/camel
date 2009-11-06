@@ -391,8 +391,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      *
      * @param test the test used to determine if the class matches
      * @param fqn  the fully qualified name of a class
-     */
-    @SuppressWarnings("unchecked")
+     */    
     protected void addIfMatching(PackageScanFilter test, String fqn, Set<Class> classes) {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');

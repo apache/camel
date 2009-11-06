@@ -58,7 +58,6 @@ public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassRe
      * @throws java.io.IOException is thrown by the classloader
      */
     @Override
-    @SuppressWarnings("unchecked")
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
         // try super first, just in vase
         Enumeration<URL> enumeration = super.getResources(loader, packageName);
