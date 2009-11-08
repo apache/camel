@@ -107,7 +107,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         if (eventEndpoint != null) {
             eventEndpoint.onApplicationEvent(event);
         } else {
-            LOG.warn("No spring-event endpoint enabled to handle event: " + event);
+            LOG.info("No spring-event endpoint enabled to handle event: " + event);
         }
     }
 
@@ -126,7 +126,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         if (applicationContext != null && applicationContext.getClassLoader() != null) {
             cl = applicationContext.getClassLoader();
         } else {
-            LOG.warn("Cannot find the class loader from application context, so using the thread context class loader instead");
+            LOG.warn("Cannot find the class loader from application context, using the thread context class loader instead");
             cl = Thread.currentThread().getContextClassLoader();
         }
         if (LOG.isDebugEnabled()) {
