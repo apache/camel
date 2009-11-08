@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.Enumeration;
@@ -72,7 +73,7 @@ public class MailBinding {
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
         throws MessagingException, IOException {
 
-        // camel message headers takes presedence over endpoint configuration
+        // camel message headers takes precedence over endpoint configuration
         if (hasRecipientHeaders(exchange)) {
             setRecipientFromCamelMessage(mimeMessage, exchange);
         } else {
@@ -94,7 +95,7 @@ public class MailBinding {
             mimeMessage.setFrom(new InternetAddress(from));
         }
 
-        // if there is an alternativebody provided, set up a mime multipart alternative message
+        // if there is an alternative body provided, set up a mime multipart alternative message
         if (hasAlternativeBody(endpoint.getConfiguration(), exchange)) {
             createMultipartAlternativeMessage(mimeMessage, endpoint.getConfiguration(), exchange);
         } else {
@@ -149,7 +150,7 @@ public class MailBinding {
         if (charset == null) {
             return null;
         }
-        
+
         boolean supported;
         try {
             supported = Charset.isSupported(charset);
@@ -209,9 +210,34 @@ public class MailBinding {
      * Extracts the body from the Mail message
      */
     public Object extractBodyFromMail(Exchange exchange, Message message) {
+        return doExtractBodyFromMail(exchange, message, true);
+    }
+
+    /**
+     * Extracts the body from the Mail message
+     */
+    protected Object doExtractBodyFromMail(Exchange exchange, Message message, boolean firstAttempt) {
         try {
             return message.getContent();
         } catch (Exception e) {
+            // try to fix message in case it has an unsupported encoding in the Content-Type header
+            UnsupportedEncodingException uee = ObjectHelper.getException(UnsupportedEncodingException.class, e);
+            if (firstAttempt && uee != null) {
+                LOG.debug("Unsupported encoding detected: " + uee.getMessage());
+                try {
+                    String contentType = message.getContentType();
+                    String type = ObjectHelper.before(contentType, "charset=");
+                    if (type != null) {
+                        message.setHeader("Content-Type", type);
+                        // try again with fixed content type
+                        LOG.debug("Trying to extract mail message again with fixed Content-Type: " + type);
+                        return doExtractBodyFromMail(exchange, message, false);
+                    }
+                } catch (Exception e2) {
+                    // fall through and let original exception be thrown
+                }
+            }
+
             throw new RuntimeCamelException("Failed to extract body due to: " + e.getMessage()
                 + ". Exchange: " + exchange + ". Message: " + message, e);
         }
@@ -310,7 +336,7 @@ public class MailBinding {
         MimeMultipart multipart = new MimeMultipart();
         multipart.setSubType("mixed");
         addBodyToMultipart(configuration, multipart, exchange);
-        String partDisposition = configuration.isUseInlineAttachments() ?  Part.INLINE : Part.ATTACHMENT;
+        String partDisposition = configuration.isUseInlineAttachments() ? Part.INLINE : Part.ATTACHMENT;
         if (exchange.getIn().hasAttachments()) {
             addAttachmentsToMultipart(multipart, partDisposition, exchange);
         }
@@ -335,7 +361,7 @@ public class MailBinding {
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
                     messageBodyPart.setDataHandler(handler);
-                    
+
                     if (attachmentFilename.toLowerCase().startsWith("cid:")) {
                         // add a Content-ID header to the attachment
                         // must use angle brackets according to RFC: http://www.ietf.org/rfc/rfc2392.txt
@@ -432,7 +458,7 @@ public class MailBinding {
         Enumeration names = mailMessage.getAllHeaders();
 
         while (names.hasMoreElements()) {
-            Header header = (Header)names.nextElement();
+            Header header = (Header) names.nextElement();
             String value = header.getValue();
             if (headerFilterStrategy != null && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
                 CollectionHelper.appendValue(answer, header.getName(), value);
