@@ -79,8 +79,19 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
             }
         }
 
+        doProcess(exchange);
+    }
+
+    /**
+     * Strategy to process the exchange
+     *
+     * @param exchange the exchange
+     * @throws Exception can be thrown if error processing exchange
+     * @return the exchange that was processed
+     */
+    public Exchange doProcess(final Exchange exchange) throws Exception {
         // send the exchange to the destination using a producer
-        getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
+        return getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);
                 producer.process(exchange);

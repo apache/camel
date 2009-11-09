@@ -18,12 +18,12 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +45,7 @@ public class JettyContentExchange extends ContentExchange {
     private CountDownLatch bodyComplete = new CountDownLatch(1);
     private volatile boolean failed;
     private volatile Exchange exchange;
-    private volatile Collection<Exchange> completeTasks;
+    private volatile AsyncCallback callback;
 
     public JettyContentExchange() {
         // keep headers by default
@@ -56,8 +56,8 @@ public class JettyContentExchange extends ContentExchange {
         this.exchange = exchange;
     }
 
-    public void setCompleteTasks(Collection<Exchange> completeTasks) {
-        this.completeTasks = completeTasks;
+    public void setCallback(AsyncCallback callback) {
+        this.callback = callback;
     }
 
     @Override
@@ -82,12 +82,13 @@ public class JettyContentExchange extends ContentExchange {
             LOG.debug("onResponseComplete for " + getUrl());
         }
 
-        if (completeTasks != null && exchange != null) {
+        if (callback != null && exchange != null) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Adding Exchange to completed task: " + exchange);
             }
-            // we are complete so add the exchange to completed tasks
-            completeTasks.add(exchange);
+
+            // signal we are complete
+            callback.onDataReceived(exchange);
         }
     }
 

@@ -14,29 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 
 /**
  * @version $Revision$
  */
-public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
+public class ToAsyncTest extends ContextTestSupport {
 
-    private String url = "seda:foo?concurrentConsumers=20";
-    private int size = 100;
+    public void testToAsync() throws Exception {
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").message(0).outBody(String.class).isEqualTo("Bye World");
 
-    public void testThrottlingRoutePolicy() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(size);
-
-        for (int i = 0; i < size; i++) {
-            template.sendBody(url, "Message " + i);
-            Thread.sleep(3);
-        }
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+
+        // and it should be different exchange ids
+
+        String ida = getMockEndpoint("mock:a").getReceivedExchanges().get(0).getExchangeId();
+        String idb = getMockEndpoint("mock:b").getReceivedExchanges().get(0).getExchangeId();
+        String idresult = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
+
+        // id a should be different and id b and id result the same
+        assertNotSame(ida, idb);
+        assertNotSame(ida, idresult);
+        assertSame(idb, idresult);
     }
 
     @Override
@@ -44,12 +51,9 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
-                policy.setMaxInflightExchanges(10);
+                from("direct:start").to("mock:a").toAsync("direct:bar").to("mock:result");
 
-                from(url)
-                    .routePolicy(policy)
-                    .to("log:foo?groupSize=10").to("mock:result");
+                from("direct:bar").to("mock:b").transform(constant("Bye World"));
             }
         };
     }

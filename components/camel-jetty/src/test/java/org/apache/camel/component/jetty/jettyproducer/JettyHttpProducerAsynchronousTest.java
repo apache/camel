@@ -33,7 +33,7 @@ public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
     private static String thread1;
     private static String thread2;
 
-    private String url = "jetty://http://0.0.0.0:9123/foo?synchronous=false&concurrentConsumers=5";
+    private String url = "jetty://http://0.0.0.0:9123/foo";
 
     @Test
     public void testAsynchronous() throws Exception {
@@ -42,7 +42,7 @@ public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).outBody().isEqualTo("Bye World");
+        mock.message(0).body().isEqualTo("Bye World");
 
         Object body = null;
         template.sendBody("direct:start", body);
@@ -61,7 +61,7 @@ public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         thread1 = Thread.currentThread().getName();
                     }
-                }).to(url).process(new Processor() {
+                }).toAsync(url).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         thread2 = Thread.currentThread().getName();
                     }

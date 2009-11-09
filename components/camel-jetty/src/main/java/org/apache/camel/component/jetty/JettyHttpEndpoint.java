@@ -36,8 +36,6 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private boolean sessionSupport;
     private List<Handler> handlers;
     private HttpClient client;
-    private boolean synchronous = true;
-    private int concurrentConsumers = 1;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -85,20 +83,4 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         this.client = client;
     }
 
-    public boolean isSynchronous() {
-        return synchronous;
-    }
-
-    public void setSynchronous(boolean synchronous) {
-        this.synchronous = synchronous;
-    }
-
-    public int getConcurrentConsumers() {
-        return concurrentConsumers;
-    }
-
-    public void setConcurrentConsumers(int concurrentConsumers) {
-        this.concurrentConsumers = concurrentConsumers;
-    }
-    
 }

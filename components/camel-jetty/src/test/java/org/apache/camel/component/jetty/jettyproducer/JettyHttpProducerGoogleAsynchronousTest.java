@@ -33,7 +33,6 @@ public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
         mock.message(0).outBody(String.class).contains("google");
 
         template.sendBody("direct:start", null);
-        System.out.println("I am not blocked");
 
         assertMockEndpointsSatisfied();
     }
@@ -45,7 +44,7 @@ public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     // to prevent redirect being thrown as an exception
-                    .to("jetty://http://www.google.com?throwExceptionOnFailure=false&synchronous=false&concurrentConsumers=5")
+                    .toAsync("jetty://http://www.google.com?throwExceptionOnFailure=false")
                     .to("mock:result");
             }
         };

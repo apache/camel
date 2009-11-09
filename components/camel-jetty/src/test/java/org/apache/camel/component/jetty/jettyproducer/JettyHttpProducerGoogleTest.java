@@ -47,7 +47,7 @@ public class JettyHttpProducerGoogleTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // to prevent redirect being thrown as an exception
-                from("direct:start").to("jetty://http://www.google.com?throwExceptionOnFailure=false&synchronous=true");
+                from("direct:start").to("jetty://http://www.google.com?throwExceptionOnFailure=false");
             }
         };
     }

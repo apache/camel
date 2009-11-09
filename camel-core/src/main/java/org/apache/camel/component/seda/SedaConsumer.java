@@ -24,7 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +42,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     private SedaEndpoint endpoint;
     private Processor processor;
     private ExecutorService executor;
+    private ExceptionHandler exceptionHandler;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
@@ -53,6 +56,17 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
 
     public Endpoint getEndpoint() {
         return endpoint;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        if (exceptionHandler == null) {
+            exceptionHandler = new LoggingExceptionHandler(getClass());
+        }
+        return exceptionHandler;
+    }
+
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     public void run() {
@@ -70,7 +84,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                     try {
                         processor.process(exchange);
                     } catch (Exception e) {
-                        LOG.error("Seda queue caught: " + e, e);
+                        getExceptionHandler().handleException(e);
                     }
                 } else {
                     LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);
@@ -78,6 +92,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                         queue.put(exchange);
                     } catch (InterruptedException e) {
                         LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                        continue;
                     }
                 }
             }

@@ -320,6 +320,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     /**
      * Sends the exchange to the given endpoint
      *
+     * @param uri  the endpoint to send to
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toAsync(String uri) {
+        ToDefinition answer = new ToDefinition(uri);
+        answer.setAsync(true);
+        addOutput(answer);
+        // must push a block so we have a child route for the async reply
+        // routing which is separated from the caller route
+        pushBlock(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Sends the exchange to the given endpoint
+     *
      * @param uri  the String formatted endpoint uri to send to
      * @param args arguments for the string formatting of the uri
      * @return the builder

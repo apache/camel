@@ -87,8 +87,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             answer = doConvertTo(type, exchange, value);
         } catch (Exception e) {
             // if its a ExecutionException then we have rethrow it as its not due to failed conversion
-            boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null ||
-                    ObjectHelper.getException(CamelExecutionException.class, e) != null;
+            boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
+                    || ObjectHelper.getException(CamelExecutionException.class, e) != null;
             if (execution) {
                 throw ObjectHelper.wrapCamelExecutionException(exchange, e);
             }

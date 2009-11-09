@@ -16,13 +16,21 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.processor.SendAsyncProcessor;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -32,8 +40,18 @@ import org.apache.camel.ExchangePattern;
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
+    @XmlTransient
+    private final List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlAttribute(required = false)
     private ExchangePattern pattern;
+    @XmlAttribute(required = false)
+    private Boolean async;
+    @XmlTransient
+    private ExecutorService executorService;
+    @XmlAttribute(required = false)
+    private String executorServiceRef;
+    @XmlAttribute(required = false)
+    private Integer poolSize;
 
     public ToDefinition() {
     }
@@ -57,8 +75,48 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     @Override
+    public List<ProcessorDefinition> getOutputs() {
+        return outputs;
+    }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        if (async == null || !async) {
+            // when sync then let super create the processor
+            return super.createProcessor(routeContext);
+        }
+
+        if (executorServiceRef != null) {
+            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+        }
+        if (executorService == null && poolSize != null) {
+            executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "ToAsync", true);
+        }
+
+        // create the child processor which is the async route
+        Processor childProcessor = routeContext.createProcessor(this);
+
+        // create async processor
+        Endpoint endpoint = resolveEndpoint(routeContext);
+
+        SendAsyncProcessor async = new SendAsyncProcessor(endpoint, getPattern(), childProcessor);
+        if (executorService != null) {
+            async.setExecutorService(executorService);
+        }
+        if (poolSize != null) {
+            async.setPoolSize(poolSize);
+        }
+
+        return async;
+    }
+
+    @Override
     public String toString() {
-        return "To[" + getLabel() + "]";
+        if (async != null && async) {
+            return "ToAsync[" + getLabel() + "]";
+        } else {
+            return "To[" + getLabel() + "]";
+        }
     }
 
     @Override
@@ -69,6 +127,14 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     @Override
     public ExchangePattern getPattern() {
         return pattern;
+    }
+
+    public Boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(Boolean async) {
+        this.async = async;
     }
 
     /**
