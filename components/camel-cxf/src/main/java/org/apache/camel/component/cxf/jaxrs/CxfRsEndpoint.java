@@ -48,7 +48,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private List<Class<?>> resourceClasses;    
     private HeaderFilterStrategy headerFilterStrategy;
     private CxfRsBinding binding;
-    private boolean httpClientAPI;
+    private boolean httpClientAPI = true;
 
     private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
     
