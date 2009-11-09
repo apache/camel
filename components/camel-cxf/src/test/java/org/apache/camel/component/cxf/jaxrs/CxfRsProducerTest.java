@@ -172,10 +172,13 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                     // set the Http method
                     inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                     inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
+                    // override the parameter setting from URI
+                    // START SNIPPET: QueryMapExample
                     Map<String, String> queryMap = new LinkedHashMap<String, String>();                    
                     queryMap.put("q1", "new");
                     queryMap.put("q2", "world");                    
                     inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);
+                    // END SNIPPET: QueryMapExample 
                     inMessage.setBody(null);                
                 }
             
