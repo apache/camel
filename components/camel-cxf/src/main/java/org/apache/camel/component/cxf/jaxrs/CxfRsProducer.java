@@ -92,7 +92,11 @@ public class CxfRsProducer extends DefaultProducer {
         }
         
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint)getEndpoint();
-        Map<String, String> maps = cxfRsEndpoint.getParameters();
+        // check if there is a query map in the message header
+        Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
+        if (maps == null) {            
+            maps = cxfRsEndpoint.getParameters();
+        }
         if (maps != null) {
             for (Map.Entry<String, String> entry : maps.entrySet()) {
                 client.query(entry.getKey(), entry.getValue());

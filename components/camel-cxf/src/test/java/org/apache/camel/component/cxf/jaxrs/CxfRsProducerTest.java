@@ -17,6 +17,8 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -154,6 +156,36 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         
         assertNotNull("The response should not be null ", response);
         assertEquals("The response value is wrong", "q1=12&q2=13", response);
+        
+        
+    }
+    
+    @Test
+    public void testProducerWithQueryParametersHeader() {
+        
+        Exchange exchange = template.send("cxfrs://http://localhost:9003/testQuery?httpClientAPI=true&q1=12&q2=13"
+                                        
+            , new Processor() {        
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setPattern(ExchangePattern.InOut);
+                    Message inMessage = exchange.getIn();
+                    // set the Http method
+                    inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
+                    inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, InputStream.class);
+                    Map<String, String> queryMap = new LinkedHashMap<String, String>();                    
+                    queryMap.put("q1", "new");
+                    queryMap.put("q2", "world");                    
+                    inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);
+                    inMessage.setBody(null);                
+                }
+            
+            });
+     
+        // get the response message 
+        String response = exchange.getOut().getBody(String.class);
+        
+        assertNotNull("The response should not be null ", response);
+        assertEquals("The response value is wrong", "q1=new&q2=world", response);
         
         
     }
