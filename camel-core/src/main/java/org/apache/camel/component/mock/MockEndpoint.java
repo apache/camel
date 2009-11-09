@@ -380,6 +380,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                         actualBody = actualBodyValues.get(i);
                     }
 
+                    // TODO: coerce types before assertEquals
                     assertEquals("Body of message: " + i, expectedBody, actualBody);
                 }
             }

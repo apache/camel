@@ -23,15 +23,9 @@ import java.util.List;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.client.Address;
 import org.mortbay.jetty.client.HttpClient;
 
 /**
@@ -39,14 +33,11 @@ import org.mortbay.jetty.client.HttpClient;
  */
 public class JettyHttpEndpoint extends HttpEndpoint {
 
-    private static final transient Log LOG = LogFactory.getLog(JettyHttpEndpoint.class);
     private boolean sessionSupport;
     private List<Handler> handlers;
-
-    public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL, HttpClientParams clientParams,
-                             HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(uri, component, httpURL, clientParams, httpConnectionManager, clientConfigurer);
-    }
+    private HttpClient client;
+    private boolean synchronous = true;
+    private int concurrentConsumers = 1;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -59,7 +50,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new JettyHttpProducer(this);
+        return new JettyHttpProducer(this, getClient());
     }
 
     @Override
@@ -83,30 +74,31 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         this.handlers = handlers;
     }
 
-    /**
-     * Factory method used by producers and consumers to create a new {@link org.apache.commons.httpclient.HttpClient} instance
-     */
-    public HttpClient getJettyHttpClient() throws Exception {
-        HttpClient answer = getComponent().getHttpClient();
-        if (answer == null) {
-            answer = new HttpClient();
-            answer.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-
-            if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
-                String host = System.getProperty("http.proxyHost");
-                int port = Integer.parseInt(System.getProperty("http.proxyPort"));
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: "
-                            + host + " port: " + port);
-                }
-                answer.setProxy(new Address(host, port));
-            }
-
-            // TODO: allow jetty producer configuration from uri
-
-            answer.start();
+    public HttpClient getClient() {
+        if (client == null) {
+            return getComponent().getHttpClient();
         }
-        return answer;
+        return client;
+    }
+
+    public void setClient(HttpClient client) {
+        this.client = client;
+    }
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
     }
     
 }

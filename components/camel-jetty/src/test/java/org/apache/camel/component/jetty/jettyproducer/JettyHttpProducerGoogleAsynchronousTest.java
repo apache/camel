@@ -16,29 +16,26 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import java.util.concurrent.Future;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerGoogleTest extends CamelTestSupport {
+public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
 
     @Test
-    public void testGoogleFrontPage() throws Exception {
-        String reply = template.requestBody("direct:start", null, String.class);
-        assertNotNull(reply);
-    }
+    public void testGoogleFrontPageAsync() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).outBody(String.class).contains("google");
 
-    @Test
-    public void testGoogleFrontPageFutureTask() throws Exception {
-        Object body = null;
-        Future<String> reply = (Future<String>) template.requestBody("direct:start", body);
-        assertNotNull(reply);
-        assertNotNull(reply.get());
+        template.sendBody("direct:start", null);
+        System.out.println("I am not blocked");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -46,10 +43,11 @@ public class JettyHttpProducerGoogleTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // to prevent redirect being thrown as an exception
-                from("direct:start").to("jetty://http://www.google.com?throwExceptionOnFailure=false&synchronous=true");
+                from("direct:start")
+                    // to prevent redirect being thrown as an exception
+                    .to("jetty://http://www.google.com?throwExceptionOnFailure=false&synchronous=false&concurrentConsumers=5")
+                    .to("mock:result");
             }
         };
     }
 }
-

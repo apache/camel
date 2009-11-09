@@ -18,11 +18,15 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mortbay.io.Buffer;
 import org.mortbay.jetty.HttpHeaders;
 import org.mortbay.jetty.client.ContentExchange;
@@ -34,14 +38,26 @@ import org.mortbay.jetty.client.ContentExchange;
  */
 public class JettyContentExchange extends ContentExchange {
 
+    private static final transient Log LOG = LogFactory.getLog(JettyContentExchange.class);
+
+    private final Map<String, String> headers = new LinkedHashMap<String, String>();
     private CountDownLatch headersComplete = new CountDownLatch(1);
     private CountDownLatch bodyComplete = new CountDownLatch(1);
-    private final Map<String, String> headers = new LinkedHashMap<String, String>();
-    private boolean failed;
+    private volatile boolean failed;
+    private volatile Exchange exchange;
+    private volatile Collection<Exchange> completeTasks;
 
     public JettyContentExchange() {
         // keep headers by default
         super(true);
+    }
+
+    public void setExchange(Exchange exchange) {
+        this.exchange = exchange;
+    }
+
+    public void setCompleteTasks(Collection<Exchange> completeTasks) {
+        this.completeTasks = completeTasks;
     }
 
     @Override
@@ -53,11 +69,26 @@ public class JettyContentExchange extends ContentExchange {
     @Override
     protected void onResponseHeaderComplete() throws IOException {
         headersComplete.countDown();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("onResponseHeader for " + getUrl());
+        }
     }
 
     @Override
     protected void onResponseComplete() throws IOException {
         bodyComplete.countDown();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("onResponseComplete for " + getUrl());
+        }
+
+        if (completeTasks != null && exchange != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Adding Exchange to completed task: " + exchange);
+            }
+            // we are complete so add the exchange to completed tasks
+            completeTasks.add(exchange);
+        }
     }
 
     @Override
@@ -83,14 +114,23 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     public void waitForHeadersToComplete() throws InterruptedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for headers to complete for " + getUrl());
+        }
         headersComplete.await();
     }
 
     public void waitForBodyToComplete() throws InterruptedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for body to complete for " + getUrl());
+        }
         bodyComplete.await();
     }
 
     public boolean waitForBodyToComplete(long timeout, TimeUnit timeUnit) throws InterruptedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for body to complete for " + getUrl());
+        }
         return bodyComplete.await(timeout, timeUnit);
     }
 

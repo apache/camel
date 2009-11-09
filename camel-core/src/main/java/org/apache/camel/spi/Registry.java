@@ -20,29 +20,29 @@ import java.util.Map;
 
 /**
  * Represents a service registry which may be implemented via a Spring ApplicationContext,
- * via JNDI, a simple Map or the OSGI Service Registry
+ * via JNDI, a simple Map or the OSGi Service Registry
  *
  * @version $Revision$
  */
 public interface Registry {
 
     /**
-     * Looks up a service in the registry, returning the service or null if it could not be found.
+     * Looks up a service in the registry based purely on name,
+     * returning the service or <tt>null</tt> if it could not be found.
+     *
+     * @param name the name of the service
+     * @return the service from the registry or <tt>null</tt> if it could not be found
+     */
+    Object lookup(String name);
+
+    /**
+     * Looks up a service in the registry, returning the service or <tt>null</tt> if it could not be found.
      *
      * @param name the name of the service
      * @param type the type of the required service
-     * @return the service from the registry or null if it could not be found
+     * @return the service from the registry or <tt>null</tt> if it could not be found
      */
     <T> T lookup(String name, Class<T> type);
-
-    /**
-     * Looks up a service in the registry based purely on name,
-     * returning the service or null if it could not be found.
-     *
-     * @param name the name of the service
-     * @return the service from the registry or null if it could not be found
-     */
-    Object lookup(String name);
 
     /**
      * Looks up services in the registry by their type.

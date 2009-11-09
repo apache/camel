@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import java.util.concurrent.Future;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
@@ -29,37 +28,28 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerHeaderBasedCBRTestTest extends CamelTestSupport {
+public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
 
-    private static String step;
-    private String url = "jetty://http://0.0.0.0:9123/foo";
+    private static String thread1;
+    private static String thread2;
+
+    private String url = "jetty://http://0.0.0.0:9123/foo?synchronous=false&concurrentConsumers=5";
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void testSlowReplyCBRRoutedOnHeader() throws Exception {
-        step = "";
+    public void testAsynchronous() throws Exception {
+        thread1 = "";
+        thread2 = "";
 
-        MockEndpoint gold = getMockEndpoint("mock:gold");
-        gold.expectedMessageCount(1);
-        gold.whenAnyExchangeReceived(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // add the step when we received the message
-                step += "C";
-            }
-        });
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).outBody().isEqualTo("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
-        step += "D";
+        Object body = null;
+        template.sendBody("direct:start", body);
 
         assertMockEndpointsSatisfied();
 
-        // let it wait for the body now using the future handle
-        // Note: we could just use getBody(String.class) and Camel will then automatic wait for you
-        Future<String> future = (Future<String>) gold.getReceivedExchanges().get(0).getIn().getBody();
-        assertEquals("Bye World", future.get());
-
-        // and ensure the we could CBR on the header before we got the reply body
-        assertTrue("Should be either ACDB or ADCB was " + step, step.equals("ACDB") || step.equals("ADCB"));
+        assertNotSame("Should not use same threads", thread1, thread2);
     }
 
     @Override
@@ -67,18 +57,21 @@ public class JettyHttpProducerHeaderBasedCBRTestTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to(url)
-                    .choice()
-                        .when(header("customer").isEqualTo("gold")).to("mock:gold")
-                        .otherwise().to("mock:unknown");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        thread1 = Thread.currentThread().getName();
+                    }
+                }).to(url).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        thread2 = Thread.currentThread().getName();
+                    }
+                }).to("mock:result");
 
                 from(url).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         HttpServletResponse res = exchange.getIn().getBody(HttpServletResponse.class);
                         res.setStatus(200);
                         res.setHeader("customer", "gold");
-
-                        step += "A";
 
                         // write empty string to force flushing
                         res.getWriter().write("");
@@ -88,8 +81,6 @@ public class JettyHttpProducerHeaderBasedCBRTestTest extends CamelTestSupport {
 
                         res.getWriter().write("Bye World");
                         res.flushBuffer();
-
-                        step += "B";
                     }
                 });
             }

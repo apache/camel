@@ -77,6 +77,7 @@ public class JettyFutureGetBody implements Future<String>, Serializable {
             if (done) {
                 return doGetBody();
             } else {
+                // timeout occurred
                 ExchangeTimedOutException cause = new ExchangeTimedOutException(exchange, timeout);
                 throw new ExecutionException(cause);
             }

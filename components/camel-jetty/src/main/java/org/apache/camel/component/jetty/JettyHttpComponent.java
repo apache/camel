@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
@@ -31,12 +32,13 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mortbay.component.LifeCycle;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.client.Address;
 import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
@@ -44,6 +46,8 @@ import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.servlet.SessionHandler;
+import org.mortbay.thread.QueuedThreadPool;
+import org.mortbay.thread.ThreadPool;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
@@ -63,6 +67,9 @@ public class JettyHttpComponent extends HttpComponent {
     protected String sslKeystore;
     protected Map<Integer, SslSocketConnector> sslSocketConnectors;
     protected HttpClient httpClient;
+    protected ThreadPool httpClientThreadPool;
+    protected Integer httpClientMinThreads;
+    protected Integer httpClientMaxThreads;
 
     class ConnectorRef {
         Server server;
@@ -91,9 +98,6 @@ public class JettyHttpComponent extends HttpComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         uri = uri.startsWith("jetty:") ? remaining : uri;
 
-        HttpClientParams params = new HttpClientParams();
-        IntrospectionSupport.setProperties(params, parameters, "httpClient.");
-
         // handlers
         List<Handler> handlerList = new ArrayList<Handler>();
         String handlers = getAndRemoveParameter(parameters, "handlers", String.class);
@@ -109,7 +113,7 @@ public class JettyHttpComponent extends HttpComponent {
         // configure regular parameters
         configureParameters(parameters);
 
-        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, null, params, getHttpConnectionManager(), httpClientConfigurer);
+        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, null);
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
@@ -118,6 +122,16 @@ public class JettyHttpComponent extends HttpComponent {
             result.setHandlers(handlerList);
         }
         setProperties(result, parameters);
+
+        // configure http client if we have url configuration for it
+        if (IntrospectionSupport.hasProperties(parameters, "httpClient.")) {
+            // configure Jetty http client
+            result.setClient(getHttpClient());
+            // set additional parameters on http client
+            IntrospectionSupport.setProperties(getHttpClient(), parameters, "httpClient.");
+            // validate that we could resolve all httpClient. parameters as this component is lenient
+            validateParameters(uri, parameters, "httpClient.");
+        }
 
         // create the http uri after we have configured all the parameters on the camel objects
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
@@ -184,8 +198,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     /**
-     * Disconnects the URL specified on the endpoint from the specified
-     * processor.
+     * Disconnects the URL specified on the endpoint from the specified processor.
      */
     @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
@@ -281,12 +294,68 @@ public class JettyHttpComponent extends HttpComponent {
         sslSocketConnectors = connectors;
     }
 
-    public HttpClient getHttpClient() {
+    public synchronized HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = new HttpClient();
+            httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+
+            if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
+                String host = System.getProperty("http.proxyHost");
+                int port = Integer.parseInt(System.getProperty("http.proxyPort"));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: "
+                            + host + " port: " + port);
+                }
+                httpClient.setProxy(new Address(host, port));
+            }
+
+            // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
+            if (getHttpClientThreadPool() == null) {
+                QueuedThreadPool qtp = new QueuedThreadPool();
+                if (httpClientMinThreads != null) {
+                    qtp.setMinThreads(httpClientMinThreads.intValue());
+                }
+                if (httpClientMaxThreads != null) {
+                    qtp.setMaxThreads(httpClientMaxThreads.intValue());
+                }
+                try {
+                    qtp.start();
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Error starting JettyHttpClient thread pool: " + qtp, e);
+                }
+                setHttpClientThreadPool(qtp);
+            }
+            httpClient.setThreadPool(getHttpClientThreadPool());
+        }
         return httpClient;
     }
 
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
+    }
+
+    public ThreadPool getHttpClientThreadPool() {
+        return httpClientThreadPool;
+    }
+
+    public void setHttpClientThreadPool(ThreadPool httpClientThreadPool) {
+        this.httpClientThreadPool = httpClientThreadPool;
+    }
+
+    public Integer getHttpClientMinThreads() {
+        return httpClientMinThreads;
+    }
+
+    public void setHttpClientMinThreads(Integer httpClientMinThreads) {
+        this.httpClientMinThreads = httpClientMinThreads;
+    }
+
+    public Integer getHttpClientMaxThreads() {
+        return httpClientMaxThreads;
+    }
+
+    public void setHttpClientMaxThreads(Integer httpClientMaxThreads) {
+        this.httpClientMaxThreads = httpClientMaxThreads;
     }
 
     // Implementation methods
@@ -319,5 +388,29 @@ public class JettyHttpComponent extends HttpComponent {
         server.addHandler(collection);
         server.start();
         return server;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (httpClientThreadPool != null && httpClientThreadPool instanceof LifeCycle) {
+            LifeCycle lc = (LifeCycle) httpClientThreadPool;
+            lc.start();
+        }
+        if (httpClient != null && !httpClient.isStarted()) {
+            httpClient.start();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (httpClient != null) {
+            httpClient.stop();
+        }
+        if (httpClientThreadPool != null && httpClientThreadPool instanceof LifeCycle) {
+            LifeCycle lc = (LifeCycle) httpClientThreadPool;
+            lc.stop();
+        }
     }
 }
