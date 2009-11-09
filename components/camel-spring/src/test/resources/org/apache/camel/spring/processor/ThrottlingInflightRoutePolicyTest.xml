@@ -36,7 +36,7 @@
     </bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <route autoStartup="false" id="myRoute" routePolicyRef="myRoutePolicy">
+        <route id="myRoute" routePolicyRef="myRoutePolicy">
             <from uri="seda:foo?concurrentConsumers=20"/>
             <to uri="log:foo?groupSize=10"/>
             <to uri="mock:result"/>
