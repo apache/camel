@@ -45,7 +45,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     @XmlAttribute(required = false)
     private ExchangePattern pattern;
     @XmlAttribute(required = false)
-    private Boolean async;
+    private Boolean async = Boolean.FALSE;
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute(required = false)
@@ -113,7 +113,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     @Override
     public String toString() {
         if (async != null && async) {
-            return "ToAsync[" + getLabel() + "]";
+            return "ToAsync[" + getLabel() + "] -> " + getOutputs();
         } else {
             return "To[" + getLabel() + "]";
         }
@@ -137,11 +137,66 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         this.async = async;
     }
 
+    public Integer getPoolSize() {
+        return poolSize;
+    }
+
+    public void setPoolSize(Integer poolSize) {
+        this.poolSize = poolSize;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
+    }
+
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
     }
+
+    /**
+     * Setting the executor service for executing the async routing.
+     *
+     * @return the builder
+     */
+    public ToDefinition executorService(ExecutorService executorService) {
+        setExecutorService(executorService);
+        return this;
+    }
+
+    /**
+     * Setting the executor service for executing the async routing.
+     *
+     * @return the builder
+     */
+    public ToDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
+        return this;
+    }
+
+    /**
+     * Setting the core pool size for the underlying {@link java.util.concurrent.ExecutorService}.
+     *
+     * @return the builder
+     */
+    public ToDefinition poolSize(int poolSize) {
+        setPoolSize(poolSize);
+        return this;
+    }
+
 
 }

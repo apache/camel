@@ -51,6 +51,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -299,8 +300,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             initOnCompletions(route);
             // then polices
             initPolicies(route);
-            // and last on exception
+            // then on exception
             initOnExceptions(route);
+            // and then for toAsync
+            initToAsync(route);
         }
 
         if (dataFormats != null) {
@@ -315,6 +318,33 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         findRouteBuilders();
         installRoutes();
+    }
+
+    private void initToAsync(RouteDefinition route) {
+        List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+        ToDefinition toAsync = null;
+
+        for (ProcessorDefinition output : route.getOutputs()) {
+            if (toAsync != null) {
+                // add this output on toAsync
+                toAsync.getOutputs().add(output);
+            } else {
+                // regular outputs
+                outputs.add(output);
+            }
+
+            if (output instanceof ToDefinition) {
+                ToDefinition to = (ToDefinition) output;
+                if (to.isAsync() != null && to.isAsync()) {
+                    // new current to async
+                    toAsync = to;
+                }
+            }
+        }
+
+        // rebuild outputs
+        route.clearOutput();
+        route.getOutputs().addAll(outputs);
     }
 
     private void initOnExceptions(RouteDefinition route) {

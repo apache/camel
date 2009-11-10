@@ -320,23 +320,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     /**
      * Sends the exchange to the given endpoint
      *
-     * @param uri  the endpoint to send to
-     * @return the builder
-     */
-    @SuppressWarnings("unchecked")
-    public Type toAsync(String uri) {
-        ToDefinition answer = new ToDefinition(uri);
-        answer.setAsync(true);
-        addOutput(answer);
-        // must push a block so we have a child route for the async reply
-        // routing which is separated from the caller route
-        pushBlock(answer);
-        return (Type) this;
-    }
-
-    /**
-     * Sends the exchange to the given endpoint
-     *
      * @param uri  the String formatted endpoint uri to send to
      * @param args arguments for the string formatting of the uri
      * @return the builder
@@ -476,6 +459,77 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return (Type) this;
     }
 
+    /**
+     * Sends the exchange to the given endpoint using synchronous mode.
+     *
+     * @param uri  the endpoint to send to
+     * @return the builder
+     * @see org.apache.camel.AsyncProcessor
+     */
+    public ToDefinition toAsync(String uri) {
+        ToDefinition answer = new ToDefinition(uri);
+        answer.setAsync(true);
+        addOutput(answer);
+        // must push a block so we have a child route for the async reply
+        // routing which is separated from the caller route
+        pushBlock(answer);
+        return answer;
+    }
+
+    /**
+     * Sends the exchange to the given endpoint using synchronous mode.
+     *
+     * @param uri  the endpoint to send to
+     * @param poolSize the core pool size
+     * @return the builder
+     * @see org.apache.camel.AsyncProcessor
+     */
+    public ToDefinition toAsync(String uri, int poolSize) {
+        ToDefinition answer = new ToDefinition(uri);
+        answer.setAsync(true);
+        answer.setPoolSize(poolSize);
+        addOutput(answer);
+        // must push a block so we have a child route for the async reply
+        // routing which is separated from the caller route
+        pushBlock(answer);
+        return answer;
+    }
+
+    /**
+     * Sends the exchange to the given endpoint using synchronous mode.
+     *
+     * @param endpoint  the endpoint to send to
+     * @return the builder
+     * @see org.apache.camel.AsyncProcessor
+     */
+    public ToDefinition toAsync(Endpoint endpoint) {
+        ToDefinition answer = new ToDefinition(endpoint);
+        answer.setAsync(true);
+        addOutput(answer);
+        // must push a block so we have a child route for the async reply
+        // routing which is separated from the caller route
+        pushBlock(answer);
+        return answer;
+    }
+
+    /**
+     * Sends the exchange to the given endpoint using synchronous mode.
+     *
+     * @param endpoint  the endpoint to send to
+     * @param poolSize the core pool size
+     * @return the builder
+     * @see org.apache.camel.AsyncProcessor
+     */
+    public ToDefinition toAsync(Endpoint endpoint, int poolSize) {
+        ToDefinition answer = new ToDefinition(endpoint);
+        answer.setAsync(true);
+        answer.setPoolSize(poolSize);
+        addOutput(answer);
+        // must push a block so we have a child route for the async reply
+        // routing which is separated from the caller route
+        pushBlock(answer);
+        return answer;
+    }
 
     /**
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>

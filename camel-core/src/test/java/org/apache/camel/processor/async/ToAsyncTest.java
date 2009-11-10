@@ -51,7 +51,7 @@ public class ToAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:a").toAsync("direct:bar").to("mock:result");
+                from("direct:start").to("mock:a").toAsync("direct:bar", 5).to("mock:result");
 
                 from("direct:bar").to("mock:b").transform(constant("Bye World"));
             }

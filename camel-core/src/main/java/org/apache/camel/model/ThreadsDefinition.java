@@ -80,12 +80,22 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> {
     }
 
     /**
-     * Setting the executor service for executing the multicasting action.
+     * Setting the executor service for the thread pool
      *
      * @return the builder
      */
     public ThreadsDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
+        return this;
+    }
+
+    /**
+     * Setting the executor service for the thread pool
+     *
+     * @return the builder
+     */
+    public ThreadsDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
         return this;
     }
 
@@ -118,6 +128,14 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> {
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
     }
 
     public Integer getPoolSize() {
