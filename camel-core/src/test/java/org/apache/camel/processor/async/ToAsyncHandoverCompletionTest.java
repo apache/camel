@@ -16,33 +16,36 @@
  */
 package org.apache.camel.processor.async;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * @version $Revision$
  */
-public class ToAsyncTest extends ContextTestSupport {
+public class ToAsyncHandoverCompletionTest extends ContextTestSupport {
 
-    public void testToAsync() throws Exception {
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+    public void testToAsyncHandoverCompletion() throws Exception {
+        deleteDirectory("target/toasync");
 
-        template.sendBody("direct:start", "Hello World");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World");
+        mock.expectedFileExists("target/toasync/done/hello.txt");
+
+        template.sendBodyAndHeader("file://target/toasync", "World", Exchange.FILE_NAME, "hello.txt");
+
+        Thread.sleep(1000);
+
+        // now there is a delay of 3 seconds but the original file should still be there as its in progress
+        File target = new File("target/toasync/hello.txt").getAbsoluteFile();
+        assertEquals(true, target.exists());
 
         assertMockEndpointsSatisfied();
-
-        // and it should be different exchange ids
-
-        String ida = getMockEndpoint("mock:a").getReceivedExchanges().get(0).getExchangeId();
-        String idb = getMockEndpoint("mock:b").getReceivedExchanges().get(0).getExchangeId();
-        String idresult = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getExchangeId();
-
-        // id a should be different and id b and id result the same
-        assertNotSame(ida, idb);
-        assertNotSame(ida, idresult);
-        assertSame(idb, idresult);
     }
 
     @Override
@@ -50,9 +53,9 @@ public class ToAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:a").toAsync("direct:bar", 5).to("mock:result");
+                from("file://target/toasync?move=done").to("mock:a").toAsync("direct:bar", 5).to("mock:result");
 
-                from("direct:bar").to("mock:b").transform(constant("Bye World"));
+                from("direct:bar").delay(3000).transform(simple("Bye ${body}"));
             }
         };
     }

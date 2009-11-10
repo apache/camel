@@ -84,24 +84,19 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);
 
-                if (producer instanceof AsyncProcessor) {
-                    // let the producer use this callback to signal completion
-                    AsyncProcessor asyncProcessor = (AsyncProcessor) producer;
+                AsyncProcessor asyncProducer = exchange.getContext().getTypeConverter().convertTo(AsyncProcessor.class, producer);
 
-                    // pass in the callback that adds the exchange to the completed list of tasks
-                    final AsyncCallback callback = new AsyncCallback() {
-                        public void onDataReceived(Exchange exchange) {
-                            completedTasks.add(exchange);
-                        }
-                    };
+                // pass in the callback that adds the exchange to the completed list of tasks
+                final AsyncCallback callback = new AsyncCallback() {
+                    public void onDataReceived(Exchange exchange) {
+                        completedTasks.add(exchange);
+                    }
+                };
 
-                    asyncProcessor.process(exchange, callback);
-                } else {
-                    // its not a real AsyncProcessor so simulate async processing
-                    producer.process(exchange);
-                    completedTasks.add(exchange);
-                }
+                // produce it async
+                asyncProducer.process(exchange, callback);
 
+                // and return the exchange
                 return exchange;
             }
         });
