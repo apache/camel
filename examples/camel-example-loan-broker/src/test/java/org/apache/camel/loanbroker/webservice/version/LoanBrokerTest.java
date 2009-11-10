@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class LoadBrokerTest extends Assert {
+public class LoanBrokerTest extends Assert {
     AbstractApplicationContext applicationContext;
     
     @Before
