@@ -28,7 +28,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.SendAsyncProcessor;
+import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
@@ -90,16 +92,19 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
         }
         if (executorService == null && poolSize != null) {
-            executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "ToAsync", true);
+            executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "ToAsync[" + getLabel() + "]", true);
         }
 
         // create the child processor which is the async route
         Processor childProcessor = routeContext.createProcessor(this);
 
+        // wrap it in a unit of work so the route that comes next is also done in a unit of work
+        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(childProcessor);
+
         // create async processor
         Endpoint endpoint = resolveEndpoint(routeContext);
 
-        SendAsyncProcessor async = new SendAsyncProcessor(endpoint, getPattern(), childProcessor);
+        SendAsyncProcessor async = new SendAsyncProcessor(endpoint, getPattern(), uow);
         if (executorService != null) {
             async.setExecutorService(executorService);
         }

@@ -17,17 +17,17 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.async.ToAsyncTest;
+import org.apache.camel.processor.async.ToAsyncTwoTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  * @version $Revision$
  */
-public class SpringToAsyncTest extends ToAsyncTest {
+public class SpringToAsyncTwoTest extends ToAsyncTwoTest {
 
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringToAsyncTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringToAsyncTwoTest.xml");
     }
 
 }

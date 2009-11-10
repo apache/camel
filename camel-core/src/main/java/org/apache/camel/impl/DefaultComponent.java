@@ -101,7 +101,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * Strategy to do post configuration logic.
      * <p/>
      * Can be used to construct an URI based on the remaining parameters. For example the parameters that configures
-     * the endpoint have been removed from the parameters which which leaves it with only additional parameters.
+     * the endpoint have been removed from the parameters which leaves only the additional parameters left.
      *
      * @param endpoint the created endpoint
      * @param parameters the remaining parameters after the endpoint has been created and parsed the parameters

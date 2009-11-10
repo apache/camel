@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,6 +28,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
@@ -37,7 +40,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 /**
  * @version $Revision$
  */
-public class SendAsyncProcessor extends SendProcessor implements Runnable {
+public class SendAsyncProcessor extends SendProcessor implements Runnable, Navigate {
 
     private static final int DEFAULT_THREADPOOL_SIZE = 10;
     protected final Processor target;
@@ -141,6 +144,19 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable {
         this.exceptionHandler = exceptionHandler;
     }
 
+    public boolean hasNext() {
+        return target != null;
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(target);
+        return answer;
+    }
+
     public void run() {
         while (isRunAllowed()) {
             Exchange exchange;
@@ -154,6 +170,13 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable {
 
             if (exchange != null) {
                 try {
+                    // copy OUT to IN
+                    if (exchange.hasOut()) {
+                        // replace OUT with IN as async processing changed something
+                        exchange.setIn(exchange.getOut());
+                        exchange.setOut(null);
+                    }
+
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Async reply received now routing the Exchange: " + exchange);
                     }
