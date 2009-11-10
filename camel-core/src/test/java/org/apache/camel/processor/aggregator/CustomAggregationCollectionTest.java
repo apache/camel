@@ -16,19 +16,9 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationCollection;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
  * Unit test for using our own aggregation collection.

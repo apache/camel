@@ -17,7 +17,6 @@
 package org.apache.camel;
 
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * A useful base class for testing the language plugins in Camel

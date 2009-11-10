@@ -16,10 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.File;
-
-import org.apache.camel.processor.validation.ValidatingProcessor;
-
 /**
  * Unit test of ValidatingProcessor.
  */

@@ -22,8 +22,6 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.Language;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default data format resolver

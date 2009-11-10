@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.naming.Context;
@@ -27,10 +26,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jndi.JndiTest;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes

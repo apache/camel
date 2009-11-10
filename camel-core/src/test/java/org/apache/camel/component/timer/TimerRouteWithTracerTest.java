@@ -18,7 +18,6 @@ package org.apache.camel.component.timer;
 
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * @version $Revision$

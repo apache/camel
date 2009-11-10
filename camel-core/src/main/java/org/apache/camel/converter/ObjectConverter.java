@@ -16,12 +16,10 @@
  */
 package org.apache.camel.converter;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
