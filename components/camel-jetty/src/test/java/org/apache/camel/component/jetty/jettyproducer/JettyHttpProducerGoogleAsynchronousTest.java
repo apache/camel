@@ -30,7 +30,7 @@ public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
     public void testGoogleFrontPageAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).outBody(String.class).contains("google");
+        mock.message(0).body(String.class).contains("google");
 
         template.sendBody("direct:start", null);
 
