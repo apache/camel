@@ -38,7 +38,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
  */
 public final class JaxbConverter {
     private XmlConverter xmlConverter = new XmlConverter();
-    private Map<Class, JAXBContext> contexts = new HashMap<Class, JAXBContext>();
+    private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
 
     @Converter
     public JAXBSource toSource(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException {
@@ -76,7 +76,7 @@ public final class JaxbConverter {
     }
 
     private synchronized JAXBContext getJaxbContext(Object value) throws JAXBException {
-        Class type = value.getClass();
+        Class<?> type = value.getClass();
         JAXBContext context = contexts.get(type);
         if (context == null) {
             context = JAXBContext.newInstance(type);
@@ -84,5 +84,4 @@ public final class JaxbConverter {
         }
         return context;
     }
-
 }

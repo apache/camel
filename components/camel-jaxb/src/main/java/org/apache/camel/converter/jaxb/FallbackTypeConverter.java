@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Log LOG = LogFactory.getLog(FallbackTypeConverter.class);
-    private Map<Class, JAXBContext> contexts = new HashMap<Class, JAXBContext>();
+    private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
 

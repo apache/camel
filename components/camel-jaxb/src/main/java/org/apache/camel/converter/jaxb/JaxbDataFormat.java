@@ -80,7 +80,7 @@ public class JaxbDataFormat implements DataFormat {
             // must create a new instance of unmarshaller as its not thread safe
             Object answer = getContext().createUnmarshaller().unmarshal(stream);
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
-                answer = ((JAXBElement)answer).getValue();
+                answer = ((JAXBElement<?>)answer).getValue();
             }
             return answer;
         } catch (JAXBException e) {

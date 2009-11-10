@@ -20,9 +20,9 @@ package org.apache.camel.example;
  * @version $Revision$
  */
 public class InvalidOrderException extends Exception {
+    private static final long serialVersionUID = 383958238537555588L;
 
     public InvalidOrderException(String message) {
         super(message);
     }
-    
 }

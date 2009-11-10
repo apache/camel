@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Message;
+import org.apache.camel.util.CastUtils;
 
 /**
  * Represents a JAXB2 representation of a Camel {@link Message} - <b>Important</b>: work in progress!
@@ -46,7 +47,7 @@ public class MessageDefinition {
     List<HeaderDefinition> headers = new ArrayList<HeaderDefinition>();
     @XmlAnyElement(lax = true)
     @XmlMixed
-    private List content = new ArrayList();
+    private List<Object> content = new ArrayList<Object>();
     @XmlTransient
     private Object body;
 
@@ -66,9 +67,10 @@ public class MessageDefinition {
     public void setBody(Object body) {
         this.body = body;
         if (body instanceof List) {
-            content = (List)body;
+            List<Object> cont = CastUtils.cast((List<?>)body);
+            content = cont;
         } else {
-            content = new ArrayList();
+            content = new ArrayList<Object>();
             content.add(body);
         }
     }
