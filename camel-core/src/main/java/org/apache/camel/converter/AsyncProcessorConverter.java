@@ -27,7 +27,11 @@ import org.apache.camel.processor.DelegateProcessor;
  * @version $Revision$
  */
 @Converter
-public class AsyncProcessorConverter {
+public final class AsyncProcessorConverter {
+
+    private AsyncProcessorConverter() {
+        // Utility class
+    }
 
     private static final class ProcessorToAsyncProcessorBridge extends DelegateProcessor implements AsyncProcessor {
 

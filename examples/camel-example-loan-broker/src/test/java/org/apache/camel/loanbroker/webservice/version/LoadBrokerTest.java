@@ -16,16 +16,13 @@
  */
 package org.apache.camel.loanbroker.webservice.version;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.loanbroker.webservice.version.bank.BankServer;
-import org.apache.camel.loanbroker.webservice.version.credit.CreditAgencyServer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class LoadBrokerTest extends Assert {
     AbstractApplicationContext applicationContext;
@@ -62,5 +59,4 @@ public class LoadBrokerTest extends Assert {
         
         assertTrue(delta2 < delta1);
     }
- 
 }

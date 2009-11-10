@@ -18,16 +18,17 @@ package org.apache.camel.example.camel.transport;
 
 import java.net.MalformedURLException;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelTransportClientServerTest extends Assert {
     static AbstractApplicationContext context;

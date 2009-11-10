@@ -30,6 +30,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
+    private static int counter;
+    private static String thread1;
+    private static String thread2;
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/component/jms/tx/TransactedAsyncUsingThreadsTest.xml");
@@ -38,10 +42,6 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
     protected int getExpectedRouteCount() {
         return 0;
     }
-
-    private static int counter;
-    private static String thread1;
-    private static String thread2;
 
     @Before
     public void init() {

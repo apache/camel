@@ -16,15 +16,15 @@
  */
 package org.apache.camel.example.cxf.jaxrs;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
+
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JAXRSClientServerTest extends CamelSpringTestSupport {
     

@@ -16,14 +16,8 @@
  */
 package org.apache.camel.example.cxf.provider;
 
-import javax.xml.ws.Endpoint;
-
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.spring.SpringBusFactory;
 
 public class Server {
     AbstractApplicationContext applicationContext;
