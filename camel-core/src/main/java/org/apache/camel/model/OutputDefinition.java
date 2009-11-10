@@ -52,5 +52,4 @@ public class OutputDefinition<Type extends ProcessorDefinition> extends Processo
             }
         }
     }
-
 }

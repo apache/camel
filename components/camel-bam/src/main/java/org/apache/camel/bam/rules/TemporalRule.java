@@ -29,6 +29,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.OutputDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.Time;
@@ -50,7 +51,7 @@ public class TemporalRule extends ServiceSupport {
     private long expectedMillis;
     private long overdueMillis;
     private Processor overdueAction;
-    private OutputDefinition overdueProcessors = new OutputDefinition();
+    private OutputDefinition<ProcessorDefinition<?>> overdueProcessors = new OutputDefinition<ProcessorDefinition<?>>();
 
     public TemporalRule(TimeExpression first, TimeExpression second) {
         this.first = first;
@@ -66,15 +67,12 @@ public class TemporalRule extends ServiceSupport {
         return this;
     }
 
-    public OutputDefinition errorIfOver(Time builder) {
+    public OutputDefinition<ProcessorDefinition<?>> errorIfOver(Time builder) {
         return errorIfOver(builder.toMillis());
     }
 
-    public OutputDefinition errorIfOver(long millis) {
+    public OutputDefinition<ProcessorDefinition<?>> errorIfOver(long millis) {
         overdueMillis = millis;
-        if (overdueProcessors == null) {
-            overdueProcessors = new OutputDefinition();
-        }
         return overdueProcessors;
     }
 
@@ -88,12 +86,10 @@ public class TemporalRule extends ServiceSupport {
 
     public Processor getOverdueAction() throws Exception {
         if (overdueAction == null && overdueProcessors != null) {
-
-            // TOOD refactor to avoid this messyness...
-            ArrayList<Route> list = new ArrayList<Route>();
             RouteDefinition route = new RouteDefinition();
             route.setCamelContext(first.getBuilder().getProcessBuilder().getContext());
-            RouteContext routeContext = new DefaultRouteContext(first.getBuilder().getProcessBuilder().getContext(), route, null, list);
+            RouteContext routeContext = new DefaultRouteContext(
+                first.getBuilder().getProcessBuilder().getContext(), route, null, new ArrayList<Route>());
 
             overdueAction = overdueProcessors.createOutputsProcessor(routeContext);
         }
@@ -103,7 +99,7 @@ public class TemporalRule extends ServiceSupport {
     public void processExchange(Exchange exchange, ProcessInstance instance) {
         Date firstTime = first.evaluate(instance);
         if (firstTime == null) {
-            // ignore as first event has not accurred yet
+            // ignore as first event has not occurred yet
             return;
         }
 

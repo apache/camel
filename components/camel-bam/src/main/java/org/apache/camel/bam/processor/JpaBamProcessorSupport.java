@@ -43,6 +43,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final transient Log LOG = LogFactory.getLog(JpaBamProcessorSupport.class);
 
     private static final Lock LOCK = new ReentrantLock(); // lock used for concurrency issues
+
     private ActivityRules activityRules;
     private JpaTemplate template;
     private String findByKeyQuery;
@@ -132,6 +133,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected T findEntityByCorrelationKey(Object key) {
         if (isCorrelationKeyIsPrimary()) {
             return template.find(getEntityType(), key);
@@ -145,7 +147,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         }
     }
 
-    protected Class getKeyType() {
+    protected Class<?> getKeyType() {
         try {
             Method getter = IntrospectionSupport.getPropertyGetter(getEntityType(), getKeyPropertyName());
             return getter.getReturnType();

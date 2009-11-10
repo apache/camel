@@ -32,8 +32,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a single business process
@@ -45,7 +43,6 @@ import org.apache.commons.logging.LogFactory;
     name = "CAMEL_PROCESSINSTANCE"
 )
 public class ProcessInstance  {
-    private static final transient Log LOG = LogFactory.getLog(ProcessInstance.class);
     private ProcessDefinition processDefinition;
     private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
     private String correlationKey;

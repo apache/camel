@@ -27,14 +27,15 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class NoCorrelationKeyException extends CamelExchangeException {
-    private final BamProcessorSupport processor;
+    private static final long serialVersionUID = 4511220911189364989L;
+    private final BamProcessorSupport<?> processor;
 
-    public NoCorrelationKeyException(BamProcessorSupport processor, Exchange exchange) {
+    public NoCorrelationKeyException(BamProcessorSupport<?> processor, Exchange exchange) {
         super("No correlation key could be found for " + processor.getCorrelationKeyExpression(), exchange);
         this.processor = processor;
     }
 
-    public BamProcessorSupport getProcessor() {
+    public BamProcessorSupport<?> getProcessor() {
         return processor;
     }
 }

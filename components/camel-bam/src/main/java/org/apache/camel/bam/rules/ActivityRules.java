@@ -26,8 +26,6 @@ import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a activity which is typically a system or could be an endpoint
@@ -35,11 +33,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class ActivityRules extends ServiceSupport {
-    private static final transient Log LOG = LogFactory.getLog(ActivityRules.class);
     private int expectedMessages = 1;
     private ProcessRules processRules;
     private List<TemporalRule> rules = new ArrayList<TemporalRule>();
-    private ActivityDefinition activityDefinition;
     private String activityName;
     private final org.apache.camel.bam.ProcessBuilder builder;
 
@@ -77,7 +73,6 @@ public class ActivityRules extends ServiceSupport {
     }
 
     public void setActivityDefinition(ActivityDefinition activityDefinition) {
-        this.activityDefinition = activityDefinition;
     }
 
     public int getExpectedMessages() {

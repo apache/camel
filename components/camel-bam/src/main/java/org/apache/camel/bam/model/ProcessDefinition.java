@@ -24,6 +24,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,7 +74,8 @@ public class ProcessDefinition extends EntitySupport {
     }
 
     public static ProcessDefinition findOrCreateProcessDefinition(JpaTemplate template, String processName) {
-        List<ProcessDefinition> list = template.find("select x from " + ProcessDefinition.class.getName() + " x where x.name = ?1", processName);
+        List<ProcessDefinition> list = CastUtils.cast(template.find("select x from " 
+            + ProcessDefinition.class.getName() + " x where x.name = ?1", processName));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {

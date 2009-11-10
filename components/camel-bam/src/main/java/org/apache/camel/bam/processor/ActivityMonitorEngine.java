@@ -26,6 +26,7 @@ import javax.persistence.PersistenceException;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.CastUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,7 +47,6 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
     private JpaTemplate template;
     private TransactionTemplate transactionTemplate;
     private ProcessRules rules;
-    private int escalateLevel;
     private long windowMillis = 1000L;
     private Thread thread;
     private boolean useLocking;
@@ -76,8 +76,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        //List<ActivityState> list = template.find("select x from " + ActivityState.class.getName() + " x where x.escalationLevel = ?1 and x.timeOverdue < ?2", escalateLevel, timeNow);
-                        List<ActivityState> list = template.find("select x from " + ActivityState.class.getName() + " x where x.timeOverdue < ?1", timeNow);
+                        List<ActivityState> list = CastUtils.cast(template.find("select x from " + ActivityState.class.getName() + " x where x.timeOverdue < ?1", timeNow));
                         for (ActivityState activityState : list) {
                             fireExpiredEvent(activityState);
                         }

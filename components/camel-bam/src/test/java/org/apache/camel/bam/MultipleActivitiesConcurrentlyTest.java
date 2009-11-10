@@ -20,7 +20,6 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @version $Revision$

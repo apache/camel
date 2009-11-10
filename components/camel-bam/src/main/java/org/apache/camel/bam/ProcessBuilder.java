@@ -30,6 +30,7 @@ import org.apache.camel.bam.processor.JpaBamProcessor;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
@@ -49,7 +50,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     private TransactionTemplate transactionTemplate;
     private String processName;
     private List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
-    private Class entityType = ProcessInstance.class;
+    private Class<ProcessInstance> entityType = ProcessInstance.class;
     private ProcessRules processRules = new ProcessRules();
     private ProcessDefinition processDefinition;
     private ActivityMonitorEngine engine;
@@ -84,7 +85,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     /**
      * Sets the process entity type used to perform state management
      */
-    public ProcessBuilder entityType(Class entityType) {
+    public ProcessBuilder entityType(Class<ProcessInstance> entityType) {
         this.entityType = entityType;
         return this;
     }
@@ -105,7 +106,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return activityBuilders;
     }
 
-    public Class getEntityType() {
+    public Class<ProcessInstance> getEntityType() {
         return entityType;
     }
 
@@ -172,7 +173,8 @@ public abstract class ProcessBuilder extends RouteBuilder {
     // -------------------------------------------------------------------------
     public ActivityDefinition findOrCreateActivityDefinition(String activityName) {
         ProcessDefinition definition = getProcessDefinition();
-        List<ActivityDefinition> list = jpaTemplate.find("select x from " + ActivityDefinition.class.getName() + " x where x.processDefinition = ?1 and x.name = ?2", definition, activityName);
+        List<ActivityDefinition> list = CastUtils.cast(jpaTemplate.find("select x from " 
+            + ActivityDefinition.class.getName() + " x where x.processDefinition = ?1 and x.name = ?2", definition, activityName));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
@@ -185,7 +187,8 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     protected ProcessDefinition findOrCreateProcessDefinition() {
-        List<ProcessDefinition> list = jpaTemplate.find("select x from " + ProcessDefinition.class.getName() + " x where x.name = ?1", processName);
+        List<ProcessDefinition> list = CastUtils.cast(jpaTemplate.find("select x from " 
+            + ProcessDefinition.class.getName() + " x where x.name = ?1", processName));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {

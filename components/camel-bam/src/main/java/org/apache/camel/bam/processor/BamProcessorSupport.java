@@ -16,6 +16,8 @@
  */
 package org.apache.camel.bam.processor;
 
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -27,8 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A base {@link Processor} for working on <a
@@ -45,6 +45,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
     private int retryCount = 20;
     private long retrySleep = 1000L;
 
+    @SuppressWarnings("unchecked")
     protected BamProcessorSupport(TransactionTemplate transactionTemplate,
                                   Expression correlationKeyExpression) {
         this.transactionTemplate = transactionTemplate;
@@ -57,7 +58,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
             if (arguments.length > 0) {
                 Type argumentType = arguments[0];
                 if (argumentType instanceof Class) {
-                    this.entityType = (Class<T>)argumentType;
+                    this.entityType = (Class<T>) argumentType;
                 }
             }
         }
