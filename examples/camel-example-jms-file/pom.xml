@@ -34,6 +34,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.example.jmstofile.*</camel.osgi.export.pkg>
+    <camel.osgi.import.pkg>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool,*</camel.osgi.import.pkg>
   </properties>
 
   <dependencies>
@@ -75,6 +76,23 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <profiles>
+  	<profile>
+  		<id>Example</id>
+  		<properties>
+  			<!-- Starting the camel-cxf example of routing the SOAP over http message to SOAP over JMS Server -->
+  			<target.main.class>org.apache.camel.example.jmstofile.CamelJmsToFileExample</target.main.class>
+  		</properties>
+     </profile>
+     <profile>
+  		<id>Client</id>
+  		<properties>
+  			<!-- Starting the camel-cxf example of routing the SOAP over http message to SOAP over JMS Server -->
+  			<target.main.class>org.apache.camel.example.jmstofile.JmsToFileClient</target.main.class>
+  		</properties>
+  	</profile>
+  </profiles>
 
   <build>
     <plugins>
@@ -84,7 +102,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <configuration>
-          <mainClass>org.apache.camel.example.jmstofile.CamelJmsToFileExample</mainClass>
+          <mainClass>${target.main.class}</mainClass>
           <includePluginDependencies>false</includePluginDependencies>
         </configuration>
       </plugin>

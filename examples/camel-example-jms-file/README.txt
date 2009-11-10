@@ -15,7 +15,12 @@ You will need to compile this example first:
   mvn compile
   
 The example should run if you type
-  mvn exec:java
+  mvn exec:java -PExample
+  
+To run the example inside ServiceMix 4
+  First install this example bundle, make sure the jms-file route service is started,
+  then start the client to send the JMS message to camel route service 
+  mvn exec:java -PClient
 
 To run the example with Ant
   a. You need to have Apache ActiveMQ installed. It can be downloaded from 

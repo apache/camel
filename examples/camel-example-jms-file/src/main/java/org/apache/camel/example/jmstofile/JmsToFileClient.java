@@ -31,7 +31,7 @@ public final class JmsToFileClient {
         //Helper class
     }
     
-    public static void mail(String[] args) throws Exception {
+    public static void main(String args[]) throws Exception {
         
         CamelContext context = new DefaultCamelContext();
        
