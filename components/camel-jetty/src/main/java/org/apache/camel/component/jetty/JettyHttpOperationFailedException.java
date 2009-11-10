@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.Map;
+
 import org.apache.camel.CamelException;
 
 /**
@@ -25,12 +27,20 @@ public class JettyHttpOperationFailedException extends CamelException {
 
     private final String url;
     private final int statusCode;
+    private final String redirectLocation;
+    private final Map<String, Object> responseHeaders;
     private final String responseBody;
 
-    public JettyHttpOperationFailedException(String url, int statusCode, String responseBody) {
-        super("HTTP operation failed invoking " + url + " with statusCode: " + statusCode);
-        this.statusCode = statusCode;
+    public JettyHttpOperationFailedException(String url, int statusCode, Map<String, Object> headers, String responseBody) {
+        this(url, statusCode, null, headers, responseBody);
+    }
+
+    public JettyHttpOperationFailedException(String url, int statusCode, String location, Map<String, Object> headers, String responseBody) {
+        super("HTTP operation failed invoking " + url + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
         this.url = url;
+        this.statusCode = statusCode;
+        this.redirectLocation = location;
+        this.responseHeaders = headers;
         this.responseBody = responseBody;
     }
 
@@ -48,5 +58,13 @@ public class JettyHttpOperationFailedException extends CamelException {
 
     public String getResponseBody() {
         return responseBody;
+    }
+
+    public String getRedirectLocation() {
+        return redirectLocation;
+    }
+
+    public Map<String, Object> getResponseHeaders() {
+        return responseHeaders;
     }
 }

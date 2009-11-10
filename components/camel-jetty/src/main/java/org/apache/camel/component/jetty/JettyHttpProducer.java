@@ -24,9 +24,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpProducerHelper;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
@@ -59,6 +61,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         JettyContentExchange httpExchange = createHttpExchange(exchange);
         sendSynchronous(exchange, client, httpExchange);
     }
+
     public void process(Exchange exchange, AsyncCallback callback) throws Exception {
         HttpClient client = getEndpoint().getClient();
 
@@ -66,18 +69,9 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         sendAsynchronous(exchange, client, httpExchange, callback);
     }
 
-    protected void sendSynchronous(Exchange exchange, HttpClient client, JettyContentExchange httpExchange) throws IOException {
-        // set the body with the message holder
-        exchange.setOut(new JettyHttpMessage(exchange, httpExchange, getEndpoint().isThrowExceptionOnFailure()));
-
-        doSendExchange(client, httpExchange);
-    }
-
     protected void sendAsynchronous(final Exchange exchange, final HttpClient client, final JettyContentExchange httpExchange,
                                     final AsyncCallback callback) throws IOException {
 
-        // TODO: Use something that marks it as async routed
-        exchange.setProperty("CamelSendAsync", Boolean.TRUE);
         httpExchange.setCallback(callback);
         httpExchange.setExchange(exchange);
 
@@ -87,11 +81,80 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         doSendExchange(client, httpExchange);
     }
 
-    protected void doSendExchange(HttpClient client, JettyContentExchange httpExchange) throws IOException {
+    protected void sendSynchronous(Exchange exchange, HttpClient client, JettyContentExchange httpExchange) throws Exception {
+        doSendExchange(client, httpExchange);
+
+        // we send synchronous so wait for it to be done
+        httpExchange.waitForDone();
+        // and then process the response
+        processResponse(exchange, httpExchange);
+    }
+
+    protected void processResponse(Exchange exchange, JettyContentExchange httpExchange) throws IOException, JettyHttpOperationFailedException {
+        int responseCode = httpExchange.getResponseStatus();
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending HTTP request to: " + httpExchange.getUrl());
+            LOG.debug("HTTP responseCode: " + responseCode);
         }
-        client.send(httpExchange);
+
+        Message in = exchange.getIn();
+        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
+        if (!getEndpoint().isThrowExceptionOnFailure()) {
+            // if we do not use failed exception then populate response for all response codes
+            populateResponse(exchange, httpExchange, exchange.getIn(), strategy, responseCode);
+        } else {
+            if (responseCode >= 100 && responseCode < 300) {
+                // only populate response for OK response
+                populateResponse(exchange, httpExchange, in, strategy, responseCode);
+            } else {
+                // operation failed so populate exception to throw
+                throw populateHttpOperationFailedException(exchange, httpExchange, responseCode);
+            }
+        }
+    }
+
+    protected void populateResponse(Exchange exchange, JettyContentExchange httpExchange,
+                                    Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
+        Message answer = exchange.getOut();
+
+        answer.setHeaders(in.getHeaders());
+        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+        answer.setBody(httpExchange.getBody());
+
+        // propagate HTTP response headers
+        for (Map.Entry<String, Object> entry : httpExchange.getHeaders().entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if (name.toLowerCase().equals("content-type")) {
+                name = Exchange.CONTENT_TYPE;
+            }
+            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                answer.setHeader(name, value);
+            }
+        }
+    }
+
+    protected JettyHttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, JettyContentExchange httpExchange,
+                                                                                     int responseCode) throws IOException {
+        JettyHttpOperationFailedException exception;
+        String uri = httpExchange.getUrl();
+        Map<String, Object> headers = httpExchange.getHeaders();
+        String body = httpExchange.getBody();
+
+        if (responseCode >= 300 && responseCode < 400) {
+            String locationHeader = httpExchange.getResponseFields().getStringField("location");
+            if (locationHeader != null) {
+                exception = new JettyHttpOperationFailedException(uri, responseCode, locationHeader, headers, body);
+            } else {
+                // no redirect location
+                exception = new JettyHttpOperationFailedException(uri, responseCode, headers, body);
+            }
+        } else {
+            // internal server error (error code 500)
+            exception = new JettyHttpOperationFailedException(uri, responseCode, headers, body);
+        }
+
+        return exception;
     }
 
     protected JettyContentExchange createHttpExchange(Exchange exchange) throws Exception {
@@ -104,6 +167,18 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         httpExchange.setURL(url);
 
         doSetQueryParameters(exchange, httpExchange);
+
+        // and copy headers from IN message
+        Message in = exchange.getIn();
+        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
+
+        // propagate headers as HTTP headers
+        for (String headerName : in.getHeaders().keySet()) {
+            String headerValue = in.getHeader(headerName, String.class);
+            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
+                httpExchange.addRequestHeader(headerName, headerValue);
+            }
+        }
 
         return httpExchange;
     }
@@ -125,6 +200,13 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             httpExchange.setRequestHeader(entry.getKey(), entry.getValue());
         }
+    }
+
+    protected static void doSendExchange(HttpClient client, JettyContentExchange httpExchange) throws IOException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sending HTTP request to: " + httpExchange.getUrl());
+        }
+        client.send(httpExchange);
     }
 
     @Override

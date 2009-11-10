@@ -40,7 +40,7 @@ public class JettyContentExchange extends ContentExchange {
 
     private static final transient Log LOG = LogFactory.getLog(JettyContentExchange.class);
 
-    private final Map<String, String> headers = new LinkedHashMap<String, String>();
+    private final Map<String, Object> headers = new LinkedHashMap<String, Object>();
     private CountDownLatch headersComplete = new CountDownLatch(1);
     private CountDownLatch bodyComplete = new CountDownLatch(1);
     private volatile boolean failed;
@@ -83,10 +83,6 @@ public class JettyContentExchange extends ContentExchange {
         }
 
         if (callback != null && exchange != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Adding Exchange to completed task: " + exchange);
-            }
-
             // signal we are complete
             callback.onDataReceived(exchange);
         }
@@ -106,7 +102,7 @@ public class JettyContentExchange extends ContentExchange {
         return bodyComplete.getCount() == 0;
     }
 
-    public Map<String, String> getHeaders() {
+    public Map<String, Object> getHeaders() {
         return headers;
     }
 

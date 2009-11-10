@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,20 +32,14 @@ public class JettyHttpProducerSimulate404ErrorTest extends CamelTestSupport {
 
     @Test
     public void test404() throws Exception {
-        Exchange exchange = template.request(url, null);
-        assertNotNull(exchange);
-
-        Future<String> future = exchange.getOut().getBody(Future.class);
-        assertNotNull(future);
-        assertEquals(false, future.isDone());
-
         try {
-            future.get();
-        } catch (ExecutionException e) {
+            template.request(url, null);
+        } catch (Exception e) {
             JettyHttpOperationFailedException cause = assertIsInstanceOf(JettyHttpOperationFailedException.class, e.getCause());
             assertEquals(404, cause.getStatusCode());
             assertEquals("http//0.0.0.0:9123/bar", cause.getUrl());
             assertEquals("Page not found", cause.getResponseBody());
+            assertNotNull(cause.getResponseHeaders());
         }
     }
 

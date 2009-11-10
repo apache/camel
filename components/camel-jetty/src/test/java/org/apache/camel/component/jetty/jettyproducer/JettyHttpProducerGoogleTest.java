@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import java.util.concurrent.Future;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -31,14 +29,6 @@ public class JettyHttpProducerGoogleTest extends CamelTestSupport {
     public void testGoogleFrontPage() throws Exception {
         String reply = template.requestBody("direct:start", null, String.class);
         assertNotNull(reply);
-    }
-
-    @Test
-    public void testGoogleFrontPageFutureTask() throws Exception {
-        Object body = null;
-        Future<String> reply = (Future<String>) template.requestBody("direct:start", body);
-        assertNotNull(reply);
-        assertNotNull(reply.get());
     }
 
     @Override

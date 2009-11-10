@@ -31,6 +31,7 @@ import org.apache.camel.ExchangeTimedOutException;
  *
  * @version $Revision$
  */
+@Deprecated
 public class JettyFutureGetBody implements Future<String>, Serializable {
 
     private final Exchange exchange;
@@ -88,7 +89,7 @@ public class JettyFutureGetBody implements Future<String>, Serializable {
     private String doGetBody() throws ExecutionException {
         try {
             if (httpExchange.isFailed() && throwExceptionOnFailure) {
-                throw new JettyHttpOperationFailedException(httpExchange.getUrl(), httpExchange.getResponseStatus(), httpExchange.getBody());
+                throw new JettyHttpOperationFailedException(httpExchange.getUrl(), httpExchange.getResponseStatus(), httpExchange.getHeaders(), httpExchange.getBody());
             } else {
                 return httpExchange.getBody();
             }

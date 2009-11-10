@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import java.util.concurrent.Future;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
@@ -37,14 +36,10 @@ public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
         Exchange exchange = template.request(url, null);
         assertNotNull(exchange);
 
-        Future<String> future = exchange.getOut().getBody(Future.class);
-        assertNotNull(future);
-        assertEquals(false, future.isDone());
-
-        String reply = future.get();
+        String reply = exchange.getOut().getBody(String.class);
         assertEquals("Bye World", reply);
 
-        assertEquals(3, exchange.getOut().getHeaders().size());
+        assertEquals(4, exchange.getOut().getHeaders().size());
     }
 
     @Override
@@ -62,7 +57,7 @@ public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
                         res.getWriter().write("");
                         res.flushBuffer();
 
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
 
                         res.getWriter().write("Bye World");
                         res.flushBuffer();
