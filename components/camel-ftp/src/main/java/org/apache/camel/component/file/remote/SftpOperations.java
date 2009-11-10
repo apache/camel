@@ -295,8 +295,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         try {
             final List<ChannelSftp.LsEntry> list = new ArrayList<ChannelSftp.LsEntry>();
             Vector files = channel.ls(path);
-            for (Object file : files) {
-                list.add((ChannelSftp.LsEntry)file);
+            // can return either null or an empty list depending on FTP servers
+            if (files != null) {
+                for (Object file : files) {
+                    list.add((ChannelSftp.LsEntry)file);
+                }
             }
             return list;
         } catch (SftpException e) {
@@ -444,6 +447,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         String onlyName = FileUtil.stripPath(name);
         try {
             Vector files = channel.ls(directory);
+            // can return either null or an empty list depending on FTP servers
+            if (files == null) {
+                return false;
+            }
             for (Object file : files) {
                 ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
                 if (entry.getFilename().equals(onlyName)) {

@@ -373,6 +373,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         String onlyName = FileUtil.stripPath(name);
         try {
             String[] names = client.listNames(directory);
+            // can return either null or an empty list depending on FTP servers
+            if (names == null) {
+                return false;
+            }
             for (String existing : names) {
                 if (existing.equals(onlyName)) {
                     return true;
@@ -413,7 +417,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             final List<FTPFile> list = new ArrayList<FTPFile>();
             FTPFile[] files = client.listFiles(path);
-            list.addAll(Arrays.asList(files));
+            // can return either null or an empty list depending on FTP servers
+            if (files != null) {
+                list.addAll(Arrays.asList(files));
+            }
             return list;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
