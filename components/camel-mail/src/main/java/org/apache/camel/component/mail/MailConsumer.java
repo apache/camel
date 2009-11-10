@@ -200,7 +200,8 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
      */
     protected void processCommit(Exchange exchange) throws MessagingException {
         MailMessage msg = (MailMessage) exchange.getIn();
-        Message message = msg.getMessage();
+        // Use the "original" Message, in case a copy ended up being made
+        Message message = msg.getOriginalMessage();
 
         if (endpoint.getConfiguration().isDelete()) {
             LOG.debug("Exchange processed, so flagging message as DELETED");

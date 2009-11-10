@@ -32,6 +32,7 @@ import javax.mail.BodyPart;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -209,29 +210,29 @@ public class MailBinding {
     /**
      * Extracts the body from the Mail message
      */
-    public Object extractBodyFromMail(Exchange exchange, Message message) {
-        return doExtractBodyFromMail(exchange, message, true);
-    }
-
-    /**
-     * Extracts the body from the Mail message
-     */
-    protected Object doExtractBodyFromMail(Exchange exchange, Message message, boolean firstAttempt) {
+    public Object extractBodyFromMail(Exchange exchange, MailMessage mailMessage) {
+        Message message = mailMessage.getMessage();
         try {
             return message.getContent();
         } catch (Exception e) {
             // try to fix message in case it has an unsupported encoding in the Content-Type header
             UnsupportedEncodingException uee = ObjectHelper.getException(UnsupportedEncodingException.class, e);
-            if (firstAttempt && uee != null) {
+            if (uee != null) {
                 LOG.debug("Unsupported encoding detected: " + uee.getMessage());
                 try {
                     String contentType = message.getContentType();
                     String type = ObjectHelper.before(contentType, "charset=");
                     if (type != null) {
-                        message.setHeader("Content-Type", type);
                         // try again with fixed content type
                         LOG.debug("Trying to extract mail message again with fixed Content-Type: " + type);
-                        return doExtractBodyFromMail(exchange, message, false);
+                        // Since message is read-only, we need to use a copy
+                        MimeMessage messageCopy = new MimeMessage((MimeMessage)message);
+                        messageCopy.setHeader("Content-Type", type);
+                        Object body = messageCopy.getContent();
+                        // If we got this far, our fix worked...
+                        // Replace the MailMessage's Message with the copy
+                        mailMessage.setMessage(messageCopy);
+                        return body;
                     }
                 } catch (Exception e2) {
                     // fall through and let original exception be thrown
@@ -240,6 +241,61 @@ public class MailBinding {
 
             throw new RuntimeCamelException("Failed to extract body due to: " + e.getMessage()
                 + ". Exchange: " + exchange + ". Message: " + message, e);
+        }
+    }
+
+    /**
+     * Parses the attachments of the given mail message and adds them to the map
+     *
+     * @param  message  the mail message with attachments
+     * @param  map      the map to add found attachments (attachmentFilename is the key)
+     */
+    public void extractAttachmentsFromMail(Message message, Map<String, DataHandler> map)
+        throws javax.mail.MessagingException, IOException {
+
+        LOG.trace("Extracting attachments +++ start +++");
+
+        Object content = message.getContent();
+        if (content instanceof Multipart) {
+            extractAttachmentsFromMultipart((Multipart)content, map);
+        } else if (content != null) {
+            LOG.trace("No attachments to extract as content is not Multipart: " + content.getClass().getName());
+        }
+
+        LOG.trace("Extracting attachments +++ done +++");
+    }
+
+    protected void extractAttachmentsFromMultipart(Multipart mp, Map<String, DataHandler> map)
+        throws javax.mail.MessagingException, IOException {
+
+        for (int i = 0; i < mp.getCount(); i++) {
+            Part part = mp.getBodyPart(i);
+            LOG.trace("Part #" + i + ": " + part);
+
+            if (part.isMimeType("multipart/*")) {
+                LOG.trace("Part #" + i + ": is mimetype: multipart/*");
+                extractAttachmentsFromMultipart((Multipart)part.getContent(), map);
+            } else {
+                String disposition = part.getDisposition();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Part #" + i + ": Disposition: " + part.getDisposition());
+                    LOG.trace("Part #" + i + ": Description: " + part.getDescription());
+                    LOG.trace("Part #" + i + ": ContentType: " + part.getContentType());
+                    LOG.trace("Part #" + i + ": FileName: " + part.getFileName());
+                    LOG.trace("Part #" + i + ": Size: " + part.getSize());
+                    LOG.trace("Part #" + i + ": LineCount: " + part.getLineCount());
+                }
+
+                if (disposition != null && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE))) {
+                    // only add named attachments
+                    String fileName = part.getFileName();
+                    if (fileName != null) {
+                        LOG.debug("Mail contains file attachment: " + fileName);
+                        // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
+                        CollectionHelper.appendValue(map, fileName, part.getDataHandler());
+                    }
+                }
+            }
         }
     }
 

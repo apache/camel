@@ -16,21 +16,14 @@
  */
 package org.apache.camel.component.mail;
 
-import java.io.IOException;
 import java.util.Map;
-
 import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
@@ -38,14 +31,16 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision:520964 $
  */
 public class MailMessage extends DefaultMessage {
-    private static final transient Log LOG = LogFactory.getLog(MailMessage.class);
+    // we need a copy of the original message in case we need to workaround a charset issue when extracting
+    // mail content, see more in MailBinding
+    private Message originalMailMessage;
     private Message mailMessage;
 
     public MailMessage() {
     }
 
     public MailMessage(Message message) {
-        this.mailMessage = message;
+        this.originalMailMessage = this.mailMessage = message;
     }
 
     @Override
@@ -59,8 +54,16 @@ public class MailMessage extends DefaultMessage {
 
     public MailMessage copy() {
         MailMessage answer = (MailMessage)super.copy();
+        answer.originalMailMessage = originalMailMessage;
         answer.mailMessage = mailMessage;
         return answer;
+    }
+
+    /**
+     * Returns the original underlying Mail message
+     */
+    public Message getOriginalMessage() {
+        return originalMailMessage;
     }
 
     /**
@@ -71,6 +74,9 @@ public class MailMessage extends DefaultMessage {
     }
 
     public void setMessage(Message mailMessage) {
+        if (this.originalMailMessage == null) {
+            this.originalMailMessage = mailMessage;
+        }
         this.mailMessage = mailMessage;
     }
 
@@ -83,7 +89,7 @@ public class MailMessage extends DefaultMessage {
     protected Object createBody() {
         if (mailMessage != null) {
             MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
-            return binding != null ? binding.extractBodyFromMail(getExchange(), mailMessage) : null;
+            return binding != null ? binding.extractBodyFromMail(getExchange(), this) : null;
         }
         return null;
     }
@@ -106,7 +112,10 @@ public class MailMessage extends DefaultMessage {
     protected void populateInitialAttachments(Map<String, DataHandler> map) {
         if (mailMessage != null) {
             try {
-                extractAttachments(mailMessage, map);
+                MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
+                if (binding != null) {
+                    binding.extractAttachmentsFromMail(mailMessage, map);
+                }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error populating the initial mail message attachments", e);
             }
@@ -117,63 +126,9 @@ public class MailMessage extends DefaultMessage {
         super.copyFrom(that);
         if (that instanceof MailMessage) {
             MailMessage mailMessage = (MailMessage) that;
+            this.originalMailMessage = mailMessage.originalMailMessage;
             this.mailMessage = mailMessage.mailMessage;
         }
     }
-
-    /**
-     * Parses the attachments of the given mail message and adds them to the map
-     *
-     * @param  message  the mail message with attachments
-     * @param  map      the map to add found attachments (attachmentFilename is the key)
-     */
-    protected static void extractAttachments(Message message, Map<String, DataHandler> map)
-        throws javax.mail.MessagingException, IOException {
-
-        LOG.trace("Extracting attachments +++ start +++");
-
-        Object content = message.getContent();
-        if (content instanceof Multipart) {
-            extractFromMultipart((Multipart)content, map);
-        } else if (content != null) {
-            LOG.trace("No attachments to extract as content is not Multipart: " + content.getClass().getName());
-        }
-
-        LOG.trace("Extracting attachments +++ done +++");
-    }
-    
-    protected static void extractFromMultipart(Multipart mp, Map<String, DataHandler> map) 
-        throws javax.mail.MessagingException, IOException {
-
-        for (int i = 0; i < mp.getCount(); i++) {
-            Part part = mp.getBodyPart(i);
-            LOG.trace("Part #" + i + ": " + part);
-
-            if (part.isMimeType("multipart/*")) {
-                LOG.trace("Part #" + i + ": is mimetype: multipart/*");
-                extractFromMultipart((Multipart)part.getContent(), map);
-            } else {
-                String disposition = part.getDisposition();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Part #" + i + ": Disposition: " + part.getDisposition());
-                    LOG.trace("Part #" + i + ": Description: " + part.getDescription());
-                    LOG.trace("Part #" + i + ": ContentType: " + part.getContentType());
-                    LOG.trace("Part #" + i + ": FileName: " + part.getFileName());
-                    LOG.trace("Part #" + i + ": Size: " + part.getSize());
-                    LOG.trace("Part #" + i + ": LineCount: " + part.getLineCount());
-                }
-
-                if (disposition != null && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE))) {
-                    // only add named attachments
-                    String fileName = part.getFileName();
-                    if (fileName != null) {
-                        LOG.debug("Mail contains file attachment: " + fileName);
-                        // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
-                        CollectionHelper.appendValue(map, fileName, part.getDataHandler());
-                    }
-                }
-            }
-        }
-    }    
 
 }
