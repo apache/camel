@@ -58,6 +58,12 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testNoCamelParametersInFeedUri() throws Exception {
+        AtomEndpoint endpoint = context.getEndpoint("atom:file:src/test/data/feed.atom?splitEntries=false", AtomEndpoint.class);
+        assertEquals("file:src/test/data/feed.atom", endpoint.getFeedUri());
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -19,6 +19,7 @@ package org.apache.camel.component.rss;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.util.URISupport;
@@ -31,15 +32,28 @@ import org.apache.camel.util.URISupport;
 public class RssComponent extends FeedComponent {
 
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new RssEndpoint(uri, this, null);
+    }
 
-        // Parameters should be kept in the remaining path, since they might be needed to get the actual RSS feed
-        URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
-
-        if (remainingUri.getScheme().equals("http") || remainingUri.getScheme().equals("https")) {
-            return new RssEndpoint(uri, this, remainingUri.toString());
+    @Override
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map parameters) throws Exception {
+        RssEndpoint rss = (RssEndpoint) endpoint;
+        if (rss.getFeedUri() != null) {
+            // already set so do not change it
+            return;
         }
 
-        return new RssEndpoint(uri, this, remaining);
+        // recreate feed uri after we have configured the endpoint so we can use the left over parameters
+        // for the http feed
+        String feedUri;
+        if (!parameters.isEmpty()) {
+            URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
+            feedUri = remainingUri.toString();
+        } else {
+            feedUri = remaining;
+        }
+
+        rss.setFeedUri(feedUri);
     }
-    
+
 }

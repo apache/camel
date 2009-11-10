@@ -19,6 +19,7 @@ package org.apache.camel.component.atom;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.util.URISupport;
@@ -34,18 +35,28 @@ public class AtomComponent extends FeedComponent {
 
     @Override
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new AtomEndpoint(uri, this, null);
+    }
 
-        // Parameters should be kept in the remaining path, since they might be needed to get the actual ATOM feed
-        URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
-
-        // if http or https then the uri should include the parameters as we can have URI parameters
-        // that need to be sent to the remote server when retrieving feeds
-        String scheme = remainingUri.getScheme();
-        if (scheme != null && (scheme.equals("http") || scheme.equals("https"))) {
-            return new AtomEndpoint(uri, this, remainingUri.toString());
+    @Override
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map parameters) throws Exception {
+        AtomEndpoint atom = (AtomEndpoint) endpoint;
+        if (atom.getFeedUri() != null) {
+            // already set so do not change it
+            return;
         }
 
-        return new AtomEndpoint(uri, this, remaining);
+        // recreate feed uri after we have configured the endpoint so we can use the left over parameters
+        // for the http feed
+        String feedUri;
+        if (!parameters.isEmpty()) {
+            URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
+            feedUri = remainingUri.toString();
+        } else {
+            feedUri = remaining;
+        }
+
+        atom.setFeedUri(feedUri);
     }
 
 }

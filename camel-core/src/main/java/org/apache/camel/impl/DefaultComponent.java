@@ -93,7 +93,22 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             }
         }
 
+        afterConfiguration(uri, path, endpoint, parameters);
         return endpoint;
+    }
+
+    /**
+     * Strategy to do post configuration logic.
+     * <p/>
+     * Can be used to construct an URI based on the remaining parameters. For example the parameters that configures
+     * the endpoint have been removed from the parameters which which leaves it with only additional parameters.
+     *
+     * @param endpoint the created endpoint
+     * @param parameters the remaining parameters after the endpoint has been created and parsed the parameters
+     * @throws Exception can be thrown to indicate error creating the endpoint
+     */
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map parameters) throws Exception {
+        // noop
     }
 
     /**
