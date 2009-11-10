@@ -35,14 +35,14 @@ public final class FlatpackConverter {
     }
 
     @Converter
-    public static Map toMap(DataSet dataSet) {
+    public static Map<String, Object> toMap(DataSet dataSet) {
         Map<String, Object> map = new HashMap<String, Object>();
         putValues(map, dataSet);
         return map;
     }
 
     @Converter
-    public static List toList(DataSet dataSet) {
+    public static List<Map<String, Object>> toList(DataSet dataSet) {
         List<Map<String, Object>> answer = new ArrayList<Map<String, Object>>();
         dataSet.goTop();
 
@@ -77,5 +77,4 @@ public final class FlatpackConverter {
             map.put(column, value);
         }
     }
-
 }

@@ -16,19 +16,13 @@
  */
 package org.apache.camel.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Expression;
-import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.spi.Language;
-
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
 
 /**
  * A number of helper methods

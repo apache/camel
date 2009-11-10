@@ -18,20 +18,21 @@ package org.apache.camel.component.flatpack;
 
 import java.util.AbstractList;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sf.flatpack.DataSet;
 
 /**
  * @version $Revision$
  */
-public class DataSetList extends AbstractList {
+public class DataSetList extends AbstractList<Map<String, Object>> {
     private final DataSet dataSet;
 
     public DataSetList(DataSet dataSet) {
         this.dataSet = dataSet;
     }
 
-    public Object get(int index) {
+    public Map<String, Object> get(int index) {
         dataSet.absolute(index);
         return FlatpackConverter.toMap(dataSet);
     }
@@ -41,15 +42,14 @@ public class DataSetList extends AbstractList {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<Map<String, Object>> iterator() {
         dataSet.goTop();
-        return new Iterator() {
-
+        return new Iterator<Map<String, Object>>() {
             public boolean hasNext() {
                 return dataSet.next();
             }
 
-            public Object next() {
+            public Map<String, Object> next() {
                 // because of a limitation in split() we need to create an object for the current position
                 // otherwise strangeness occurs when the same object is used to represent each row
                 return FlatpackConverter.toMap(dataSet);
@@ -60,5 +60,4 @@ public class DataSetList extends AbstractList {
             }
         };
     }
-    
 }
