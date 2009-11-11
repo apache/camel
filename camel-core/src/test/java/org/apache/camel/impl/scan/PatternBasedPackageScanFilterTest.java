@@ -31,11 +31,11 @@ import org.apache.camel.util.CollectionHelper;
 @SuppressWarnings("unchecked")
 public class PatternBasedPackageScanFilterTest extends ScanTestSupport {
 
-    private Set<Class> allClasses;
+    private Set<Class<?>> allClasses;
 
     public void setUp() throws Exception {
         // use classes that are pretty much constants
-        allClasses = new HashSet<Class>();
+        allClasses = new HashSet<Class<?>>();
         allClasses.add(List.class);
         allClasses.add(ArrayList.class);
         allClasses.add(LinkedList.class);

@@ -59,7 +59,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     @SuppressWarnings("unchecked")
     public void load(TypeConverterRegistry registry) throws Exception {
         String[] packageNames = findPackageNames();
-        Set<Class> classes = resolver.findAnnotated(Converter.class, packageNames);
+        Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
         for (Class type : classes) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading converter class: " + ObjectHelper.name(type));

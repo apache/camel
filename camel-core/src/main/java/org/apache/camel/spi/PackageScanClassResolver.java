@@ -53,7 +53,7 @@ public interface PackageScanClassResolver {
      * @param packageNames one or more package names to scan (including subpackages) for classes
      * @return the classes found, returns an empty set if none found
      */
-    Set<Class> findAnnotated(Class<? extends Annotation> annotation, String... packageNames);
+    Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames);
 
     /**
      * Attempts to discover classes that are annotated with to the annotation.
@@ -62,7 +62,7 @@ public interface PackageScanClassResolver {
      * @param packageNames one or more package names to scan (including subpackages) for classes
      * @return the classes found, returns an empty set if none found
      */
-    Set<Class> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames);
+    Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames);
 
     /**
      * Attempts to discover classes that are assignable to the type provided. In
@@ -74,7 +74,7 @@ public interface PackageScanClassResolver {
      * @param packageNames one or more package names to scan (including subpackages) for classes
      * @return the classes found, returns an empty set if none found
      */
-    Set<Class> findImplementations(Class parent, String... packageNames);
+    Set<Class<?>> findImplementations(Class<?> parent, String... packageNames);
 
     /**
      * Attemsp to discover classes filter by the provided filter
@@ -83,7 +83,7 @@ public interface PackageScanClassResolver {
      * @param packageNames one or more package names to scan (including subpackages) for classes
      * @return the classes found, returns an empty set if none found
      */
-    Set<Class> findByFilter(PackageScanFilter fiter, String... packageNames);
+    Set<Class<?>> findByFilter(PackageScanFilter fiter, String... packageNames);
     
     /**
      * Add a filter that will be applied to all scan operations
@@ -91,5 +91,4 @@ public interface PackageScanClassResolver {
      * @param filter filter to filter desired classes in all scan operations
      */
     void addFilter(PackageScanFilter filter);
-
 }

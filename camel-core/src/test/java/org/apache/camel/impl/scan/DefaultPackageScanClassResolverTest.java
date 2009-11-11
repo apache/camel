@@ -43,7 +43,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
     }
 
     public void testFindByAnnotationWithoutExtraFilters() {
-        Set<Class> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class);
 
         scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
@@ -51,12 +51,12 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
     }
 
     public void testFindByAnnotationsWithoutExtraFilters() {
-        Set<Class> scanned = resolver.findAnnotated(annotations, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(annotations, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
     public void testFindImplementationsWithoutExtraFilters() {
-        Set<Class> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class);
     }
     
@@ -64,7 +64,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".b.*");
         resolver.addFilter(filter);
 
-        Set<Class> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetTwo.class);
 
         scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
@@ -76,7 +76,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".c.*");
         resolver.addFilter(filter);
 
-        Set<Class> scanned = resolver.findAnnotated(annotations, "org.apache.camel.impl.scan");
+        Set<Class<?>> scanned = resolver.findAnnotated(annotations, "org.apache.camel.impl.scan");
         validateMatchingSetContains(scanned, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
@@ -85,7 +85,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addExcludePattern(scanPackage + ".c.*");
         resolver.addFilter(filter);
 
-        Set<Class> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class);
 
         scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
@@ -95,7 +95,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
     public void testFindByAnnotationsWithExcludePackageFilter() {
         filter.addExcludePattern(scanPackage + ".a.*");
 
-        Set<Class> scanned = resolver.findAnnotated(annotations, "org.apache.camel.impl.scan");
+        Set<Class<?>> scanned = resolver.findAnnotated(annotations, "org.apache.camel.impl.scan");
         validateMatchingSetContains(scanned, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
@@ -103,7 +103,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".**.ScanTarget*");
         resolver.addFilter(filter);
 
-        Set<Class> scanned = resolver.findByFilter(filter, "org.apache.camel.impl.scan");
+        Set<Class<?>> scanned = resolver.findByFilter(filter, "org.apache.camel.impl.scan");
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class, ScanTargetThree.class);
     }
     
@@ -111,7 +111,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".b.*");
         resolver.addFilter(filter);
         
-        Set<Class> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
         validateMatchingSetContains(scanned,  ScanTargetTwo.class);
     }
     
@@ -119,7 +119,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addExcludePattern(scanPackage + ".a.*");
         resolver.addFilter(filter);
         
-        Set<Class> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findImplementations(ScanTargetOne.class, scanPackage);
         validateMatchingSetContains(scanned,  ScanTargetTwo.class);
     }
     
@@ -136,7 +136,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
 
             filter.addIncludePattern("a.*.c.*");
             resolver.addFilter(filter);
-            Set<Class> scanned = resolver.findByFilter(filter, "a.b.c");
+            Set<Class<?>> scanned = resolver.findByFilter(filter, "a.b.c");
             assertEquals(1, scanned.size());
             assertEquals("class a.b.c.Test", scanned.iterator().next().toString());            
         } finally {
@@ -159,7 +159,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
 
             filter.addIncludePattern("a.*.c.*");
             resolver.addFilter(filter);
-            Set<Class> scanned = resolver.findByFilter(filter, "a.b.c");
+            Set<Class<?>> scanned = resolver.findByFilter(filter, "a.b.c");
             assertEquals(1, scanned.size());
             assertEquals("class a.b.c.Test", scanned.iterator().next().toString());
         } finally {
@@ -168,5 +168,4 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
             }
         }
     }
-
 }

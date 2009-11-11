@@ -49,7 +49,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         return classLoaders;
     }
     
-    public void find(PackageScanFilter test, String packageName, Set<Class> classes) {
+    public void find(PackageScanFilter test, String packageName, Set<Class<?>> classes) {
         packageName = packageName.replace('.', '/');
         Set<ClassLoader> set = getClassLoaders();
         ClassLoader osgiClassLoader = getOsgiClassLoader(set);
@@ -71,9 +71,9 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         }
     }
 
-    private void findInOsgiClassLoader(PackageScanFilter test, String packageName, ClassLoader osgiClassLoader, Set<Class> classes) {
+    private void findInOsgiClassLoader(PackageScanFilter test, String packageName, ClassLoader osgiClassLoader, Set<Class<?>> classes) {
         try {
-            Method mth = osgiClassLoader.getClass().getMethod("getBundle", new Class[]{});
+            Method mth = osgiClassLoader.getClass().getMethod("getBundle", new Class<?>[]{});
             if (mth != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Loading from osgi bundle using classloader: " + osgiClassLoader);
@@ -112,7 +112,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         return false;
     }
     
-    private void loadImplementationsInBundle(PackageScanFilter test, String packageName, ClassLoader loader, Method mth, Set<Class> classes) {
+    private void loadImplementationsInBundle(PackageScanFilter test, String packageName, ClassLoader loader, Method mth, Set<Class<?>> classes) {
         // Use an inner class to avoid a NoClassDefFoundError when used in a non-osgi env
         Set<String> urls = OsgiUtil.getImplementationsInBundle(test, packageName, loader, mth);
         if (urls != null) {

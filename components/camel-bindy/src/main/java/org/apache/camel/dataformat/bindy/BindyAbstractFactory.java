@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
-    protected Set<Class> models;
+    protected Set<Class<?>> models;
     protected Map<String, List<Field>> annotedLinkFields = new LinkedHashMap<String, List<Field>>();
     protected List<Field> linkFields = new ArrayList<Field>();
     protected String crlf;

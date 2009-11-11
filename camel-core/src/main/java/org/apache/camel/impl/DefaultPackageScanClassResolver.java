@@ -85,7 +85,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     }
 
     @SuppressWarnings("unchecked")
-    public Set<Class> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
+    public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
             return Collections.EMPTY_SET;
         }
@@ -95,7 +95,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithPackageScanFilter(annotation, true));
-        Set<Class> classes = new LinkedHashSet<Class>();
+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
         }
@@ -108,7 +108,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     }
 
     @SuppressWarnings("unchecked")
-    public Set<Class> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
+    public Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
         if (packageNames == null) {
             return Collections.EMPTY_SET;
         }
@@ -118,7 +118,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithAnyPackageScanFilter(annotations, true));
-        Set<Class> classes = new LinkedHashSet<Class>();
+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
         }
@@ -131,7 +131,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     }
 
     @SuppressWarnings("unchecked")
-    public Set<Class> findImplementations(Class parent, String... packageNames) {
+    public Set<Class<?>> findImplementations(Class parent, String... packageNames) {
         if (packageNames == null) {
             return Collections.EMPTY_SET;
         }
@@ -141,7 +141,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
 
         PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
-        Set<Class> classes = new LinkedHashSet<Class>();
+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
         }
@@ -154,12 +154,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     }
 
     @SuppressWarnings("unchecked")
-    public Set<Class> findByFilter(PackageScanFilter filter, String... packageNames) {
+    public Set<Class<?>> findByFilter(PackageScanFilter filter, String... packageNames) {
         if (packageNames == null) {
             return Collections.EMPTY_SET;
         }
 
-        Set<Class> classes = new LinkedHashSet<Class>();
+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         for (String pkg : packageNames) {
             find(filter, pkg, classes);
         }
@@ -171,7 +171,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         return classes;
     }
 
-    protected void find(PackageScanFilter test, String packageName, Set<Class> classes) {
+    protected void find(PackageScanFilter test, String packageName, Set<Class<?>> classes) {
         packageName = packageName.replace('.', '/');
 
         Set<ClassLoader> set = getClassLoaders();
@@ -181,7 +181,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
     }
 
-    protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class> classes) {
+    protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
             log.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
                     + loader.getClass().getName());
@@ -329,7 +329,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      *                 <i>parent</i> would be <i>org/apache</i>
      * @param location a File object representing a directory
      */
-    private void loadImplementationsInDirectory(PackageScanFilter test, String parent, File location, Set<Class> classes) {
+    private void loadImplementationsInDirectory(PackageScanFilter test, String parent, File location, Set<Class<?>> classes) {
         File[] files = location.listFiles();
         StringBuilder builder = null;
 
@@ -361,7 +361,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      * @param stream  the inputstream of the jar file to be examined for classes
      * @param urlPath the url of the jar file to be examined for classes
      */
-    private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream, String urlPath, Set<Class> classes) {
+    private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream, String urlPath, Set<Class<?>> classes) {
         JarInputStream jarStream = null;
         try {
             jarStream = new JarInputStream(stream);
@@ -392,7 +392,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      * @param test the test used to determine if the class matches
      * @param fqn  the fully qualified name of a class
      */    
-    protected void addIfMatching(PackageScanFilter test, String fqn, Set<Class> classes) {
+    protected void addIfMatching(PackageScanFilter test, String fqn, Set<Class<?>> classes) {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
             Set<ClassLoader> set = getClassLoaders();

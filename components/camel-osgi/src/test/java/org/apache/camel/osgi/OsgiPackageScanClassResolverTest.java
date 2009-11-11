@@ -34,7 +34,7 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
         OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
              
         String[] packageNames = {"org.apache.camel.osgi.test"};
-        Set<Class> classes = resolver.findAnnotated(Converter.class, packageNames);
+        Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
         assertEquals("There should find a class", classes.size(), 1);
         assertTrue("Find a wrong class", classes.contains(MyTypeConverter.class));
     }
@@ -44,7 +44,7 @@ public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
         BundleContext  context = getActivator().getBundle().getBundleContext();
         OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
         String[] packageNames = {"org.apache.camel.osgi.test"};
-        Set<Class> classes = resolver.findImplementations(RoutesBuilder.class, packageNames);
+        Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packageNames);
         assertEquals("There should find a class", classes.size(), 1);
         assertTrue("Find a wrong class", classes.contains(MyRouteBuilder.class));
     }

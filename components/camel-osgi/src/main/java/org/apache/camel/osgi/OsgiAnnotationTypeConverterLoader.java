@@ -39,8 +39,8 @@ public class OsgiAnnotationTypeConverterLoader extends AnnotationTypeConverterLo
         for (Activator.TypeConverterEntry entry : Activator.getTypeConverterEntries()) {
             OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(entry.bundle);
             String[] packages = entry.converterPackages.toArray(new String[entry.converterPackages.size()]);
-            Set<Class> classes = resolver.findAnnotated(Converter.class, packages);           
-            for (Class type : classes) {
+            Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packages);           
+            for (Class<?> type : classes) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Loading converter class: " + ObjectHelper.name(type));
                 }

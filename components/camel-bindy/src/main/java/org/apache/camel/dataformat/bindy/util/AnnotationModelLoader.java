@@ -44,8 +44,7 @@ public class AnnotationModelLoader {
         annotations.add(Section.class);
     }
 
-    public Set<Class> loadModels(String... packageNames) throws Exception {
+    public Set<Class<?>> loadModels(String... packageNames) throws Exception {
         return resolver.findAnnotated(annotations, packageNames);
     }
-
 }
