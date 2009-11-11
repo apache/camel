@@ -32,12 +32,12 @@ public interface ExceptionPolicyStrategy {
     /**
      * Resolves the {@link org.apache.camel.model.OnExceptionDefinition} that should handle the thrown exception.
      *
-     * @param exceptionPolicices the configured exception policies to resolve from
+     * @param exceptionPolicies the configured exception policies to resolve from
      * @param exchange           the exchange
      * @param exception          the exception that was thrown
      * @return the resolved exception type to handle this exception, <tt>null</tt> if none found.
      */
-    OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
+    OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
                                              Exchange exchange, Throwable exception);
 
 }

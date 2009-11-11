@@ -19,6 +19,7 @@ package org.apache.camel.processor.exceptionpolicy;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -33,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * <b>Selection strategy:</b>
  * <br/>This strategy applies the following rules:
  * <ul>
- * <li>Will walk the exception hieracy from bottom upwards till the thrown exception, meaning that the most outer caused
+ * <li>Will walk the exception hierarchy from bottom upwards till the thrown exception, meaning that the most outer caused
  * by is selected first, ending with the thrown exception itself. The method {@link #createExceptionIterator(Throwable)}
  * provides the Iterator used for the walking.</li>
  * <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this
@@ -54,25 +55,38 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultExceptionPolicyStrategy.class);
 
-    public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
+    public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
                                                     Exchange exchange, Throwable exception) {
 
+        Map<Integer, OnExceptionDefinition> candidates = new TreeMap<Integer, OnExceptionDefinition>();
+
         // recursive up the tree using the iterator
+        boolean exactMatch = false;
         Iterator<Throwable> it = createExceptionIterator(exception);
-        while (it.hasNext()) {
-            OnExceptionDefinition type = findMatchedExceptionPolicy(exceptionPolicices, exchange, it.next());
-            if (type != null) {
-                return type;
-            }
+        while (!exactMatch && it.hasNext()) {
+            // we should stop looking if we have found an exact match
+            exactMatch = findMatchedExceptionPolicy(exceptionPolicies, exchange, it.next(), candidates);
         }
 
-        // no type found
-        return null;
+        // now go through the candidates and find the best
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Found " + candidates.size() + " candidates");
+        }
+
+        if (candidates.isEmpty()) {
+            // no type found
+            return null;
+        } else {
+            // return the first in the map as its sorted and
+            return candidates.values().iterator().next();
+        }
     }
 
 
-    private OnExceptionDefinition findMatchedExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
-                                                             Exchange exchange, Throwable exception) {
+    private boolean findMatchedExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
+                                                             Exchange exchange, Throwable exception,
+                                                             Map<Integer, OnExceptionDefinition> candidates) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
         }
@@ -85,7 +99,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         int candidateDiff = Integer.MAX_VALUE;
 
         // loop through all the entries and find the best candidates to use
-        Set<Map.Entry<ExceptionPolicyKey, OnExceptionDefinition>> entries = exceptionPolicices.entrySet();
+        Set<Map.Entry<ExceptionPolicyKey, OnExceptionDefinition>> entries = exceptionPolicies.entrySet();
         for (Map.Entry<ExceptionPolicyKey, OnExceptionDefinition> entry : entries) {
             Class clazz = entry.getKey().getExceptionClass();
             OnExceptionDefinition type = entry.getValue();
@@ -103,6 +117,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                 // exact match then break
                 if (clazz.equals(exception.getClass())) {
                     candidate = type;
+                    candidateDiff = 0;
                     break;
                 }
 
@@ -118,15 +133,28 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             }
         }
 
-        if (LOG.isTraceEnabled()) {
-            if (candidate != null) {
-                LOG.trace("Using " + candidate + " as the exception policy");
+        if (candidate != null) {
+            if (!candidates.containsKey(candidateDiff)) {
+                // only add as candidate if we do not already have it registered with that level
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Adding " + candidate + " as candidate at level " + candidateDiff);
+                }
+                candidates.put(candidateDiff, candidate);
             } else {
-                LOG.trace("No candidate found to be used as exception policy");
+                // we have an existing candidate already which we should prefer to use
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Existing candidate " + candidates.get(candidateDiff)
+                        + " takes precedence over " + candidate + " at level " + candidateDiff);
+                }
             }
         }
 
-        return candidate;
+        // if we found a exact match then we should stop continue looking
+        boolean exactMatch = candidateDiff == 0;
+        if (LOG.isTraceEnabled() && exactMatch) {
+            LOG.trace("Exact match found for candidate: " + candidate);
+        }
+        return exactMatch;
     }
 
     /**
