@@ -49,8 +49,8 @@
       <commons-jxpath-version>1.3</commons-jxpath-version>
       <commons-lang-version>2.4</commons-lang-version>
       <commons-net-version>2.0</commons-net-version>
-      <flatpack-bundle-version>3.1.1_2-SNAPSHOT</flatpack-bundle-version>
-      <freemarker-bundle-version>2.3.15_2-SNAPSHOT</freemarker-bundle-version>
+      <flatpack-bundle-version>3.1.1_1</flatpack-bundle-version>
+      <freemarker-bundle-version>2.3.15_2</freemarker-bundle-version>
       <flatpack-bundle-version>3.1.1_3</flatpack-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-jaxws-spec-version>1.0</geronimo-jaxws-spec-version>
@@ -81,19 +81,19 @@
       <juel-bundle-version>2.1.0_1</juel-bundle-version>
       <junit-bundle-version>4.4_1</junit-bundle-version>
       <mvel-bundle-version>2.0.9_1</mvel-bundle-version>
-      <mina-bundle-version>1.1.7_2-SNAPSHOT</mina-bundle-version>
+      <mina-bundle-version>1.1.7_2</mina-bundle-version>
       <neethi-bundle-version>2.0.4_1</neethi-bundle-version>
       <ognl-bundle-version>2.7.3_1</ognl-bundle-version>
       <oro-bundle-version>2.0.8_1</oro-bundle-version>
-      <openjpa-bundle-version>1.2.1_1-SNAPSHOT</openjpa-bundle-version>
+      <openjpa-bundle-version>1.2.1_1</openjpa-bundle-version>
       <oscache-bundle-version>2.4_1</oscache-bundle-version>
       <quartz-bundle-version>1.6.1_1</quartz-bundle-version>
       <qpid-bundle-version>1.0-incubating-M2.1_1</qpid-bundle-version>
       <saxon-bundle-version>9.1.0.1_1</saxon-bundle-version>
-      <servicemix-specs-version>1.4-SNAPSHOT</servicemix-specs-version>
+      <servicemix-specs-version>1.3.0</servicemix-specs-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
-      <serp-bundle-version>1.13.1_1-SNAPSHOT</serp-bundle-version>
-      <snmp4j-bundle-version>1.8.1_2-SNAPSHOT</snmp4j-bundle-version>
+      <serp-bundle-version>1.13.1_1</serp-bundle-version>
+      <snmp4j-bundle-version>1.8.1_2</snmp4j-bundle-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>      
       <spring-commons-collections-version>3.2.1</spring-commons-collections-version>
       <spring-version>2.5.6.SEC01</spring-version>
@@ -107,7 +107,7 @@
       <xerces-bundle-version>2.9.1_1</xerces-bundle-version>
       <xmlbeans-bundle-version>2.4.0_2</xmlbeans-bundle-version>
       <xmlschema-version>1.4.5</xmlschema-version>
-      <xmlsec-bundle-version>1.4.3_1-SNAPSHOT</xmlsec-bundle-version>
+      <xmlsec-bundle-version>1.3.0_1</xmlsec-bundle-version>
       <xmlresolver-bundle-version>1.2_1</xmlresolver-bundle-version>
       <xpp3-bundle-version>1.1.4c_1</xpp3-bundle-version>
       <xstream-bundle-version>1.3_1</xstream-bundle-version>
