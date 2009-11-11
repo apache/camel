@@ -50,7 +50,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 log.warn("Producer is stopping. Ignoring caught exception: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                log.warn("Exception occured during processing: "
+                log.warn("Exception occurred during processing: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll

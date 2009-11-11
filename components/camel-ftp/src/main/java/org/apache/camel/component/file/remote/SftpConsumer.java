@@ -28,6 +28,7 @@ import com.jcraft.jsch.SftpException;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.util.ObjectHelper;
 
 public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private final SftpEndpoint endpoint;
@@ -59,7 +60,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            log.warn("Exception occured during disconecting from " + remoteServer() + ". "
+            log.warn("Exception occurred during disconecting from " + remoteServer() + ". "
                      + e.getClass().getCanonicalName() + " message: " + e.getMessage());
         }
         super.doStop();
@@ -119,7 +120,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 log.warn("Consumer is stopping. Ignoring caught exception: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                log.warn("Exception occured during polling: "
+                log.warn("Exception occurred during polling: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
@@ -176,16 +177,21 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         if (timestampMatched && isMatched(sftpFile)) {
             String fullFileName = getFullFileName(sftpFile);
 
-            // is we use excluse read then acquire the exclusive read (waiting until we got it)
+            // is we use exclusive read then acquire the exclusive read (waiting until we got it)
             if (exclusiveReadLock) {
                 acquireExclusiveReadLock(sftpFile);
             }
 
             // retrieve the file
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            channel.get(sftpFile.getFilename(), byteArrayOutputStream);
-            if (log.isDebugEnabled()) {
-                log.debug("Retrieved file: " + sftpFile.getFilename() + " from: " + remoteServer());
+            try {
+                channel.get(sftpFile.getFilename(), byteArrayOutputStream);
+                if (log.isDebugEnabled()) {
+                    log.debug("Retrieved file: " + sftpFile.getFilename() + " from: " + remoteServer());
+                }
+            } finally {
+                // close stream to avoid leaking SFTP connections
+                ObjectHelper.close(byteArrayOutputStream, "retrieve: " + sftpFile.getFilename(), log);
             }
 
             RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(sftpFile),
@@ -214,7 +220,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 if (deleteFile) {
                     // delete file after consuming
                     if (log.isDebugEnabled()) {
-                        log.debug("Deleteing file: " + sftpFile.getFilename() + " from: " + remoteServer());
+                        log.debug("Deleting file: " + sftpFile.getFilename() + " from: " + remoteServer());
                     }
                     deleteFile(sftpFile.getFilename());
                 } else if (isMoveFile()) {

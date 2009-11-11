@@ -17,12 +17,12 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -135,7 +135,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 log.warn("Consumer is stopping. Ignoring caught exception: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                log.warn("Exception occured during polling: "
+                log.warn("Exception occurred during polling: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
@@ -194,16 +194,21 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         if (timestampMatched && isMatched(ftpFile)) {
             String fullFileName = getFullFileName(ftpFile);
 
-            // is we use excluse read then acquire the exclusive read (waiting until we got it)
+            // is we use exclusive read then acquire the exclusive read (waiting until we got it)
             if (exclusiveReadLock) {
                 acquireExclusiveReadLock(client, ftpFile);
             }
 
             // retrieve the file
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
-            if (log.isDebugEnabled()) {
-                log.debug("Retrieved file: " + ftpFile.getName() + " from: " + remoteServer());
+            try {
+                client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
+                if (log.isDebugEnabled()) {
+                    log.debug("Retrieved file: " + ftpFile.getName() + " from: " + remoteServer());
+                }
+            } finally {
+                // close stream to avoid leaking FTP connections
+                ObjectHelper.close(byteArrayOutputStream, "retrieve: " + ftpFile.getName(), log);
             }
 
             RemoteFileExchange exchange = endpoint.createExchange(fullFileName, ftpFile.getName(),
@@ -234,7 +239,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 if (deleteFile) {
                     // delete file after consuming
                     if (log.isDebugEnabled()) {
-                        log.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer());
+                        log.debug("Deleting file: " + ftpFile.getName() + " from: " + remoteServer());
                     }
                     boolean deleted = client.deleteFile(ftpFile.getName());
                     if (!deleted) {

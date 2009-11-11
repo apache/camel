@@ -96,7 +96,7 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            log.warn("Exception occured during disconecting from " + remoteServer() + ". "
+            log.warn("Exception occurred during disconecting from " + remoteServer() + ". "
                      + e.getClass().getCanonicalName() + " message: " + e.getMessage());
         }
         super.doStop();
