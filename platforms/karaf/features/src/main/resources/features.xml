@@ -275,8 +275,8 @@
   </feature>
   <feature name='camel-restlet' version='${pom.version}'>
     <bundle>mvn:org.apache.camel/camel-restlet/${pom.version}</bundle>
-    <bundle>mvn:org.restlet/org.restlet/${restlet-version}</bundle>
-    <bundle>mvn:com.noelios.restlet/com.noelios.restlet/${restlet-version}</bundle>
+    <bundle>mvn:http://maven.restlet.org!org.restlet/org.restlet/${restlet-version}</bundle>
+    <bundle>mvn:http://maven.restlet.org!com.noelios.restlet/com.noelios.restlet/${restlet-version}</bundle>
     <feature version='${pom.version}'>camel-http</feature>
   </feature>
   <feature name='camel-rmi' version='${pom.version}'>
@@ -289,7 +289,7 @@
     <bundle>mvn:org.apache.camel/camel-saxon/${pom.version}</bundle>
   </feature>
   <feature name='camel-scala' version='${pom.version}'>
-    <bundle>mvn:org.scala-lang-osgi/scala-library/${scala-version}</bundle>
+    <bundle>mvn:http://www.scala-tools.com/repo-releases!org.scala-lang-osgi/scala-library/${scala-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${pom.version}</bundle>
   </feature>
@@ -299,7 +299,7 @@
     <bundle>mvn:org.apache.camel/camel-script/${pom.version}</bundle>
   </feature>
   <feature name='camel-spring-integration' version='${pom.version}'>
-    <bundle>mvn:org.springframework.integration/org.springframework.integration/1.0.1.RELEASE</bundle>
+    <bundle>mvn:http://repository.springsource.com/maven/bundles/release!org.springframework.integration/org.springframework.integration/1.0.1.RELEASE</bundle>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-spring-integration/${pom.version}</bundle>
   </feature>
