@@ -20,16 +20,18 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.io.Buffer;
 import org.mortbay.jetty.HttpHeaders;
 import org.mortbay.jetty.client.ContentExchange;
+import org.mortbay.jetty.client.HttpClient;
+import org.mortbay.jetty.client.HttpExchange;
 
 /**
  * Jetty specific exchange which keeps track of the the request and response.
@@ -41,19 +43,16 @@ public class JettyContentExchange extends ContentExchange {
     private static final transient Log LOG = LogFactory.getLog(JettyContentExchange.class);
 
     private final Map<String, Object> headers = new LinkedHashMap<String, Object>();
-    private CountDownLatch headersComplete = new CountDownLatch(1);
-    private CountDownLatch bodyComplete = new CountDownLatch(1);
-    private volatile boolean failed;
     private volatile Exchange exchange;
     private volatile AsyncCallback callback;
+    private volatile JettyHttpBinding jettyBinding;
+    private volatile HttpClient client;
 
-    public JettyContentExchange() {
-        // keep headers by default
-        super(true);
-    }
-
-    public void setExchange(Exchange exchange) {
+    public JettyContentExchange(Exchange exchange, JettyHttpBinding jettyBinding, HttpClient client) {
+        super(true); // keep headers by default
         this.exchange = exchange;
+        this.jettyBinding = jettyBinding;
+        this.client = client;
     }
 
     public void setCallback(AsyncCallback callback) {
@@ -67,38 +66,23 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     @Override
-    protected void onResponseHeaderComplete() throws IOException {
-        headersComplete.countDown();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("onResponseHeader for " + getUrl());
-        }
+    protected void onResponseComplete() {
+        doTaskCompleted();
     }
 
     @Override
-    protected void onResponseComplete() throws IOException {
-        bodyComplete.countDown();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("onResponseComplete for " + getUrl());
-        }
-
-        if (callback != null && exchange != null) {
-            // signal we are complete
-            callback.onTaskCompleted(exchange);
-        }
+    protected void onExpire() {
+        doTaskCompleted();
     }
 
     @Override
-    protected void onResponseStatus(Buffer version, int status, Buffer reason) throws IOException {
-        super.onResponseStatus(version, status, reason);
-        failed = status != 200;
+    protected void onException(Throwable ex) {
+        doTaskCompleted(ex);
     }
 
-    public boolean isHeadersComplete() {
-        return headersComplete.getCount() == 0;
-    }
-
-    public boolean isBodyComplete() {
-        return bodyComplete.getCount() == 0;
+    @Override
+    protected void onConnectionFailed(Throwable ex) {
+        doTaskCompleted(ex);
     }
 
     public Map<String, Object> getHeaders() {
@@ -109,33 +93,48 @@ public class JettyContentExchange extends ContentExchange {
         return super.getResponseContent();
     }
 
-    public void waitForHeadersToComplete() throws InterruptedException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for headers to complete for " + getUrl());
-        }
-        headersComplete.await();
-    }
-
-    public void waitForBodyToComplete() throws InterruptedException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for body to complete for " + getUrl());
-        }
-        bodyComplete.await();
-    }
-
-    public boolean waitForBodyToComplete(long timeout, TimeUnit timeUnit) throws InterruptedException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for body to complete for " + getUrl());
-        }
-        return bodyComplete.await(timeout, timeUnit);
-    }
-
-    public boolean isFailed() {
-        return failed;
-    }
-
     public String getUrl() {
         String params = getRequestFields().getStringField(HttpHeaders.CONTENT_ENCODING);
         return getScheme() + "//" + getAddress().toString() + getURI() + (params != null ? "?" + params : "");
     }
+
+    protected void doTaskCompleted() {
+        if (callback == null) {
+            // this is only for the async callback
+            return;
+        }
+
+        int exchangeState = getStatus();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("TaskComplete with state " + exchangeState + " for url: " + getUrl());
+        }
+
+        try {
+            if (exchangeState == HttpExchange.STATUS_COMPLETED) {
+                // process the response as the state is ok
+                try {
+                    jettyBinding.populateResponse(exchange, this);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+            } else if (exchangeState == HttpExchange.STATUS_EXPIRED) {
+                // we did timeout
+                exchange.setException(new ExchangeTimedOutException(exchange, client.getTimeout()));
+            } else if (exchangeState == HttpExchange.STATUS_EXCEPTED) {
+                // some kind of other error
+                exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
+            }
+        } finally {
+            // now invoke callback
+            callback.onTaskCompleted(exchange);
+        }
+    }
+
+    protected void doTaskCompleted(Throwable ex) {
+        // some kind of other error
+        exchange.setException(new CamelExchangeException("JettyClient failed cause by: " + ex.getMessage(), exchange, ex));
+        callback.onTaskCompleted(exchange);
+    }
+
 }

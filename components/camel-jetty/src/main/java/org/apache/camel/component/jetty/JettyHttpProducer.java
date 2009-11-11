@@ -22,8 +22,10 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpProducerHelper;
@@ -34,6 +36,7 @@ import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.client.HttpClient;
+import org.mortbay.jetty.client.HttpExchange;
 
 /**
  * @version $Revision$
@@ -63,47 +66,40 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     public void process(Exchange exchange, final AsyncCallback callback) throws Exception {
         HttpClient client = getEndpoint().getClient();
 
-        final JettyContentExchange httpExchange = createHttpExchange(exchange);
-
-        // wrap the original callback into another so we can populate the response
-        // before we signal completion to the original callback which then will start routing the exchange
-        AsyncCallback wrapped = new AsyncCallback() {
-            public void onTaskCompleted(Exchange exchange) {
-                // at first we must populate the response
-                try {
-                    getBinding().populateResponse(exchange, httpExchange);
-                } catch (JettyHttpOperationFailedException e) {
-                    // can be expected
-                    exchange.setException(e);
-                } catch (Exception e) {
-                    LOG.error("Error populating response from " + httpExchange.getUrl() + " on Exchange " + exchange, e);
-                    exchange.setException(e);
-                } finally {
-                    // now we are ready so signal completion to the original callback
-                    callback.onTaskCompleted(exchange);
-                }
-            }
-        };
-
-        sendAsynchronous(exchange, client, httpExchange, wrapped);
+        JettyContentExchange httpExchange = createHttpExchange(exchange);
+        sendAsynchronous(exchange, client, httpExchange, callback);
     }
 
     protected void sendAsynchronous(final Exchange exchange, final HttpClient client, final JettyContentExchange httpExchange,
                                     final AsyncCallback callback) throws IOException {
 
+        // set the callback for the async mode
         httpExchange.setCallback(callback);
-        httpExchange.setExchange(exchange);
 
         doSendExchange(client, httpExchange);
+
+        // the callback will handle all the response handling logic
     }
 
     protected void sendSynchronous(Exchange exchange, HttpClient client, JettyContentExchange httpExchange) throws Exception {
         doSendExchange(client, httpExchange);
 
         // we send synchronous so wait for it to be done
-        httpExchange.waitForDone();
-        // and then process the response
-        getBinding().populateResponse(exchange, httpExchange);
+        int exchangeState = httpExchange.waitForDone();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP exchange is done with state " + exchangeState);
+        }
+
+        if (exchangeState == HttpExchange.STATUS_COMPLETED) {
+            // process the response as the state is ok
+            getBinding().populateResponse(exchange, httpExchange);
+        } else if (exchangeState == HttpExchange.STATUS_EXPIRED) {
+            // we did timeout
+            throw new ExchangeTimedOutException(exchange, client.getTimeout());
+        } else if (exchangeState == HttpExchange.STATUS_EXCEPTED) {
+            // some kind of other error
+            throw new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange);
+        }
     }
 
     protected JettyContentExchange createHttpExchange(Exchange exchange) throws Exception {
@@ -111,7 +107,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         HttpMethods methodToUse = HttpProducerHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
         String method = methodToUse.createMethod(url).getName();
 
-        JettyContentExchange httpExchange = new JettyContentExchange();
+        JettyContentExchange httpExchange = new JettyContentExchange(exchange, getBinding(), client);
         httpExchange.setMethod(method);
         httpExchange.setURL(url);
 
