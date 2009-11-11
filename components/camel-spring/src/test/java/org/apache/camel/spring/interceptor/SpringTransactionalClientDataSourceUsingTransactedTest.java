@@ -18,7 +18,6 @@ package org.apache.camel.spring.interceptor;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler

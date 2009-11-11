@@ -17,10 +17,7 @@
 package org.apache.camel.spring.processor.onexception;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.ExceptionBuilderWithRetryLoggingLevelSetTest;
-import org.apache.camel.component.mock.MockEndpoint;
-
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringExceptionBuilderWithRetryLoggingLevelSetTest extends ExceptionBuilderWithRetryLoggingLevelSetTest {

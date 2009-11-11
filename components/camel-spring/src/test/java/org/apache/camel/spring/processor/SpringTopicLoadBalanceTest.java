@@ -17,7 +17,6 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.RandomLoadBalanceTest;
 import org.apache.camel.processor.TopicLoadBalanceTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 

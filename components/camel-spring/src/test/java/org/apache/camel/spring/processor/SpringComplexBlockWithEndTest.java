@@ -19,8 +19,6 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.AggregatorTest;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 

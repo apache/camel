@@ -16,16 +16,6 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import javax.sql.DataSource;
-
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.spring.SpringTestSupport;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
-
 /**
  * Using the default error handler = DeadLetterChannel to unit test that this works out of the box
  * also, that Camel doesn't break.

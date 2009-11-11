@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.event;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

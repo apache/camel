@@ -16,10 +16,8 @@
  */
 package org.apache.camel.spring;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.springframework.context.support.AbstractXmlApplicationContext;

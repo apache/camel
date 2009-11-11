@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilderTest;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
