@@ -77,14 +77,13 @@ public class JettyContentExchange extends ContentExchange {
     @Override
     protected void onResponseComplete() throws IOException {
         bodyComplete.countDown();
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("onResponseComplete for " + getUrl());
         }
 
         if (callback != null && exchange != null) {
             // signal we are complete
-            callback.onDataReceived(exchange);
+            callback.onTaskCompleted(exchange);
         }
     }
 

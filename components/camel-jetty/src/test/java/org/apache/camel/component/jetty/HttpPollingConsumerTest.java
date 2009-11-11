@@ -30,20 +30,20 @@ public class HttpPollingConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReceive() throws Exception {
-        String body = consumer.receiveBody("http://localhost:9080/test", String.class);
+        String body = consumer.receiveBody("http://localhost:9444/test", String.class);
         assertEquals("Bye World", body);
     }
 
     @Test
     public void testReceiveTimeout() throws Exception {
-        String body = consumer.receiveBody("http://localhost:9080/test", 5000, String.class);
+        String body = consumer.receiveBody("http://localhost:9444/test", 5000, String.class);
         assertEquals("Bye World", body);
     }
 
     @Test
     public void testReceiveTimeoutTriggered() throws Exception {
         try {
-            consumer.receiveBody("http://localhost:9080/test", 250, String.class);
+            consumer.receiveBody("http://localhost:9444/test", 250, String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
@@ -55,7 +55,7 @@ public class HttpPollingConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test")
+                from("jetty://http://localhost:9444/test")
                     .delay(2000).transform(constant("Bye World"));
             }
         };

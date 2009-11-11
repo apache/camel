@@ -88,7 +88,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
 
                 // pass in the callback that adds the exchange to the completed list of tasks
                 final AsyncCallback callback = new AsyncCallback() {
-                    public void onDataReceived(Exchange exchange) {
+                    public void onTaskCompleted(Exchange exchange) {
                         completedTasks.add(exchange);
                     }
                 };

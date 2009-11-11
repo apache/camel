@@ -36,6 +36,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private boolean sessionSupport;
     private List<Handler> handlers;
     private HttpClient client;
+    private JettyHttpBinding jettyBinding;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -48,7 +49,9 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new JettyHttpProducer(this, getClient());
+        JettyHttpProducer answer = new JettyHttpProducer(this, getClient());
+        answer.setBinding(getJettyBinding());
+        return answer;
     }
 
     @Override
@@ -83,4 +86,16 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         this.client = client;
     }
 
+    public synchronized JettyHttpBinding getJettyBinding() {
+        if (jettyBinding == null) {
+            jettyBinding = new DefaultJettyHttpBinding();
+            jettyBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            jettyBinding.setThrowExceptionOnFailure(isThrowExceptionOnFailure());
+        }
+        return jettyBinding;
+    }
+
+    public void setJettyBinding(JettyHttpBinding jettyBinding) {
+        this.jettyBinding = jettyBinding;
+    }
 }

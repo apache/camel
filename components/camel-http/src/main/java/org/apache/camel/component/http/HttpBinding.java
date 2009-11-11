@@ -69,9 +69,9 @@ public interface HttpBinding {
     void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException;
 
     /**
-     * Strategy method that writes the response to the http response stream when an exception occuerd
+     * Strategy method that writes the response to the http response stream when an exception occurred
      *
-     * @param exception  the exception occured
+     * @param exception  the exception occurred
      * @param response   the http response
      * @throws java.io.IOException can be thrown from http response
      */

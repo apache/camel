@@ -45,7 +45,7 @@ public final class AsyncProcessorConverter {
             } catch (Exception e) {
                 exchange.setException(e);
             }
-            callback.onDataReceived(exchange);
+            callback.onTaskCompleted(exchange);
         }
     }
 

@@ -25,9 +25,10 @@ package org.apache.camel;
 public interface AsyncCallback {
 
     /**
-     * Callback when the {@link Exchange} is ready to be routed as data has been received.
+     * Callback when the async task is completed and the provided {@link Exchange}
+     * is ready to be routed.
      *
      * @param exchange the exchange
      */
-    void onDataReceived(Exchange exchange);
+    void onTaskCompleted(Exchange exchange);
 }

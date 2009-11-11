@@ -41,9 +41,7 @@ import org.mortbay.jetty.client.HttpClient;
 public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(JettyHttpProducer.class);
     private final HttpClient client;
-
-    // TODO: support that bridge option
-    // TODO: more unit tests
+    private JettyHttpBinding binding;
 
     public JettyHttpProducer(Endpoint endpoint, HttpClient client) {
         super(endpoint);
@@ -62,11 +60,32 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         sendSynchronous(exchange, client, httpExchange);
     }
 
-    public void process(Exchange exchange, AsyncCallback callback) throws Exception {
+    public void process(Exchange exchange, final AsyncCallback callback) throws Exception {
         HttpClient client = getEndpoint().getClient();
 
-        JettyContentExchange httpExchange = createHttpExchange(exchange);
-        sendAsynchronous(exchange, client, httpExchange, callback);
+        final JettyContentExchange httpExchange = createHttpExchange(exchange);
+
+        // wrap the original callback into another so we can populate the response
+        // before we signal completion to the original callback which then will start routing the exchange
+        AsyncCallback wrapped = new AsyncCallback() {
+            public void onTaskCompleted(Exchange exchange) {
+                // at first we must populate the response
+                try {
+                    getBinding().populateResponse(exchange, httpExchange);
+                } catch (JettyHttpOperationFailedException e) {
+                    // can be expected
+                    exchange.setException(e);
+                } catch (Exception e) {
+                    LOG.error("Error populating response from " + httpExchange.getUrl() + " on Exchange " + exchange, e);
+                    exchange.setException(e);
+                } finally {
+                    // now we are ready so signal completion to the original callback
+                    callback.onTaskCompleted(exchange);
+                }
+            }
+        };
+
+        sendAsynchronous(exchange, client, httpExchange, wrapped);
     }
 
     protected void sendAsynchronous(final Exchange exchange, final HttpClient client, final JettyContentExchange httpExchange,
@@ -74,9 +93,6 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
 
         httpExchange.setCallback(callback);
         httpExchange.setExchange(exchange);
-
-        // set the body with the message holder
-        exchange.setOut(new JettyHttpMessage(exchange, httpExchange, getEndpoint().isThrowExceptionOnFailure()));
 
         doSendExchange(client, httpExchange);
     }
@@ -87,74 +103,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         // we send synchronous so wait for it to be done
         httpExchange.waitForDone();
         // and then process the response
-        processResponse(exchange, httpExchange);
-    }
-
-    protected void processResponse(Exchange exchange, JettyContentExchange httpExchange) throws IOException, JettyHttpOperationFailedException {
-        int responseCode = httpExchange.getResponseStatus();
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("HTTP responseCode: " + responseCode);
-        }
-
-        Message in = exchange.getIn();
-        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
-        if (!getEndpoint().isThrowExceptionOnFailure()) {
-            // if we do not use failed exception then populate response for all response codes
-            populateResponse(exchange, httpExchange, exchange.getIn(), strategy, responseCode);
-        } else {
-            if (responseCode >= 100 && responseCode < 300) {
-                // only populate response for OK response
-                populateResponse(exchange, httpExchange, in, strategy, responseCode);
-            } else {
-                // operation failed so populate exception to throw
-                throw populateHttpOperationFailedException(exchange, httpExchange, responseCode);
-            }
-        }
-    }
-
-    protected void populateResponse(Exchange exchange, JettyContentExchange httpExchange,
-                                    Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
-        Message answer = exchange.getOut();
-
-        answer.setHeaders(in.getHeaders());
-        answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
-        answer.setBody(httpExchange.getBody());
-
-        // propagate HTTP response headers
-        for (Map.Entry<String, Object> entry : httpExchange.getHeaders().entrySet()) {
-            String name = entry.getKey();
-            Object value = entry.getValue();
-            if (name.toLowerCase().equals("content-type")) {
-                name = Exchange.CONTENT_TYPE;
-            }
-            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                answer.setHeader(name, value);
-            }
-        }
-    }
-
-    protected JettyHttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, JettyContentExchange httpExchange,
-                                                                                     int responseCode) throws IOException {
-        JettyHttpOperationFailedException exception;
-        String uri = httpExchange.getUrl();
-        Map<String, Object> headers = httpExchange.getHeaders();
-        String body = httpExchange.getBody();
-
-        if (responseCode >= 300 && responseCode < 400) {
-            String locationHeader = httpExchange.getResponseFields().getStringField("location");
-            if (locationHeader != null) {
-                exception = new JettyHttpOperationFailedException(uri, responseCode, locationHeader, headers, body);
-            } else {
-                // no redirect location
-                exception = new JettyHttpOperationFailedException(uri, responseCode, headers, body);
-            }
-        } else {
-            // internal server error (error code 500)
-            exception = new JettyHttpOperationFailedException(uri, responseCode, headers, body);
-        }
-
-        return exception;
+        getBinding().populateResponse(exchange, httpExchange);
     }
 
     protected JettyContentExchange createHttpExchange(Exchange exchange) throws Exception {
@@ -207,6 +156,14 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
             LOG.debug("Sending HTTP request to: " + httpExchange.getUrl());
         }
         client.send(httpExchange);
+    }
+
+    public JettyHttpBinding getBinding() {
+        return binding;
+    }
+
+    public void setBinding(JettyHttpBinding binding) {
+        this.binding = binding;
     }
 
     @Override
