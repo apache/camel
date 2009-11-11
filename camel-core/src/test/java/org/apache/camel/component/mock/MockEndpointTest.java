@@ -431,12 +431,12 @@ public class MockEndpointTest extends ContextTestSupport {
         return "<message>" + counter + "</message>";
     }
 
-    protected List<String> listOfMessages(int... counters) {
+    protected Object[] listOfMessages(int... counters) {
         List<String> list = new ArrayList<String>(counters.length);
         for (int counter : counters) {
             list.add(createTestMessage(counter));
         }
-        return list;
+        return list.toArray();
     }   
     
     protected void sendHeader(String name, Object value) {

@@ -218,7 +218,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             }
 
             // Retrieve the format, pattern and precision associated to the type
-            Class type = field.getType();
+            Class<?> type = field.getType();
             String pattern = keyValuePairField.pattern();
             int precision = keyValuePairField.precision();
 

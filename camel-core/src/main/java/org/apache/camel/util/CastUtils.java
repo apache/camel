@@ -20,6 +20,7 @@
 package org.apache.camel.util;
 
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -73,5 +74,9 @@ public final class CastUtils {
     }
     public static <T, U> Map.Entry<T, U> cast(Map.Entry<?, ?> p, Class<T> pc, Class<U> uc) {
         return (Map.Entry<T, U>)p;
+    }
+
+    public static <T> Enumeration<T> cast(Enumeration<?> p) {
+        return (Enumeration<T>)p;
     }
 }

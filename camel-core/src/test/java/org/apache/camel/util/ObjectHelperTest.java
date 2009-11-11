@@ -139,7 +139,7 @@ public class ObjectHelperTest extends TestCase {
 
     public void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
-        Iterator it = ObjectHelper.createIterator(s, ",");
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
@@ -147,7 +147,7 @@ public class ObjectHelperTest extends TestCase {
 
     public void testCreateIteratorWithStringAndSemiColonSeparator() {
         String s = "a;b;c";
-        Iterator it = ObjectHelper.createIterator(s, ";");
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ";"));
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
@@ -220,7 +220,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testMatches() {
-        List data = new ArrayList();
+        List<Object> data = new ArrayList<Object>();
         data.add("foo");
         data.add("bar");
         assertEquals(true, ObjectHelper.matches(data));
@@ -246,7 +246,7 @@ public class ObjectHelperTest extends TestCase {
         Message msg = new DefaultMessage();
         msg.setBody("a,b,c");
 
-        Iterator it = ObjectHelper.createIterator(msg);
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(msg));
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
@@ -257,7 +257,7 @@ public class ObjectHelperTest extends TestCase {
         Message msg = new DefaultMessage();
         msg.setBody("");
 
-        Iterator it = ObjectHelper.createIterator(msg);
+        Iterator<Object> it = ObjectHelper.createIterator(msg);
         assertFalse(it.hasNext());
     }
 
@@ -265,8 +265,7 @@ public class ObjectHelperTest extends TestCase {
         Message msg = new DefaultMessage();
         msg.setBody(null);
 
-        Iterator it = ObjectHelper.createIterator(msg);
+        Iterator<Object> it = ObjectHelper.createIterator(msg);
         assertFalse(it.hasNext());
     }
-
 }

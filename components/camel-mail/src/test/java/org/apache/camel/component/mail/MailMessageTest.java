@@ -28,6 +28,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class MailMessageTest extends CamelTestSupport {
         // need to use iterator as some mail impl returns String[] and others a single String with comma as separator
         // so we let Camel create an iterator so we can use the same code for the test
         Object to = in.getHeader("TO");
-        Iterator<String> it = ObjectHelper.createIterator(to);
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(to));
         int i = 0;
         while (it.hasNext()) {
             if (i == 0) {

@@ -22,10 +22,11 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class ExpectedBodyTypeException extends RuntimeCamelException {
+    private static final long serialVersionUID = -7121445152234363768L;
     private final transient Exchange exchange;
-    private final transient Class expectedBodyType;
+    private final transient Class<?> expectedBodyType;
 
-    public ExpectedBodyTypeException(Exchange exchange, Class expectedBodyType) {
+    public ExpectedBodyTypeException(Exchange exchange, Class<?> expectedBodyType) {
         super("Could not extract IN message body as type: " + expectedBodyType + " body is: "
               + exchange.getIn().getBody());
         this.exchange = exchange;
@@ -36,7 +37,7 @@ public class ExpectedBodyTypeException extends RuntimeCamelException {
         return exchange;
     }
 
-    public Class getExpectedBodyType() {
+    public Class<?> getExpectedBodyType() {
         return expectedBodyType;
     }
 }

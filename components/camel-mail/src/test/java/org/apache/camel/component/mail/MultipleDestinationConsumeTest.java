@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +79,7 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
         // need to use iterator as some mail impl returns String[] and others a single String with comma as separator
         // so we let Camel create an iterator so we can use the same code for the test
         Object to = in.getHeader("TO");
-        Iterator<String> it = ObjectHelper.createIterator(to);
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(to));
         int i = 0;
         while (it.hasNext()) {
             if (i == 0) {
@@ -89,13 +90,12 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
             i++;
         }
 
-        Enumeration iter = inMessage.getAllHeaders();
+        Enumeration<Header> iter = CastUtils.cast(inMessage.getAllHeaders());
         while (iter.hasMoreElements()) {
-            Header header = (Header) iter.nextElement();
+            Header header = iter.nextElement();
             String[] value = message.getHeader(header.getName());
             log.debug("Header: " + header.getName() + " has value: " + ObjectHelper.asString(value));
         }
-
     }
 
     @Override

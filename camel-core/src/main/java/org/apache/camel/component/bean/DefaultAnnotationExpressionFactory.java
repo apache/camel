@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
 
-    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
+    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
         String languageName = languageAnnotation.language();
         if (languageName == null) {
             throw new IllegalArgumentException("Cannot determine the language from the annotation: " + annotation);

@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
+    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
         String beanName = getFromAnnotation(annotation, "ref");
         String method = getFromAnnotation(annotation, "method");
 
@@ -59,6 +59,5 @@ public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpression
                 + " of the annotation: " + annotation + " as it does not have a " + attribute + "() method");
         }
     }
-
 }
 

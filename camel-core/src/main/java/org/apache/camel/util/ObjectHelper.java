@@ -421,7 +421,7 @@ public final class ObjectHelper {
      * @param value  the value
      * @return the iterator
      */
-    public static Iterator createIterator(Object value) {
+    public static Iterator<Object> createIterator(Object value) {
         return createIterator(value, ",");
     }
 
@@ -435,14 +435,14 @@ public final class ObjectHelper {
      * @return the iterator
      */
     @SuppressWarnings("unchecked")
-    public static Iterator createIterator(Object value, String delimiter) {
+    public static Iterator<Object> createIterator(Object value, String delimiter) {
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
             value = ((Message) value).getBody();
         }
 
         if (value == null) {
-            return Collections.EMPTY_LIST.iterator();
+            return Collections.emptyList().iterator();
         } else if (value instanceof Iterator) {
             return (Iterator)value;
         } else if (value instanceof Collection) {
@@ -455,7 +455,7 @@ public final class ObjectHelper {
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList)value;
-            return new Iterator<Node>() {
+            return CastUtils.cast(new Iterator<Node>() {
                 int idx = -1;
 
                 public boolean hasNext() {
@@ -469,7 +469,7 @@ public final class ObjectHelper {
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
-            };
+            });
         } else if (value instanceof String) {
             final String s = (String) value;
 
@@ -479,10 +479,10 @@ public final class ObjectHelper {
                 // use a scanner if it contains the delimiter
                 Scanner scanner = new Scanner((String)value);
                 scanner.useDelimiter(delimiter);
-                return scanner;
+                return CastUtils.cast(scanner);
             } else {
                 // use a plain iterator that returns the value as is as there are only a single value
-                return new Iterator<String>() {
+                return CastUtils.cast(new Iterator<String>() {
                     int idx = -1;
 
                     public boolean hasNext() {
@@ -497,7 +497,7 @@ public final class ObjectHelper {
                     public void remove() {
                         throw new UnsupportedOperationException();
                     }
-                };
+                });
             }
         } else {
             return Collections.singletonList(value).iterator();
@@ -512,7 +512,7 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if the first element is a boolean and its value
      *         is true or if the list is non empty
      */
-    public static boolean matches(List list) {
+    public static boolean matches(List<Object> list) {
         if (!list.isEmpty()) {
             Object value = list.get(0);
             if (value instanceof Boolean) {
@@ -566,7 +566,7 @@ public final class ObjectHelper {
      * Returns the type name of the given type or null if the type variable is
      * null
      */
-    public static String name(Class type) {
+    public static String name(Class<?> type) {
         return type != null ? type.getName() : null;
     }
 
@@ -620,7 +620,7 @@ public final class ObjectHelper {
         }
 
         // try context class loader first
-        Class clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
+        Class<?> clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
         if (clazz == null) {
             // then the provided loader
             clazz = doLoadClass(name, loader);
@@ -844,7 +844,7 @@ public final class ObjectHelper {
      * coercion between primitive types to deal with Java 5 primitive type
      * wrapping
      */
-    public static boolean isAssignableFrom(Class a, Class b) {
+    public static boolean isAssignableFrom(Class<?> a, Class<?> b) {
         a = convertPrimitiveTypeToWrapperType(a);
         b = convertPrimitiveTypeToWrapperType(b);
         return a.isAssignableFrom(b);
@@ -1127,7 +1127,7 @@ public final class ObjectHelper {
     public static Scanner getScanner(Exchange exchange, Object value) {
         if (value instanceof GenericFile) {
             // generic file is just a wrapper for the real file so call again with the real file
-            GenericFile gf = (GenericFile) value;
+            GenericFile<?> gf = (GenericFile<?>) value;
             return getScanner(exchange, gf.getFile());
         }
 

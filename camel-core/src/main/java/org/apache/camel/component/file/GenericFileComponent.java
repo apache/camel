@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -57,7 +58,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         if (isNotEmpty(sortBy) && !EndpointHelper.isReferenceParameter(sortBy)) {
             // we support nested sort groups so they should be chained
             String[] groups = sortBy.split(";");
-            Iterator<String> it = ObjectHelper.createIterator(groups);
+            Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(groups));
             Comparator<Exchange> comparator = createSortByComparator(it);
             endpoint.setSortBy(comparator);
         }

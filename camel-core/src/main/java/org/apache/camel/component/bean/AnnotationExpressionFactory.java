@@ -30,5 +30,5 @@ import org.apache.camel.language.LanguageAnnotation;
  */
 public interface AnnotationExpressionFactory {
 
-    Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType);
+    Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType);
 }
