@@ -33,7 +33,7 @@ public class FreemarkerComponent extends DefaultComponent {
     private Configuration configuration;
     private Configuration noCacheConfiguration;
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FreemarkerEndpoint endpoint = new FreemarkerEndpoint(uri, this, remaining);
 
         // should we use regular configuration or no cache (content cache is default true)

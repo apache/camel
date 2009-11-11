@@ -16,14 +16,11 @@
  */
 package org.apache.camel.builder.script;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.ScriptTestHelper;
 
 /**

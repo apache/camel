@@ -34,7 +34,7 @@ public class FlatpackComponent extends ResourceBasedComponent {
     public static final String HEADER_ID = "header";
     public static final String TRAILER_ID = "trailer";
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean fixed = false;
         if (remaining.startsWith("fixed:")) {
             fixed = true;

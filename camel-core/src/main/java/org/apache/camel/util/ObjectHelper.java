@@ -854,8 +854,8 @@ public final class ObjectHelper {
      * Converts primitive types such as int to its wrapper type like
      * {@link Integer}
      */
-    public static Class convertPrimitiveTypeToWrapperType(Class type) {
-        Class rc = type;
+    public static Class<?> convertPrimitiveTypeToWrapperType(Class<?> type) {
+        Class<?> rc = type;
         if (type.isPrimitive()) {
             if (type == int.class) {
                 rc = Integer.class;
@@ -944,8 +944,8 @@ public final class ObjectHelper {
         try {
             return toType.cast(value);
         } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Failed to convert: " + value + " to type: "
-                                               + toType.getName() + " due to: " + e, e);
+            throw new IllegalArgumentException("Failed to convert: " 
+                + value + " to type: " + toType.getName() + " due to: " + e, e);
         }
     }
 
@@ -1197,5 +1197,4 @@ public final class ObjectHelper {
             it.remove();
         }
     }
-
 }

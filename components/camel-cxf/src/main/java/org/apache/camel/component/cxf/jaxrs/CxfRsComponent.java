@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CastUtils;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 
 /**
@@ -41,7 +42,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CxfRsEndpoint answer = null;
         if (remaining.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             // Get the bean from the Spring context
@@ -69,10 +70,9 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
             // endpoint URI does not specify a bean
             answer = new CxfRsEndpoint(remaining, this);
         }
-        answer.setParameters((Map<String, String>)parameters);
+        Map<String, String> params = CastUtils.cast(parameters);
+        answer.setParameters(params);
         setEndpointHeaderFilterStrategy(answer);
         return answer;
     }
-    
-    
 }

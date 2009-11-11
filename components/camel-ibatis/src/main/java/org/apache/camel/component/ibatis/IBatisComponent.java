@@ -78,7 +78,7 @@ public class IBatisComponent extends ResourceBasedComponent {
      * Creates an IbatisEndpoint for use by an IbatisConsumer or IbatisProducer.
      */
     @Override
-    protected IBatisEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected IBatisEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         IBatisEndpoint answer = new IBatisEndpoint(uri, this, remaining);
         setProperties(answer, parameters);
         return answer;

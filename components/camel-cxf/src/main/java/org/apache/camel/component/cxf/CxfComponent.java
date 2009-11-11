@@ -46,7 +46,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
      */
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, 
-            Map parameters) throws Exception {
+            Map<String, Object> parameters) throws Exception {
         
         CxfEndpoint result = null;
         

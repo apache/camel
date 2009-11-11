@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 
@@ -35,10 +36,11 @@ public class CxfSoapComponent extends DefaultComponent {
     }
     
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map soapProps = IntrospectionSupport.extractProperties(parameters, "soap.");
         if (parameters.size() > 0) {
-            remaining += "?" + URISupport.createQueryString(parameters);
+            Map<Object, Object> options = CastUtils.cast(parameters);
+            remaining += "?" + URISupport.createQueryString(options);
         }
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
         CxfSoapEndpoint soapEndpoint = new CxfSoapEndpoint(endpoint);

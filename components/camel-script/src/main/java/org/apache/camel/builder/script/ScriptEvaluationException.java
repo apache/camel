@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision$
  */
 public class ScriptEvaluationException extends RuntimeCamelException {
+    private static final long serialVersionUID = 2487032913316865381L;
 
     public ScriptEvaluationException(String message) {
         super(message);

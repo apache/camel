@@ -148,7 +148,7 @@ public final class EndpointHelper {
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
      */
-    public static void setProperties(CamelContext context, Object bean, Map parameters) throws Exception {
+    public static void setProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
         IntrospectionSupport.setProperties(context.getTypeConverter(), bean, parameters);
     }
 
@@ -164,16 +164,15 @@ public final class EndpointHelper {
      * @throws Exception is thrown if setting property fails
      */
     @SuppressWarnings("unchecked")
-    public static void setReferenceProperties(CamelContext context, Object bean, Map parameters) throws Exception {
-        Iterator<Map.Entry> it = parameters.entrySet().iterator();
+    public static void setReferenceProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
+        Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry entry = it.next();
-            Object key = entry.getKey();
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
             Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
             if (value != null && isReferenceParameter(value)) {
                 Object ref = resolveReferenceParameter(context, value, Object.class);
-                String name = key.toString();
                 if (ref != null) {
                     boolean hit = IntrospectionSupport.setProperty(context.getTypeConverter(), bean, name, ref);
                     if (hit) {

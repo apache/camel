@@ -45,5 +45,4 @@ public abstract class HeaderFilterStrategyComponent extends DefaultComponent imp
             ((HeaderFilterStrategyAware)endpoint).setHeaderFilterStrategy(headerFilterStrategy);
         }
     }
-
 }

@@ -41,10 +41,10 @@ public final class URISupport {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map parseQuery(String uri) throws URISyntaxException {
+    public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
         try {
             // use a linked map so the parameters is in the same order
-            Map rc = new LinkedHashMap();
+            Map<String, Object> rc = new LinkedHashMap<String, Object>();
             if (uri != null) {
                 String[] parameters = uri.split("&");
                 for (String parameter : parameters) {
@@ -66,13 +66,13 @@ public final class URISupport {
         }
     }
 
-    public static Map parseParameters(URI uri) throws URISyntaxException {
+    public static Map<String, Object> parseParameters(URI uri) throws URISyntaxException {
         String query = uri.getQuery();
         if (query == null) {
             String schemeSpecificPart = uri.getSchemeSpecificPart();
             int idx = schemeSpecificPart.lastIndexOf('?');
             if (idx < 0) {
-                return Collections.EMPTY_MAP;
+                return Collections.emptyMap();
             } else {
                 query = schemeSpecificPart.substring(idx + 1);
             }
@@ -97,7 +97,7 @@ public final class URISupport {
         return value;
     }
 
-    public static String createQueryString(Map options) throws URISyntaxException {
+    public static String createQueryString(Map<Object, Object> options) throws URISyntaxException {
         try {
             if (options.size() > 0) {
                 StringBuffer rc = new StringBuffer();
@@ -134,7 +134,7 @@ public final class URISupport {
      * <p/>
      * Used by various Camel components
      */
-    public static URI createRemainingURI(URI originalURI, Map params) throws URISyntaxException {
+    public static URI createRemainingURI(URI originalURI, Map<Object, Object> params) throws URISyntaxException {
         String s = createQueryString(params);
         if (s.length() == 0) {
             s = null;
@@ -181,7 +181,7 @@ public final class URISupport {
             List<String> keys = new ArrayList<String>(parameters.keySet());
             Collections.sort(keys);
 
-            Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
+            Map<Object, Object> sorted = new LinkedHashMap<Object, Object>(parameters.size());
             for (String key : keys) {
                 sorted.put(key, parameters.get(key));
             }
@@ -196,5 +196,4 @@ public final class URISupport {
         // must include :// to do a correct URI all components can work with
         return scheme + "://" + path + (query != null ? "?" + query : "");
     }
-   
 }

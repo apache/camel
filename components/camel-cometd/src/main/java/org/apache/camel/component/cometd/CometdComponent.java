@@ -73,9 +73,8 @@ public class CometdComponent extends DefaultComponent {
     public CometdComponent() {
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         setProperties(this, parameters);
         return new CometdEndpoint(this, uri, remaining, parameters);
     }

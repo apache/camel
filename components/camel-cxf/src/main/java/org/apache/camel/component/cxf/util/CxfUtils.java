@@ -154,7 +154,6 @@ public final class CxfUtils {
         }       
 
         writer.writeEndElement();
-        
     }
 
     private static void visitNodesForNameSpace(Node node, Map<String, String> namespaces) {
@@ -170,7 +169,5 @@ public final class CxfUtils {
                 }
             }
         }
-
     }
-
 }

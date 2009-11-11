@@ -68,7 +68,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         if (idx > 0) {
             path = path.substring(0, idx);
         }
-        Map parameters = URISupport.parseParameters(u);
+        Map<String, Object> parameters = URISupport.parseParameters(u);
 
         validateURI(uri, path, parameters);
 
@@ -107,7 +107,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters the remaining parameters after the endpoint has been created and parsed the parameters
      * @throws Exception can be thrown to indicate error creating the endpoint
      */
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
         // noop
     }
 
@@ -214,7 +214,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @return a newly created endpoint or null if the endpoint cannot be
      *         created based on the inputs
      */
-    protected abstract Endpoint createEndpoint(String uri, String remaining, Map parameters)
+    protected abstract Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception;
 
     /**
@@ -223,7 +223,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param bean  the bean
      * @param parameters  properties to set
      */
-    protected void setProperties(Object bean, Map parameters) throws Exception {        
+    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {        
         // set reference properties first as they use # syntax that fools the regular properties setter
         EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
         EndpointHelper.setProperties(getCamelContext(), bean, parameters);

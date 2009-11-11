@@ -170,12 +170,11 @@ public class PatternBasedPackageScanFilterTest extends ScanTestSupport {
         validateMatchingSetContains();
     }
 
-    protected void validateMatchingSetContains(Class... matchingClasses) {
+    protected void validateMatchingSetContains(Class<?>... matchingClasses) {
         super.validateMatchingSetContains(allClasses, matchingClasses);
     }
 
-    protected void validateMatchingSetContains(Set<Class> matchingClasses) {
+    protected void validateMatchingSetContains(Set<Class<?>> matchingClasses) {
         super.validateMatchingSetContains(allClasses, matchingClasses);
     }
-
 }

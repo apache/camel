@@ -30,19 +30,19 @@ public abstract class ScanTestSupport extends TestCase {
         filter = new PatternBasedPackageScanFilter();
     }
 
-    protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Class... matchingClasses) {
-        HashSet<Class> expectedSet = new HashSet<Class>();
+    protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Class<?>... matchingClasses) {
+        HashSet<Class<?>> expectedSet = new HashSet<Class<?>>();
         for (Class expected : matchingClasses) {
             expectedSet.add(expected);
         }
         validateMatchingSetContains(scannedClasses, expectedSet);
     }
 
-    protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Set<Class> matchingClasses) {
-        Set<Class> matching = getMatchingClasses(scannedClasses, filter);
+    protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Set<Class<?>> matchingClasses) {
+        Set<Class<?>> matching = getMatchingClasses(scannedClasses, filter);
         assertEquals("Incorrect number of classes matched", matchingClasses.size(), matching.size());
 
-        for (Class expected : matchingClasses) {
+        for (Class<?> expected : matchingClasses) {
             assertTrue("Expected matching class '" + expected + "' is not present", matching.contains(expected));
         }
     }
@@ -59,8 +59,8 @@ public abstract class ScanTestSupport extends TestCase {
         }
     }
 
-    public Set<Class> getMatchingClasses(Set<Class<?>> scannedClasses, PatternBasedPackageScanFilter filter) {
-        Set<Class> matching = new HashSet<Class>();
+    public Set<Class<?>> getMatchingClasses(Set<Class<?>> scannedClasses, PatternBasedPackageScanFilter filter) {
+        Set<Class<?>> matching = new HashSet<Class<?>>();
 
         for (Class candidate : scannedClasses) {
             if (filter.matches(candidate)) {

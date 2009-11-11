@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -34,12 +35,12 @@ import org.apache.camel.util.URISupport;
 public class AtomComponent extends FeedComponent {
 
     @Override
-    protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new AtomEndpoint(uri, this, null);
     }
 
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
         AtomEndpoint atom = (AtomEndpoint) endpoint;
         if (atom.getFeedUri() != null) {
             // already set so do not change it
@@ -50,7 +51,8 @@ public class AtomComponent extends FeedComponent {
         // for the http feed
         String feedUri;
         if (!parameters.isEmpty()) {
-            URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
+            Map<Object, Object> params = CastUtils.cast(parameters);
+            URI remainingUri = URISupport.createRemainingURI(new URI(remaining), params);
             feedUri = remainingUri.toString();
         } else {
             feedUri = remaining;

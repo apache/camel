@@ -50,7 +50,7 @@ public final class CollectionConverter {
      * Converts a collection to an array
      */
     @Converter
-    public static Object[] toArray(Collection value) {
+    public static Object[] toArray(Collection<?> value) {
         if (value == null) {
             return null;
         }
@@ -61,7 +61,7 @@ public final class CollectionConverter {
      * Converts an array to a collection
      */
     @Converter
-    public static List toList(Object[] array) {
+    public static List<Object> toList(Object[] array) {
         return Arrays.asList(array);
     }
 
@@ -69,18 +69,16 @@ public final class CollectionConverter {
      * Converts a collection to a List if it is not already
      */
     @Converter
-    @SuppressWarnings("unchecked")
-    public static List toList(Collection collection) {
-        return new ArrayList(collection);
+    public static <T> List<T> toList(Collection<T> collection) {
+        return new ArrayList<T>(collection);
     }
     
     /**
      * Converts an {@link Iterator} to a {@link ArrayList}
      */
     @Converter
-    @SuppressWarnings("unchecked")
-    public static ArrayList toArrayList(Iterator it) {
-        ArrayList list = new ArrayList();
+    public static <T> ArrayList<T> toArrayList(Iterator<T> it) {
+        ArrayList<T> list = new ArrayList<T>();
         while (it.hasNext()) {
             list.add(it.next());
         }
@@ -88,42 +86,37 @@ public final class CollectionConverter {
     }
 
     @Converter
-    @SuppressWarnings("unchecked")
-    public static Set toSet(Object[] array) {
-        Set answer = new HashSet();
+    public static Set<Object> toSet(Object[] array) {
+        Set<Object> answer = new HashSet<Object>();
         answer.addAll(Arrays.asList(array));
         return answer;
     }
 
     @Converter
-    @SuppressWarnings("unchecked")
-    public static Set toSet(Collection collection) {
-        return new HashSet(collection);
+    public static <T> Set<T> toSet(Collection<T> collection) {
+        return new HashSet<T>(collection);
     }
 
     @Converter
-    public static Set toSet(Map map) {
+    public static <K, V> Set<Map.Entry<K, V>> toSet(Map<K, V> map) {
         return map.entrySet();
     }
 
     @Converter
-    @SuppressWarnings("unchecked")
-    public static Properties toProperties(Map map) {
+    public static Properties toProperties(Map<Object, Object> map) {
         Properties answer = new Properties();
         answer.putAll(map);
         return answer;
     }
 
     @Converter
-    @SuppressWarnings("unchecked")
-    public static Hashtable toHashtable(Map map) {
-        return new Hashtable(map);
+    public static <K, V> Hashtable<K, V> toHashtable(Map<? extends K, ? extends V> map) {
+        return new Hashtable<K, V>(map);
     }
 
     @Converter
-    @SuppressWarnings("unchecked")
-    public static HashMap toHashMap(Map map) {
-        return new HashMap(map);
+    public static <K, V> HashMap<K, V>  toHashMap(Map<? extends K, ? extends V> map) {
+        return new HashMap<K, V> (map);
     }
 
     /**
@@ -131,12 +124,12 @@ public final class CollectionConverter {
      */
     @Converter
     @SuppressWarnings("unchecked")
-    public static List toList(Iterable iterable) {
+    public static <T> List<T> toList(Iterable<T> iterable) {
         if (iterable instanceof List) {
             return (List) iterable;
         }
-        List result = new LinkedList();
-        for (Object value : iterable) {
+        List<T> result = new LinkedList<T>();
+        for (T value : iterable) {
             result.add(value);
         }
         return result;

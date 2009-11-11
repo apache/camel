@@ -196,9 +196,9 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
             return;
         }
 
-        Map<String, String> parameters = URISupport.parseQuery(queryString);
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            httpExchange.setRequestHeader(entry.getKey(), entry.getValue());
+        Map<String, Object> parameters = URISupport.parseQuery(queryString);
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            httpExchange.setRequestHeader(entry.getKey(), entry.getValue().toString());
         }
     }
 
