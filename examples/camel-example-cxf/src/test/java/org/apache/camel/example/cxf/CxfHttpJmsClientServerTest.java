@@ -18,8 +18,6 @@ package org.apache.camel.example.cxf;
 
 import java.net.MalformedURLException;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.example.cxf.CamelCxfExample.MyRouteBuilder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;

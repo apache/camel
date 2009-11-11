@@ -37,6 +37,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.commons.logging.Log;
@@ -107,21 +108,21 @@ public class ConverterTest extends TestCase {
     public void testArrayToListAndSetConversion() throws Exception {
         String[] array = new String[]{"one", "two"};
 
-        List list = converter.convertTo(List.class, array);
+        List<String> list = CastUtils.cast(converter.convertTo(List.class, array));
         assertEquals("List size: " + list, 2, list.size());
 
-        Collection collection = converter.convertTo(Collection.class, array);
+        Collection<String> collection = CastUtils.cast(converter.convertTo(Collection.class, array));
         assertEquals("Collection size: " + collection, 2, collection.size());
 
-        Set set = converter.convertTo(Set.class, array);
+        Set<String> set = CastUtils.cast(converter.convertTo(Set.class, array));
         assertEquals("Set size: " + set, 2, set.size());
-        set = converter.convertTo(Set.class, list);
+        set = CastUtils.cast(converter.convertTo(Set.class, list));
         assertEquals("Set size: " + set, 2, set.size());
     }
 
 
     public void testCollectionToArrayConversion() throws Exception {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         list.add("one");
         list.add("two");
 
@@ -133,7 +134,7 @@ public class ConverterTest extends TestCase {
     }
 
     public void testCollectionToPrimitiveArrayConversion() throws Exception {
-        List list = new ArrayList();
+        List<Integer> list = new ArrayList<Integer>();
         list.add(5);
         list.add(6);
 
@@ -148,7 +149,7 @@ public class ConverterTest extends TestCase {
         assertEquals("long[] length", 2, longArray.length);
 
         // now lets go back to a List again
-        List resultList = converter.convertTo(List.class, intArray);
+        List<Integer> resultList = CastUtils.cast(converter.convertTo(List.class, intArray));
         assertEquals("List size", 2, resultList.size());
         LOG.debug("From primitive type array we've created the list: " + resultList);
     }

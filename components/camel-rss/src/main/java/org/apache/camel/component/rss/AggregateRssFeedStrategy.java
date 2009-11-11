@@ -19,10 +19,12 @@ package org.apache.camel.component.rss;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.util.CastUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,9 +38,9 @@ public class AggregateRssFeedStrategy implements AggregationStrategy {
         SyndFeed oldFeed = oldExchange.getIn().getBody(SyndFeed.class);
         SyndFeed newFeed = newExchange.getIn().getBody(SyndFeed.class);
         if (oldFeed != null && newFeed != null) {                
-            List oldEntries = oldFeed.getEntries();                  
-            List newEntries = newFeed.getEntries();
-            List mergedList = new ArrayList(oldEntries.size() + newEntries.size());
+            List<SyndEntryImpl> oldEntries = CastUtils.cast(oldFeed.getEntries());                  
+            List<SyndEntryImpl> newEntries = CastUtils.cast(newFeed.getEntries());
+            List<SyndEntryImpl> mergedList = new ArrayList<SyndEntryImpl>(oldEntries.size() + newEntries.size());
             mergedList.addAll(oldEntries);
             mergedList.addAll(newEntries);
             oldFeed.setEntries(mergedList);    

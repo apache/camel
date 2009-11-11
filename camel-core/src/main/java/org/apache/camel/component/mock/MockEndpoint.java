@@ -70,8 +70,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private long resultWaitTime;
     private long resultMinimumWaitTime;
     private int expectedMinimumCount;
-    private List expectedBodyValues;
-    private List actualBodyValues;
+    private List<Object> expectedBodyValues;
+    private List<Object> actualBodyValues;
     private String headerName;
     private Object headerValue;
     private Object actualHeader;
@@ -363,10 +363,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that the given body values are received by this
      * endpoint in the specified order
      */
-    public void expectedBodiesReceived(final List bodies) {
+    public void expectedBodiesReceived(final List<Object> bodies) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
-        this.actualBodyValues = new ArrayList();
+        this.actualBodyValues = new ArrayList<Object>();
 
         expects(new Runnable() {
             public void run() {
@@ -391,7 +391,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Sets an expectation that the given body values are received by this endpoint
      */
     public void expectedBodiesReceived(Object... bodies) {
-        List bodyList = new ArrayList();
+        List<Object> bodyList = new ArrayList<Object>();
         bodyList.addAll(Arrays.asList(bodies));
         expectedBodiesReceived(bodyList);
     }
@@ -423,14 +423,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that the given body values are received by this
      * endpoint in any order
      */
-    public void expectedBodiesReceivedInAnyOrder(final List bodies) {
+    public void expectedBodiesReceivedInAnyOrder(final List<Object> bodies) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
-        this.actualBodyValues = new ArrayList();
+        this.actualBodyValues = new ArrayList<Object>();
 
         expects(new Runnable() {
             public void run() {
-                Set actualBodyValuesSet = new HashSet(actualBodyValues);
+                Set<Object> actualBodyValuesSet = new HashSet<Object>(actualBodyValues);
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
                     Exchange exchange = getReceivedExchanges().get(i);
                     assertTrue("No exchange received for counter: " + i, exchange != null);
@@ -448,9 +448,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that the given body values are received by this
      * endpoint in any order
      */
-    @SuppressWarnings("unchecked")
     public void expectedBodiesReceivedInAnyOrder(Object... bodies) {
-        List bodyList = new ArrayList();
+        List<Object> bodyList = new ArrayList<Object>();
         bodyList.addAll(Arrays.asList(bodies));
         expectedBodiesReceivedInAnyOrder(bodyList);
     }
@@ -800,7 +799,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         resultMinimumWaitTime = 0L;
         expectedMinimumCount = -1;
         expectedBodyValues = null;
-        actualBodyValues = new ArrayList();
+        actualBodyValues = new ArrayList<Object>();
     }
 
     protected synchronized void onExchange(Exchange exchange) {
@@ -810,7 +809,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
             performAssertions(exchange);
         } catch (Throwable e) {
-            // must catch throwable as AssertionException extends java.lang.Error
+            // must catch java.lang.Throwable as AssertionException extends java.lang.Error
             failures.add(e);
         } finally {
             // make sure latch is counted down to avoid test hanging forever

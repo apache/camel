@@ -28,12 +28,12 @@ import junit.framework.TestCase;
 public class SubmitOrderedCompletionServiceTest extends TestCase {
 
     private ExecutorService executor;
-    private SubmitOrderedCompletionService service;
+    private SubmitOrderedCompletionService<Object> service;
 
     @Override
     protected void setUp() throws Exception {
         executor = Executors.newFixedThreadPool(5);
-        service = new SubmitOrderedCompletionService(executor);
+        service = new SubmitOrderedCompletionService<Object>(executor);
     }
 
     @Override
@@ -43,13 +43,13 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
 
     public void testSubmitOrdered() throws Exception {
 
-        service.submit(new Callable() {
+        service.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 return "A";
             }
         });
 
-        service.submit(new Callable() {
+        service.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 return "B";
             }
@@ -64,7 +64,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
 
     public void testSubmitOrderedFirstTaskIsSlow() throws Exception {
 
-        service.submit(new Callable() {
+        service.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 // this task should be slower than B but we should still get it first
                 Thread.sleep(200);
@@ -72,7 +72,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
             }
         });
 
-        service.submit(new Callable() {
+        service.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 return "B";
             }
@@ -87,13 +87,13 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
 
     public void testSubmitOrderedSecondTaskIsSlow() throws Exception {
 
-        service.submit(new Callable() {
+        service.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 return "A";
             }
         });
 
-        service.submit(new Callable() {
+        service.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 Thread.sleep(200);
                 return "B";
@@ -106,5 +106,4 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         assertEquals("A", a);
         assertEquals("B", b);
     }
-
 }

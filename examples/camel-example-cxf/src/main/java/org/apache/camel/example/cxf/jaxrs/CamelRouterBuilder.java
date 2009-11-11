@@ -98,7 +98,7 @@ public class CamelRouterBuilder extends RouteBuilder {
     // Mapping the request to object's invocation
     private class MappingProcessor implements Processor {
         
-        private Class beanClass;
+        private Class<?> beanClass;
         private Object instance;
         
         public MappingProcessor(Object obj) {
@@ -121,11 +121,11 @@ public class CamelRouterBuilder extends RouteBuilder {
             return beanClass.getMethod(operationName, getParameterTypes(parameters));
         }
         
-        private Class[] getParameterTypes(Object[] parameters) {
+        private Class<?>[] getParameterTypes(Object[] parameters) {
             if (parameters == null) {
                 return new Class[0];
             }
-            Class[] answer = new Class[parameters.length];
+            Class<?>[] answer = new Class[parameters.length];
             int i = 0;
             for (Object object : parameters) {
                 answer[i] = object.getClass();
@@ -133,8 +133,5 @@ public class CamelRouterBuilder extends RouteBuilder {
             }
             return answer;
         }
-        
     }
-
-
 }

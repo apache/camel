@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.CastUtils;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -38,7 +39,7 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(DataSetList.class);
 
-        String data = IOConverter.toString(new File("src/test/data/headerandtrailer/PEOPLE-HeaderAndTrailer.txt").getAbsoluteFile());
+        String data = IOConverter.toString(new File("src/test/data/headerandtrailer/PEOPLE-HeaderAndTrailer.txt").getAbsoluteFile(), null);
 
         template.sendBody("direct:unmarshal", data);
         assertMockEndpointsSatisfied();
@@ -47,16 +48,16 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         assertEquals(6, list.size());
 
         // assert header
-        Map header = (Map) list.get(0);
+        Map<String, String> header = CastUtils.cast(list.get(0));
         assertEquals("HBT", header.get("INDICATOR"));
         assertEquals("20080817", header.get("DATE"));
 
         // assert data
-        Map row = (Map) list.get(1);
+        Map<String, String> row = CastUtils.cast(list.get(1));
         assertEquals("JOHN", row.get("FIRSTNAME"));
 
         // assert trailer
-        Map trailer = (Map) list.get(5);
+        Map<String, String> trailer = CastUtils.cast(list.get(5));
         assertEquals("FBT", trailer.get("INDICATOR"));
         assertEquals("SUCCESS", trailer.get("STATUS"));
     }

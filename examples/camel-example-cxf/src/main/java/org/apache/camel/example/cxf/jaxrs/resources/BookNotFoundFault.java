@@ -22,6 +22,8 @@ import javax.xml.ws.WebFault;
 
 @WebFault
 public class BookNotFoundFault extends Exception {
+    private static final long serialVersionUID = 1L;
+
     @XmlElement
     private BookNotFoundDetails details;
 

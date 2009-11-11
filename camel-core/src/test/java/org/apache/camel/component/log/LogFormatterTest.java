@@ -176,9 +176,9 @@ public class LogFormatterTest extends ContextTestSupport {
         assertEquals(0, formatter.getMaxChars());
     }
 
-    private class MyFuture extends FutureTask {
+    private class MyFuture extends FutureTask<Object> {
 
-        public MyFuture(Callable callable) {
+        public MyFuture(Callable<Object> callable) {
             super(callable);
         }
 
@@ -201,5 +201,4 @@ public class LogFormatterTest extends ContextTestSupport {
             return "ThisIsMyFuture";
         }
     }
-
 }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.CastUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -59,7 +60,7 @@ public class CustomerTransformer {
      * Finds a customer for the given username, or creates and inserts a new one
      */
     protected CustomerEntity findCustomerByName(JpaTemplate template, String user) {
-        List<CustomerEntity> list = template.find("select x from " + CustomerEntity.class.getName() + " x where x.userName = ?1", user);
+        List<CustomerEntity> list = CastUtils.cast(template.find("select x from " + CustomerEntity.class.getName() + " x where x.userName = ?1", user));
         if (list.isEmpty()) {
             CustomerEntity answer = new CustomerEntity();
             answer.setUserName(user);

@@ -94,13 +94,13 @@ public class SplitterPojoTest extends ContextTestSupport {
          * @param body the payload of the incoming message
          * @return a list containing each part splitted
          */
-        public List splitBody(String body) {
+        public List<String> splitBody(String body) {
             // since this is based on an unit test you can of couse
             // use different logic for splitting as Camel have out
             // of the box support for splitting a String based on comma
             // but this is for show and tell, since this is java code
             // you have the full power how you like to split your messages
-            List answer = new ArrayList();
+            List<String> answer = new ArrayList<String>();
             String[] parts = body.split(",");
             for (String part : parts) {
                 answer.add(part);

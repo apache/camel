@@ -16,19 +16,19 @@
  */
 package org.apache.camel.component.flatpack;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.CastUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test to verify that splitRows=false option.
@@ -53,23 +53,23 @@ public class NoSplitRowsTest extends AbstractJUnit4SpringContextTests {
 
         results.assertIsSatisfied();
 
-        List<Map> data = (List) results.getExchanges().get(0).getIn().getBody();
+        List<Map<String, String>> data = CastUtils.cast(results.getExchanges().get(0).getIn().getBody(List.class));
 
         // assert header
-        Map header = data.get(0);
+        Map<String, String> header = data.get(0);
         assertEquals("HBT", header.get("INDICATOR"));
         assertEquals("20080817", header.get("DATE"));
 
         // assert body
         int counter = 0;
-        for (Map row : data.subList(1, 5)) {
+        for (Map<String, String> row : data.subList(1, 5)) {
             assertEquals("FIRSTNAME", expectedFirstName[counter], row.get("FIRSTNAME"));
             LOG.info("Result: " + counter + " = " + row);
             counter++;
         }
 
         // assert trailer
-        Map trailer = data.get(5);
+        Map<String, String> trailer = data.get(5);
         assertEquals("FBT", trailer.get("INDICATOR"));
         assertEquals("SUCCESS", trailer.get("STATUS"));
     }

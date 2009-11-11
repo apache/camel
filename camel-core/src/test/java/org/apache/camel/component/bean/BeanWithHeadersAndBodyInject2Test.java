@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BeanWithHeadersAndBodyInject2Test.class);
     private MyBean myBean = new MyBean();
-    private Map users = new HashMap();
+    private Map<String, User> users = new HashMap<String, User>();
 
     public void testCannotBindToParameter() throws Exception {
         // Create hashmap for testing purpose
@@ -64,7 +64,7 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
     }
 
     public void testBindToParameter() throws Exception {
-        final List list = new ArrayList();
+        final List<String> list = new ArrayList<String>();
         list.add("Charles");
         list.add("Claus");
 
@@ -109,9 +109,9 @@ public class BeanWithHeadersAndBodyInject2Test extends ContextTestSupport {
 
     public static class MyBean {
         public Object body;
-        public List users;
+        public List<User> users;
 
-        public void myMethod(@Header(value = "users") List users, Object body) {
+        public void myMethod(@Header(value = "users") List<User> users, Object body) {
             LOG.info("myMethod() method called on " + this);
             LOG.info(" users " + users);
             this.body = body;

@@ -30,7 +30,7 @@ public class ObjectConverterTest extends TestCase {
     public void testIsCollection() {
         assertEquals(false, ObjectConverter.isCollection("String"));
         assertEquals(false, ObjectConverter.isCollection(null));
-        assertEquals(true, ObjectConverter.isCollection(new ArrayList()));
+        assertEquals(true, ObjectConverter.isCollection(new ArrayList<Object>()));
         assertEquals(true, ObjectConverter.isCollection(new String[]{"foo", "bar"}));
     }
 

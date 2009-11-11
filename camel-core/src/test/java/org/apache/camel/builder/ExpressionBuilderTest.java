@@ -29,6 +29,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.CastUtils;
+
 import static org.apache.camel.builder.ExpressionBuilder.*;
 import static org.apache.camel.builder.PredicateBuilder.contains;
 
@@ -41,7 +43,7 @@ public class ExpressionBuilderTest extends TestSupport {
     
     public void testRegexTokenize() throws Exception {
         Expression expression = regexTokenizeExpression(headerExpression("location"), ",");
-        ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Islington", "London", "UK"}));
+        ArrayList<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Islington", "London", "UK"}));
         assertExpression(expression, exchange, expected);
 
         Predicate predicate = contains(regexTokenizeExpression(headerExpression("location"), ","),
@@ -65,7 +67,7 @@ public class ExpressionBuilderTest extends TestSupport {
     public void testTokenize() throws Exception {
         Expression expression = tokenizeExpression(headerExpression("location"), ",");
 
-        ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Islington", "London", "UK"}));
+        ArrayList<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Islington", "London", "UK"}));
         assertExpression(expression, exchange, expected);
 
         Predicate predicate = contains(tokenizeExpression(headerExpression("location"), ","),
@@ -81,7 +83,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = regexTokenizeExpression(bodyExpression(), "[\r|\n]");
         exchange.getIn().setBody("Hello World\nBye World\rSee you again");
 
-        ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Hello World", "Bye World", "See you again"}));
+        ArrayList<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Hello World", "Bye World", "See you again"}));
         assertExpression(expression, exchange, expected);
     }
 
@@ -89,7 +91,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = sortExpression(body().tokenize(",").getExpression(), new SortByName());
         exchange.getIn().setBody("Jonathan,Claus,James,Hadrian");
 
-        ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Claus", "Hadrian", "James", "Jonathan"}));
+        ArrayList<String> expected = new ArrayList<String>(Arrays.asList(new String[] {"Claus", "Hadrian", "James", "Jonathan"}));
         assertExpression(expression, exchange, expected);
     }
     
@@ -98,7 +100,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = camelContextPropertyExpression("CamelTestKey");
         assertExpression(expression, exchange, "CamelTestValue");        
         expression = camelContextPropertiesExpression();
-        Map<String, String> properties = (Map<String, String>)expression.evaluate(exchange, Object.class);
+        Map<String, String> properties = CastUtils.cast(expression.evaluate(exchange, Map.class));
         assertEquals("Get a wrong properties size", properties.size(), 1);
     }
 
