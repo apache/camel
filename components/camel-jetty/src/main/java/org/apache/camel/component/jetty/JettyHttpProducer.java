@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Map;
 
@@ -31,10 +32,13 @@ import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpProducerHelper;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mortbay.io.Buffer;
+import org.mortbay.io.ByteArrayBuffer;
 import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.client.HttpExchange;
 
@@ -110,6 +114,30 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         JettyContentExchange httpExchange = new JettyContentExchange(exchange, getBinding(), client);
         httpExchange.setMethod(method);
         httpExchange.setURL(url);
+
+        // if we post then set data
+        if (HttpMethods.POST.equals(methodToUse)) {
+
+            String contentType = ExchangeHelper.getContentType(exchange);
+            if (contentType != null) {
+                httpExchange.setRequestContentType(contentType);
+            }
+
+            // try with String at first
+            String data = exchange.getIn().getBody(String.class);
+            if (data != null) {
+                String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+                if (charset != null) {
+                    httpExchange.setRequestContent(new ByteArrayBuffer(data, charset));
+                } else {
+                    httpExchange.setRequestContent(new ByteArrayBuffer(data));
+                }
+            } else {
+                // then fallback to input stream
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, exchange.getIn().getBody());
+                httpExchange.setRequestContentSource(is);
+            }
+        }
 
         doSetQueryParameters(exchange, httpExchange);
 

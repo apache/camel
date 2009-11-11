@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.io.Buffer;
@@ -63,6 +65,15 @@ public class JettyContentExchange extends ContentExchange {
     protected void onResponseHeader(Buffer name, Buffer value) throws IOException {
         super.onResponseHeader(name, value);
         headers.put(name.toString(), value.toString());
+    }
+
+    @Override
+    protected void onRequestComplete() throws IOException {
+        // close the input stream when its not needed anymore
+        InputStream is = getRequestContentSource();
+        if (is != null) {
+            ObjectHelper.close(is, "RequestContentSource", LOG);
+        }
     }
 
     @Override
