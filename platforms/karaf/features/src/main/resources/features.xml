@@ -277,7 +277,7 @@
   </feature>
   <feature name='camel-ognl' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ognl/${pom.version}</bundle>
   </feature>
   <feature name='camel-quartz' version='${pom.version}'>
