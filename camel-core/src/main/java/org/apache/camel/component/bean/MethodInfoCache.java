@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.LRUCache;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.camel.util.LRUCache;
 public class MethodInfoCache {
     private final CamelContext camelContext;
     private Map<Method, MethodInfo> methodCache;
-    private Map<Class, BeanInfo> classCache;
+    private Map<Class<?>, BeanInfo> classCache;
 
     public MethodInfoCache(CamelContext camelContext) {
         this(camelContext, 1000, 10000);
@@ -39,10 +40,10 @@ public class MethodInfoCache {
 
     @SuppressWarnings("unchecked")
     public MethodInfoCache(CamelContext camelContext, int classCacheSize, int methodCacheSize) {
-        this(camelContext, createLruCache(classCacheSize), createLruCache(methodCacheSize));
+        this(camelContext, createClassCache(classCacheSize), createMethodCache(methodCacheSize));
     }
 
-    public MethodInfoCache(CamelContext camelContext, Map<Class, BeanInfo> classCache, Map<Method, MethodInfo> methodCache) {
+    public MethodInfoCache(CamelContext camelContext, Map<Class<?>, BeanInfo> classCache, Map<Method, MethodInfo> methodCache) {
         this.camelContext = camelContext;
         this.classCache = classCache;
         this.methodCache = methodCache;
@@ -76,7 +77,15 @@ public class MethodInfoCache {
         return new BeanInfo(camelContext, declaringClass);
     }
 
-    protected static Map createLruCache(int size) {
-        return new LRUCache(size);
+    protected static Map<Object, Object> createLruCache(int size) {
+        return new LRUCache<Object, Object>(size);
+    }
+
+    private static Map<Class<?>, BeanInfo> createClassCache(int size) {
+        return CastUtils.cast(createLruCache(size));
+    }
+
+    private static Map<Method, MethodInfo> createMethodCache(int size) {
+        return CastUtils.cast(createLruCache(size));
     }
 }

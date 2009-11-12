@@ -67,7 +67,7 @@ public final class Builder {
      * @param method   name of method to invoke
      * @return the builder
      */
-    public static ValueBuilder bean(Class beanType, String method) {
+    public static ValueBuilder bean(Class<?> beanType, String method) {
         Expression expression = ExpressionBuilder.beanExpression(beanType, method);
         return new ValueBuilder(expression);
     }

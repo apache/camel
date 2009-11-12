@@ -47,7 +47,7 @@ public class MethodInfo {
     private static final transient Log LOG = LogFactory.getLog(MethodInfo.class);
 
     private CamelContext camelContext;
-    private Class type;
+    private Class<?> type;
     private Method method;
     private final List<ParameterInfo> parameters;
     private final List<ParameterInfo> bodyParameters;
@@ -57,7 +57,7 @@ public class MethodInfo {
     private ExchangePattern pattern = ExchangePattern.InOut;
     private RecipientList recipientList;
 
-    public MethodInfo(CamelContext camelContext, Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
+    public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
         this.camelContext = camelContext;
         this.type = type;
@@ -129,7 +129,7 @@ public class MethodInfo {
         };
     }
 
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -156,7 +156,7 @@ public class MethodInfo {
         return bodyParameters;
     }
 
-    public Class getBodyParameterType() {
+    public Class<?> getBodyParameterType() {
         if (bodyParameters.isEmpty()) {
             return null;
         }
@@ -164,8 +164,8 @@ public class MethodInfo {
         return parameterInfo.getType();
     }
 
-    public boolean bodyParameterMatches(Class bodyType) {
-        Class actualType = getBodyParameterType();
+    public boolean bodyParameterMatches(Class<?> bodyType) {
+        Class<?> actualType = getBodyParameterType();
         return actualType != null && ObjectHelper.isAssignableFrom(bodyType, actualType);
     }
 
@@ -271,8 +271,8 @@ public class MethodInfo {
             // lets create the search order of types to scan
             List<Class<?>> typesToSearch = new ArrayList<Class<?>>();
             addTypeAndSuperTypes(type, typesToSearch);
-            Class[] interfaces = type.getInterfaces();
-            for (Class anInterface : interfaces) {
+            Class<?>[] interfaces = type.getInterfaces();
+            for (Class<?> anInterface : interfaces) {
                 addTypeAndSuperTypes(anInterface, typesToSearch);
             }
 

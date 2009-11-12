@@ -43,6 +43,7 @@ import org.apache.camel.Property;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -60,7 +61,7 @@ public class BeanInfo {
     private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private final CamelContext camelContext;
-    private final Class type;
+    private final Class<?> type;
     private final ParameterMappingStrategy strategy;
     private final Map<String, List<MethodInfo>> operations = new ConcurrentHashMap<String, List<MethodInfo>>();
     private final List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
@@ -70,11 +71,11 @@ public class BeanInfo {
     private MethodInfo defaultMethod;
     private BeanInfo superBeanInfo;
 
-    public BeanInfo(CamelContext camelContext, Class type) {
+    public BeanInfo(CamelContext camelContext, Class<?> type) {
         this(camelContext, type, createParameterMappingStrategy(camelContext));
     }
 
-    public BeanInfo(CamelContext camelContext, Class type, ParameterMappingStrategy strategy) {
+    public BeanInfo(CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy) {
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
@@ -101,7 +102,7 @@ public class BeanInfo {
         }
     }
 
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
@@ -177,7 +178,7 @@ public class BeanInfo {
      *
      * @param clazz the class
      */
-    protected void introspect(Class clazz) {
+    protected void introspect(Class<?> clazz) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Introspecting class: " + clazz);
         }
@@ -187,7 +188,7 @@ public class BeanInfo {
                 introspect(clazz, method);
             }
         }
-        Class superclass = clazz.getSuperclass();
+        Class<?> superclass = clazz.getSuperclass();
         if (superclass != null && !superclass.equals(Object.class)) {
             introspect(superclass);
         }
@@ -200,7 +201,7 @@ public class BeanInfo {
      * @param method the method
      * @return the method info, is newer <tt>null</tt>
      */
-    protected MethodInfo introspect(Class clazz, Method method) {
+    protected MethodInfo introspect(Class<?> clazz, Method method) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Introspecting class: " + clazz + ", method: " + method);
         }
@@ -261,7 +262,7 @@ public class BeanInfo {
         if (answer == null) {
             // maybe the method is defined on a base class?
             if (superBeanInfo == null && type != Object.class) {
-                Class superclass = type.getSuperclass();
+                Class<?> superclass = type.getSuperclass();
                 if (superclass != null && superclass != Object.class) {
                     superBeanInfo = new BeanInfo(camelContext, superclass, strategy);
                     return superBeanInfo.getMethodInfo(method);
@@ -511,7 +512,7 @@ public class BeanInfo {
      * @param method  the method
      * @return true if valid, false to skip the method
      */
-    protected boolean isValidMethod(Class clazz, Method method) {
+    protected boolean isValidMethod(Class<?> clazz, Method method) {
         // must not be in the excluded list
         for (Method excluded : EXCLUDED_METHODS) {
             if (ObjectHelper.isOverridingMethod(excluded, method)) {
@@ -580,8 +581,8 @@ public class BeanInfo {
      * insufficient annotations or not fitting with the default type
      * conventions.
      */
-    private Expression createParameterUnmarshalExpression(Class clazz, Method method, Class parameterType,
-                                                          Annotation[] parameterAnnotation) {
+    private Expression createParameterUnmarshalExpression(Class<?> clazz, Method method, 
+            Class<?> parameterType, Annotation[] parameterAnnotation) {
 
         // look for a parameter annotation that converts into an expression
         for (Annotation annotation : parameterAnnotation) {
@@ -594,8 +595,9 @@ public class BeanInfo {
         return strategy.getDefaultParameterTypeExpression(parameterType);
     }
 
-    private Expression createParameterUnmarshalExpressionForAnnotation(Class clazz, Method method, Class parameterType,
-                                                                       Annotation annotation) {
+    private Expression createParameterUnmarshalExpressionForAnnotation(Class<?> clazz, Method method, 
+            Class<?> parameterType, Annotation annotation) {
+
         if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
             return ExpressionBuilder.propertyExpression(propertyAnnotation.value());
@@ -609,7 +611,7 @@ public class BeanInfo {
         } else if (annotation instanceof OutHeaders) {
             return ExpressionBuilder.outHeadersExpression();
         } else if (annotation instanceof ExchangeException) {
-            return ExpressionBuilder.exchangeExceptionExpression(parameterType);
+            return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {

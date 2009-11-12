@@ -74,10 +74,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
             } else {
                 // use a recipient list since we only have an uri for the endpoint
                 failureProcessor = new RecipientList(new Expression() {
-                    public Object evaluate(Exchange exchange) {
-                        return deadLetterUri;
-                    }
-
                     public <T> T evaluate(Exchange exchange, Class<T> type) {
                         return exchange.getContext().getTypeConverter().convertTo(type, deadLetterUri);
                     }

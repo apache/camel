@@ -28,11 +28,11 @@ import org.apache.camel.Expression;
  */
 public class ParameterInfo {
     private final int index;
-    private final Class type;
+    private final Class<?> type;
     private final Annotation[] annotations;
     private Expression expression;
 
-    public ParameterInfo(int index, Class type, Annotation[] annotations, Expression expression) {
+    public ParameterInfo(int index, Class<?> type, Annotation[] annotations, Expression expression) {
         this.index = index;
         this.type = type;
         this.annotations = annotations;
@@ -51,7 +51,7 @@ public class ParameterInfo {
         return index;
     }
 
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 

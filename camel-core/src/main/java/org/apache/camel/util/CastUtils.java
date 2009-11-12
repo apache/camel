@@ -89,6 +89,13 @@ public final class CastUtils {
         return (Enumeration<T>)p;
     }
 
+    public static <T> Class<T> cast(Class<?> p) {
+        return (Class<T>)p;
+    }
+    public static <T> Class<T> cast(Class<?> p, Class<T> cls) {
+        return (Class<T>)p;
+    }
+
     public static <T> Future<T> cast(Future<?> p) {
         return (Future<T>)p;
     }

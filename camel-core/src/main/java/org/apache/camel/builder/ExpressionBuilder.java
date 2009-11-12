@@ -905,7 +905,7 @@ public final class ExpressionBuilder {
         };
     }
     
-    public static Expression beanExpression(final Class beanType, final String methodName) {
+    public static Expression beanExpression(final Class<?> beanType, final String methodName) {
         return BeanLanguage.bean(beanType, methodName);        
     }
 
@@ -952,6 +952,4 @@ public final class ExpressionBuilder {
             }
         };
     }
-
-
 }

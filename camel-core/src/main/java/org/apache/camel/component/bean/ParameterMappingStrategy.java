@@ -32,5 +32,5 @@ public interface ParameterMappingStrategy {
      * @param parameterType the parameter type
      * @return the expression to evaluate as value
      */
-    Expression getDefaultParameterTypeExpression(Class parameterType);
+    Expression getDefaultParameterTypeExpression(Class<?> parameterType);
 }

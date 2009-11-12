@@ -158,7 +158,7 @@ public abstract class BuilderSupport {
      * @param beanType the Class of the bean which we want to invoke
      * @return the builder
      */
-    public ValueBuilder bean(Class beanType) {
+    public ValueBuilder bean(Class<?> beanType) {
         return Builder.bean(beanType, null);
     }
     
@@ -170,7 +170,7 @@ public abstract class BuilderSupport {
      * @param method   name of method to invoke
      * @return the builder
      */
-    public ValueBuilder bean(Class beanType, String method) {
+    public ValueBuilder bean(Class<?> beanType, String method) {
         return Builder.bean(beanType, method);
     }
 

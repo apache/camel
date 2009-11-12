@@ -95,7 +95,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     /**
      * An expression of an inbound message body converted to the expected type
      */
-    public T body(Class expectedType) {
+    public T body(Class<?> expectedType) {
         return expression(ExpressionBuilder.bodyExpression(expectedType));
     }
 
@@ -183,7 +183,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param beanType the Class of the bean which we want to invoke
      * @return the builder to continue processing the DSL
      */
-    public T method(Class beanType) {
+    public T method(Class<?> beanType) {
         MethodCallExpression expression = new MethodCallExpression(beanType);
         setExpressionType(expression);
         return result;
@@ -215,7 +215,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param method the name of the method to invoke on the bean
      * @return the builder to continue processing the DSL
      */
-    public T method(Class beanType, String method) {
+    public T method(Class<?> beanType, String method) {
         MethodCallExpression expression = new MethodCallExpression(beanType, method);
         setExpressionType(expression);
         return result;
@@ -362,7 +362,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param resultType the return type expected by the expressiopn
      * @return the builder to continue processing the DSL
      */
-    public T xpath(String text, Class resultType) {
+    public T xpath(String text, Class<?> resultType) {
         XPathExpression expression = new XPathExpression(text);
         expression.setResultType(resultType);
         setExpressionType(expression);
@@ -379,7 +379,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
-    public T xpath(String text, Class resultType, Namespaces namespaces) {
+    public T xpath(String text, Class<?> resultType, Namespaces namespaces) {
         return xpath(text, resultType, namespaces.getNamespaces());
     }
 
@@ -393,7 +393,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
-    public T xpath(String text, Class resultType, Map<String, String> namespaces) {
+    public T xpath(String text, Class<?> resultType, Map<String, String> namespaces) {
         XPathExpression expression = new XPathExpression(text);
         expression.setResultType(resultType);
         expression.setNamespaces(namespaces);
@@ -448,7 +448,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param resultType the return type expected by the expressiopn
      * @return the builder to continue processing the DSL
      */
-    public T xquery(String text, Class resultType) {
+    public T xquery(String text, Class<?> resultType) {
         XQueryExpression expression = new XQueryExpression(text);
         expression.setResultType(resultType);
         setExpressionType(expression);
@@ -465,7 +465,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
-    public T xquery(String text, Class resultType, Namespaces namespaces) {
+    public T xquery(String text, Class<?> resultType, Namespaces namespaces) {
         return xquery(text, resultType, namespaces.getNamespaces());
     }
 
@@ -479,7 +479,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
-    public T xquery(String text, Class resultType, Map<String, String> namespaces) {
+    public T xquery(String text, Class<?> resultType, Map<String, String> namespaces) {
         XQueryExpression expression = new XQueryExpression(text);
         expression.setResultType(resultType);
         expression.setNamespaces(namespaces);

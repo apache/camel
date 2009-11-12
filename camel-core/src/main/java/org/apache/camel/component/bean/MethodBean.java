@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
  * @version $Revision$
  */
 public class MethodBean implements Serializable {
+    private static final long serialVersionUID = -789408217201706532L;
+
     private String name;
     private Class<?> type;
     private Class<?>[] parameterTypes;

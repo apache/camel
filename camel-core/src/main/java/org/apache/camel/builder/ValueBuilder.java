@@ -86,7 +86,7 @@ public class ValueBuilder implements Expression {
         return onNewPredicate(PredicateBuilder.isGreaterThanOrEqualTo(expression, right));
     }
 
-    public Predicate isInstanceOf(Class type) {
+    public Predicate isInstanceOf(Class<?> type) {
         return onNewPredicate(PredicateBuilder.isInstanceOf(expression, type));
     }
 

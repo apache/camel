@@ -46,7 +46,7 @@ import org.apache.camel.model.dataformat.ZipDataFormat;
  *
  * @version $Revision$
  */
-public class DataFormatClause<T extends ProcessorDefinition> {
+public class DataFormatClause<T extends ProcessorDefinition<?>> {
     private final T processorType;
     private final Operation operation;
 

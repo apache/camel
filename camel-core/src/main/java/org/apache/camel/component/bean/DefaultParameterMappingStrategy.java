@@ -33,20 +33,20 @@ import org.apache.camel.spi.Registry;
  * @version $Revision$
  */
 public class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
-    private final Map<Class, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class, Expression>();
+    private final Map<Class<?>, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class<?>, Expression>();
 
     public DefaultParameterMappingStrategy() {
         loadDefaultRegistry();
     }
 
-    public Expression getDefaultParameterTypeExpression(Class parameterType) {
+    public Expression getDefaultParameterTypeExpression(Class<?> parameterType) {
         return parameterTypeToExpressionMap.get(parameterType);
     }
 
     /**
      * Adds a default parameter type mapping to an expression
      */
-    public void addParameterMapping(Class parameterType, Expression expression) {
+    public void addParameterMapping(Class<?> parameterType, Expression expression) {
         parameterTypeToExpressionMap.put(parameterType, expression);
     }
 
@@ -58,5 +58,4 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
         addParameterMapping(Registry.class, ExpressionBuilder.registryExpression());
         addParameterMapping(CamelContext.class, ExpressionBuilder.camelContextExpression());
     }
-
 }

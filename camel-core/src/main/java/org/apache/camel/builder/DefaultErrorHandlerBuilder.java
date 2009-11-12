@@ -208,7 +208,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @param log the log class
      * @return the builder
      */
-    public DefaultErrorHandlerBuilder log(Class log) {
+    public DefaultErrorHandlerBuilder log(Class<?> log) {
         return log(LogFactory.getLog(log));
     }
 

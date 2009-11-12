@@ -58,7 +58,7 @@ public class BeanRegistryBeanTest extends ContextTestSupport {
     public void testParameterMappingStrategy() {
         RegistryBean rb = new RegistryBean(context, "foo");
         ParameterMappingStrategy myStrategy = new ParameterMappingStrategy() {
-            public Expression getDefaultParameterTypeExpression(Class parameterType) {
+            public Expression getDefaultParameterTypeExpression(Class<?> parameterType) {
                 return null;
             }
         };

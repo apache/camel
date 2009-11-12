@@ -28,6 +28,8 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class AmbiguousMethodCallException extends CamelExchangeException {
+    private static final long serialVersionUID = -8867010485101806951L;
+
     private final Collection<MethodInfo> methods;
 
     public AmbiguousMethodCallException(Exchange exchange, Collection<MethodInfo> methods) {

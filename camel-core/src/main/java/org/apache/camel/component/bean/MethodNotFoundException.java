@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class MethodNotFoundException extends CamelExchangeException {
+    private static final long serialVersionUID = -7411465307141051012L;
 
     private final String methodName;
     private final Object bean;

@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class expressionReturnType) {
+    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
         String xpath = getExpressionFromAnnotation(annotation);
         XPathBuilder builder = XPathBuilder.xpath(xpath, getResultType(annotation));
         NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
