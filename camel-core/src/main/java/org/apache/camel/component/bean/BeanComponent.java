@@ -54,7 +54,7 @@ public class BeanComponent extends DefaultComponent {
 
     // Implementation methods
     //-----------------------------------------------------------------------
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
         Boolean cache = getAndRemoveParameter(parameters, "cache", Boolean.class, Boolean.FALSE);
@@ -67,5 +67,4 @@ public class BeanComponent extends DefaultComponent {
     protected BeanEndpoint createEndpoint(String uri, BeanProcessor processor) {
         return new BeanEndpoint(uri, this, processor);
     }
-
 }

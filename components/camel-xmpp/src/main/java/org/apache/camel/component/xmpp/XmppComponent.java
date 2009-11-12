@@ -35,7 +35,7 @@ public class XmppComponent extends DefaultComponent {
     Map<String, XmppEndpoint> endpointCache = new HashMap<String, XmppEndpoint>();
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         if (endpointCache.containsKey(uri)) {
             LOG.debug("Using cached endpoint for URI " + uri);

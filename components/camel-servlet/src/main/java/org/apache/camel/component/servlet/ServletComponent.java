@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -52,7 +53,7 @@ public class ServletComponent extends HttpComponent {
     }
     
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         uri = uri.startsWith("servlet:") ? remaining : uri;
 
         HttpClientParams params = new HttpClientParams();
@@ -62,7 +63,8 @@ public class ServletComponent extends HttpComponent {
         configureParameters(parameters);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), 
+                CastUtils.cast(parameters));
         uri = httpUri.toString();
 
         ServletEndpoint result = new ServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);

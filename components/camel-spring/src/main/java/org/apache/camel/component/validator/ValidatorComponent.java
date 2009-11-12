@@ -31,7 +31,7 @@ import org.springframework.core.io.Resource;
  */
 public class ValidatorComponent extends ResourceBasedComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringValidator validator = new SpringValidator();
         Resource resource = resolveMandatoryResource(remaining);
         validator.setSchemaResource(resource);
@@ -47,7 +47,7 @@ public class ValidatorComponent extends ResourceBasedComponent {
         return new ProcessorEndpoint(uri, this, validator);
     }
 
-    protected void configureValidator(SpringValidator validator, String uri, String remaining, Map parameters) throws Exception {
+    protected void configureValidator(SpringValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         setProperties(validator, parameters);
     }
 }

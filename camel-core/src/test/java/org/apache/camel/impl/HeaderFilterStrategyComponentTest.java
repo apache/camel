@@ -33,7 +33,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
 
     private class MyComponent extends HeaderFilterStrategyComponent {
 
-        protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return null;
         }
     }

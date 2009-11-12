@@ -53,7 +53,7 @@ public class TimerComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
 
         // convert time from String to a java.util.Date using the supported patterns

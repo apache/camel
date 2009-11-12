@@ -46,7 +46,7 @@ public class MsvComponent extends ValidatorComponent {
         this.schemaFactory = schemaFactory;
     }
 
-    protected void configureValidator(SpringValidator validator, String uri, String remaining, Map parameters) throws Exception {
+    protected void configureValidator(SpringValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validator.setSchemaLanguage(XMLConstants.RELAXNG_NS_URI);
         validator.setSchemaFactory(getSchemaFactory());
         // must use Dom for Msv to work

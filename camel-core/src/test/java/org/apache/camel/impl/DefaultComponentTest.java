@@ -35,35 +35,35 @@ public class DefaultComponentTest extends ContextTestSupport {
             super(context);
         }
 
-        protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
             return null;
         }
     }
 
     public void testGetAndRemoveParameterEmptyMap() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class);
         assertNull(value);
     }
 
     public void testGetAndRemoveParameterEmptyMapDefault() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class, 5);
         assertEquals(value.intValue(), 5);
     }
 
     public void testGetAndRemoveParameterEmptyMapDefaultIsNull() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class, null);
         assertNull(value);
     }
 
     public void testGetAndRemoveParameterToInteger() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("size", 200);
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class);
@@ -71,7 +71,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     public void testGetAndRemoveParameterToIntegerDefault() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("size", 200);
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "level", Integer.class, 4);
@@ -79,7 +79,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     public void testResolveAndRemoveReferenceParameter() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("date", "#beginning");
         MyComponent my = new MyComponent(this.context);
         Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
@@ -87,7 +87,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     public void testResolveAndRemoveReferenceParameterNotInRegistryDefault() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("date", "#somewhen");
         MyComponent my = new MyComponent(this.context);
         Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class, new Date(1));
@@ -95,7 +95,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     public void testResolveAndRemoveReferenceParameterNotInRegistryNull() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("date", "#somewhen");
         MyComponent my = new MyComponent(this.context);
         Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
@@ -103,7 +103,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     public void testResolveAndRemoveReferenceParameterNotInMapDefault() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("date", "#beginning");
         MyComponent my = new MyComponent(this.context);
         Date value = my.resolveAndRemoveReferenceParameter(parameters, "wrong", Date.class, new Date(1));
@@ -111,7 +111,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     public void testResolveAndRemoveReferenceParameterNotInMapNull() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("date", "#beginning");
         MyComponent my = new MyComponent(this.context);
         Date value = my.resolveAndRemoveReferenceParameter(parameters, "wrong", Date.class);
@@ -119,7 +119,7 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     public void testResolveAndRemoveInvalidReferenceParameter() {
-        Map parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("date", "beginning");
         MyComponent my = new MyComponent(this.context);
         try {

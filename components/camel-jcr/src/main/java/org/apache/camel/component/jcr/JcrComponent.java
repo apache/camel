@@ -27,8 +27,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class JcrComponent extends DefaultComponent {
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map properties) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
         return new JcrEndpoint(uri, this);
     }
-
 }

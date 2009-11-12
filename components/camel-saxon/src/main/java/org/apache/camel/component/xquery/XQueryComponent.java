@@ -32,7 +32,7 @@ import org.springframework.core.io.Resource;
  */
 public class XQueryComponent extends ResourceBasedComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Resource resource = resolveMandatoryResource(remaining);
         if (log.isDebugEnabled()) {
             log.debug(this + " using schema resource: " + resource);
@@ -42,7 +42,7 @@ public class XQueryComponent extends ResourceBasedComponent {
         return new ProcessorEndpoint(uri, this, xslt);
     }
 
-    protected void configureXslt(XQueryBuilder xQueryBuilder, String uri, String remaining, Map parameters) throws Exception {
+    protected void configureXslt(XQueryBuilder xQueryBuilder, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         setProperties(xQueryBuilder, parameters);
     }
 }

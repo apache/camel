@@ -26,8 +26,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class StringTemplateComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new StringTemplateEndpoint(uri, this, remaining, parameters);
     }
-
 }

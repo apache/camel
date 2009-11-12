@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class BrowseComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new BrowseEndpoint(uri, this);
     }
 }

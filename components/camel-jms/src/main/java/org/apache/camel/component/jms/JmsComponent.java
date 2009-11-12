@@ -27,6 +27,7 @@ import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -134,12 +135,13 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
             // If we are being configured with spring...
             if (applicationContext != null) {
-                Map beansOfType = applicationContext.getBeansOfType(ConnectionFactory.class);
+                Map<String, Object> beansOfType = 
+                    CastUtils.cast(applicationContext.getBeansOfType(ConnectionFactory.class));
                 if (!beansOfType.isEmpty()) {
                     ConnectionFactory cf = (ConnectionFactory)beansOfType.values().iterator().next();
                     configuration.setConnectionFactory(cf);
                 }
-                beansOfType = applicationContext.getBeansOfType(DestinationResolver.class);
+                beansOfType = CastUtils.cast(applicationContext.getBeansOfType(DestinationResolver.class));
                 if (!beansOfType.isEmpty()) {
                     DestinationResolver destinationResolver = (DestinationResolver)beansOfType.values()
                         .iterator().next();
@@ -366,7 +368,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception {
 
         boolean pubSubDomain = false;
@@ -433,7 +435,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         if (strategy != null) {
             if (EndpointHelper.isReferenceParameter(strategy)) {
                 String key = strategy.substring(1);
-                endpoint.setJmsKeyFormatStrategy(lookup(key, JmsKeyFormatStrategy.class));
+                endpoint.setJmsKeyFormatStrategy(getCamelContext().getRegistry().lookup(key, JmsKeyFormatStrategy.class));
             } else {
                 // should be on of the default ones we support
                 if ("default".equalsIgnoreCase(strategy)) {
@@ -456,7 +458,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
      * A strategy method allowing the URI destination to be translated into the
      * actual JMS destination name (say by looking up in JNDI or something)
      */
-    protected String convertPathToActualDestination(String path, Map parameters) {
+    protected String convertPathToActualDestination(String path, Map<String, Object> parameters) {
         return path;
     }
 

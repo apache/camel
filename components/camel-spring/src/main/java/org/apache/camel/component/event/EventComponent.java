@@ -57,7 +57,7 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
         }
     }
 
-    protected EventEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected EventEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         EventEndpoint answer = new EventEndpoint(uri, this);
         return answer;
     }

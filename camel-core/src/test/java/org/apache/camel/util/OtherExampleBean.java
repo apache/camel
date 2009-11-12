@@ -21,10 +21,18 @@ package org.apache.camel.util;
  */
 public class OtherExampleBean {
 
+    private int customerId;
     private boolean goldCustomer;
     private Boolean silverCustomer;
-    private int customerId;
     private String company;
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
 
     public boolean isGoldCustomer() {
         return goldCustomer;
@@ -34,20 +42,12 @@ public class OtherExampleBean {
         this.goldCustomer = goldCustomer;
     }
 
-    public int getCustomerId() {
-        return customerId;
-    }
-
     public Boolean isSilverCustomer() {
         return silverCustomer;
     }
 
     public void setSilverCustomer(Boolean silverCustomer) {
         this.silverCustomer = silverCustomer;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
     }
 
     public String getCompany() {

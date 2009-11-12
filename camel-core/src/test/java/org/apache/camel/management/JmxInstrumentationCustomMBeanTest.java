@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.CastUtils;
 
 /**
  * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered
@@ -56,7 +57,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
         resolveMandatoryEndpoint("custom://end", CustomEndpoint.class);
 
-        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set<ObjectName> s = CastUtils.cast(mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null));
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
         // get custom
@@ -113,16 +114,16 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
 
-        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set<ObjectName> s = CastUtils.cast(mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null));
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
-        s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
+        s = CastUtils.cast(mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null));
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
-        s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
+        s = CastUtils.cast(mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null));
         assertEquals("Could not find 2 processors: " + s, 2, s.size());
 
-        s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
+        s = CastUtils.cast(mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null));
         assertEquals("Could not find 1 route: " + s, 1, s.size());
     }
 
@@ -139,7 +140,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
     }
 
     private class CustomComponent extends DefaultComponent {
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map parameters) throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
             return new CustomEndpoint("custom", this);
         }
     }

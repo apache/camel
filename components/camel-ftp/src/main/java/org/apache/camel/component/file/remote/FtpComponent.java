@@ -36,7 +36,7 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
     }
 
     @Override
-    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
         // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
         // to espace the $ for the expression (file language)
@@ -55,6 +55,5 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
     protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {
         // noop
     }
-
 }
 

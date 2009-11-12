@@ -61,7 +61,6 @@ import org.springframework.core.io.Resource;
  * @see IBatisPollingConsumer
  */
 public class IBatisComponent extends ResourceBasedComponent {
-    private static final transient Log LOG = LogFactory.getLog(IBatisComponent.class);
     private static final String DEFAULT_CONFIG_URI = "classpath:SqlMapConfig.xml";
     private SqlMapClient sqlMapClient;
     private String sqlMapConfig = DEFAULT_CONFIG_URI;

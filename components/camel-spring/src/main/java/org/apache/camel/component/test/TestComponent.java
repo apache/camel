@@ -45,11 +45,11 @@ public class TestComponent extends DefaultComponent {
             path = path.substring(2);
         }
 
-        return createEndpoint(uri, path, new HashMap());
+        return createEndpoint(uri, path, new HashMap<String, Object>());
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
         return new TestEndpoint(uri, this, endpoint);
     }

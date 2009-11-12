@@ -39,15 +39,14 @@ public class VmComponent extends SedaComponent {
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BlockingQueue<Exchange> blockingQueue = getBlockingQueue(uri, parameters);
         SedaEndpoint answer = new SedaEndpoint(uri, this, blockingQueue);
         answer.configureProperties(parameters);
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
-    protected BlockingQueue<Exchange> getBlockingQueue(String uri, Map parameters) {
+    protected BlockingQueue<Exchange> getBlockingQueue(String uri, Map<String, Object> parameters) {
         synchronized (QUEUES) {
             BlockingQueue<Exchange> answer = QUEUES.get(uri);
             if (answer == null) {

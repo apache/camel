@@ -29,6 +29,7 @@ import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -95,7 +96,7 @@ public class JettyHttpComponent extends HttpComponent {
     
     
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         uri = uri.startsWith("jetty:") ? remaining : uri;
 
         // handlers
@@ -134,7 +135,8 @@ public class JettyHttpComponent extends HttpComponent {
         }
 
         // create the http uri after we have configured all the parameters on the camel objects
-        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), 
+                CastUtils.cast(parameters));
         result.setHttpUri(httpUri);
 
         return result;

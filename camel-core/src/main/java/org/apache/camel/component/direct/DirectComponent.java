@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class DirectComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new DirectEndpoint(uri, this);
         setProperties(endpoint, parameters);
         return endpoint;

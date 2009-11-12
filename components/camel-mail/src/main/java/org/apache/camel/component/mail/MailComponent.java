@@ -49,7 +49,7 @@ public class MailComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         URI url = new URI(uri);
         if ("nntp".equalsIgnoreCase(url.getScheme())) {
             throw new UnsupportedOperationException("nntp protocol is not supported");

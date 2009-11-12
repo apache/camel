@@ -54,7 +54,7 @@ public class JpaComponent extends DefaultComponent {
     //-------------------------------------------------------------------------
 
     @Override
-    protected Endpoint createEndpoint(String uri, String path, Map options) throws Exception {
+    protected Endpoint createEndpoint(String uri, String path, Map<String, Object> options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
 
         // lets interpret the next string as a class

@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -31,12 +32,12 @@ import org.apache.camel.util.URISupport;
  */
 public class RssComponent extends FeedComponent {
 
-    protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new RssEndpoint(uri, this, null);
     }
 
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
         RssEndpoint rss = (RssEndpoint) endpoint;
         if (rss.getFeedUri() != null) {
             // already set so do not change it
@@ -47,7 +48,7 @@ public class RssComponent extends FeedComponent {
         // for the http feed
         String feedUri;
         if (!parameters.isEmpty()) {
-            URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
+            URI remainingUri = URISupport.createRemainingURI(new URI(remaining), CastUtils.cast(parameters));
             feedUri = remainingUri.toString();
         } else {
             feedUri = remaining;
@@ -55,5 +56,4 @@ public class RssComponent extends FeedComponent {
 
         rss.setFeedUri(feedUri);
     }
-
 }

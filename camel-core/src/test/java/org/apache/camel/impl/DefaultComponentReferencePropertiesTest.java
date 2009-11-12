@@ -81,7 +81,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
             super(context);
         }
 
-        protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             MyEndpoint result = new MyEndpoint(uri, this);
             setProperties(result, parameters);
             return result;

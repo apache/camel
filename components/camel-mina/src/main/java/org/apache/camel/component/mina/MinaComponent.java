@@ -72,7 +72,7 @@ public class MinaComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // Using the configuration which set by the component as a default one
         // Since the configuration's properties will be set by the URI
         // we need to copy or create a new MinaConfiguration here

@@ -119,8 +119,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param optionPrefix optional prefix to filter the parameters for validation. Use <tt>null</tt> for validate all.
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
-    protected void validateParameters(String uri, Map parameters, String optionPrefix) {
-        Map param = parameters;
+    protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
+        Map<String, Object> param = parameters;
         if (optionPrefix != null) {
             param = IntrospectionSupport.extractProperties(parameters, optionPrefix);
         }
@@ -141,7 +141,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters the parameters, an empty map if no parameters given
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
-    protected void validateURI(String uri, String path, Map parameters) {
+    protected void validateURI(String uri, String path, Map<String, Object> parameters) {
         // check for uri containing & but no ? marker
         if (uri.contains("&") && !uri.contains("?")) {
             throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
@@ -320,7 +320,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @return  the converted value parameter, <tt>null</tt> if parameter does not exists.
      * @see #resolveAndRemoveReferenceParameter(Map, String, Class)
      */
-    public <T> T getAndRemoveParameter(Map parameters, String key, Class<T> type) {
+    public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type) {
         return getAndRemoveParameter(parameters, key, type, null);
     }
 
@@ -335,7 +335,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @return  the converted value parameter
      * @see #resolveAndRemoveReferenceParameter(Map, String, Class, Object)
      */
-    public <T> T getAndRemoveParameter(Map parameters, String key, Class<T> type, T defaultValue) {
+    public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         Object value = parameters.remove(key);
         if (value == null) {
             value = defaultValue;
@@ -356,7 +356,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param type          type of object to lookup in th registry.
      * @return the referenced object or <code>null</code>.
      */
-    public <T> T resolveAndRemoveReferenceParameter(Map parameters, String key, Class<T> type) {
+    public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
         return resolveAndRemoveReferenceParameter(parameters, key, type, null); 
     }
 
@@ -372,7 +372,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      *                      type.
      * @return the referenced object, the default value or <code>null</code>.
      */
-    public <T> T resolveAndRemoveReferenceParameter(Map parameters, String key, Class<T> type, T defaultValue) {
+    public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         String value = getAndRemoveParameter(parameters, key, String.class);
         if (EndpointHelper.isReferenceParameter(value)) {
             T result = EndpointHelper.resolveReferenceParameter(getCamelContext(), value.toString(), type);

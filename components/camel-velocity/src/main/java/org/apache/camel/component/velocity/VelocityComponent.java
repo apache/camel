@@ -37,7 +37,7 @@ public class VelocityComponent extends DefaultComponent {
         this.velocityEngine = velocityEngine;
     }
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String propertiesFile = getAndRemoveParameter(parameters, "propertiesFile", String.class);
         String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);        

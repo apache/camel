@@ -55,7 +55,7 @@ public class QuartzComponent extends DefaultComponent {
     }
 
     @Override
-    protected QuartzEndpoint createEndpoint(final String uri, final String remaining, final Map parameters) throws Exception {
+    protected QuartzEndpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         QuartzEndpoint answer = new QuartzEndpoint(uri, this, getScheduler());
 
         // lets split the remaining into a group/name
@@ -87,8 +87,8 @@ public class QuartzComponent extends DefaultComponent {
         trigger.setName(name);
         trigger.setGroup(group);
 
-        Map triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
-        Map jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
+        Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
+        Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
 
         setProperties(trigger, triggerParameters);
         setProperties(answer.getJobDetail(), jobParameters);

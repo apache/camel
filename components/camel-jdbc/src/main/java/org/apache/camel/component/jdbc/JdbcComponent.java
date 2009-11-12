@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * @version $Revision:520964 $
@@ -37,14 +38,14 @@ public class JdbcComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DataSource dataSource;
 
         if (ds != null) {
             // prefer to use datasource set by setter
             dataSource = ds;
         } else {
-            dataSource = mandatoryLookup(remaining, DataSource.class);
+            dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, DataSource.class);
         }
 
         JdbcEndpoint jdbc = new JdbcEndpoint(uri, this, dataSource);
@@ -55,5 +56,4 @@ public class JdbcComponent extends DefaultComponent {
     public void setDataSource(DataSource dataSource) {
         this.ds = dataSource;
     }
-
 }

@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -39,10 +40,10 @@ public class SqlComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
         if (dataSourceRef != null) {
-            dataSource = mandatoryLookup(dataSourceRef, DataSource.class);
+            dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), dataSourceRef, DataSource.class);
         }
         
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);

@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -66,7 +67,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      * 
      * @param parameters the map of parameters 
      */
-    protected void configureParameters(Map parameters) {
+    protected void configureParameters(Map<String, Object> parameters) {
         // lookup http binding in registry if provided
         String ref = getAndRemoveParameter(parameters, "httpBindingRef", String.class);
         if (ref != null) {
@@ -110,7 +111,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
     
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
@@ -127,7 +128,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         
         Boolean matchOnUriPrefix = Boolean.parseBoolean(getAndRemoveParameter(parameters, "matchOnUriPrefix", String.class));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
+        URI httpUri = URISupport.createRemainingURI(new URI(uri), CastUtils.cast(parameters));
         uri = httpUri.toString();
 
         // validate http uri that end-user did not duplicate the http part that can be a common error

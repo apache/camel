@@ -37,7 +37,7 @@ public class CxfSoapComponent extends DefaultComponent {
     
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map soapProps = IntrospectionSupport.extractProperties(parameters, "soap.");
+        Map<String, Object> soapProps = IntrospectionSupport.extractProperties(parameters, "soap.");
         if (parameters.size() > 0) {
             Map<Object, Object> options = CastUtils.cast(parameters);
             remaining += "?" + URISupport.createQueryString(options);
@@ -53,5 +53,4 @@ public class CxfSoapComponent extends DefaultComponent {
     protected boolean useIntrospectionOnEndpoint() {
         return false;
     }
-
 }

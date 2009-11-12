@@ -34,5 +34,4 @@ public abstract class RemoteFileComponent<T> extends GenericFileComponent<T> {
     public RemoteFileComponent(CamelContext context) {
         super(context);
     }
-
 }

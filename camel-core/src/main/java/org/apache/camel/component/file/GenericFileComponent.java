@@ -44,8 +44,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         super(context);
     }
 
-    @SuppressWarnings("unchecked")
-    protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         // create the correct endpoint based on the protocol
         final GenericFileEndpoint<T> endpoint;
@@ -81,7 +80,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
      *         created based on the inputs
      * @throws Exception can be thrown
      */
-    protected abstract GenericFileEndpoint<T> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception;
+    protected abstract GenericFileEndpoint<T> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception;
 
     /**
      * A factory method for derived file components to perform validation of properties
@@ -116,5 +115,4 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), 
             reminder, reverse, ignoreCase, createSortByComparator(it));
     }
-
 }

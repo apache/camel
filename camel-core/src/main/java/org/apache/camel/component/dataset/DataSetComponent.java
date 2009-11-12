@@ -30,7 +30,7 @@ import org.apache.camel.util.CamelContextHelper;
 public class DataSetComponent extends DefaultComponent {
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DataSet dataSet = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, DataSet.class);
         return new DataSetEndpoint(uri, this, dataSet);
     }

@@ -35,7 +35,7 @@ public class SedaComponent extends DefaultComponent {
 
     private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
 
-    public synchronized BlockingQueue<Exchange> createQueue(String uri, Map parameters) {
+    public synchronized BlockingQueue<Exchange> createQueue(String uri, Map<String, Object> parameters) {
         String key = getQueueKey(uri);
 
         if (queues.containsKey(key)) {
@@ -50,7 +50,7 @@ public class SedaComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, 1);
         SedaEndpoint answer = new SedaEndpoint(uri, this, createQueue(uri, parameters), consumers);
         answer.configureProperties(parameters);
@@ -70,5 +70,4 @@ public class SedaComponent extends DefaultComponent {
         queues.clear();
         super.doStop();
     }
-
 }

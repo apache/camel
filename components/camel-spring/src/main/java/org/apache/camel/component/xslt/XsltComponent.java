@@ -25,6 +25,7 @@ import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.util.CamelContextHelper;
 import org.springframework.core.io.Resource;
 
 /**
@@ -44,19 +45,18 @@ public class XsltComponent extends ResourceBasedComponent {
         this.xmlConverter = xmlConverter;
     }
 
-    @SuppressWarnings("unchecked")
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Resource resource = resolveMandatoryResource(remaining);
         if (log.isDebugEnabled()) {
             log.debug(this + " using schema resource: " + resource);
         }
-        XsltBuilder xslt = newInstance(XsltBuilder.class);
+        XsltBuilder xslt = getCamelContext().getInjector().newInstance(XsltBuilder.class);
 
         // lets allow the converter to be configured
         XmlConverter converter = null;
         String converterName = getAndRemoveParameter(parameters, "converter", String.class);        
         if (converterName != null) {
-            converter = mandatoryLookup(converterName, XmlConverter.class);
+            converter = CamelContextHelper.mandatoryLookup(getCamelContext(), converterName, XmlConverter.class);
         }
         if (converter == null) {
             converter = getXmlConverter();
@@ -69,9 +69,9 @@ public class XsltComponent extends ResourceBasedComponent {
         TransformerFactory factory = null;
         if (transformerFactoryClassName != null) {
             // provide the class loader of this component to work in OSGi environments
-            Class factoryClass = getCamelContext().getClassResolver().resolveClass(transformerFactoryClassName, XsltComponent.class.getClassLoader());
+            Class<?> factoryClass = getCamelContext().getClassResolver().resolveClass(transformerFactoryClassName, XsltComponent.class.getClassLoader());
             if (factoryClass != null) {
-                factory = (TransformerFactory) newInstance(factoryClass);
+                factory = (TransformerFactory) getCamelContext().getInjector().newInstance(factoryClass);
             } else {
                 log.warn("Cannot find the TransformerFactoryClass with the class name: " + transformerFactoryClassName);
             }
@@ -79,7 +79,7 @@ public class XsltComponent extends ResourceBasedComponent {
         
         String transformerFactoryName = getAndRemoveParameter(parameters, "transformerFactory", String.class);        
         if (transformerFactoryName != null) {
-            factory = mandatoryLookup(transformerFactoryName, TransformerFactory.class);
+            factory = CamelContextHelper.mandatoryLookup(getCamelContext(), transformerFactoryName, TransformerFactory.class);
         }
         
         if (factory != null) {
@@ -90,7 +90,7 @@ public class XsltComponent extends ResourceBasedComponent {
         return new ProcessorEndpoint(uri, this, xslt);
     }
 
-    protected void configureXslt(XsltBuilder xslt, String uri, String remaining, Map parameters) throws Exception {
+    protected void configureXslt(XsltBuilder xslt, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         setProperties(xslt, parameters);
     }
 }

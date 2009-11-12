@@ -32,8 +32,7 @@ public class Jt400Component extends DefaultComponent {
     private static final String DATA_QUEUE = "DTAQ";
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected Endpoint createEndpoint(String uri, String remaining, Map properties) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
         String type = remaining.substring(remaining.lastIndexOf(".") + 1).toUpperCase();
 
         if (DATA_QUEUE.equals(type)) {

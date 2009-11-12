@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class SpringIntegrationComponent extends DefaultComponent {
 
-    protected SpringIntegrationEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected SpringIntegrationEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringIntegrationEndpoint endpoint = new SpringIntegrationEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);
         return endpoint;

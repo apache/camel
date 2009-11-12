@@ -52,8 +52,8 @@ public final class IntrospectionSupport {
 
     public static boolean isGetter(Method method) {
         String name = method.getName();
-        Class type = method.getReturnType();
-        Class params[] = method.getParameterTypes();
+        Class<?> type = method.getReturnType();
+        Class<?> params[] = method.getParameterTypes();
 
         if (!GETTER_PATTERN.matcher(name).matches()) {
             return false;
@@ -69,8 +69,8 @@ public final class IntrospectionSupport {
 
     public static boolean isSetter(Method method) {
         String name = method.getName();
-        Class type = method.getReturnType();
-        Class params[] = method.getParameterTypes();
+        Class<?> type = method.getReturnType();
+        Class<?> params[] = method.getParameterTypes();
 
         if (!SETTER_PATTERN.matcher(name).matches()) {
             return false;
@@ -118,7 +118,7 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean hasProperties(Map properties, String optionPrefix) {
+    public static boolean hasProperties(Map<String, Object> properties, String optionPrefix) {
         ObjectHelper.notNull(properties, "properties");
 
         if (ObjectHelper.isNotEmpty(optionPrefix)) {
@@ -141,12 +141,12 @@ public final class IntrospectionSupport {
 
         property = property.substring(0, 1).toUpperCase() + property.substring(1);
 
-        Class clazz = target.getClass();
+        Class<?> clazz = target.getClass();
         Method method = getPropertyGetter(clazz, property);
         return method.invoke(target);
     }
 
-    public static Method getPropertyGetter(Class type, String propertyName) throws NoSuchMethodException {
+    public static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
         return type.getMethod("get" + ObjectHelper.capitalize(propertyName));
     }
 
@@ -172,15 +172,14 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map extractProperties(Map properties, String optionPrefix) {
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
         ObjectHelper.notNull(properties, "properties");
 
-        HashMap rc = new LinkedHashMap(properties.size());
+        HashMap<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
 
-        for (Iterator<Map.Entry> it = properties.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = it.next();
-            String name = entry.getKey().toString();
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
             if (name.startsWith(optionPrefix)) {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
@@ -192,13 +191,13 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperties(TypeConverter typeConverter, Object target, Map properties) throws Exception {
+    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
-        for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry)iter.next();
+        for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<String, Object> entry = iter.next();
             if (setProperty(typeConverter, target, (String)entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;
@@ -208,13 +207,13 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperties(Object target, Map props) throws Exception {
-        return setProperties(null, target, props);
+    public static boolean setProperties(Object target, Map<String, Object> properties) throws Exception {
+        return setProperties(null, target, properties);
     }
 
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         try {
-            Class clazz = target.getClass();
+            Class<?> clazz = target.getClass();
             // find candidates of setter methods as there can be overloaded setters
             Set<Method> setters = findSetterMethods(typeConverter, clazz, name, value);
             if (setters.isEmpty()) {
@@ -289,7 +288,7 @@ public final class IntrospectionSupport {
         return null;
     }
 
-    private static String convertToString(Object value, Class type) throws URISyntaxException {
+    private static String convertToString(Object value, Class<?> type) throws URISyntaxException {
         PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {
             editor.setValue(value);
@@ -301,7 +300,7 @@ public final class IntrospectionSupport {
         return null;
     }
 
-    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class clazz, String name, Object value) {
+    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value) {
         Set<Method> candidates = new LinkedHashSet<Method>();
 
         // Build the method name.
@@ -312,9 +311,9 @@ public final class IntrospectionSupport {
             Method objectSetMethod = null;
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                Class params[] = method.getParameterTypes();
+                Class<?> params[] = method.getParameterTypes();
                 if (method.getName().equals(name) && params.length == 1) {
-                    Class paramType = params[0];
+                    Class<?> paramType = params[0];
                     if (paramType.equals(Object.class)) {                        
                         objectSetMethod = method;
                     } else if (typeConverter != null || isSettableType(paramType) || paramType.isInstance(value)) {
@@ -355,7 +354,7 @@ public final class IntrospectionSupport {
         }
     }
 
-    private static boolean isSettableType(Class clazz) {
+    private static boolean isSettableType(Class<?> clazz) {
         if (PropertyEditorManager.findEditor(clazz) != null) {
             return true;
         }
@@ -367,5 +366,4 @@ public final class IntrospectionSupport {
         }
         return false;
     }
-
 }

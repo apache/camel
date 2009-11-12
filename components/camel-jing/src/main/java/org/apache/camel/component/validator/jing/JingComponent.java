@@ -30,7 +30,7 @@ import org.springframework.core.io.Resource;
  * @version $Revision$
  */
 public class JingComponent extends ResourceBasedComponent {
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JingValidator validator = new JingValidator();
         Resource resource = resolveMandatoryResource(remaining);
         validator.setSchemaResource(resource);
@@ -41,7 +41,7 @@ public class JingComponent extends ResourceBasedComponent {
         return new ProcessorEndpoint(uri, this, validator);
     }
 
-    protected void configureValidator(JingValidator validator, String uri, String remaining, Map parameters) throws Exception {
+    protected void configureValidator(JingValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         setProperties(validator, parameters);
     }
 }

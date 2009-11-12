@@ -36,7 +36,7 @@ public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
     }
 
     @Override
-    protected GenericFileEndpoint<ChannelSftp.LsEntry> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected GenericFileEndpoint<ChannelSftp.LsEntry> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
         // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
         // to espace the $ for the expression (file language)

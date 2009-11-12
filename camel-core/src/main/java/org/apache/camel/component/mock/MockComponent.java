@@ -31,7 +31,7 @@ import org.apache.camel.processor.ThroughputLogger;
 public class MockComponent extends DefaultComponent {
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MockEndpoint endpoint = new MockEndpoint(uri, this);
         Integer value = getAndRemoveParameter(parameters, "reportGroup", Integer.class);
         if (value != null) {
