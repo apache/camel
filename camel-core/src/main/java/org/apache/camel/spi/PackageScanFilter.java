@@ -27,5 +27,5 @@ public interface PackageScanFilter {
      * @param type the class
      * @return true to include this class, false to skip it.
      */
-    boolean matches(Class type);
+    boolean matches(Class<?> type);
 }

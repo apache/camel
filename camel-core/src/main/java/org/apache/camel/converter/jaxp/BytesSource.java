@@ -32,6 +32,8 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class BytesSource extends StreamSource implements Serializable {
+    private static final long serialVersionUID = 124123201106542082L;
+
     private final byte[] data;
 
     public BytesSource(byte[] data) {
@@ -60,5 +62,4 @@ public class BytesSource extends StreamSource implements Serializable {
     public String toString() {
         return "BytesSource[" + new String(data) + "]";
     }
-
 }

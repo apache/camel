@@ -92,7 +92,7 @@ public class DefaultManagementStrategy implements ManagementStrategy {
         return onlyManageProcessorWithCustomId;
     }
 
-    public boolean manageProcessor(ProcessorDefinition definition) {
+    public boolean manageProcessor(ProcessorDefinition<?> definition) {
         return false;
     }
 

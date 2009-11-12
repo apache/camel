@@ -182,7 +182,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     // okay the in operator is a bit more complex as we need to build a list of values
                     // from the right handside expression.
                     // each element on the right handside must be separated by comma (default for create iterator)
-                    Iterator it = ObjectHelper.createIterator(right.evaluate(exchange, Object.class));
+                    Iterator<Object> it = ObjectHelper.createIterator(right.evaluate(exchange, Object.class));
                     List<Object> values = new ArrayList<Object>();
                     while (it.hasNext()) {
                         values.add(it.next());
@@ -195,7 +195,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     }
                 } else if (operator == IS || operator == NOT_IS) {
                     String name = right.evaluate(exchange, String.class);
-                    Class rightType = exchange.getContext().getClassResolver().resolveClass(name);
+                    Class<?> rightType = exchange.getContext().getClassResolver().resolveClass(name);
                     if (rightType == null) {
                         // prefix class name with java.lang. so people can use String as shorthand
                         rightType = exchange.getContext().getClassResolver().resolveClass("java.lang." + name);

@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @version $Revision$
  */
 public class CamelContextStopFailureEvent extends EventObject {
+    private static final long serialVersionUID = -802046840118188292L;
 
     private CamelContext context;
     private Exception cause;
@@ -46,5 +47,4 @@ public class CamelContextStopFailureEvent extends EventObject {
     public String toString() {
         return "Failed to stop Camel: " + context.getName() + " due to " + cause.getMessage();
     }
-
 }

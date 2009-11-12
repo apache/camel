@@ -402,7 +402,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     log.trace("Testing for class " + externalName + " matches criteria [" + test + "] using classloader:" + classLoader);
                 }
                 try {
-                    Class type = classLoader.loadClass(externalName);
+                    Class<?> type = classLoader.loadClass(externalName);
                     if (log.isTraceEnabled()) {
                         log.trace("Loaded the class: " + type + " in classloader: " + classLoader);
                     }

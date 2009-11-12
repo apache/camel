@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class ExchangeFailureHandledEvent extends EventObject {
+    private static final long serialVersionUID = -7554809462006009547L;
 
     private final Exchange exchange;
     private final Processor failureHandler;
@@ -63,5 +64,4 @@ public class ExchangeFailureHandledEvent extends EventObject {
             return "Exchange failed: " + exchange + " but was processed by: " + failureHandler;
         }
     }
-
 }

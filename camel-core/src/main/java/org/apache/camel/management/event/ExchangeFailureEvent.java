@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class ExchangeFailureEvent extends EventObject {
+    private static final long serialVersionUID = -8484326904627268101L;
 
     private final Exchange exchange;
 
@@ -40,5 +41,4 @@ public class ExchangeFailureEvent extends EventObject {
     public String toString() {
         return "Exchange failure: " + exchange;
     }
-
 }

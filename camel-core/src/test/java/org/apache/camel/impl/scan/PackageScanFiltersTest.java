@@ -42,7 +42,7 @@ public class PackageScanFiltersTest extends TestCase {
         filter = new AssignableToPackageScanFilter(ScanTargetOne.class);
         validateFilter(filter, ScanTargetTwo.class);
 
-        Set<Class> classes = new LinkedHashSet<Class>();
+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         classes.add(ScanTargetOne.class);
         classes.add(ScanTargetThree.class);
         filter = new AssignableToPackageScanFilter(classes);
@@ -99,7 +99,7 @@ public class PackageScanFiltersTest extends TestCase {
         assertEquals("![annotated with @ScannableOne]", filter.toString());
     }
 
-    private void validateFilter(PackageScanFilter filter, Class type) {
+    private void validateFilter(PackageScanFilter filter, Class<?> type) {
         assertTrue(filter.matches(type));
         assertFalse(new InvertingPackageScanFilter(filter).matches(type));
     }

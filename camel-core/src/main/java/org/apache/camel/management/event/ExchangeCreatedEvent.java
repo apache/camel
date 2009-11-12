@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class ExchangeCreatedEvent extends EventObject {
+    private static final long serialVersionUID = -19248832613958243L;
 
     private final Exchange exchange;
 
@@ -40,5 +41,4 @@ public class ExchangeCreatedEvent extends EventObject {
     public String toString() {
         return "Exchange created: " + exchange;
     }
-
 }

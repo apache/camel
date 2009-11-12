@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public class ExchangeCompletedEvent extends EventObject {
+    private static final long serialVersionUID = -3231801412021356098L;
 
     private final Exchange exchange;
 
@@ -40,5 +41,4 @@ public class ExchangeCompletedEvent extends EventObject {
     public String toString() {
         return "Exchange completed: " + exchange;
     }
-
 }

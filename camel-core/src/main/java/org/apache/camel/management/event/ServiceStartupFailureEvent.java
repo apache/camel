@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @version $Revision$
  */
 public class ServiceStartupFailureEvent extends EventObject {
+    private static final long serialVersionUID = -9171964933795931862L;
 
     private CamelContext context;
     private Object service;
@@ -52,5 +53,4 @@ public class ServiceStartupFailureEvent extends EventObject {
     public String toString() {
         return "Failure to start service: " + service + " due to " + cause.getMessage();
     }
-
 }

@@ -24,6 +24,7 @@ import org.apache.camel.Route;
  * @version $Revision$
  */
 public class RouteStartedEvent extends EventObject {
+    private static final long serialVersionUID = 1330257282431407329L;
 
     private final Route route;
 
@@ -40,5 +41,4 @@ public class RouteStartedEvent extends EventObject {
     public String toString() {
         return "Started route: " + route.getId();
     }
-
 }

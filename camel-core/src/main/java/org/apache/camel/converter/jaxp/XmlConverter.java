@@ -70,13 +70,13 @@ public class XmlConverter {
      * When converting a DOM tree to a SAXSource, we try to use Xalan internal DOM parser if
      * available. Else, transform the DOM tree to a String and build a SAXSource on top of it.
      */
-    private static final Class DOM_TO_SAX_CLASS;
+    private static final Class<?> DOM_TO_SAX_CLASS;
 
     private DocumentBuilderFactory documentBuilderFactory;
     private TransformerFactory transformerFactory;
 
     static {
-        Class cl = null;
+        Class<?> cl = null;
         try {
             cl = ObjectHelper.loadClass("org.apache.xalan.xsltc.trax.DOM2SAX");
         } catch (Exception e) {
@@ -397,7 +397,7 @@ public class XmlConverter {
     public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
         if (DOM_TO_SAX_CLASS != null) {
             try {
-                Constructor cns = DOM_TO_SAX_CLASS.getConstructor(Node.class);
+                Constructor<?> cns = DOM_TO_SAX_CLASS.getConstructor(Node.class);
                 XMLReader converter = (XMLReader) cns.newInstance(source.getNode());
                 return new SAXSource(converter, new InputSource());
             } catch (Exception e) {

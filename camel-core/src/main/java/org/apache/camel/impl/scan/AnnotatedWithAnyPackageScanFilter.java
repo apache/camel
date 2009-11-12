@@ -38,7 +38,7 @@ public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
         this.checkMetaAnnotations = checkMetaAnnotations;
     }
 
-    public boolean matches(Class type) {
+    public boolean matches(Class<?> type) {
         if (type == null) {
             return false;
         }

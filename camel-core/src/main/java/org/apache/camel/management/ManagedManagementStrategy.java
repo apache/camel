@@ -140,7 +140,7 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
     }
 
     @Override
-    public boolean manageProcessor(ProcessorDefinition definition) {
+    public boolean manageProcessor(ProcessorDefinition<?> definition) {
         return true;
     }
 

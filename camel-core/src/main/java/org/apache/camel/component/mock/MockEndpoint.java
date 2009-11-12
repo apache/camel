@@ -399,8 +399,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     /**
      * Adds an expectation that the given body value are received by this endpoint
      */
-    public ExpressionClause expectedBodyReceived() {
-        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+    public ExpressionClause<?> expectedBodyReceived() {
+        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
 
         expectedMessageCount(1);
 
@@ -515,8 +515,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that messages received should have ascending values
      * of the given expression such as a user generated counter value
      */
-    public ExpressionClause expectsAscending() {
-        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+    public ExpressionClause<?> expectsAscending() {
+        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
         expects(new Runnable() {
             public void run() {
                 assertMessagesAscending(clause.getExpressionValue());
@@ -541,8 +541,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that messages received should have descending values
      * of the given expression such as a user generated counter value
      */
-    public ExpressionClause expectsDescending() {
-        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+    public ExpressionClause<?> expectsDescending() {
+        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
         expects(new Runnable() {
             public void run() {
                 assertMessagesDescending(clause.getExpressionValue());
@@ -573,8 +573,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that no duplicate messages should be received using
      * the expression to determine the message ID
      */
-    public ExpressionClause expectsNoDuplicates() {
-        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+    public ExpressionClause<?> expectsNoDuplicates() {
+        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
         expects(new Runnable() {
             public void run() {
                 assertNoDuplicates(clause.getExpressionValue());

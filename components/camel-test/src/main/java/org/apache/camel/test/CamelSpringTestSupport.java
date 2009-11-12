@@ -28,6 +28,7 @@ import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -59,7 +60,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
 
-        public void setExcludedClasses(Set<Class> excludedClasses) {
+        public void setExcludedClasses(Set<Class<?>> excludedClasses) {
             excludedClasses = excludedClasses == null ? Collections.EMPTY_SET : excludedClasses;
             addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
         }
@@ -95,7 +96,8 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         routeExcludingContext.refresh();
 
         ExcludingPackageScanClassResolver excludingResolver = (ExcludingPackageScanClassResolver)routeExcludingContext.getBean("excludingResolver");
-        excludingResolver.setExcludedClasses(new HashSet<Class>(Arrays.asList(excludeRoutes())));
+        List<Class<?>> excluded = CastUtils.cast(Arrays.asList(excludeRoutes()));
+        excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
 
         return routeExcludingContext;
     }
@@ -106,15 +108,15 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
      *
      * @return Class[] the classes to be excluded from test time context route scanning
      */
-    protected Class[] excludeRoutes() {
-        Class excludedRoute = excludeRoute();
+    protected Class<?>[] excludeRoutes() {
+        Class<?> excludedRoute = excludeRoute();
         return excludedRoute != null ? new Class[] {excludedRoute} : new Class[0];
     }
 
     /**
      * Template method used to exclude a {@link org.apache.camel.Route} from the test camel context
      */
-    protected Class excludeRoute() {
+    protected Class<?> excludeRoute() {
         return null;
     }
 

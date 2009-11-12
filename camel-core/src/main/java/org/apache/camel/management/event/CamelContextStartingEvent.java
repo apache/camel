@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @version $Revision$
  */
 public class CamelContextStartingEvent extends EventObject {
+    private static final long serialVersionUID = -1120225323715688981L;
 
     private final CamelContext context;
 
@@ -40,6 +41,4 @@ public class CamelContextStartingEvent extends EventObject {
     public String toString() {
         return "Starting CamelContext: " + context.getName();
     }
-
-
 }

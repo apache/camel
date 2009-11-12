@@ -42,7 +42,7 @@ public class CompositePackageScanFilter implements PackageScanFilter {
         filters.add(filter);
     }
 
-    public boolean matches(Class type) {
+    public boolean matches(Class<?> type) {
         for (PackageScanFilter filter : filters) {
             if (!filter.matches(type)) {
                 return false;

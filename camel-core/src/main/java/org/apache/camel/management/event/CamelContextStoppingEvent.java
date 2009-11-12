@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @version $Revision$
  */
 public class CamelContextStoppingEvent extends EventObject {
+    private static final long serialVersionUID = -1074581102102126334L;
 
     private final CamelContext context;
 
