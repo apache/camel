@@ -53,6 +53,10 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         ExchangeHelper.copyResults(exchange, remoteExchange);
     }
 
+    protected RemoteFileOperations getOperations() {
+        return (RemoteFileOperations) operations;
+    }
+
     /**
      * The file could not be written. We need to disconnect from the remote server.
      */
@@ -60,21 +64,28 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll
-            log.debug("Exception occured during stopping: " + exception.getMessage());
+            log.debug("Exception occurred during stopping: " + exception.getMessage());
         } else {
-            log.debug("Exception occured during processing. ", exception);
-            disconnect();
-            // Rethrow to signify that we didn't poll
+            log.debug("Exception occurred during processing. ", exception);
+            try {
+                disconnect();
+            } catch (Exception e) {
+                // ignore exception
+                log.debug("Ignored exception during disconnect", e);
+            }
+            // Rethrow the original exception
             throw exception;
         }
     }
 
     public void disconnect() throws IOException {
         loggedIn = false;
-        if (log.isDebugEnabled()) {
-            log.debug("Disconnecting from: " + getEndpoint());
+        if (getOperations().isConnected()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Disconnecting from: " + getEndpoint());
+            }
+            getOperations().disconnect();
         }
-        ((RemoteFileOperations) operations).disconnect();
     }
 
     @Override
@@ -100,20 +111,19 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         try {
             disconnect();
         } catch (Exception e) {
-            log.debug("Exception occured during disconnecting from: " + getEndpoint() + " " + e.getMessage());
+            log.debug("Exception occurred during disconnecting from: " + getEndpoint() + " " + e.getMessage());
         }
         super.doStop();
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!((RemoteFileOperations) operations).isConnected() || !loggedIn) {
+        if (!(getOperations()).isConnected() || !loggedIn) {
             if (log.isDebugEnabled()) {
                 log.debug("Not already connected/logged in. Connecting to: " + getEndpoint());
             }
-            RemoteFileOperations rfo = (RemoteFileOperations) operations;
             RemoteFileEndpoint rfe = (RemoteFileEndpoint) getEndpoint();
             RemoteFileConfiguration conf = (RemoteFileConfiguration) rfe.getConfiguration();
-            loggedIn = rfo.connect(conf);
+            loggedIn = getOperations().connect(conf);
             if (!loggedIn) {
                 return;
             }
