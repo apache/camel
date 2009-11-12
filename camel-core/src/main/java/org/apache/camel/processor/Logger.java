@@ -255,7 +255,7 @@ public class Logger implements Processor {
             break;
         case INFO:
             if (log.isInfoEnabled()) {
-                log.debug(message, exception);
+                log.info(message, exception);
             }
             break;
         case TRACE:
