@@ -34,6 +34,7 @@
 
   <properties>
      <camel.osgi.export.pkg>org.apache.camel.example.pojo_messaging.*</camel.osgi.export.pkg>
+     <camel.osgi.import.pkg>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool,*</camel.osgi.import.pkg>
    </properties>
     
   <dependencies>
