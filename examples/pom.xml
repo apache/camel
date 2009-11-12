@@ -60,6 +60,7 @@
     <module>camel-example-osgi</module>
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reportincident</module>
+    <module>camel-example-route-throttling</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
