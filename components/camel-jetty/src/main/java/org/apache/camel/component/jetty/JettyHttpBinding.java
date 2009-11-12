@@ -52,7 +52,7 @@ public interface JettyHttpBinding {
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
 
     /**
-     * Whether to throw {@link org.apache.camel.component.jetty.JettyHttpOperationFailedException}
+     * Whether to throw {@link org.apache.camel.component.http.HttpOperationFailedException}
      * in case of response code != 200.
      *
      * @param throwExceptionOnFailure <tt>true</tt> to throw exception
@@ -60,7 +60,7 @@ public interface JettyHttpBinding {
     void setThrowExceptionOnFailure(boolean throwExceptionOnFailure);
 
     /**
-     * Whether to throw {@link org.apache.camel.component.jetty.JettyHttpOperationFailedException}
+     * Whether to throw {@link org.apache.camel.component.http.HttpOperationFailedException}
      * in case of response code != 200.
      *
      * @return <tt>true</tt> to throw exception

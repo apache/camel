@@ -43,6 +43,10 @@ public class HttpsRouteTest extends CamelTestSupport {
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
+
+    public String getHttpProducerScheme() {
+        return "https://";
+    }
     
     @Override
     @Before
@@ -68,7 +72,7 @@ public class HttpsRouteTest extends CamelTestSupport {
 
     protected void restoreSystemProperties() {
         for (Object key : originalValues.keySet()) {
-            Object value = (String) originalValues.get(key);  
+            Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
                 System.getProperties().remove(key);    
             } else {
@@ -140,8 +144,8 @@ public class HttpsRouteTest extends CamelTestSupport {
     }
     
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader("https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
-        template.sendBodyAndHeader("https://localhost:9090/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:9090/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override

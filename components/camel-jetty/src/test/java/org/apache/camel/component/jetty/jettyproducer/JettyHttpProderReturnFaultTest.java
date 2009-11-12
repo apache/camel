@@ -19,28 +19,18 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerSimulate404ErrorTest extends CamelTestSupport {
-
-    private String url = "jetty://http://0.0.0.0:9123/bar";
+public class JettyHttpProderReturnFaultTest extends CamelTestSupport {
 
     @Test
-    public void test404() throws Exception {
-        try {
-            template.request(url, null);
-        } catch (Exception e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(404, cause.getStatusCode());
-            assertEquals("http//0.0.0.0:9123/bar", cause.getUri());
-            assertEquals("Page not found", cause.getResponseBody());
-            assertNotNull(cause.getResponseHeaders());
-        }
+    public void testHttpFault() throws Exception {
+        String out = template.requestBody("jetty://http://localhost:9080/test", "Hello World", String.class);
+        assertEquals("This is a fault", out);
     }
 
     @Override
@@ -48,14 +38,13 @@ public class JettyHttpProducerSimulate404ErrorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(url).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Thread.sleep(1000);
-
-                        exchange.getOut().setBody("Page not found");
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                    }
-                });
+                from("jetty://http://localhost:9080/test")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            exchange.getOut().setFault(true);
+                            exchange.getOut().setBody("This is a fault");
+                        }
+                    });
             }
         };
     }

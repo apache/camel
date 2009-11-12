@@ -17,33 +17,28 @@
 package org.apache.camel.component.http;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.StatusLine;
 
 public class HttpOperationFailedException extends CamelException {
-    private static final long serialVersionUID = -8721487434390572633L;
+    private static final long serialVersionUID = -8721487434390572634L;
     private final String uri;
     private final String redirectLocation;
     private final int statusCode;
-    private final StatusLine statusLine;
-    private final Header[] responseHeaders;
-    private final InputStream responseBody;
+    private final String statusText;
+    private final Map<String, String> responseHeaders;
+    private final String responseBody;
 
-    public HttpOperationFailedException(String uri, int statusCode, StatusLine statusLine, String location, Header[] responseHeaders, InputStream responseBody) {
-        super("HTTP operation failed invoking " + uri + " with statusCode: " + statusCode + ", status: " + statusLine + (location != null ? ", redirectLocation: " + location : ""));
+    public HttpOperationFailedException(String uri, int statusCode, String statusText, String location, Map<String, String> responseHeaders, String responseBody) {
+        super("HTTP operation failed invoking " + uri + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location : ""));
         this.uri = uri;
         this.statusCode = statusCode;
-        this.statusLine = statusLine;
+        this.statusText = statusText;
         this.redirectLocation = location;
         this.responseHeaders = responseHeaders;
         this.responseBody = responseBody;
-    }
-
-    public HttpOperationFailedException(String uri, int statusCode, StatusLine statusLine, Header[] responseHeaders, InputStream responseBody) {
-        this(uri, statusCode, statusLine, null, responseHeaders, responseBody);
     }
 
     public String getUri() {
@@ -62,19 +57,19 @@ public class HttpOperationFailedException extends CamelException {
         return redirectLocation;
     }
 
-    public StatusLine getStatusLine() {
-        return statusLine;
-    }
-
     public int getStatusCode() {
         return statusCode;
     }
 
-    public Header[] getResponseHeaders() {
+    public String getStatusText() {
+        return statusText;
+    }
+
+    public Map<String, String> getResponseHeaders() {
         return responseHeaders;
     }
 
-    public InputStream getResponseBody() {
+    public String getResponseBody() {
         return responseBody;
     }
 

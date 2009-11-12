@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,49 +29,43 @@ import org.junit.Test;
 /**
  * @version $Revision$
  */
-public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
-
-    private String url = "jetty://http://0.0.0.0:9321/foo";
+public class JettyHttpProducerSendFileTest extends CamelTestSupport {
 
     @Test
-    public void testSlowReply() throws Exception {
+    public void testSendImage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMinimumMessageCount(1);
+        mock.message(0).body().isInstanceOf(InputStream.class);
+        mock.message(0).header("Content-Type").isEqualTo("image/jpeg");
 
-        Exchange exchange = template.request(url, null);
+        Exchange out = template.send("jetty://http://localhost:9080/myapp/myservice", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(new File("src/test/data/logo.jpeg"));
+                exchange.getIn().setHeader("Content-Type", "image/jpeg");
+            }
+        });
 
         assertMockEndpointsSatisfied();
 
-        assertNotNull(exchange);
-
-        String reply = exchange.getOut().getBody(String.class);
-        assertEquals("Bye World", reply);
-
-        assertEquals(4, exchange.getOut().getHeaders().size());
+        assertEquals("OK", out.getOut().getBody(String.class));
+        assertEquals("text/plain", out.getOut().getHeader("Content-Type"));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
-                from(url).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        HttpServletResponse res = exchange.getIn().getBody(HttpServletResponse.class);
-                        res.setStatus(200);
-                        res.setHeader("customer", "gold");
-
-                        // write empty string to force flushing
-                        res.getWriter().write("");
-                        res.flushBuffer();
-
-                        Thread.sleep(1000);
-
-                        res.getWriter().write("Bye World");
-                        res.flushBuffer();
-                    }
-                }).to("mock:result");
+                from("jetty:http://localhost:9080/myapp/myservice")
+                    .to("mock:result")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            String body = exchange.getIn().getBody(String.class);
+                            assertNotNull("Body should not be null", body);
+                        }
+                    })
+                    .transform(constant("OK")).setHeader("Content-Type", constant("text/plain"));
             }
         };
     }
+
 }

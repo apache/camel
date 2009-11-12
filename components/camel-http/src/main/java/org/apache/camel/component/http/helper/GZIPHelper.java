@@ -43,7 +43,7 @@ public final class GZIPHelper {
         }
     }
 
-    public static InputStream toGZIPInputStream(String contentEncoding, byte[] data) throws Exception {
+    public static InputStream toGZIPInputStream(String contentEncoding, byte[] data) throws IOException {
         if (isGzip(contentEncoding)) {
             ByteArrayOutputStream os = null;
             GZIPOutputStream gzip = null;

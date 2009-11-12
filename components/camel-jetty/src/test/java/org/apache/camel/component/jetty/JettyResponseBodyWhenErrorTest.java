@@ -25,7 +25,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Unit test for HttpOperationFailedException should contain reponse body
+ * Unit test for HttpOperationFailedException should contain response body
  */
 public class JettyResponseBodyWhenErrorTest extends CamelTestSupport {
 
@@ -41,7 +41,8 @@ public class JettyResponseBodyWhenErrorTest extends CamelTestSupport {
             assertTrue(body.indexOf("Damm") > -1);
             assertTrue(body.indexOf("IllegalArgumentException") > -1);
             assertNotNull(cause.getResponseHeaders());
-            assertTrue("Should have http header with content type set", cause.getResponseHeaders()[0].getValue().indexOf("text/plain") > -1);
+            String type = cause.getResponseHeaders().get(Exchange.CONTENT_TYPE);
+            assertTrue(type.startsWith("text/plain"));
         }
     }
 

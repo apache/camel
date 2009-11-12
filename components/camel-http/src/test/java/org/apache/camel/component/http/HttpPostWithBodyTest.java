@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.http;
 
 import java.util.List;
@@ -58,7 +57,7 @@ public class HttpPostWithBodyTest extends CamelTestSupport {
         int statusCode = exception.getStatusCode();
         assertTrue("The response code should not be 200", statusCode != 200);
 
-        String reason = exception.getStatusLine().getReasonPhrase();
+        String reason = exception.getStatusText();
 
         assertNotNull("Should have a body!", reason);
 

@@ -72,7 +72,8 @@ public final class URISupport {
             String schemeSpecificPart = uri.getSchemeSpecificPart();
             int idx = schemeSpecificPart.lastIndexOf('?');
             if (idx < 0) {
-                return Collections.emptyMap();
+                // return an empty map
+                return new LinkedHashMap<String, Object>(0);
             } else {
                 query = schemeSpecificPart.substring(idx + 1);
             }

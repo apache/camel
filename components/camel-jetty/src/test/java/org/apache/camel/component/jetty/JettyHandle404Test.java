@@ -32,6 +32,10 @@ import org.junit.Test;
  */
 public class JettyHandle404Test extends CamelTestSupport {
 
+    public String getProducerUrl() {
+        return "http://localhost:8123/myserver?user=Camel";
+    }
+
     @Test
     public void testSimulate404() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -64,7 +68,7 @@ public class JettyHandle404Test extends CamelTestSupport {
                 // and set the data back as data on the exchange to not cause the exception to be thrown
                 from("direct:tohttp")
                         .doTry()
-                            .to("http://localhost:8123/myserver?user=Camel")
+                            .to(getProducerUrl())
                         .doCatch(HttpOperationFailedException.class)
                             .process(new Processor() {
                                 public void process(Exchange exchange) {

@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
@@ -37,7 +38,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.io.Buffer;
 import org.mortbay.io.ByteArrayBuffer;
 import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.client.HttpExchange;
@@ -115,6 +115,9 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         httpExchange.setMethod(method);
         httpExchange.setURL(url);
 
+        // set query parameters
+        doSetQueryParameters(exchange, httpExchange);
+
         // if we post then set data
         if (HttpMethods.POST.equals(methodToUse)) {
 
@@ -138,8 +141,6 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                 httpExchange.setRequestContentSource(is);
             }
         }
-
-        doSetQueryParameters(exchange, httpExchange);
 
         // and copy headers from IN message
         Message in = exchange.getIn();
@@ -169,9 +170,18 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
             return;
         }
 
-        Map<String, Object> parameters = URISupport.parseQuery(queryString);
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            httpExchange.setRequestHeader(entry.getKey(), entry.getValue().toString());
+        // okay we need to add the query string to the URI so we need to juggle a bit with the parameters
+        String uri = httpExchange.getURI();
+
+        Map parameters = URISupport.parseParameters(new URI(uri));
+        parameters.putAll(URISupport.parseQuery(queryString));
+
+        if (uri.contains("?")) {
+            uri = ObjectHelper.before(uri, "?");
+        }
+        if (!parameters.isEmpty()) {
+            uri = uri + "?" + URISupport.createQueryString(parameters);
+            httpExchange.setURI(uri);
         }
     }
 

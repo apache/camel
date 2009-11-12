@@ -44,7 +44,7 @@ public class JettyContentExchange extends ContentExchange {
 
     private static final transient Log LOG = LogFactory.getLog(JettyContentExchange.class);
 
-    private final Map<String, Object> headers = new LinkedHashMap<String, Object>();
+    private final Map<String, String> headers = new LinkedHashMap<String, String>();
     private volatile Exchange exchange;
     private volatile AsyncCallback callback;
     private volatile JettyHttpBinding jettyBinding;
@@ -96,7 +96,7 @@ public class JettyContentExchange extends ContentExchange {
         doTaskCompleted(ex);
     }
 
-    public Map<String, Object> getHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 
@@ -145,7 +145,10 @@ public class JettyContentExchange extends ContentExchange {
     protected void doTaskCompleted(Throwable ex) {
         // some kind of other error
         exchange.setException(new CamelExchangeException("JettyClient failed cause by: " + ex.getMessage(), exchange, ex));
-        callback.onTaskCompleted(exchange);
+
+        if (callback != null) {
+            callback.onTaskCompleted(exchange);
+        }
     }
 
 }

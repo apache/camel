@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpHeaderFilterStrategy;
+import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,12 +80,12 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
         answer.setHeaders(in.getHeaders());
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
-        answer.setBody(httpExchange.getBody());
+        answer.setBody(extractResponseBody(exchange, httpExchange));
 
         // propagate HTTP response headers
-        for (Map.Entry<String, Object> entry : httpExchange.getHeaders().entrySet()) {
+        for (Map.Entry<String, String> entry : httpExchange.getHeaders().entrySet()) {
             String name = entry.getKey();
-            Object value = entry.getValue();
+            String value = entry.getValue();
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
@@ -94,28 +95,31 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
         }
     }
 
-    protected JettyHttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, JettyContentExchange httpExchange,
-                                                                                     int responseCode) throws IOException {
-        JettyHttpOperationFailedException exception;
+    protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, JettyContentExchange httpExchange,
+                                                                                int responseCode) throws IOException {
+        HttpOperationFailedException exception;
         String uri = httpExchange.getUrl();
-        Map<String, Object> headers = httpExchange.getHeaders();
-        String body = httpExchange.getBody();
+        Map<String, String> headers = httpExchange.getHeaders();
+        String body = extractResponseBody(exchange, httpExchange);
 
         if (responseCode >= 300 && responseCode < 400) {
             String locationHeader = httpExchange.getResponseFields().getStringField("location");
             if (locationHeader != null) {
-                exception = new JettyHttpOperationFailedException(uri, responseCode, locationHeader, headers, body);
+                exception = new HttpOperationFailedException(uri, responseCode, null, locationHeader, headers, body);
             } else {
                 // no redirect location
-                exception = new JettyHttpOperationFailedException(uri, responseCode, headers, body);
+                exception = new HttpOperationFailedException(uri, responseCode, null, null, headers, body);
             }
         } else {
             // internal server error (error code 500)
-            exception = new JettyHttpOperationFailedException(uri, responseCode, headers, body);
+            exception = new HttpOperationFailedException(uri, responseCode, null, null, headers, body);
         }
 
         return exception;
     }
 
+    protected String extractResponseBody(Exchange exchange, JettyContentExchange httpExchange) throws IOException {
+        return httpExchange.getBody();
+    }
 
 }

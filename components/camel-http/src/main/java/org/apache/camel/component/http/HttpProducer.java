@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -83,7 +85,7 @@ public class HttpProducer extends DefaultProducer {
                 populateResponse(exchange, method, in, strategy, responseCode);
             } else {
                 if (responseCode >= 100 && responseCode < 300) {
-                    // only populate reponse for OK response
+                    // only populate response for OK response
                     populateResponse(exchange, method, in, strategy, responseCode);
                 } else {
                     // operation failed so populate exception to throw
@@ -124,12 +126,13 @@ public class HttpProducer extends DefaultProducer {
     protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException {
         HttpOperationFailedException exception;
         String uri = method.getURI().toString();
-        Header[] headers = method.getResponseHeaders();
+        String statusText = method.getStatusLine() != null ? method.getStatusLine().getReasonPhrase() : null;
+        Map<String, String> headers = extractResponseHeaders(method.getResponseHeaders());
         InputStream is = extractResponseBody(method, exchange);
         // make a defensive copy of the response body in the exception so its detached from the cache
-        InputStream copy = null;
+        String copy = null;
         if (is != null) {
-            copy = new ByteArrayInputStream(exchange.getContext().getTypeConverter().convertTo(byte[].class, is));
+            copy = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
         }
 
         if (responseCode >= 300 && responseCode < 400) {
@@ -137,14 +140,14 @@ public class HttpProducer extends DefaultProducer {
             Header locationHeader = method.getResponseHeader("location");
             if (locationHeader != null) {
                 redirectLocation = locationHeader.getValue();
-                exception = new HttpOperationFailedException(uri, responseCode, method.getStatusLine(), redirectLocation, headers, copy);
+                exception = new HttpOperationFailedException(uri, responseCode, statusText, redirectLocation, headers, copy);
             } else {
                 // no redirect location
-                exception = new HttpOperationFailedException(uri, responseCode, method.getStatusLine(), headers, copy);
+                exception = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
             }
         } else {
             // internal server error (error code 500)
-            exception = new HttpOperationFailedException(uri, responseCode, method.getStatusLine(), headers, copy);
+            exception = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
         }
 
         return exception;
@@ -159,6 +162,25 @@ public class HttpProducer extends DefaultProducer {
      */
     protected int executeMethod(HttpMethod method) throws IOException {
         return httpClient.executeMethod(method);
+    }
+
+    /**
+     * Extracts the response headers
+     *
+     * @param responseHeaders the headers
+     * @return the extracted headers or <tt>null</tt> if no headers existed
+     */
+    protected static Map<String, String> extractResponseHeaders(Header[] responseHeaders) {
+        if (responseHeaders == null || responseHeaders.length == 0) {
+            return null;
+        }
+
+        Map<String, String> answer = new HashMap<String, String>();
+        for (Header header : responseHeaders) {
+            answer.put(header.getName(), header.getValue());
+        }
+
+        return answer;
     }
 
     /**
