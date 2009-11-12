@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -39,7 +40,7 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
     protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
         // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
-        // to espace the $ for the expression (file language)
+        // to escape the $ for the expression (file language)
         String baseUri = uri;
         if (uri.indexOf("?") != -1) {
             baseUri = uri.substring(0, uri.indexOf("?"));
@@ -49,7 +50,23 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
         // must pass on baseUri to the configuration (see above)
         FtpConfiguration config = new FtpConfiguration(new URI(baseUri));
 
-        return new FtpEndpoint(uri, this, config);
+        FtpEndpoint answer = new FtpEndpoint(uri, this, config);
+
+        // additional client configuration options
+        if (IntrospectionSupport.hasProperties(parameters, "ftpClientConfig.")) {
+            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClientConfig.");
+            // remember these parameters so we can use them when creating a client
+            answer.setFtpClientConfigParameters(param);
+        }
+
+        // additional client options
+        if (IntrospectionSupport.hasProperties(parameters, "ftpClient.")) {
+            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.");
+            // remember these parameters so we can use them when creating a client
+            answer.setFtpClientParameters(param);
+        }
+
+        return answer;
     }
 
     protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {

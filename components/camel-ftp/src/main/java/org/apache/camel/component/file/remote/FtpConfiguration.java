@@ -26,7 +26,6 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 public class FtpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_FTP_PORT = 21;
-    private FTPClientConfig ftpClientConfig;
 
     public FtpConfiguration() {
         setProtocol("ftp");
@@ -39,14 +38,6 @@ public class FtpConfiguration extends RemoteFileConfiguration {
     @Override
     protected void setDefaultPort() {
         setPort(DEFAULT_FTP_PORT);
-    }
-
-    public FTPClientConfig getFtpClientConfig() {
-        return ftpClientConfig;
-    }
-
-    public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
-        this.ftpClientConfig = ftpClientConfig;
     }
 
 }

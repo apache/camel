@@ -38,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
@@ -47,14 +48,12 @@ import org.apache.commons.net.ftp.FTPReply;
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
     private static final transient Log LOG = LogFactory.getLog(FtpOperations.class);
     private final FTPClient client;
+    private final FTPClientConfig clientConfig;
     private RemoteFileEndpoint endpoint;
 
-    public FtpOperations() {
-        this.client = new FTPClient();
-    }
-
-    public FtpOperations(FTPClient client) {
+    public FtpOperations(FTPClient client, FTPClientConfig clientConfig) {
         this.client = client;
+        this.clientConfig = clientConfig;
     }
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
@@ -70,11 +69,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         int port = configuration.getPort();
         String username = configuration.getUsername();
 
-        FtpConfiguration ftpConfig = (FtpConfiguration) configuration;
-
-        if (ftpConfig.getFtpClientConfig() != null) {
-            LOG.trace("Configuring FTPClient with config: " + ftpConfig.getFtpClientConfig());
-            client.configure(ftpConfig.getFtpClientConfig());
+        if (clientConfig != null) {
+            LOG.trace("Configuring FTPClient with config: " + clientConfig);
+            client.configure(clientConfig);
         }
 
         if (LOG.isTraceEnabled()) {
