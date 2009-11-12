@@ -39,6 +39,7 @@ public class KeyValueHolder<K, V> {
         return value;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -48,7 +49,7 @@ public class KeyValueHolder<K, V> {
             return false;
         }
 
-        KeyValueHolder that = (KeyValueHolder) o;
+        KeyValueHolder<K, V> that = (KeyValueHolder<K, V>) o;
 
         if (key != null ? !key.equals(that.key) : that.key != null) {
             return false;

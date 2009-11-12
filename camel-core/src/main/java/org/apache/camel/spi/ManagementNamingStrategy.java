@@ -45,7 +45,7 @@ public interface ManagementNamingStrategy {
 
     ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder builder) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) throws MalformedObjectNameException;
+    ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException;
 
@@ -56,5 +56,4 @@ public interface ManagementNamingStrategy {
     ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException;
-
 }

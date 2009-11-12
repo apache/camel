@@ -38,6 +38,7 @@ import javax.naming.Reference;
 import javax.naming.spi.NamingManager;
 
 import org.apache.camel.spi.Injector;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
@@ -57,44 +58,38 @@ public class JndiContext implements Context, Serializable {
     protected static final Injector INJETOR = new ReflectionInjector();
     private static final long serialVersionUID = -5754338187296859149L;
 
-    private final Hashtable environment; // environment for this context
-    private final Map bindings; // bindings at my level
-    private final Map treeBindings; // all bindings under me
+    private final Hashtable<String, Object> environment; // environment for this context
+    private final Map<String, Object> bindings; // bindings at my level
+    private final Map<String, Object> treeBindings; // all bindings under me
     private boolean frozen;
     private String nameInNamespace = "";
 
     public JndiContext() throws Exception {
-        this(new Hashtable());
+        this(new Hashtable<String, Object>());
     }
 
-    public JndiContext(Hashtable env) throws Exception {
+    public JndiContext(Hashtable<String, Object>env) throws Exception {
         this(env, createBindingsMapFromEnvironment(env));
     }
 
-    @SuppressWarnings("unchecked")
-    public JndiContext(Hashtable environment, Map bindings) {
-        if (environment == null) {
-            this.environment = new Hashtable();
-        } else {
-            this.environment = new Hashtable(environment);
-        }
+    public JndiContext(Hashtable<String, Object> environment, Map<String, Object> bindings) {
+        this.environment = environment == null ? new Hashtable<String, Object>() : new Hashtable<String, Object>(environment);
         this.bindings = bindings;
-        treeBindings = new HashMap();
+        treeBindings = new HashMap<String, Object>();
     }
 
-    public JndiContext(Hashtable environment, Map bindings, String nameInNamespace) {
+    public JndiContext(Hashtable<String, Object> environment, Map<String, Object> bindings, String nameInNamespace) {
         this(environment, bindings);
         this.nameInNamespace = nameInNamespace;
     }
 
-    @SuppressWarnings("unchecked")
-    protected JndiContext(JndiContext clone, Hashtable env) {
+    protected JndiContext(JndiContext clone, Hashtable<String, Object> env) {
         this.bindings = clone.bindings;
         this.treeBindings = clone.treeBindings;
-        this.environment = new Hashtable(env);
+        this.environment = new Hashtable<String, Object>(env);
     }
 
-    protected JndiContext(JndiContext clone, Hashtable env, String nameInNamespace) {
+    protected JndiContext(JndiContext clone, Hashtable<String, Object> env, String nameInNamespace) {
         this(clone, env);
         this.nameInNamespace = nameInNamespace;
     }
@@ -104,22 +99,19 @@ public class JndiContext implements Context, Serializable {
      * properties using $foo.class to point to a class name with $foo.* being
      * properties set on the injected bean
      */
-    @SuppressWarnings("unchecked")
-    public static Map createBindingsMapFromEnvironment(Hashtable env) throws Exception {
-        Map answer = new HashMap(env);
+    public static Map<String, Object> createBindingsMapFromEnvironment(Hashtable<String, Object> env) throws Exception {
+        Map<String, Object> answer = new HashMap<String, Object>(env);
 
-        for (Object object : env.entrySet()) {
-            Map.Entry entry = (Map.Entry)object;
-            Object key = entry.getKey();
+        for (Map.Entry<String, Object> entry : env.entrySet()) {
+            String key = entry.getKey();
             Object value = entry.getValue();
 
-            if (key instanceof String && value instanceof String) {
-                String keyText = (String)key;
+            if (key != null && value instanceof String) {
                 String valueText = (String)value;
-                if (keyText.endsWith(".class")) {
+                if (key.endsWith(".class")) {
                     Class<?> type = ObjectHelper.loadClass(valueText);
                     if (type != null) {
-                        String newEntry = keyText.substring(0, keyText.length() - ".class".length());
+                        String newEntry = key.substring(0, key.length() - ".class".length());
                         Object bean = createBean(type, answer, newEntry + ".");
                         if (bean != null) {
                             answer.put(newEntry, bean);
@@ -150,12 +142,11 @@ public class JndiContext implements Context, Serializable {
      * created it). (the names are suitably extended by the segment originally
      * lopped off).
      */
-    @SuppressWarnings("unchecked")
-    protected Map internalBind(String name, Object value) throws NamingException {
+    protected Map<String, Object> internalBind(String name, Object value) throws NamingException {
         assert name != null && name.length() > 0;
         assert !frozen;
 
-        Map newBindings = new HashMap();
+        Map<String, Object> newBindings = new HashMap<String, Object>();
         int pos = name.indexOf('/');
         if (pos == -1) {
             if (treeBindings.put(name, value) != null) {
@@ -178,10 +169,10 @@ public class JndiContext implements Context, Serializable {
             }
             JndiContext defaultContext = (JndiContext)o;
             String remainder = name.substring(pos + 1);
-            Map subBindings = defaultContext.internalBind(remainder, value);
-            for (Iterator iterator = subBindings.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry)iterator.next();
-                String subName = segment + "/" + (String)entry.getKey();
+            Map<String, Object> subBindings = defaultContext.internalBind(remainder, value);
+            for (Iterator<Map.Entry<String, Object>> iterator = subBindings.entrySet().iterator(); iterator.hasNext();) {
+                Map.Entry<String, Object> entry = iterator.next();
+                String subName = segment + "/" + entry.getKey();
                 Object bound = entry.getValue();
                 treeBindings.put(subName, bound);
                 newBindings.put(subName, bound);
@@ -203,8 +194,8 @@ public class JndiContext implements Context, Serializable {
         return environment.put(propName, propVal);
     }
 
-    public Hashtable getEnvironment() throws NamingException {
-        return (Hashtable)environment.clone();
+    public Hashtable<String, Object> getEnvironment() throws NamingException {
+        return CastUtils.cast((Hashtable<?, ?>)environment.clone(), String.class, Object.class);
     }
 
     public Object removeFromEnvironment(String propName) throws NamingException {
@@ -291,10 +282,10 @@ public class JndiContext implements Context, Serializable {
         return result.toString();
     }
 
-    public NamingEnumeration list(String name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
         Object o = lookup(name);
         if (o == this) {
-            return new ListEnumeration();
+            return CastUtils.cast(new ListEnumeration());
         } else if (o instanceof Context) {
             return ((Context)o).list("");
         } else {
@@ -302,10 +293,10 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
-    public NamingEnumeration listBindings(String name) throws NamingException {
+    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
         Object o = lookup(name);
         if (o == this) {
-            return new ListBindingEnumeration();
+            return CastUtils.cast(new ListBindingEnumeration());
         } else if (o instanceof Context) {
             return ((Context)o).listBindings("");
         } else {
@@ -317,11 +308,11 @@ public class JndiContext implements Context, Serializable {
         return lookupLink(name.toString());
     }
 
-    public NamingEnumeration list(Name name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
         return list(name.toString());
     }
 
-    public NamingEnumeration listBindings(Name name) throws NamingException {
+    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
         return listBindings(name.toString());
     }
 
@@ -394,8 +385,8 @@ public class JndiContext implements Context, Serializable {
         treeBindings.remove(name);
     }
 
-    private abstract class LocalNamingEnumeration implements NamingEnumeration {
-        private Iterator i = bindings.entrySet().iterator();
+    private abstract class LocalNamingEnumeration implements NamingEnumeration<Object> {
+        private Iterator<Map.Entry<String, Object>> i = bindings.entrySet().iterator();
 
         public boolean hasMore() throws NamingException {
             return i.hasNext();
@@ -405,8 +396,8 @@ public class JndiContext implements Context, Serializable {
             return i.hasNext();
         }
 
-        protected Map.Entry getNext() {
-            return (Map.Entry)i.next();
+        protected Map.Entry<String, Object> getNext() {
+            return i.next();
         }
 
         public void close() throws NamingException {
@@ -422,7 +413,7 @@ public class JndiContext implements Context, Serializable {
         }
 
         public Object nextElement() {
-            Map.Entry entry = getNext();
+            Map.Entry<String, Object> entry = getNext();
             return new NameClassPair((String)entry.getKey(), entry.getValue().getClass().getName());
         }
     }
@@ -436,12 +427,12 @@ public class JndiContext implements Context, Serializable {
         }
 
         public Object nextElement() {
-            Map.Entry entry = getNext();
+            Map.Entry<String, Object> entry = getNext();
             return new Binding((String)entry.getKey(), entry.getValue());
         }
     }
 
-    protected static Object createBean(Class<?> type, Map properties, String prefix) throws Exception {
+    protected static Object createBean(Class<?> type, Map<String, Object> properties, String prefix) throws Exception {
         Object value = INJETOR.newInstance(type);
         IntrospectionSupport.setProperties(value, properties, prefix);
         return value;

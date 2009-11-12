@@ -25,6 +25,7 @@ import org.apache.camel.ValidationException;
  * @version $Revision$
  */
 public class NoXmlBodyValidationException extends ValidationException {
+    private static final long serialVersionUID = 4502520681354358599L;
 
     public NoXmlBodyValidationException(Exchange exchange) {
         super(exchange, "No XML body could be found on the input message");

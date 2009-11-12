@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @version $Revision$
  */
-public class TimeoutMapEntry implements Comparable, Map.Entry {
+public class TimeoutMapEntry implements Comparable<Object>, Map.Entry<Object, Object> {
     private Object key;
     private Object value;
     private long timeout;

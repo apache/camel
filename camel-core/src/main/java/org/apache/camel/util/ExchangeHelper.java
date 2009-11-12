@@ -298,8 +298,8 @@ public final class ExchangeHelper {
      * @param exchange the exchange to make available
      * @return a Map populated with the require variables
      */
-    public static Map createVariableMap(Exchange exchange) {
-        Map answer = new HashMap();
+    public static Map<String, Object> createVariableMap(Exchange exchange) {
+        Map<String, Object> answer = new HashMap<String, Object>();
         populateVariableMap(exchange, answer);
         return answer;
     }
@@ -310,8 +310,7 @@ public final class ExchangeHelper {
      * @param exchange the exchange to make available
      * @param map      the map to populate
      */
-    @SuppressWarnings("unchecked")
-    public static void populateVariableMap(Exchange exchange, Map map) {
+    public static void populateVariableMap(Exchange exchange, Map<String, Object> map) {
         map.put("exchange", exchange);
         Message in = exchange.getIn();
         map.put("in", in);
@@ -491,7 +490,7 @@ public final class ExchangeHelper {
      * @return the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    public static <T> T extractFutureBody(CamelContext context, Future future, Class<T> type) {
+    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, Class<T> type) {
         try {
             return doExtractFutureBody(context, future.get(), type);
         } catch (InterruptedException e) {
@@ -521,7 +520,7 @@ public final class ExchangeHelper {
      * @throws CamelExecutionException if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
-    public static <T> T extractFutureBody(CamelContext context, Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         try {
             if (timeout > 0) {
                 return doExtractFutureBody(context, future.get(timeout, unit), type);

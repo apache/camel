@@ -36,7 +36,7 @@ public final class LoadBalanceDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }    
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         LoadBalanceDefinition loadB = (LoadBalanceDefinition)processor;
         // buffer.append(".").append(output.getShortName()).append("()");
         buffer.append(".").append("loadBalance").append("()");
@@ -44,8 +44,8 @@ public final class LoadBalanceDefinitionRenderer {
         LoadBalancer lb = loadB.getLoadBalancerType().getLoadBalancer(null);
         if (lb instanceof FailOverLoadBalancer) {
             buffer.append(".failover(");
-            List<Class> exceptions = ((FailOverLoadBalancer)lb).getExceptions();
-            for (Class excep : exceptions) {
+            List<Class<?>> exceptions = ((FailOverLoadBalancer)lb).getExceptions();
+            for (Class<?> excep : exceptions) {
                 buffer.append(excep.getSimpleName()).append(".class");
                 if (excep != exceptions.get(exceptions.size() - 1)) {
                     buffer.append(", ");
@@ -65,7 +65,7 @@ public final class LoadBalanceDefinitionRenderer {
         }
 
         List<ProcessorDefinition> branches = loadB.getOutputs();
-        for (ProcessorDefinition branch : branches) {
+        for (ProcessorDefinition<?> branch : branches) {
             ProcessorDefinitionRenderer.render(buffer, branch);
         }
     }

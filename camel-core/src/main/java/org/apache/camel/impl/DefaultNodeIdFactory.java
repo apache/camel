@@ -32,7 +32,7 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
 
     protected static Map<String, AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
 
-    public String createId(OptionalIdentifiedDefinition definition) {
+    public String createId(OptionalIdentifiedDefinition<?> definition) {
         String key = definition.getShortName();
         return key + getNodeCounter(key).incrementAndGet();
     }
@@ -48,5 +48,4 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
         }
         return answer;
     }
-
 }

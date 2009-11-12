@@ -29,6 +29,8 @@ import org.apache.camel.ValidationException;
  * @version $Revision$
  */
 public class SchemaValidationException extends ValidationException {
+    private static final long serialVersionUID = 2656907296674888684L;
+
     private final Object schema;
     private final List<SAXParseException> fatalErrors;
     private final List<SAXParseException> errors;

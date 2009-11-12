@@ -34,5 +34,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER })
 public @interface HasAnnotation {
 
-    Class value();
+    Class<?> value();
 }

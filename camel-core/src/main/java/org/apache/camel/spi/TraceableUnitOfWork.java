@@ -63,6 +63,5 @@ public interface TraceableUnitOfWork extends UnitOfWork {
      * @param node the intercept node
      * @return the current count
      */
-    int getAndIncrement(ProcessorDefinition node);
-
+    int getAndIncrement(ProcessorDefinition<?> node);
 }

@@ -50,5 +50,4 @@ public class CompositePackageScanFilter implements PackageScanFilter {
         }
         return true;
     }
-
 }

@@ -27,22 +27,22 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class FailOverLoadBalancer extends LoadBalancerSupport {
 
-    private final List<Class> exceptions;
+    private final List<Class<?>> exceptions;
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
     }
 
-    public FailOverLoadBalancer(List<Class> exceptions) {
+    public FailOverLoadBalancer(List<Class<?>> exceptions) {
         this.exceptions = exceptions;
-        for (Class type : exceptions) {
+        for (Class<?> type : exceptions) {
             if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
                 throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
             }
         }
     }
 
-    public List<Class> getExceptions() {
+    public List<Class<?>> getExceptions() {
         return exceptions;
     }
 
@@ -60,7 +60,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
                 return true;
             }
 
-            for (Class exception : exceptions) {
+            for (Class<?> exception : exceptions) {
                 // will look in exception hierarchy 
                 if (exchange.getException(exception) != null) {
                     return true;

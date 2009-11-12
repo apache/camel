@@ -38,9 +38,9 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         if (!exceptions.isEmpty()) {
-            List<Class> classes = new ArrayList<Class>();
+            List<Class<?>> classes = new ArrayList<Class<?>>();
             for (String name : exceptions) {
-                Class type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
+                Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(name);
                 if (type == null) {
                     throw new IllegalArgumentException("Cannot find class: " + name + " in the classpath");
                 }

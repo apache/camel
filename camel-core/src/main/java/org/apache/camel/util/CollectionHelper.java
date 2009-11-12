@@ -20,7 +20,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,10 +50,10 @@ public final class CollectionHelper {
     public static Integer size(Object value) {
         if (value != null) {
             if (value instanceof Collection) {
-                Collection collection = (Collection)value;
+                Collection<?> collection = (Collection<?>)value;
                 return collection.size();
             } else if (value instanceof Map) {
-                Map map = (Map)value;
+                Map<?, ?> map = (Map<?, ?>)value;
                 return map.size();
             } else if (value instanceof Object[]) {
                 Object[] array = (Object[])value;
@@ -111,15 +110,15 @@ public final class CollectionHelper {
         return collectionAsCommaDelimitedString(Arrays.asList(col));
     }
 
-    public static String collectionAsCommaDelimitedString(Collection col) {
+    public static String collectionAsCommaDelimitedString(Collection<?> col) {
         if (col == null || col.isEmpty()) {
             return "";
         }
 
         StringBuilder sb = new StringBuilder();
-        Iterator it = col.iterator();
+        Iterator<?> it = col.iterator();
         while (it.hasNext()) {
-            sb.append(it.next());
+            sb.append(it.next().toString());
             if (it.hasNext()) {
                 sb.append(",");
             }

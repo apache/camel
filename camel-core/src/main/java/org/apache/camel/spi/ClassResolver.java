@@ -31,7 +31,7 @@ public interface ClassResolver {
      * @param name full qualified name of class
      * @return the class if resolved, <tt>null</tt> if not found.
      */
-    Class resolveClass(String name);
+    Class<?> resolveClass(String name);
 
     /**
      * Resolves the given class by its name
@@ -49,7 +49,7 @@ public interface ClassResolver {
      * @param loader use the provided class loader
      * @return the class if resolved, <tt>null</tt> if not found.
      */
-    Class resolveClass(String name, ClassLoader loader);
+    Class<?> resolveClass(String name, ClassLoader loader);
 
     /**
      * Resolves the given class by its name
@@ -68,7 +68,7 @@ public interface ClassResolver {
      * @return the class if resolved, <tt>null</tt> if not found.
      * @throws ClassNotFoundException is thrown if class not found
      */
-    Class resolveMandatoryClass(String name) throws ClassNotFoundException;
+    Class<?> resolveMandatoryClass(String name) throws ClassNotFoundException;
 
     /**
      * Resolves the given class by its name
@@ -88,7 +88,7 @@ public interface ClassResolver {
      * @return the class if resolved, <tt>null</tt> if not found.
      * @throws ClassNotFoundException is thrown if class not found
      */
-    Class resolveMandatoryClass(String name, ClassLoader loader) throws ClassNotFoundException;
+    Class<?> resolveMandatoryClass(String name, ClassLoader loader) throws ClassNotFoundException;
 
     /**
      * Resolves the given class by its name

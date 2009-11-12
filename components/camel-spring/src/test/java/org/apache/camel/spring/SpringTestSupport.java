@@ -56,14 +56,12 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
 
         public void setExcludedClasses(Set<Class> excludedClasses) {
             excludedClasses = excludedClasses == null ? Collections.EMPTY_SET : excludedClasses;
             addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
         }
-
     }
 
     /**

@@ -184,7 +184,7 @@ public final class FileUtil {
 
         // build path based on stack
         StringBuilder sb = new StringBuilder();
-        for (Iterator it = stack.iterator(); it.hasNext();) {
+        for (Iterator<String> it = stack.iterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(File.separator);

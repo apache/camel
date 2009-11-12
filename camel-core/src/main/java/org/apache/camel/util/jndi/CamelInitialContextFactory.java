@@ -22,6 +22,8 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 
+import org.apache.camel.util.CastUtils;
+
 /**
  * A factory of the Camel InitialContext which allows a Map to be used to create a
  * JNDI context.
@@ -37,9 +39,9 @@ public class CamelInitialContextFactory implements InitialContextFactory {
      * @return the created context.
      * @throws NamingException is thrown if creation failed.
      */
-    public Context getInitialContext(Hashtable environment) throws NamingException {
+    public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
         try {
-            return new JndiContext(environment);
+            return new JndiContext(CastUtils.cast(environment, String.class, Object.class));
         } catch (Exception e) {
             if (e instanceof NamingException) {
                 throw (NamingException) e;

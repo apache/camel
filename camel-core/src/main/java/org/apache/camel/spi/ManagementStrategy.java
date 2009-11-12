@@ -97,7 +97,7 @@ public interface ManagementStrategy extends org.fusesource.commons.management.Ma
      * @param definition definition of the processor
      * @return <tt>true</tt> to manage it
      */
-    boolean manageProcessor(ProcessorDefinition definition);
+    boolean manageProcessor(ProcessorDefinition<?> definition);
 
     /**
      * Sets the whether only manage processors if they have been configured with a custom id
@@ -130,5 +130,4 @@ public interface ManagementStrategy extends org.fusesource.commons.management.Ma
      * @return the level
      */
     ManagementStatisticsLevel getStatisticsLevel();
-
 }

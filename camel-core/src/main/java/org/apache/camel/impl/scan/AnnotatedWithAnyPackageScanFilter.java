@@ -54,5 +54,4 @@ public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
     public String toString() {
         return "annotated with any @[" + annotations + "]";
     }
-
 }

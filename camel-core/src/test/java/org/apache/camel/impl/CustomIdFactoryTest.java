@@ -57,7 +57,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // use our own id factory so we can generate the keys we like to use
                 context.setNodeIdFactory(new NodeIdFactory() {
-                    public String createId(OptionalIdentifiedDefinition definition) {
+                    public String createId(OptionalIdentifiedDefinition<?> definition) {
                         return "#" + definition.getShortName() + ++counter + "#";
                     }
                 });
@@ -107,8 +107,8 @@ public class CustomIdFactoryTest extends ContextTestSupport {
 
     private class MyDebuggerCheckingId implements InterceptStrategy {
 
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition definition,
-                                                     Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(final CamelContext context, 
+                final ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
 
             // MUST DO THIS
             // force id creation as sub nodes have lazy assigned ids

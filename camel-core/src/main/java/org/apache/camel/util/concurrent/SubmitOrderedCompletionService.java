@@ -39,24 +39,24 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
     // the idea to order the completed task in the same order as they where submitted is to leverage
     // the delay queue. With the delay queue we can control the order by the getDelay and compareTo methods
     // where we can order the tasks in the same order as they where submitted.
-    private final DelayQueue completionQueue = new DelayQueue();
+    private final DelayQueue<SubmitOrderFutureTask> completionQueue = new DelayQueue<SubmitOrderFutureTask>();
 
     // id is the unique id that determines the order in which tasks was submitted (incrementing)
     private final AtomicInteger id = new AtomicInteger();
     // index is the index of the next id that should expire and thus be ready to take from the delayed queue
     private final AtomicInteger index = new AtomicInteger();
 
-    private class SubmitOrderFutureTask<V> extends FutureTask<Void> implements Delayed {
+    private class SubmitOrderFutureTask extends FutureTask<V> implements Delayed {
 
         // the id this task was assigned
         private final long id;
 
-        public SubmitOrderFutureTask(long id, Callable<Void> voidCallable) {
+        public SubmitOrderFutureTask(long id, Callable<V> voidCallable) {
             super(voidCallable);
             this.id = id;
         }
 
-        public SubmitOrderFutureTask(long id, Runnable runnable, Void result) {
+        public SubmitOrderFutureTask(long id, Runnable runnable, V result) {
             super(runnable, result);
             this.id = id;
         }
@@ -91,7 +91,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         }
         SubmitOrderFutureTask f = new SubmitOrderFutureTask(id.incrementAndGet(), task);
         executor.execute(f);
-        return f;
+        return (Future<V>) f;
     }
 
     @SuppressWarnings("unchecked")

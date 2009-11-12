@@ -32,7 +32,7 @@ public interface TypeConverterRegistry {
      * @param fromType      the type to convert from
      * @param typeConverter the type converter to use
      */
-    void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter);
+    void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter);
 
     /**
      * Registers a new fallback type converter
@@ -48,7 +48,7 @@ public interface TypeConverterRegistry {
      * @param fromType      the type to convert from
      * @return the type converter or null if not found.
      */
-    TypeConverter lookup(Class toType, Class fromType);
+    TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**
      * Sets the injector to be used for creating new instances during type convertions.

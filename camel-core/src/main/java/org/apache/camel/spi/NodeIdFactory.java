@@ -31,5 +31,5 @@ public interface NodeIdFactory {
      * @param definition model definition
      * @return the id created
      */
-    String createId(OptionalIdentifiedDefinition definition);
+    String createId(OptionalIdentifiedDefinition<?> definition);
 }

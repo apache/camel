@@ -25,6 +25,8 @@ import org.apache.camel.RuntimeExpressionException;
  * @version $Revision$
  */
 public class RuntimeBeanExpressionException extends RuntimeExpressionException {
+    private static final long serialVersionUID = -7184254079414493118L;
+
     private final Exchange exchange;
     private final String beanName;
     private final String method;

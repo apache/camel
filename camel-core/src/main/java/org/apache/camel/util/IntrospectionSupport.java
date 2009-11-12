@@ -150,14 +150,13 @@ public final class IntrospectionSupport {
         return type.getMethod("get" + ObjectHelper.capitalize(propertyName));
     }
 
-    @SuppressWarnings("unchecked")
-    public static boolean setProperties(Object target, Map properties, String optionPrefix) throws Exception {
+    public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
-        for (Iterator<Map.Entry> it = properties.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = it.next();
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
             String name = entry.getKey().toString();
             if (name.startsWith(optionPrefix)) {
                 Object value = properties.get(name);

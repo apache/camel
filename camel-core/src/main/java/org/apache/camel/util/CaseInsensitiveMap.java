@@ -33,6 +33,7 @@ import java.util.Set;
  * @version $Revision$
  */
 public class CaseInsensitiveMap extends HashMap<String, Object> {
+    private static final long serialVersionUID = -8538318195477618308L;
 
     // holds a map of lower case key -> original key
     private Map<String, String> originalKeys;
@@ -138,5 +139,4 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
 
         return entrySetView;
     }
-
 }

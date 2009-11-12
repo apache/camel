@@ -38,13 +38,13 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
         this.parents.addAll(parents);
     }
 
-    public void addParentType(Class parentType) {
+    public void addParentType(Class<?> parentType) {
         parents.add(parentType);
     }
 
     public boolean matches(Class type) {
         if (parents != null && parents.size() > 0) {
-            for (Class parent : parents) {
+            for (Class<?> parent : parents) {
                 if (parent.isAssignableFrom(type)) {
                     return true;
                 }
@@ -56,11 +56,10 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Class parent : parents) {
+        for (Class<?> parent : parents) {
             sb.append(parent.getSimpleName()).append(", ");
         }
         sb.setLength(sb.length() > 0 ? sb.length() - 2 : 0);
         return "is assignable to any of " + sb;
     }
-
 }

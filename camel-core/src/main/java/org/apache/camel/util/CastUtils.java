@@ -18,12 +18,15 @@ package org.apache.camel.util;
 
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Future;
+
+import javax.naming.NamingEnumeration;
 
 @SuppressWarnings("unchecked")
 public final class CastUtils {
@@ -75,6 +78,13 @@ public final class CastUtils {
         return (Queue<T>)p;
     }
 
+    public static <T, U> Hashtable<T, U> cast(Hashtable<?, ?> p) {
+        return (Hashtable<T, U>)p;
+    }
+    public static <T, U> Hashtable<T, U> cast(Hashtable<?, ?> p, Class<T> pc, Class<U> uc) {
+        return (Hashtable<T, U>)p;
+    }
+
     public static <T, U> Map.Entry<T, U> cast(Map.Entry<?, ?> p) {
         return (Map.Entry<T, U>)p;
     }
@@ -84,6 +94,9 @@ public final class CastUtils {
 
     public static <T> Enumeration<T> cast(Enumeration<?> p) {
         return (Enumeration<T>)p;
+    }
+    public static <T> NamingEnumeration<T> cast(NamingEnumeration<?> p) {
+        return (NamingEnumeration<T>)p;
     }
 
     public static <T> Class<T> cast(Class<?> p) {

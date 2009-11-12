@@ -37,8 +37,8 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultTimeoutMap.class);
 
-    private final Map map = new HashMap();
-    private SortedSet index = new TreeSet();
+    private final Map<Object, Object> map = new HashMap<Object, Object>();
+    private SortedSet<TimeoutMapEntry> index = new TreeSet<TimeoutMapEntry>();
     private ScheduledExecutorService executor;
     private long purgePollTime;
 
@@ -52,7 +52,6 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         schedulePoll();
     }
 
-    @SuppressWarnings("unchecked")
     public Object get(Object key) {
         TimeoutMapEntry entry = null;
         synchronized (map) {
@@ -67,7 +66,6 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         return entry.getValue();
     }
 
-    @SuppressWarnings("unchecked")
     public void put(Object key, Object value, long timeoutMillis) {
         TimeoutMapEntry entry = new TimeoutMapEntry(key, value, timeoutMillis);
         synchronized (map) {
@@ -89,11 +87,10 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Object[] getKeys() {
         Object[] keys = null;
         synchronized (map) {
-            Set keySet = map.keySet();
+            Set<Object> keySet = map.keySet();
             keys = new Object[keySet.size()];
             keySet.toArray(keys);
         }
@@ -117,7 +114,7 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
     public void purge() {
         long now = currentTime();
         synchronized (map) {
-            for (Iterator iter = index.iterator(); iter.hasNext();) {
+            for (Iterator<TimeoutMapEntry> iter = index.iterator(); iter.hasNext();) {
                 TimeoutMapEntry entry = (TimeoutMapEntry) iter.next();
                 if (entry == null) {
                     break;

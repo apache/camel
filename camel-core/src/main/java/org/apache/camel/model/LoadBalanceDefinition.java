@@ -157,7 +157,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @param exceptions exception classes which we want to failover if one of them was thrown
      * @return the builder
      */
-    public LoadBalanceDefinition failover(Class... exceptions) {
+    public LoadBalanceDefinition failover(Class<?>... exceptions) {
         loadBalancerType = new LoadBalancerDefinition(new FailOverLoadBalancer(Arrays.asList(exceptions)));
         return this;
     }

@@ -42,6 +42,6 @@ public interface InterceptStrategy {
      * @return processor wrapped with an interceptor or not wrapped
      * @throws Exception can be thrown
      */
-    Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
-                                          Processor target, Processor nextTarget) throws Exception;
+    Processor wrapProcessorInInterceptors(CamelContext context, 
+            ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception;
 }

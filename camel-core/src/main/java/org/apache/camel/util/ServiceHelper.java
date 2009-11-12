@@ -48,7 +48,7 @@ public final class ServiceHelper {
             }
             service.start();
         } else if (value instanceof Collection) {
-            startServices((Collection)value);
+            startServices((Collection<?>)value);
         }
     }
 
@@ -64,7 +64,7 @@ public final class ServiceHelper {
     /**
      * Starts all of the given services
      */
-    public static void startServices(Collection services) throws Exception {
+    public static void startServices(Collection<?> services) throws Exception {
         for (Object value : services) {
             if (value instanceof Service) {
                 Service service = (Service)value;
@@ -80,7 +80,7 @@ public final class ServiceHelper {
      * Stops all of the given services, throwing the first exception caught
      */
     public static void stopServices(Object... services) throws Exception {
-        List list = Arrays.asList(services);
+        List<Object> list = Arrays.asList(services);
         stopServices(list);
     }
 
@@ -92,14 +92,14 @@ public final class ServiceHelper {
             }
             service.stop();
         } else if (value instanceof Collection) {
-            stopServices((Collection)value);
+            stopServices((Collection<?>)value);
         }
     }
 
     /**
      * Stops all of the given services, throwing the first exception caught
      */
-    public static void stopServices(Collection services) throws Exception {
+    public static void stopServices(Collection<?> services) throws Exception {
         Exception firstException = null;
         for (Object value : services) {
             if (value instanceof Service) {
