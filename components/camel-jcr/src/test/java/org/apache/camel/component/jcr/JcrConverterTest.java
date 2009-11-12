@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 import javax.jcr.Value;
 
-import junit.framework.TestCase;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.DefaultFactoryFinderResolver;

@@ -18,7 +18,6 @@ package org.apache.camel.component.javaspace;
 
 import java.util.concurrent.CountDownLatch;
 
-import junit.framework.Assert;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

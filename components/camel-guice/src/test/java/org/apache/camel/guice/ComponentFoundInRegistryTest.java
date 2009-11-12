@@ -20,7 +20,6 @@ import java.util.Hashtable;
 
 import javax.naming.InitialContext;
 
-import junit.framework.TestCase;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 
@@ -35,7 +34,6 @@ import org.guiceyfruit.jndi.JndiBind;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 /**

@@ -17,7 +17,6 @@
 
 package org.apache.camel.processor.cache;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 

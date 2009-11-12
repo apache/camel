@@ -18,7 +18,6 @@ package org.apache.camel.test;
 
 import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -42,7 +41,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
-import org.apache.camel.util.CamelContextHelper;
 
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes

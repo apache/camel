@@ -17,14 +17,11 @@
 package org.apache.camel.component.snmp;
 
 import java.net.URI;
-import java.util.concurrent.CopyOnWriteArraySet;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.commons.logging.Log;

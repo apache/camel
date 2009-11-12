@@ -18,8 +18,6 @@ package org.apache.camel.builder.saxon;
 
 import org.w3c.dom.Document;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;

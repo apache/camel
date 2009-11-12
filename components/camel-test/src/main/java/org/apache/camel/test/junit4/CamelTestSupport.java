@@ -18,7 +18,6 @@ package org.apache.camel.test.junit4;
 
 import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -42,7 +41,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
-import org.apache.camel.util.CamelContextHelper;
 import org.junit.After;
 import org.junit.Before;
 

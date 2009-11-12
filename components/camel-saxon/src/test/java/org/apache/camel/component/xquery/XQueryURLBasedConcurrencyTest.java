@@ -18,8 +18,6 @@ package org.apache.camel.component.xquery;
 
 import java.util.Random;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;

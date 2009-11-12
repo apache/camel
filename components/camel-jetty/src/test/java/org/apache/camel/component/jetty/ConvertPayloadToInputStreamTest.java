@@ -16,16 +16,10 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.Reader;
-import java.net.URL;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;

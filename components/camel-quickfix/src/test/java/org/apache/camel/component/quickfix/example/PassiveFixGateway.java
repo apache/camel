@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.quickfix.example;
 
-import java.io.InputStream;
-
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

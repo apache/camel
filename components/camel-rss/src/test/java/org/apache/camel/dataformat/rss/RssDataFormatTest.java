@@ -16,15 +16,10 @@
  */
 package org.apache.camel.dataformat.rss;
 
-import java.util.List;
-
 import com.sun.syndication.feed.synd.SyndFeed;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.rss.RssEndpoint;
 import org.apache.camel.component.rss.RssUtils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;

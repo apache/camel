@@ -16,7 +16,6 @@
  */
 package org.apache.camel.ruby;
 
-import junit.framework.TestCase;
 import org.jruby.Main;
 
 /**

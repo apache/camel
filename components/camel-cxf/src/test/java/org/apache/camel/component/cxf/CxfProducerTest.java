@@ -22,8 +22,6 @@ import java.util.Map;
 
 import javax.xml.ws.Endpoint;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,10 +30,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.hello_world_soap_http.GreeterImpl;

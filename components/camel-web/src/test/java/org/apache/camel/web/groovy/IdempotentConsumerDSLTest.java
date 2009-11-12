@@ -17,7 +17,6 @@
 
 package org.apache.camel.web.groovy;
 
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.Test;
 
 /**

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,7 +29,6 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
-import org.apache.mina.filter.codec.textline.LineDelimiter;
 
 /**
  * Unit test with custom codec.

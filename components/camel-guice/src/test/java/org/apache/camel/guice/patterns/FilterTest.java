@@ -23,7 +23,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.apache.camel.guice.consume.ConsumeTest;
 import org.guiceyfruit.testing.UseModule;
 import org.guiceyfruit.testing.junit4.GuiceyJUnit4;
 import org.junit.Test;

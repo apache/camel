@@ -16,13 +16,7 @@
  */
 package org.apache.camel.component.servlet;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-
-import org.xml.sax.SAXException;
-
-import com.meterware.httpunit.HttpInternalErrorException;
 import com.meterware.httpunit.HttpNotFoundException;
 import com.meterware.httpunit.HttpUnitOptions;
 import com.meterware.servletunit.ServletRunner;

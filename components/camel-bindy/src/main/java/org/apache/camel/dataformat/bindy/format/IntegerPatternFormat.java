@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.format;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class IntegerPatternFormat extends NumberPatternFormat<Integer> {

@@ -18,10 +18,8 @@
 package org.apache.camel.component.cache;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
-import net.sf.ehcache.event.RegisteredEventListeners;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
 import org.apache.camel.util.URISupport;

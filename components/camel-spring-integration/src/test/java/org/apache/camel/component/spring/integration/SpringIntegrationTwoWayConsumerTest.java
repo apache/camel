@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.channel.AbstractPollableChannel;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.core.MessageChannel;

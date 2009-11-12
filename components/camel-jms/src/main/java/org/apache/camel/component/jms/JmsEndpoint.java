@@ -26,7 +26,6 @@ import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
-import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
@@ -39,7 +38,6 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.ManagementAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;

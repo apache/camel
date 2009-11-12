@@ -19,16 +19,13 @@ package org.apache.camel.component.cxf.spring;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.cxf.BusFactory;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {

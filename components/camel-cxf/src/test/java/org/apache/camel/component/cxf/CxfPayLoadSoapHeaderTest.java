@@ -37,7 +37,6 @@ import org.apache.camel.pizza.types.ToppingsListType;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.jaxws.EndpointImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

@@ -18,7 +18,6 @@ package org.apache.camel.dataformat.bindy.model.fix.sorted.header;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 
 @Link

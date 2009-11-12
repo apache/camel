@@ -18,8 +18,6 @@ package org.apache.camel.component.cxf.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-
 import org.w3c.dom.Element;
 
 import org.apache.camel.converter.jaxp.XmlConverter;

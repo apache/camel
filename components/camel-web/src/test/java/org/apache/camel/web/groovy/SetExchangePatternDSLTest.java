@@ -17,8 +17,6 @@
 
 package org.apache.camel.web.groovy;
 
-import org.apache.camel.ExchangePattern;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

@@ -27,8 +27,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 

@@ -21,8 +21,6 @@ import java.text.NumberFormat;
 
 import org.apache.camel.dataformat.bindy.PatternFormat;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
 

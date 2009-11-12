@@ -19,7 +19,6 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;

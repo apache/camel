@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
-import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 
 @CsvRecord(separator = ",")
 public class Math {

@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.cxf.spring;
 
-import org.apache.cxf.BusFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

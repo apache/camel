@@ -17,12 +17,10 @@
 package org.apache.camel.component.spring.integration.adapter;
 
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.spring.integration.HelloWorldService;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.channel.PollableChannel;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageHandler;
 

@@ -27,7 +27,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.commons.logging.Log;

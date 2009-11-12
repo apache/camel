@@ -20,8 +20,6 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;

@@ -17,13 +17,9 @@
 package org.apache.camel.component.jetty.jettyproducer;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.JettyHttpOperationFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.Iterator;
-
 import javax.naming.Context;
 
 import com.sun.syndication.feed.synd.SyndEntry;

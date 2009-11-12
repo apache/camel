@@ -21,10 +21,7 @@ import java.util.Date;
 import javax.naming.Context;
 
 import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
 import org.apache.camel.Body;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina;
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

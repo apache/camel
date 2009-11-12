@@ -16,26 +16,17 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.xml.sax.SAXException;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.headers.Header;
-import org.apache.cxf.helpers.CastUtils;
 
 public class CxfConsumerPayloadTest extends CxfConsumerTest {
         

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.soap.headers;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;

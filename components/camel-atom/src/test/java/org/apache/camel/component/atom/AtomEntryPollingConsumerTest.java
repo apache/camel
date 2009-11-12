@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atom;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javax.naming.Context;

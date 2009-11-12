@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.xml.ws.Endpoint;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -18,8 +18,6 @@ package org.apache.camel.component.jt400;
 
 import java.util.HashMap;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.junit.Assert;

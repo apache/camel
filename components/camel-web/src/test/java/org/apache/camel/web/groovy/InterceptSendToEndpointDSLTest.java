@@ -17,7 +17,6 @@
 
 package org.apache.camel.web.groovy;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

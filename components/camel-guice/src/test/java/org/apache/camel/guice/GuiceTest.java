@@ -16,8 +16,6 @@
  */
 package org.apache.camel.guice;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;

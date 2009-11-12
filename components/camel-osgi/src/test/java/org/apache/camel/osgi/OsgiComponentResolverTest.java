@@ -16,13 +16,10 @@
  */
 package org.apache.camel.osgi;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.Language;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 

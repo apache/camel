@@ -23,7 +23,6 @@ import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.cxf.BusFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

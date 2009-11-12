@@ -20,7 +20,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.camel.CamelContext;
-import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;

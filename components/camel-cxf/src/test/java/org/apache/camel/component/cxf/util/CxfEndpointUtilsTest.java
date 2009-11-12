@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.util;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;

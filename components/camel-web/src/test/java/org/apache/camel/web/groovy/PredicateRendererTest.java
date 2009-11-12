@@ -19,7 +19,6 @@ package org.apache.camel.web.groovy;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.builder.PredicateBuilder.in;

@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Processor;
-import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.commons.net.ftp.FTPFile;
 
