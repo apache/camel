@@ -54,7 +54,7 @@ public class RouteBuilderFinder {
      * Appends all the {@link org.apache.camel.builder.RouteBuilder} instances that can be found on the classpath
      */
     public void appendBuilders(List<RoutesBuilder> list) throws IllegalAccessException, InstantiationException {
-        Set<Class> classes = resolver.findImplementations(RoutesBuilder.class, packages);
+        Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packages);
         for (Class aClass : classes) {
             if (shouldIgnoreBean(aClass)) {
                 continue;
