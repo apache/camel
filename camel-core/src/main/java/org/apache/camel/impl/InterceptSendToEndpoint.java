@@ -155,7 +155,7 @@ public class InterceptSendToEndpoint implements Endpoint {
         return delegate.createPollingConsumer();
     }
 
-    public void configureProperties(Map options) {
+    public void configureProperties(Map<String, Object> options) {
         delegate.configureProperties(options);
     }
 

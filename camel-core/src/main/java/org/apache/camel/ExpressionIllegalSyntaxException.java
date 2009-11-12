@@ -22,6 +22,8 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class ExpressionIllegalSyntaxException extends RuntimeCamelException {
+    private static final long serialVersionUID = 6545652894842621836L;
+
     private final String expression;
 
     public ExpressionIllegalSyntaxException(String expression) {

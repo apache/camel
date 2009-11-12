@@ -82,7 +82,7 @@ public interface Channel extends Processor, Navigate<Processor> {
      * @param routeContext      the route context
      * @throws Exception is thrown if some error occured
      */
-    void initChannel(ProcessorDefinition outputDefinition, RouteContext routeContext) throws Exception;
+    void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception;
 
     /**
      * Gets the wrapped output that at runtime should be delegated to.
@@ -110,6 +110,5 @@ public interface Channel extends Processor, Navigate<Processor> {
      *
      * @return the processor definition
      */
-    ProcessorDefinition getProcessorDefinition();
-
+    ProcessorDefinition<?> getProcessorDefinition();
 }

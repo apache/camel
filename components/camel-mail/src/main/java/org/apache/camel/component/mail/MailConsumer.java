@@ -30,6 +30,8 @@ import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -107,9 +109,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
                     messages = folder.getMessages();
                 }
 
-                Queue<Exchange> exchanges = createExchanges(messages);
-                processBatch(exchanges);
-
+                processBatch(CastUtils.cast(createExchanges(messages)));
             } else if (count == -1) {
                 throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
             }
@@ -132,7 +132,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public void processBatch(Queue exchanges) throws Exception {
+    public void processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
         // limit if needed
@@ -143,7 +143,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
 
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            Exchange exchange = (Exchange)exchanges.poll();
+            Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);

@@ -22,6 +22,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class RollbackExchangeException extends CamelExchangeException {
+    private static final long serialVersionUID = -7837446508365767066L;
 
     public RollbackExchangeException(Exchange exchange) {
         this("Intended rollback", exchange);
@@ -38,5 +39,4 @@ public class RollbackExchangeException extends CamelExchangeException {
     public RollbackExchangeException(String message, Exchange exchange, Throwable cause) {
         super(message, exchange, cause);
     }
-
 }

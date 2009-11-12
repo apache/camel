@@ -200,7 +200,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, getEndpointUri(), true);
     }
 
-    public void configureProperties(Map options) {
+    public void configureProperties(Map<String, Object> options) {
         // do nothing by default
     }
 

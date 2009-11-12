@@ -38,14 +38,15 @@ public interface BatchConsumer extends Consumer {
     void setMaxMessagesPerPoll(int maxMessagesPerPoll);
 
     /**
-     * Processes the list of {@link org.apache.camel.Exchange} in a batch.
+     * Processes the list of {@link org.apache.camel.Exchange} in a batch. 
      * <p/>
      * Each message exchange will be processed individually but the batch
      * consumer will add properties with the current index and total in the batch.
+     * The items in the Queue may actually be Holder objects that store other 
+     * data alongside the Exchange.
      *
-     * @param exchanges list of exchanges in this batch
+     * @param exchanges list of items in this batch
      * @throws Exception if an internal processing error has occurred.
      */
-    void processBatch(Queue exchanges) throws Exception;
-
+    void processBatch(Queue<Object> exchanges) throws Exception;
 }

@@ -69,7 +69,7 @@ public interface RouteContext extends RuntimeConfiguration {
      * @return the created processor
      * @throws Exception can be thrown
      */
-    Processor createProcessor(ProcessorDefinition node) throws Exception;
+    Processor createProcessor(ProcessorDefinition<?> node) throws Exception;
 
     /**
      * Resolves an endpoint from the URI
@@ -185,5 +185,4 @@ public interface RouteContext extends RuntimeConfiguration {
      * @param routePolicy the custom route policy
      */
     void setRoutePolicy(RoutePolicy routePolicy);
-
 }

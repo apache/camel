@@ -21,8 +21,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.integration.core.MessageChannel;
 
 /**
@@ -31,8 +29,6 @@ import org.springframework.integration.core.MessageChannel;
  * @version $Revision$
  */
 public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
-    private static final Log LOG = LogFactory.getLog(SpringIntegrationEndpoint.class);
-    
     private String inputChannel;
     private String outputChannel;
     private String defaultChannel;

@@ -22,6 +22,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
+    private static final long serialVersionUID = -155083097523464793L;
     private final transient Class<?> type;
 
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type) {

@@ -65,7 +65,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
-        Thread.sleep(200);
+        Thread.sleep(500);
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/filelanguage/" + id + ".bak");

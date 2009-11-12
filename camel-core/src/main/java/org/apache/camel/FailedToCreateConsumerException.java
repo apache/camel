@@ -22,6 +22,8 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class FailedToCreateConsumerException extends RuntimeCamelException {
+    private static final long serialVersionUID = 1916718168052020246L;
+
     private final String uri;
 
     public FailedToCreateConsumerException(Endpoint endpoint, Throwable cause) {

@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -47,7 +48,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private Expression producerExpression;
     private int maximumResults = -1;
     private Class<?> entityType;
-    private Map entityManagerProperties;
+    private Map<Object, Object> entityManagerProperties;
     private boolean consumeDelete = true;
     private boolean consumeLockEntity = true;
     private boolean flushOnSend = true;
@@ -91,11 +92,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
-    public void configureProperties(Map options) {
+    public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);
-        Map emProperties = IntrospectionSupport.extractProperties(options, "emf.");
+        Map<String, Object> emProperties = IntrospectionSupport.extractProperties(options, "emf.");
         if (emProperties != null) {
-            setEntityManagerProperties(emProperties);
+            setEntityManagerProperties(CastUtils.cast(emProperties));
         }
     }
 
@@ -171,14 +172,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.transactionManager = transactionManager;
     }
 
-    public Map getEntityManagerProperties() {
+    public Map<Object, Object> getEntityManagerProperties() {
         if (entityManagerProperties == null) {
             entityManagerProperties = System.getProperties();
         }
         return entityManagerProperties;
     }
 
-    public void setEntityManagerProperties(Map entityManagerProperties) {
+    public void setEntityManagerProperties(Map<Object, Object> entityManagerProperties) {
         this.entityManagerProperties = entityManagerProperties;
     }
 

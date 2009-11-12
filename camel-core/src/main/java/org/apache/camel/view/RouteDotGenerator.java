@@ -80,7 +80,7 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
         printNode(writer, nodeData);
 
         NodeData from = nodeData;
-        for (ProcessorDefinition output : route.getOutputs()) {
+        for (ProcessorDefinition<?> output : route.getOutputs()) {
             NodeData newData = printNode(writer, from, output);
             from = newData;
         }
@@ -120,7 +120,7 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
 
         // now lets write any children
         //List<ProcessorType> outputs = node.getOutputs();
-        List<ProcessorDefinition> outputs = toData.outputs;
+        List<ProcessorDefinition<?>> outputs = toData.outputs;
         if (outputs != null) {
             for (ProcessorDefinition output : outputs) {
                 NodeData newData = printNode(writer, toData, output);
@@ -177,7 +177,7 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
     /**
      * Is the given node a pipeline
      */
-    private static boolean isPipeline(ProcessorDefinition node) {
+    private static boolean isPipeline(ProcessorDefinition<?> node) {
         if (node instanceof MulticastDefinition) {
             return false;
         }

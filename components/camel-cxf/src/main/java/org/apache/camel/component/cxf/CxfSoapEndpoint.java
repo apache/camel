@@ -102,7 +102,7 @@ public class CxfSoapEndpoint implements Endpoint, HeaderFilterStrategyAware {
         throw new UnsupportedOperationException();
     }
 
-    public void configureProperties(Map options) {
+    public void configureProperties(Map<String, Object> options) {
     }
 
     public Resource getWsdl() {

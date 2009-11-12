@@ -58,8 +58,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     private Processor nextProcessor;
     // the real output to invoke that has been wrapped
     private Processor output;
-    private ProcessorDefinition definition;
-    private RouteContext routeContext;
+    private ProcessorDefinition<?> definition;
     private CamelContext camelContext;
 
     public List<Processor> next() {
@@ -91,7 +90,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
         return nextProcessor;
     }
 
-    public boolean hasInterceptorStrategy(Class type) {
+    public boolean hasInterceptorStrategy(Class<?> type) {
         for (InterceptStrategy strategy : interceptors) {
             if (type.isInstance(strategy)) {
                 return true;
@@ -120,7 +119,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
         return interceptors;
     }
 
-    public ProcessorDefinition getProcessorDefinition() {
+    public ProcessorDefinition<?> getProcessorDefinition() {
         return definition;
     }
 
@@ -134,9 +133,8 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
         ServiceHelper.stopServices(output, errorHandler);
     }
 
-    public void initChannel(ProcessorDefinition outputDefinition, RouteContext routeContext) throws Exception {
+    public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.definition = outputDefinition;
-        this.routeContext = routeContext;
         this.camelContext = routeContext.getCamelContext();
 
         Processor target = nextProcessor;

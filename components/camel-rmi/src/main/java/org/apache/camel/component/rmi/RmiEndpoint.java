@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RmiEndpoint extends DefaultEndpoint {
 
-    private List<Class> remoteInterfaces;
+    private List<Class<?>> remoteInterfaces;
     private ClassLoader classLoader;
     private URI uri;
     private int port;
@@ -100,18 +100,18 @@ public class RmiEndpoint extends DefaultEndpoint {
         }
     }
 
-    public List<Class> getRemoteInterfaces() {
+    public List<Class<?>> getRemoteInterfaces() {
         return remoteInterfaces;
     }
 
-    public void setRemoteInterfaces(List<Class> remoteInterfaces) {
+    public void setRemoteInterfaces(List<Class<?>> remoteInterfaces) {
         this.remoteInterfaces = remoteInterfaces;
         if (classLoader == null && !remoteInterfaces.isEmpty()) {
             classLoader = remoteInterfaces.get(0).getClassLoader();
         }
     }
 
-    public void setRemoteInterfaces(Class... remoteInterfaces) {
+    public void setRemoteInterfaces(Class<?>... remoteInterfaces) {
         setRemoteInterfaces(Arrays.asList(remoteInterfaces));
     }
 

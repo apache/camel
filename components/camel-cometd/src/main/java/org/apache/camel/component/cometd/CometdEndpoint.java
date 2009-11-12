@@ -43,7 +43,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     private URI uri;
     private CometdComponent component;
     
-    public CometdEndpoint(CometdComponent component, String uri, String remaining, Map parameters) {
+    public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
         this.component = component;
         try {

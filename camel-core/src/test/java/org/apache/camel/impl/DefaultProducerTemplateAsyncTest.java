@@ -34,6 +34,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.CastUtils;
 
 /**
  * @version $Revision$
@@ -268,7 +269,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        String result = template.extractFutureBody(future, String.class);
+        String result = template.extractFutureBody(CastUtils.cast(future), String.class);
 
         assertMockEndpointsSatisfied();
 
@@ -295,7 +296,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        String result = template.extractFutureBody(future, 5, TimeUnit.SECONDS, String.class);
+        String result = template.extractFutureBody(CastUtils.cast(future), 5, TimeUnit.SECONDS, String.class);
 
         assertMockEndpointsSatisfied();
 

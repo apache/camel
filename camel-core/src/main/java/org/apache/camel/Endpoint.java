@@ -125,7 +125,7 @@ public interface Endpoint extends IsSingleton {
      * 
      * @param options  the options (properties)
      */
-    void configureProperties(Map options);
+    void configureProperties(Map<String, Object> options);
 
     /**
      * Sets the camel context.

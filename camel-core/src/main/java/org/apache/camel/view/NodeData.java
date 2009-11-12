@@ -51,17 +51,15 @@ public class NodeData {
     public String nodeType;
     public boolean nodeWritten;
     public String url;
-    public List<ProcessorDefinition> outputs;
+    public List<ProcessorDefinition<?>> outputs;
     public String association = "property";
-    private final String imagePrefix;
 
     @SuppressWarnings("unchecked")
     public NodeData(String id, Object node, String imagePrefix) {
         this.id = id;
-        this.imagePrefix = imagePrefix;
 
         if (node instanceof ProcessorDefinition) {
-            ProcessorDefinition processorType = (ProcessorDefinition)node;
+            ProcessorDefinition<?> processorType = (ProcessorDefinition<?>)node;
             this.edgeLabel = processorType.getLabel();
         }
         if (node instanceof FromDefinition) {
@@ -96,7 +94,7 @@ public class NodeData {
             this.edgeLabel = "";
 
             ChoiceDefinition choice = (ChoiceDefinition)node;
-            List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>(choice.getWhenClauses());
+            List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>(choice.getWhenClauses());
             if (choice.getOtherwise() != null) {
                 outputs.add(choice.getOtherwise());
             }

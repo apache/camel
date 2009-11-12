@@ -26,6 +26,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -141,7 +143,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         if (LOG.isTraceEnabled()) {
             LOG.trace("Polling: " + endpoint);
         }
-        List data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
+        List<Object> data = CastUtils.cast(endpoint.getProcessingStrategy().poll(this, getEndpoint()));
 
         // create a list of exchange objects with the data
         Queue<DataHolder> answer = new LinkedList<DataHolder>();
@@ -164,14 +166,14 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         }
 
         // process all the exchanges in this batch
-        processBatch(answer);
+        processBatch(CastUtils.cast(answer));
     }
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public void processBatch(Queue exchanges) throws Exception {
+    public void processBatch(Queue<Object> exchanges) throws Exception {
         final IBatisEndpoint endpoint = getEndpoint();
 
         int total = exchanges.size();
@@ -184,7 +186,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
 
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            DataHolder holder = (DataHolder) exchanges.poll();
+            DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
             Exchange exchange = holder.exchange;
             Object data = holder.data;
 

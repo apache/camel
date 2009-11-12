@@ -30,6 +30,7 @@ import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +46,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
     private final JpaEndpoint endpoint;
     private final TransactionStrategy template;
     private QueryFactory queryFactory;
-    private DeleteHandler deleteHandler;
+    private DeleteHandler<Object> deleteHandler;
     private String query;
     private String namedQuery;
     private String nativeQuery;
@@ -72,7 +73,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
-                List results = query.getResultList();
+                List<Object> results = CastUtils.cast(query.getResultList());
                 for (Object result : results) {
                     DataHolder holder = new DataHolder();
                     holder.manager = entityManager;
@@ -82,7 +83,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
                 }
 
                 try {
-                    processBatch(answer);
+                    processBatch(CastUtils.cast(answer));
                 } catch (Exception e) {
                     throw new PersistenceException(e);
                 }
@@ -97,7 +98,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
         this.maxMessagesPerPoll = maxMessagesPerPoll;
     }
 
-    public void processBatch(Queue exchanges) throws Exception {
+    public void processBatch(Queue<Object> exchanges) throws Exception {
         if (exchanges.isEmpty()) {
             return;
         }
@@ -112,7 +113,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
 
         for (int index = 0; index < total && isRunAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            DataHolder holder = (DataHolder) exchanges.poll();
+            DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
             EntityManager entityManager = holder.manager;
             Exchange exchange = holder.exchange;
             Object result = holder.result;
@@ -160,14 +161,14 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
         this.queryFactory = queryFactory;
     }
 
-    public DeleteHandler getDeleteHandler() {
+    public DeleteHandler<Object> getDeleteHandler() {
         if (deleteHandler == null) {
             deleteHandler = createDeleteHandler();
         }
         return deleteHandler;
     }
 
-    public void setDeleteHandler(DeleteHandler deleteHandler) {
+    public void setDeleteHandler(DeleteHandler<Object> deleteHandler) {
         this.deleteHandler = deleteHandler;
     }
 

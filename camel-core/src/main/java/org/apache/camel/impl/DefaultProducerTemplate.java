@@ -471,11 +471,11 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return asyncRequestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers, type);
     }
 
-    public <T> T extractFutureBody(Future future, Class<T> type) {
+    public <T> T extractFutureBody(Future<Object> future, Class<T> type) {
         return ExchangeHelper.extractFutureBody(context, future, type);
     }
 
-    public <T> T extractFutureBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public <T> T extractFutureBody(Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         return ExchangeHelper.extractFutureBody(context, future, timeout, unit, type);
     }
 

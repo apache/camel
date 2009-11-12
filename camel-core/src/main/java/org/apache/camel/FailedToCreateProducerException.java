@@ -22,6 +22,8 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class FailedToCreateProducerException extends RuntimeCamelException {
+    private static final long serialVersionUID = 1341435621084082033L;
+
     private final String uri;
 
     public FailedToCreateProducerException(Endpoint endpoint, Throwable cause) {

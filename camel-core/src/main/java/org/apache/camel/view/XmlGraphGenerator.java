@@ -93,7 +93,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         // TODO we should add a transactional client / event driven consumer / polling client
 
         NodeData from = nodeData;
-        for (ProcessorDefinition output : route.getOutputs()) {
+        for (ProcessorDefinition<?> output : route.getOutputs()) {
             NodeData newData = printNode(writer, from, output);
             from = newData;
         }
@@ -127,7 +127,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
 
         // now lets write any children
-        List<ProcessorDefinition> outputs = toData.outputs;
+        List<ProcessorDefinition<?>> outputs = toData.outputs;
         if (outputs != null) {
             for (ProcessorDefinition output : outputs) {
                 NodeData newData = printNode(writer, toData, output);

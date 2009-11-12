@@ -22,6 +22,8 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class ExchangeTimedOutException extends CamelExchangeException {
+    private static final long serialVersionUID = -7899162905421788853L;
+
     private final long timeout;
 
     public ExchangeTimedOutException(Exchange exchange, long timeout) {

@@ -37,7 +37,7 @@ public interface RouteNode {
      *
      * @return the definition, is newer <tt>null</tt>
      */
-    ProcessorDefinition getProcessorDefinition();
+    ProcessorDefinition<?> getProcessorDefinition();
 
     /**
      * Gets a label about this node to be used for tracing or tooling etc.
@@ -56,5 +56,4 @@ public interface RouteNode {
      * @return whether this node is abstract or not
      */
     boolean isAbstract();
-
 }

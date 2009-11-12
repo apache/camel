@@ -22,6 +22,8 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class ResolveEndpointFailedException extends RuntimeCamelException {
+    private static final long serialVersionUID = -9121465713858552263L;
+
     private final String uri;
 
     public ResolveEndpointFailedException(String uri, Throwable cause) {
@@ -42,5 +44,4 @@ public class ResolveEndpointFailedException extends RuntimeCamelException {
     public String getUri() {
         return uri;
     }
-    
 }

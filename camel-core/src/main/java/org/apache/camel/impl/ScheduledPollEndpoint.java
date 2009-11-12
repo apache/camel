@@ -32,7 +32,7 @@ import org.apache.camel.util.IntrospectionSupport;
  * @version $Revision$
  */
 public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
-    private Map consumerProperties;
+    private Map<String, Object> consumerProperties;
 
     protected ScheduledPollEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -49,11 +49,11 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     protected ScheduledPollEndpoint() {
     }
 
-    public Map getConsumerProperties() {
+    public Map<String, Object> getConsumerProperties() {
         return consumerProperties;
     }
 
-    public void setConsumerProperties(Map consumerProperties) {
+    public void setConsumerProperties(Map<String, Object> consumerProperties) {
         this.consumerProperties = consumerProperties;
     }
 
@@ -71,16 +71,15 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
     }
 
-    public void configureProperties(Map options) {
-        Map consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
+    public void configureProperties(Map<String, Object> options) {
+        Map<String, Object> consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
         if (consumerProperties != null) {
             setConsumerProperties(consumerProperties);
         }
         configureScheduledPollConsumerProperties(options, consumerProperties);
     }
 
-    @SuppressWarnings("unchecked")
-    private void configureScheduledPollConsumerProperties(Map options, Map consumerProperties) {
+    private void configureScheduledPollConsumerProperties(Map<String, Object> options, Map<String, Object> consumerProperties) {
         // special for scheduled poll consumers as we want to allow end users to configure its options
         // from the URI parameters without the consumer. prefix
         Object initialDelay = options.remove("initialDelay");
@@ -90,7 +89,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object pollStrategy = options.remove("pollStrategy");
         if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null) {
             if (consumerProperties == null) {
-                consumerProperties = new HashMap();
+                consumerProperties = new HashMap<String, Object>();
             }
             if (initialDelay != null) {
                 consumerProperties.put("initialDelay", initialDelay);
@@ -109,5 +108,4 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
         }
     }
-
 }

@@ -92,7 +92,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
 
     public List<Exchange> getExchanges() {
         if (queueBrowseStrategy == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         String queue = getDestinationName();
         JmsOperations template = getConfiguration().createInOnlyTemplate(this, false, queue);
@@ -113,7 +113,6 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
         // must use java type with JMX such as java.lang.String
         return exchange.toString();
     }
-
 
     protected QueueBrowseStrategy createQueueBrowseStrategy() {
         QueueBrowseStrategy answer = null;

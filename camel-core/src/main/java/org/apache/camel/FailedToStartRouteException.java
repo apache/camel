@@ -22,6 +22,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class FailedToStartRouteException extends CamelException {
+    private static final long serialVersionUID = -6118520819865759888L;
 
     public FailedToStartRouteException(String routeId, String message) {
         super("Failed to start route " + routeId + " because of " + message);

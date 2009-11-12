@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -90,7 +91,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             log.debug("Total " + total + " files to consume");
         }
 
-        processBatch(exchanges);
+        Queue<Exchange> q = exchanges;
+        processBatch(CastUtils.cast(q));
     }
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
@@ -98,7 +100,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     }
 
     @SuppressWarnings("unchecked")
-    public void processBatch(Queue exchanges) {
+    public void processBatch(Queue<Object> exchanges) {
         int total = exchanges.size();
 
         // limit if needed

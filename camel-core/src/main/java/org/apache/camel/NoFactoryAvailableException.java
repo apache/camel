@@ -24,6 +24,8 @@ import java.io.IOException;
  * @version $Revision$
  */
 public class NoFactoryAvailableException extends IOException {
+    private static final long serialVersionUID = -425141860196708627L;
+
     private final String uri;
 
     public NoFactoryAvailableException(String uri) {

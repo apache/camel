@@ -25,6 +25,7 @@ package org.apache.camel;
  * @version $Revision$
  */
 public class ValidationException extends CamelExchangeException {
+    private static final long serialVersionUID = -7485357452450907415L;
 
     public ValidationException(Exchange exchange, String message) {
         super(message, exchange);
