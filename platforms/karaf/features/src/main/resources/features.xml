@@ -119,7 +119,7 @@
     <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/${servicemix-specs-version}</bundle>
+    <bundle>mvn:http://repo.fusesource.com/maven2!org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/${java-persistence-api-version}</bundle>
     <bundle>mvn:org.springframework/spring-orm/${spring-version}</bundle>        
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oscache/${oscache-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ibatis-sqlmap/${ibatis-bundle-version}</bundle>
@@ -222,7 +222,7 @@
     <bundle>mvn:org.apache.camel/camel-josql/${pom.version}</bundle>
   </feature>
   <feature name='camel-jpa' version='${pom.version}'>
-    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/${servicemix-specs-version}</bundle>
+    <bundle>mvn:http://repo.fusesource.com/maven2!org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/${java-persistence-api-version}</bundle>
     <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/${geronimo-el-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
