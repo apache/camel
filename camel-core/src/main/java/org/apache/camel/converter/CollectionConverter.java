@@ -116,7 +116,7 @@ public final class CollectionConverter {
 
     @Converter
     public static <K, V> HashMap<K, V>  toHashMap(Map<? extends K, ? extends V> map) {
-        return new HashMap<K, V> (map);
+        return new HashMap<K, V>(map);
     }
 
     /**

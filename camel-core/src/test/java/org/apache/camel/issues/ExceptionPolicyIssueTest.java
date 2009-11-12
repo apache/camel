@@ -48,7 +48,7 @@ public class ExceptionPolicyIssueTest extends ContextTestSupport {
         };
     }
 
-    private class MyUnmarshalException extends Exception {
+    private final class MyUnmarshalException extends Exception {
 
         private MyUnmarshalException(String message, Throwable cause) {
             super(message, cause);

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.util;
 
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A number of helper methods
