@@ -71,7 +71,7 @@ import static org.apache.camel.builder.Builder.body;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedDefinition<Type> implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedDefinition implements Block {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected ErrorHandlerBuilder errorHandlerBuilder;
     protected String errorHandlerRef;
