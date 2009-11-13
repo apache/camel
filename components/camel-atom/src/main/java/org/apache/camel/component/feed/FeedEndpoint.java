@@ -113,6 +113,12 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         return "atom:" + feedUri;
     }
 
+    @Override
+    public String getEndpointKey() {
+        // use the full endpoint uri because the lenient properties matters as they should be unique based on the feed uri
+        return getEndpointUri();
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
