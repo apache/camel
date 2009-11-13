@@ -79,7 +79,8 @@
     <module>camel-ruby</module>
     <module>camel-rss</module>
     <module>camel-saxon</module>
-    <module>camel-scala</module>
+    <!--module>camel-scala</module>-->
+    <!-- TODO: Cannot compile due internal error -->
     <module>camel-script</module>
     <module>camel-servlet</module>
     <module>camel-snmp</module>
