@@ -33,8 +33,8 @@ public final class CatchDefinitionRenderer {
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         CatchDefinition catchDef = (CatchDefinition)processor;
         buffer.append(".").append(catchDef.getShortName()).append("(");
-        List<Class> exceptions = catchDef.getExceptionClasses();
-        for (Class clazz : exceptions) {
+        List<Class<Exception>> exceptions = catchDef.getExceptionClasses();
+        for (Class<Exception> clazz : exceptions) {
             buffer.append(clazz.getSimpleName()).append(".class");
             if (clazz != exceptions.get(exceptions.size() - 1)) {
                 buffer.append(", ");

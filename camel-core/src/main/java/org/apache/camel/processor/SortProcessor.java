@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.util.CastUtils;
 
 /**
  * A processor that sorts the expression using a comparator
@@ -31,18 +32,17 @@ import org.apache.camel.Processor;
 public class SortProcessor implements Processor {
 
     private final Expression expression;
-    private final Comparator comparator;
+    private final Comparator<Object> comparator;
 
-    public SortProcessor(Expression expression, Comparator comparator) {
+    public SortProcessor(Expression expression, Comparator<Object> comparator) {
         this.expression = expression;
         this.comparator = comparator;
     }
 
-    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
 
-        List list = expression.evaluate(exchange, List.class);
+        List<Object> list = CastUtils.cast(expression.evaluate(exchange, List.class));
         Collections.sort(list, comparator);
 
         if (exchange.getPattern().isOutCapable()) {
@@ -57,7 +57,6 @@ public class SortProcessor implements Processor {
     public String toString() {
         return "Sort[" + expression + "]";
     }
-
 }
 
 

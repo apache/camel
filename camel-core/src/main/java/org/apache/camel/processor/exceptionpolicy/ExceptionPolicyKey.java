@@ -26,10 +26,10 @@ import org.apache.camel.model.WhenDefinition;
  */
 public final class ExceptionPolicyKey {
 
-    private final Class<?> exceptionClass;
+    private final Class<? extends Exception> exceptionClass;
     private final WhenDefinition when;
 
-    public ExceptionPolicyKey(Class<?> exceptionClass, WhenDefinition when) {
+    public ExceptionPolicyKey(Class<? extends Exception> exceptionClass, WhenDefinition when) {
         this.exceptionClass = exceptionClass;
         this.when = when;
     }
@@ -42,11 +42,11 @@ public final class ExceptionPolicyKey {
         return when;
     }
 
-    public static ExceptionPolicyKey newInstance(Class<?> exceptionClass) {
+    public static ExceptionPolicyKey newInstance(Class<? extends Exception> exceptionClass) {
         return new ExceptionPolicyKey(exceptionClass, null);
     }
 
-    public static ExceptionPolicyKey newInstance(Class<?> exceptionClass, WhenDefinition when) {
+    public static ExceptionPolicyKey newInstance(Class<? extends Exception> exceptionClass, WhenDefinition when) {
         return new ExceptionPolicyKey(exceptionClass, when);
     }
 

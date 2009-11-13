@@ -40,7 +40,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 /**
  * @version $Revision$
  */
-public class SendAsyncProcessor extends SendProcessor implements Runnable, Navigate {
+public class SendAsyncProcessor extends SendProcessor implements Runnable, Navigate<Processor> {
 
     private static final int DEFAULT_THREADPOOL_SIZE = 10;
     protected final Processor target;

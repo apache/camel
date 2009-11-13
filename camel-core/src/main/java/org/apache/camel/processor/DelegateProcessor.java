@@ -31,7 +31,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @version $Revision$
  */
-public class DelegateProcessor extends ServiceSupport implements Processor, Navigate {
+public class DelegateProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
     protected Processor processor;
 
     public DelegateProcessor() {
@@ -94,5 +94,4 @@ public class DelegateProcessor extends ServiceSupport implements Processor, Navi
         answer.add(processor);
         return answer;
     }
-
 }

@@ -33,6 +33,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
@@ -53,19 +54,19 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
-    private List<Class> exceptionClasses;
+    private List<Class<Exception>> exceptionClasses;
     @XmlTransient
     private Predicate handledPolicy;
 
     public CatchDefinition() {
     }
 
-    public CatchDefinition(List<Class> exceptionClasses) {
+    public CatchDefinition(List<Class<Exception>> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
 
-    public CatchDefinition(Class exceptionType) {
-        exceptionClasses = new ArrayList<Class>();
+    public CatchDefinition(Class<Exception> exceptionType) {
+        exceptionClasses = new ArrayList<Class<Exception>>();
         exceptionClasses.add(exceptionType);
     }
 
@@ -109,14 +110,14 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.outputs = outputs;
     }
 
-    public List<Class> getExceptionClasses() {
+    public List<Class<Exception>> getExceptionClasses() {
         if (exceptionClasses == null) {
             exceptionClasses = createExceptionClasses();
         }
         return exceptionClasses;
     }
 
-    public void setExceptionClasses(List<Class> exceptionClasses) {
+    public void setExceptionClasses(List<Class<Exception>> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
     
@@ -128,7 +129,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * @param exceptionClasses  a list of the exception classes
      * @return the builder
      */
-    public CatchDefinition exceptionClasses(List<Class> exceptionClasses) {
+    public CatchDefinition exceptionClasses(List<Class<Exception>> exceptionClasses) {
         setExceptionClasses(exceptionClasses);
         return this;
     }
@@ -202,8 +203,8 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * @param exception  the exception of class
      * @return the builder
      */
-    public CatchDefinition exceptionClasses(Class exception) {
-        List<Class> list = getExceptionClasses();
+    public CatchDefinition exceptionClasses(Class<Exception> exception) {
+        List<Class<Exception>> list = getExceptionClasses();
         list.add(exception);
         return this;
     }
@@ -240,11 +241,11 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.handled = handled;
     }
 
-    protected List<Class> createExceptionClasses() {
+    protected List<Class<Exception>> createExceptionClasses() {
         List<String> list = getExceptions();
-        List<Class> answer = new ArrayList<Class>(list.size());
+        List<Class<Exception>> answer = new ArrayList<Class<Exception>>(list.size());
         for (String name : list) {
-            Class type = ObjectHelper.loadClass(name, getClass().getClassLoader());
+            Class<Exception> type = CastUtils.cast(ObjectHelper.loadClass(name, getClass().getClassLoader()));
             answer.add(type);
         }
         return answer;

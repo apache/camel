@@ -53,7 +53,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @see Pipeline
  * @version $Revision$
  */
-public class MulticastProcessor extends ServiceSupport implements Processor, Navigate, Traceable {
+public class MulticastProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
 
     private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private static final transient Log LOG = LogFactory.getLog(MulticastProcessor.class);

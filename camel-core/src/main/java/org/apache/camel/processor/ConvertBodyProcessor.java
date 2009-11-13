@@ -28,15 +28,15 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class ConvertBodyProcessor implements Processor {
-    private final Class type;
+    private final Class<?> type;
     private final String charset;
 
-    public ConvertBodyProcessor(Class type) {
+    public ConvertBodyProcessor(Class<?> type) {
         this.type = type;
         this.charset = null;
     }
 
-    public ConvertBodyProcessor(Class type, String charset) {
+    public ConvertBodyProcessor(Class<?> type, String charset) {
         this.type = type;
         this.charset = charset;
     }
@@ -63,7 +63,7 @@ public class ConvertBodyProcessor implements Processor {
         }
     }
 
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 }

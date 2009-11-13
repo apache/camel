@@ -40,6 +40,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
@@ -70,7 +71,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
-    private List<Class> exceptionClasses;
+    private List<Class<Exception>> exceptionClasses;
     @XmlTransient
     private Processor errorHandler;
     @XmlTransient
@@ -83,12 +84,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     public OnExceptionDefinition() {
     }
 
-    public OnExceptionDefinition(List<Class> exceptionClasses) {
-        this.exceptionClasses = exceptionClasses;
+    public OnExceptionDefinition(List<Class<? extends Exception>> exceptionClasses) {
+        this.exceptionClasses = CastUtils.cast(exceptionClasses);
     }
 
     public OnExceptionDefinition(Class exceptionType) {
-        exceptionClasses = new ArrayList<Class>();
+        exceptionClasses = new ArrayList<Class<Exception>>();
         exceptionClasses.add(exceptionType);
     }
 
@@ -411,14 +412,14 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         this.outputs = outputs;
     }
 
-    public List<Class> getExceptionClasses() {
+    public List<Class<Exception>> getExceptionClasses() {
         if (exceptionClasses == null) {
             exceptionClasses = createExceptionClasses();
         }
         return exceptionClasses;
     }
 
-    public void setExceptionClasses(List<Class> exceptionClasses) {
+    public void setExceptionClasses(List<Class<Exception>> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
 
@@ -515,11 +516,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         return redeliveryPolicy;
     }
 
-    protected List<Class> createExceptionClasses() {
+    protected List<Class<Exception>> createExceptionClasses() {
         List<String> list = getExceptions();
-        List<Class> answer = new ArrayList<Class>(list.size());
+        List<Class<Exception>> answer = new ArrayList<Class<Exception>>(list.size());
         for (String name : list) {
-            Class type = ObjectHelper.loadClass(name, getClass().getClassLoader());
+            Class<Exception> type = CastUtils.cast(ObjectHelper.loadClass(name, getClass().getClassLoader()), Exception.class);
             answer.add(type);
         }
         return answer;
@@ -537,5 +538,4 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
             retryUntil(getRetryUntil().createPredicate(routeContext));
         }
     }
-
 }

@@ -26,6 +26,8 @@ import org.apache.camel.RuntimeExpressionException;
  * @version $Revision$
  */
 public class InvalidXPathExpression extends RuntimeExpressionException {
+    private static final long serialVersionUID = 9171451033826915273L;
+
     private final String xpath;
 
     public InvalidXPathExpression(String xpath, XPathException e) {

@@ -119,7 +119,7 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
         } else {
             result = new ArrayList<ProcessorExchangePair>();
         }
-        Iterator iter = ObjectHelper.createIterator(value);
+        Iterator<Object> iter = ObjectHelper.createIterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
             Exchange newExchange = exchange.copy();
@@ -139,7 +139,7 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
         super.updateNewExchange(exchange, index, allPairs);
         exchange.setProperty(Exchange.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
-            exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection) allPairs).size());
+            exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>)allPairs).size());
         }
     }
 

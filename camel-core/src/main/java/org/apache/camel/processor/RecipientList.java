@@ -75,7 +75,7 @@ public class RecipientList extends ServiceSupport implements Processor {
      * Sends the given exchange to the recipient list
      */
     public void sendToRecipientList(Exchange exchange, Object receipientList) throws Exception {
-        Iterator iter = ObjectHelper.createIterator(receipientList, delimiter);
+        Iterator<Object> iter = ObjectHelper.createIterator(receipientList, delimiter);
         List<Processor> processors = new ArrayList<Processor>();
         while (iter.hasNext()) {
             Object recipient = iter.next();

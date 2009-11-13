@@ -40,8 +40,8 @@ public final class OnExceptionDefinitionRenderer {
 
         OnExceptionDefinition onException = (OnExceptionDefinition)processor;
         buffer.append(processor.getShortName()).append("(");
-        List<Class> exceptions = onException.getExceptionClasses();
-        for (Class excep : exceptions) {
+        List<Class<Exception>> exceptions = onException.getExceptionClasses();
+        for (Class<Exception> excep : exceptions) {
             buffer.append(excep.getSimpleName()).append(".class");
             if (excep != exceptions.get(exceptions.size() - 1)) {
                 buffer.append(", ");

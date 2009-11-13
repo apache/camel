@@ -106,7 +106,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return new XPathBuilder(text);
     }
 
-    public static XPathBuilder xpath(String text, Class resultType) {
+    public static XPathBuilder xpath(String text, Class<?> resultType) {
         XPathBuilder builder = new XPathBuilder(text);
         builder.setResultType(resultType);
         return builder;
@@ -259,7 +259,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * @param documentType the document type
      * @return the current builder
      */
-    public XPathBuilder documentType(Class documentType) {
+    public XPathBuilder documentType(Class<?> documentType) {
         setDocumentType(documentType);
         return this;
     }
@@ -280,11 +280,11 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         this.xpathFactory = xpathFactory;
     }
 
-    public Class getDocumentType() {
+    public Class<?> getDocumentType() {
         return documentType;
     }
 
-    public void setDocumentType(Class documentType) {
+    public void setDocumentType(Class<?> documentType) {
         this.documentType = documentType;
     }
 
@@ -332,6 +332,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getBodyFunction() {
         if (bodyFunction == null) {
             bodyFunction = new XPathFunction() {
+                @SuppressWarnings("unchecked")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange == null) {
                         return null;
@@ -350,6 +351,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getHeaderFunction() {
         if (headerFunction == null) {
             headerFunction = new XPathFunction() {
+                @SuppressWarnings("unchecked")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -371,6 +373,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getOutBodyFunction() {
         if (outBodyFunction == null) {
             outBodyFunction = new XPathFunction() {
+                @SuppressWarnings("unchecked")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && exchange.get().hasOut()) {
                         return exchange.get().getOut().getBody();
@@ -389,6 +392,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getOutHeaderFunction() {
         if (outHeaderFunction == null) {
             outHeaderFunction = new XPathFunction() {
+                @SuppressWarnings("unchecked")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -407,11 +411,11 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         this.outHeaderFunction = outHeaderFunction;
     }
 
-    public Class getResultType() {
+    public Class<?> getResultType() {
         return resultType;
     }
 
-    public void setResultType(Class resultType) {
+    public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
         if (Number.class.isAssignableFrom(resultType)) {
             numberResult();

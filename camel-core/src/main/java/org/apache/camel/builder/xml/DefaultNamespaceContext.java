@@ -69,8 +69,8 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
     }
 
     public String getPrefix(String namespaceURI) {
-        for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
+        for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<String, String> entry = iter.next();
             if (namespaceURI.equals(entry.getValue())) {
                 return (String) entry.getKey();
             }
