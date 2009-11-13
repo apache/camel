@@ -101,7 +101,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         // loop through all the entries and find the best candidates to use
         Set<Map.Entry<ExceptionPolicyKey, OnExceptionDefinition>> entries = exceptionPolicies.entrySet();
         for (Map.Entry<ExceptionPolicyKey, OnExceptionDefinition> entry : entries) {
-            Class clazz = entry.getKey().getExceptionClass();
+            Class<?> clazz = entry.getKey().getExceptionClass();
             OnExceptionDefinition type = entry.getValue();
 
             if (filter(type, clazz, exception)) {
@@ -165,7 +165,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @param exception      the thrown exception
      * @return <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it.
      */
-    protected boolean filter(OnExceptionDefinition type, Class exceptionClass, Throwable exception) {
+    protected boolean filter(OnExceptionDefinition type, Class<?> exceptionClass, Throwable exception) {
         // must be instance of check to ensure that the exceptionClass is one type of the thrown exception
         return exceptionClass.isInstance(exception);
     }
@@ -205,11 +205,10 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         return ObjectHelper.createExceptionIterator(exception);
     }
 
-    private static int getInheritanceLevel(Class clazz) {
+    private static int getInheritanceLevel(Class<?> clazz) {
         if (clazz == null || "java.lang.Object".equals(clazz.getName())) {
             return 0;
         }
         return 1 + getInheritanceLevel(clazz.getSuperclass());
     }
-
 }

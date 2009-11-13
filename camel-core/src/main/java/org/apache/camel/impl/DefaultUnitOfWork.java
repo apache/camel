@@ -46,7 +46,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private String id;
     private List<Synchronization> synchronizations;
     private List<RouteNode> routeNodes;
-    private Map<ProcessorDefinition, AtomicInteger> routeIndex = new HashMap<ProcessorDefinition, AtomicInteger>();
+    private Map<ProcessorDefinition<?>, AtomicInteger> routeIndex = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
     private Message originalInMessage;
 
     public DefaultUnitOfWork(Exchange exchange) {
@@ -181,7 +181,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return originalInMessage;
     }
 
-    public int getAndIncrement(ProcessorDefinition node) {
+    public int getAndIncrement(ProcessorDefinition<?> node) {
         AtomicInteger count = routeIndex.get(node);
         if (count == null) {
             count = new AtomicInteger();
@@ -189,5 +189,4 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         }
         return count.getAndIncrement();
     }
-
 }

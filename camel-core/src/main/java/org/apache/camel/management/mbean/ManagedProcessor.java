@@ -34,11 +34,11 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
 
     private final CamelContext context;
     private final Processor processor;
-    private final ProcessorDefinition definition;
+    private final ProcessorDefinition<?> definition;
     private final String id;
     private Route route;
 
-    public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition definition) {
+    public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) {
         this.context = context;
         this.processor = processor;
         this.definition = definition;
@@ -56,7 +56,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter {
         return processor;
     }
 
-    public ProcessorDefinition getDefinition() {
+    public ProcessorDefinition<?> getDefinition() {
         return definition;
     }
 

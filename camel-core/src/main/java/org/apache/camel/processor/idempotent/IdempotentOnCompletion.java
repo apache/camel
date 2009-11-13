@@ -33,11 +33,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IdempotentOnCompletion implements Synchronization {
     private static final transient Log LOG = LogFactory.getLog(IdempotentOnCompletion.class);
-    private final IdempotentRepository idempotentRepository;
+    private final IdempotentRepository<String> idempotentRepository;
     private final String messageId;
     private final boolean eager;
 
-    public IdempotentOnCompletion(IdempotentRepository idempotentRepository, String messageId, boolean eager) {
+    public IdempotentOnCompletion(IdempotentRepository<String> idempotentRepository, String messageId, boolean eager) {
         this.idempotentRepository = idempotentRepository;
         this.messageId = messageId;
         this.eager = eager;
@@ -92,5 +92,4 @@ public class IdempotentOnCompletion implements Synchronization {
     public String toString() {
         return "IdempotentOnCompletion[" + messageId + ']';
     }
-
 }

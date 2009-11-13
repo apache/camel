@@ -101,14 +101,14 @@ public class DefaultLanguageResolver implements LanguageResolver {
         throw new NoSuchLanguageException(name);
     }
     
-    protected Class findLanguage(String name, CamelContext context) throws Exception {
+    protected Class<?> findLanguage(String name, CamelContext context) throws Exception {
         if (languageFactory == null) {
             languageFactory = context.getFactoryFinder(LANGUAGE_RESOURCE_PATH);
         }
         return languageFactory.findClass(name);
     }
     
-    protected Class findLanguageResolver(String name, CamelContext context) throws Exception {
+    protected Class<?> findLanguageResolver(String name, CamelContext context) throws Exception {
         if (languageResolver == null) {
             languageResolver = context.getFactoryFinder(LANGUAGE_RESOLVER_RESOURCE_PATH);
         }

@@ -37,7 +37,7 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
     public DataFormat resolveDataFormat(String name, CamelContext context) {
         DataFormat dataFormat = lookup(context, name, DataFormat.class);
         if (dataFormat == null) {
-            Class type = null;
+            Class<?> type = null;
             try {
                 if (dataformatFactory == null) {
                     dataformatFactory = context.getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
@@ -82,5 +82,4 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
             return null;
         }
     }
-
 }

@@ -32,5 +32,5 @@ public interface TraceFormatter {
      * @param exchange       the current exchange
      * @return the log message
      */
-    Object format(TraceInterceptor interceptor, ProcessorDefinition node, Exchange exchange);
+    Object format(TraceInterceptor interceptor, ProcessorDefinition<?> node, Exchange exchange);
 }

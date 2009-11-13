@@ -112,10 +112,9 @@ public class TraceFormatterTest extends ContextTestSupport {
     // as this is a test we just create a simple string with * around the body
     class MyTraceFormatter implements TraceFormatter {
 
-        public Object format(TraceInterceptor interceptor, ProcessorDefinition node, Exchange exchange) {
+        public Object format(TraceInterceptor interceptor, ProcessorDefinition<?> node, Exchange exchange) {
             return "***" + exchange.getIn().getBody(String.class) + "***";
         }
     }
     // END SNIPPET: e2
-
 }

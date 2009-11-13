@@ -39,7 +39,7 @@ public abstract class ServiceSupport implements Service {
     private final AtomicBoolean starting = new AtomicBoolean(false);
     private final AtomicBoolean stopping = new AtomicBoolean(false);
     private final AtomicBoolean stopped = new AtomicBoolean(false);
-    private Collection childServices;
+    private Collection<Object> childServices;
     private String version;
 
     public void start() throws Exception {

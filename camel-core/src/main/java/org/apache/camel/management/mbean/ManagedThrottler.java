@@ -30,7 +30,7 @@ public class ManagedThrottler extends ManagedProcessor {
 
     private Throttler throttler;
 
-    public ManagedThrottler(CamelContext context, Throttler throttler, ProcessorDefinition definition) {
+    public ManagedThrottler(CamelContext context, Throttler throttler, ProcessorDefinition<?> definition) {
         super(context, throttler, definition);
         this.throttler = throttler;
     }
@@ -58,5 +58,4 @@ public class ManagedThrottler extends ManagedProcessor {
     public void setTimePeriodMillis(long timePeriodMillis) {
         getThrottler().setTimePeriodMillis(timePeriodMillis);
     }
-
 }

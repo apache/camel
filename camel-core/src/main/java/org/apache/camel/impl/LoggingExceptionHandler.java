@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 public class LoggingExceptionHandler implements ExceptionHandler {
     private final Logger logger;
 
-    public LoggingExceptionHandler(Class ownerType) {
+    public LoggingExceptionHandler(Class<?> ownerType) {
         this(new Logger(LogFactory.getLog(ownerType), LoggingLevel.ERROR));
     }
 
@@ -58,5 +58,4 @@ public class LoggingExceptionHandler implements ExceptionHandler {
 
         return false;
     }
-
 }

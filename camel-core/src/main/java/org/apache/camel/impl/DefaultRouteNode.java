@@ -32,14 +32,14 @@ public class DefaultRouteNode implements RouteNode {
 
     private Expression expression;
     private Processor processor;
-    private ProcessorDefinition processorDefinition;
+    private ProcessorDefinition<?> processorDefinition;
 
-    public DefaultRouteNode(ProcessorDefinition processorDefinition, Processor processor) {
+    public DefaultRouteNode(ProcessorDefinition<?> processorDefinition, Processor processor) {
         this.processor = processor;
         this.processorDefinition = processorDefinition;
     }
 
-    public DefaultRouteNode(ProcessorDefinition processorDefinition, Expression expression) {
+    public DefaultRouteNode(ProcessorDefinition<?> processorDefinition, Expression expression) {
         this.processorDefinition = processorDefinition;
         this.expression = expression;
     }
@@ -48,7 +48,7 @@ public class DefaultRouteNode implements RouteNode {
         return processor;
     }
 
-    public ProcessorDefinition getProcessorDefinition() {
+    public ProcessorDefinition<?> getProcessorDefinition() {
         return processorDefinition;
     }
 
@@ -77,5 +77,4 @@ public class DefaultRouteNode implements RouteNode {
     public String toString() {
         return "RouteNode[" + processorDefinition + "]";
     }
-
 }

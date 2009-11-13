@@ -25,6 +25,8 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision$
  */
 public class ProxyInstantiationException extends RuntimeCamelException {
+    private static final long serialVersionUID = -2050115486047385507L;
+
     private final Class<?> type;
     private final Endpoint endpoint;
 

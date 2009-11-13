@@ -96,8 +96,9 @@ public class Tracer implements InterceptStrategy, Service {
         return logger;
     }
 
-    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
-                                                 Processor target, Processor nextTarget) throws Exception {
+    public Processor wrapProcessorInInterceptors(CamelContext context, 
+            ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
+
         // Force the creation of an id, otherwise the id is not available when the trace formatter is
         // outputting trace information
         definition.idOrCreate(context.getNodeIdFactory());

@@ -27,6 +27,8 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision$
  */
 public class NoMessageIdException extends RuntimeCamelException {
+    private static final long serialVersionUID = 5755929795399134568L;
+
     private final Exchange exchange;
     private final Expression expression;
 

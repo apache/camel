@@ -39,11 +39,11 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
     private static final transient Log LOG = LogFactory.getLog(IdempotentConsumer.class);
     private final Expression messageIdExpression;
     private final Processor processor;
-    private final IdempotentRepository idempotentRepository;
+    private final IdempotentRepository<String> idempotentRepository;
     private final boolean eager;
 
-    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
-                              boolean eager, Processor processor) {
+    public IdempotentConsumer(Expression messageIdExpression, 
+            IdempotentRepository<String> idempotentRepository, boolean eager, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
@@ -103,7 +103,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor, Nav
         return messageIdExpression;
     }
 
-    public IdempotentRepository getIdempotentRepository() {
+    public IdempotentRepository<String> getIdempotentRepository() {
         return idempotentRepository;
     }
 

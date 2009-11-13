@@ -43,7 +43,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     private String method;
     @XmlTransient
     // we don't need to support the beanType class in Spring
-    private Class beanType;
+    private Class<?> beanType;
     
 
     public MethodCallExpression() {
@@ -58,12 +58,12 @@ public class MethodCallExpression extends ExpressionDefinition {
         this.method = method;
     }
     
-    public MethodCallExpression(Class type) {
+    public MethodCallExpression(Class<?> type) {
         super(type.toString());
         this.beanType = type;        
     }
     
-    public MethodCallExpression(Class type, String method) {
+    public MethodCallExpression(Class<?> type, String method) {
         super(type.toString());
         this.beanType = type;
         this.method = method;

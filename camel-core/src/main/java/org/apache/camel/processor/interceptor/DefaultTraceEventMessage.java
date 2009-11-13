@@ -30,6 +30,7 @@ import org.apache.camel.util.MessageHelper;
  * Default {@link TraceEventMessage}.
  */
 public final class DefaultTraceEventMessage implements Serializable, TraceEventMessage {
+    private static final long serialVersionUID = -4549012920528941202L;
 
     private Date timestamp;
     private String fromEndpointUri;
@@ -54,7 +55,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
      * @param toNode the node where this trace is intercepted
      * @param exchange the current {@link Exchange}
      */
-    public DefaultTraceEventMessage(final Date timestamp, final ProcessorDefinition toNode, final Exchange exchange) {
+    public DefaultTraceEventMessage(final Date timestamp, final ProcessorDefinition<?> toNode, final Exchange exchange) {
         Message in = exchange.getIn();
 
         // need to use defensive copies to avoid Exchange altering after the point of interception

@@ -85,7 +85,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
     }
 
-    private Class findComponent(String name, CamelContext context) throws ClassNotFoundException, IOException {
+    private Class<?> findComponent(String name, CamelContext context) throws ClassNotFoundException, IOException {
         if (factoryFinder == null) {
             factoryFinder = context.getFactoryFinder(RESOURCE_PATH);
         }

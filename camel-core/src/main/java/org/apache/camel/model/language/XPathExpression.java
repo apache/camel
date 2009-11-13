@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
     @XmlAttribute(required = false)
-    private Class resultType;
+    private Class<?> resultType;
 
     public XPathExpression() {
     }
@@ -47,11 +47,11 @@ public class XPathExpression extends NamespaceAwareExpression {
         return "xpath";
     }
 
-    public Class getResultType() {
+    public Class<?> getResultType() {
         return resultType;
     }
 
-    public void setResultType(Class resultType) {
+    public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
 

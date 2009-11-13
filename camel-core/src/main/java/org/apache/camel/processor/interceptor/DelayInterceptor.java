@@ -26,10 +26,10 @@ import org.apache.camel.processor.DelayProcessorSupport;
  */
 public class DelayInterceptor extends DelayProcessorSupport {
 
-    private final ProcessorDefinition node;
+    private final ProcessorDefinition<?> node;
     private Delayer delayer;
 
-    public DelayInterceptor(ProcessorDefinition node, Processor target, Delayer delayer) {
+    public DelayInterceptor(ProcessorDefinition<?> node, Processor target, Delayer delayer) {
         super(target);
         this.node = node;
         this.delayer = delayer;
@@ -46,5 +46,4 @@ public class DelayInterceptor extends DelayProcessorSupport {
             waitUntil(time, exchange);
         }
     }
-
 }

@@ -53,13 +53,13 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";
     private Logger logger;
     private Producer traceEventProducer;
-    private final ProcessorDefinition node;
+    private final ProcessorDefinition<?> node;
     private final Tracer tracer;
     private TraceFormatter formatter;
-    private Class jpaTraceEventMessageClass;
+    private Class<?> jpaTraceEventMessageClass;
     private RouteContext routeContext;
 
-    public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
+    public TraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
         this.tracer = tracer;
         this.node = node;
@@ -162,7 +162,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     // Properties
     //-------------------------------------------------------------------------
-    public ProcessorDefinition getNode() {
+    public ProcessorDefinition<?> getNode() {
         return node;
     }
 
@@ -376,7 +376,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     /**
      * Returns true if the given node should be logged in the trace list
      */
-    protected boolean shouldLogNode(ProcessorDefinition node) {
+    protected boolean shouldLogNode(ProcessorDefinition<?> node) {
         if (node == null) {
             return false;
         }

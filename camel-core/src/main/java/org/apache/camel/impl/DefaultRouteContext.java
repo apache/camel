@@ -98,7 +98,7 @@ public class DefaultRouteContext implements RouteContext {
         return camelContext;
     }
 
-    public Processor createProcessor(ProcessorDefinition node) throws Exception {
+    public Processor createProcessor(ProcessorDefinition<?> node) throws Exception {
         return node.createOutputsProcessor(this);
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.lang.reflect.Method;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
@@ -127,6 +128,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     /**
      * Creates the object to be injected for an {@link org.apache.camel.EndpointInject} or {@link org.apache.camel.Produce} injection point
      */
+    @SuppressWarnings("unchecked")
     public Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {
             return createInjectionProducerTemplate(endpointUri, endpointRef, injectionPointName);

@@ -80,6 +80,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
@@ -359,16 +360,16 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     strategy.onEndpointRemove(oldEndpoint);
                 }
             } else {
-                Collection<Map.Entry> worklist = new ArrayList<Map.Entry>();
-                for (Map.Entry entry : endpoints.entrySet()) {
-                    oldEndpoint = (Endpoint) entry.getValue();
+                Collection<Map.Entry<String, Endpoint>> worklist = new ArrayList<Map.Entry<String, Endpoint>>();
+                for (Map.Entry<String, Endpoint> entry : endpoints.entrySet()) {
+                    oldEndpoint = entry.getValue();
                     if (!oldEndpoint.isSingleton() && uri.equals(oldEndpoint.getEndpointUri())) {
                         // add to worklist to avoid concurrent modification exception
                         worklist.add(entry);
                     }
                 }
-                for (Map.Entry entry : worklist) {
-                    oldEndpoint = (Endpoint) entry.getValue();
+                for (Map.Entry<String, Endpoint> entry : worklist) {
+                    oldEndpoint = entry.getValue();
                     answer.add(oldEndpoint);
                     stopServices(oldEndpoint);
                     endpoints.remove(entry.getKey());
@@ -1089,16 +1090,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-    private void stopServices(Collection services) throws Exception {
+    private void stopServices(Collection<?> services) throws Exception {
         // reverse stopping by default
         stopServices(services, true);
     }
 
-    @SuppressWarnings("unchecked")
-    private void stopServices(Collection services, boolean reverse) throws Exception {
-        Collection list = services;
+    private void stopServices(Collection<?> services, boolean reverse) throws Exception {
+        Collection<Object> list = CastUtils.cast(services);
         if (reverse) {
-            ArrayList reverseList = new ArrayList(services);
+            ArrayList<Object> reverseList = new ArrayList<Object>(services);
             Collections.reverse(reverseList);
             list = reverseList;
         }

@@ -44,7 +44,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showException = true;
     private int maxChars;
 
-    public Object format(final TraceInterceptor interceptor, final ProcessorDefinition node, final Exchange exchange) {
+    public Object format(final TraceInterceptor interceptor, final ProcessorDefinition<?> node, final Exchange exchange) {
         Message in = exchange.getIn();
         Message out = null;
         if (exchange.hasOut()) {
@@ -245,7 +245,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
      * <br/>or
      * <br/><tt>ID-mojo/39713-1225468755256/2-0 -> transform(body)</tt>
      */
-    protected String extractBreadCrumb(TraceInterceptor interceptor, ProcessorDefinition currentNode, Exchange exchange) {
+    protected String extractBreadCrumb(TraceInterceptor interceptor, ProcessorDefinition<?> currentNode, Exchange exchange) {
         String id = "";
         String result;
         

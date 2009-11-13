@@ -33,7 +33,7 @@ public class ManagedDelayer extends ManagedProcessor {
 
     private Delayer delayer;
 
-    public ManagedDelayer(CamelContext context, Delayer delayer, ProcessorDefinition definition) {
+    public ManagedDelayer(CamelContext context, Delayer delayer, ProcessorDefinition<?> definition) {
         super(context, delayer, definition);
         this.delayer = delayer;
     }

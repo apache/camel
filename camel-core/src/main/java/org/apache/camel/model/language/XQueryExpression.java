@@ -40,7 +40,7 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @XmlAttribute(required = false)
     private String type;
     @XmlTransient
-    private Class resultType;
+    private Class<?> resultType;
 
     public XQueryExpression() {
     }
@@ -61,11 +61,11 @@ public class XQueryExpression extends NamespaceAwareExpression {
         this.type = type;
     }
 
-    public Class getResultType() {
+    public Class<?> getResultType() {
         return resultType;
     }
 
-    public void setResultType(Class resultType) {
+    public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
 

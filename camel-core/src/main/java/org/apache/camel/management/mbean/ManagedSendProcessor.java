@@ -32,7 +32,7 @@ public class ManagedSendProcessor extends ManagedProcessor {
 
     private SendProcessor processor;
 
-    public ManagedSendProcessor(CamelContext context, SendProcessor processor, ProcessorDefinition definition) {
+    public ManagedSendProcessor(CamelContext context, SendProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -60,5 +60,4 @@ public class ManagedSendProcessor extends ManagedProcessor {
         Endpoint endpoint = getContext().getEndpoint(uri);
         processor.setDestination(endpoint);
     }
-
 }

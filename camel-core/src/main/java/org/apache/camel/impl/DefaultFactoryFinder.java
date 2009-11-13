@@ -29,6 +29,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -36,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultFactoryFinder implements FactoryFinder {
 
-    protected final ConcurrentHashMap<String, Class> classMap = new ConcurrentHashMap<String, Class>();
+    protected final ConcurrentHashMap<String, Class<?>> classMap = new ConcurrentHashMap<String, Class<?>>();
     private final ClassResolver classResolver;
     private final String path;
 
@@ -58,20 +59,20 @@ public class DefaultFactoryFinder implements FactoryFinder {
     }
 
     public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws ClassNotFoundException, IOException {
-        List<Class> list = findClasses(key);
+        List<Class<T>> list = CastUtils.cast(findClasses(key));
         List<T> answer = new ArrayList<T>(list.size());
         answer.add(newInstance(key, injector, type));
         return answer;
     }
 
-    public Class findClass(String key) throws ClassNotFoundException, IOException {
+    public Class<?> findClass(String key) throws ClassNotFoundException, IOException {
         return findClass(key, null);
     }
 
-    public Class findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+    public Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         String prefix = propertyPrefix != null ? propertyPrefix : "";
 
-        Class clazz = classMap.get(prefix + key);
+        Class<?> clazz = classMap.get(prefix + key);
         if (clazz == null) {
             clazz = newInstance(doFindFactoryProperties(key), prefix);
             if (clazz != null) {
@@ -83,7 +84,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
 
     private Object newInstance(String key, String propertyPrefix) throws IllegalAccessException,
         InstantiationException, IOException, ClassNotFoundException {
-        Class clazz = findClass(key, propertyPrefix);
+        Class<?> clazz = findClass(key, propertyPrefix);
         return clazz.newInstance();
     }
 
@@ -103,23 +104,23 @@ public class DefaultFactoryFinder implements FactoryFinder {
         }
     }
 
-    private List<Class> findClasses(String key) throws ClassNotFoundException, IOException {
+    private List<Class<?>> findClasses(String key) throws ClassNotFoundException, IOException {
         return findClasses(key, null);
     }
 
-    private List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+    private List<Class<?>> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         // TODO change to support finding multiple classes on the classpath!
-        Class type = findClass(key, propertyPrefix);
-        return Collections.singletonList(type);
+        Class<?> type = findClass(key, propertyPrefix);
+        return CastUtils.cast(Collections.singletonList(type));
     }
 
-    private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {
+    private Class<?> newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {
         String className = properties.getProperty(propertyPrefix + "class");
         if (className == null) {
             throw new IOException("Expected property is missing: " + propertyPrefix + "class");
         }
 
-        Class clazz = classResolver.resolveClass(className);
+        Class<?> clazz = classResolver.resolveClass(className);
         if (clazz == null) {
             throw new ClassNotFoundException(className);
         }
@@ -146,6 +147,4 @@ public class DefaultFactoryFinder implements FactoryFinder {
             ObjectHelper.close(in, key, null);
         }
     }
-
-
 }

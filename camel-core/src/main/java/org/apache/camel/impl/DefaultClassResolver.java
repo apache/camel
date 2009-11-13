@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -27,28 +28,26 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultClassResolver implements ClassResolver {
 
-    public Class resolveClass(String name) {
+    public Class<?> resolveClass(String name) {
         return loadClass(name, DefaultClassResolver.class.getClassLoader());
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Class<T> resolveClass(String name, Class<T> type) {
-        Class answer = loadClass(name, DefaultClassResolver.class.getClassLoader());
+        Class<T> answer = CastUtils.cast(loadClass(name, DefaultClassResolver.class.getClassLoader()));
         return (Class<T>) answer;
     }
 
-    public Class resolveClass(String name, ClassLoader loader) {
+    public Class<?> resolveClass(String name, ClassLoader loader) {
         return loadClass(name, loader);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Class<T> resolveClass(String name, Class<T> type, ClassLoader loader) {
-        Class answer = loadClass(name, loader);
-        return (Class<T>) answer;
+        Class<T> answer = CastUtils.cast(loadClass(name, loader));
+        return answer;
     }
 
-    public Class resolveMandatoryClass(String name) throws ClassNotFoundException {
-        Class answer = resolveClass(name);
+    public Class<?> resolveMandatoryClass(String name) throws ClassNotFoundException {
+        Class<?> answer = resolveClass(name);
         if (answer == null) {
             throw new ClassNotFoundException(name);
         }
@@ -63,8 +62,8 @@ public class DefaultClassResolver implements ClassResolver {
         return answer;
     }
 
-    public Class resolveMandatoryClass(String name, ClassLoader loader) throws ClassNotFoundException {
-        Class answer = resolveClass(name, loader);
+    public Class<?> resolveMandatoryClass(String name, ClassLoader loader) throws ClassNotFoundException {
+        Class<?> answer = resolveClass(name, loader);
         if (answer == null) {
             throw new ClassNotFoundException(name);
         }
@@ -89,9 +88,8 @@ public class DefaultClassResolver implements ClassResolver {
         return ObjectHelper.loadResourceAsURL(uri);
     }
 
-    protected Class loadClass(String name, ClassLoader loader) {
+    protected Class<?> loadClass(String name, ClassLoader loader) {
         ObjectHelper.notEmpty(name, "name");
         return ObjectHelper.loadClass(name, loader);
     }
-
 }
