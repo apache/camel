@@ -35,9 +35,9 @@ public final class GenericFileDefaultSorter {
     /**
      * Returns a new sort by name
      */
-    public static Comparator<GenericFile> sortByName(final boolean reverse) {
-        return new Comparator<GenericFile>() {
-            public int compare(GenericFile o1, GenericFile o2) {
+    public static Comparator<GenericFile<?>> sortByName(final boolean reverse) {
+        return new Comparator<GenericFile<?>>() {
+            public int compare(GenericFile<?> o1, GenericFile<?> o2) {
                 int answer = o1.getFileName().compareTo(o2.getFileName());
                 return reverse ? -1 * answer : answer;
             }
@@ -47,9 +47,9 @@ public final class GenericFileDefaultSorter {
     /**
      * Returns a new sort by path name
      */
-    public static Comparator<GenericFile> sortByPathName(final boolean reverse) {
-        return new Comparator<GenericFile>() {
-            public int compare(GenericFile o1, GenericFile o2) {
+    public static Comparator<GenericFile<?>> sortByPathName(final boolean reverse) {
+        return new Comparator<GenericFile<?>>() {
+            public int compare(GenericFile<?> o1, GenericFile<?> o2) {
                 int answer = o1.getParent().compareTo(o2.getParent());
                 return reverse ? -1 * answer : answer;
             }
@@ -59,10 +59,10 @@ public final class GenericFileDefaultSorter {
     /**
      * Returns a new sort by last modified (newest first)
      */
-    public static Comparator<GenericFile> sortByLastModified(
+    public static Comparator<GenericFile<?>> sortByLastModified(
             final boolean reverse) {
-        return new Comparator<GenericFile>() {
-            public int compare(GenericFile o1, GenericFile o2) {
+        return new Comparator<GenericFile<?>>() {
+            public int compare(GenericFile<?> o1, GenericFile<?> o2) {
                 long delta = o1.getLastModified() - o2.getLastModified();
                 if (delta == 0) {
                     return 0;
@@ -76,9 +76,9 @@ public final class GenericFileDefaultSorter {
     /**
      * Returns a new sort by file size (smallest first)
      */
-    public static Comparator<GenericFile> sortBySize(final boolean reverse) {
-        return new Comparator<GenericFile>() {
-            public int compare(GenericFile o1, GenericFile o2) {
+    public static Comparator<GenericFile<?>> sortBySize(final boolean reverse) {
+        return new Comparator<GenericFile<?>>() {
+            public int compare(GenericFile<?> o1, GenericFile<?> o2) {
                 long delta = o1.getFileLength() - o2.getFileLength();
                 if (delta == 0) {
                     return 0;

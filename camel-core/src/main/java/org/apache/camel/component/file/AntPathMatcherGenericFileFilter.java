@@ -27,8 +27,9 @@ import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedS
  * File filter using Spring's AntPathMatcher.
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
+ * @param <T>
  */
-public class AntPathMatcherGenericFileFilter implements GenericFileFilter, CamelContextAware {
+public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T>, CamelContextAware {
     private static final String ANTPATHMATCHER_CLASSNAME = "org.apache.camel.spring.util.SpringAntPathMatcherFileFilter";
 
     private CamelContext context;
@@ -41,7 +42,7 @@ public class AntPathMatcherGenericFileFilter implements GenericFileFilter, Camel
     private Method excludesMethod;
     private Method acceptsMethod;
 
-    public boolean accept(GenericFile file) {
+    public boolean accept(GenericFile<T> file) {
         try {
             synchronized (this) {
                 if (filter == null) {
@@ -116,5 +117,4 @@ public class AntPathMatcherGenericFileFilter implements GenericFileFilter, Camel
     public CamelContext getCamelContext() {
         return context;
     }
-
 }

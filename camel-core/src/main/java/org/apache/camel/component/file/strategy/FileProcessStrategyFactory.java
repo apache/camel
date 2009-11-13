@@ -31,7 +31,7 @@ public final class FileProcessStrategyFactory {
     private FileProcessStrategyFactory() {
     }
 
-    public static GenericFileProcessStrategy createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
+    public static GenericFileProcessStrategy<File> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
         Expression moveExpression = (Expression) params.get("move");

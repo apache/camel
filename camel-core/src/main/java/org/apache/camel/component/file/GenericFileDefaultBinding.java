@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
  * Default binding for generic file.
  */
 public class GenericFileDefaultBinding<T> implements GenericFileBinding<T> {
+    private static final long serialVersionUID = 1156079468647449995L;
 
     private Object body;
 
@@ -38,5 +39,4 @@ public class GenericFileDefaultBinding<T> implements GenericFileBinding<T> {
     public void loadContent(Exchange exchange, GenericFile<T> file) throws IOException {
         // noop as the body is already loaded
     }
-
 }

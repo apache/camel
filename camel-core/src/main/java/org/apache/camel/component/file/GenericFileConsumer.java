@@ -155,7 +155,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * @param exchange the exchange
      */
     protected void processExchange(final Exchange exchange) {
-        GenericFile<T> file = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        GenericFile<T> file = getExchangeFileProperty(exchange);
         if (log.isTraceEnabled()) {
             log.trace("Processing remote file: " + file);
         }
@@ -173,7 +173,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             // must use file from exchange as it can be updated due the
             // preMoveNamePrefix/preMoveNamePostfix options
-            final GenericFile<T> target = (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            final GenericFile<T> target = getExchangeFileProperty(exchange);
             // must use full name when downloading so we have the correct path
             final String name = target.getAbsoluteFilePath();
 
@@ -313,5 +313,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             fileExpressionResult = endpoint.getFileName().evaluate(dummy, String.class);
         }
     }
-
+    
+    @SuppressWarnings("unchecked")
+    private GenericFile<T> getExchangeFileProperty(Exchange exchange) {
+        return (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+    }
 }

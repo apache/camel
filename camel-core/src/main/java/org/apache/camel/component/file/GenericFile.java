@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * provide a File for transfer.
  */
 public class GenericFile<T> implements Serializable {
-
+    private static final long serialVersionUID = 565270785443491000L;
     private static final Log LOG = LogFactory.getLog(GenericFile.class);
 
     private String endpointPath;
@@ -87,7 +87,7 @@ public class GenericFile<T> implements Serializable {
      * @param source  the source
      * @param result  the result
      */
-    public void copyFromPopulateAdditional(GenericFile source, GenericFile result) {
+    public void copyFromPopulateAdditional(GenericFile<T> source, GenericFile<T> result) {
         // noop
     }
 

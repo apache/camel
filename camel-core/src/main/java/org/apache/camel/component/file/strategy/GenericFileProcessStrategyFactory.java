@@ -30,7 +30,7 @@ public final class GenericFileProcessStrategyFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public static GenericFileProcessStrategy createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
+    public static <T> GenericFileProcessStrategy<T> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
         Expression moveExpression = (Expression) params.get("move");
@@ -41,42 +41,43 @@ public final class GenericFileProcessStrategyFactory {
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isNoop) {
-            GenericFileNoOpProcessStrategy strategy = new GenericFileNoOpProcessStrategy();
-            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            GenericFileNoOpProcessStrategy<T> strategy = new GenericFileNoOpProcessStrategy<T>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
             return strategy;
         } else if (isDelete) {
-            GenericFileDeleteProcessStrategy strategy = new GenericFileDeleteProcessStrategy();
-            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            GenericFileDeleteProcessStrategy<T> strategy = new GenericFileDeleteProcessStrategy<T>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
             return strategy;
         } else if (isMove) {
-            GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
-            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            GenericFileRenameProcessStrategy<T> strategy = new GenericFileRenameProcessStrategy<T>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
             if (moveExpression != null) {
-                GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
                 renamer.setExpression(moveExpression);
                 strategy.setCommitRenamer(renamer);
             }
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             return strategy;
         } else {
             // default strategy will do nothing
-            GenericFileNoOpProcessStrategy strategy = new GenericFileNoOpProcessStrategy();
-            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            GenericFileNoOpProcessStrategy<T> strategy = new GenericFileNoOpProcessStrategy<T>();
+            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
             return strategy;
         }
     }
 
-    private static GenericFileExclusiveReadLockStrategy getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy strategy = (GenericFileExclusiveReadLockStrategy) params.get("exclusiveReadLockStrategy");
+    @SuppressWarnings("unchecked")
+    private static <T> GenericFileExclusiveReadLockStrategy<T> getExclusiveReadLockStrategy(Map<String, Object> params) {
+        GenericFileExclusiveReadLockStrategy<T> strategy = (GenericFileExclusiveReadLockStrategy<T>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -87,7 +88,7 @@ public final class GenericFileProcessStrategyFactory {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy();
+                GenericFileRenameExclusiveReadLockStrategy<T> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<T>();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
@@ -95,7 +96,6 @@ public final class GenericFileProcessStrategyFactory {
                 return readLockStrategy;
             }
         }
-
         return null;
     }
 }

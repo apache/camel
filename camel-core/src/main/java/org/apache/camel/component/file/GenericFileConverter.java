@@ -33,13 +33,12 @@ public final class GenericFileConverter {
     }
 
     @FallbackConverter
-    @SuppressWarnings("unchecked")
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use a fallback type converter so we can convert the embedded body if the value is GenericFile
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
 
-            GenericFile file = (GenericFile) value;
-            Class from = file.getBody().getClass();
+            GenericFile<?> file = (GenericFile<?>) value;
+            Class<?> from = file.getBody().getClass();
 
             // maybe from is already the type we want
             if (from.isAssignableFrom(type)) {
@@ -58,7 +57,7 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static String convertToString(GenericFile file, Exchange exchange) {
+    public static String convertToString(GenericFile<?> file, Exchange exchange) {
         if (exchange != null) {
             return exchange.getContext().getTypeConverter().convertTo(String.class, file.getBody());
         } else {
@@ -66,5 +65,4 @@ public final class GenericFileConverter {
             return null;
         }
     }
-
 }

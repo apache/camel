@@ -72,13 +72,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected Expression moveFailed;
     protected Expression preMove;
     protected Boolean idempotent;
-    protected IdempotentRepository idempotentRepository;
+    protected IdempotentRepository<String> idempotentRepository;
     protected GenericFileFilter<T> filter;
     protected Comparator<GenericFile<T>> sorter;
     protected Comparator<Exchange> sortBy;
     protected String readLock = "none";
     protected long readLockTimeout = 10000;
-    protected GenericFileExclusiveReadLockStrategy exclusiveReadLockStrategy;
+    protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
 
     public GenericFileEndpoint() {
     }
@@ -279,11 +279,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.idempotent = idempotent;
     }
 
-    public IdempotentRepository getIdempotentRepository() {
+    public IdempotentRepository<String> getIdempotentRepository() {
         return idempotentRepository;
     }
 
-    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
+    public void setIdempotentRepository(IdempotentRepository<String> idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 
@@ -356,11 +356,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
-    public GenericFileExclusiveReadLockStrategy getExclusiveReadLockStrategy() {
+    public GenericFileExclusiveReadLockStrategy<T> getExclusiveReadLockStrategy() {
         return exclusiveReadLockStrategy;
     }
 
-    public void setExclusiveReadLockStrategy(GenericFileExclusiveReadLockStrategy exclusiveReadLockStrategy) {
+    public void setExclusiveReadLockStrategy(GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy) {
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
 

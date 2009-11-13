@@ -38,9 +38,9 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
     private static int deleteCounter;
 
 
-    private class MyGenericFileOperations implements GenericFileOperations {
+    private class MyGenericFileOperations implements GenericFileOperations<Object> {
 
-        public void setEndpoint(GenericFileEndpoint endpoint) {
+        public void setEndpoint(GenericFileEndpoint<Object> endpoint) {
         }
 
         public boolean deleteFile(String name) throws GenericFileOperationFailedException {
@@ -82,11 +82,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         }
 
-        public List listFiles() throws GenericFileOperationFailedException {
+        public List<Object> listFiles() throws GenericFileOperationFailedException {
             return null;
         }
 
-        public List listFiles(String path) throws GenericFileOperationFailedException {
+        public List<Object> listFiles(String path) throws GenericFileOperationFailedException {
             return null;
         }
     }

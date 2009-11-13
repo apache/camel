@@ -48,7 +48,7 @@ public class FileOperations implements GenericFileOperations<File> {
         this.endpoint = endpoint;
     }
 
-    public void setEndpoint(GenericFileEndpoint endpoint) {
+    public void setEndpoint(GenericFileEndpoint<File> endpoint) {
         this.endpoint = (FileEndpoint) endpoint;
     }
 

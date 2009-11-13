@@ -24,6 +24,8 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision$
  */
 public class GenericFileOperationFailedException extends RuntimeCamelException {
+    private static final long serialVersionUID = -64176625836814418L;
+
     private final int code;
     private final String reason;
 

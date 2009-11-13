@@ -27,7 +27,7 @@ public interface GenericFileOperations<T> {
      *
      * @param endpoint the endpoint
      */
-    void setEndpoint(GenericFileEndpoint endpoint);
+    void setEndpoint(GenericFileEndpoint<T> endpoint);
 
     /**
      * Deletes the file name by name, relative to the current directory

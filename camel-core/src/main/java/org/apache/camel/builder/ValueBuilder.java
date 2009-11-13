@@ -240,7 +240,7 @@ public class ValueBuilder implements Expression {
      * @param comparator  the comparator used by sorting
      * @return the current builder
      */
-    public ValueBuilder sort(Comparator comparator) {
+    public ValueBuilder sort(Comparator<?> comparator) {
         Expression newExp = ExpressionBuilder.sortExpression(expression, comparator);
         return new ValueBuilder(newExp);
     }
