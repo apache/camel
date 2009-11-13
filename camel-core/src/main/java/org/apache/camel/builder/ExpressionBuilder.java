@@ -53,6 +53,8 @@ public final class ExpressionBuilder {
 
     /**
      * Returns an expression for the header value with the given name
+     * <p/>
+     * Will fallback and look in properties if not found in headers.
      *
      * @param headerName the name of the header the expression will return
      * @return an expression object which will return the header value
@@ -95,6 +97,8 @@ public final class ExpressionBuilder {
 
     /**
      * Returns an expression for the out header value with the given name
+     * <p/>
+     * Will fallback and look in properties if not found in headers.
      *
      * @param headerName the name of the header the expression will return
      * @return an expression object which will return the header value
