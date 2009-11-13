@@ -22,7 +22,7 @@ in the src/main/resources/META-INF/spring/camel-client.xml file.
 
 
 For the latest & greatest documentation on how to use this example please see:
-  http://camel.apache.org/route-throttling-example.html
+  http://camel.apache.org/http-async-example.html
 
 You will need to compile this example first:
   mvn compile
@@ -32,7 +32,7 @@ The example should run if you type:
 
   mvn exec:java -PCamelClient
 
-To stop the example hit ctrl + c
+To stop the server hit ctrl + c
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
