@@ -95,7 +95,7 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
 
             @Override
             public String toString() {
-                return "intercept[" +  (interceptedTarget != null ? interceptedTarget : output) + "]";
+                return "intercept[" + (interceptedTarget != null ? interceptedTarget : output) + "]";
             }
         });
 
@@ -108,7 +108,7 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
     /**
      * Applies this interceptor only if the given predicate is true
      *
-     * @param predicate  the predicate
+     * @param predicate the predicate
      * @return the builder
      */
     public ChoiceDefinition when(Predicate predicate) {

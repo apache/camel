@@ -67,7 +67,9 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
     public BatchProcessor(Processor processor, Collection<Exchange> collection) {
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(collection, "collection");
-        this.processor = processor;
+
+        // wrap processor in UnitOfWork so what we send out of the batch runs in a UoW
+        this.processor = new UnitOfWorkProcessor(processor);
         this.collection = collection;
         this.sender = new BatchSender();
     }

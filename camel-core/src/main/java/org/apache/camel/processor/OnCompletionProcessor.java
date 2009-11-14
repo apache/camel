@@ -45,7 +45,8 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     private Predicate onWhen;
 
     public OnCompletionProcessor(Processor processor, boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen) {
-        this.processor = processor;
+        // wrap processor in UnitOfWork so what we send out runs in a UoW
+        this.processor = new UnitOfWorkProcessor(processor);
         this.onCompleteOnly = onCompleteOnly;
         this.onFailureOnly = onFailureOnly;
         this.onWhen = onWhen;
@@ -91,7 +92,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Processing onComplete: " + copy);
                         }
-                        processor.process(copy);
+                        doProcess(processor, copy);
                         return copy;
                     }
                 });
@@ -118,8 +119,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Processing onFailure: " + copy);
                         }
-
-                        processor.process(copy);
+                        doProcess(processor, copy);
                         return copy;
                     }
                 });
@@ -137,6 +137,21 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
             }
         });
     }
+
+    /**
+     * Processes the exchange by the processors
+     *
+     * @param processor the processor
+     * @param exchange the exchange
+     */
+    protected static void doProcess(Processor processor, Exchange exchange) {
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+    }
+
 
     /**
      * Prepares the {@link Exchange} to send as onCompletion.
@@ -175,6 +190,6 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     }
 
     public String getTraceLabel() {
-        return "OnCompletion";
+        return "onCompletion";
     }
 }
