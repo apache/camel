@@ -82,8 +82,8 @@ public class CamelContextResource {
     /**
      * Returns the system properties
      */
-    public Map getSystemProperties() {
-        return new TreeMap(System.getProperties());
+    public Map<Object, Object> getSystemProperties() {
+        return new TreeMap<Object, Object>(System.getProperties());
     }
 
     // representations

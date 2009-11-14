@@ -30,11 +30,11 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class InstanceMethodTypeConverter implements TypeConverter {
-    private final CachingInjector injector;
+    private final CachingInjector<?>injector;
     private final Method method;
     private final boolean useExchange;
 
-    public InstanceMethodTypeConverter(CachingInjector injector, Method method) {
+    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterTypes().length == 2;

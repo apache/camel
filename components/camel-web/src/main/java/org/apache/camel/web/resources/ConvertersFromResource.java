@@ -26,9 +26,9 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
  * @version $Revision$
  */
 public class ConvertersFromResource extends CamelChildResourceSupport {
-    private Class type;
+    private Class<?> type;
 
-    public ConvertersFromResource(CamelContextResource contextResource, Class type) {
+    public ConvertersFromResource(CamelContextResource contextResource, Class<?> type) {
         super(contextResource);
         this.type = type;
     }
@@ -37,9 +37,9 @@ public class ConvertersFromResource extends CamelChildResourceSupport {
         Map<String, TypeConverter> answer = new TreeMap<String, TypeConverter>();
         DefaultTypeConverter converter = getDefaultTypeConverter();
         if (converter != null) {
-            Map<Class, TypeConverter> classes = converter.getToClassMappings(type);
-            for (Map.Entry<Class, TypeConverter> entry : classes.entrySet()) {
-                Class aClass = entry.getKey();
+            Map<Class<?>, TypeConverter> classes = converter.getToClassMappings(type);
+            for (Map.Entry<Class<?>, TypeConverter> entry : classes.entrySet()) {
+                Class<?> aClass = entry.getKey();
                 String name = ConvertersResource.nameOf(aClass);
                 answer.put(name, entry.getValue());
             }
@@ -47,8 +47,7 @@ public class ConvertersFromResource extends CamelChildResourceSupport {
         return answer;
     }
 
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
-
 }

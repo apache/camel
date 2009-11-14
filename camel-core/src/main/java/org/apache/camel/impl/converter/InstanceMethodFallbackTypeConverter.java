@@ -31,12 +31,12 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class InstanceMethodFallbackTypeConverter implements TypeConverter {
-    private final CachingInjector injector;
+    private final CachingInjector<?> injector;
     private final Method method;
     private final boolean useExchange;
     private final TypeConverterRegistry registry;
 
-    public InstanceMethodFallbackTypeConverter(CachingInjector injector, Method method, TypeConverterRegistry registry) {
+    public InstanceMethodFallbackTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterTypes().length == 4;

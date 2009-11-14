@@ -36,6 +36,7 @@ import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,7 +51,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
     protected PackageScanClassResolver resolver;
-    private Set<Class> visitedClasses = new HashSet<Class>();
+    private Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
         this.resolver = resolver;
@@ -127,14 +128,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     /**
      * Loads all of the converter methods for the given type
      */
-    protected void loadConverterMethods(TypeConverterRegistry registry, Class type) {
+    protected void loadConverterMethods(TypeConverterRegistry registry, Class<?> type) {
         if (visitedClasses.contains(type)) {
             return;
         }
         visitedClasses.add(type);
         try {
             Method[] methods = type.getDeclaredMethods();
-            CachingInjector injector = null;
+            CachingInjector<?> injector = null;
 
             for (Method method : methods) {
                 // this may be prone to ClassLoader or packaging problems when the same class is defined
@@ -146,7 +147,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 }
             }
 
-            Class superclass = type.getSuperclass();
+            Class<?> superclass = type.getSuperclass();
             if (superclass != null && !superclass.equals(Object.class)) {
                 loadConverterMethods(registry, superclass);
             }
@@ -155,8 +156,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private CachingInjector handleHasConverterAnnotation(TypeConverterRegistry registry, Class type, CachingInjector injector, Method method) {
+    private CachingInjector<?> handleHasConverterAnnotation(TypeConverterRegistry registry, Class<?> type, CachingInjector<?> injector, Method method) {
         if (isValidConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
@@ -174,7 +174,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                                 new StaticMethodTypeConverter(method));
                     } else {
                         if (injector == null) {
-                            injector = new CachingInjector(registry, type);
+                            injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
                         }
                         registerTypeConverter(registry, method, toType, fromType,
                                 new InstanceMethodTypeConverter(injector, method));
@@ -188,8 +188,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         return injector;
     }
 
-    @SuppressWarnings("unchecked")
-    private CachingInjector handleHasFallbackConverterAnnotation(TypeConverterRegistry registry, Class type, CachingInjector injector, Method method) {
+    private CachingInjector<?> handleHasFallbackConverterAnnotation(TypeConverterRegistry registry, Class<?> type, CachingInjector<?> injector, Method method) {
         if (isValidFallbackConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
@@ -205,7 +204,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry));
                     } else {
                         if (injector == null) {
-                            injector = new CachingInjector(registry, type);
+                            injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
                         }
                         registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry));
                     }
@@ -219,7 +218,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     protected void registerTypeConverter(TypeConverterRegistry registry,
-                                         Method method, Class toType, Class fromType, TypeConverter typeConverter) {
+            Method method, Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         registry.addTypeConverter(toType, fromType, typeConverter);
     }
 

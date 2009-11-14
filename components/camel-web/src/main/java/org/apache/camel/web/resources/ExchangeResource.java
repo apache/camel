@@ -34,11 +34,9 @@ import org.apache.camel.spi.UnitOfWork;
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class ExchangeResource {
-    private final EndpointResource endpointResource;
     private final Exchange exchange;
 
     public ExchangeResource(EndpointResource endpointResource, Exchange exchange) {
-        this.endpointResource = endpointResource;
         this.exchange = exchange;
     }
 

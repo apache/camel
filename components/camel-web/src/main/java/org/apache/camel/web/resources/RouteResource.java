@@ -311,7 +311,7 @@ public class RouteResource extends CamelChildResourceSupport {
         try {
 
             // store the route definition
-            File file = storeRoute(route, LANGUAGE_SCALA);
+            storeRoute(route, LANGUAGE_SCALA);
 
             // load the definition class
             //TODO: process the route definition using scala route builder

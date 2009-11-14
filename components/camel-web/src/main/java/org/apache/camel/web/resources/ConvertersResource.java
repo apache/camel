@@ -19,29 +19,26 @@ package org.apache.camel.web.resources;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class ConvertersResource extends CamelChildResourceSupport {
-    private static final transient Log LOG = LogFactory.getLog(ConvertersResource.class);
-
     public ConvertersResource(CamelContextResource contextResource) {
         super(contextResource);
     }
 
-    public Map<String, Class> getFromClassTypes() {
-        Map<String, Class> answer = new TreeMap<String, Class>();
+    public Map<String, Class<?>> getFromClassTypes() {
+        Map<String, Class<?>> answer = new TreeMap<String, Class<?>>();
         DefaultTypeConverter converter = getDefaultTypeConverter();
         if (converter != null) {
-            Set<Class> classes = converter.getFromClassMappings();
-            for (Class aClass : classes) {
+            Set<Class<?>> classes = converter.getFromClassMappings();
+            for (Class<?> aClass : classes) {
                 String name = nameOf(aClass);
                 answer.put(name, aClass);
             }
@@ -61,7 +58,7 @@ public class ConvertersResource extends CamelChildResourceSupport {
 */
 
     public ConvertersFromResource getConvertersFrom(@PathParam("type") String typeName) {
-        Class type = getCamelContext().getClassResolver().resolveClass(typeName, getClass().getClassLoader());
+        Class<?> type = getCamelContext().getClassResolver().resolveClass(typeName, getClass().getClassLoader());
         if (type == null) {
             return null;
         }
@@ -69,7 +66,7 @@ public class ConvertersResource extends CamelChildResourceSupport {
     }
 
 
-    public static String nameOf(Class aClass) {
+    public static String nameOf(Class<?> aClass) {
         return aClass.getCanonicalName();
     }
 }
