@@ -18,8 +18,10 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -44,6 +46,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class DefaultRouteContext implements RouteContext {
+    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
     private final RouteDefinition route;
     private FromDefinition from;
     private final Collection<Route> routes;
@@ -285,5 +288,14 @@ public class DefaultRouteContext implements RouteContext {
 
     public void setRoutePolicy(RoutePolicy routePolicy) {
         this.routePolicy = routePolicy;
+    }
+
+    public int getAndIncrement(ProcessorDefinition<?> node) {
+        AtomicInteger count = nodeIndex.get(node);
+        if (count == null) {
+            count = new AtomicInteger();
+            nodeIndex.put(node, count);
+        }
+        return count.getAndIncrement();
     }
 }

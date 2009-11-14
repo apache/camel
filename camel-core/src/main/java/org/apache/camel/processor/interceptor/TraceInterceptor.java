@@ -22,21 +22,22 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultRouteNode;
+import org.apache.camel.impl.OnCompletionRouteNode;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.TraceableUnitOfWork;
+import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -98,28 +99,29 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);
 
         // whether we should trace it or not, some nodes should be skipped as they are abstract
-        // intermedidate steps for instance related to on completion
+        // intermediate steps for instance related to on completion
         boolean trace = true;
 
         // okay this is a regular exchange being routed we might need to log and trace
         try {
             // before
             if (shouldLog) {
+                // traced holds the information about the current traced route path
+                if (exchange.getUnitOfWork() != null) {
+                    TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
 
-                // register route path taken if TraceableUnitOfWork unit of work
-                if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
-                    TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-
-                    if (node instanceof OnExceptionDefinition) {
-                        // special for on exception so we can see it in the trace logs
-                        trace = beforeOnException((OnExceptionDefinition) node, tuow, exchange);
-                    } else if (node instanceof OnCompletionDefinition) {
-                        // special for on completion so we can see it in the trace logs
-                        trace = beforeOnCompletion((OnCompletionDefinition) node, tuow, exchange);
+                    if (node instanceof OnCompletionDefinition || node instanceof OnExceptionDefinition || node instanceof TryDefinition) {
+                        // skip any of these as its just a marker definition
+                        trace = false;
+                    } else if (exchange.getProperty(Exchange.ON_COMPLETION) != null) {
+                        // special for on completion tracing
+                        traceOnCompletion(traced, exchange);
                     } else {
                         // regular so just add it
-                        tuow.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+                        traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
                     }
+                } else {
+                    LOG.trace("Cannot trace as this Exchange does not have an UnitOfWork: " + exchange);
                 }
             }
 
@@ -129,15 +131,10 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                 traceExchange(exchange);
             }
 
-            // some nodes need extra work to trace it
-            if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
-                TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-
-                if (node instanceof InterceptDefinition) {
-                    // special for intercept() as we would like to trace the processor that was intercepted
-                    // as well, otherwise we only see the intercepted route, but we need the both to be logged/traced
-                    afterIntercept((InterceptDefinition) node, tuow, exchange);
-                }
+            // special for interceptor where we need to keep booking how far we have routed in the intercepted processors
+            if (node.getParent() instanceof InterceptDefinition && exchange.getUnitOfWork() != null) {
+                TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
+                traceIntercept((InterceptDefinition) node.getParent(), traced, exchange);
             }
 
             // process the exchange
@@ -153,6 +150,35 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                 logException(exchange, e);
             }
             throw e;
+        }
+    }
+
+    private void traceOnCompletion(TracedRouteNodes traced, Exchange exchange) {
+        // if ON_COMPLETION is not null then we are actually doing the onCompletion routing
+        // add the onCompletion and then the processor that is invoked next
+        if (!(traced.getSecondLastNode() instanceof OnCompletionRouteNode)) {
+            // only and on completion once when we start the on completion routing
+            traced.addTraced(new OnCompletionRouteNode(exchange));
+            // add the next processor as well
+            traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+        } else {
+            // regular during on completion so add it
+            traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+        }
+    }
+
+    protected void traceIntercept(InterceptDefinition intercept, TracedRouteNodes traced, Exchange exchange) throws Exception {
+        // use the counter to get the index of the intercepted processor to be traced
+        Processor last = intercept.getInterceptedProcessor(traced.getAndIncrementCounter(intercept));
+        if (last != null) {
+            traced.addTraced(new DefaultRouteNode(node, last));
+
+            boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);
+            if (shouldLog) {
+                // log and trace the processor that was intercepted so we can see it
+                logExchange(exchange);
+                traceExchange(exchange);
+            }
         }
     }
 
@@ -176,103 +202,6 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     public Tracer getTracer() {
         return tracer;
-    }
-
-    // Implementation methods
-    //-------------------------------------------------------------------------
-    protected boolean beforeOnException(OnExceptionDefinition onException, TraceableUnitOfWork tuow, Exchange exchange) throws Exception {
-        // lets see if this is the first time for this exception
-        int index = tuow.getAndIncrement(node);
-        if (index == 0) {
-            class OnExceptionExpression implements Expression {
-                @SuppressWarnings("unchecked")
-                public Object evaluate(Exchange exchange, Class type) {
-                    String label = "OnException";
-                    if (exchange.getProperty(Exchange.EXCEPTION_CAUGHT) != null) {
-                        label += "[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
-                    }
-                    return exchange.getContext().getTypeConverter().convertTo(type, label);
-                }
-                
-            }
-            // yes its first time then do some special to log and trace the
-            // start of onException
-            Expression exp = new OnExceptionExpression(); 
-              
-            // add our pesudo node
-            tuow.addTraced(new DefaultRouteNode(node, exp));
-
-            // log and trace the processor that was onException so we can see immediately
-            logExchange(exchange);
-            traceExchange(exchange);
-        }
-
-        // add the processor that is invoked for this onException
-        tuow.addTraced(new DefaultRouteNode(node, super.getProcessor()));
-        return true;
-    }
-    
-
-    protected boolean beforeOnCompletion(OnCompletionDefinition onCompletion, TraceableUnitOfWork tuow, Exchange exchange) throws Exception {
-        // we should only trace when we do the actual onCompletion
-        // the problem is that onCompletion is added at the very beginning of a route to be able to
-        // add synchronization hoos on unit of work so it knows to invoke the onCompletion when the
-        // exchange is done. But in the trace log we want to defer the onCompletion being logged
-        // unitl the exchange is actually completed and is doing the onCompletion routing
-        // so if the last node is null then we have just started and thus should not trace this node
-        boolean answer = tuow.getLastNode() != null;
-
-        if (exchange.getProperty(Exchange.ON_COMPLETION) != null) {
-            // if ON_COMPLETION is not null then we are actually doing the onCompletion routing
-            
-            // we should trace the onCompletion route and we want a start log of the onCompletion
-            // step so get the index and see if its 0 then we can add our speical log
-            int index = tuow.getAndIncrement(node);
-            if (index == 0) {
-                class OnCompletionExpression implements Expression {
-                    @SuppressWarnings("unchecked")
-                    public Object evaluate(Exchange exchange, Class type) {
-                        String label = "OnCompletion[" + exchange.getProperty(Exchange.CORRELATION_ID) + "]";
-                        return exchange.getContext().getTypeConverter().convertTo(type, label);
-                    }
-                }
-                // yes its first time then do some special to log and trace the start of onCompletion
-                Expression exp = new OnCompletionExpression();
-                // add the onCompletion and then the processor that is invoked nest
-                tuow.addTraced(new DefaultRouteNode(node, exp));
-                tuow.addTraced(new DefaultRouteNode(node, super.getProcessor()));
-
-                // log and trace so we get the onCompletion -> processor in the log
-                logExchange(exchange);
-                traceExchange(exchange);
-            } else {
-                // we are doing the onCompletion but this is after the start so just
-                // add the processor and do no special start message
-                tuow.addTraced(new DefaultRouteNode(node, super.getProcessor()));
-            }
-
-        }
-
-        return answer;
-    }
-
-    protected boolean afterIntercept(InterceptDefinition interceptr, TraceableUnitOfWork tuow, Exchange exchange) throws Exception {
-        // get the intercepted processor from the definition
-        // we need to use the UoW to have its own index of how far we got into the list
-        // of intercepted processors the intercept definition holds as the intercept
-        // definition is a single object that is shared by concurrent thread being routed
-        // so each exchange has its own private counter
-        InterceptDefinition intercept = (InterceptDefinition) node;
-        Processor last = intercept.getInterceptedProcessor(tuow.getAndIncrement(intercept));
-        if (last != null) {
-            tuow.addTraced(new DefaultRouteNode(node, last));
-
-            // log and trace the processor that was intercepted so we can see it
-            logExchange(exchange);
-            traceExchange(exchange);
-        }
-
-        return true;
     }
 
     protected void logExchange(Exchange exchange) {

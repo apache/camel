@@ -73,4 +73,11 @@ public interface UnitOfWork {
      * @return the original IN {@link Message}
      */
     Message getOriginalInMessage();
+
+    /**
+     * Gets tracing information
+     *
+     * @return trace information
+     */
+    TracedRouteNodes getTracedRouteNodes();
 }

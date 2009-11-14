@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.TraceableUnitOfWork;
+import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.MessageHelper;
 
 /**
@@ -267,17 +267,17 @@ public class DefaultTraceFormatter implements TraceFormatter {
         // compute from and to
         String from = "";
         String to = "";
-        if (showNode && exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
-            TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+        if (showNode) {
+            TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
 
-            RouteNode traceFrom = tuow.getSecondLastNode();
+            RouteNode traceFrom = traced.getSecondLastNode();
             if (traceFrom != null) {
                 from = getNodeMessage(traceFrom, exchange);
             } else if (exchange.getFromEndpoint() != null) {
                 from = "from(" + exchange.getFromEndpoint().getEndpointUri() + ")";
             }
 
-            RouteNode traceTo = tuow.getLastNode();
+            RouteNode traceTo = traced.getLastNode();
             if (traceTo != null) {
                 to = getNodeMessage(traceTo, exchange);
             }

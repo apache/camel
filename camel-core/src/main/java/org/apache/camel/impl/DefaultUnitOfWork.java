@@ -17,19 +17,14 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RouteNode;
 import org.apache.camel.Service;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.spi.TraceableUnitOfWork;
+import org.apache.camel.spi.TracedRouteNodes;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
@@ -40,18 +35,18 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
+public class DefaultUnitOfWork implements UnitOfWork, Service {
     private static final transient Log LOG = LogFactory.getLog(DefaultUnitOfWork.class);
 
     private String id;
     private List<Synchronization> synchronizations;
-    private List<RouteNode> routeNodes;
-    private Map<ProcessorDefinition<?>, AtomicInteger> routeIndex = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
     private Message originalInMessage;
+    private final TracedRouteNodes tracedRouteNodes;
 
     public DefaultUnitOfWork(Exchange exchange) {
-        // TODO: optimize to only copy original message if enabled to do so in the route
+        tracedRouteNodes = new DefaultTracedRouteNodes();
 
+        // TODO: optimize to only copy original message if enabled to do so in the route
         // special for JmsMessage as it can cause it to loose headers later.
         if (exchange.getIn().getClass().getSimpleName().equals("JmsMessage")) {
             this.originalInMessage = new DefaultMessage();
@@ -79,10 +74,9 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         if (synchronizations != null) {
             synchronizations.clear();
         }
-        if (routeNodes != null) {
-            routeNodes.clear();
+        if (tracedRouteNodes != null) {
+            tracedRouteNodes.clear();
         }
-        routeIndex.clear();
         originalInMessage = null;
     }
 
@@ -152,41 +146,12 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return id;
     }
 
-    public void addTraced(RouteNode entry) {
-        if (routeNodes == null) {
-            routeNodes = new ArrayList<RouteNode>();
-        }
-        routeNodes.add(entry);
-    }
-
-    public RouteNode getLastNode() {
-        if (routeNodes == null || routeNodes.isEmpty()) {
-            return null;
-        }
-        return routeNodes.get(routeNodes.size() - 1);
-    }
-
-    public RouteNode getSecondLastNode() {
-        if (routeNodes == null || routeNodes.isEmpty() || routeNodes.size() == 1) {
-            return null;
-        }
-        return routeNodes.get(routeNodes.size() - 2);
-    }
-
-    public List<RouteNode> getNodes() {
-        return Collections.unmodifiableList(routeNodes);
-    }
-
     public Message getOriginalInMessage() {
         return originalInMessage;
     }
 
-    public int getAndIncrement(ProcessorDefinition<?> node) {
-        AtomicInteger count = routeIndex.get(node);
-        if (count == null) {
-            count = new AtomicInteger();
-            routeIndex.put(node, count);
-        }
-        return count.getAndIncrement();
+    public TracedRouteNodes getTracedRouteNodes() {
+        return tracedRouteNodes;
     }
+
 }

@@ -36,6 +36,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.AtomicExchange;
@@ -118,7 +119,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     public String getTraceLabel() {
-        return "Multicast";
+        return "multicast";
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -162,13 +163,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                         return subExchange;
                     }
 
-                    try {
-                        // set property which endpoint we send to
-                        setToEndpoint(subExchange, producer);
-                        producer.process(subExchange);
-                    } catch (Exception e) {
-                        subExchange.setException(e);
-                    }
+                    doProcess(producer, subExchange);
 
                     // should we stop in case of an exception occurred during processing?
                     if (stopOnException && subExchange.getException() != null) {
@@ -208,14 +203,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total, pairs);
 
-            // process it sequentially
-            try {
-                // set property which endpoint we send to
-                setToEndpoint(subExchange, producer);
-                producer.process(subExchange);
-            } catch (Exception e) {
-                subExchange.setException(e);
-            }
+            doProcess(producer, subExchange);
 
             // should we stop in case of an exception occurred during processing?
             if (stopOnException && subExchange.getException() != null) {
@@ -234,6 +222,30 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Done sequential processing " + total + " exchanges");
+        }
+    }
+
+    private void doProcess(Processor producer, Exchange exchange) {
+        TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
+
+        try {
+            // prepare tracing starting from a new block
+            if (traced != null) {
+                traced.pushBlock();
+            }
+
+            // set property which endpoint we send to
+            setToEndpoint(exchange, producer);
+
+            // let the producer process it
+            producer.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        } finally {
+            // pop the block so by next round we have the same staring point and thus the tracing looks accurate
+            if (traced != null) {
+                traced.popBlock();
+            }
         }
     }
 

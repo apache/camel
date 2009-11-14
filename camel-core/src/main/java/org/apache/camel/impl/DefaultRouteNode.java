@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
+import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Traceable;
 
@@ -57,12 +58,17 @@ public class DefaultRouteNode implements RouteNode {
             return expression.evaluate(exchange, String.class);
         }
 
-        if (processor != null) {
-            if (processor instanceof Traceable) {
-                Traceable trace = (Traceable) processor;
+        Processor target = processor;
+        if (target != null) {
+            // can be wrapped
+            if (target instanceof InstrumentationProcessor) {
+                target = ((InstrumentationProcessor) target).getProcessor();
+            }
+
+            if (target instanceof Traceable) {
+                Traceable trace = (Traceable) target;
                 return trace.getTraceLabel();
             }
-            processor.toString();
         }
 
         // default then to definition

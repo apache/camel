@@ -65,6 +65,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.builder.Builder.body;
+
 /**
  * Base class for processor types that most XML types extend.
  *
@@ -152,10 +153,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         if (processor instanceof Channel) {
             return processor;
         }
-        return wrapChannel(routeContext, processor);
+        return wrapChannel(routeContext, processor, null);
     }
 
-    protected Processor wrapChannel(RouteContext routeContext, Processor processor) throws Exception {
+    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child) throws Exception {
         // put a channel in between this and each output to control the route flow logic
         Channel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
@@ -167,12 +168,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             channel.addInterceptStrategy(routeContext.getManagedInterceptStrategy());
         }
         addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
-        
-        // init the channel
-        channel.initChannel(this, routeContext);
 
         // must do this ugly cast to avoid compiler error on HP-UX
         ProcessorDefinition defn = (ProcessorDefinition) this;
+
+        // set the child before init the channel
+        channel.setChildDefinition(child);
+        channel.initChannel(defn, routeContext);
+
         // set the error handler, must be done after init as we can set the error handler as first in the chain
         if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
@@ -259,7 +262,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
                 continue;
             }
 
-            Processor channel = wrapChannel(routeContext, processor);
+            Processor channel = wrapChannel(routeContext, processor, output);
             list.add(channel);
         }
 

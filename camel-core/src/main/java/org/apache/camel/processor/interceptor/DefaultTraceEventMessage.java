@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.TraceableUnitOfWork;
+import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.MessageHelper;
 
 /**
@@ -87,18 +87,18 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     }
 
     private static String extractFromNode(Exchange exchange) {
-        if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
-            TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            RouteNode last = tuow.getSecondLastNode();
+        if (exchange.getUnitOfWork() != null) {
+            TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
+            RouteNode last = traced.getSecondLastNode();
             return last != null ? last.getLabel(exchange) : null;
         }
         return null;
     }
 
     private static String extractToNode(Exchange exchange) {
-        if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
-            TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            RouteNode last = tuow.getLastNode();
+        if (exchange.getUnitOfWork() != null) {
+            TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
+            RouteNode last = traced.getLastNode();
             return last != null ? last.getLabel(exchange) : null;
         }
         return null;

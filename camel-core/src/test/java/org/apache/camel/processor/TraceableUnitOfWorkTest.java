@@ -25,7 +25,7 @@ import org.apache.camel.RouteNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.InstrumentationProcessor;
-import org.apache.camel.spi.TraceableUnitOfWork;
+import org.apache.camel.spi.TracedRouteNodes;
 
 /**
  * @version $Revision$
@@ -69,13 +69,12 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
     // START SNIPPET: e2
     private class MyErrorProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
-            // cast to TraceableUnitOfWork so we can work on the intercepted node path
-            TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+            TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
 
             // get the list of intercepted nodes
-            List<RouteNode> list = tuow.getNodes();
-            // get the 3rd last as its the bean
-            Processor last = list.get(list.size() - 3).getProcessor();
+            List<RouteNode> list = traced.getNodes();
+            // get the 2rd last as its the bean
+            Processor last = list.get(list.size() - 2).getProcessor();
 
             // wrapped by JMX
             if (last instanceof InstrumentationProcessor) {

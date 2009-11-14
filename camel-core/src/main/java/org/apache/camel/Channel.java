@@ -78,11 +78,19 @@ public interface Channel extends Processor, Navigate<Processor> {
     /**
      * Initializes the channel.
      *
-     * @param outputDefinition  the route defintion the {@link Channel} represents
+     * @param outputDefinition  the route definition the {@link Channel} represents
      * @param routeContext      the route context
-     * @throws Exception is thrown if some error occured
+     * @throws Exception is thrown if some error occurred
      */
     void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception;
+
+    /**
+     * If the initialized output definition contained outputs (children) then we need to
+     * set the child so we can leverage fine grained tracing
+     *
+     * @param child the child
+     */
+    void setChildDefinition(ProcessorDefinition<?> child);
 
     /**
      * Gets the wrapped output that at runtime should be delegated to.

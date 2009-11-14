@@ -185,4 +185,17 @@ public interface RouteContext extends RuntimeConfiguration {
      * @param routePolicy the custom route policy
      */
     void setRoutePolicy(RoutePolicy routePolicy);
+
+    /**
+     * A private counter that increments, is used to as book keeping
+     * when building a route based on the model
+     * <p/>
+     * We need this special book keeping be able to assign the correct
+     * {@link org.apache.camel.model.ProcessorDefinition} to the {@link org.apache.camel.Channel}
+     *
+     * @param node the current node
+     * @return the current count
+     */
+    int getAndIncrement(ProcessorDefinition<?> node);
+
 }

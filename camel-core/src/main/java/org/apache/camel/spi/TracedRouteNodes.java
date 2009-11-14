@@ -22,13 +22,12 @@ import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * A Unit of work that is also traceable with the
- * {@link org.apache.camel.processor.interceptor.TraceInterceptor} so we can trace the excact
- * route path a given {@link org.apache.camel.Exchange} has been processed.
+ * Tracing information used by {@link org.apache.camel.processor.interceptor.TraceInterceptor}
+ * so we can trace the exact route path a given {@link org.apache.camel.Exchange} has been processed.
  *
  * @version $Revision$
  */
-public interface TraceableUnitOfWork extends UnitOfWork {
+public interface TracedRouteNodes {
 
     /**
      * Adds the entry that was intercepted
@@ -39,19 +38,42 @@ public interface TraceableUnitOfWork extends UnitOfWork {
 
     /**
      * Gets the last node, is <tt>null</tt> if no last exists.
+     *
+     * @return the last node
      */
     RouteNode getLastNode();
 
     /**
      * Gets the 2nd last node, is <tt>null</tt> if no last exists.
+     *
+     * @return the 2nd last
      */
     RouteNode getSecondLastNode();
 
     /**
      * Gets the current list of nodes, representing the route path the
      * current {@link org.apache.camel.Exchange} has currently taken.
+     *
+     * @return the node path
      */
     List<RouteNode> getNodes();
+
+    /**
+     * Prepares a new block for tracing.
+     * <p/>
+     * This is needed when you have child block such as a multicast or aggregator
+     */
+    void pushBlock();
+
+    /**
+     * Pops the last block from tracing.
+     */
+    void popBlock();
+
+    /**
+     * Clears all traced information
+     */
+    void clear();
 
     /**
      * A private counter that increments, is used to as book keeping how far this
@@ -63,5 +85,6 @@ public interface TraceableUnitOfWork extends UnitOfWork {
      * @param node the intercept node
      * @return the current count
      */
-    int getAndIncrement(ProcessorDefinition<?> node);
+    int getAndIncrementCounter(ProcessorDefinition<?> node);
+
 }
