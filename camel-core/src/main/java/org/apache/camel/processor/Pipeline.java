@@ -166,6 +166,6 @@ public class Pipeline extends MulticastProcessor implements Processor, Traceable
 
     @Override
     public String getTraceLabel() {
-        return "Pipeline";
+        return "pipeline";
     }
 }

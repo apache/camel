@@ -96,8 +96,8 @@ public class Tracer implements InterceptStrategy, Service {
         return logger;
     }
 
-    public Processor wrapProcessorInInterceptors(CamelContext context, 
-            ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
+    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
+                                                 Processor target, Processor nextTarget) throws Exception {
 
         // Force the creation of an id, otherwise the id is not available when the trace formatter is
         // outputting trace information
@@ -223,7 +223,7 @@ public class Tracer implements InterceptStrategy, Service {
      * <p/>
      * Can be used to store tracing as files, in a database or whatever. The routing of the Exchange
      * will happen synchronously and the original route will first continue when this destination routing
-     * has been compledted.
+     * has been completed.
      */
     public void setDestinationUri(String destinationUri) {
         this.destinationUri = destinationUri;

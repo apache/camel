@@ -133,7 +133,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     }
 
     public String getTraceLabel() {
-        return "StreamResequence";
+        return "streamResequence";
     }
 
     @Override

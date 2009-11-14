@@ -59,7 +59,7 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
     }
 
     public String getTraceLabel() {
-        return "RoutingSlip[" + header + "]";
+        return "routingSlip[" + header + "]";
     }
 
     public void process(Exchange exchange) throws Exception {

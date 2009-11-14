@@ -52,6 +52,6 @@ public class TransformProcessor extends DelegateProcessor implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Transform[" + expression + "]";
+        return "transform[" + expression + "]";
     }
 }

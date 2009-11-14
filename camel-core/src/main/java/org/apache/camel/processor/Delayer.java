@@ -42,7 +42,7 @@ public class Delayer extends DelayProcessorSupport implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Delayer[" + delay + "]";
+        return "delay[" + delay + "]";
     }
 
     public Expression getDelay() {

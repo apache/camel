@@ -27,7 +27,7 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
 
     public void testAggregatorTimerAndTracer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("c");
 
         assertMockEndpointsSatisfied();
     }
@@ -41,6 +41,7 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
                 from("seda:splitted").
                     aggregate(header("id")).
                     to("mock:result");
+
                 from("timer://kickoff?period=9999910000").
                     setHeader("id").constant("foo").setBody().constant("a b c").
                     split(body().tokenize(" ")).to("seda:splitted");

@@ -66,6 +66,11 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     @Override
+    public String getLabel() {
+        return "doTry";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor tryProcessor = createOutputsProcessor(routeContext, getOutputsWithoutCatches());
 

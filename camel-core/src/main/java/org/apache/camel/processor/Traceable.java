@@ -27,7 +27,7 @@ public interface Traceable {
     /**
      * Gets the trace label used for logging when tracing is enabled.
      * <p/>
-     * The lable should be short and precise.
+     * The label should be short and precise.
      *
      * @return  the label
      */

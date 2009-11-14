@@ -63,7 +63,7 @@ public class RollbackProcessor implements Processor, Traceable {
     }
 
     public String getTraceLabel() {
-        return "Rollback";
+        return "rollback";
     }
 
     public boolean isMarkRollbackOnly() {

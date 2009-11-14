@@ -61,7 +61,7 @@ public class LoopProcessor extends DelegateProcessor implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Loop[" + expression + "]";
+        return "loop[" + expression + "]";
     }
 
     public Expression getExpression() {

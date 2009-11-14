@@ -52,7 +52,7 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
     }
 
     public String getTraceLabel() {
-        return "Try";
+        return "try";
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -104,6 +104,7 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
                     LOG.trace("This TryProcessor catches the exception: " + caught.getClass().getName() + " caused by: " + e.getMessage());
                 }
 
+                // TODO: No need to make a copy
                 // lets attach the exception to the exchange
                 Exchange localExchange = exchange.copy();
                 

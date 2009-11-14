@@ -43,7 +43,7 @@ public class InstrumentationProcessor extends DelegateProcessor {
 
     @Override
     public String toString() {
-        return "Instrumention" + (type != null ? ":" + type : "") + "[" + processor + "]";
+        return "Instrumentation" + (type != null ? ":" + type : "") + "[" + processor + "]";
     }
 
     public void setCounter(ManagedPerformanceCounter counter) {

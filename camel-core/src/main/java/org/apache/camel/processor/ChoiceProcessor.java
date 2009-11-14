@@ -81,7 +81,7 @@ public class ChoiceProcessor extends ServiceSupport implements Processor, Naviga
     }
 
     public String getTraceLabel() {
-        return "Choice";
+        return "choice";
     }
 
     public List<FilterProcessor> getFilters() {

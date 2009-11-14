@@ -64,7 +64,7 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
 
     @Override
     public String getTraceLabel() {
-        return "Split[" + expression + "]";
+        return "split[" + expression + "]";
     }
 
     @Override

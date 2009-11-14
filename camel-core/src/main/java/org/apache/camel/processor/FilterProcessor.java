@@ -56,7 +56,7 @@ public class FilterProcessor extends DelegateProcessor implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Filter[if: " + predicate + "]";
+        return "filter[if: " + predicate + "]";
     }
 
     public Predicate getPredicate() {

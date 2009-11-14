@@ -107,7 +107,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public String getShortName() {
         return "aggregate";
     }
-    
+
+    @Override
+    public String getLabel() {
+        return "aggregate";
+    }
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return createAggregator(routeContext);

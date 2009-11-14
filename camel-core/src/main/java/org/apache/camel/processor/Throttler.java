@@ -52,7 +52,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Throttle[" + maximumRequestsPerPeriod + " per: " + timePeriodMillis + "]";
+        return "throttle[" + maximumRequestsPerPeriod + " per: " + timePeriodMillis + "]";
     }
 
     // Properties

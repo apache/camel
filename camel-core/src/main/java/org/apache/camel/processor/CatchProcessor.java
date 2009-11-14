@@ -47,7 +47,7 @@ public class CatchProcessor extends DelegateProcessor implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Catch";
+        return "catch";
     }
 
     /**

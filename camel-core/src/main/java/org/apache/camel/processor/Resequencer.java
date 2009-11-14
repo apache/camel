@@ -53,7 +53,7 @@ public class Resequencer extends BatchProcessor implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Resequence";
+        return "resequencer";
     }
 
     // Implementation methods

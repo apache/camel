@@ -66,6 +66,6 @@ public class Aggregator extends BatchProcessor implements Traceable {
     }
 
     public String getTraceLabel() {
-        return "Aggregate[" + correlationExpression + "]";
+        return "aggregate[" + correlationExpression + "]";
     }
 }

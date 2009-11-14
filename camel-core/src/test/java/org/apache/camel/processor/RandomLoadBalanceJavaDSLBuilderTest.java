@@ -53,7 +53,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
     }
 
     public void testNavigateRouteAsJavaDSL() throws Exception {
-        // this one navigate using the route definiton
+        // this one navigate using the route definition
 
         StringBuilder sb = new StringBuilder();
 

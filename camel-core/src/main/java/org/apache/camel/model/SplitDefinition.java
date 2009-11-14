@@ -78,6 +78,11 @@ public class SplitDefinition extends ExpressionNode {
     }
 
     @Override
+    public String getLabel() {
+        return "split";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         aggregationStrategy = createAggregationStrategy(routeContext);
