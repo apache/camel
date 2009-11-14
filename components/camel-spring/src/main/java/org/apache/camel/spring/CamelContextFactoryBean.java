@@ -303,6 +303,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             initOnExceptions(route);
             // and then for toAsync
             initToAsync(route);
+            // configure parents
+            initParent(route);
         }
 
         if (dataFormats != null) {
@@ -317,6 +319,27 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         findRouteBuilders();
         installRoutes();
+    }
+
+    private void initParent(RouteDefinition route) {
+        for (ProcessorDefinition<?> output : route.getOutputs()) {
+            output.setParent(route);
+            if (output.getOutputs() != null) {
+                // recursive the outputs
+                initParent(output);
+            }
+        }
+    }
+
+    private void initParent(ProcessorDefinition<?> parent) {
+        List<ProcessorDefinition> children = parent.getOutputs();
+        for (ProcessorDefinition child : children) {
+            child.setParent(parent);
+            if (child.getOutputs() != null) {
+                // recursive the children
+                initParent(child);
+            }
+        }
     }
 
     private void initToAsync(RouteDefinition route) {
