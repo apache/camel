@@ -81,9 +81,7 @@ public class RecipientList extends ServiceSupport implements Processor {
             Object recipient = iter.next();
             Endpoint endpoint = resolveEndpoint(exchange, recipient);
             Producer producer = getProducerCache(exchange).getProducer(endpoint);
-            // wrap in unit of work
-            Processor target = new UnitOfWorkProcessor(producer);
-            processors.add(target);
+            processors.add(producer);
         }
         MulticastProcessor mp = new MulticastProcessor(processors, new UseLatestAggregationStrategy());
         mp.process(exchange);
