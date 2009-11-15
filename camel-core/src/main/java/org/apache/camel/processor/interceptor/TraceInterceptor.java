@@ -26,12 +26,19 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultRouteNode;
+import org.apache.camel.impl.DoCatchRouteNode;
+import org.apache.camel.impl.DoFinallyRouteNode;
+import org.apache.camel.impl.AggregateRouteNode;
 import org.apache.camel.impl.OnCompletionRouteNode;
+import org.apache.camel.impl.OnExceptionRouteNode;
+import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.CatchDefinition;
+import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.TryDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -110,18 +117,32 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                 if (exchange.getUnitOfWork() != null) {
                     TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
 
-                    if (node instanceof OnCompletionDefinition || node instanceof OnExceptionDefinition || node instanceof TryDefinition) {
+                    if (node instanceof OnCompletionDefinition || node instanceof OnExceptionDefinition) {
                         // skip any of these as its just a marker definition
                         trace = false;
-                    } else if (exchange.getProperty(Exchange.ON_COMPLETION) != null) {
+                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(OnCompletionDefinition.class, node)) {
                         // special for on completion tracing
                         traceOnCompletion(traced, exchange);
+                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(OnExceptionDefinition.class, node)) {
+                        // special for on exception
+                        traceOnException(traced, exchange);
+                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(CatchDefinition.class, node)) {
+                        // special for do catch
+                        traceDoCatch(traced, exchange);
+                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(FinallyDefinition.class, node)) {
+                        // special for do finally
+                        traceDoFinally(traced, exchange);
+                    } else if (ProcessorDefinitionHelper.isFirstChildOfType(AggregateDefinition.class, node)) {
+                        // special for aggregate
+                        traceAggregate(traced, exchange);
                     } else {
                         // regular so just add it
                         traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
                     }
                 } else {
-                    LOG.trace("Cannot trace as this Exchange does not have an UnitOfWork: " + exchange);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Cannot trace as this Exchange does not have an UnitOfWork: " + exchange);
+                    }
                 }
             }
 
@@ -154,17 +175,42 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     }
 
     private void traceOnCompletion(TracedRouteNodes traced, Exchange exchange) {
-        // if ON_COMPLETION is not null then we are actually doing the onCompletion routing
-        // add the onCompletion and then the processor that is invoked next
-        if (!(traced.getSecondLastNode() instanceof OnCompletionRouteNode)) {
-            // only and on completion once when we start the on completion routing
-            traced.addTraced(new OnCompletionRouteNode(exchange));
-            // add the next processor as well
-            traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
-        } else {
-            // regular during on completion so add it
-            traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
-        }
+        traced.addTraced(new OnCompletionRouteNode());
+        // do not log and trace as onCompletion should be a new event on its own
+        // add the next step as well so we have onCompletion -> new step
+        traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+    }
+
+    private void traceOnException(TracedRouteNodes traced, Exchange exchange) throws Exception {
+        traced.addTraced(new DefaultRouteNode(traced.getLastNode().getProcessorDefinition(), traced.getLastNode().getProcessor()));
+        traced.addTraced(new OnExceptionRouteNode());
+        // log and trace so we have the from -> onException event as well
+        logExchange(exchange);
+        traceExchange(exchange);
+        traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+    }
+
+    private void traceDoCatch(TracedRouteNodes traced, Exchange exchange) throws Exception {
+        traced.addTraced(new DefaultRouteNode(traced.getLastNode().getProcessorDefinition(), traced.getLastNode().getProcessor()));
+        traced.addTraced(new DoCatchRouteNode());
+        // log and trace so we have the from -> doCatch event as well
+        logExchange(exchange);
+        traceExchange(exchange);
+        traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+    }
+
+    private void traceDoFinally(TracedRouteNodes traced, Exchange exchange) throws Exception {
+        traced.addTraced(new DefaultRouteNode(traced.getLastNode().getProcessorDefinition(), traced.getLastNode().getProcessor()));
+        traced.addTraced(new DoFinallyRouteNode());
+        // log and trace so we have the from -> doFinally event as well
+        logExchange(exchange);
+        traceExchange(exchange);
+        traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
+    }
+
+    private void traceAggregate(TracedRouteNodes traced, Exchange exchange) {
+        traced.addTraced(new AggregateRouteNode((AggregateDefinition) node.getParent()));
+        traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
     }
 
     protected void traceIntercept(InterceptDefinition intercept, TracedRouteNodes traced, Exchange exchange) throws Exception {

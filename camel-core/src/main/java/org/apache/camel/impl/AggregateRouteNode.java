@@ -19,14 +19,18 @@ package org.apache.camel.impl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
+import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * @version $Revision$
  */
-public class OnExceptionRouteNode implements RouteNode {
+public class AggregateRouteNode implements RouteNode {
 
-    public OnExceptionRouteNode() {
+    private AggregateDefinition aggregateDefinition;
+
+    public AggregateRouteNode(AggregateDefinition aggregateDefinition) {
+        this.aggregateDefinition = aggregateDefinition;
     }
 
     public Processor getProcessor() {
@@ -38,7 +42,8 @@ public class OnExceptionRouteNode implements RouteNode {
     }
 
     public String getLabel(Exchange exchange) {
-        return "OnException[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
+        String expressionString = (aggregateDefinition.getExpression() != null) ? aggregateDefinition.getExpression().getLabel() : "";
+        return "aggregate[" + expressionString + "]";
     }
 
     public boolean isAbstract() {
@@ -47,6 +52,6 @@ public class OnExceptionRouteNode implements RouteNode {
 
     @Override
     public String toString() {
-        return "OnExceptionRouteNode";
+        return "AggregateRouteNode";
     }
 }

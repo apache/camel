@@ -19,14 +19,15 @@ package org.apache.camel.impl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
+import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * @version $Revision$
  */
-public class OnExceptionRouteNode implements RouteNode {
+public class DoCatchRouteNode implements RouteNode {
 
-    public OnExceptionRouteNode() {
+    public DoCatchRouteNode() {
     }
 
     public Processor getProcessor() {
@@ -38,7 +39,7 @@ public class OnExceptionRouteNode implements RouteNode {
     }
 
     public String getLabel(Exchange exchange) {
-        return "OnException[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
+        return "doCatch[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
     }
 
     public boolean isAbstract() {
@@ -47,6 +48,6 @@ public class OnExceptionRouteNode implements RouteNode {
 
     @Override
     public String toString() {
-        return "OnExceptionRouteNode";
+        return "DoCatchRouteNode";
     }
 }

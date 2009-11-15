@@ -22,16 +22,11 @@ import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * A default implementation of the {@link org.apache.camel.RouteNode}
- *
  * @version $Revision$
  */
 public class OnCompletionRouteNode implements RouteNode {
 
-    private final Exchange exchange;
-
-    public OnCompletionRouteNode(Exchange exchange) {
-        this.exchange = exchange;
+    public OnCompletionRouteNode() {
     }
 
     public Processor getProcessor() {

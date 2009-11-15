@@ -52,7 +52,7 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
     }
 
     public String getTraceLabel() {
-        return "try";
+        return "doTry";
     }
 
     public void process(Exchange exchange) throws Exception {

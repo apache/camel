@@ -73,8 +73,8 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
 
             // get the list of intercepted nodes
             List<RouteNode> list = traced.getNodes();
-            // get the 2rd last as its the bean
-            Processor last = list.get(list.size() - 2).getProcessor();
+            // get the 3rd last as its the bean
+            Processor last = list.get(list.size() - 3).getProcessor();
 
             // wrapped by JMX
             if (last instanceof InstrumentationProcessor) {

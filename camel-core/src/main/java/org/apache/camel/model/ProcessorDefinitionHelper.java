@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Helper class for ProcessorDefinition and the other model classes.
  */
-final class ProcessorDefinitionHelper {
+public final class ProcessorDefinitionHelper {
 
     private ProcessorDefinitionHelper() {
     }
@@ -56,6 +56,29 @@ final class ProcessorDefinitionHelper {
             return null;
         }
         return found.iterator().next();
+    }
+
+    /**
+     * Is the given child the first in the outputs from the parent?
+     *
+     * @param parentType the type the parent must be
+     * @param node the node
+     * @return <tt>true</tt> if first child, <tt>false</tt> otherwise
+     */
+    public static boolean isFirstChildOfType(Class parentType, ProcessorDefinition node) {
+        if (node == null || node.getParent() == null) {
+            return false;
+        }
+
+        if (node.getParent().getOutputs().isEmpty()) {
+            return false;
+        }
+
+        if (!(node.getParent().getClass().equals(parentType))) {
+            return false;
+        }
+
+        return node.getParent().getOutputs().get(0).equals(node);
     }
 
     @SuppressWarnings("unchecked")
@@ -96,5 +119,6 @@ final class ProcessorDefinitionHelper {
             doFindType(children, type, found);
         }
     }
+
 
 }

@@ -24,9 +24,9 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * @version $Revision$
  */
-public class OnExceptionRouteNode implements RouteNode {
+public class DoFinallyRouteNode implements RouteNode {
 
-    public OnExceptionRouteNode() {
+    public DoFinallyRouteNode() {
     }
 
     public Processor getProcessor() {
@@ -38,7 +38,7 @@ public class OnExceptionRouteNode implements RouteNode {
     }
 
     public String getLabel(Exchange exchange) {
-        return "OnException[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
+        return "doFinally";
     }
 
     public boolean isAbstract() {
@@ -47,6 +47,6 @@ public class OnExceptionRouteNode implements RouteNode {
 
     @Override
     public String toString() {
-        return "OnExceptionRouteNode";
+        return "DoFinallyRouteNode";
     }
 }

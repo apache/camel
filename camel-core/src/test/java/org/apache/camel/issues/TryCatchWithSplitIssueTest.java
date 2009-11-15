@@ -41,6 +41,17 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSplitOnlyWithErrorIsHandled() throws Exception {
+        MockEndpoint error = getMockEndpoint("mock:error");
+        error.expectedBodiesReceived("James");
+        error.message(0).property(Exchange.EXCEPTION_CAUGHT).isNotNull();
+        error.message(0).property(Exchange.EXCEPTION_CAUGHT).convertTo(String.class).isEqualTo("This is a dummy error James!");
+
+        template.sendBody("direct:start", "James");
+
+        assertMockEndpointsSatisfied();
+    }
+
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -51,13 +62,18 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                context.setTracing(true);
+
                 from("direct:start")
                     .split(body().tokenize("@"))
                     .doTry()
                         .to("bean:error")
                         .to("mock:result")
-                    .doCatch(java.lang.Exception.class)
+                    .doCatch(Exception.class)
                         .to("mock:error")
+                    .doFinally()
+                        .to("mock:foo")
+                        .to("mock:bar")
                     .end();
             }
 
@@ -68,7 +84,7 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
 
         public String dummyException(String payload) throws Exception {
             if (payload.equals("James")) {
-                throw new Exception("This is a dummy error James!");
+                throw new IllegalArgumentException("This is a dummy error James!");
             }
             return "Hi " + payload;
         }

@@ -40,6 +40,7 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
                 
                 from("seda:splitted").
                     aggregate(header("id")).
+                    to("mock:foo").
                     to("mock:result");
 
                 from("timer://kickoff?period=9999910000").
