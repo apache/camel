@@ -3,8 +3,7 @@
   <repository>mvn:org.apache.felix.karaf/apache-felix-karaf/${karaf-version}/xml/features</repository>
   <feature name='camel' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
-    <feature version='${pom.version}'>camel-spring</feature>
-    <feature version='${pom.version}'>camel-osgi</feature>    
+    <feature version='${pom.version}'>camel-spring-osgi</feature>
   </feature>
   <feature name='camel-core' version='${pom.version}'>
     <feature version="${spring-version}">spring</feature>
@@ -14,6 +13,15 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${jaxb-bundle-version}</bundle>
     <bundle>mvn:org.fusesource.commonman/commons-management/${commons-management-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${pom.version}</bundle>
+  </feature>
+  <feature name='camel-spring-osgi' version='${pom.version}'>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle
+>
+    <feature version='${spring-version}'>spring</feature>
+    <feature version='${spring-osgi-version}'>spring-dm</feature>
+    <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-spring-osgi/${pom.version}</bundle>
   </feature>
   <feature name='camel-spring' version='${pom.version}'>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
