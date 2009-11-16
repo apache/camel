@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-spring-osgi</artifactId>
+  <name>Camel :: Spring :: OSGi</name>
+  <description>Camel Spring support with OSGi </description>
+  <packaging>bundle</packaging>
+
+  <properties>
+      <camel.osgi.import>
+        !org.apache.camel.spring.*,
+        !org.apache.camel.component,
+        !org.apache.camel.component.event,
+        !org.apache.camel.component.validator,
+        !org.apache.camel.component.xslt,
+        !javax.xml.bind.annotation.adapters,
+        org.apache.camel.*;${camel.osgi.import.strict.version},
+        *
+      </camel.osgi.import>
+      <camel.osgi.export>
+        org.apache.camel.osgi.*;${camel.osgi.version},
+        org.apache.camel.spring.*;${camel.osgi.version},
+        org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
+        org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
+        org.apache.camel.component.test;${camel.osgi.split.pkg};${camel.osgi.version},
+        org.apache.camel.component.validator;${camel.osgi.split.pkg};${camel.osgi.version},
+        org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version}
+      </camel.osgi.export>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-osgi</artifactId>
+    </dependency> 
+  </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>org.apache.camel:camel-spring</include>
+                                    <include>org.apache.camel:camel-osgi</include>
+                                </includes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>org.apache.camel:camel-spring</artifact>
+                                    <excludes>
+                                        <exclude>**/org/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.apache.camel:camel-osgi</artifact>
+                                    <excludes>
+                                        <exclude>**/org/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+

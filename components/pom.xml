@@ -87,6 +87,7 @@
     <module>camel-spring</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-javaconfig</module>
+    <module>camel-spring-osgi</module>
     <module>camel-sql</module>
     <module>camel-stringtemplate</module>
     <module>camel-stream</module>
