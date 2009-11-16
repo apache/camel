@@ -46,6 +46,9 @@ public class HttpStreamCacheFileTest extends ContextTestSupport {
         String out = context.getTypeConverter().convertTo(String.class, response); 
         assertEquals("Bye World", out);
 
+        // give time for files to be deleted etc.
+        Thread.sleep(2000);
+
         // the temporary files should have been deleted
         File file = new File("./target/cachedir");
         String[] files = file.list();
@@ -61,6 +64,9 @@ public class HttpStreamCacheFileTest extends ContextTestSupport {
             String s = context.getTypeConverter().convertTo(String.class, hofe.getResponseBody());
             assertEquals("Response body", body, s);
         }
+
+        // give time for files to be deleted etc.
+        Thread.sleep(2000);
 
         // the temporary files should have been deleted
         File file = new File("./target/cachedir");
