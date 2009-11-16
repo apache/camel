@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.util.CastUtils;
@@ -28,6 +29,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 public class ServletComponent extends HttpComponent {
@@ -67,7 +69,7 @@ public class ServletComponent extends HttpComponent {
                 CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint result = new ServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
+        ServletEndpoint result = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
@@ -76,6 +78,14 @@ public class ServletComponent extends HttpComponent {
         return result;
     }
 
+    protected ServletEndpoint createServletEndpoint(String endpointUri,
+            ServletComponent component, URI httpUri, HttpClientParams params,
+            HttpConnectionManager httpConnectionManager,
+            HttpClientConfigurer clientConfigurer) throws Exception {
+        return new ServletEndpoint(endpointUri, component, httpUri, params,
+                httpConnectionManager, clientConfigurer);
+    }
+    
     public void connect(HttpConsumer consumer) throws Exception {
         ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
         CamelServlet servlet = getCamelServlet(endpoint.getServletName());

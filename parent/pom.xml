@@ -72,6 +72,7 @@
     <hamcrest-version>1.2-dev1</hamcrest-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
+    <httpunit-version>1.6.2</httpunit-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <groovy-version>1.6.3</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
@@ -936,6 +937,11 @@
         <artifactId>easymockclassextension</artifactId>
         <version>${easymock-version}</version>
       </dependency>
+     <dependency>
+        <groupId>httpunit</groupId>
+        <artifactId>httpunit</artifactId>
+        <version>${httpunit-version}</version>
+     </dependency>
 
       <!-- default JPA support -->
       <dependency>

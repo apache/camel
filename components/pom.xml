@@ -44,6 +44,7 @@
     <module>camel-flatpack</module>
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
+    <module>camel-gae</module>
     <module>camel-guice</module>
     <module>camel-groovy</module>
     <module>camel-http</module>
