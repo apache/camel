@@ -487,6 +487,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
         <reportSets>
           <reportSet>
             <configuration />
