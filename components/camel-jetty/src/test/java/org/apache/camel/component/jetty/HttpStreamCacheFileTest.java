@@ -48,6 +48,9 @@ public class HttpStreamCacheFileTest extends CamelTestSupport {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
+        // give time for files to be deleted etc.
+        Thread.sleep(2000);
+
         // the temporary files should have been deleted
         File file = new File("./target/cachedir");
         String[] files = file.list();
@@ -64,6 +67,9 @@ public class HttpStreamCacheFileTest extends CamelTestSupport {
             String s = context.getTypeConverter().convertTo(String.class, hofe.getResponseBody());
             assertEquals("Response body", body, s);
         }
+
+        // give time for files to be deleted etc.
+        Thread.sleep(2000);
 
         // the temporary files should have been deleted
         File file = new File("./target/cachedir");
