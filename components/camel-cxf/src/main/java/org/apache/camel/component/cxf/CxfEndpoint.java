@@ -189,7 +189,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     protected Bus doGetBus() {
-        return BusFactory.getDefaultBus();
+        return BusFactory.getThreadDefaultBus();
     }
     
     /**
