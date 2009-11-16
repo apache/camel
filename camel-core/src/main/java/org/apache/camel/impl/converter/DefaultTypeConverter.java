@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -41,7 +42,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
-
 /**
  * Default implementation of a type converter registry used for
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
@@ -56,7 +56,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     private final List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
     private Injector injector;
     private final FactoryFinder factoryFinder;
-    private boolean loaded;
+    private AtomicBoolean loaded = new AtomicBoolean();
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.injector = injector;
@@ -212,10 +212,14 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         TypeMapping key = new TypeMapping(toType, fromType);
         synchronized (typeMappings) {
             TypeConverter converter = typeMappings.get(key);
-            if (converter != null) {
-                LOG.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
+            // only override it if its different
+            // as race conditions can lead to many threads trying to promote the same fallback converter
+            if (typeConverter != converter) {
+                if (converter != null) {
+                    LOG.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
+                }
+                typeMappings.put(key, typeConverter);
             }
-            typeMappings.put(key, typeConverter);
         }
     }
 
@@ -365,8 +369,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
      * Checks if the registry is loaded and if not lazily load it
      */
     protected synchronized void checkLoaded() {
-        if (!loaded) {
-            loaded = true;
+        // must be synchronized to let other threads wait for it to initialize
+        // also use a atomic boolean so its state is visible for the other threads
+        // this ensure that at most one thread is loading all the type converters
+        if (loaded.compareAndSet(false, true)) {
+            LOG.debug("Loading type converters ...");
             try {
                 for (TypeConverterLoader typeConverterLoader : typeConverterLoaders) {
                     typeConverterLoader.load(this);
@@ -381,6 +388,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
+            LOG.debug("Loading type converters done");
         }
     }
 

@@ -671,7 +671,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public TypeConverter getTypeConverter() {
         if (typeConverter == null) {
-            typeConverter = createTypeConverter();
+            synchronized (this) {
+                // we can synchronize on this as there is only one instance
+                // of the camel context (its the container)
+                typeConverter = createTypeConverter();
+            }
         }
         return typeConverter;
     }
