@@ -158,6 +158,7 @@ public final class CxfConverter {
      * @param registry type converter registry
      * @return the converted value of the desired type or null if no suitable converter found
      */
+    @SuppressWarnings("unchecked")
     @FallbackConverter
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, 
             TypeConverterRegistry registry) {
@@ -177,6 +178,8 @@ public final class CxfConverter {
                     }
                 }
             }
+            // return void to indicate its not possible to convert at this time
+            return (T) Void.TYPE;
         }
         
         return null;
