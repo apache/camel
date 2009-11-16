@@ -20,7 +20,7 @@
              version="1.0">
 
     <persistence-unit name="tracer" transaction-type="RESOURCE_LOCAL">
-        <class>org.apache.camel.processor.interceptor.JpaTraceEventMessage</class>
+        <class>org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
