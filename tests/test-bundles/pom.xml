@@ -64,7 +64,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>${camel.osgi.export}</Export-Package>
                         <Import-Package>${camel.osgi.import.pkg}*</Import-Package>
                         <Private-Package>${camel.osgi.private.pkg}</Private-Package>

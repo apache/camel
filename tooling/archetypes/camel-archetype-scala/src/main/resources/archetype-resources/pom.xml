@@ -21,8 +21,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>${groupId}</groupId>
-  <artifactId>${artifactId}</artifactId>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
   <packaging>bundle</packaging>
   <version>${version}</version>
 
@@ -63,8 +63,8 @@
 	    <configuration>
           <excludeDependencies>true</excludeDependencies>
 	      <instructions>
-	        <Bundle-Name>${artifactId}</Bundle-Name>
-	        <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
+	        <Bundle-Name>${project.artifactId}</Bundle-Name>
+	        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 	        <Export-Package>${package}*</Export-Package>
 	        <Implementation-Title>Apache Camel Scala DSL Router</Implementation-Title>
 	        <Implementation-Version>${project.version}</Implementation-Version>

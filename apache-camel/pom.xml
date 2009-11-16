@@ -410,10 +410,10 @@
               <outputDirectory>${project.build.directory}</outputDirectory>
               <artifactItems>
                 <artifactItem>
-                  <groupId>${pom.groupId}</groupId>
+                  <groupId>${project.groupId}</groupId>
                   <artifactId>camel-bundle</artifactId>
-                  <version>${pom.version}</version>
-                  <destFileName>${pom.artifactId}-${pom.version}.jar</destFileName>
+                  <version>${project.version}</version>
+                  <destFileName>${project.artifactId}-${project.version}.jar</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -435,7 +435,7 @@
               <descriptors>
                 <descriptor>src/main/descriptors/unix-bin.xml</descriptor>
               </descriptors>
-              <finalName>${pom.artifactId}-${pom.version}</finalName>
+              <finalName>${project.artifactId}-${project.version}</finalName>
               <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
@@ -449,7 +449,7 @@
               <descriptors>
                 <descriptor>src/main/descriptors/windows-bin.xml</descriptor>
               </descriptors>
-              <finalName>${pom.artifactId}-${pom.version}</finalName>
+              <finalName>${project.artifactId}-${project.version}</finalName>
               <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
@@ -520,10 +520,10 @@
                   <outputDirectory>${project.build.directory}/javadoc/camel-core</outputDirectory>
                   <artifactItems>
                     <artifactItem>
-                      <groupId>${pom.groupId}</groupId>
+                      <groupId>${project.groupId}</groupId>
                       <artifactId>camel-core</artifactId>
                       <classifier>javadoc</classifier>
-                      <version>${pom.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -538,10 +538,10 @@
                   <outputDirectory>${project.build.directory}/javadoc/camel-spring</outputDirectory>
                   <artifactItems>
                     <artifactItem>
-                      <groupId>${pom.groupId}</groupId>
+                      <groupId>${project.groupId}</groupId>
                       <artifactId>camel-spring</artifactId>
                       <classifier>javadoc</classifier>
-                      <version>${pom.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                   </artifactItems>
                 </configuration>

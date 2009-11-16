@@ -209,7 +209,7 @@
                             <artifactItem>
                                 <groupId>org.apache.camel</groupId>
                                 <artifactId>camel-blueprint</artifactId>
-                                <version>${pom.version}</version>
+                                <version>${project.version}</version>
                                 <type>jar</type>
                                 <overWrite>false</overWrite>
                                 <outputDirectory>${project.build.directory}/schema</outputDirectory>

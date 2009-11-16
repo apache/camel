@@ -140,7 +140,7 @@
     <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
     <camel.osgi.dynamic />
-    <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
+    <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
 
     <!-- encoding -->

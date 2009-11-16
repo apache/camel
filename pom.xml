@@ -345,7 +345,7 @@
 	    <configuration>
               <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
 	      <instructions>
-	        <Bundle-Name>${artifactId}</Bundle-Name>
+	        <Bundle-Name>${project.artifactId}</Bundle-Name>
 	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
             <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
 	        <Export-Package>${camel.osgi.export}</Export-Package>

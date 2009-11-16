@@ -54,7 +54,7 @@
               <style type="text/css">
                 @page :left {
                   @top-left {
-                    content: "Apache Camel ${pom.version} Developer's Manual";
+                    content: "Apache Camel ${project.version} Developer's Manual";
                   }
                 }
               </style>
@@ -63,7 +63,7 @@
               <h3 id="replaceme">.*</h3>
           ]]></replaceToken>
           <replaceValue><![CDATA[
-              <h3>Version ${pom.version}</h3>
+              <h3>Version ${project.version}</h3>
           ]]></replaceValue>
         </configuration>
       </plugin>

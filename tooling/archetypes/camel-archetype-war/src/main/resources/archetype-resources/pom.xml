@@ -21,8 +21,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>${groupId}</groupId>
-  <artifactId>${artifactId}</artifactId>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
   <version>${version}</version>
 
   <name>Camel Router Application</name>

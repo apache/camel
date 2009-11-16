@@ -79,7 +79,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${pom.version}</version>
+        <version>${project.version}</version>
       </plugin>
       
       <!-- 
@@ -109,7 +109,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${pom.version}</version>
+        <version>${project.version}</version>
       </plugin>
     </plugins>
   </reporting>
