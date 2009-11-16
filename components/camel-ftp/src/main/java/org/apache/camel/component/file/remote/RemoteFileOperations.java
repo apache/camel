@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
-
 /**
  * Remote file operations based on some backing framework
  */
@@ -28,7 +27,7 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     /**
      * Connects to the remote server
      *
-     * @param configuration configuraiton
+     * @param configuration configuration
      * @return true if connected
      * @throws GenericFileOperationFailedException can be thrown
      */
@@ -43,10 +42,18 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     boolean isConnected() throws GenericFileOperationFailedException;
 
     /**
-     * Discconects from the remote server
+     * Disconnects from the remote server
      *
      * @throws GenericFileOperationFailedException can be thrown
      */
     void disconnect() throws GenericFileOperationFailedException;
+
+    /**
+     * Sends a noop command to the remote server
+     *
+     * @throws GenericFileOperationFailedException can be thrown
+     * @return <tt>true</tt> if the noop was a success, <tt>false</tt> otherwise
+     */
+    boolean sendNoop() throws GenericFileOperationFailedException;
 
 }

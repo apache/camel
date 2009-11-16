@@ -461,6 +461,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException(e.getMessage(), e);
         }
-    }   
+    }
 
+    public boolean sendNoop() throws GenericFileOperationFailedException {
+        // is not implemented
+        return true;
+    }
 }

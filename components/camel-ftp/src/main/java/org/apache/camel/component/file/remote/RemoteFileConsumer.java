@@ -33,6 +33,10 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
+    protected RemoteFileOperations getOperations() {
+        return (RemoteFileOperations) operations;
+    }
+
     protected boolean prePollCheck() throws Exception {
         connectIfNecessary();
         if (!loggedIn) {
@@ -52,12 +56,12 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected void disconnect() {
         // disconnect when stopping
         try {
-            if (((RemoteFileOperations) operations).isConnected()) {
+            if (getOperations().isConnected()) {
                 loggedIn = false;
                 if (log.isDebugEnabled()) {
                     log.debug("Disconnecting from: " + remoteServer());
                 }
-                ((RemoteFileOperations) operations).disconnect();
+                getOperations().disconnect();
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
@@ -66,11 +70,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!((RemoteFileOperations) operations).isConnected() || !loggedIn) {
+        if (!loggedIn) {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to: " + remoteServer());
             }
-            loggedIn = ((RemoteFileOperations) operations).connect((RemoteFileConfiguration) endpoint.getConfiguration());
+            loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration());
             if (loggedIn) {
                 log.info("Connected and logged in to: " + remoteServer());
             }

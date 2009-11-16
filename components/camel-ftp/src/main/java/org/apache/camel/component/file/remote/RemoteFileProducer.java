@@ -90,6 +90,33 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     @Override
     protected void preWriteCheck() throws Exception {
+        // before writing send a noop to see if the connection is alive and works
+        boolean noop = false;
+        try {
+            connectIfNecessary();
+            if (loggedIn) {
+                noop = getOperations().sendNoop();
+            }
+        } catch (Exception e) {
+            log.error(e);
+            noop = false;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("preWriteCheck send noop success: " + noop);
+        }
+
+        // if not alive then force a disconnect so we reconnect again
+        if (!noop) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("preWriteCheck forcing a disconnect as noop failed");
+                }
+                disconnect();
+            } catch (IOException e) {
+                // ignore for now
+            }
+        }
+
         connectIfNecessary();
         if (!loggedIn) {
             // must be logged in to be able to upload the file
@@ -117,7 +144,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!(getOperations()).isConnected() || !loggedIn) {
+        if (!loggedIn) {
             if (log.isDebugEnabled()) {
                 log.debug("Not already connected/logged in. Connecting to: " + getEndpoint());
             }

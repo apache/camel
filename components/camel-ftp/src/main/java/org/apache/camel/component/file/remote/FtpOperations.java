@@ -424,6 +424,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    public boolean sendNoop() throws GenericFileOperationFailedException {
+        try {
+            return client.sendNoOp();
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+    }
+
     private boolean buildDirectoryChunks(String dirName) throws IOException {
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("/|\\\\");
