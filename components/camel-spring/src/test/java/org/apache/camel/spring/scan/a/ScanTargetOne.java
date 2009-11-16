@@ -14,14 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan.test.b;
+package org.apache.camel.spring.scan.a;
 
-import org.apache.camel.impl.scan.test.ScannableOne;
-import org.apache.camel.impl.scan.test.a.ScanTargetOne;
-
-@ScannableOne
-@SuppressWarnings("all")
-public class ScanTargetTwo extends ScanTargetOne {
+@org.apache.camel.spring.scan.ScannableOne
+public class ScanTargetOne {
 
     public void someMethod() {
     }

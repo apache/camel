@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan.test.a;
+package org.apache.camel.spring.scan;
 
-import org.apache.camel.impl.scan.test.ScannableOne;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-@ScannableOne
-public class ScanTargetOne {
-
-    public void someMethod() {
-    }
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ScannableTwo {
 
 }

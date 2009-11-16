@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan;
+package org.apache.camel.spring.scan;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,10 +26,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 
+import org.apache.camel.spring.PatternBasedPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
 
 @SuppressWarnings("unchecked")
-public class PatternBasedPackageScanFilterTest extends ScanTestSupport {
+public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private Set<Class<?>> allClasses;
 

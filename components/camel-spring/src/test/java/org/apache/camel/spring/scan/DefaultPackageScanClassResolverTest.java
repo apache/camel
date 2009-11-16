@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan;
+package org.apache.camel.spring.scan;
 
 import java.lang.annotation.Annotation;
 import java.net.URL;
@@ -23,30 +23,28 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
-import org.apache.camel.impl.scan.test.ScannableOne;
-import org.apache.camel.impl.scan.test.ScannableTwo;
-import org.apache.camel.impl.scan.test.a.ScanTargetOne;
-import org.apache.camel.impl.scan.test.b.ScanTargetTwo;
-import org.apache.camel.impl.scan.test.c.ScanTargetThree;
+import org.apache.camel.spring.scan.a.ScanTargetOne;
+import org.apache.camel.spring.scan.b.ScanTargetTwo;
+import org.apache.camel.spring.scan.c.ScanTargetThree;
 
-public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
+public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private DefaultPackageScanClassResolver resolver;
     private Set<Class<? extends Annotation>> annotations = new HashSet<Class<? extends Annotation>>();
-    private String scanPackage = "org.apache.camel.impl.scan.test";
+    private String scanPackage = "org.apache.camel.spring.scan";
 
     public void setUp() throws Exception {
         super.setUp();
         resolver = new DefaultPackageScanClassResolver();
-        annotations.add(ScannableOne.class);
-        annotations.add(ScannableTwo.class);
+        annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
+        annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
     }
 
     public void testFindByAnnotationWithoutExtraFilters() {
-        Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class);
 
-        scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
+        scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableTwo.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetThree.class);
     }
 
@@ -64,7 +62,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".b.*");
         resolver.addFilter(filter);
 
-        Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetTwo.class);
 
         scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
@@ -76,7 +74,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".c.*");
         resolver.addFilter(filter);
 
-        Set<Class<?>> scanned = resolver.findAnnotated(annotations, "org.apache.camel.impl.scan");
+        Set<Class<?>> scanned = resolver.findAnnotated(annotations, "org.apache.camel.spring.scan");
         validateMatchingSetContains(scanned, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
@@ -88,14 +86,14 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class);
 
-        scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
+        scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableTwo.class, scanPackage);
         validateMatchingSetContains(scanned);
     }
 
     public void testFindByAnnotationsWithExcludePackageFilter() {
         filter.addExcludePattern(scanPackage + ".a.*");
 
-        Set<Class<?>> scanned = resolver.findAnnotated(annotations, "org.apache.camel.impl.scan");
+        Set<Class<?>> scanned = resolver.findAnnotated(annotations, "org.apache.camel.spring.scan");
         validateMatchingSetContains(scanned, ScanTargetTwo.class, ScanTargetThree.class);
     }
 
@@ -103,7 +101,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".**.ScanTarget*");
         resolver.addFilter(filter);
 
-        Set<Class<?>> scanned = resolver.findByFilter(filter, "org.apache.camel.impl.scan");
+        Set<Class<?>> scanned = resolver.findByFilter(filter, "org.apache.camel.spring.scan");
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class, ScanTargetThree.class);
     }
     

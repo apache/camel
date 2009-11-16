@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.scan;
+package org.apache.camel.spring.scan;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
+import org.apache.camel.spring.PatternBasedPackageScanFilter;
 
 @SuppressWarnings("unchecked")
 public abstract class ScanTestSupport extends TestCase {
