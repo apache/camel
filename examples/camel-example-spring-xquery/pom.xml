@@ -32,6 +32,10 @@
   <name>Camel :: Example :: Spring :: XQuery</name>
   <description>An example using Spring XML to transform a message using XQuery</description>
 
+  <properties>
+    <camel.osgi.export.pkg></camel.osgi.export.pkg>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
