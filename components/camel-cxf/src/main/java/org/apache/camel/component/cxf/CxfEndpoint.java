@@ -28,6 +28,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Service;
 import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
@@ -63,7 +64,7 @@ import org.apache.cxf.message.Message;
  *
  * @version $Revision$
  */
-public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
     
     private static final Log LOG = LogFactory.getLog(CxfEndpoint.class);
 
@@ -77,7 +78,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private Bus bus;
     private CxfBinding cxfBinding;
     private HeaderFilterStrategy headerFilterStrategy;
-    private AtomicBoolean cxfBindingInitialized = new AtomicBoolean(false);
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private boolean isSetDefaultBus;
 
@@ -387,22 +387,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setCxfBinding(CxfBinding cxfBinding) {
         this.cxfBinding = cxfBinding;
-        cxfBindingInitialized.set(false);
     }
 
     public CxfBinding getCxfBinding() {
-        if (cxfBinding == null) {
-            cxfBinding = new DefaultCxfBinding();   
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Create default CXF Binding " + cxfBinding);
-            }
-        }
-        
-        if (!cxfBindingInitialized.getAndSet(true) 
-                && cxfBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)cxfBinding)
-                .setHeaderFilterStrategy(getHeaderFilterStrategy());
-        }
         return cxfBinding;
     }
 
@@ -415,13 +402,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
-        if (headerFilterStrategy == null) {
-            headerFilterStrategy = new CxfHeaderFilterStrategy();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Create CXF default header filter strategy " 
-                        + headerFilterStrategy);
-            }
-        }
         return headerFilterStrategy;
     }
 
@@ -453,7 +433,23 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public boolean isSetDefaultBus() {
         return isSetDefaultBus;
     }
-    
+
+    public void start() throws Exception {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new CxfHeaderFilterStrategy();
+        }
+        if (cxfBinding == null) {
+            cxfBinding = new DefaultCxfBinding();
+        }
+        if (cxfBinding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)cxfBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+    }
+
+    public void stop() throws Exception {
+        // noop
+    }
+
     /**
      * We need to override the {@link ClientImpl#setParameters} method
      * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD}
