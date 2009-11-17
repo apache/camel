@@ -24,9 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * A useful base class for output types
  *
@@ -34,20 +31,18 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OutputDefinition<Type extends ProcessorDefinition> extends ProcessorDefinition<Type> {
-    private static final transient Log LOG = LogFactory.getLog(OutputDefinition.class);
-
+public class OutputDefinition<Type extends ProcessorDefinition<?>> extends ProcessorDefinition<Type> {
     @XmlElementRef
-    protected List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    protected List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
         if (outputs != null) {
-            for (ProcessorDefinition output : outputs) {
+            for (ProcessorDefinition<?> output : outputs) {
                 configureChild(output);
             }
         }

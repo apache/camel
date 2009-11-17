@@ -36,11 +36,11 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionNode extends ProcessorDefinition<ProcessorDefinition> {
+public class ExpressionNode extends ProcessorDefinition<ProcessorDefinition<?>> {
     @XmlElementRef
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public ExpressionNode() {
     }
@@ -74,11 +74,11 @@ public class ExpressionNode extends ProcessorDefinition<ProcessorDefinition> {
         this.expression = expression;
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 

@@ -64,7 +64,7 @@ public final class LoadBalanceDefinitionRenderer {
             buffer.append(".topic()");
         }
 
-        List<ProcessorDefinition> branches = loadB.getOutputs();
+        List<ProcessorDefinition<?>> branches = loadB.getOutputs();
         for (ProcessorDefinition<?> branch : branches) {
             ProcessorDefinitionRenderer.render(buffer, branch);
         }

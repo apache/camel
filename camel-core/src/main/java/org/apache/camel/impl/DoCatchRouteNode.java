@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
-import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**

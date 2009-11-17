@@ -37,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
+public class InterceptDefinition extends OutputDefinition<ProcessorDefinition<?>> {
 
     // TODO: support stop later (its a bit hard as it needs to break entire processing of route)
 
@@ -74,8 +74,8 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {
             private Processor interceptedTarget;
 
-            public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
-                                                         Processor target, Processor nextTarget) throws Exception {
+            public Processor wrapProcessorInInterceptors(CamelContext context, 
+                    ProcessorDefinition <?>definition, Processor target, Processor nextTarget) throws Exception {
                 // prefer next target over target as next target is the real target
                 interceptedTarget = nextTarget != null ? nextTarget : target;
 
@@ -128,17 +128,17 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
             return;
         }
 
-        ProcessorDefinition first = getOutputs().get(0);
+        ProcessorDefinition<?> first = getOutputs().get(0);
         if (first instanceof WhenDefinition) {
             WhenDefinition when = (WhenDefinition) first;
             // move this outputs to the when, expect the first one
             // as the first one is the interceptor itself
             for (int i = 1; i < outputs.size(); i++) {
-                ProcessorDefinition out = outputs.get(i);
+                ProcessorDefinition<?> out = outputs.get(i);
                 when.addOutput(out);
             }
             // remove the moved from the original output, by just keeping the first one
-            ProcessorDefinition keep = outputs.get(0);
+            ProcessorDefinition<?> keep = outputs.get(0);
             clearOutput();
             outputs.add(keep);
         }
@@ -152,5 +152,4 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
             return null;
         }
     }
-
 }

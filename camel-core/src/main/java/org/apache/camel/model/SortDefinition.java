@@ -40,7 +40,7 @@ import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition extends OutputDefinition<SortDefinition> {
     @XmlTransient
-    private Comparator comparator;
+    private Comparator<Object> comparator;
     @XmlAttribute(required = false)
     private String comparatorRef;
     @XmlElement(name = "expression", required = false)
@@ -53,7 +53,7 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
         setExpression(expression);
     }
 
-    public SortDefinition(Expression expression, Comparator comparator) {
+    public SortDefinition(Expression expression, Comparator<Object> comparator) {
         this(expression);
         this.comparator = comparator;
     }
@@ -69,6 +69,7 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // lookup in registry
         if (ObjectHelper.isNotEmpty(comparatorRef)) {
@@ -77,7 +78,7 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
 
         // if no comparator then default on to string representation
         if (comparator == null) {
-            comparator = new Comparator() {
+            comparator = new Comparator<Object>() {
                 public int compare(Object o1, Object o2) {
                     return ObjectHelper.compare(o1, o2);
                 }
@@ -99,15 +100,15 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 
-    public Comparator getComparator() {
+    public Comparator<Object> getComparator() {
         return comparator;
     }
 
-    public void setComparator(Comparator comparator) {
+    public void setComparator(Comparator<Object> comparator) {
         this.comparator = comparator;
     }
 
@@ -137,7 +138,7 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
      * @param comparator  the comparator to use for sorting
      * @return the builder
      */
-    public SortDefinition comparator(Comparator comparator) {
+    public SortDefinition comparator(Comparator<Object> comparator) {
         setComparator(comparator);
         return this;
     }
@@ -152,6 +153,4 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
         setComparatorRef(ref);
         return this;
     }
-
-
 }

@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
+public class BeanDefinition extends OutputDefinition<ProcessorDefinition<?>> {
     @XmlAttribute(required = false)
     private String ref;
     @XmlAttribute(required = false)
@@ -88,11 +88,11 @@ public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
         this.bean = bean;
     }
 
-    public Class getBeanType() {
+    public Class<?> getBeanType() {
         return beanType;
     }
 
-    public void setBeanType(Class beanType) {
+    public void setBeanType(Class<?> beanType) {
         this.beanType = beanType;
     }
     
@@ -137,7 +137,7 @@ public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
      * @param beanType the Class of the bean
      * @return the builder
      */
-    public BeanDefinition beanType(Class beanType) {
+    public BeanDefinition beanType(Class<?> beanType) {
         setBean(beanType);
         return this;
     }

@@ -46,9 +46,9 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
         Processor processor = exceptionType.getErrorHandler();
         addChildService(processor);
 
-        List<Class<Exception>> list = exceptionType.getExceptionClasses();
+        List<Class<? extends Throwable>> list = exceptionType.getExceptionClasses();
 
-        for (Class<Exception> clazz : list) {
+        for (Class<? extends Throwable> clazz : list) {
             ExceptionPolicyKey key = new ExceptionPolicyKey(clazz, exceptionType.getOnWhen());
             exceptionPolicies.put(key, exceptionType);
         }

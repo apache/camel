@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
+public class PolicyDefinition extends OutputDefinition<ProcessorDefinition<?>> {
 
     // TODO: Align this code with TransactedDefinition
 

@@ -44,7 +44,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         route.from("seda:a");
         route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).to("seda:b");
         route.description(null, "This is a description of the route", "en");
-        List<ProcessorDefinition> list = route.getOutputs();
+        List<ProcessorDefinition<?>> list = route.getOutputs();
         assertEquals("Size of list: " + list, 1, list.size());
 
         dump(context);
@@ -60,5 +60,4 @@ public class GenerateXmlTest extends XmlTestSupport {
         String out = buffer.toString();
         assertTrue("Should contain the description", out.indexOf("This is a description of the route") > 0);
     }
-
 }

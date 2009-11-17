@@ -40,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
 
     @XmlAttribute(required = false)
     private Boolean onCompleteOnly = Boolean.FALSE;
@@ -49,7 +49,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public OnCompletionDefinition() {
     }
@@ -107,7 +107,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     }
 
     @Override
-    public ProcessorDefinition<? extends ProcessorDefinition> end() {
+    public ProcessorDefinition<? extends ProcessorDefinition<?>> end() {
         // pop parent block, as we added outself as block to parent when synchronized was defined in the route
         getParent().popBlock();
         return super.end();
@@ -168,11 +168,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     }
 
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 

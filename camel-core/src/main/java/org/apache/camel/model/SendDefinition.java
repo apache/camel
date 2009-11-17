@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class SendDefinition<Type extends ProcessorDefinition> extends ProcessorDefinition<Type> {
+public abstract class SendDefinition<Type extends ProcessorDefinition<?>> extends ProcessorDefinition<Type> {
     @XmlAttribute(required = false)
     protected String uri;
     @XmlAttribute(required = false)
@@ -95,9 +95,8 @@ public abstract class SendDefinition<Type extends ProcessorDefinition> extends P
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return Collections.emptyList();
     }
 
     /**

@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> {
+public class TransactedDefinition extends OutputDefinition<ProcessorDefinition<?>> {
 
     // TODO: Align this code with PolicyDefinition
 

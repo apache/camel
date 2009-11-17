@@ -52,7 +52,7 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
  */
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
@@ -69,9 +69,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     @XmlAttribute(name = "useOriginalMessage", required = false)
     private Boolean useOriginalMessagePolicy = Boolean.FALSE;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlTransient
-    private List<Class<Exception>> exceptionClasses;
+    private List<Class<? extends Throwable>> exceptionClasses;
     @XmlTransient
     private Processor errorHandler;
     @XmlTransient
@@ -84,12 +84,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     public OnExceptionDefinition() {
     }
 
-    public OnExceptionDefinition(List<Class<? extends Exception>> exceptionClasses) {
+    public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
         this.exceptionClasses = CastUtils.cast(exceptionClasses);
     }
 
-    public OnExceptionDefinition(Class exceptionType) {
-        exceptionClasses = new ArrayList<Class<Exception>>();
+    public OnExceptionDefinition(Class<? extends Throwable> exceptionType) {
+        exceptionClasses = new ArrayList<Class<? extends Throwable>>();
         exceptionClasses.add(exceptionType);
     }
 
@@ -158,7 +158,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     //-------------------------------------------------------------------------
 
     @Override
-    public OnExceptionDefinition onException(Class exceptionType) {
+    public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         getExceptionClasses().add(exceptionType);
         return this;
     }
@@ -404,22 +404,22 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     // Properties
     //-------------------------------------------------------------------------
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 
-    public List<Class<Exception>> getExceptionClasses() {
+    public List<Class<? extends Throwable>> getExceptionClasses() {
         if (exceptionClasses == null) {
             exceptionClasses = createExceptionClasses();
         }
         return exceptionClasses;
     }
 
-    public void setExceptionClasses(List<Class<Exception>> exceptionClasses) {
+    public void setExceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
 
@@ -516,11 +516,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         return redeliveryPolicy;
     }
 
-    protected List<Class<Exception>> createExceptionClasses() {
+    protected List<Class<? extends Throwable>> createExceptionClasses() {
         List<String> list = getExceptions();
-        List<Class<Exception>> answer = new ArrayList<Class<Exception>>(list.size());
+        List<Class<? extends Throwable>> answer = new ArrayList<Class<? extends Throwable>>(list.size());
         for (String name : list) {
-            Class<Exception> type = CastUtils.cast(ObjectHelper.loadClass(name, getClass().getClassLoader()), Exception.class);
+            Class<Throwable> type = CastUtils.cast(ObjectHelper.loadClass(name, getClass().getClassLoader()), Throwable.class);
             answer.add(type);
         }
         return answer;

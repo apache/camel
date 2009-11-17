@@ -36,13 +36,13 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
     @XmlAttribute
     private Long maximumRequestsPerPeriod;
     @XmlAttribute
     private long timePeriodMillis = 1000;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public ThrottleDefinition() {
     }
@@ -117,11 +117,11 @@ public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition>
         this.timePeriodMillis = timePeriodMillis;
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 }

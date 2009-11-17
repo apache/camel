@@ -35,13 +35,13 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
     @XmlAttribute
     private String type;
     @XmlAttribute(required = false)
     private String charset;
     @XmlTransient
-    private Class typeClass;
+    private Class<?> typeClass;
 
     public ConvertBodyDefinition() {
     }
@@ -50,12 +50,12 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
         setType(type);
     }
 
-    public ConvertBodyDefinition(Class typeClass) {
+    public ConvertBodyDefinition(Class<?> typeClass) {
         setTypeClass(typeClass);
         setType(typeClass.getName());
     }
 
-    public ConvertBodyDefinition(Class typeClass, String charset) {
+    public ConvertBodyDefinition(Class<?> typeClass, String charset) {
         setTypeClass(typeClass);
         setType(typeClass.getName());
         setCharset(charset);
@@ -85,7 +85,7 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 
@@ -97,11 +97,11 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
         this.type = type;
     }
 
-    public Class getTypeClass() {
+    public Class<?> getTypeClass() {
         return typeClass;
     }
 
-    public void setTypeClass(Class typeClass) {
+    public void setTypeClass(Class<?> typeClass) {
         this.typeClass = typeClass;
     }
 
@@ -112,5 +112,4 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
     public void setCharset(String charset) {
         this.charset = charset;
     }
-
 }

@@ -30,11 +30,11 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class CatchProcessor extends DelegateProcessor implements Traceable {
-    private final List<Class<Exception>> exceptions;
+    private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;
     private final Predicate handled;
 
-    public CatchProcessor(List<Class<Exception>> exceptions, Processor processor, Predicate onWhen, Predicate handled) {
+    public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen, Predicate handled) {
         super(processor);
         this.exceptions = exceptions;
         this.onWhen = onWhen;
@@ -94,7 +94,7 @@ public class CatchProcessor extends DelegateProcessor implements Traceable {
         return handled.matches(exchange);
     }
 
-    public List<Class<Exception>> getExceptions() {
+    public List<Class<? extends Throwable>> getExceptions() {
         return exceptions;
     }
 

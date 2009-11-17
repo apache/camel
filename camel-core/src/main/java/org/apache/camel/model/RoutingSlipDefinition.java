@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
     public static final String DEFAULT_DELIMITER = ",";
 
     @XmlAttribute
@@ -73,9 +73,8 @@ public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return Collections.emptyList();
     }
 
     public void setHeaderName(String headerName) {

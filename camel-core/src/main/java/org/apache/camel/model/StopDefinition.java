@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StopDefinition extends OutputDefinition<ProcessorDefinition> {
+public class StopDefinition extends OutputDefinition<ProcessorDefinition<?>> {
 
     @Override
     public String getShortName() {
@@ -56,9 +56,7 @@ public class StopDefinition extends OutputDefinition<ProcessorDefinition> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return Collections.emptyList();
     }
-
 }

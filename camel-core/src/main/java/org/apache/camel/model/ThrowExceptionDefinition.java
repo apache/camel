@@ -64,9 +64,8 @@ public class ThrowExceptionDefinition extends ProcessorDefinition<ThrowException
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return Collections.emptyList();
     }
 
     public Exception getException() {

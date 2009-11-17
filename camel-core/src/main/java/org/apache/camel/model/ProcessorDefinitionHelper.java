@@ -35,7 +35,7 @@ public final class ProcessorDefinitionHelper {
      * @param type     the type to look for
      * @return         the found definitions, or <tt>null</tt> if not found
      */
-    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
+    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
         doFindType(outputs, type, found);
         return found.iterator();
@@ -49,7 +49,7 @@ public final class ProcessorDefinitionHelper {
      * @param type     the type to look for
      * @return         the first found type, or <tt>null</tt> if not found
      */
-    public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
+    public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
         doFindType(outputs, type, found);
         if (found.isEmpty()) {
@@ -65,7 +65,7 @@ public final class ProcessorDefinitionHelper {
      * @param node the node
      * @return <tt>true</tt> if first child, <tt>false</tt> otherwise
      */
-    public static boolean isFirstChildOfType(Class parentType, ProcessorDefinition node) {
+    public static boolean isFirstChildOfType(Class<?> parentType, ProcessorDefinition<?> node) {
         if (node == null || node.getParent() == null) {
             return false;
         }
@@ -82,20 +82,20 @@ public final class ProcessorDefinitionHelper {
     }
 
     @SuppressWarnings("unchecked")
-    private static void doFindType(List<ProcessorDefinition> outputs, Class<?> type, List found) {
+    private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found) {
         if (outputs == null || outputs.isEmpty()) {
             return;
         }
 
-        for (ProcessorDefinition out : outputs) {
+        for (ProcessorDefinition<?> out : outputs) {
             if (type.isInstance(out)) {
-                found.add(out);
+                found.add((T)out);
             }
 
             // send is much common
             if (out instanceof SendDefinition) {
-                SendDefinition send = (SendDefinition) out;
-                List<ProcessorDefinition> children = send.getOutputs();
+                SendDefinition<?> send = (SendDefinition<?>) out;
+                List<ProcessorDefinition<?>> children = send.getOutputs();
                 doFindType(children, type, found);
             }
 
@@ -103,22 +103,21 @@ public final class ProcessorDefinitionHelper {
             if (out instanceof ChoiceDefinition) {
                 ChoiceDefinition choice = (ChoiceDefinition) out;
                 for (WhenDefinition when : choice.getWhenClauses()) {
-                    List<ProcessorDefinition> children = when.getOutputs();
+                    List<ProcessorDefinition<?>> children = when.getOutputs();
                     doFindType(children, type, found);
                 }
 
                 // otherwise is optional
                 if (choice.getOtherwise() != null) {
-                    List<ProcessorDefinition> children = choice.getOtherwise().getOutputs();
+                    List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
                     doFindType(children, type, found);
                 }
             }
 
             // try children as well
-            List<ProcessorDefinition> children = out.getOutputs();
+            List<ProcessorDefinition<?>> children = out.getOutputs();
             doFindType(children, type, found);
         }
     }
-
 
 }

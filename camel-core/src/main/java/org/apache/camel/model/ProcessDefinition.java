@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "process")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcessDefinition extends OutputDefinition<ProcessorDefinition> {
+public class ProcessDefinition extends OutputDefinition<ProcessorDefinition<?>> {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient
@@ -86,5 +86,4 @@ public class ProcessDefinition extends OutputDefinition<ProcessorDefinition> {
         }
         return processor;
     }
-
 }

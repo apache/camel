@@ -33,8 +33,8 @@ public final class CatchDefinitionRenderer {
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         CatchDefinition catchDef = (CatchDefinition)processor;
         buffer.append(".").append(catchDef.getShortName()).append("(");
-        List<Class<Exception>> exceptions = catchDef.getExceptionClasses();
-        for (Class<Exception> clazz : exceptions) {
+        List<Class<? extends Throwable>> exceptions = catchDef.getExceptionClasses();
+        for (Class<? extends Throwable> clazz : exceptions) {
             buffer.append(clazz.getSimpleName()).append(".class");
             if (clazz != exceptions.get(exceptions.size() - 1)) {
                 buffer.append(", ");
@@ -48,8 +48,8 @@ public final class CatchDefinitionRenderer {
             buffer.append(".handled(").append(handled).append(")");
         }
 
-        List<ProcessorDefinition> branches = catchDef.getOutputs();
-        for (ProcessorDefinition branch : branches) {
+        List<ProcessorDefinition<?>> branches = catchDef.getOutputs();
+        for (ProcessorDefinition<?> branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);
         }
     }

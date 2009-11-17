@@ -303,7 +303,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
      * @param exception  the exception
      * @return the builder
      */
-    public OnExceptionDefinition onException(Class exception) {
+    public OnExceptionDefinition onException(Class<? extends Throwable> exception) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exception);
         getOnExceptions().add(answer);
         return answer;

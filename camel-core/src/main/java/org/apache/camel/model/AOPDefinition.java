@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "aop")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AOPDefinition extends OutputDefinition<ProcessorDefinition> {
+public class AOPDefinition extends OutputDefinition<ProcessorDefinition<?>> {
 
     @XmlAttribute(required = false)
     private String beforeUri;
@@ -82,7 +82,7 @@ public class AOPDefinition extends OutputDefinition<ProcessorDefinition> {
 
         // use a pipeline to assemble the before and target processor
         // and the after if not afterFinally
-        Collection<ProcessorDefinition> pipe = new ArrayList<ProcessorDefinition>();
+        Collection<ProcessorDefinition<?>> pipe = new ArrayList<ProcessorDefinition<?>>();
 
         Processor finallyProcessor = null;
 
@@ -169,5 +169,4 @@ public class AOPDefinition extends OutputDefinition<ProcessorDefinition> {
         this.afterFinallyUri = afterUri;
         return this;
     }
-
 }

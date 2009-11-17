@@ -50,10 +50,10 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         return result;
     }    
     
-    protected SplitDefinition firstSplitterType(List<ProcessorDefinition> outputs) {
+    protected SplitDefinition firstSplitterType(List<ProcessorDefinition<?>> outputs) {
         SplitDefinition result = null;
         
-        for (ProcessorDefinition processorType : outputs) {
+        for (ProcessorDefinition<?> processorType : outputs) {
             if (processorType instanceof SplitDefinition) {
                 result = (SplitDefinition) processorType;
             } else {

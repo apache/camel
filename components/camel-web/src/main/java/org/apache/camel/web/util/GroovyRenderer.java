@@ -41,7 +41,7 @@ public final class GroovyRenderer {
      */
     public static void renderRoute(StringBuilder buffer, RouteDefinition route) {
         List<FromDefinition> inputs = route.getInputs();
-        List<ProcessorDefinition> outputs = route.getOutputs();
+        List<ProcessorDefinition<?>> outputs = route.getOutputs();
 
         // render the error handler
         if (!(route.getErrorHandlerBuilder() instanceof ErrorHandlerBuilderRef)) {
@@ -51,7 +51,7 @@ public final class GroovyRenderer {
         // render the global dsl not started with from, like global
         // intercept, interceptFrom,interceptSendToEndpoint, onCompletion,
         // onException
-        for (ProcessorDefinition processor : outputs) {
+        for (ProcessorDefinition<?> processor : outputs) {
             if (processor.getParent() == null && !(processor instanceof SendDefinition)) {
                 ProcessorDefinitionRenderer.render(buffer, processor);
                 buffer.append(";");
@@ -81,7 +81,7 @@ public final class GroovyRenderer {
         }
 
         // render the outputs of the router
-        for (ProcessorDefinition processor : outputs) {
+        for (ProcessorDefinition<?> processor : outputs) {
             if (processor.getParent() == route || processor instanceof SendDefinition) {
                 ProcessorDefinitionRenderer.render(buffer, processor);
             }

@@ -31,7 +31,7 @@ public final class OnExceptionDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
 
-    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         // if not a global onCompletion, add a period
         boolean notGlobal = buffer.toString().endsWith(")");
         if (notGlobal) {
@@ -40,8 +40,8 @@ public final class OnExceptionDefinitionRenderer {
 
         OnExceptionDefinition onException = (OnExceptionDefinition)processor;
         buffer.append(processor.getShortName()).append("(");
-        List<Class<Exception>> exceptions = onException.getExceptionClasses();
-        for (Class<Exception> excep : exceptions) {
+        List<Class<? extends Throwable>> exceptions = onException.getExceptionClasses();
+        for (Class<? extends Throwable> excep : exceptions) {
             buffer.append(excep.getSimpleName()).append(".class");
             if (excep != exceptions.get(exceptions.size() - 1)) {
                 buffer.append(", ");
@@ -79,8 +79,8 @@ public final class OnExceptionDefinitionRenderer {
             }
         }
 
-        List<ProcessorDefinition> branches = onException.getOutputs();
-        for (ProcessorDefinition branch : branches) {
+        List<ProcessorDefinition<?>> branches = onException.getOutputs();
+        for (ProcessorDefinition<?> branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);
         }
     }

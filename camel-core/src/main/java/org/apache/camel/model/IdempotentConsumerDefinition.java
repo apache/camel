@@ -42,12 +42,12 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     @XmlAttribute
     private Boolean eager = Boolean.TRUE;
     @XmlTransient
-    private IdempotentRepository idempotentRepository;
+    private IdempotentRepository<?> idempotentRepository;
 
     public IdempotentConsumerDefinition() {
     }
 
-    public IdempotentConsumerDefinition(Expression messageIdExpression, IdempotentRepository idempotentRepository) {
+    public IdempotentConsumerDefinition(Expression messageIdExpression, IdempotentRepository<?> idempotentRepository) {
         super(messageIdExpression);
         this.idempotentRepository = idempotentRepository;
     }
@@ -89,7 +89,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      * @param idempotentRepository  the repository instance of idempotent
      * @return builder
      */
-    public IdempotentConsumerDefinition messageIdRepository(IdempotentRepository idempotentRepository) {
+    public IdempotentConsumerDefinition messageIdRepository(IdempotentRepository<?> idempotentRepository) {
         setMessageIdRepository(idempotentRepository);
         return this;
     }
@@ -115,11 +115,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.messageIdRepositoryRef = messageIdRepositoryRef;
     }
 
-    public IdempotentRepository getMessageIdRepository() {
+    public IdempotentRepository<?> getMessageIdRepository() {
         return idempotentRepository;
     }
 
-    public void setMessageIdRepository(IdempotentRepository idempotentRepository) {
+    public void setMessageIdRepository(IdempotentRepository<?> idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 
@@ -132,9 +132,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        IdempotentRepository idempotentRepository = resolveMessageIdRepository(routeContext);
+        IdempotentRepository<String> idempotentRepository = 
+            (IdempotentRepository<String>) resolveMessageIdRepository(routeContext);
         Expression expression = getExpression().createExpression(routeContext);
         return new IdempotentConsumer(expression, idempotentRepository, eager, childProcessor);
     }
@@ -145,7 +147,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      * @param routeContext  route context
      * @return the repository
      */
-    protected IdempotentRepository resolveMessageIdRepository(RouteContext routeContext) {
+    protected IdempotentRepository<?> resolveMessageIdRepository(RouteContext routeContext) {
         if (idempotentRepository == null) {
             idempotentRepository = routeContext.lookup(messageIdRepositoryRef, IdempotentRepository.class);
         }
