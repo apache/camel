@@ -112,8 +112,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
                     log.debug("preWriteCheck forcing a disconnect as noop failed");
                 }
                 disconnect();
-            } catch (IOException e) {
-                // ignore for now
+            } catch (Exception e) {
+                // ignore for now as we will reconnect below
             }
         }
 
