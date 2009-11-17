@@ -36,7 +36,7 @@ public final class CxfSoapBinding {
         MessageImpl answer = new MessageImpl();
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE,
                                                                         org.apache.cxf.message.Exchange.class);
-        org.apache.camel.Message message = null;
+        org.apache.camel.Message message;
         if (isClient) {
             message = exchange.getOut();
         } else {
@@ -50,13 +50,14 @@ public final class CxfSoapBinding {
 
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer, exchange);
 
-        InputStream body = null;
-        try {
-            body = message.getMandatoryBody(InputStream.class);
-        } catch (InvalidPayloadException e) {
-            throw new RuntimeCamelException(e);
+        // body can be empty in case of GET etc.
+        InputStream body = message.getBody(InputStream.class);
+        if (body != null) {
+            answer.setContent(InputStream.class, body);
+        } else if (message.getBody() != null) {
+            // fallback and set the body as what it is
+            answer.setContent(Object.class, body);
         }
-        answer.setContent(InputStream.class, body);
 
         answer.putAll(message.getHeaders());
         answer.setExchange(cxfExchange);
@@ -65,14 +66,15 @@ public final class CxfSoapBinding {
     }    
     
     public static org.apache.cxf.message.Message getCxfOutMessage(HeaderFilterStrategy headerFilterStrategy,
-            org.apache.camel.Exchange exchange, boolean isClient) {
+            org.apache.camel.Exchange exchange, boolean isClient) throws InvalidPayloadException {
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         assert cxfExchange != null;
         org.apache.cxf.endpoint.Endpoint cxfEndpoint = cxfExchange.get(org.apache.cxf.endpoint.Endpoint.class);
         org.apache.cxf.message.Message outMessage = cxfEndpoint.getBinding().createMessage();
         outMessage.setExchange(cxfExchange);
         cxfExchange.setOutMessage(outMessage);
-        org.apache.camel.Message message = null;
+
+        org.apache.camel.Message message;
         if (isClient) {
             message = exchange.getIn();
         } else {
@@ -82,12 +84,7 @@ public final class CxfSoapBinding {
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), outMessage, exchange);
 
         // send the body back
-        Source body = null;
-        try {
-            body = message.getMandatoryBody(Source.class);
-        } catch (InvalidPayloadException e) {
-            throw new RuntimeCamelException(e);
-        }
+        Source body = message.getMandatoryBody(Source.class);
         outMessage.setContent(Source.class, body);
         outMessage.putAll(message.getHeaders());
         return outMessage;
