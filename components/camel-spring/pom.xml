@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spring</artifactId>
@@ -331,7 +331,7 @@
                 <phase>process-sources</phase>
                       <configuration>
                           <tasks>
-                              <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath"/>
+                              <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
 
                               <echo>Copying to code together for the XSD generation</echo>
                               <mkdir dir="${project.build.directory}/schema-src" />
@@ -351,13 +351,11 @@
                               <echo>Generating XSD schema</echo>
                               <mkdir dir="${project.build.directory}/schema" />
                               <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
-                                  <schema namespace="http://activemq.apache.org/camel/schema/spring" file="camel-spring.xsd"/>
-                                  <classpath refid="maven.compile.classpath"/>
+                                  <schema namespace="http://activemq.apache.org/camel/schema/spring" file="camel-spring.xsd" />
+                                  <classpath refid="maven.compile.classpath" />
                               </schemagen>
-                              <copy file="${project.build.directory}/schema/camel-spring.xsd"
-                                    tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"/>
-                              <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd"
-                                       token="http://activemq.apache.org/camel/schema/spring" value="http://activemq.apache.org/camel/schema/spring/v${camel.schema.version}"/>
+                              <copy file="${project.build.directory}/schema/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
+                              <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://activemq.apache.org/camel/schema/spring" value="http://activemq.apache.org/camel/schema/spring/v${camel.schema.version}" />
 
                           </tasks>
                       </configuration>

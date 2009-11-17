@@ -24,12 +24,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.3-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>1.6.2-SNAPSHOT</version>
+  <version>1.6.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel Parent POM</description>
@@ -946,22 +946,22 @@
                        <phase>initialize</phase>
                        <configuration>
                            <tasks>
-                               <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
-                               <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp"/>
-                               <property name="mv" value="${project.version}"/>
-                               <echo message="Maven version:   ${mv}" />
-                               <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0"/>
-                               <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0"/>
-                               <propertyregex property="ov.p3" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\3" defaultValue=".0"/>
-                               <propertyregex property="ov.p4" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\4" defaultValue=""/>
-                               <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0"/>
-                               <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0"/>
-                               <propertyregex property="ov.p3a" input="${ov.p3}" regexp="(\..+)" replace="\1" defaultValue=".0"/>
-                               <propertyregex property="ov.p4a" input="${ov.p4}" regexp="(\..+)" replace="\1" defaultValue=""/>
-                               <property name="ov" value="${ov.p1a}${ov.p2a}${ov.p3a}${ov.p4a}"/>
-                               <property name="os" value="${ov.p1a}${ov.p2a}"/>
-                               <echo message="OSGi version:    ${ov}" />
-                               <mkdir dir="target"/>
+                               <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                               <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
+                               <property name="mv" value="${project.version}" />
+                               <echo message="Maven version: ${mv}" />
+                               <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
+                               <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
+                               <propertyregex property="ov.p3" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\3" defaultValue=".0" />
+                               <propertyregex property="ov.p4" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\4" defaultValue="" />
+                               <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
+                               <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
+                               <propertyregex property="ov.p3a" input="${ov.p3}" regexp="(\..+)" replace="\1" defaultValue=".0" />
+                               <propertyregex property="ov.p4a" input="${ov.p4}" regexp="(\..+)" replace="\1" defaultValue="" />
+                               <property name="ov" value="${ov.p1a}${ov.p2a}${ov.p3a}${ov.p4a}" />
+                               <property name="os" value="${ov.p1a}${ov.p2a}" />
+                               <echo message="OSGi version: ${ov}" />
+                               <mkdir dir="target" />
                                <echo file="target/camel.osgi.version.txt"> 
                                 camel.osgi.version.clean = ${ov}
                                 camel.schema.version = ${os} 
