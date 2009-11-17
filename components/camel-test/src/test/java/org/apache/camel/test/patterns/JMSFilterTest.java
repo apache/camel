@@ -33,31 +33,7 @@ import org.apache.camel.component.jms.JmsComponent;
   * @version $Revision: 724291 $
  */
 // START SNIPPET: example
-public class JMSFilterTest extends CamelTestSupport {
-
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint resultEndpoint;
-
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
-
-    public void testSendMatchingMessage() throws Exception {
-        String expectedBody = "<matched/>";
-
-        resultEndpoint.expectedBodiesReceived(expectedBody);
-
-        template.sendBodyAndHeader(expectedBody, "foo", "bar");
-
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    public void testSendNotMatchingMessage() throws Exception {
-        resultEndpoint.expectedMessageCount(0);
-
-        template.sendBodyAndHeader("<notMatched/>", "foo", "notMatchedHeaderValue");
-
-        resultEndpoint.assertIsSatisfied();
-    }
+public class JMSFilterTest extends FilterTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
