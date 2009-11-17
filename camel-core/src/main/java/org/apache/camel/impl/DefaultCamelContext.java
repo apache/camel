@@ -779,6 +779,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return routeDefinitions;
     }
 
+    public RouteDefinition getRouteDefinition(String id) {
+        for (RouteDefinition route : routeDefinitions) {
+            if (route.getId().equals(id)) {
+                return route;
+            }
+        }
+        return null;
+    }
+
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }

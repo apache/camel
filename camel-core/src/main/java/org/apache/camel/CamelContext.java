@@ -252,6 +252,14 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     List<RouteDefinition> getRouteDefinitions();
 
     /**
+     * Gets the route definition with the given id
+     *
+     * @param id id of the route
+     * @return the route definition or <tt>null</tt> if not found
+     */
+    RouteDefinition getRouteDefinition(String id);
+
+    /**
      * Returns the current routes in this context
      *
      * @return the current routes
