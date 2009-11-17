@@ -19,6 +19,14 @@ To run the example of using WebServiceProvider API
 To run the example of showing how to create CXF JAXRS endpoint
   mvn exec:java -PJAXRS
 
+To run the example within ServiceMix 4
+ First, you need to install the camel-cxf, camel-jetty features into ServiceMix4
+ Then install this bundle into ServiceMix, and use those java client to call the services
+ mvn exec:java -PHttpToJMS.Client
+ mvn exec:java -PCamelTransport.Client
+ mvn exec:java -PWebServiceProvider.Client
+ mvn exec:java -PJAXRS.Client
+ 
 
 To run the example with Ant
   a. You need to have Apache ActiveMQ , Apache CXF, Spring and Jetty installed. They can be

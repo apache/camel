@@ -55,7 +55,12 @@ public final class Client {
         return port;
     }
 
-
+    public static void main(String args[]) throws Exception {
+        // set the client's service access point
+        Client client = new Client("http://localhost:9001/SoapContext/SoapPort?wsdl");
+        // invoking the services
+        client.invoke();
+    }
 
     public void invoke() throws Exception {
 

@@ -77,6 +77,8 @@ public final class Client {
         SOAPElement message = payload.addChildElement("requestType");
 
         message.addTextNode("Hello Camel!!");
+        
+        System.out.println("Send out the request: Hello Camel!!");
 
         // Invoke the endpoint synchronously
         SOAPMessage reply = null;
@@ -96,6 +98,8 @@ public final class Client {
         SOAPElement bodyElement = (SOAPElement)body.getChildElements(responseName).next();
 
         String responseMessageText = bodyElement.getTextContent();
+        
+        System.out.println("Get the response: " + responseMessageText);
         
         return responseMessageText;
 

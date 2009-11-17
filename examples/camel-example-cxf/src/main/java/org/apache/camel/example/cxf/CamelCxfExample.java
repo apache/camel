@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public final class CamelCxfExample {
     private static final String ROUTER_ADDRESS = "http://localhost:9001/SoapContext/SoapPort";
-    private static final String SERVICE_ADDRESS = "http://localhost:9000/SoapContext/SoapPort";
+    private static final String SERVICE_ADDRESS = "http://localhost:9003/SoapContext/SoapPort";
     private static final String SERVICE_CLASS = "serviceClass=org.apache.hello_world_soap_http.Greeter";
     private static final String WSDL_LOCATION = "wsdlURL=wsdl/hello_world.wsdl";
     private static final String SERVICE_NAME = "serviceName={http://apache.org/hello_world_soap_http}SOAPService";

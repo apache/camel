@@ -26,6 +26,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.3.0.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+  
+  <import resource="classpath:META-INF/cxf/cxf.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-jms.xml" />
 
   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
     <broker:transportConnectors>
@@ -33,7 +38,7 @@
     </broker:transportConnectors>
   </broker:broker>
 
-  <camel:camelContext>
+  <camel:camelContext id="myCamelContext">
     <camel:routeBuilder ref="myRouteBuilder"/>    
   </camel:camelContext>
 

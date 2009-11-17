@@ -14,66 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.example.cxf.jaxrs;
 
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.cxf.BusFactory;
 
-import org.junit.Test;
-
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-public class JAXRSClientServerTest extends CamelSpringTestSupport {
+public class Client {
     
-    @Test
-    public void testJAXWSClient() throws BookNotFoundFault {
+    void invoke() throws BookNotFoundFault {
+        // JAXWSClient invocation
         JAXWSClient jaxwsClient = new JAXWSClient();
         BookStore bookStore = jaxwsClient.getBookStore();
         
         bookStore.addBook(new Book("Camel User Guide", 234L));
         Book book = bookStore.getBook(123L);
-        assertNotNull("We should find the book here", book);       
+        System.out.println("Get the book with id 123. " + book);       
       
         try {
             book = bookStore.getBook(124L);
-            fail("We should not have this book");
+            System.out.println("Get the book with id 124. " + book); 
         } catch (Exception exception) {
-            assertTrue("The exception should be BookNotFoundFault", exception instanceof BookNotFoundFault);
+            System.out.println("Get the exception " + exception);
         }
-    }
-    
-    @Test
-    public void testJAXRSClient() throws BookNotFoundFault {
-
+        
         // JAXRSClient invocation
         JAXRSClient jaxrsClient = new JAXRSClient();
-        BookStore bookStore =  jaxrsClient.getBookStore();
+        bookStore =  jaxrsClient.getBookStore();
         
         bookStore.addBook(new Book("Camel User Guide", 124L));
-        Book book = bookStore.getBook(124L);
-        assertNotNull("We should find the book here", book);   
+        book = bookStore.getBook(124L);
+        System.out.println("Get the book with id 124. " + book);
         
         try {
             book = bookStore.getBook(126L);
-            fail("We should not have this book");
+            System.out.println("Get the book with id 126. " + book); 
         } catch (Exception exception) {
-            assertTrue("The exception should be BookNotFoundFault", exception instanceof BookNotFoundFault);
+            System.out.println("Get the exception " + exception);
         }
     }
-
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/JAXRSCamelContext.xml"});
-    }
     
-    public void tearDown() throws Exception {
-        super.tearDown();
-        BusFactory.setDefaultBus(null);
-        BusFactory.setThreadDefaultBus(null);
+    public static void main(String args[]) throws Exception {
+        Client client = new Client();
+        client.invoke();
     }
 
 }

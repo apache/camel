@@ -49,6 +49,13 @@ public final class Client {
     public Greeter getProxy() {
         return port;
     }
+    
+    public static void main(String args[]) throws Exception {
+        // set the client's service access point
+        Client client = new Client("http://localhost:9091/GreeterContext/GreeterPort");
+        // invoking the services
+        client.invoke();
+    }
 
     public void invoke() throws Exception {
 
