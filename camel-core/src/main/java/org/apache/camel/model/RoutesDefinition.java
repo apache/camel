@@ -203,7 +203,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
         // configure intercept
         for (InterceptDefinition intercept : getIntercepts()) {
-            // add as first output so intercept is handled before the acutal route and that gives
+            // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             route.getOutputs().add(0, intercept);
         }
@@ -232,7 +232,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
 
         // configure intercept send to endpoint
         for (InterceptSendToEndpointDefinition sendTo : getInterceptSendTos()) {
-            // add as first output so intercept is handled before the acutal route and that gives
+            // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             route.getOutputs().add(0, sendTo);
         }

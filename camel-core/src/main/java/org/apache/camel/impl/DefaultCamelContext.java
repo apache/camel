@@ -577,7 +577,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
         String key = routeDefinition.idOrCreate(nodeIdFactory);
+        // stop and remove the route
         stopRoute(key);
+        this.routeServices.remove(key);
         removeRouteDefinition(key);
     }
 

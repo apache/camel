@@ -233,8 +233,23 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
+        configureRoutes(context);
+        // add routes to Camel by populating them
+        populateRoutes();
+    }
+
+    /**
+     * Configures the routes
+     *
+     * @param context the Camel context
+     * @return the routes configured
+     * @throws Exception can be thrown during configuration
+     */
+    public RoutesDefinition configureRoutes(CamelContext context) throws Exception {
         setContext(context);
         checkInitialized();
+        routeCollection.setCamelContext(context);
+        return routeCollection;
     }
 
     /**
@@ -278,7 +293,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 setErrorHandlerBuilder(camelContext.getErrorHandlerBuilder());
             }
             configure();
-            populateRoutes();
         }
     }
 

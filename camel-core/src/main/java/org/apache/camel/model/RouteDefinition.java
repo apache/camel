@@ -35,6 +35,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -142,6 +143,51 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         return CamelContextHelper.getMandatoryEndpoint(context, uri);
+    }
+
+    /**
+     * Advices this route with the route builder.
+     * <p/>
+     * The advice process will add the interceptors, on exceptions, on completions etc. configured
+     * from the route builder to this route.
+     * <p/>
+     * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
+     * <p/>
+     * Will stop and remove the old route from camel context and add and start this new advised route.
+     *
+     * @param builder the route builder
+     * @return a new route which is this route merged with the route builder
+     * @throws Exception can be thrown from the route builder
+     */
+    public RouteDefinition adviceWith(RouteBuilder builder) throws Exception {
+        CamelContext context = getCamelContext();
+        if (context == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+
+        // configure and prepare the routes from the builder
+        RoutesDefinition routes = builder.configureRoutes(context);
+
+        // we can only advice with a route builder without any routes
+        if (!routes.getRoutes().isEmpty()) {
+            throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes."
+                    + " Remove all routes from the route builder.");
+        }
+
+        // stop and remove this existing route
+        List<RouteDefinition> list = new ArrayList<RouteDefinition>();
+        list.add(this);
+        context.removeRouteDefinitions(list);
+
+        // now merge which also ensures that interceptors and the likes get mixed in correctly as well
+        RouteDefinition merged = routes.route(this);
+
+        // add the new merged route
+        context.getRouteDefinitions().add(0, merged);
+
+        // and start it
+        context.startRoute(merged);
+        return merged;
     }
 
     // Fluent API
