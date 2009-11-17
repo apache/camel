@@ -72,7 +72,7 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
             exchange.setException(e);
         }
 
-        // handle any exception occured during the try processor
+        // handle any exception occurred during the try processor
         try {
             if (e != null) {
                 handleException(exchange, e);
@@ -104,17 +104,14 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
                     LOG.trace("This TryProcessor catches the exception: " + caught.getClass().getName() + " caused by: " + e.getMessage());
                 }
 
-                // TODO: No need to make a copy
-                // lets attach the exception to the exchange
-                Exchange localExchange = exchange.copy();
-                
-                localExchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
                 // give the rest of the pipeline another chance
-                localExchange.setException(null);
+                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
+                exchange.setException(null);
 
                 // do not catch any exception here, let it propagate up
-                catchClause.process(localExchange);
+                catchClause.process(exchange);
 
+                // is the exception handled by the catch clause
                 boolean handled = catchClause.handles(exchange);
 
                 if (LOG.isDebugEnabled()) {
@@ -124,13 +121,11 @@ public class TryProcessor extends ServiceSupport implements Processor, Navigate<
 
                 if (!handled) {
                     // put exception back as it was not handled
-                    if (localExchange.getException() == null) {
-                        localExchange.setException(localExchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+                    if (exchange.getException() == null) {
+                        exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                     }
                 }
 
-                // copy result back to the original exchange
-                ExchangeHelper.copyResults(exchange, localExchange);
                 return;
             }
         }
