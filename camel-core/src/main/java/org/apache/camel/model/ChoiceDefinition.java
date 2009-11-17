@@ -134,7 +134,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         if (otherwise != null) {
             return otherwise.getOutputs();
         } else if (whenClauses.isEmpty()) {

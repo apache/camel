@@ -40,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
+public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> {
 
     @XmlAttribute(required = false)
     private Boolean onCompleteOnly = Boolean.FALSE;
@@ -49,7 +49,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public OnCompletionDefinition() {
     }
@@ -89,12 +89,12 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     }
 
     /**
-     * Removes all existing {@link org.apache.camel.model.OnCompletionDefinition} from the defintion.
+     * Removes all existing {@link org.apache.camel.model.OnCompletionDefinition} from the definition.
      * <p/>
      * This is used to let route scoped <tt>onCompletion</tt> overrule any global <tt>onCompletion</tt>.
      * Hence we remove all existing as they are global.
      *
-     * @param definition the parent defintion that is the route
+     * @param definition the parent definition that is the route
      */
     @SuppressWarnings("unchecked")
     public void removeAllOnCompletionDefinition(ProcessorDefinition definition) {
@@ -108,13 +108,13 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
 
     @Override
     public ProcessorDefinition<? extends ProcessorDefinition<?>> end() {
-        // pop parent block, as we added outself as block to parent when synchronized was defined in the route
+        // pop parent block, as we added our self as block to parent when synchronized was defined in the route
         getParent().popBlock();
         return super.end();
     }
 
     /**
-     * Will only synchronize when the {@link org.apache.camel.Exchange} completed succesfully (no errors).
+     * Will only synchronize when the {@link org.apache.camel.Exchange} completed successfully (no errors).
      *
      * @return the builder
      */
@@ -168,11 +168,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     }
 
 
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }
 

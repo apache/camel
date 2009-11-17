@@ -51,7 +51,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UnmarshalDefinition extends OutputDefinition<ProcessorDefinition<?>> {
+public class UnmarshalDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = false)
     private String ref;
     // cannot use @XmlElementRef as it doesn't allow optional properties

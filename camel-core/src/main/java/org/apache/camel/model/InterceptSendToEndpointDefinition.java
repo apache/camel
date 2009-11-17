@@ -38,7 +38,7 @@ import org.apache.camel.util.EndpointHelper;
  */
 @XmlRootElement(name = "interceptToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptSendToEndpointDefinition extends OutputDefinition<ProcessorDefinition<?>> {
+public class InterceptSendToEndpointDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // TODO: Support lookup endpoint by ref (requires a bit more work)
 
@@ -104,7 +104,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
         // instead we use the proxy endpoints producer do the triggering. That is we trigger when someone sends
         // an exchange to the endpoint, see InterceptSendToEndpoint for details.
         RouteDefinition route = routeContext.getRoute();
-        List<ProcessorDefinition<?>> outputs = route.getOutputs();
+        List<ProcessorDefinition> outputs = route.getOutputs();
         outputs.remove(this);
 
         return new InterceptEndpointProcessor(uri, detour);
@@ -139,24 +139,24 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
      */
     public void afterPropertiesSet() {
         // okay the intercept endpoint works a bit differently than the regular interceptors
-        // so we must fix the route definiton yet again
+        // so we must fix the route definition yet again
 
         if (getOutputs().size() == 0) {
             // no outputs
             return;
         }
 
-        ProcessorDefinition<?> first = getOutputs().get(0);
+        ProcessorDefinition first = getOutputs().get(0);
         if (first instanceof WhenDefinition) {
             WhenDefinition when = (WhenDefinition) first;
             // move this outputs to the when, expect the first one
             // as the first one is the interceptor itself
             for (int i = 1; i < outputs.size(); i++) {
-                ProcessorDefinition<?> out = outputs.get(i);
+                ProcessorDefinition out = outputs.get(i);
                 when.addOutput(out);
             }
             // remove the moved from the original output, by just keeping the first one
-            ProcessorDefinition<?> keep = outputs.get(0);
+            ProcessorDefinition keep = outputs.get(0);
             clearOutput();
             outputs.add(keep);
         }

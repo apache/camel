@@ -72,7 +72,7 @@ import static org.apache.camel.builder.Builder.body;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> extends OptionalIdentifiedDefinition<Type> implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedDefinition implements Block {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected ErrorHandlerBuilder errorHandlerBuilder;
     protected String errorHandlerRef;
@@ -82,18 +82,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // else to use an optional attribute in JAXB2
-    public abstract List<ProcessorDefinition<?>> getOutputs();
+    public abstract List<ProcessorDefinition> getOutputs();
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
     }
 
     public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
-        Collection<ProcessorDefinition<?>> outputs = getOutputs();
+        Collection<ProcessorDefinition> outputs = getOutputs();
         return createOutputsProcessor(routeContext, outputs);
     }
 
-    public void addOutput(ProcessorDefinition<?> processorType) {
+    public void addOutput(ProcessorDefinition processorType) {
         processorType.setParent(this);
         configureChild(processorType);
         if (blocks.isEmpty()) {
@@ -155,7 +155,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
         return wrapChannel(routeContext, processor, null);
     }
 
-    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child) throws Exception {
+    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition child) throws Exception {
         // put a channel in between this and each output to control the route flow logic
         Channel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
@@ -169,7 +169,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
         addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
 
         // must do this ugly cast to avoid compiler error on HP-UX
-        ProcessorDefinition<?> defn = (ProcessorDefinition<?>) this;
+        ProcessorDefinition defn = (ProcessorDefinition) this;
 
         // set the child before init the channel
         channel.setChildDefinition(child);
@@ -253,7 +253,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
         return new DefaultChannel();
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
             Processor processor = output.createProcessor(routeContext);
@@ -299,7 +299,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
         return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
-    protected void configureChild(ProcessorDefinition<?> output) {
+    protected void configureChild(ProcessorDefinition output) {
         output.setNodeFactory(getNodeFactory());
         output.setErrorHandlerBuilder(getErrorHandlerBuilder());
     }
@@ -889,7 +889,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public ProcessorDefinition<? extends ProcessorDefinition<?>> end() {
+    public ProcessorDefinition end() {
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
@@ -930,8 +930,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
      * @param idempotentRepository  the repository to use for duplicate chedck
      * @return the builder
      */
-    public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression,
-            IdempotentRepository<?> idempotentRepository) {
+    public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression, IdempotentRepository<?> idempotentRepository) {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition(messageIdExpression, idempotentRepository);
         addOutput(answer);
         return answer;
@@ -1110,7 +1109,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
      *                class will look in for the list of URIs to route the message to.
      * @param uriDelimiter  is the delimiter that will be used to split up
      *                      the list of URIs in the routing slip.
-     * @return the buiider
+     * @return the builder
      */
     @SuppressWarnings("unchecked")
     public Type routingSlip(String header, String uriDelimiter) {
@@ -1554,7 +1553,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
      * @param exceptionType  the exception to catch
      * @return the exception builder to configure
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
+    public OnExceptionDefinition onException(Class exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
         addOutput(answer);
         return answer;
@@ -2316,11 +2315,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<?>> e
     // Properties
     // -------------------------------------------------------------------------
     @XmlTransient
-    public ProcessorDefinition<? extends ProcessorDefinition<?>> getParent() {
+    public ProcessorDefinition getParent() {
         return parent;
     }
 
-    public void setParent(ProcessorDefinition<? extends ProcessorDefinition<?>> parent) {
+    public void setParent(ProcessorDefinition parent) {
         this.parent = parent;
     }
 

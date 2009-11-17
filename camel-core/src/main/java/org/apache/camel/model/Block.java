@@ -22,5 +22,11 @@ package org.apache.camel.model;
  * @version $Revision$
  */
 public interface Block {
-    void addOutput(ProcessorDefinition<?> processorType);
+
+    /**
+     * Adds the given definition as output to this block
+     *
+     * @param processorDefinition the processor definition
+     */
+    void addOutput(ProcessorDefinition processorDefinition);
 }

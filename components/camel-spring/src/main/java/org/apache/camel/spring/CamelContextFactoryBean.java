@@ -332,8 +332,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initParent(ProcessorDefinition<?> parent) {
-        List<ProcessorDefinition<?>> children = parent.getOutputs();
-        for (ProcessorDefinition<?> child : children) {
+        List<ProcessorDefinition> children = parent.getOutputs();
+        for (ProcessorDefinition child : children) {
             child.setParent(parent);
             if (child.getOutputs() != null) {
                 // recursive the children
@@ -471,7 +471,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     private void initPolicies(RouteDefinition route) {
         // setup the policies as JAXB yet again have not created a correct model for us
-        List<ProcessorDefinition<?>> types = route.getOutputs();
+        List<ProcessorDefinition> types = route.getOutputs();
 
         // we need two types as transacted cannot extend policy due JAXB limitations
         PolicyDefinition policy = null;

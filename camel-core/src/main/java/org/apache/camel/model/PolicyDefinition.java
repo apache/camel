@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PolicyDefinition extends OutputDefinition<ProcessorDefinition<?>> {
+public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // TODO: Align this code with TransactedDefinition
 
@@ -82,7 +82,7 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition<?>> {
     }
 
     /**
-     * Sets a policy type that this defition should scope within.
+     * Sets a policy type that this definition should scope within.
      * <p/>
      * Is used for convention over configuration situations where the policy
      * should be automatic looked up in the registry and it should be based

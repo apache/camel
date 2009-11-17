@@ -42,7 +42,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDefinition extends SendDefinition<ToDefinition> {
     @XmlTransient
-    private final List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private final List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlAttribute(required = false)
     private ExchangePattern pattern;
     @XmlAttribute(required = false)
@@ -76,7 +76,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 

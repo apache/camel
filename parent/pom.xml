@@ -76,7 +76,8 @@
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <groovy-version>1.6.3</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
-    <junit-version>4.6</junit-version>
+    <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
+    <junit-version>4.4</junit-version>
     <ognl-version>2.7.3_1</ognl-version>
     <pax-exam-version>1.0.0</pax-exam-version>
     <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>

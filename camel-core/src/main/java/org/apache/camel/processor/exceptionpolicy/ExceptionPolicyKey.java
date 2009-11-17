@@ -22,14 +22,14 @@ import org.apache.camel.model.WhenDefinition;
  * Exception policy key is a compound key for storing:
  * <b>exception class</b> + <b>when</b> => <b>exception type</b>.
  * <p/>
- * This is used by Camel to store the onException types configued that has or has not predicates attached (when).
+ * This is used by Camel to store the onException types configured that has or has not predicates attached (when).
  */
 public final class ExceptionPolicyKey {
 
-    private final Class<? extends Throwable> exceptionClass;
+    private final Class exceptionClass;
     private final WhenDefinition when;
 
-    public ExceptionPolicyKey(Class<? extends Throwable> exceptionClass, WhenDefinition when) {
+    public ExceptionPolicyKey(Class exceptionClass, WhenDefinition when) {
         this.exceptionClass = exceptionClass;
         this.when = when;
     }
@@ -42,11 +42,11 @@ public final class ExceptionPolicyKey {
         return when;
     }
 
-    public static ExceptionPolicyKey newInstance(Class<? extends Throwable> exceptionClass) {
+    public static ExceptionPolicyKey newInstance(Class exceptionClass) {
         return new ExceptionPolicyKey(exceptionClass, null);
     }
 
-    public static ExceptionPolicyKey newInstance(Class<? extends Throwable> exceptionClass, WhenDefinition when) {
+    public static ExceptionPolicyKey newInstance(Class exceptionClass, WhenDefinition when) {
         return new ExceptionPolicyKey(exceptionClass, when);
     }
 

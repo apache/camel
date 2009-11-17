@@ -190,7 +190,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param exception exception to catch
      * @return the builder
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable> exception) {
+    public OnExceptionDefinition onException(Class exception) {
         routeCollection.setCamelContext(getContext());
         return routeCollection.onException(exception);
     }
@@ -202,9 +202,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param exceptions list of exceptions to catch
      * @return the builder
      */
-    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
+    public OnExceptionDefinition onException(Class... exceptions) {
         OnExceptionDefinition last = null;
-        for (Class<? extends Throwable> ex : exceptions) {
+        for (Class ex : exceptions) {
             last = last == null ? onException(ex) : last.onException(ex);
         }
         return last != null ? last : onException(Exception.class);

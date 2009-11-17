@@ -52,9 +52,9 @@ import org.apache.camel.util.CamelContextHelper;
 @XmlRootElement(name = "route")
 @XmlType(propOrder = {"inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition<?>> implements CamelContextAware {
+public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> implements CamelContextAware {
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     private CamelContext camelContext;
     private String group;
     private Boolean streamCache;
@@ -353,16 +353,16 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition<?>>
         this.inputs = inputs;
     }
 
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 
     @XmlElementRef
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
 
         if (outputs != null) {
-            for (ProcessorDefinition<?> output : outputs) {
+            for (ProcessorDefinition output : outputs) {
                 configureChild(output);
             }
         }
@@ -579,8 +579,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition<?>>
             }
         }
 
-        List<ProcessorDefinition<?>> list = new ArrayList<ProcessorDefinition<?>>(outputs);
-        for (ProcessorDefinition<?> output : list) {
+        List<ProcessorDefinition> list = new ArrayList<ProcessorDefinition>(outputs);
+        for (ProcessorDefinition output : list) {
             output.addRoutes(routeContext, routes);
         }
 

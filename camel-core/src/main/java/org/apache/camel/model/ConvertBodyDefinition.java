@@ -35,7 +35,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
+public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefinition> {
     @XmlAttribute
     private String type;
     @XmlAttribute(required = false)
@@ -85,7 +85,7 @@ public class ConvertBodyDefinition extends ProcessorDefinition<ProcessorDefiniti
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 

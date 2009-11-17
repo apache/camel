@@ -52,21 +52,21 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "handled", required = false)
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
-    private List<Class<? extends Throwable>> exceptionClasses;
+    private List<Class> exceptionClasses;
     @XmlTransient
     private Predicate handledPolicy;
 
     public CatchDefinition() {
     }
 
-    public CatchDefinition(List<Class<? extends Throwable>> exceptionClasses) {
+    public CatchDefinition(List<Class> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
 
-    public CatchDefinition(Class<? extends Throwable> exceptionType) {
-        exceptionClasses = new ArrayList<Class<? extends Throwable>>();
+    public CatchDefinition(Class exceptionType) {
+        exceptionClasses = new ArrayList<Class>();
         exceptionClasses.add(exceptionType);
     }
 
@@ -102,22 +102,22 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
     }
 
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }
 
-    public List<Class<? extends Throwable>> getExceptionClasses() {
+    public List<Class> getExceptionClasses() {
         if (exceptionClasses == null) {
             exceptionClasses = createExceptionClasses();
         }
         return exceptionClasses;
     }
 
-    public void setExceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
+    public void setExceptionClasses(List<Class> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
     
@@ -129,7 +129,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * @param exceptionClasses  a list of the exception classes
      * @return the builder
      */
-    public CatchDefinition exceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
+    public CatchDefinition exceptionClasses(List<Class> exceptionClasses) {
         setExceptionClasses(exceptionClasses);
         return this;
     }
@@ -203,8 +203,8 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * @param exception  the exception of class
      * @return the builder
      */
-    public CatchDefinition exceptionClasses(Class<? extends Throwable> exception) {
-        List<Class<? extends Throwable>> list = getExceptionClasses();
+    public CatchDefinition exceptionClasses(Class exception) {
+        List<Class> list = getExceptionClasses();
         list.add(exception);
         return this;
     }
@@ -241,9 +241,9 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.handled = handled;
     }
 
-    protected List<Class<? extends Throwable>> createExceptionClasses() {
+    protected List<Class> createExceptionClasses() {
         List<String> list = getExceptions();
-        List<Class<? extends Throwable>> answer = new ArrayList<Class<? extends Throwable>>(list.size());
+        List<Class> answer = new ArrayList<Class>(list.size());
         for (String name : list) {
             Class<Exception> type = CastUtils.cast(ObjectHelper.loadClass(name, getClass().getClassLoader()));
             answer.add(type);

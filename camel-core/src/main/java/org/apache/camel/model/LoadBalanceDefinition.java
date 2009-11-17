@@ -65,7 +65,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     private LoadBalancerDefinition loadBalancerType;
 
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public LoadBalanceDefinition() {
     }
@@ -75,11 +75,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return "loadbalance";
     }
 
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
         if (outputs != null) {
             for (ProcessorDefinition<?> output : outputs) {
@@ -104,8 +104,8 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         loadBalancerType = loadbalancer;
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, 
-            Collection<ProcessorDefinition<?>> outputs) throws Exception {
+    protected Processor createOutputsProcessor(RouteContext routeContext,
+                                               Collection<ProcessorDefinition> outputs) throws Exception {
         LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorDefinition<?> processorType : outputs) {
             // The outputs should be the SendProcessor
@@ -205,8 +205,8 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer();
-        List<ProcessorDefinition<?>> list = getOutputs();
-        for (ProcessorDefinition<?> processorType : list) {
+        List<ProcessorDefinition> list = getOutputs();
+        for (ProcessorDefinition processorType : list) {
             buffer.append(processorType.getLabel());
         }
         return buffer.toString();

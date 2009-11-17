@@ -82,8 +82,9 @@ public class SetPropertyDefinition extends ExpressionNode {
         return propertyName;
     }
     
- // Fluent API
+    // Fluent API
     //-------------------------------------------------------------------------
+
     /**
      * Set the expression that SetPropertyType will use
      * @return the builder

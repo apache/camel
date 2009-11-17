@@ -38,7 +38,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MulticastDefinition extends OutputDefinition<ProcessorDefinition<?>> {
+public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
     @XmlAttribute(required = false)

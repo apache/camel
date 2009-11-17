@@ -32,7 +32,7 @@ import org.apache.camel.util.CollectionStringBuffer;
  */
 @XmlRootElement(name = "otherwise")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OtherwiseDefinition extends OutputDefinition<ProcessorDefinition<?>> implements Block {
+public class OtherwiseDefinition extends OutputDefinition<ProcessorDefinition> implements Block {
 
     @Override
     public String toString() {
@@ -52,8 +52,8 @@ public class OtherwiseDefinition extends OutputDefinition<ProcessorDefinition<?>
     @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer();
-        List<ProcessorDefinition<?>> list = getOutputs();
-        for (ProcessorDefinition<?> type : list) {
+        List<ProcessorDefinition> list = getOutputs();
+        for (ProcessorDefinition type : list) {
             buffer.append(type.getLabel());
         }
         return buffer.toString();

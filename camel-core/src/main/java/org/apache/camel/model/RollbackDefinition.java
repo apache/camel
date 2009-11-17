@@ -73,7 +73,7 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 

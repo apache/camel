@@ -100,7 +100,7 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 

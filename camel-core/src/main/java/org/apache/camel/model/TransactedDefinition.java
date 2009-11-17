@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransactedDefinition extends OutputDefinition<ProcessorDefinition<?>> {
+public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // TODO: Align this code with PolicyDefinition
 
@@ -95,7 +95,7 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition<?
     }
 
     /**
-     * Sets a policy type that this defition should scope within.
+     * Sets a policy type that this definition should scope within.
      * <p/>
      * Is used for convention over configuration situations where the policy
      * should be automatic looked up in the registry and it should be based

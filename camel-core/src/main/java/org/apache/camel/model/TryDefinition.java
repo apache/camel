@@ -53,7 +53,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @XmlTransient
     private boolean initialized;
     @XmlTransient
-    private List<ProcessorDefinition<?>> outputsWithoutCatches;
+    private List<ProcessorDefinition> outputsWithoutCatches;
 
     @Override
     public String toString() {
@@ -98,9 +98,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @param exceptionType  the exception(s)
      * @return the try builder
      */
-    public TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
+    public TryDefinition doCatch(Class... exceptionType) {
         popBlock();
-        List<Class<? extends Throwable>> list = CastUtils.cast(Arrays.asList(exceptionType));
+        List<Class> list = CastUtils.cast(Arrays.asList(exceptionType));
         CatchDefinition answer = new CatchDefinition(list);
         addOutput(answer);
         pushBlock(answer);
@@ -222,20 +222,20 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return finallyClause;
     }
 
-    public List<ProcessorDefinition<?>> getOutputsWithoutCatches() {
+    public List<ProcessorDefinition> getOutputsWithoutCatches() {
         if (outputsWithoutCatches == null) {
             checkInitialized();
         }
         return outputsWithoutCatches;
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         initialized = false;
         super.setOutputs(outputs);
     }
 
     @Override
-    public void addOutput(ProcessorDefinition<?> output) {
+    public void addOutput(ProcessorDefinition output) {
         initialized = false;
         super.addOutput(output);
     }
@@ -246,7 +246,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     protected void checkInitialized() {
         if (!initialized) {
             initialized = true;
-            outputsWithoutCatches = new ArrayList<ProcessorDefinition<?>>();
+            outputsWithoutCatches = new ArrayList<ProcessorDefinition>();
             catchClauses = new ArrayList<CatchDefinition>();
             finallyClause = null;
 

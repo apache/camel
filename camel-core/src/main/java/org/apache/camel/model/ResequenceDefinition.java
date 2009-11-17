@@ -40,11 +40,11 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlRootElement(name = "resequence")
-public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinition<?>> {
+public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinition> {
     @XmlElementRef
     private List<ExpressionDefinition> expressions = new ArrayList<ExpressionDefinition>();
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     // Binding annotation at setter
     private BatchResequencerConfig batchConfig;
     // Binding annotation at setter
@@ -199,11 +199,11 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
         return expressionList;
     }
 
-    public List<ProcessorDefinition<?>> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }
 

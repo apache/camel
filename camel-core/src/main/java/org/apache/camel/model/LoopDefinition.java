@@ -35,6 +35,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends ExpressionNode implements Block {
+
     public LoopDefinition() {
     }
 
@@ -51,7 +52,6 @@ public class LoopDefinition extends ExpressionNode implements Block {
             setExpression(new ExpressionDefinition(expr));
         }
     }
-    
     
     @Override
     public String toString() {
@@ -72,6 +72,7 @@ public class LoopDefinition extends ExpressionNode implements Block {
     
      // Fluent API
     //-------------------------------------------------------------------------
+
     /**
      * Set the expression that LoopType will use
      * @return the builder
