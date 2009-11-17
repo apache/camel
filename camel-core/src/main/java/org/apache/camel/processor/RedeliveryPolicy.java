@@ -71,9 +71,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
+    protected static transient Random randomNumberGenerator;
     private static final long serialVersionUID = -338222777701473252L;
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
-    protected static transient Random randomNumberGenerator;
 
     protected long redeliverDelay = 1000L;
     protected int maximumRedeliveries;

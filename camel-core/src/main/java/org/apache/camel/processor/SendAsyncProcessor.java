@@ -134,7 +134,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
      */
     protected void doSimulateAsyncProcess(final Processor producer, final Exchange exchange, final AsyncCallback callback) throws Exception {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Producer "+ producer + " is not an instanceof AsyncProcessor"
+            LOG.trace("Producer " + producer + " is not an instanceof AsyncProcessor"
                 + ". Will fallback to simulate async behavior by transferring task to a producer thread pool for further processing.");
         }
 
