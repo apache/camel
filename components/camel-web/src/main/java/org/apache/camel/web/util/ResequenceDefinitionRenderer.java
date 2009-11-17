@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import java.util.List;
@@ -23,10 +22,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 
-/**
- *
- */
 public final class ResequenceDefinitionRenderer {
+
     private ResequenceDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }    

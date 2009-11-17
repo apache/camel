@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import java.util.List;
@@ -23,10 +22,8 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 
-/**
- *
- */
 public final class OnExceptionDefinitionRenderer {
+
     private OnExceptionDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }
@@ -40,8 +37,8 @@ public final class OnExceptionDefinitionRenderer {
 
         OnExceptionDefinition onException = (OnExceptionDefinition)processor;
         buffer.append(processor.getShortName()).append("(");
-        List<Class<? extends Throwable>> exceptions = onException.getExceptionClasses();
-        for (Class<? extends Throwable> excep : exceptions) {
+        List<Class> exceptions = onException.getExceptionClasses();
+        for (Class excep : exceptions) {
             buffer.append(excep.getSimpleName()).append(".class");
             if (excep != exceptions.get(exceptions.size() - 1)) {
                 buffer.append(", ");
@@ -53,9 +50,9 @@ public final class OnExceptionDefinitionRenderer {
         if (onException.getRedeliveryPolicy() != null) {
             RedeliveryPolicyDefinition redelivery = onException.getRedeliveryPolicy();
             if (redelivery.getMaximumRedeliveries() != null) {
-                int maxRediliveries = redelivery.getMaximumRedeliveries();
-                if (maxRediliveries != 0) {
-                    buffer.append(".maximumRedeliveries(").append(maxRediliveries).append(")");
+                int maxRedeliveries = redelivery.getMaximumRedeliveries();
+                if (maxRedeliveries != 0) {
+                    buffer.append(".maximumRedeliveries(").append(maxRedeliveries).append(")");
                 }
             }
             if (redelivery.getRedeliveryDelay() != null) {
@@ -79,8 +76,8 @@ public final class OnExceptionDefinitionRenderer {
             }
         }
 
-        List<ProcessorDefinition<?>> branches = onException.getOutputs();
-        for (ProcessorDefinition<?> branch : branches) {
+        List<ProcessorDefinition> branches = onException.getOutputs();
+        for (ProcessorDefinition branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);
         }
     }

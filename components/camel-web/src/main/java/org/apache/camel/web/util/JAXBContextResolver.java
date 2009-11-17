@@ -16,7 +16,6 @@
  */
 package org.apache.camel.web.util;
 
-
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;

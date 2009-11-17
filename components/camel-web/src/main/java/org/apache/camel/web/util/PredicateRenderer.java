@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.Predicate;
@@ -23,6 +22,7 @@ import org.apache.camel.Predicate;
  * render a predicate
  */
 public final class PredicateRenderer {
+
     private PredicateRenderer() {
         // Utility class, no public or protected default constructor
     }

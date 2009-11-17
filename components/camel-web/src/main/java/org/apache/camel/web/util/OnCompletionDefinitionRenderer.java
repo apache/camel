@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import java.util.List;
@@ -23,10 +22,8 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 
-/**
- *
- */
 public final class OnCompletionDefinitionRenderer {
+
     private OnCompletionDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }    
@@ -57,8 +54,8 @@ public final class OnCompletionDefinitionRenderer {
         if (onComplete.getOnFailureOnly()) {
             buffer.append(".onFailureOnly()");
         }
-        List<ProcessorDefinition<?>> branches = onComplete.getOutputs();
-        for (ProcessorDefinition<?> branch : branches) {
+        List<ProcessorDefinition> branches = onComplete.getOutputs();
+        for (ProcessorDefinition branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);
         }
 

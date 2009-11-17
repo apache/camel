@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.ChoiceDefinition;
@@ -22,10 +21,8 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 
-/**
- *
- */
 public final class ChoiceDefinitionRenderer {
+
     private ChoiceDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }    

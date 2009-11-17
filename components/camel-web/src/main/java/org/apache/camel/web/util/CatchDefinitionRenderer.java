@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import java.util.List;
@@ -22,10 +21,8 @@ import java.util.List;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
-/**
- * 
- */
 public final class CatchDefinitionRenderer {
+
     private CatchDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }
@@ -33,8 +30,8 @@ public final class CatchDefinitionRenderer {
     public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
         CatchDefinition catchDef = (CatchDefinition)processor;
         buffer.append(".").append(catchDef.getShortName()).append("(");
-        List<Class<? extends Throwable>> exceptions = catchDef.getExceptionClasses();
-        for (Class<? extends Throwable> clazz : exceptions) {
+        List<Class> exceptions = catchDef.getExceptionClasses();
+        for (Class clazz : exceptions) {
             buffer.append(clazz.getSimpleName()).append(".class");
             if (clazz != exceptions.get(exceptions.size() - 1)) {
                 buffer.append(", ");
@@ -48,8 +45,8 @@ public final class CatchDefinitionRenderer {
             buffer.append(".handled(").append(handled).append(")");
         }
 
-        List<ProcessorDefinition<?>> branches = catchDef.getOutputs();
-        for (ProcessorDefinition<?> branch : branches) {
+        List<ProcessorDefinition> branches = catchDef.getOutputs();
+        for (ProcessorDefinition branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);
         }
     }

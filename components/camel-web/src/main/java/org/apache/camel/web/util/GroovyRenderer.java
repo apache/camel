@@ -41,7 +41,7 @@ public final class GroovyRenderer {
      */
     public static void renderRoute(StringBuilder buffer, RouteDefinition route) {
         List<FromDefinition> inputs = route.getInputs();
-        List<ProcessorDefinition<?>> outputs = route.getOutputs();
+        List<ProcessorDefinition> outputs = route.getOutputs();
 
         // render the error handler
         if (!(route.getErrorHandlerBuilder() instanceof ErrorHandlerBuilderRef)) {

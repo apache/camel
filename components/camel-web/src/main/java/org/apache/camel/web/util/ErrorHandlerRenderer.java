@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.RedeliveryPolicy;
 
-/**
- * 
- */
 public final class ErrorHandlerRenderer {
+
     private ErrorHandlerRenderer() {
         // Utility class, no public or protected default constructor
     }
@@ -36,9 +33,9 @@ public final class ErrorHandlerRenderer {
 
             // render the redelivery policy
             RedeliveryPolicy redelivery = deadLetter.getRedeliveryPolicy();
-            int maxRediliveries = redelivery.getMaximumRedeliveries();
-            if (maxRediliveries != 0) {
-                buffer.append(".maximumRedeliveries(").append(maxRediliveries).append(")");
+            int maxRedeliveries = redelivery.getMaximumRedeliveries();
+            if (maxRedeliveries != 0) {
+                buffer.append(".maximumRedeliveries(").append(maxRedeliveries).append(")");
             }
             long redeliverDelay = redelivery.getRedeliverDelay();
             if (redeliverDelay != 1000) {

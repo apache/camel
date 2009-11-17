@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import java.util.List;
@@ -49,10 +48,8 @@ import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 
-/**
- *
- */
 public final class OutputDefinitionRenderer {
+
     private OutputDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }
@@ -171,8 +168,8 @@ public final class OutputDefinitionRenderer {
     private static void renderFinally(StringBuilder buffer, OutputDefinition<?> out) {
         buffer.append("()");
         FinallyDefinition finallyDef = (FinallyDefinition)out;
-        List<ProcessorDefinition<?>> branches = finallyDef.getOutputs();
-        for (ProcessorDefinition<?> branch : branches) {
+        List<ProcessorDefinition> branches = finallyDef.getOutputs();
+        for (ProcessorDefinition branch : branches) {
             SendDefinitionRenderer.render(buffer, branch);
         }
         buffer.append(".end()");

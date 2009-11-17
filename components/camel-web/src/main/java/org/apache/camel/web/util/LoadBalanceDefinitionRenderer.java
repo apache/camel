@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import java.util.List;
@@ -28,10 +27,8 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 
-/**
- *
- */
 public final class LoadBalanceDefinitionRenderer {
+
     private LoadBalanceDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }    
@@ -64,8 +61,8 @@ public final class LoadBalanceDefinitionRenderer {
             buffer.append(".topic()");
         }
 
-        List<ProcessorDefinition<?>> branches = loadB.getOutputs();
-        for (ProcessorDefinition<?> branch : branches) {
+        List<ProcessorDefinition> branches = loadB.getOutputs();
+        for (ProcessorDefinition branch : branches) {
             ProcessorDefinitionRenderer.render(buffer, branch);
         }
     }

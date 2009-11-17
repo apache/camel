@@ -14,16 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 
-/**
- *
- */
 public final class AggregateDefinitionRenderer {
+
     private AggregateDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }    

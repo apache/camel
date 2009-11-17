@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.ConvertBodyDefinition;
@@ -24,6 +23,7 @@ import org.apache.camel.model.ProcessorDefinition;
  *
  */
 public final class ConvertBodyDefinitionRenderer {
+
     private ConvertBodyDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }    

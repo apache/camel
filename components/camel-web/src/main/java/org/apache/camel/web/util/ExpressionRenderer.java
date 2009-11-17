@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.builder.ExpressionClause;
@@ -22,19 +21,14 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.XPathExpression;
 
-/**
- *
- */
 public final class ExpressionRenderer {
+
     private ExpressionRenderer() {
         // Utility class, no public or protected default constructor
     }    
 
     /**
      * a common render method to process the expressionDefinition
-     * 
-     * @param buffer
-     * @param expression
      */
     public static void render(StringBuilder buffer, ExpressionDefinition expression) {
 
@@ -57,9 +51,6 @@ public final class ExpressionRenderer {
 
     /**
      * Render a constant: constant("")
-     * 
-     * @param expression
-     * @param buffer
      */
     public static void renderConstant(StringBuilder buffer, ExpressionDefinition expression) {
         renderConstant(buffer, expression.getExpressionValue().toString());
@@ -67,9 +58,6 @@ public final class ExpressionRenderer {
 
     /**
      * Render a constant: constant("")
-     * 
-     * @param expression
-     * @param buffer
      */
     public static void renderConstant(StringBuilder buffer, String expression) {
         if (buffer.toString().endsWith(")")) {
@@ -80,9 +68,6 @@ public final class ExpressionRenderer {
 
     /**
      * Render an expression clause
-     * 
-     * @param buffer
-     * @param expression
      */
     private static void renderExpressionClause(StringBuilder buffer, ExpressionClause expression) {
         if (expression.getLanguage() != null) {
@@ -121,9 +106,6 @@ public final class ExpressionRenderer {
     /**
      * Render a simple expression: header(foo) -> header("foo")
      * tokenize(header(foo), ,) -> header("foo").tokenize(",")
-     * 
-     * @param buffer
-     * @param expression
      */
     public static void renderExpression(StringBuilder buffer, String expression) {
         if (!expression.contains(",")) {

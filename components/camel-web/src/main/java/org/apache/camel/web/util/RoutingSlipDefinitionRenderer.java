@@ -14,23 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 
-/**
- *
- */
 public final class RoutingSlipDefinitionRenderer {
+
     private RoutingSlipDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }    
 
     public static void render(StringBuilder buffer, ProcessorDefinition processor) {
         RoutingSlipDefinition routingSlip = (RoutingSlipDefinition)processor;
-        buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName()).append("\", \"").append(routingSlip.getUriDelimiter())
-            .append("\")");
+        buffer.append(".").append(routingSlip.getShortName()).append("(\"").append(routingSlip.getHeaderName())
+            .append("\", \"").append(routingSlip.getUriDelimiter()).append("\")");
     }
 }

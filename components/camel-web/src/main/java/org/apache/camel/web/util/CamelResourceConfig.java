@@ -32,6 +32,7 @@ import org.apache.camel.web.resources.Constants;
  * @version $Revision$
  */
 public class CamelResourceConfig extends PackagesResourceConfig {
+
     public CamelResourceConfig() {
         super(createProperties());
     }

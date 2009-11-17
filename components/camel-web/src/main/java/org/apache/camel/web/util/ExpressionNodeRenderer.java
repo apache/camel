@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.builder.ExpressionClause;
@@ -38,10 +37,8 @@ import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 
-/**
- *
- */
 public final class ExpressionNodeRenderer {
+
     private ExpressionNodeRenderer() {
         // Utility class, no public or protected default constructor
     }

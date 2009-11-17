@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import java.io.UnsupportedEncodingException;
@@ -23,9 +22,6 @@ import java.util.BitSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- *
- */
 public final class UriCharactersEncoder {
     private static BitSet unsafeCharacters;
     private static final transient Log LOG = LogFactory.getLog(UriCharactersEncoder.class);

@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.util;
 
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.WireTapDefinition;
 
-/**
- *
- */
 public final class SendDefinitionRenderer {
+
     private SendDefinitionRenderer() {
         // Utility class, no public or protected default constructor
     }
