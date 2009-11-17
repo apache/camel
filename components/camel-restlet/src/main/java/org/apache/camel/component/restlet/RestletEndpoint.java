@@ -18,12 +18,12 @@ package org.apache.camel.component.restlet;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -36,7 +36,7 @@ import org.restlet.data.Method;
  *
  * @version $Revision$
  */
-public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
     private static final Log LOG = LogFactory.getLog(RestletEndpoint.class);
 
     private static final int DEFAULT_PORT = 80;
@@ -61,7 +61,6 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private Map<String, String> restletRealm;
     private HeaderFilterStrategy headerFilterStrategy;
     private RestletBinding restletBinding;
-    private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
@@ -134,23 +133,11 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     }
 
     public RestletBinding getRestletBinding() {
-        if (restletBinding == null) {
-            restletBinding = new DefaultRestletBinding();   
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Create default Restlet Binding " + restletBinding);
-            }
-        }
-        
-        if (!bindingInitialized.getAndSet(true) 
-                && restletBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
-        }
         return restletBinding;
     }
 
     public void setRestletBinding(RestletBinding restletBinding) {
         this.restletBinding = restletBinding;
-        bindingInitialized.set(false);
     }
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
@@ -161,12 +148,6 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
-        if (headerFilterStrategy == null) {
-            headerFilterStrategy = new RestletHeaderFilterStrategy();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Create Restlet default header filter strategy " + headerFilterStrategy);
-            }
-        }
         return headerFilterStrategy;
     }
 
@@ -184,32 +165,35 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         return ExchangePattern.InOut;
     }
 
-    /**
-     * @param restletMethods the restletMethods to set
-     */
     public void setRestletMethods(Method[] restletMethods) {
         this.restletMethods = restletMethods;
     }
 
-    /**
-     * @return the restletMethods
-     */
     public Method[] getRestletMethods() {
         return restletMethods;
     }
 
-    /**
-     * @param restletUriPatterns the restletUriPatterns to set
-     */
     public void setRestletUriPatterns(List<String> restletUriPatterns) {
         this.restletUriPatterns = restletUriPatterns;
     }
 
-    /**
-     * @return the restletUriPatterns
-     */
     public List<String> getRestletUriPatterns() {
         return restletUriPatterns;
     }
 
+    public void start() throws Exception {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new RestletHeaderFilterStrategy();
+        }
+        if (restletBinding == null) {
+            restletBinding = new DefaultRestletBinding();
+        }
+        if (restletBinding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+    }
+
+    public void stop() throws Exception {
+        // noop
+    }
 }
