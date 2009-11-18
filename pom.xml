@@ -367,15 +367,16 @@
 	      <instructions>
 	        <Bundle-Name>${project.artifactId}</Bundle-Name>
 	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
-            <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
+                <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
 	        <Export-Package>${camel.osgi.export}</Export-Package>
 	        <Import-Package>${camel.osgi.import}</Import-Package>
 	        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
 	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
 	        <Implementation-Title>Apache Camel</Implementation-Title>
 	        <Implementation-Version>${project.version}</Implementation-Version>
-            <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
-	      </instructions>
+                <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
+                <_failok>${camel.osgi.failok}</_failok>
+            </instructions>
 	    </configuration>
       </plugin>
 

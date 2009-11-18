@@ -31,9 +31,19 @@
   <description>Camel CXF support</description>
 
   <properties>
-     <camel.osgi.export.pkg>
-     	org.apache.camel.component.cxf.*
-     </camel.osgi.export.pkg>
+     <camel.osgi.import>
+      !org.apache.camel.component.cxf.*,
+      !META-INF.cxf,
+      org.apache.camel.*;${camel.osgi.import.camel.version},
+      ${camel.osgi.import.defaults},
+      ${camel.osgi.import.additional},
+      *
+     </camel.osgi.import>
+     <camel.osgi.export>        
+     	org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first,
+        '=META-INF.cxf'
+     </camel.osgi.export>
+     <camel.osgi.failok>true</camel.osgi.failok>
   </properties>
 
   <repositories>
@@ -236,7 +246,6 @@
           </systemProperties>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>

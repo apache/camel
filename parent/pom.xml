@@ -135,6 +135,7 @@
       *
     </camel.osgi.import.pkg>
     <camel.osgi.activator />
+    <camel.osgi.failok>false</camel.osgi.failok>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
