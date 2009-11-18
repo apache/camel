@@ -65,7 +65,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
         exchange.getIn().setBody(new Request());
 
         try {
-            MethodInvocation mi = beanInfo.createInvocation(null, exchange);
+            beanInfo.createInvocation(null, exchange);
             Assert.fail("This should be ambiguous!");
         } catch (AmbiguousMethodCallException e) {
             // expected (currently not supported in camel)

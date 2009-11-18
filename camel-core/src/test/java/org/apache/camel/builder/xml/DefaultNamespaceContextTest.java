@@ -38,7 +38,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         String prefix = context.getPrefix("foo");
         assertNull(prefix);
 
-        Iterator it = context.getPrefixes("foo");
+        Iterator<String> it = context.getPrefixes("foo");
         assertEquals(false, it.hasNext());
     }
 
@@ -53,7 +53,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         String prefix = context.getPrefix("http://acme/cheese");
         assertEquals("pre", prefix);
 
-        Iterator it = context.getPrefixes("http://acme/cheese");
+        Iterator<String> it = context.getPrefixes("http://acme/cheese");
         assertEquals(true, it.hasNext());
         assertEquals("pre", it.next());
     }
@@ -73,11 +73,11 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         String prefix2 = context.getPrefix("http://acme/bar");
         assertEquals("bar", prefix2);
 
-        Iterator it = context.getPrefixes("http://acme/cheese");
+        Iterator<String> it = context.getPrefixes("http://acme/cheese");
         assertEquals(true, it.hasNext());
         assertEquals("pre", it.next());
 
-        Iterator it2 = context.getPrefixes("http://acme/bar");
+        Iterator<String> it2 = context.getPrefixes("http://acme/bar");
         assertEquals(true, it2.hasNext());
         assertEquals("bar", it2.next());
     }
@@ -91,7 +91,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals(Namespaces.IN_NAMESPACE, uri);
         String prefix = context.getPrefix(Namespaces.IN_NAMESPACE);
         assertEquals("in", prefix);
-        Iterator it = context.getPrefixes(Namespaces.IN_NAMESPACE);
+        Iterator<String> it = context.getPrefixes(Namespaces.IN_NAMESPACE);
         assertEquals(true, it.hasNext());
         assertEquals("in", it.next());
 
@@ -114,7 +114,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
     }
 
     public void testDefaultNamespaceContextAnotherCtr() throws Exception {
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("foo", "http://acme/cheese");
         DefaultNamespaceContext context = new DefaultNamespaceContext(null, map);
 
@@ -125,5 +125,4 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         String uri2 = context.getNamespaceURI("foo");
         assertEquals("http://acme/cheese", uri2);
     }
-
 }

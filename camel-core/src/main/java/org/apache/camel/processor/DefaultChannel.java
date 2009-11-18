@@ -154,7 +154,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
 
         // then wrap the output with the tracer
         // the tracer should have the fine grained definition so if a child is set then use it, if not then its the original output used
-        ProcessorDefinition traceDef = childDefinition != null ? childDefinition : outputDefinition;
+        ProcessorDefinition<?> traceDef = childDefinition != null ? childDefinition : outputDefinition;
         TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), traceDef, target, null);
         // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
         trace.setRouteContext(routeContext);

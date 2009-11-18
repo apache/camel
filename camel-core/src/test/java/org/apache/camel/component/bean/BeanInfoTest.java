@@ -88,13 +88,13 @@ public class BeanInfoTest extends TestCase {
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
     }
 
-    protected BeanInfo createBeanInfo(Class type) {
+    protected BeanInfo createBeanInfo(Class<?> type) {
         BeanInfo info = new BeanInfo(camelContext, type);
         return info;
     }
 
     protected void assertMethodPattern(BeanInfo info, String methodName, ExchangePattern expectedPattern) throws NoSuchMethodException {
-        Class type = info.getType();
+        Class<?> type = info.getType();
         Method method = type.getMethod(methodName);
         assertNotNull("Could not find method: " + methodName, method);
 

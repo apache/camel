@@ -84,10 +84,9 @@ public class BeanPipelineTest extends ContextTestSupport {
             fail("Should not invoce me");
         }
 
-        public void withAnnotations(@Headers Map headers, @Body String body) {
+        public void withAnnotations(@Headers Map<String, Object> headers, @Body String body) {
             assertEquals("Hello World from James", body);
             assertEquals("James", headers.get("from"));
         }
     }
-
 }

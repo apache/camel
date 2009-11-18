@@ -29,7 +29,7 @@ public class BeanParameterInfoTest extends ContextTestSupport {
     protected CamelContext camelContext = new DefaultCamelContext();
 
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
-        Class foo = Foo.class.getClass();
+        Class<?> foo = Foo.class.getClass();
         ParameterInfo info = new ParameterInfo(1, foo.getClass(), foo.getAnnotations(), null);
 
         assertNotNull(info);

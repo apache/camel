@@ -91,6 +91,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             @Override
             public void configure() throws Exception {
                 MyChoiceBean bean = new MyChoiceBean();

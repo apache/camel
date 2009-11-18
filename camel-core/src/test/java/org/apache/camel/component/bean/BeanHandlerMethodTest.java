@@ -43,7 +43,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         MyAmbigiousBean pojo = new MyAmbigiousBean();
         try {
-            MethodInvocation mi = info.createInvocation(pojo, exchange);
+            info.createInvocation(pojo, exchange);
             fail("Should have thrown an exception");
         } catch (AmbiguousMethodCallException e) {
             assertEquals(2, e.getMethods().size());
@@ -76,7 +76,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         MyReallyDummyBean pojo = new MyReallyDummyBean();
         try {
-            MethodInvocation mi = info.createInvocation(pojo, exchange);
+            info.createInvocation(pojo, exchange);
             fail("Should throw exception");
         } catch (AmbiguousMethodCallException e) {
             assertEquals(2, e.getMethods().size());

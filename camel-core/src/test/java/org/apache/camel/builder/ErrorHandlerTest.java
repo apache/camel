@@ -60,7 +60,7 @@ public class ErrorHandlerTest extends TestSupport {
             assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
 
             Processor processor = unwrap(channel.getNextProcessor());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
+            assertIsInstanceOf(SendProcessor.class, processor);
         }
     }
 

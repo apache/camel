@@ -24,6 +24,8 @@ import java.io.Serializable;
  * @version $Revision$
  */
 public class PurchaseOrder implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String product;
     private double amount;
 

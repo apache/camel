@@ -234,6 +234,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
     protected RouteBuilder createTryCatchNoEnd() {
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             public void configure() {
                 from("direct:a")
                     .doTry()
@@ -273,6 +274,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
     protected RouteBuilder createTryCatchEnd() {
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             public void configure() {
                 from("direct:a").doTry().process(validator).process(toProcessor)
                     .doCatch(ValidationException.class).process(orderProcessor).end().process(orderProcessor3);
@@ -307,6 +309,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
     protected RouteBuilder createTryCatchFinallyNoEnd() {
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             public void configure() {
                 from("direct:a").doTry().process(validator).process(toProcessor)
                     .doCatch(ValidationException.class).process(orderProcessor).doFinally()
@@ -346,6 +349,7 @@ public class BuilderWithScopesTest extends TestSupport {
 
     protected RouteBuilder createTryCatchFinallyEnd() {
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             public void configure() {
                 from("direct:a").doTry().process(validator).process(toProcessor)
                     .doCatch(ValidationException.class).process(orderProcessor).doFinally()

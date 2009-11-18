@@ -51,7 +51,7 @@ public class BeanWithHeadersAndBodyInjectionTest extends ContextTestSupport {
             }
         });
 
-        Map foo = myBean.headers;
+        Map<String, Object> foo = myBean.headers;
         assertNotNull("myBean.foo", foo);
 
         assertEquals("foo.h1", "xyz", foo.get("h1"));

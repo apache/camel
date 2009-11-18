@@ -27,6 +27,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 /**
  * @version $Revision$
  */
+@SuppressWarnings("unchecked")
 public class BeanProxyTest extends ContextTestSupport {
 
     public void testBeanProxyStringReturnString() throws Exception {

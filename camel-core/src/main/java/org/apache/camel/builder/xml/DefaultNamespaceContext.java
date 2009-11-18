@@ -26,6 +26,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.util.CastUtils;
 
 /**
  * An implementation of {@link NamespaceContext} which uses a simple Map where
@@ -81,17 +82,16 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public Iterator getPrefixes(String namespaceURI) {
-        Set set = new HashSet();
-        for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
+    public Iterator<String> getPrefixes(String namespaceURI) {
+        Set<String> set = new HashSet<String>();
+        for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<String, String> entry = iter.next();
             if (namespaceURI.equals(entry.getValue())) {
                 set.add(entry.getKey());
             }
         }
         if (parent != null) {
-            Iterator iter = parent.getPrefixes(namespaceURI);
+            Iterator<String> iter = CastUtils.cast(parent.getPrefixes(namespaceURI));
             while (iter.hasNext()) {
                 set.add(iter.next());
             }

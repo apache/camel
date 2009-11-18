@@ -151,13 +151,16 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     }
 
     public static class MyBaseBusinessException extends Exception {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class MyBusinessException extends MyBaseBusinessException {
+        private static final long serialVersionUID = 1L;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").redeliverDelay(0).maximumRedeliveries(3));
 
