@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  *   <li>useExponentialBackOff = false</li>
  *   <li>collisionAvoidanceFactor = 0.15d</li>
  *   <li>useCollisionAvoidance = false</li>
- *   <li>retriesExhaustedLogLevel = LoggingLevel.DEBUG</li>
+ *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
  *   <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
  *   <li>logStrackTrace = false</li>
  * </ul>
@@ -53,7 +53,7 @@ import org.apache.commons.logging.LogFactory;
  * <p/>
  * This policy can be configured either by one of the following two settings:
  * <ul>
- *   <li>using convnetional options, using all the options defined above</li>
+ *   <li>using conventional options, using all the options defined above</li>
  *   <li>using delay pattern to declare intervals for delays</li>
  * </ul>
  * <p/>
@@ -83,7 +83,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     // +/-15% for a 30% spread -cgs
     protected double collisionAvoidanceFactor = 0.15d;
     protected boolean useCollisionAvoidance;
-    protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.DEBUG;
+    protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.DEBUG;
     protected boolean logStackTrace;
     protected String delayPattern;
@@ -198,7 +198,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     protected static long calculateRedeliverDelayUsingPattern(String delayPattern, int redeliveryCounter) {
         String[] groups = delayPattern.split(";");
-        // find the group where ther redelivery counter matches
+        // find the group where the redelivery counter matches
         long answer = 0;
         for (String group : groups) {
             long delay = Long.valueOf(ObjectHelper.after(group, ":"));
@@ -451,7 +451,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets an optional delay pattern to use insted of fixed delay.
+     * Sets an optional delay pattern to use instead of fixed delay.
      */
     public void setDelayPattern(String delayPattern) {
         this.delayPattern = delayPattern;
@@ -462,7 +462,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets wheter stack traces should be logged or not
+     * Sets whether stack traces should be logged or not
      */
     public void setLogStackTrace(boolean logStackTrace) {
         this.logStackTrace = logStackTrace;
