@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -155,20 +156,37 @@ public class CxfProducer extends DefaultProducer {
      * Get the parameters for the web service operation
      */
     private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) {
-        
+
+        // TODO: this method should probably be more strict and validate (CAMEL-2195)
+
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
             List<?> list = exchange.getIn().getBody(List.class);
             if (list != null) {
                 params = list.toArray();
             } else {
-                params = new Object[0];
+                // maybe we can iterate the body and that way create a list for the parameters
+                // then end users do not need to trouble with List
+                Iterator it = exchange.getIn().getBody(Iterator.class);
+                if (it != null && it.hasNext()) {
+                    list = exchange.getContext().getTypeConverter().convertTo(List.class, it);
+                    if (list != null) {
+                        params = list.toArray();
+                    }
+                }
+                if (params == null) {
+                    // no we could not then use the body as single parameter
+                    params = new Object[1];
+                    params[0] = exchange.getIn().getBody();
+                }
             }
         } else if (endpoint.getDataFormat() == DataFormat.PAYLOAD) {
             params = new Object[1];
+            // TODO: maybe it should be mandatory body?
             params[0] = exchange.getIn().getBody(CxfPayload.class);
         } else if (endpoint.getDataFormat() == DataFormat.MESSAGE) {
             params = new Object[1];
+            // TODO: maybe it should be mandatory body?
             params[0] = exchange.getIn().getBody(InputStream.class);
         }
 

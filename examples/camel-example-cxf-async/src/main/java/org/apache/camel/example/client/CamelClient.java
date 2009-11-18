@@ -16,9 +16,6 @@
  */
 package org.apache.camel.example.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.reportincident.InputReportIncident;
@@ -64,12 +61,8 @@ public final class CamelClient {
             input.setEmail("davsclaus@apache.org");
             input.setPhone("55512345678");
 
-            // must add to a list otherwise CXF cannot send data
-            // TODO: camel-cxf should be able to do this itself without me having to create a List object
-            List data = new ArrayList();
-            data.add(input);
-
-            producer.sendBody("direct:start", data);
+            // send our input to the Camel route
+            producer.sendBody("direct:start", input);
         }
         System.out.println("... Send done");
 
