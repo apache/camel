@@ -92,7 +92,7 @@ public class ManagedErrorHandlerRedeliveryTest extends ContextTestSupport {
         assertNull(dp);
 
         String ell = (String) mbeanServer.getAttribute(on, "RetriesExhaustedLogLevel");
-        assertEquals(LoggingLevel.DEBUG.name(), ell);
+        assertEquals(LoggingLevel.ERROR.name(), ell);
 
         String rll = (String) mbeanServer.getAttribute(on, "RetryAttemptedLogLevel");
         assertEquals(LoggingLevel.DEBUG.name(), rll);
