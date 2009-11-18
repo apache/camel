@@ -31,7 +31,6 @@ public class CxfConsumerStartTwiceTest extends Assert {
         //add the same route twice...
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-
                 from("cxf:http://localhost:7070/test?serviceClass=org.apache.camel.component.cxf.HelloService")
                     .to("log:POJO");
             }
@@ -40,9 +39,7 @@ public class CxfConsumerStartTwiceTest extends Assert {
        
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-
-                from(
-                     "cxf:http://localhost:7070/test?serviceClass=org.apache.camel.component.cxf.HelloService")
+                from("cxf:http://localhost:7070/test?serviceClass=org.apache.camel.component.cxf.HelloService")
                     .to("log:POJO");
             }
         });            
@@ -51,10 +48,10 @@ public class CxfConsumerStartTwiceTest extends Assert {
             context.start();
             fail("Expect to catch an exception here");
         } catch (Exception ex) {
-            assertTrue("Expect the exception message has a Soap errror", ex.getMessage().equals("Soap 1.1 endpoint already registered on address http://localhost:7070/test"));
-            context.stop();
+            assertTrue(ex.getMessage().endsWith("Multiple consumers for the same endpoint is now allowed: Endpoint[http://localhost:7070/test]"));
         }
                 
+        context.stop();
     }
 
 }

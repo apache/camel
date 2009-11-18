@@ -36,11 +36,13 @@ public class DirectConsumer extends DefaultConsumer {
 
     @Override
     public void start() throws Exception {
-        if (!endpoint.isAllowMultipleConsumers() && !endpoint.getConsumers().isEmpty()) {
-            throw new IllegalStateException("Endpoint " + endpoint.getEndpointUri() + " only allows 1 active consumer but you attempted to start a 2nd consumer.");
+        // only add as consumer if not already registered
+        if (!endpoint.getConsumers().contains(this)) {
+            if (!endpoint.getConsumers().isEmpty()) {
+                throw new IllegalStateException("Endpoint " + endpoint.getEndpointUri() + " only allows 1 active consumer but you attempted to start a 2nd consumer.");
+            }
+            endpoint.getConsumers().add(this);
         }
-
-        endpoint.getConsumers().add(this);
         super.start();
     }
 

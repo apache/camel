@@ -28,6 +28,7 @@ import javax.jms.Topic;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jms.requestor.Requestor;
@@ -51,7 +52,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @version $Revision:520964 $
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint> {
+public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint>, MultipleConsumersSupport {
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -203,6 +204,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public Object getManagedObject(JmsEndpoint endpoint) {
         return this;
+    }
+
+    public boolean isMultipleConsumersSupported() {
+        // only allow multiple consumers for pub sub domain (e.g. topics)
+        return isPubSubDomain();
     }
 
     // Properties

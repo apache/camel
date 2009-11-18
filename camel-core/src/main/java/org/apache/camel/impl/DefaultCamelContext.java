@@ -36,6 +36,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -891,6 +892,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             // we use a tree map so the routes will be ordered according to startup order defined on the route
             Map<Integer, StartupRouteHolder> inputs = new TreeMap<Integer, StartupRouteHolder>();
 
+            // figure out the order in which the routes should be started
             for (RouteService routeService : routeServices.values()) {
                 Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
                 if (autoStart == null || autoStart) {
@@ -940,6 +942,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                 } else {
                     // should not start on startup
                     LOG.info("Cannot start route " + routeService.getId() + " as it is configured with auto startup disabled.");
+                }
+            }
+
+            // check for clash with multiple consumers of the same endpoints which is not allowed
+            List<Endpoint> routeInputs = new ArrayList<Endpoint>();
+            for (RouteService routeService : routeServices.values()) {
+                for (Consumer consumer : routeService.getInputs().values()) {
+                    Endpoint endpoint = consumer.getEndpoint();
+
+                    // is multiple consumers supported
+                    boolean multipleConsumersSupported = false;
+                    if (endpoint instanceof MultipleConsumersSupport) {
+                        multipleConsumersSupported = ((MultipleConsumersSupport) endpoint).isMultipleConsumersSupported();
+                    }
+
+                    if (!multipleConsumersSupported && routeInputs.contains(endpoint)) {
+                        throw new FailedToStartRouteException(routeService.getId(),
+                            "Multiple consumers for the same endpoint is now allowed: " + endpoint);
+                    } else {
+                        routeInputs.add(endpoint);
+                    }
                 }
             }
 

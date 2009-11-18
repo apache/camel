@@ -185,5 +185,9 @@ public class MinaConfiguration implements Cloneable {
     public void setFilters(List<IoFilter> filters) {
         this.filters = filters;
     }
+
+    public boolean isDatagramProtocol() {
+        return protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast");
+    }
     
 }

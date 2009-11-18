@@ -30,7 +30,7 @@ import org.apache.camel.test.CamelTestSupport;
 
 /**
  * Tests filtering using Camel Test
-  * @version $Revision: 724291 $
+ * @version $Revision: 724291 $
  */
 // START SNIPPET: example
 public class JmsFilterTest extends CamelTestSupport {

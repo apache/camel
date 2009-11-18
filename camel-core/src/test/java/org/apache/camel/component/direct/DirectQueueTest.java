@@ -30,7 +30,7 @@ public class DirectQueueTest extends ContextTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Bar");
 
         template.sendBody("direct:foo", "Hello World");
-        template.sendBody("direct:foo?allowMultipleConsumers=false", "Bye World");
+        template.sendBody("direct:foo", "Bye World");
         template.sendBody("direct:bar", "Bar");
     }
 
@@ -41,7 +41,7 @@ public class DirectQueueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:foo").to("mock:result");
 
-                from("direct:bar?allowMultipleConsumers=false").to("mock:result");
+                from("direct:bar").to("mock:result");
             }
         };
     }

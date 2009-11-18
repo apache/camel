@@ -31,9 +31,9 @@ public class DirectNoMultipleConsumersTest extends TestCase {
 
         container.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in?allowMultipleConsumers=false").to("mock:result");
+                from("direct:in").to("mock:result");
 
-                from("direct:in?allowMultipleConsumers=false").to("mock:result");
+                from("direct:in").to("mock:result");
             }
         });
 

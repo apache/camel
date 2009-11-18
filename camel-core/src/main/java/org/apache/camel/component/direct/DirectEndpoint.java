@@ -32,7 +32,6 @@ import org.apache.camel.impl.DefaultEndpoint;
  * @version $Revision$
  */
 public class DirectEndpoint extends DefaultEndpoint {
-    private boolean allowMultipleConsumers = true;
     private final CopyOnWriteArrayList<DefaultConsumer> consumers = new CopyOnWriteArrayList<DefaultConsumer>();
 
     public DirectEndpoint() {
@@ -52,14 +51,6 @@ public class DirectEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         return new DirectConsumer(this, processor);
-    }
-
-    public boolean isAllowMultipleConsumers() {
-        return allowMultipleConsumers;
-    }
-
-    public void setAllowMultipleConsumers(boolean allowMutlipleConsumers) {
-        this.allowMultipleConsumers = allowMutlipleConsumers;
     }
 
     public boolean isSingleton() {

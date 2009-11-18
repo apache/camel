@@ -54,7 +54,6 @@ public class DirectEndpointTest extends ContextTestSupport {
     public void testDirectEndpointAgain() throws Exception {
         final DirectEndpoint de = new DirectEndpoint("direct://foo");
         de.setCamelContext(context);
-        de.setAllowMultipleConsumers(false);
 
         context.addRoutes(new RouteBuilder() {
             @Override

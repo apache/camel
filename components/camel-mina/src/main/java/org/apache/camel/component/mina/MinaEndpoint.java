@@ -20,6 +20,7 @@ import java.net.SocketAddress;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -35,14 +36,14 @@ import org.apache.mina.common.IoSession;
  *
  * @version $Revision$
  */
-public class MinaEndpoint extends DefaultEndpoint {
+public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+
     /** The key of the IoSession which is stored in the message header*/
     public static final transient String HEADER_MINA_IOSESSION = "CamelMinaIoSession";
     /** The socket address of local machine that received the message. */
     public static final transient String HEADER_LOCAL_ADDRESS = "CamelMinaLocalAddress";
     /** The socket address of the remote machine that send the message. */
     public static final transient String HEADER_REMOTE_ADDRESS = "CamelMinaRemoteAddress";
-    
 
     private SocketAddress address;
     private IoAcceptor acceptor;
@@ -91,6 +92,11 @@ public class MinaEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+
+    public boolean isMultipleConsumersSupported() {
+        // only datagram should allow multiple consumers
+        return configuration.isDatagramProtocol();
     }
 
     // Properties
@@ -143,4 +149,5 @@ public class MinaEndpoint extends DefaultEndpoint {
     public void setConnectorConfig(IoConnectorConfig connectorConfig) {
         this.connectorConfig = connectorConfig;
     }
+
 }

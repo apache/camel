@@ -104,7 +104,7 @@ public class MinaComponent extends DefaultComponent {
         if (protocol != null) {
             if (protocol.equals("tcp")) {
                 return createSocketEndpoint(uri, config);
-            } else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
+            } else if (config.isDatagramProtocol()) {
                 return createDatagramEndpoint(uri, config);
             } else if (protocol.equals("vm")) {
                 return createVmEndpoint(uri, config);
