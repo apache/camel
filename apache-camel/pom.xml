@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.2</version>
   </parent>
 
   <artifactId>apache-camel</artifactId>
@@ -361,30 +361,6 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-bundle-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>${pom.groupId}</groupId>
-                  <artifactId>camel-bundle</artifactId>
-                  <version>${pom.version}</version>
-                  <destFileName>${pom.artifactId}-${pom.version}.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
