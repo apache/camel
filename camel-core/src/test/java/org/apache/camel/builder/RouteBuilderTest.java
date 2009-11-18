@@ -306,7 +306,6 @@ public class RouteBuilderTest extends TestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("seda:a").filter(header("foo").isEqualTo(123)).to("seda:b");
-                from("seda:a").filter(header("bar").isGreaterThan(45)).to("seda:b");
             }
         };
         // END SNIPPET: e7
@@ -314,7 +313,7 @@ public class RouteBuilderTest extends TestSupport {
         List<Route> routes = getRouteList(builder);
         log.debug("Created routes: " + routes);
 
-        assertEquals("Number routes created", 2, routes.size());
+        assertEquals("Number routes created", 1, routes.size());
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda://a", key.getEndpointUri());
