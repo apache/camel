@@ -101,6 +101,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
         Exchange exchange = createExchange(jobExecutionContext);
         try {
             getLoadBalancer().process(exchange);
+
+            // log exception if an exception occurred and was not handled
+            if (exchange.getException() != null) {
+                LOG.error("Quart Job processing Exchange: " + exchange + " failed with exception.", exchange.getException());
+            }
         } catch (JobExecutionException e) {
             throw e;
         } catch (Exception e) {

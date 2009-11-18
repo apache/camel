@@ -53,6 +53,25 @@ public class AdviceWithTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testAdvisedNoNewRoutesAllowed() throws Exception {
+        try {
+            context.getRouteDefinitions().get(0).adviceWith(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:bar").to("mock:bar");
+
+                    interceptSendToEndpoint("mock:foo")
+                            .skipSendToOriginalEndpoint()
+                            .to("log:foo")
+                            .to("mock:advised");
+                }
+            });
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

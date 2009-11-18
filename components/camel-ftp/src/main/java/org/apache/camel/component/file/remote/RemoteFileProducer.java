@@ -66,14 +66,14 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             // if we are stopping then ignore any exception during a poll
             log.debug("Exception occurred during stopping: " + exception.getMessage());
         } else {
-            log.debug("Exception occurred during processing. ", exception);
+            log.warn("Writing file failed with: " + exception.getMessage());
             try {
                 disconnect();
             } catch (Exception e) {
                 // ignore exception
-                log.debug("Ignored exception during disconnect", e);
+                log.debug("Ignored exception during disconnect: " + e.getMessage());
             }
-            // Rethrow the original exception
+            // rethrow the original exception*/
             throw exception;
         }
     }

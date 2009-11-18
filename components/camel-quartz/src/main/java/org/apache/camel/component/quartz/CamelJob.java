@@ -24,6 +24,7 @@ import org.quartz.JobExecutionException;
  * @version $Revision$
  */
 public class CamelJob implements Job {
+
     public void execute(JobExecutionContext context) throws JobExecutionException {
         QuartzEndpoint component = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
         if (component == null) {

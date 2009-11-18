@@ -23,6 +23,7 @@ import java.util.TimerTask;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -92,7 +93,7 @@ public class TimerConsumer extends DefaultConsumer {
 
         Date now = new Date();
         exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
-        // also set now on in header with same key as quaartz to be consistent
+        // also set now on in header with same key as quartz to be consistent
         exchange.getIn().setHeader("firedTime", now);
 
         if (LOG.isTraceEnabled()) {
@@ -100,6 +101,11 @@ public class TimerConsumer extends DefaultConsumer {
         }
         try {
             getProcessor().process(exchange);
+
+            // log exception if an exception occurred and was not handled
+            if (exchange.getException() != null) {
+                handleException(exchange.getException());
+            }
         } catch (Exception e) {
             handleException(e);
         }
