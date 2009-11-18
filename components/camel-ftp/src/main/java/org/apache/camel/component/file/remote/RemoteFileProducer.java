@@ -98,7 +98,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
                 noop = getOperations().sendNoop();
             }
         } catch (Exception e) {
-            log.error(e);
+            // ignore as we will try to recover connection
             noop = false;
         }
         if (log.isDebugEnabled()) {
