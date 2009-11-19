@@ -119,6 +119,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
             }
         };
     }
+    
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();

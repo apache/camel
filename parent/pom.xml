@@ -38,7 +38,7 @@
     <activemq-version>5.3.0</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
     <axiom-version>1.2.8</axiom-version>
-    <cxf-version>2.2.4</cxf-version>
+    <cxf-version>2.2.5</cxf-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>

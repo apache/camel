@@ -154,15 +154,15 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             return new JaxWsProxyFactoryBean(new JaxWsClientFactoryBean() {
                 @Override
-                protected void createClient(Endpoint ep) {
-                    setClient(new CamelCxfClientImpl(getBus(), ep));
+                protected Client createClient(Endpoint ep) {
+                    return new CamelCxfClientImpl(getBus(), ep);
                 }
             });
         } else {
             return new ClientProxyFactoryBean(new ClientFactoryBean() {
                 @Override
-                protected void createClient(Endpoint ep) {
-                    setClient(new CamelCxfClientImpl(getBus(), ep));
+                protected Client createClient(Endpoint ep) {
+                    return new CamelCxfClientImpl(getBus(), ep);
                 }
             });
         }
@@ -176,8 +176,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return new ClientFactoryBean(new WSDLServiceFactoryBean()) {
                         
             @Override
-            protected void createClient(Endpoint ep) {
-                setClient(new CamelCxfClientImpl(getBus(), ep));
+            protected Client createClient(Endpoint ep) {
+                return new CamelCxfClientImpl(getBus(), ep);
             }
             
             @Override
