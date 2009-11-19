@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer {
-    private final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
     private final Endpoint endpoint;
     private final Processor processor;
     private ExceptionHandler exceptionHandler;

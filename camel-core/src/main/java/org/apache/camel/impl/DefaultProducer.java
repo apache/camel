@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class DefaultProducer extends ServiceSupport implements Producer {
-    private final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
     private final Endpoint endpoint;
 
     public DefaultProducer(Endpoint endpoint) {

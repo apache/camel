@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.Connection;
+
+import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.support.JmsUtils;
 
 /**
  * A {@link org.apache.camel.Consumer} which uses Spring's {@link AbstractMessageListenerContainer} implementations to consume JMS messages
@@ -76,6 +80,28 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         listenerContainer.start();
     }
 
+    /**
+     * Pre tests the connection before starting the listening.
+     * <p/>
+     * In case of connection failure the exception is thrown which prevents Camel from starting.
+     *
+     * @throws FailedToCreateConsumerException is thrown if testing the connection failed
+     */
+    protected void testConnectionOnStartup() throws FailedToCreateConsumerException {
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Testing JMS Connection on startup for destination: " + getDestinationName());
+            }
+            Connection con = listenerContainer.getConnectionFactory().createConnection();
+            JmsUtils.closeConnection(con);
+
+            log.info("Successfully tested JMS Connection on startup for destination: " + getDestinationName());
+        } catch (Exception e) {
+            String msg = "Cannot get JMS Connection on startup for destination " + getDestinationName();
+            throw new FailedToCreateConsumerException(getEndpoint(), msg, e);
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -89,6 +115,10 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
 
         // only start listener if auto start is enabled or we are explicit invoking start later
         if (initialized || getEndpoint().isAutoStartup()) {
+            // should we pre test connections before starting?
+            if (getEndpoint().isTestConnectionOnStartup()) {
+                testConnectionOnStartup();
+            }
             startListenerContainer();
         }
 
@@ -125,4 +155,14 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
     public boolean isSuspended() {
         return suspended;
     }
+
+    private String getDestinationName() {
+        if (listenerContainer.getDestination() != null) {
+            return listenerContainer.getDestination().toString();
+        } else {
+            return listenerContainer.getDestinationName();
+        }
+    }
+
+
 }
