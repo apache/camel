@@ -32,6 +32,7 @@
       class="org.apache.camel.builder.MyExceptionThrowingProcessor" />
 
     <bean id="dlc" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+      <property name="deadLetterUri" value="mock:dead" />
       <property name="logger" ref="theCustomLogger" />
     </bean>
 

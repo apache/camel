@@ -17,17 +17,16 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.Logger;
-import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -52,6 +51,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
+        validateDeadLetterUri(routeContext);
+
         DeadLetterChannel answer = new DeadLetterChannel(processor, getLogger(), getOnRedelivery(), getRedeliveryPolicy(),
                 getHandledPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(),
                 isUseOriginalMessage());
@@ -69,18 +70,19 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     public Processor getFailureProcessor() {
         if (failureProcessor == null) {
-            if (deadLetter != null) {
-                failureProcessor = new SendProcessor(deadLetter);
-            } else {
-                // use a recipient list since we only have an uri for the endpoint
-                failureProcessor = new RecipientList(new Expression() {
-                    public <T> T evaluate(Exchange exchange, Class<T> type) {
-                        return exchange.getContext().getTypeConverter().convertTo(type, deadLetterUri);
-                    }
-                });
-            }
+            failureProcessor = new SendProcessor(deadLetter);
         }
         return failureProcessor;
+    }
+
+    protected void validateDeadLetterUri(RouteContext routeContext) {
+        if (deadLetter == null) {
+            ObjectHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
+            deadLetter = routeContext.getCamelContext().getEndpoint(deadLetterUri);
+            if (deadLetter == null) {
+                throw new NoSuchEndpointException(deadLetterUri);
+            }
+        }
     }
 
     protected Predicate createHandledPolicy() {
