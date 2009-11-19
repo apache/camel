@@ -99,6 +99,7 @@
       <smack-bundle-version>3.0.4_2</smack-bundle-version>      
       <spring-version>2.5.6.SEC01</spring-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
+      <spring-integration-version>1.0.1.RELEASE</spring-integration-version>
       <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <stringtemplate-bundle-version>3.2_3</stringtemplate-bundle-version>
@@ -211,7 +212,14 @@
                        </goals>
                      </execution>
                    </executions>
-                 </plugin>
+                   <dependencies>
+                    <dependency> 
+                     <groupId>org.slf4j</groupId>
+                     <artifactId>slf4j-simple</artifactId>
+                     <version>1.4.3</version>
+                   </dependency>
+                 </dependencies>
+               </plugin> 
               </plugins>
            </build>
         </profile>
