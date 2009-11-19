@@ -331,6 +331,10 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setRedeliverDelay(long redeliverDelay) {
         this.redeliverDelay = redeliverDelay;
+        // if max enabled then also set max to this value in case max was too low
+        if (maximumRedeliveryDelay > 0 && redeliverDelay > maximumRedeliveryDelay) {
+            this.maximumRedeliveryDelay = redeliverDelay;
+        }
     }
 
     public double getBackOffMultiplier() {
@@ -386,7 +390,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
-     * Sets the maximum redelivery delay if using exponential back off.
+     * Sets the maximum redelivery delay.
      * Use -1 if you wish to have no maximum
      */
     public void setMaximumRedeliveryDelay(long maximumRedeliveryDelay) {
