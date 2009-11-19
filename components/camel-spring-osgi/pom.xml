@@ -33,6 +33,9 @@
         org.apache.camel.component.validator;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
+      <camel.osgi.activator>
+        org.apache.camel.osgi.Activator
+      </camel.osgi.activator>
   </properties>
 
   <dependencies>
