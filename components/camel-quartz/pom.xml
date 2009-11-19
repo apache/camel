@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>
-            <artifactId>quartz-all</artifactId>
+            <artifactId>quartz</artifactId>
             <version>${quartz-version}</version>
         </dependency>
         <!-- commons-collections is needed at runtime by quartz -->
