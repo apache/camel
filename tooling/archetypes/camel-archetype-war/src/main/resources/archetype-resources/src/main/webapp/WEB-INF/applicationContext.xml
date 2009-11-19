@@ -15,84 +15,85 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:amq="http://activemq.apache.org/schema/core" xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <amq:broker>
+        <amq:persistenceAdapter>
+            <amq:amqPersistenceAdapter syncOnWrite="false"
+                directory="${activemq.base}/data" maxFileLength="20 mb" />
+        </amq:persistenceAdapter>
+        <!--
+            The maximum about of space the broker will use before slowing down
+            producers
+        -->
+        <amq:systemUsage>
+            <amq:systemUsage>
+                <amq:memoryUsage>
+                    <amq:memoryUsage limit="20 mb" />
+                </amq:memoryUsage>
+                <amq:storeUsage>
+                    <amq:storeUsage limit="1 gb" name="foo" />
+                </amq:storeUsage>
+                <amq:tempUsage>
+                    <amq:tempUsage limit="100 mb" />
+                </amq:tempUsage>
+            </amq:systemUsage>
+        </amq:systemUsage>
 
-  <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" dataDirectory="activemq-data">
+        <!-- The transport connectors ActiveMQ will listen to -->
+        <amq:transportConnectors>
+            <amq:transportConnector name="openwire"
+                uri="tcp://localhost:61616" />
+            <amq:transportConnector name="stomp"
+                uri="stomp://localhost:61613" />
+        </amq:transportConnectors>
+    </amq:broker>
 
-    <persistenceAdapter>
-      <amqPersistenceAdapter syncOnWrite="false" directory="${activemq.base}/data" maxFileLength="20 mb"/>
-    </persistenceAdapter>
+    <!--
+        configure the camel activemq component to use the current broker
+    -->
+        <!-- create the activemq component so that we can use the activemq uri -->
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"
+        p:brokerURL="vm://localhost?create=false&amp;waitForStart=10000" />
 
-    <!--  The maximum about of space the broker will use before slowing down producers -->
-    <systemUsage>
-      <systemUsage>
-        <memoryUsage>
-          <memoryUsage limit="20 mb"/>
-        </memoryUsage>
-        <storeUsage>
-          <storeUsage limit="1 gb" name="foo"/>
-        </storeUsage>
-        <tempUsage>
-          <tempUsage limit="100 mb"/>
-        </tempUsage>
-      </systemUsage>
-    </systemUsage>
+    <!--
+        Here is a sample which processes the input files (leaving them in
+        place - see the 'noop' flag), and sends them on a JMS queue. This
+        queue is watched by another route which then performs content based
+        routing on the messages using XPath.
+    -->
+    <camel:camelContext>
+        <camel:package>com.intuit.ai.step.camel</camel:package>
+        <camel:route>
+            <camel:from uri="file:src/data?noop=true" />
+            <!-- Print the message to standard out, just as a test -->
+            <camel:convertBodyTo type="java.lang.String" />
+            <camel:to uri="stream:out" />
+            <camel:to uri="activemq:personnel.records" />
+        </camel:route>
 
-    <!-- The transport connectors ActiveMQ will listen to -->
-    <transportConnectors>
-      <transportConnector name="openwire" uri="tcp://localhost:61616"/>
-      <transportConnector name="stomp" uri="stomp://localhost:61613"/>
-    </transportConnectors>
-  </broker>
-
-  <!-- configure the camel activemq component to use the current broker -->
-  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="connectionFactory">
-      <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?create=false&amp;waitForStart=10000"/>
-      </bean>
-    </property>
-  </bean>
-
-  <!-- Here is a sample which processes the input files
-         (leaving them in place - see the 'noop' flag), and
-         sends them on a JMS queue. This queue is watched by
-         another route which then performs content based
-         routing on the messages using XPath.
-  -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <package>${package}</package>
-    <route>
-      <from uri="file:src/data?noop=true"/>
-      
-      <!-- Print the message to standard out, just as a test -->
-      <convertBodyTo type="java.lang.String"/>
-      <to uri="stream:out"/> 
-      
-      <to uri="activemq:personnel.records"/>
-    </route>
-
-    <route>
-      <from uri="activemq:personnel.records"/>
-      <choice>
-        <when>
-          <xpath>/person/city = 'London'</xpath>
-          <to uri="file:target/messages/uk"/>
-        </when>
-        <otherwise>
-          <to uri="file:target/messages/others"/>
-        </otherwise>
-      </choice>
-    </route>
-  </camelContext>
+        <camel:route>
+            <camel:from uri="activemq:personnel.records" />
+            <camel:choice>
+                <camel:when>
+                    <camel:xpath>/person/city = 'London'</camel:xpath>
+                    <camel:to uri="file:target/messages/uk" />
+                </camel:when>
+                <camel:otherwise>
+                    <camel:to uri="file:target/messages/others" />
+                </camel:otherwise>
+            </camel:choice>
+        </camel:route>
+    </camel:camelContext>
 
 </beans>
