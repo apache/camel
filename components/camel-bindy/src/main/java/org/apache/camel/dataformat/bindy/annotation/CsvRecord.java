@@ -30,6 +30,7 @@ import java.lang.annotation.RetentionPolicy;
  * The skipfirstline (optional) allows to skip the first line of the file/content received
  * The generateHeaderColumnNames (optional) allow to add in the CSV generated the header containing names of the columns
  * The crlf (optional) is used to add a new line after a record. By default, the value is WINDOWS 
+ * The isOrdered (optional) boolean is used to ordered the message generated in output
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -73,6 +74,14 @@ public @interface CsvRecord {
      * @return boolean
      */
     boolean generateHeaderColumns() default false;
+    
+    /**
+     * 
+     * Indicates if the message must be ordered in output
+     * 
+     * @return boolean
+     */
+    boolean isOrdered() default false;
     
 
 }

@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.fix;
+package org.apache.camel.dataformat.bindy.csv;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,21 +27,24 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Header;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Trailer;
+import org.apache.camel.dataformat.bindy.model.simple.onetomany.Author;
+import org.apache.camel.dataformat.bindy.model.simple.onetomany.Book;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairNullMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
-public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4SpringContextTests {
+@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvOneToManyMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringContextTests {
+
+    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private String result = "Charles,Moulliard,Camel in Action 1,2010,43\r\n" +
+        "Charles,Moulliard,Camel in Action 2,2012,43\r\n" +
+        "Charles,Moulliard,Camel in Action 3,2013,43\r\n" +
+        "Charles,Moulliard,Camel in Action 4,,43\r\n";
 
     @Produce(uri = "direct:start")
     private ProducerTemplate template;
@@ -49,54 +53,70 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
     private MockEndpoint resultEndpoint;
 
     @Test
-    @DirtiesContext
     public void testMarshallMessage() throws Exception {
-    	
-    	String result = "1=BE.CHM.0018=FIX 4.19=2010=22011=CHM0001-0122=434=148=BE000124567849=INVMGR54=156=BRKR58=this is a camel - bindy test\r\n";
-    	
         resultEndpoint.expectedBodiesReceived(result);
+
         template.sendBody(generateModel());
 
         resultEndpoint.assertIsSatisfied();
     }
 
     public List<Map<String, Object>> generateModel() {
-    	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> modelObjects = new HashMap<String, Object>();
 
-        Header header = new Header();
-        header.setBeginString("FIX 4.1");
-        header.setBodyLength(20);
-        header.setMsgSeqNum(1);
-        header.setMsgType(null); // NULL value
-        header.setSendCompId("INVMGR");
-        header.setTargetCompId("BRKR");
-        
-        Trailer trailer = new Trailer();
-        trailer.setCheckSum(220); 
-        
-        Order order = new Order();
-        order.setAccount("BE.CHM.001");
-        order.setClOrdId("CHM0001-01");
-        order.setIDSource("4");
-        order.setSecurityId("BE0001245678");
-        order.setSide("1");
-        order.setText("this is a camel - bindy test");
-        
-        order.setHeader(header);
-        order.setTrailer(trailer);
-        
-        model.put(order.getClass().getName(), order);
-        model.put(header.getClass().getName(), header);
-        model.put(trailer.getClass().getName(), trailer);
- 
+		Author author;
+		Book book;
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		List<Book> books = new ArrayList<Book>();
+		//List<Reference> references = new ArrayList<Reference>();
+		//List<Editor> editors = new ArrayList<Editor>();
+		
+		author = new Author();
+		author.setFirstName("Charles");
+		author.setLastName("Moulliard");
+		author.setAge("43");
+		
+		// 1st Book
+		book = new Book();
+		book.setTitle("Camel in Action 1");
+		book.setYear("2010");
+		
+		books.add(book);
+
+		
+		// 2nd book
+		book = new Book();
+		book.setTitle("Camel in Action 2");
+		book.setYear("2012");
+		
+		books.add(book);
+		
+		// 3rd book
+		book = new Book();
+		book.setTitle("Camel in Action 3");
+		book.setYear("2013");
+		books.add(book);
+		
+		// 4th book
+		book = new Book();
+		book.setTitle("Camel in Action 4");
+		book.setYear( null );
+		books.add(book);
+		
+		// Add books to author
+		author.setBooks(books);
+		
+		model.put(author.getClass().getName(), author);
+
         models.add(model);
+
         return models;
     }
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.onetomany");
 
         @Override
         @Bean
@@ -104,9 +124,10 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start").marshal(kvpBindyDataFormat).to("mock:result");
+                    from("direct:start").marshal(camelDataFormat).to("mock:result");
                 }
             };
         }
     }
+
 }

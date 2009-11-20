@@ -26,6 +26,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
@@ -37,37 +38,34 @@ import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairSortedMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
-public class BindySimpleKeyValuePairSortedMarshallTest extends AbstractJUnit4SpringContextTests {
+public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
     private static final transient Log LOG = LogFactory.getLog(BindySimpleKeyValuePairSortedMarshallTest.class);
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    private String result = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
-
-    @Produce(uri = "direct:start")
-    private ProducerTemplate template;
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint resultEndpoint;
-
     @Test
+    @DirtiesContext
     public void testMarshallMessage() {
+    	
+    	String message = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
 
-        resultEndpoint.expectedBodiesReceived(result);
+        result.expectedBodiesReceived( message );
         template.sendBody(generateModel());
 
         try {
-            resultEndpoint.assertIsSatisfied();
+            result.assertIsSatisfied();
         } catch (InterruptedException e) {
             LOG.error("Unit test error : ", e);
         }
     }
 
     public List<Map<String, Object>> generateModel() {
+    	
+    	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
         Map<String, Object> modelObjects = new HashMap<String, Object>();
 
         Header header = new Header();
@@ -102,7 +100,8 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends AbstractJUnit4Spr
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat(
+    	
+        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(
             "org.apache.camel.dataformat.bindy.model.fix.sorted");
 
         @Override
@@ -111,7 +110,7 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends AbstractJUnit4Spr
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start").marshal(camelDataFormat).to("mock:result");
+                    from(URI_DIRECT_START).marshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
                 }
             };
         }

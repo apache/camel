@@ -61,7 +61,8 @@
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>            
+            <artifactId>junit</artifactId>
+            <version>4.4</version>            
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -75,10 +76,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+        	<groupId>commons-collections</groupId>
+        	<artifactId>commons-collections</artifactId>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -90,6 +97,7 @@
                     <useFile>true</useFile>
                     <forkMode>pertest</forkMode>
                     <excludes>
+                        <exclude>**/CommonBindyTest.*</exclude>
                         <!-- <exclude>**/*Csv*Test.*</exclude>
                         <exclude>**/*Tab*Test.*</exclude>
                         <exclude>**/*UnmarshallTest.*</exclude> -->

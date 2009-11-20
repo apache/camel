@@ -22,98 +22,111 @@ import org.apache.camel.dataformat.bindy.annotation.Message;
 
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1")
 public class Order {
-    
-    @Link Header header;
-    
-    @Link Trailer trailer;
 
-    @KeyValuePairField(tag = 1) // Client reference
-    private String account;
+	@Link
+	Header header;
 
-    @KeyValuePairField(tag = 11) // Order reference
-    private String clOrdId;
-    
-    @KeyValuePairField(tag = 22) // Fund ID type (Sedol, ISIN, ...)
-    private String iDSource;
-    
-    @KeyValuePairField(tag = 48) // Fund code
-    private String securityId;
-    
-    @KeyValuePairField(tag = 54) // Movement type ( 1 = Buy, 2 = sell)
-    private String side;
-    
-    @KeyValuePairField(tag = 58) // Free text
-    private String text;
+	@Link
+	Trailer trailer;
 
-    public Header getHeader() {
-        return header;
-    }
+	@KeyValuePairField(tag = 1)
+	// Client reference
+	private String account;
 
-    public void setHeader(Header header) {
-        this.header = header;
-    }
+	@KeyValuePairField(tag = 11)
+	// Order reference
+	private String clOrdId;
 
-    public Trailer getTrailer() {
-        return trailer;
-    }
+	@KeyValuePairField(tag = 22)
+	// Fund ID type (Sedol, ISIN, ...)
+	private String iDSource;
 
-    public void setTrailer(Trailer trailer) {
-        this.trailer = trailer;
-    }
- 
-    public String getAccount() {
-        return account;
-    }
+	@KeyValuePairField(tag = 48)
+	// Fund code
+	private String securityId;
 
-    public void setAccount(String account) {
-        this.account = account;
-    }
+	@KeyValuePairField(tag = 54)
+	// Movement type ( 1 = Buy, 2 = sell)
+	private String side;
 
-    public String getClOrdId() {
-        return clOrdId;
-    }
+	@KeyValuePairField(tag = 58)
+	// Free text
+	private String text;
 
-    public void setClOrdId(String clOrdId) {
-        this.clOrdId = clOrdId;
-    }
+	public Header getHeader() {
+		return header;
+	}
 
-    public String getIDSource() {
-        return iDSource;
-    }
+	public void setHeader(Header header) {
+		this.header = header;
+	}
 
-    public void setIDSource(String source) {
-        this.iDSource = source;
-    }
+	public Trailer getTrailer() {
+		return trailer;
+	}
 
-    public String getSecurityId() {
-        return securityId;
-    }
+	public void setTrailer(Trailer trailer) {
+		this.trailer = trailer;
+	}
 
-    public void setSecurityId(String securityId) {
-        this.securityId = securityId;
-    }
+	public String getAccount() {
+		return account;
+	}
 
-    public String getSide() {
-        return side;
-    }
+	public void setAccount(String account) {
+		this.account = account;
+	}
 
-    public void setSide(String side) {
-        this.side = side;
-    }
+	public String getClOrdId() {
+		return clOrdId;
+	}
 
-    public String getText() {
-        return this.text;
-    }
+	public void setClOrdId(String clOrdId) {
+		this.clOrdId = clOrdId;
+	}
 
-    public void setText(String text) {
-        this.text = text;
-    }
-    
+	public String getIDSource() {
+		return iDSource;
+	}
+
+	public void setIDSource(String source) {
+		this.iDSource = source;
+	}
+
+	public String getSecurityId() {
+		return securityId;
+	}
+
+	public void setSecurityId(String securityId) {
+		this.securityId = securityId;
+	}
+
+	public String getSide() {
+		return side;
+	}
+
+	public void setSide(String side) {
+		this.side = side;
+	}
+
+	public String getText() {
+		return this.text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+	
     @Override
     public String toString() {
-        return "Model : " + Order.class.getName() + ", " + this.account
-            + ", " + this.clOrdId + ", " + this.iDSource + ", " + this.securityId
-            + ", " + this.side + ", " + this.text;
-    }
+
+    	return Order.class.getName() +  " --> 1: " + this.account
+    	+ ", 11: " + this.clOrdId 
+    	+ ", 22: " + this.iDSource
+    	+ ", 48: " + this.securityId
+    	+ ", 54: " + this.side
+    	+ ", 58: " + this.text;
+
+	}
 
 }

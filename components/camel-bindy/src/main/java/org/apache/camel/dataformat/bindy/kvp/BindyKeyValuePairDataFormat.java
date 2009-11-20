@@ -120,6 +120,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
                 if (result.size() > 0) {
 
                     // Bind data from message with model classes
+                	// Counter is used to detect line where error occurs
                     factory.bind(result, model, count);
 
                     // Link objects together

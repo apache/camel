@@ -90,9 +90,9 @@ public class Header {
     
     @Override
     public String toString() {
-        return "Model : " + Header.class.getName()
-            + ", " + this.beginString + ", " + this.bodyLength + ", " + this.msgSeqNum
-            + this.msgType + ", " + this.sendCompId + ", " + this.targetCompId;
+        return Header.class.getName()
+            + " --> 8: " + this.beginString + ", 9: " + this.bodyLength + ", 34: " + this.msgSeqNum
+            + " , 35: " + this.msgType + ", 49: " + this.sendCompId + ", 56: " + this.targetCompId;
     }
-
+  
 }

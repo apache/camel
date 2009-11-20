@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.model.fix.sorted.trailer;
+package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.dataformat.bindy.annotation.Section;
 
 @Link
-@Section(number = 3)
 public class Trailer {
 
-    @KeyValuePairField(tag = 10, position = 1)
+    @KeyValuePairField(tag = 10)
+    
     // CheckSum
     private int checkSum;
 
@@ -35,7 +34,7 @@ public class Trailer {
     public void setCheckSum(int checkSum) {
         this.checkSum = checkSum;
     }
-    
+
     @Override
     public String toString() {
         return Trailer.class.getName() + " --> 10: " + this.checkSum;

@@ -21,14 +21,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
+import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
+import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -49,11 +53,13 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<Integer, KeyValuePairField>();
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
+    
+	private Map<String, List> lists = new HashMap<String, List>();
 
     private String keyValuePairSeparator;
     private String pairSeparator;
     private boolean messageOrdered;
-
+    
     public BindyKeyValuePairFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
 
         super(resolver, packageNames);
@@ -80,6 +86,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     }
 
+   
     public void initAnnotedFields() {
 
         for (Class<?> cl : models) {
@@ -114,70 +121,332 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         }
     }
 
+    /**
+     * 
+     */
     public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
-
-        int pos = 0;
-
+    	
+        Map<Integer, List> results = new HashMap<Integer, List>();
+        
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Data : " + data);
+            LOG.debug("Key value pairs data : " + data);
         }
-
-        while (pos < data.size()) {
-
-            if (!data.get(pos).equals("")) {
-
-                // Separate the key from its value
-                // e.g 8=FIX 4.1 --> key = 8 and Value = FIX 4.1
-                ObjectHelper.notNull(this.keyValuePairSeparator,
-                                     "Key Value Pair not defined in the @Message annotation");
-                String[] keyValuePair = data.get(pos).split(this.getKeyValuePairSeparator());
-
-                int tag = Integer.parseInt(keyValuePair[0]);
-                String keyValue = keyValuePair[1];
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Key : " + tag + ", value : " + keyValue);
-                }
-
-                KeyValuePairField keyValuePairField = keyValuePairFields.get(tag);
-                ObjectHelper.notNull(keyValuePairField, "No tag defined for the field : " + tag + ", line : " + line);
-
-                Field field = annotedFields.get(tag);
-                field.setAccessible(true);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Tag : " + tag + ", Data : " + keyValue + ", Field type : " + field.getType());
-                }
-
-                Format<?> format;
-
-                // Get pattern defined for the field
-                String pattern = keyValuePairField.pattern();
-
-                // Create format object to format the field
-                format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField.precision());
-
-                // field object to be set
-                Object modelField = model.get(field.getDeclaringClass().getName());
-
-                // format the value of the key received
-                Object value;
-                try {
-                    value = format.parse(keyValue);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Parsing error detected for field defined at the tag : " + tag
-                        + ", line : " + line, e);
-                }
-
-                field.set(modelField, value);
-
+        
+        // Separate the key from its value
+        // e.g 8=FIX 4.1 --> key = 8 and Value = FIX 4.1
+        ObjectHelper.notNull( keyValuePairSeparator, "Key Value Pair not defined in the @Message annotation");
+        
+        // Generate map of key value
+        // We use a Map of List as we can have the same key several times (relation one to many)
+        for (String s : data) {
+        	
+        	// Get KeyValuePair
+        	String[] keyValuePair = s.split( getKeyValuePairSeparator() );
+        	
+        	// Extract Key
+            int key = Integer.parseInt(keyValuePair[0]);
+            
+            // Extract key value
+            String value = keyValuePair[1];
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Key : " + key + ", value : " + value);
             }
+            
+            // Add value to the Map using key value as key
+			if (!results.containsKey(key)) {
+				
+				List list = new LinkedList();
+				list.add(value);
+				results.put(key, list);
 
-            pos++;
+			} else {
+
+				List list = (LinkedList) results.get(key);
+				list.add(value);
+			}
+            
         }
+        
 
+        // Iterate over the model
+		for (Class clazz : models) {
+
+			Object obj = model.get(clazz.getName());
+
+			if (obj != null) {
+
+				// Generate model from key value map
+				generateModelFromKeyValueMap(clazz, obj, results, line);
+
+			}
+		}
+		
     }
+    
+    /**
+     * 
+     * @param clazz
+     * @param obj
+     * @param results
+     * @param line
+     * @throws Exception
+     */
+    private void generateModelFromKeyValueMap(Class clazz, Object obj, Map<Integer, List> results, int line)
+			throws Exception {
 
+		for (Field field : clazz.getDeclaredFields()) {
+
+			field.setAccessible(true);
+
+			KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
+
+			if (keyValuePairField != null) {
+
+				// Key
+				int key = keyValuePairField.tag();
+
+				// Get Value
+				List<String> values = results.get(key);
+				String value = null;
+
+				// we don't received data
+				if (values == null) {
+
+					/*
+					 * The relation is one to one
+					 * So we check if we are in a target class
+					 * and if the field is mandatory
+					 */
+					if (obj != null) {
+
+						// Check mandatory field
+						if (keyValuePairField.required() && values == null) {
+							throw new IllegalArgumentException("The mandatory key/tag : " + key
+									+ " has not been defined !");
+						}
+						
+						Object result = getDefaultValueforPrimitive(field.getType());
+						
+						try {
+							field.set(obj, result);
+						} catch (Exception e) {
+							throw new IllegalArgumentException("Setting of field " + field + " failed for object : " + obj
+									+ " and result : " + result);
+						}
+						
+					} else {
+						
+						/*
+						 * The relation is one to many
+						 * So, we create an object with empty fields
+						 * and we don't check if the fields are mandatory
+						 */
+						
+						// Get List from Map
+						List l = lists.get(clazz.getName());
+
+						if (l != null) {
+							
+							// Test if object exist
+							if (!l.isEmpty()) {
+								obj = l.get(0);
+							} else {
+								obj = clazz.newInstance();
+							}
+							
+							Object result = getDefaultValueforPrimitive(field.getType());
+							try {
+								field.set(obj, result);
+							} catch (Exception e) {
+								throw new IllegalArgumentException("Setting of field " + field + " failed for object : " + obj
+										+ " and result : " + result);
+							}							
+							
+							// Add object created to the list
+							if ( !l.isEmpty() ) {
+								l.set(0, obj);
+							} else {
+								l.add(0, obj);
+							}
+
+							// and to the Map
+							lists.put(clazz.getName(), l);
+							
+							//Reset obj to null
+							obj = null;
+							
+						} else {
+							throw new IllegalArgumentException(
+									"The list of values is empty for the following key : " + key + " defined in the class : " + clazz.getName());
+						}
+						
+						
+					} // end of test if obj != null
+
+
+
+				} else {
+
+					// Data have been retrieved from message
+					if (values.size() >= 1) {
+
+						if (obj != null) {
+
+							// Relation OneToOne
+							value = (String) values.get(0);
+							Object result = null;
+
+							if (value != null) {
+
+								// Get pattern defined for the field
+								String pattern = keyValuePairField.pattern();
+
+								// Create format object to format the field
+								Format<?> format = FormatFactory.getFormat(field.getType(), pattern, keyValuePairField
+										.precision());
+
+								// format the value of the key received
+								result = formatField(format, value, key, line);
+
+								if (LOG.isDebugEnabled()) {
+									LOG.debug("Value formated : " + result);
+								}
+
+							} else {
+								result = getDefaultValueforPrimitive(field.getType());
+							}
+							try {
+								field.set(obj, result);
+							} catch (Exception e) {
+								// System.out.println("Exception : " + e);
+								throw new IllegalArgumentException("Setting of field " + field
+										+ " failed for object : " + obj + " and result : " + result);
+							}
+
+						} else {
+
+							// Get List from Map
+							List l = lists.get(clazz.getName());
+
+							if (l != null) {
+
+								// Relation OneToMany
+								for (int i = 0; i < values.size(); i++) {
+
+									// Test if object exist
+									if ((!l.isEmpty()) && (l.size() > i)) {
+										obj = l.get(i);
+									} else {
+										obj = clazz.newInstance();
+									}
+
+									value = (String) values.get(i);
+
+									// Get pattern defined for the field
+									String pattern = keyValuePairField.pattern();
+
+									// Create format object to format the field
+									Format<?> format = FormatFactory.getFormat(field.getType(), pattern,
+											keyValuePairField.precision());
+
+									// format the value of the key received
+									Object result = formatField(format, value, key, line);
+
+									if (LOG.isDebugEnabled()) {
+										LOG.debug("Value formated : " + result);
+									}
+
+									try {
+										if (value != null) {
+											field.set(obj, result);
+										} else {
+											field.set(obj, getDefaultValueforPrimitive(field.getType()));
+										}
+									} catch (Exception e) {
+										throw new IllegalArgumentException("Setting of field " + field
+												+ " failed for object : " + obj + " and result : " + result);
+									}
+
+									// Add object created to the list
+									if ((!l.isEmpty()) && (l.size() > i)) {
+										l.set(i, obj);
+									} else {
+										l.add(i, obj);
+									}
+									// and to the Map
+									lists.put(clazz.getName(), l);
+									
+									//Reset obj to null
+									obj = null;
+
+								}
+
+							} else {
+								throw new IllegalArgumentException(
+										"The list of values is empty for the following key : " + key
+												+ " defined in the class : " + clazz.getName());
+							}
+						}
+
+					} else {
+
+						// No values found from message
+						Object result = getDefaultValueforPrimitive(field.getType());
+
+						try {
+							field.set(obj, result);
+						} catch (Exception e) {
+							throw new IllegalArgumentException("Setting of field " + field + " failed for object : "
+									+ obj + " and result : " + result);
+						}
+					}
+				}
+			}
+
+			OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+			if (oneToMany != null) {
+
+				String targetClass = oneToMany.mappedTo();
+
+				if (targetClass != "") {
+					// Class cl = Class.forName(targetClass); Does not work in OSGI when class is defined in another bundle
+				    Class cl = null;
+
+				    try {
+
+				        cl = Thread.currentThread().getContextClassLoader().loadClass( targetClass );
+
+				    }
+
+				    catch (ClassNotFoundException e) {
+
+				        cl = getClass().getClassLoader().loadClass( targetClass );
+
+				    }
+
+					if (!lists.containsKey(cl.getName())) {
+						lists.put(cl.getName(), new ArrayList());
+					}
+
+					generateModelFromKeyValueMap(cl, null, results, line);
+
+					// Add list of objects
+					field.set(obj, lists.get(cl.getName()));
+
+				} else {
+					throw new IllegalArgumentException("No target class has been defined in @OneToMany annotation !");
+				}
+
+			}
+
+		}
+
+	}
+    
+    /**
+     * 
+     */
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder builder = new StringBuilder();
@@ -324,6 +593,26 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         return builder.toString();
     }
+    
+    private Object formatField(Format format, String value, int tag, int line) throws Exception {
+    	
+		Object obj = null ;
+
+		if (value != null) {
+
+				// Format field value
+				try {
+					obj = format.parse( value );	
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Parsing error detected for field defined at the tag : " + tag
+	                        + ", line : " + line, e);
+				}
+
+		}
+
+		return obj;
+
+	}
 
     /**
      * Find the pair separator used to delimit the key value pair fields

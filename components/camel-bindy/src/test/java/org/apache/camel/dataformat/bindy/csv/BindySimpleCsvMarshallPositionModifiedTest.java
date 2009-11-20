@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,84 +26,69 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.EndpointInject;
+
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Client;
-import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order;
-import org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Security;
+import org.apache.camel.dataformat.bindy.CommonBindyTest;
+import org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindyComplexCsvMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
-public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTests {
+
+@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvMarshallPositionModifiedTest$ContextConfig", loader = JavaConfigContextLoader.class)
+public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    private String result = "10,A1,Julia,Roberts,ISIN,LU123456789,BUY,Share,150,USD,14-01-2009\r\n";
-
-    @Produce(uri = "direct:start")
-    private ProducerTemplate template;
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint resultEndpoint;
-
+    private String expected;
+    
     @Test
-    public void testMarshallMessage() throws Exception {
-        resultEndpoint.expectedBodiesReceived(result);
-
+    @DirtiesContext
+    public void testReverseMessage() throws Exception {
+    	
+    	expected = "08-01-2009,EUR,400.25,Share,BUY,BE12345678,ISIN,Knightley,Keira,B2,1\r\n";
+        result.expectedBodiesReceived(expected);
+       
         template.sendBody(generateModel());
-
-        resultEndpoint.assertIsSatisfied();
+    	result.assertIsSatisfied();
     }
+    
 
-    private List<Map<String, Object>> generateModel() {
+    public List<Map<String, Object>> generateModel() {
         Map<String, Object> model = new HashMap<String, Object>();
 
         Order order = new Order();
-        order.setOrderNr(10);
-        order.setAmount(new BigDecimal("150"));
+        order.setOrderNr(1);
         order.setOrderType("BUY");
+        order.setClientNr("B2");
+        order.setFirstName("Keira");
+        order.setLastName("Knightley");
+        order.setAmount(new BigDecimal("400.25"));
+        order.setInstrumentCode("ISIN");
+        order.setInstrumentNumber("BE12345678");
         order.setInstrumentType("Share");
-        order.setCurrency("USD");
+        order.setCurrency("EUR");
 
         Calendar calendar = new GregorianCalendar();
-        calendar.set(2009, 0, 14);
+        calendar.set(2009, 0, 8);
         order.setOrderDate(calendar.getTime());
 
-        Client client = new Client();
-        client.setClientNr("A1");
-        client.setFirstName("Julia");
-        client.setLastName("Roberts");
-
-        order.setClient(client);
-        
-        Security security = new Security();
-        security.setInstrumentCode("ISIN");
-        security.setInstrumentNumber("LU123456789");
-        
-        order.setSecurity(security);        
-
         model.put(order.getClass().getName(), order);
-        model.put(client.getClass().getName(), client);
-        model.put(security.getClass().getName(), security);
 
-        models.add(0, model);
+        models.add(model);
 
         return models;
     }
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
+    	
+        BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition");
 
         @Override
         @Bean
@@ -109,7 +96,19 @@ public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTest
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start").marshal(camelDataFormat).to("mock:result");
+                	
+                    Tracer tracer = new Tracer();
+                    tracer.setLogLevel(LoggingLevel.FATAL);
+                    tracer.setLogName("org.apache.camel.bindy");
+
+                    getContext().addInterceptStrategy(tracer);
+            
+                    // default should errors go to mock:error
+                    errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
+                
+                    onException(Exception.class).maximumRedeliveries(0).handled(true);                	
+                	
+                    from(URI_DIRECT_START).marshal(csvBindyDataFormat).to(URI_MOCK_RESULT);
                 }
             };
         }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,6 +29,7 @@ import java.util.TreeMap;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
+import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.Converter;
@@ -49,6 +51,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
+    
+    private Map<Integer, List> results; 
+    
     private int numberOptionalFields;
     private int numberMandatoryFields;
     private int totalFields;
@@ -57,6 +62,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean skipFirstLine;
     private boolean generateHeaderColumnNames;
     private boolean messageOrdered;
+    
+	boolean isOneToMany = false;
 
     public BindyCsvFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         super(resolver, packageNames);
@@ -215,7 +222,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         
     }
 
-    public String unbind(Map<String, Object> model) throws Exception {
+    /*public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder builder = new StringBuilder();
 
@@ -298,7 +305,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 } else {
 
-                    // Add value to the list if not null
+                    // Add value to the appender if not null
                     if (value != null) {
 
                         // Format field value
@@ -346,7 +353,291 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         
         return builder.toString();
 
+    }*/
+    
+    public String unbind(Map<String, Object> model) throws Exception {
+
+		StringBuffer buffer = new StringBuffer();
+		results = new HashMap<Integer, List>();
+
+		// Check if separator exists
+		ObjectHelper.notNull(this.separator,
+				"The separator has not been instantiated or property not defined in the @CsvRecord annotation");
+
+		char separator = Converter.getCharDelimitor(this.getSeparator());
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : "
+							+ this.getSeparator());
+		}
+
+		for (Class clazz : models) {
+			
+			if ( model.containsKey( clazz.getName()) ) {
+
+				Object obj = model.get(clazz.getName());
+
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Model object : " + obj + ", class : " + obj.getClass().getName());
+				}
+
+				if (obj != null) {
+
+					// Generate Csv table
+					generateCsvPositionMap(clazz, obj);
+
+				}
+			}
+		}
+
+		// Transpose result
+		List<List> l = new ArrayList<List>();
+
+		if (isOneToMany) {
+			
+			l = product(results);
+			
+		} else {
+			
+			// Convert Map<Integer, List> into List<List>
+			TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
+			List<String> temp = new ArrayList<String>();
+			
+			for(Integer key : sortValues.keySet()) {
+				
+				// Get list of values
+				List<String> val = sortValues.get(key);
+				
+				// For one to one relation
+				// There is only one item in the list
+				String value = (String) val.get(0);
+				
+				// Add the value to the temp array
+				if ( value != null ) {			
+				    temp.add( value );
+				} else {
+					temp.add( "" );
+				}
+			}
+			
+			l.add(temp);
+		}
+		
+
+		if (l != null) {
+
+			Iterator it = l.iterator();
+			while (it.hasNext()) {
+
+				List<String> tokens = (ArrayList<String>) it.next();
+				Iterator itx = tokens.iterator();
+
+				while (itx.hasNext()) {
+
+					String res = (String) itx.next();
+
+					if (res != null) {
+						buffer.append(res);
+					} else {
+						buffer.append("");
+					}
+
+					if (itx.hasNext()) {
+						buffer.append(separator);
+					}
+
+				}
+
+				if (it.hasNext()) {
+					buffer.append(Converter.getStringCarriageReturn(getCarriageReturn()));
+				}
+
+			}
+
+		}
+
+		return buffer.toString();
+       
     }
+    
+    private List<List> product(Map<Integer, List> values) {
+
+		TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
+
+		List<List> product = new ArrayList<List>();
+		Map<Integer, Integer> index = new HashMap<Integer, Integer>();
+
+		boolean cont = true;
+		int idx = 0;
+		int idxSize;
+
+		do {
+
+			idxSize = 0;
+			List v = new ArrayList();
+
+			for (int ii = 1; ii <= sortValues.lastKey(); ii++) {
+
+				List l = values.get(ii);
+
+				if (l == null) {
+					v.add("");
+					++idxSize;
+					continue;
+				}
+
+				if (l.size() >= idx + 1) {
+					v.add(l.get(idx));
+					index.put(ii, idx);
+					if (LOG.isDebugEnabled()) {
+	                    LOG.debug("Value : " + l.get(idx) + ", pos : " + ii + ", at :" + idx);
+					}
+
+				} else {
+					v.add(l.get(0));
+					index.put(ii, 0);
+					++idxSize;
+					if (LOG.isDebugEnabled()) {
+	                    LOG.debug("Value : " + l.get(0) + ", pos : " + ii + ", at index : " + 0);
+					}
+				}
+
+			}
+			
+			if ( idxSize != sortValues.lastKey()) {
+				product.add(v);
+			}
+			++idx;
+
+		} while (idxSize != sortValues.lastKey());
+
+		return product;
+	}
+	
+    
+    private void generateCsvPositionMap(Class clazz, Object obj) throws Exception {
+    	
+		String result = "";
+
+		for (Field field : clazz.getDeclaredFields()) {
+
+			field.setAccessible(true);
+
+			DataField datafield = field.getAnnotation(DataField.class);
+
+			if (datafield != null) {
+
+				if (obj != null) {
+
+					// Retrieve the format, pattern and precision associated to
+					// the type
+					Class type = field.getType();
+					String pattern = datafield.pattern();
+					int precision = datafield.precision();
+
+					// Create format
+					Format format = FormatFactory.getFormat(type, pattern, precision);
+
+					// Get field value
+					Object value = field.get(obj);
+
+					result = formatString(format, value);
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Value to be formatted : " + value + ", position : " + datafield.pos()
+								+ ", and its formated value : " + result);
+					}
+
+				} else {
+					result = "";
+				}
+
+				Integer key;
+
+				if (isMessageOrdered()) {
+
+					// Generate a key using the number of the section
+					// and the position of the field
+					Integer key1 = sections.get(obj.getClass().getName());
+					Integer key2 = datafield.position();
+					Integer keyGenerated = generateKey(key1, key2);
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
+					}
+
+					key = keyGenerated;
+
+				} else {
+
+					key = datafield.pos();
+				}
+
+				if (!results.containsKey(key)) {
+
+					List list = new LinkedList();
+					list.add(result);
+					results.put(key, list);
+
+				} else {
+
+					List list = (LinkedList) results.get(key);
+					list.add(result);
+				}
+
+			}
+
+			OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+			if (oneToMany != null) {
+				
+				// Set global variable
+				// Will be used during generation of CSV
+				isOneToMany = true;
+
+				ArrayList list = (ArrayList) field.get(obj);
+
+				if (list != null) {
+
+					Iterator it = list.iterator();
+
+					while (it.hasNext()) {
+
+						Object target = it.next();
+						generateCsvPositionMap(target.getClass(), target);
+
+					}
+
+				} else {
+					
+					// Call this function to add empty value
+					// in the table
+					generateCsvPositionMap(field.getClass(), null);
+				}
+
+			}
+		}
+    	
+    	
+    }
+    
+    private String formatString(Format format, Object value) throws Exception {
+    	
+		String strValue = "";
+
+		if (value != null) {
+
+				// Format field value
+				try {
+					strValue = format.format(value);
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Formating error detected for the value : " + value, e);
+				}
+
+		}
+
+		return strValue;
+
+	}
     
     public String generateHeader() {
 
@@ -425,6 +716,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Carriage return defined for the CSV : " + crlf);
                     }
+                    
+                    // Get isOrdered parameter
+                    messageOrdered = record.isOrdered();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Must CSV record be ordered ? " + messageOrdered);
+                    }
+                    
                 }
 
                 if (section != null) {

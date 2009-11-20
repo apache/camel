@@ -73,10 +73,10 @@ public class BindyCsvDataFormat implements DataFormat {
             outputStream.write(bytesCRLF);
         }
 
-        // We iterate over the list of CSV record
         for (Map<String, Object> model : models) {
 
             String result = factory.unbind(model);
+
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
 

@@ -50,7 +50,9 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         this.packageNames = packageNames;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Package(s) name : " + packageNames.toString());
+        	for (String str : this.packageNames) {
+        		LOG.debug("Package name : " + str);
+        	}
         }
 
         initModel();

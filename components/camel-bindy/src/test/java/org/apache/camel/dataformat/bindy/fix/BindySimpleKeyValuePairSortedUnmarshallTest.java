@@ -16,33 +16,78 @@
  */
 package org.apache.camel.dataformat.bindy.fix;
 
-import org.apache.camel.EndpointInject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
+import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
+import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
+import org.apache.camel.dataformat.bindy.model.fix.sorted.trailer.Trailer;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairSortedUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
-public class BindySimpleKeyValuePairSortedUnmarshallTest extends AbstractJUnit4SpringContextTests {
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint resultEndpoint;
+public class BindySimpleKeyValuePairSortedUnmarshallTest extends CommonBindyTest {
 
     @Test
+    @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.assertIsSatisfied();
+    	
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived( generateModel().toString() );
+        
+        result.assertIsSatisfied();
+        
     }
+    
+    public List<Map<String, Object>> generateModel() {
+        Map<String, Object> model = new HashMap<String, Object>();
+    	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    	
+        Header header = new Header();
+        header.setBeginString("FIX.4.1");
+        header.setBodyLength(20);
+        header.setMsgSeqNum(1);
+        header.setMsgType("0");
+        header.setSendCompId("INVMGR");
+        header.setTargetCompId("BRKR");
+        
+        Trailer trailer = new Trailer();
+        trailer.setCheckSum(220); 
+        
+        Order order = new Order();
+        order.setAccount("BE.CHM.001");
+        order.setClOrdId("CHM0001-01");
+        order.setText("this is a camel - bindy test");
+        order.setIDSource("4");
+        order.setSecurityId("BE0001245678");
+        order.setSide("1");
+        
+        order.setHeader(header);
+        order.setTrailer(trailer);
+        
+        model.put(order.getClass().getName(), order);
+        model.put(header.getClass().getName(), header);
+        model.put(trailer.getClass().getName(), trailer);
+ 
+        models.add(model);
+        return models;
+    }
+    
+    
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.sorted");
+        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.sorted");
 
         @Override
         @Bean
@@ -50,7 +95,7 @@ public class BindySimpleKeyValuePairSortedUnmarshallTest extends AbstractJUnit4S
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("file://src/test/data/fix?noop=true").unmarshal(camelDataFormat).to("mock:result");
+                    from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
                 }
             };
         }

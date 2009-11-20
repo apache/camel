@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.model.fix.tab;
+package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
@@ -94,5 +94,5 @@ public class Header {
             + " --> 8: " + this.beginString + ", 9: " + this.bodyLength + ", 34: " + this.msgSeqNum
             + " , 35: " + this.msgType + ", 49: " + this.sendCompId + ", 56: " + this.targetCompId;
     }
-    
+
 }

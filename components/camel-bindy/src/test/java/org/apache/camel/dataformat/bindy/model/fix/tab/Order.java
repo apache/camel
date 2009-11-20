@@ -111,9 +111,14 @@ public class Order {
     
     @Override
     public String toString() {
-        return "Model : " + Order.class.getName() + ", " + this.account
-            + ", " + this.clOrdId + ", " + this.iDSource + ", " + this.securityId
-            + ", " + this.side + ", " + this.text;
-    }
 
+    	return Order.class.getName() +  " --> 1: " + this.account
+    	+ ", 11: " + this.clOrdId 
+    	+ ", 22: " + this.iDSource
+    	+ ", 48: " + this.securityId
+    	+ ", 54: " + this.side
+    	+ ", 58: " + this.text;
+
+	}
+    
 }

@@ -49,4 +49,16 @@ public final class Converter {
             return returnCharacter.getBytes();
         }
     }
+    
+    public static String getStringCarriageReturn(String returnCharacter) {
+        if (returnCharacter.equals("WINDOWS")) {
+            return "\r\n";
+        } else if (returnCharacter.equals("UNIX")) {
+            return "\n";
+        } else if (returnCharacter.equals("MAC")) {
+            return "\r";
+        } else {
+            return returnCharacter;
+        }
+    }
 }

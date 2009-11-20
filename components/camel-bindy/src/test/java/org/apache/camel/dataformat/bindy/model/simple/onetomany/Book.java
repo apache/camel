@@ -14,31 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.bindy.model.fix.sorted.trailer;
+package org.apache.camel.dataformat.bindy.model.simple.onetomany;
 
-import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
-import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.dataformat.bindy.annotation.Section;
+import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-@Link
-@Section(number = 3)
-public class Trailer {
+public class Book {
 
-    @KeyValuePairField(tag = 10, position = 1)
-    // CheckSum
-    private int checkSum;
-
-    public int getCheckSum() {
-        return checkSum;
-    }
-
-    public void setCheckSum(int checkSum) {
-        this.checkSum = checkSum;
-    }
-    
-    @Override
-    public String toString() {
-        return Trailer.class.getName() + " --> 10: " + this.checkSum;
-    }
-
+	@DataField(pos = 3)
+	private String title;
+	
+	@DataField(pos = 4)
+	private String year;
+	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
+	
 }

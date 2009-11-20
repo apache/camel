@@ -21,15 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Header;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Trailer;
+import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
+import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
+import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Security;
+import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
@@ -37,38 +35,39 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairNullMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
-public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "direct:start")
-    private ProducerTemplate template;
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint resultEndpoint;
+@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindyComplexOneToManyKeyValuePairUnMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindyTest {
 
     @Test
     @DirtiesContext
-    public void testMarshallMessage() throws Exception {
+    public void testUnMarshallMessage() throws Exception {
     	
-    	String result = "1=BE.CHM.0018=FIX 4.19=2010=22011=CHM0001-0122=434=148=BE000124567849=INVMGR54=156=BRKR58=this is a camel - bindy test\r\n";
+    	String message = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR" +
+		"1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test" +
+		"22=448=BE000124567854=1" +
+		"22=548=BE000987654354=2" +
+		"22=648=BE000999999954=3" +
+		"10=220";
     	
-        resultEndpoint.expectedBodiesReceived(result);
-        template.sendBody(generateModel());
+        result.expectedBodiesReceived( generateModel().toString() );
+        template.sendBody(message);
 
-        resultEndpoint.assertIsSatisfied();
+        result.assertIsSatisfied();
     }
 
     public List<Map<String, Object>> generateModel() {
+    	
     	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
         Map<String, Object> model = new HashMap<String, Object>();
-
+        List<Security> securities = new ArrayList<Security>();
+         
         Header header = new Header();
         header.setBeginString("FIX 4.1");
         header.setBodyLength(20);
         header.setMsgSeqNum(1);
-        header.setMsgType(null); // NULL value
+        header.setMsgType("0");
         header.setSendCompId("INVMGR");
         header.setTargetCompId("BRKR");
         
@@ -78,11 +77,33 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
         Order order = new Order();
         order.setAccount("BE.CHM.001");
         order.setClOrdId("CHM0001-01");
-        order.setIDSource("4");
-        order.setSecurityId("BE0001245678");
-        order.setSide("1");
         order.setText("this is a camel - bindy test");
+
+        // 1st security
+        Security security = new Security();
+        security.setIdSource("4");
+        security.setSecurityCode("BE0001245678");
+        security.setSide("1");
         
+        securities.add(security);
+        
+        // 2nd security
+        security = new Security();
+        security.setIdSource("5");
+        security.setSecurityCode("BE0009876543");
+        security.setSide("2");
+        
+        securities.add(security);
+        
+        // 3rd security
+        security = new Security();
+        security.setIdSource("6");
+        security.setSecurityCode("BE0009999999");
+        security.setSide("3");
+        
+        securities.add(security);
+        
+        order.setSecurities(securities);
         order.setHeader(header);
         order.setTrailer(trailer);
         
@@ -96,7 +117,7 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
+        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.complex.onetomany");
 
         @Override
         @Bean
@@ -104,7 +125,7 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start").marshal(kvpBindyDataFormat).to("mock:result");
+                    from(URI_DIRECT_START).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
                 }
             };
         }

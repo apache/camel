@@ -23,6 +23,7 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 public class Trailer {
 
     @KeyValuePairField(tag = 10)
+    
     // CheckSum
     private int checkSum;
 
@@ -31,12 +32,12 @@ public class Trailer {
     }
 
     public void setCheckSum(int checkSum) {
-        checkSum = checkSum;
+        this.checkSum = checkSum;
     }
-
+    
     @Override
     public String toString() {
-        return "Model : " + Trailer.class.getName() + ", " + this.checkSum;
+        return Trailer.class.getName() + " --> 10: " + this.checkSum;
     }
 
 }
