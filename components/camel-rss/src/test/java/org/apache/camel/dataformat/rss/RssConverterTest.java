@@ -28,7 +28,7 @@ public class RssConverterTest extends RssDataFormatTest {
                 // START SNIPPET: ex
                 from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=1000").convertBodyTo(String.class).to("mock:marshal");
                 // END SNIPPET: ex
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=1000").convertBodyTo(String.class).convertBodyTo(SyndFeed.class).to("mock:unmarshal");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=1500").convertBodyTo(String.class).convertBodyTo(SyndFeed.class).to("mock:unmarshal");
             }
         };
     }
