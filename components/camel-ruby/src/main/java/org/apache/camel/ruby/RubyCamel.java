@@ -34,6 +34,7 @@ public final class RubyCamel {
     private RubyCamel() {
         // helper class
     }
+
     public static List<RouteBuilder> getRoutes() {
         return routes;
     }
@@ -51,5 +52,9 @@ public final class RubyCamel {
 
     public static void setCamelContext(CamelContext camelContext) {
         RubyCamel.camelContext = camelContext;
+    }
+
+    public static void clearRoutes() {
+        routes.clear();
     }
 }

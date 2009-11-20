@@ -60,9 +60,11 @@ public class RubyTest extends CamelTestSupport {
 
         // TODO make a better way to load ruby based route definitions!
 
+        // must clear before running script
+        RubyCamel.clearRoutes();
+
         // now lets run the script
         runScript(scriptName);
-        
         List<RouteBuilder> list = RubyCamel.getRoutes();
 
         log.info("Found route builders: " + list);
