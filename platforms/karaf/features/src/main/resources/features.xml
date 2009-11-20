@@ -78,6 +78,7 @@
     <bundle>mvn:org.apache.cxf/cxf-bundle/${cxf-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-spring-osgi</feature>
+    <feature version='${karaf-version}'>http</feature>
     <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
   </feature>
   <feature name='camel-cache' version='${pom.version}'>
