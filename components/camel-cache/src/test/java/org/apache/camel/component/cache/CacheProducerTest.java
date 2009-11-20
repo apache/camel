@@ -40,7 +40,7 @@ public class CacheProducerTest extends CamelTestSupport {
     }
 
     private void sendFile() throws Exception {
-        template.send("direct:start", new Processor() {
+        template.send("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
              // Read from an input stream
                 InputStream is = new BufferedInputStream(
@@ -58,7 +58,7 @@ public class CacheProducerTest extends CamelTestSupport {
     }
     
     private void sendUpdatedFile() throws Exception {
-        template.send("direct:start", new Processor() {
+        template.send("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
              // Read from an input stream
                 InputStream is = new BufferedInputStream(
@@ -79,7 +79,7 @@ public class CacheProducerTest extends CamelTestSupport {
     public void testAddingDataToCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
+                from("direct:b").
                     setHeader("CACHE_OPERATION", constant("ADD")).
                     setHeader("CACHE_KEY", constant("Ralph_Waldo_Emerson")).
                     to("cache://TestCache1");
@@ -94,7 +94,7 @@ public class CacheProducerTest extends CamelTestSupport {
     public void testUpdatingDataInCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
+                from("direct:b").
                     setHeader("CACHE_OPERATION", constant("UPDATE")).
                     setHeader("CACHE_KEY", constant("Ralph_Waldo_Emerson")).
                     to("cache://TestCache1");
@@ -109,7 +109,7 @@ public class CacheProducerTest extends CamelTestSupport {
     public void testDeletingDataFromCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
+                from("direct:c").
                     setHeader("CACHE_OPERATION", constant("DELETE")).
                     setHeader("CACHE_KEY", constant("Ralph_Waldo_Emerson")).
                     to("cache://TestCache1");
@@ -124,15 +124,15 @@ public class CacheProducerTest extends CamelTestSupport {
     public void testDeletingAllDataFromCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").
+                from("direct:a").
                     setHeader("CACHE_OPERATION", constant("ADD")).
                     setHeader("CACHE_KEY", constant("Ralph_Waldo_Emerson")).
                     to("cache://TestCache1");
-                from("direct:start").
+                from("direct:b").
                     setHeader("CACHE_OPERATION", constant("ADD")).
                     setHeader("CACHE_KEY", constant("Ralph_Waldo_Emerson2")).
                     to("cache://TestCache1");
-                from("direct:start").
+                from("direct:c").
                     setHeader("CACHE_OPERATION", constant("DELETEALL")).
                     to("cache://TestCache1");
             }
