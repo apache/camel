@@ -35,7 +35,7 @@ public class TutorialRouteBuilder extends RouteBuilder {
             .process(new WeatherProcessor())        
             .setHeader(GMailBinding.GMAIL_SUBJECT, constant("Weather report"))
             .setHeader(GMailBinding.GMAIL_TO, header("mailto"))
-            .to("gmail://krasserm@googlemail.com");
+            .to("gmail://replaceme@gmail.com");
     }
 
 }
