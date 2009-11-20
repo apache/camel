@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,9 +35,10 @@ public class InvalidXsltFileTest extends TestSupport {
             context.addRoutes(builder);
             context.start();
 
-            fail("Should have thrown a ResolveEndpointFailedException due XSL compilation error");
-        } catch (ResolveEndpointFailedException e) {
+            fail("Should have thrown an exception due XSL compilation error");
+        } catch (FailedToCreateRouteException e) {
             // expected
+            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
         }
 
     }

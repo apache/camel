@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -145,8 +145,8 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should throw an exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertIsInstanceOf(ParseException.class, e.getCause());
+        } catch (FailedToCreateRouteException e) {
+            assertIsInstanceOf(ParseException.class, e.getCause().getCause());
         }
     }
 

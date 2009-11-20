@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -33,9 +34,10 @@ public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
         try {
             super.setUp();
             fail("Should have failed to create this route!");
-        } catch (NoSuchEndpointException e) {
+        } catch (FailedToCreateRouteException e) {
             log.debug("Caught expected exception: " + e, e);
-            assertEquals("uri", "thisUriDoesNotExist", e.getUri());
+            NoSuchEndpointException nse = assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
+            assertEquals("uri", "thisUriDoesNotExist", nse.getUri());
         }
     }
 

@@ -36,8 +36,9 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
         try {
             super.setUp();
             fail("Should have thrown an exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
+        } catch (Exception e) {
+            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause().getCause());
+            assertTrue(cause.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
         }
     }
 

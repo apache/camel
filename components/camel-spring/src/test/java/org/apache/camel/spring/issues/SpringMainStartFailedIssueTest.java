@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.issues;
 
-import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.Main;
 
@@ -32,8 +32,8 @@ public class SpringMainStartFailedIssueTest extends TestSupport {
         try {
             main.run(args);
             fail("Should have thrown an exception");
-        } catch (ResolveEndpointFailedException e) {
-            // expected
+        } catch (Exception e) {
+            assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
         }
 
         assertNull("Spring application context should NOT be created", main.getApplicationContext());

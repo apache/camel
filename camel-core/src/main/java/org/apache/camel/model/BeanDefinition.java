@@ -146,7 +146,7 @@ public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) {
         BeanProcessor answer;
-        if (ref != null) {
+        if (ObjectHelper.isNotEmpty(ref)) {
             answer = new BeanProcessor(new RegistryBean(routeContext.getCamelContext(), ref));
         } else {
             if (bean == null) {

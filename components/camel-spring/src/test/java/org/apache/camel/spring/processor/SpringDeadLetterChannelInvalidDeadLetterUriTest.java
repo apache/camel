@@ -36,8 +36,9 @@ public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestS
         try {
             super.setUp();
             fail("Should have thrown an exception");
-        } catch (NoSuchEndpointException e) {
-            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed camel component jar.", e.getMessage());
+        } catch (Exception e) {
+            NoSuchEndpointException cause = assertIsInstanceOf(NoSuchEndpointException.class, e.getCause().getCause());
+            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed camel component jar.", cause.getMessage());
         }
     }
 

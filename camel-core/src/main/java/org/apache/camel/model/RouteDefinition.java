@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -130,7 +131,15 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         }
 
         for (FromDefinition fromType : inputs) {
-            RouteContext routeContext = addRoutes(routes, fromType);
+            RouteContext routeContext;
+            try {
+                routeContext = addRoutes(routes, fromType);
+            } catch (FailedToCreateRouteException e) {
+                throw e;
+            } catch (Exception e) {
+                // wrap in exception which provide more details about which route was failing
+                throw new FailedToCreateRouteException(getId(), toString(), e);
+            }
             answer.add(routeContext);
         }
         return answer;
@@ -555,7 +564,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
             routeContext.setStreamCaching(isStreamCache());
             if (isStreamCache()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("StramCaching is enabled on route: " + this);
+                    log.debug("StreamCaching is enabled on route: " + this);
                 }
                 // only add a new stream cache if not already a global configured on camel context
                 if (StreamCaching.getStreamCaching(getCamelContext()) == null) {
@@ -627,7 +636,12 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
         List<ProcessorDefinition> list = new ArrayList<ProcessorDefinition>(outputs);
         for (ProcessorDefinition output : list) {
-            output.addRoutes(routeContext, routes);
+            try {
+                output.addRoutes(routeContext, routes);
+            } catch (Exception e) {
+                RouteDefinition route = routeContext.getRoute();
+                throw new FailedToCreateRouteException(route.getId(), route.toString(), output.toString(), e);
+            }
         }
 
         routeContext.commit();
