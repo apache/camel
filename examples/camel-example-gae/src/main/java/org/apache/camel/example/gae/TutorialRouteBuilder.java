@@ -22,6 +22,12 @@ import org.apache.camel.component.gae.mail.GMailBinding;
 
 public class TutorialRouteBuilder extends RouteBuilder {
 
+    private String sender;
+    
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+    
     @Override
     public void configure() throws Exception {
         from("ghttp:///weather")
@@ -35,7 +41,7 @@ public class TutorialRouteBuilder extends RouteBuilder {
             .process(new WeatherProcessor())        
             .setHeader(GMailBinding.GMAIL_SUBJECT, constant("Weather report"))
             .setHeader(GMailBinding.GMAIL_TO, header("mailto"))
-            .to("gmail://replaceme@gmail.com");
+            .to("gmail://" + sender);
     }
 
 }

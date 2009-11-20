@@ -11,6 +11,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
     
     <bean id="tutorialRouteBuilder"
         class="org.apache.camel.example.gae.TutorialRouteBuilder">
+        <property name="sender" value="replaceme@gmail.com" />
     </bean>
     
 </beans>
