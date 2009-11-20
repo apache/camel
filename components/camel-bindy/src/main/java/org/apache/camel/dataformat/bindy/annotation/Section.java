@@ -22,8 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * This annotation allows to define during
- * the marshaling process how a message
+ * This annotation allows to define during the marshaling process how a message
  * must be reconstruct
  */
 @Documented
@@ -33,7 +32,7 @@ public @interface Section {
     /**
      * Number of the section
      * 
-     * @return 
+     * @return
      */
     int number();
 }

@@ -39,8 +39,7 @@ import static org.junit.Assert.fail;
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvMandatoryFieldsUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
-    private static final transient Log LOG = LogFactory
-        .getLog(BindySimpleCsvMandatoryFieldsUnmarshallTest.class);
+    private static final transient Log LOG = LogFactory.getLog(BindySimpleCsvMandatoryFieldsUnmarshallTest.class);
 
     @EndpointInject(uri = "mock:result1")
     protected MockEndpoint resultEndpoint1;
@@ -53,18 +52,17 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
 
     @Produce(uri = "direct:start2")
     protected ProducerTemplate template2;
-  
+
     String header = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
-    
+
     // String record5 = ",,,,,,,,,,"; // record with no data
-    
-    
+
     @DirtiesContext
     @Test
     public void testEmptyRecord() throws Exception {
-    	
-    	String record1 = ""; // empty records
-    	
+
+        String record1 = ""; // empty records
+
         resultEndpoint1.expectedMessageCount(0);
 
         try {
@@ -81,9 +79,9 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     @DirtiesContext
     @Test
     public void testEmptyFields() throws Exception {
-    	
-    	String record2 = ",,blabla,,,,,,,,"; // optional fields
-    	
+
+        String record2 = ",,blabla,,,,,,,,"; // optional fields
+
         resultEndpoint1.expectedMessageCount(1);
         template1.sendBody(record2);
 
@@ -93,9 +91,9 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     @DirtiesContext
     @Test
     public void testOneOptionalField() throws Exception {
-    	
-    	String record2 = ",,blabla,,,,,,,,"; // optional fields
-    	
+
+        String record2 = ",,blabla,,,,,,,,"; // optional fields
+
         resultEndpoint1.expectedMessageCount(1);
 
         template1.sendBody(record2);
@@ -105,23 +103,29 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     @DirtiesContext
     @Test
     public void testSeveralOptionalFields() throws Exception {
-    	
-    	String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,"; // mandatory fields present (A1, Charles, Moulliard)
-    	
+
+        String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,"; // mandatory
+        // fields
+        // present
+        // (A1,
+        // Charles,
+        // Moulliard)
+
         resultEndpoint1.expectedMessageCount(1);
 
         template1.sendBody(record3);
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testTooMuchFields() throws Exception {
-    	
-    	String record6 = ",,,,,,,,,,,,,,"; // too much data in the record (only 11 are accepted by the model
-    	
+
+        String record6 = ",,,,,,,,,,,,,,"; // too much data in the record (only
+        // 11 are accepted by the model
+
         resultEndpoint1.expectedMessageCount(0);
-        
+
         try {
             template1.sendBody(record6);
             fail("Should have thrown an exception");
@@ -132,13 +136,18 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
 
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testMandatoryFields() throws Exception {
-    	
-    	String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,"; // mandatory fields present (A1, Charles, Moulliard)
-    	
+
+        String record3 = "1,A1,Charles,Moulliard,ISIN,LU123456789,,,,,"; // mandatory
+        // fields
+        // present
+        // (A1,
+        // Charles,
+        // Moulliard)
+
         resultEndpoint2.expectedMessageCount(1);
 
         template2.sendBody(header + record3);
@@ -148,9 +157,10 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     @DirtiesContext
     @Test
     public void testMissingMandatoryFields() throws Exception {
-    	
-    	String record4 = "1,A1,Charles,,ISIN,LU123456789,,,,,"; // mandatory field missing
-    	
+
+        String record4 = "1,A1,Charles,,ISIN,LU123456789,,,,,"; // mandatory
+        // field missing
+
         resultEndpoint2.expectedMessageCount(1);
 
         try {
@@ -163,10 +173,8 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyCsvDataFormat formatOptional = 
-            new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
-        BindyCsvDataFormat formatMandatory =
-            new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory");
+        BindyCsvDataFormat formatOptional = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+        BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory");
 
         @Override
         @Bean
@@ -181,5 +189,3 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
         }
     }
 }
-
-    

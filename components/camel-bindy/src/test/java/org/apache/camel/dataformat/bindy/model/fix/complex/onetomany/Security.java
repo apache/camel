@@ -21,16 +21,19 @@ import org.apache.camel.dataformat.bindy.annotation.Message;
 
 // @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1")
 public class Security {
-    
-    @KeyValuePairField(tag = 22) // Fund ID type (Sedol, ISIN, ...)
+
+    @KeyValuePairField(tag = 22)
+    // Fund ID type (Sedol, ISIN, ...)
     private String idSource;
-    
-    @KeyValuePairField(tag = 48) // Fund code
+
+    @KeyValuePairField(tag = 48)
+    // Fund code
     private String securityCode;
-    
-    @KeyValuePairField(tag = 54) // Movement type ( 1 = Buy, 2 = sell)
+
+    @KeyValuePairField(tag = 54)
+    // Movement type ( 1 = Buy, 2 = sell)
     private String side;
-    
+
     public String getIdSource() {
         return idSource;
     }

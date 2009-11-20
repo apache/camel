@@ -22,15 +22,16 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * An annotation used to identify in a POJO which property is link to a field of
- * a record (csv, ...).
- * The pos (mandatory) identifies the position of the data in the record
- * The name is optional and could be used in the future to bind a property which a different name
- * The columnName (optional) represents the name of the column who will appear in the header
- * The pattern (optional) allows to define the pattern of the data (useful for Date, ...)
- * The length (optional) allows to define for fixed length message the size of the data's block
- * The precision(optional) reflects the precision to be used with BigDecimal number
- * The position (optional) identify the position of the field in the CSV generated
- * The required (optional) property identifies a field which is mandatory.
+ * a record (csv, ...). The pos (mandatory) identifies the position of the data
+ * in the record The name is optional and could be used in the future to bind a
+ * property which a different name The columnName (optional) represents the name
+ * of the column who will appear in the header The pattern (optional) allows to
+ * define the pattern of the data (useful for Date, ...) The length (optional)
+ * allows to define for fixed length message the size of the data's block The
+ * precision(optional) reflects the precision to be used with BigDecimal number
+ * The position (optional) identify the position of the field in the CSV
+ * generated The required (optional) property identifies a field which is
+ * mandatory.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -49,10 +50,10 @@ public @interface DataField {
      * @return String
      */
     String name() default "";
-    
+
     /**
      * name of the header column (optional)
-     *  
+     * 
      * @return String
      */
     String columnName() default "";
@@ -78,17 +79,15 @@ public @interface DataField {
      * @return int
      */
     int precision() default 0;
-    
+
     /**
-     * 
      * Position of the field in the message generated
      * 
-     * @return int 
+     * @return int
      */
     int position() default 0;
-    
+
     /**
-     * 
      * Indicates if the field is mandatory
      * 
      * @return boolean

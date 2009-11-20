@@ -68,10 +68,10 @@ public class BindySimpleKeyValuePairMarshallTest extends AbstractJUnit4SpringCon
         header.setMsgType("0");
         header.setSendCompId("INVMGR");
         header.setTargetCompId("BRKR");
-        
+
         Trailer trailer = new Trailer();
-        trailer.setCheckSum(220); 
-        
+        trailer.setCheckSum(220);
+
         Order order = new Order();
         order.setAccount("BE.CHM.001");
         order.setClOrdId("CHM0001-01");
@@ -79,14 +79,14 @@ public class BindySimpleKeyValuePairMarshallTest extends AbstractJUnit4SpringCon
         order.setSecurityId("BE0001245678");
         order.setSide("1");
         order.setText("this is a camel - bindy test");
-        
+
         order.setHeader(header);
         order.setTrailer(trailer);
-        
+
         modelObjects.put(order.getClass().getName(), order);
         modelObjects.put(header.getClass().getName(), header);
         modelObjects.put(trailer.getClass().getName(), trailer);
- 
+
         models.add(modelObjects);
         return models;
     }

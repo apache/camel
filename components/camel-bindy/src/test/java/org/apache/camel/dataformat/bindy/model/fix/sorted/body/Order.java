@@ -26,27 +26,35 @@ import org.apache.camel.dataformat.bindy.model.fix.sorted.trailer.Trailer;
 @Section(number = 2)
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1", isOrdered = true)
 public class Order {
-    
-    @Link Header header;
-    
-    @Link Trailer trailer;
 
-    @KeyValuePairField(tag = 1, position = 1) // Client reference
+    @Link
+    Header header;
+
+    @Link
+    Trailer trailer;
+
+    @KeyValuePairField(tag = 1, position = 1)
+    // Client reference
     private String account;
 
-    @KeyValuePairField(tag = 11, position = 3) // Order reference
+    @KeyValuePairField(tag = 11, position = 3)
+    // Order reference
     private String clOrdId;
-    
-    @KeyValuePairField(tag = 22, position = 2) // Fund ID type (Sedol, ISIN, ...)
+
+    @KeyValuePairField(tag = 22, position = 2)
+    // Fund ID type (Sedol, ISIN, ...)
     private String iDSource;
-    
-    @KeyValuePairField(tag = 48, position = 4) // Fund code
+
+    @KeyValuePairField(tag = 48, position = 4)
+    // Fund code
     private String securityId;
-    
-    @KeyValuePairField(tag = 54, position = 5) // Movement type ( 1 = Buy, 2 = sell)
+
+    @KeyValuePairField(tag = 54, position = 5)
+    // Movement type ( 1 = Buy, 2 = sell)
     private String side;
-    
-    @KeyValuePairField(tag = 58, position = 6) // Free text
+
+    @KeyValuePairField(tag = 58, position = 6)
+    // Free text
     private String text;
 
     public Header getHeader() {
@@ -64,7 +72,7 @@ public class Order {
     public void setTrailer(Trailer trailer) {
         this.trailer = trailer;
     }
- 
+
     public String getAccount() {
         return account;
     }
@@ -112,17 +120,13 @@ public class Order {
     public void setText(String text) {
         this.text = text;
     }
-    
+
     @Override
     public String toString() {
 
-    	return Order.class.getName() +  " --> 1: " + this.account
-    	+ ", 11: " + this.clOrdId 
-    	+ ", 22: " + this.iDSource
-    	+ ", 48: " + this.securityId
-    	+ ", 54: " + this.side
-    	+ ", 58: " + this.text;
+        return Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 22: " + this.iDSource + ", 48: " + this.securityId + ", 54: " + this.side
+               + ", 58: " + this.text;
 
-	}
-    
+    }
+
 }

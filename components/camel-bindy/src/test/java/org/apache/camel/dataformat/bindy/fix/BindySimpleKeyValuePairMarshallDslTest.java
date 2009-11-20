@@ -99,9 +99,7 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start")
-                        .marshal().bindy(BindyType.KeyValue, "org.apache.camel.dataformat.bindy.model.fix.simple")
-                        .to("mock:result");
+                    from("direct:start").marshal().bindy(BindyType.KeyValue, "org.apache.camel.dataformat.bindy.model.fix.simple").to("mock:result");
                 }
             };
         }

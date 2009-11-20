@@ -35,12 +35,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a>
- * ({@link DataFormat}) using Bindy to marshal to and from CSV files
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> (
+ * {@link DataFormat}) using Bindy to marshal to and from CSV files
  */
 public class BindyCsvDataFormat implements DataFormat {
     private static final transient Log LOG = LogFactory.getLog(BindyCsvDataFormat.class);
-    
+
     private String[] packages;
     private BindyCsvFactory modelFactory;
 
@@ -105,12 +105,13 @@ public class BindyCsvDataFormat implements DataFormat {
         ObjectHelper.notEmpty(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
         int count = 0;
-        
+
         try {
 
-            // If the first line of the CSV file contains columns name, then we skip this line
+            // If the first line of the CSV file contains columns name, then we
+            // skip this line
             if (factory.getSkipFirstLine()) {
-            
+
                 // Check if scanner is empty
                 if (scanner.hasNextLine()) {
                     scanner.nextLine();
@@ -121,15 +122,15 @@ public class BindyCsvDataFormat implements DataFormat {
 
                 // Read the line
                 String line = scanner.nextLine().trim();
-                
+
                 if (ObjectHelper.isEmpty(line)) {
                     // skip if line is empty
                     continue;
                 }
-                
+
                 // Increment counter
                 count++;
-                
+
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
 
@@ -137,7 +138,7 @@ public class BindyCsvDataFormat implements DataFormat {
                 // annotated class @CSVRecord
                 String[] tokens = line.split(separator, -1);
                 List<String> result = Arrays.asList(tokens);
-                
+
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV !");
                 }
@@ -164,7 +165,7 @@ public class BindyCsvDataFormat implements DataFormat {
                 }
 
             }
-            
+
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {

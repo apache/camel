@@ -23,7 +23,6 @@ import org.apache.camel.dataformat.bindy.annotation.Link;
 public class Trailer {
 
     @KeyValuePairField(tag = 10)
-    
     // CheckSum
     private int checkSum;
 

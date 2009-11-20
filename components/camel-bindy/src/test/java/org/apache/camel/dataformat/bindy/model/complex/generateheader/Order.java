@@ -28,10 +28,10 @@ public class Order {
 
     @DataField(pos = 1, columnName = "Order Nr")
     private int orderNr;
-    
+
     @Link
     private Client client;
-    
+
     @Link
     private Security security;
 
@@ -49,7 +49,7 @@ public class Order {
 
     @DataField(pos = 11, pattern = "dd-MM-yyyy", columnName = "Order Date")
     private Date orderDate;
-    
+
     public Client getClient() {
         return client;
     }
@@ -57,7 +57,7 @@ public class Order {
     public void setClient(Client client) {
         this.client = client;
     }
-    
+
     public Security getSecurity() {
         return security;
     }
@@ -116,8 +116,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-               + String.valueOf(this.amount) + ", " + ", " + this.instrumentType + ", " + this.currency +  ", "
-               + String.valueOf(this.orderDate);
+        return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + ", " + this.instrumentType + ", "
+               + this.currency + ", " + String.valueOf(this.orderDate);
     }
 }

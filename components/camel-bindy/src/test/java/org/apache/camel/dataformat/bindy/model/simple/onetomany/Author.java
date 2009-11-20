@@ -22,51 +22,51 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 
-@CsvRecord(separator=",")
+@CsvRecord(separator = ",")
 public class Author {
-	
-	@DataField(pos = 1)
-	private String firstName;
-	
-	@DataField(pos = 2)
-	private String lastName;
-	
-	@OneToMany
-	private List<Book> books;
-	
-	@DataField(pos = 5)
-	private String Age;
 
-	public String getAge() {
-		return Age;
-	}
+    @DataField(pos = 1)
+    private String firstName;
 
-	public void setAge(String age) {
-		Age = age;
-	}
+    @DataField(pos = 2)
+    private String lastName;
 
-	public List<Book> getBooks() {
-		return books;
-	}
-	
-	public void setBooks(List<Book> books) {
-		this.books = books;
-	}
-	
-	public String getFirstName() {
-		return firstName;
-	}
-	
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	
-	public String getLastName() {
-		return lastName;
-	}
-	
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    @OneToMany
+    private List<Book> books;
+
+    @DataField(pos = 5)
+    private String age;
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
 }

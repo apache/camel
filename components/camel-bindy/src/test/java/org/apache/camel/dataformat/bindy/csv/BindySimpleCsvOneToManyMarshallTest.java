@@ -41,10 +41,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringContextTests {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    private String result = "Charles,Moulliard,Camel in Action 1,2010,43\r\n" +
-        "Charles,Moulliard,Camel in Action 2,2012,43\r\n" +
-        "Charles,Moulliard,Camel in Action 3,2013,43\r\n" +
-        "Charles,Moulliard,Camel in Action 4,,43\r\n";
+    private String result = "Charles,Moulliard,Camel in Action 1,2010,43\r\n" + "Charles,Moulliard,Camel in Action 2,2012,43\r\n"
+                            + "Charles,Moulliard,Camel in Action 3,2013,43\r\n" + "Charles,Moulliard,Camel in Action 4,,43\r\n";
 
     @Produce(uri = "direct:start")
     private ProducerTemplate template;
@@ -64,50 +62,49 @@ public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringCon
     public List<Map<String, Object>> generateModel() {
         Map<String, Object> modelObjects = new HashMap<String, Object>();
 
-		Author author;
-		Book book;
-		
-		Map<String, Object> model = new HashMap<String, Object>();
-		List<Book> books = new ArrayList<Book>();
-		//List<Reference> references = new ArrayList<Reference>();
-		//List<Editor> editors = new ArrayList<Editor>();
-		
-		author = new Author();
-		author.setFirstName("Charles");
-		author.setLastName("Moulliard");
-		author.setAge("43");
-		
-		// 1st Book
-		book = new Book();
-		book.setTitle("Camel in Action 1");
-		book.setYear("2010");
-		
-		books.add(book);
+        Author author;
+        Book book;
 
-		
-		// 2nd book
-		book = new Book();
-		book.setTitle("Camel in Action 2");
-		book.setYear("2012");
-		
-		books.add(book);
-		
-		// 3rd book
-		book = new Book();
-		book.setTitle("Camel in Action 3");
-		book.setYear("2013");
-		books.add(book);
-		
-		// 4th book
-		book = new Book();
-		book.setTitle("Camel in Action 4");
-		book.setYear( null );
-		books.add(book);
-		
-		// Add books to author
-		author.setBooks(books);
-		
-		model.put(author.getClass().getName(), author);
+        Map<String, Object> model = new HashMap<String, Object>();
+        List<Book> books = new ArrayList<Book>();
+        // List<Reference> references = new ArrayList<Reference>();
+        // List<Editor> editors = new ArrayList<Editor>();
+
+        author = new Author();
+        author.setFirstName("Charles");
+        author.setLastName("Moulliard");
+        author.setAge("43");
+
+        // 1st Book
+        book = new Book();
+        book.setTitle("Camel in Action 1");
+        book.setYear("2010");
+
+        books.add(book);
+
+        // 2nd book
+        book = new Book();
+        book.setTitle("Camel in Action 2");
+        book.setYear("2012");
+
+        books.add(book);
+
+        // 3rd book
+        book = new Book();
+        book.setTitle("Camel in Action 3");
+        book.setYear("2013");
+        books.add(book);
+
+        // 4th book
+        book = new Book();
+        book.setTitle("Camel in Action 4");
+        book.setYear(null);
+        books.add(book);
+
+        // Add books to author
+        author.setBooks(books);
+
+        model.put(author.getClass().getName(), author);
 
         models.add(model);
 

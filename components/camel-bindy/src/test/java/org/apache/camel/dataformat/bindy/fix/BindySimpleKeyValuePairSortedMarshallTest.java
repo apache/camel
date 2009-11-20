@@ -50,10 +50,10 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
     @Test
     @DirtiesContext
     public void testMarshallMessage() {
-    	
-    	String message = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
 
-        result.expectedBodiesReceived( message );
+        String message = "8=FIX 4.19=2035=034=149=INVMGR56=BRKR1=BE.CHM.00122=411=CHM0001-0148=BE000124567854=158=this is a camel - bindy test10=220\r\n";
+
+        result.expectedBodiesReceived(message);
         template.sendBody(generateModel());
 
         try {
@@ -64,8 +64,8 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
     }
 
     public List<Map<String, Object>> generateModel() {
-    	
-    	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+
+        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
         Map<String, Object> modelObjects = new HashMap<String, Object>();
 
         Header header = new Header();
@@ -100,9 +100,8 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-    	
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(
-            "org.apache.camel.dataformat.bindy.model.fix.sorted");
+
+        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.sorted");
 
         @Override
         @Bean

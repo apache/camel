@@ -24,22 +24,28 @@ import org.apache.camel.dataformat.bindy.annotation.Section;
 @Section(number = 1)
 public class Header {
 
-    @KeyValuePairField(tag = 8, position = 1) // Message Header
+    @KeyValuePairField(tag = 8, position = 1)
+    // Message Header
     private String beginString;
 
-    @KeyValuePairField(tag = 9, position = 2) // Checksum
+    @KeyValuePairField(tag = 9, position = 2)
+    // Checksum
     private int bodyLength;
-    
-    @KeyValuePairField(tag = 34, position = 4) // Sequence number
+
+    @KeyValuePairField(tag = 34, position = 4)
+    // Sequence number
     private int msgSeqNum;
-    
-    @KeyValuePairField(tag = 35, position = 3) // Message Type
+
+    @KeyValuePairField(tag = 35, position = 3)
+    // Message Type
     private String msgType;
 
-    @KeyValuePairField(tag = 49, position = 5) // Company sender Id
+    @KeyValuePairField(tag = 49, position = 5)
+    // Company sender Id
     private String sendCompId;
-    
-    @KeyValuePairField(tag = 56, position = 6) // target company id
+
+    @KeyValuePairField(tag = 56, position = 6)
+    // target company id
     private String targetCompId;
 
     public String getBeginString() {
@@ -89,12 +95,11 @@ public class Header {
     public void setTargetCompId(String targetCompId) {
         this.targetCompId = targetCompId;
     }
-    
+
     @Override
     public String toString() {
-        return Header.class.getName()
-            + " --> 8: " + this.beginString + ", 9: " + this.bodyLength + ", 34: " + this.msgSeqNum
-            + " , 35: " + this.msgType + ", 49: " + this.sendCompId + ", 56: " + this.targetCompId;
+        return Header.class.getName() + " --> 8: " + this.beginString + ", 9: " + this.bodyLength + ", 34: " + this.msgSeqNum + " , 35: " + this.msgType + ", 49: "
+               + this.sendCompId + ", 56: " + this.targetCompId;
     }
-    
+
 }

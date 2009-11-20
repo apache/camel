@@ -35,13 +35,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a>
- * ({@link DataFormat}) using Bindy to marshal to and from CSV files
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> (
+ * {@link DataFormat}) using Bindy to marshal to and from CSV files
  */
 public class BindyKeyValuePairDataFormat implements DataFormat {
-    
+
     private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairDataFormat.class);
-    
+
     private String[] packages;
     private BindyKeyValuePairFactory modelFactory;
 
@@ -55,17 +55,17 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
-        List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
+        List<Map<String, Object>> models = (ArrayList<Map<String, Object>>)body;
         byte[] crlf;
-        
+
         // Get CRLF
         crlf = Converter.getByteReturn(factory.getCarriageReturn());
-        
+
         for (Map<String, Object> model : models) {
             String result = factory.unbind(model);
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
-            
+
             // Add a carriage return
             outputStream.write(crlf);
         }
@@ -86,8 +86,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         Scanner scanner = new Scanner(in);
 
         // Retrieve the pair separator defined to split the record
-        ObjectHelper.notNull(factory.getPairSeparator(),
-                             "The pair separator property of the annotation @Message");
+        ObjectHelper.notNull(factory.getPairSeparator(), "The pair separator property of the annotation @Message");
         String separator = factory.getPairSeparator();
 
         int count = 0;
@@ -120,7 +119,7 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
                 if (result.size() > 0) {
 
                     // Bind data from message with model classes
-                	// Counter is used to detect line where error occurs
+                    // Counter is used to detect line where error occurs
                     factory.bind(result, model, count);
 
                     // Link objects together

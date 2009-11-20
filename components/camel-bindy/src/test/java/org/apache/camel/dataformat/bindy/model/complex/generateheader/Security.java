@@ -46,8 +46,7 @@ public class Security {
 
     @Override
     public String toString() {
-        return "Model : " + Security.class.getName() + " : " + this.instrumentNumber + ", "
-               + this.instrumentCode;
+        return "Model : " + Security.class.getName() + " : " + this.instrumentNumber + ", " + this.instrumentCode;
     }
 
 }

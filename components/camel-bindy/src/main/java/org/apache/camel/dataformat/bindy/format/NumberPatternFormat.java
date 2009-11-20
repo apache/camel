@@ -42,7 +42,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
     @SuppressWarnings("unchecked")
     public T parse(String string) throws Exception {
         ObjectHelper.notNull(this.pattern, "pattern");
-        return (T) this.getNumberFormat().parse(string);
+        return (T)this.getNumberFormat().parse(string);
     }
 
     protected NumberFormat getNumberFormat() {

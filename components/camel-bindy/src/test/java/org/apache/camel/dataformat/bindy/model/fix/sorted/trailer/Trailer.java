@@ -35,7 +35,7 @@ public class Trailer {
     public void setCheckSum(int checkSum) {
         this.checkSum = checkSum;
     }
-    
+
     @Override
     public String toString() {
         return Trailer.class.getName() + " --> 10: " + this.checkSum;

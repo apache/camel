@@ -25,7 +25,7 @@ public interface PatternFormat<T> extends Format<T> {
     /**
      * Method used to retrieve the pattern for the format
      * 
-     * @return String  the pattern
+     * @return String the pattern
      */
     String getPattern();
 

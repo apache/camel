@@ -45,18 +45,18 @@ public class BindySimpleKeyValuePairTabMarshallTest extends CommonBindyTest {
     @Test
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
-    	
-    	String message = "1=BE.CHM.001\t8=FIX 4.1\t9=20\t10=220\t11=CHM0001-01\t22=4\t34=1\t35=0\t48=BE0001245678\t49=INVMGR\t54=1\t56=BRKR\t58=this is a camel - bindy test\t\r\n";
- 
-        result.expectedBodiesReceived( message );
+
+        String message = "1=BE.CHM.001\t8=FIX 4.1\t9=20\t10=220\t11=CHM0001-01\t22=4\t34=1\t35=0\t48=BE0001245678\t49=INVMGR\t54=1\t56=BRKR\t58=this is a camel - bindy test\t\r\n";
+
+        result.expectedBodiesReceived(message);
         template.sendBody(generateModel());
 
         result.assertIsSatisfied();
     }
 
     public List<Map<String, Object>> generateModel() {
-    	
-    	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+
+        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
         Map<String, Object> modelObjects = new HashMap<String, Object>();
 
         Header header = new Header();
@@ -66,10 +66,10 @@ public class BindySimpleKeyValuePairTabMarshallTest extends CommonBindyTest {
         header.setMsgType("0");
         header.setSendCompId("INVMGR");
         header.setTargetCompId("BRKR");
-        
+
         Trailer trailer = new Trailer();
-        trailer.setCheckSum(220); 
-        
+        trailer.setCheckSum(220);
+
         Order order = new Order();
         order.setAccount("BE.CHM.001");
         order.setClOrdId("CHM0001-01");
@@ -77,14 +77,14 @@ public class BindySimpleKeyValuePairTabMarshallTest extends CommonBindyTest {
         order.setSecurityId("BE0001245678");
         order.setSide("1");
         order.setText("this is a camel - bindy test");
-        
-        //order.setHeader(header);
-        //order.setTrailer(trailer);
-        
+
+        // order.setHeader(header);
+        // order.setTrailer(trailer);
+
         modelObjects.put(order.getClass().getName(), order);
         modelObjects.put(header.getClass().getName(), header);
         modelObjects.put(trailer.getClass().getName(), trailer);
- 
+
         models.add(modelObjects);
 
         return models;

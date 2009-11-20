@@ -94,9 +94,7 @@ public class BindySimpleCsvMarshallDslTest extends AbstractJUnit4SpringContextTe
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:start")
-                        .marshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.oneclass")
-                        .to("mock:result");
+                    from("direct:start").marshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.oneclass").to("mock:result");
                 }
             };
         }

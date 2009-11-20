@@ -17,12 +17,11 @@
 package org.apache.camel.dataformat.bindy.util;
 
 /**
- * 
- * The ConvertSeparator helps to return the char associated to the unicode string
- *
+ * The ConvertSeparator helps to return the char associated to the unicode
+ * string
  */
 public final class Converter {
-    
+
     private Converter() {
         // helper class
     }
@@ -37,7 +36,7 @@ public final class Converter {
             return separator.charAt(0);
         }
     }
-    
+
     public static byte[] getByteReturn(String returnCharacter) {
         if (returnCharacter.equals("WINDOWS")) {
             return new byte[] {13, 10};
@@ -49,7 +48,7 @@ public final class Converter {
             return returnCharacter.getBytes();
         }
     }
-    
+
     public static String getStringCarriageReturn(String returnCharacter) {
         if (returnCharacter.equals("WINDOWS")) {
             return "\r\n";

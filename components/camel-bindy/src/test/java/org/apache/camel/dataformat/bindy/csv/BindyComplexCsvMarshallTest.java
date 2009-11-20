@@ -83,12 +83,12 @@ public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTest
         client.setLastName("Roberts");
 
         order.setClient(client);
-        
+
         Security security = new Security();
         security.setInstrumentCode("ISIN");
         security.setInstrumentNumber("LU123456789");
-        
-        order.setSecurity(security);        
+
+        order.setSecurity(security);
 
         model.put(order.getClass().getName(), order);
         model.put(client.getClass().getName(), client);

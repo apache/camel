@@ -36,33 +36,28 @@ import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindyComplexOneToManyKeyValuePairUnMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindyTest {
 
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-    	
-    	String message = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR" +
-		"1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test" +
-		"22=448=BE000124567854=1" +
-		"22=548=BE000987654354=2" +
-		"22=648=BE000999999954=3" +
-		"10=220";
-    	
-        result.expectedBodiesReceived( generateModel().toString() );
+
+        String message = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR" + "1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test" + "22=448=BE000124567854=1"
+                         + "22=548=BE000987654354=2" + "22=648=BE000999999954=3" + "10=220";
+
+        result.expectedBodiesReceived(generateModel().toString());
         template.sendBody(message);
 
         result.assertIsSatisfied();
     }
 
     public List<Map<String, Object>> generateModel() {
-    	
-    	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+
+        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
         Map<String, Object> model = new HashMap<String, Object>();
         List<Security> securities = new ArrayList<Security>();
-         
+
         Header header = new Header();
         header.setBeginString("FIX 4.1");
         header.setBodyLength(20);
@@ -70,10 +65,10 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
         header.setMsgType("0");
         header.setSendCompId("INVMGR");
         header.setTargetCompId("BRKR");
-        
+
         Trailer trailer = new Trailer();
-        trailer.setCheckSum(220); 
-        
+        trailer.setCheckSum(220);
+
         Order order = new Order();
         order.setAccount("BE.CHM.001");
         order.setClOrdId("CHM0001-01");
@@ -84,33 +79,33 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
         security.setIdSource("4");
         security.setSecurityCode("BE0001245678");
         security.setSide("1");
-        
+
         securities.add(security);
-        
+
         // 2nd security
         security = new Security();
         security.setIdSource("5");
         security.setSecurityCode("BE0009876543");
         security.setSide("2");
-        
+
         securities.add(security);
-        
+
         // 3rd security
         security = new Security();
         security.setIdSource("6");
         security.setSecurityCode("BE0009999999");
         security.setSide("3");
-        
+
         securities.add(security);
-        
+
         order.setSecurities(securities);
         order.setHeader(header);
         order.setTrailer(trailer);
-        
+
         model.put(order.getClass().getName(), order);
         model.put(header.getClass().getName(), header);
         model.put(trailer.getClass().getName(), trailer);
- 
+
         models.add(model);
         return models;
     }

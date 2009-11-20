@@ -24,13 +24,14 @@ import java.lang.annotation.RetentionPolicy;
  * This annotation represents the root class of the model. When a CSV,
  * fixed-length record must be described in the model we will use this
  * annotation and the separator (for csv record) to know how to split the data
- * during the unmarshal process
- * The separator (mandatory)
- * The name is optional and could be used in the future to bind a property which a different name
- * The skipfirstline (optional) allows to skip the first line of the file/content received
- * The generateHeaderColumnNames (optional) allow to add in the CSV generated the header containing names of the columns
- * The crlf (optional) is used to add a new line after a record. By default, the value is WINDOWS 
- * The isOrdered (optional) boolean is used to ordered the message generated in output
+ * during the unmarshal process The separator (mandatory) The name is optional
+ * and could be used in the future to bind a property which a different name The
+ * skipfirstline (optional) allows to skip the first line of the file/content
+ * received The generateHeaderColumnNames (optional) allow to add in the CSV
+ * generated the header containing names of the columns The crlf (optional) is
+ * used to add a new line after a record. By default, the value is WINDOWS The
+ * isOrdered (optional) boolean is used to ordered the message generated in
+ * output
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -57,31 +58,28 @@ public @interface CsvRecord {
      * @return boolean
      */
     boolean skipFirstLine() default false;
-    
+
     /**
-     * Character to be used to add a carriage return after each record (optional)
-     * Three values can be used : WINDOWS, UNIX or MAC
+     * Character to be used to add a carriage return after each record
+     * (optional) Three values can be used : WINDOWS, UNIX or MAC
      * 
      * @return String
      */
     String crlf() default "WINDOWS";
-    
+
     /**
-     * 
-     * The generateHeaderColumns parameter allow to add in the CSV generated
-     * the header containing names of the columns
+     * The generateHeaderColumns parameter allow to add in the CSV generated the
+     * header containing names of the columns
      * 
      * @return boolean
      */
     boolean generateHeaderColumns() default false;
-    
+
     /**
-     * 
      * Indicates if the message must be ordered in output
      * 
      * @return boolean
      */
     boolean isOrdered() default false;
-    
 
 }

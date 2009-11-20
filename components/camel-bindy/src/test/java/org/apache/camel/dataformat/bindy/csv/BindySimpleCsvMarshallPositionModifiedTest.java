@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import static org.junit.Assert.assertEquals;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +23,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,24 +37,22 @@ import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvMarshallPositionModifiedTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
     private String expected;
-    
+
     @Test
     @DirtiesContext
     public void testReverseMessage() throws Exception {
-    	
-    	expected = "08-01-2009,EUR,400.25,Share,BUY,BE12345678,ISIN,Knightley,Keira,B2,1\r\n";
+
+        expected = "08-01-2009,EUR,400.25,Share,BUY,BE12345678,ISIN,Knightley,Keira,B2,1\r\n";
         result.expectedBodiesReceived(expected);
-       
+
         template.sendBody(generateModel());
-    	result.assertIsSatisfied();
+        result.assertIsSatisfied();
     }
-    
 
     public List<Map<String, Object>> generateModel() {
         Map<String, Object> model = new HashMap<String, Object>();
@@ -87,7 +82,7 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-    	
+
         BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition");
 
         @Override
@@ -96,18 +91,18 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                	
+
                     Tracer tracer = new Tracer();
                     tracer.setLogLevel(LoggingLevel.FATAL);
                     tracer.setLogName("org.apache.camel.bindy");
 
                     getContext().addInterceptStrategy(tracer);
-            
+
                     // default should errors go to mock:error
                     errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
-                
-                    onException(Exception.class).maximumRedeliveries(0).handled(true);                	
-                	
+
+                    onException(Exception.class).maximumRedeliveries(0).handled(true);
+
                     from(URI_DIRECT_START).marshal(csvBindyDataFormat).to(URI_MOCK_RESULT);
                 }
             };

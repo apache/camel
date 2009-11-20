@@ -20,23 +20,26 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 public class Book {
 
-	@DataField(pos = 3)
-	private String title;
-	
-	@DataField(pos = 4)
-	private String year;
-	
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public String getYear() {
-		return year;
-	}
-	public void setYear(String year) {
-		this.year = year;
-	}
-	
+    @DataField(pos = 3)
+    private String title;
+
+    @DataField(pos = 4)
+    private String year;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
 }

@@ -49,10 +49,10 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
-    
+
     @Produce(uri = URI_DIRECT_START)
     protected ProducerTemplate template;
-    
+
     private String record;
 
     @EndpointInject(uri = URI_MOCK_RESULT)
@@ -60,8 +60,6 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
 
     @EndpointInject(uri = URI_MOCK_ERROR)
     private MockEndpoint error;
-
-    
 
     @SuppressWarnings("unchecked")
     @Test
@@ -78,9 +76,7 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
         List<Map<String, org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math>> model = (List<Map<String, org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math>>)result
             .getExchanges().get(0).getIn().getBody();
 
-        LOG.info(">>> Model generated : "
-                 + model.get(0).get("org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math")
-                     .toString());
+        LOG.info(">>> Model generated : " + model.get(0).get("org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math").toString());
 
     }
 
@@ -101,20 +97,16 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
         error.assertIsSatisfied();
 
         // and check that we have the caused exception stored
-        Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT,
-                                                                          Exception.class);
+        Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         TestSupport.assertIsInstanceOf(Exception.class, cause.getCause());
-        assertEquals(
-                     "String provided does not fit the Integer pattern defined or is not parseable, position : 1, line : 1",
-                     cause.getMessage());
+        assertEquals("String provided does not fit the Integer pattern defined or is not parseable, position : 1, line : 1", cause.getMessage());
 
     }
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
 
-        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(
-                                                                         "org.apache.camel.dataformat.bindy.model.simple.oneclassmath");
+        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmath");
 
         @Override
         @Bean

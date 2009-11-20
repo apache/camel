@@ -44,8 +44,7 @@ public class IntegerPatternFormat extends NumberPatternFormat<Integer> {
             pat.parse(string).intValue();
 
         } catch (Exception ex) {
-            throw new FormatException(
-                                      "String provided does not fit the Integer pattern defined or is not parseable");
+            throw new FormatException("String provided does not fit the Integer pattern defined or is not parseable");
         }
 
         return res;

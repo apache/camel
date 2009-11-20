@@ -26,8 +26,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class AnnotationModuleLoaderTest extends Assert {
-    
-    @Test 
+
+    @Test
     public void testLoadModels() throws Exception {
         AnnotationModelLoader loader = new AnnotationModelLoader(new DefaultPackageScanClassResolver());
         Set<Class<?>> classes = loader.loadModels("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
@@ -37,5 +37,5 @@ public class AnnotationModuleLoaderTest extends Assert {
         assertTrue(classes.contains(Order.class));
         assertTrue(classes.contains(Security.class));
     }
-    
+
 }

@@ -48,12 +48,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     private static final transient Log LOG = LogFactory.getLog(BindyCsvFactory.class);
 
+    boolean isOneToMany;
+
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
-    
-    private Map<Integer, List> results; 
-    
+
+    private Map<Integer, List> results;
+
     private int numberOptionalFields;
     private int numberMandatoryFields;
     private int totalFields;
@@ -62,8 +64,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean skipFirstLine;
     private boolean generateHeaderColumnNames;
     private boolean messageOrdered;
-    
-	boolean isOneToMany = false;
 
     public BindyCsvFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         super(resolver, packageNames);
@@ -74,9 +74,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     /**
      * method uses to initialize the model representing the classes who will
-     * bind the data. This process will scan for classes according to the package
-     * name provided, check the annotated classes and fields and retrieve the
-     * separator of the CSV record
+     * bind the data. This process will scan for classes according to the
+     * package name provided, check the annotated classes and fields and
+     * retrieve the separator of the CSV record
      * 
      * @throws Exception
      */
@@ -104,16 +104,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class : " + cl.getName() + ", position : "
-                                  + dataField.pos() + ", Field : " + dataField.toString());
+                        LOG.debug("Position defined in the class : " + cl.getName() + ", position : " + dataField.pos() + ", Field : " + dataField.toString());
                     }
-                    
+
                     if (dataField.required()) {
                         ++numberMandatoryFields;
                     } else {
                         ++numberOptionalFields;
                     }
-                    
+
                     dataFields.put(dataField.pos(), dataField);
                     annotedFields.put(dataField.pos(), field);
                 }
@@ -132,15 +131,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (!linkFields.isEmpty()) {
                 annotedLinkFields.put(cl.getName(), linkFields);
             }
-            
+
             totalFields = numberMandatoryFields + numberOptionalFields;
-            
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Number of optional fields : " + numberOptionalFields);
                 LOG.debug("Number of mandatory fields : " + numberMandatoryFields);
                 LOG.debug("Total : " + totalFields);
-            }  
-            
+            }
+
         }
     }
 
@@ -148,13 +147,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         int pos = 1;
         int counterMandatoryFields = 0;
- 
+
         for (String data : tokens) {
-        
+
             // Get DataField from model
             DataField dataField = dataFields.get(pos);
             ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data + ", line : " + line);
-            
+
             if (dataField.required()) {
                 // Increment counter of mandatory fields
                 ++counterMandatoryFields;
@@ -162,56 +161,54 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // Check if content of the field is empty
                 // This is not possible for mandatory fields
                 if (data.equals("")) {
-                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos
-                                                       + " is empty for the line : " + line);
+                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty for the line : " + line);
                 }
             }
-            
+
             // Get Field to be setted
             Field field = annotedFields.get(pos);
             field.setAccessible(true);
-            
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Pos : " + pos + ", Data : " + data + ", Field type : " + field.getType());
             }
-            
+
             Format<?> format;
-            
+
             // Get pattern defined for the field
             String pattern = dataField.pattern();
-            
-            // Create format object to format the field 
+
+            // Create format object to format the field
             format = FormatFactory.getFormat(field.getType(), pattern, dataField.precision());
-            
+
             // field object to be set
             Object modelField = model.get(field.getDeclaringClass().getName());
-            
+
             // format the data received
             Object value = null;
-            
+
             if (!data.equals("")) {
                 try {
                     value = format.parse(data);
                 } catch (FormatException ie) {
                     throw new IllegalArgumentException(ie.getMessage() + ", position : " + pos + ", line : " + line, ie);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos  + ", line : " + line, e);
+                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos + ", line : " + line, e);
                 }
             } else {
                 value = getDefaultValueforPrimitive(field.getType());
             }
-            
+
             field.set(modelField, value);
-            
-            ++pos;            
-            
+
+            ++pos;
+
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Counter mandatory fields : " + counterMandatoryFields);
         }
-        
-     
+
         if (pos < totalFields) {
             throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line : " + line);
         }
@@ -219,426 +216,341 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         if (counterMandatoryFields < numberMandatoryFields) {
             throw new IllegalArgumentException("Some mandatory fields are missing, line : " + line);
         }
-        
+
     }
 
-    /*public String unbind(Map<String, Object> model) throws Exception {
+    /*
+     * public String unbind(Map<String, Object> model) throws Exception {
+     * StringBuilder builder = new StringBuilder(); Map<Integer, DataField>
+     * dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
+     * Iterator<Integer> it = dataFieldsSorted.keySet().iterator(); // Map
+     * containing the OUT position of the field // The key is double and is
+     * created using the position of the field and // location of the class in
+     * the message (using section) Map<Integer, String> positions = new
+     * TreeMap<Integer, String>(); // Check if separator exists ObjectHelper
+     * .notNull(this.separator,
+     * "The separator has not been instantiated or property not defined in the @CsvRecord annotation"
+     * ); char separator = Converter.getCharDelimitor(this.getSeparator()); if
+     * (LOG.isDebugEnabled()) { LOG.debug("Separator converted : '0x" +
+     * Integer.toHexString(separator) + "', from : " + this.getSeparator()); }
+     * while (it.hasNext()) { DataField dataField =
+     * dataFieldsSorted.get(it.next()); // Retrieve the field Field field =
+     * annotedFields.get(dataField.pos()); // Change accessibility to allow to
+     * read protected/private fields field.setAccessible(true); // Retrieve the
+     * format, pattern and precision associated to the type Class type =
+     * field.getType(); String pattern = dataField.pattern(); int precision =
+     * dataField.precision(); // Create format Format format =
+     * FormatFactory.getFormat(type, pattern, precision); // Get field from
+     * model Object modelField = model.get(field.getDeclaringClass().getName());
+     * if (modelField != null) { // Get field value Object value =
+     * field.get(modelField); String strValue = ""; if (this.isMessageOrdered())
+     * { // Generate a key using the number of the section // and the position
+     * of the field Integer key1 =
+     * sections.get(modelField.getClass().getName()); Integer key2 =
+     * dataField.position(); Integer keyGenerated = generateKey(key1, key2); if
+     * (LOG.isDebugEnabled()) { LOG.debug("Key generated : " +
+     * String.valueOf(keyGenerated) + ", for section : " + key1); } if (value !=
+     * null) { // Format field value try { strValue = format.format(value); }
+     * catch (Exception e) { throw new
+     * IllegalArgumentException("Formating error detected for the value : " +
+     * value, e); } } // Add the content to the TreeMap according to the //
+     * position defined positions.put(keyGenerated, strValue); if
+     * (LOG.isDebugEnabled()) { LOG.debug("Positions size : " +
+     * positions.size()); } } else { // Add value to the appender if not null if
+     * (value != null) { // Format field value try { strValue =
+     * format.format(value); } catch (Exception e) { throw new
+     * IllegalArgumentException("Formating error detected for the value : " +
+     * value, e); } } if (LOG.isDebugEnabled()) {
+     * LOG.debug("Value to be formatted : " + value + ", position : " +
+     * dataField.pos() + ", and its formated value : " + strValue); }
+     * builder.append(strValue); if (it.hasNext()) { builder.append(separator);
+     * } } } } // Iterate through the list to generate // the message according
+     * to the order/position if (this.isMessageOrdered()) { Iterator<Integer>
+     * posit = positions.keySet().iterator(); while (posit.hasNext()) { String
+     * value = positions.get(posit.next()); if (LOG.isDebugEnabled()) {
+     * LOG.debug("Value added at the position (" + posit + ") : " + value +
+     * separator); } builder.append(value); if (it.hasNext()) {
+     * builder.append(separator); } } } return builder.toString(); }
+     */
 
-        StringBuilder builder = new StringBuilder();
+    public String unbind(Map<String, Object> model) throws Exception {
 
-        Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
-        Iterator<Integer> it = dataFieldsSorted.keySet().iterator();
-
-        // Map containing the OUT position of the field
-        // The key is double and is created using the position of the field and
-        // location of the class in the message (using section)
-        Map<Integer, String> positions = new TreeMap<Integer, String>();
+        StringBuffer buffer = new StringBuffer();
+        results = new HashMap<Integer, List>();
 
         // Check if separator exists
-        ObjectHelper
-            .notNull(this.separator,
-                     "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
+        ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
 
         char separator = Converter.getCharDelimitor(this.getSeparator());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : "
-                      + this.getSeparator());
+            LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : " + this.getSeparator());
         }
-        
-        while (it.hasNext()) {
 
-            DataField dataField = dataFieldsSorted.get(it.next());
+        for (Class clazz : models) {
 
-            // Retrieve the field
-            Field field = annotedFields.get(dataField.pos());
-            // Change accessibility to allow to read protected/private fields
+            if (model.containsKey(clazz.getName())) {
+
+                Object obj = model.get(clazz.getName());
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Model object : " + obj + ", class : " + obj.getClass().getName());
+                }
+
+                if (obj != null) {
+
+                    // Generate Csv table
+                    generateCsvPositionMap(clazz, obj);
+
+                }
+            }
+        }
+
+        // Transpose result
+        List<List> l = new ArrayList<List>();
+
+        if (isOneToMany) {
+
+            l = product(results);
+
+        } else {
+
+            // Convert Map<Integer, List> into List<List>
+            TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
+            List<String> temp = new ArrayList<String>();
+
+            for (Integer key : sortValues.keySet()) {
+
+                // Get list of values
+                List<String> val = sortValues.get(key);
+
+                // For one to one relation
+                // There is only one item in the list
+                String value = (String)val.get(0);
+
+                // Add the value to the temp array
+                if (value != null) {
+                    temp.add(value);
+                } else {
+                    temp.add("");
+                }
+            }
+
+            l.add(temp);
+        }
+
+        if (l != null) {
+
+            Iterator it = l.iterator();
+            while (it.hasNext()) {
+
+                List<String> tokens = (ArrayList<String>)it.next();
+                Iterator itx = tokens.iterator();
+
+                while (itx.hasNext()) {
+
+                    String res = (String)itx.next();
+
+                    if (res != null) {
+                        buffer.append(res);
+                    } else {
+                        buffer.append("");
+                    }
+
+                    if (itx.hasNext()) {
+                        buffer.append(separator);
+                    }
+
+                }
+
+                if (it.hasNext()) {
+                    buffer.append(Converter.getStringCarriageReturn(getCarriageReturn()));
+                }
+
+            }
+
+        }
+
+        return buffer.toString();
+
+    }
+
+    private List<List> product(Map<Integer, List> values) {
+
+        TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
+
+        List<List> product = new ArrayList<List>();
+        Map<Integer, Integer> index = new HashMap<Integer, Integer>();
+
+        boolean cont = true;
+        int idx = 0;
+        int idxSize;
+
+        do {
+
+            idxSize = 0;
+            List v = new ArrayList();
+
+            for (int ii = 1; ii <= sortValues.lastKey(); ii++) {
+
+                List l = values.get(ii);
+
+                if (l == null) {
+                    v.add("");
+                    ++idxSize;
+                    continue;
+                }
+
+                if (l.size() >= idx + 1) {
+                    v.add(l.get(idx));
+                    index.put(ii, idx);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Value : " + l.get(idx) + ", pos : " + ii + ", at :" + idx);
+                    }
+
+                } else {
+                    v.add(l.get(0));
+                    index.put(ii, 0);
+                    ++idxSize;
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Value : " + l.get(0) + ", pos : " + ii + ", at index : " + 0);
+                    }
+                }
+
+            }
+
+            if (idxSize != sortValues.lastKey()) {
+                product.add(v);
+            }
+            ++idx;
+
+        } while (idxSize != sortValues.lastKey());
+
+        return product;
+    }
+
+    private void generateCsvPositionMap(Class clazz, Object obj) throws Exception {
+
+        String result = "";
+
+        for (Field field : clazz.getDeclaredFields()) {
+
             field.setAccessible(true);
 
-            // Retrieve the format, pattern and precision associated to the type
-            Class type = field.getType();
-            String pattern = dataField.pattern();
-            int precision = dataField.precision();
+            DataField datafield = field.getAnnotation(DataField.class);
 
-            // Create format
-            Format format = FormatFactory.getFormat(type, pattern, precision);
+            if (datafield != null) {
 
-            // Get field from model
-            Object modelField = model.get(field.getDeclaringClass().getName());
+                if (obj != null) {
 
-            if (modelField != null) {
+                    // Retrieve the format, pattern and precision associated to
+                    // the type
+                    Class type = field.getType();
+                    String pattern = datafield.pattern();
+                    int precision = datafield.precision();
 
-                // Get field value
-                Object value = field.get(modelField);
-                String strValue = "";
+                    // Create format
+                    Format format = FormatFactory.getFormat(type, pattern, precision);
 
-                if (this.isMessageOrdered()) {
+                    // Get field value
+                    Object value = field.get(obj);
+
+                    result = formatString(format, value);
+
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Value to be formatted : " + value + ", position : " + datafield.pos() + ", and its formated value : " + result);
+                    }
+
+                } else {
+                    result = "";
+                }
+
+                Integer key;
+
+                if (isMessageOrdered()) {
 
                     // Generate a key using the number of the section
                     // and the position of the field
-                    Integer key1 = sections.get(modelField.getClass().getName());
-                    Integer key2 = dataField.position();
+                    Integer key1 = sections.get(obj.getClass().getName());
+                    Integer key2 = datafield.position();
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : "
-                                  + key1);
+                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
                     }
 
-                    if (value != null) {
-                        // Format field value
-                        try {
-                            strValue = format.format(value);
-                        } catch (Exception e) {
-                            throw new IllegalArgumentException("Formating error detected for the value : "
-                                                               + value, e);
-                        }
-                    }
+                    key = keyGenerated;
 
-                    // Add the content to the TreeMap according to the
-                    // position defined
-                    positions.put(keyGenerated, strValue);
+                } else {
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Positions size : " + positions.size());
+                    key = datafield.pos();
+                }
+
+                if (!results.containsKey(key)) {
+
+                    List list = new LinkedList();
+                    list.add(result);
+                    results.put(key, list);
+
+                } else {
+
+                    List list = (LinkedList)results.get(key);
+                    list.add(result);
+                }
+
+            }
+
+            OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+            if (oneToMany != null) {
+
+                // Set global variable
+                // Will be used during generation of CSV
+                isOneToMany = true;
+
+                ArrayList list = (ArrayList)field.get(obj);
+
+                if (list != null) {
+
+                    Iterator it = list.iterator();
+
+                    while (it.hasNext()) {
+
+                        Object target = it.next();
+                        generateCsvPositionMap(target.getClass(), target);
+
                     }
 
                 } else {
 
-                    // Add value to the appender if not null
-                    if (value != null) {
-
-                        // Format field value
-                        try {
-                            strValue = format.format(value);
-                        } catch (Exception e) {
-                            throw new IllegalArgumentException("Formating error detected for the value : "
-                                                               + value, e);
-                        }
-
-                    }
-                    
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted : " + value + ", position : " + dataField.pos() + ", and its formated value : " + strValue);
-                    }
-
-                    builder.append(strValue);
-
-                    if (it.hasNext()) {
-                        builder.append(separator);
-                    }
+                    // Call this function to add empty value
+                    // in the table
+                    generateCsvPositionMap(field.getClass(), null);
                 }
+
             }
         }
 
-        // Iterate through the list to generate
-        // the message according to the order/position
-        if (this.isMessageOrdered()) {
-
-            Iterator<Integer> posit = positions.keySet().iterator();
-
-            while (posit.hasNext()) {
-                String value = positions.get(posit.next());
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Value added at the position (" + posit + ") : " + value + separator);
-                }
-
-                builder.append(value);
-                if (it.hasNext()) {
-                    builder.append(separator);
-                }
-            }
-        }
-        
-        return builder.toString();
-
-    }*/
-    
-    public String unbind(Map<String, Object> model) throws Exception {
-
-		StringBuffer buffer = new StringBuffer();
-		results = new HashMap<Integer, List>();
-
-		// Check if separator exists
-		ObjectHelper.notNull(this.separator,
-				"The separator has not been instantiated or property not defined in the @CsvRecord annotation");
-
-		char separator = Converter.getCharDelimitor(this.getSeparator());
-
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : "
-							+ this.getSeparator());
-		}
-
-		for (Class clazz : models) {
-			
-			if ( model.containsKey( clazz.getName()) ) {
-
-				Object obj = model.get(clazz.getName());
-
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Model object : " + obj + ", class : " + obj.getClass().getName());
-				}
-
-				if (obj != null) {
-
-					// Generate Csv table
-					generateCsvPositionMap(clazz, obj);
-
-				}
-			}
-		}
-
-		// Transpose result
-		List<List> l = new ArrayList<List>();
-
-		if (isOneToMany) {
-			
-			l = product(results);
-			
-		} else {
-			
-			// Convert Map<Integer, List> into List<List>
-			TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
-			List<String> temp = new ArrayList<String>();
-			
-			for(Integer key : sortValues.keySet()) {
-				
-				// Get list of values
-				List<String> val = sortValues.get(key);
-				
-				// For one to one relation
-				// There is only one item in the list
-				String value = (String) val.get(0);
-				
-				// Add the value to the temp array
-				if ( value != null ) {			
-				    temp.add( value );
-				} else {
-					temp.add( "" );
-				}
-			}
-			
-			l.add(temp);
-		}
-		
-
-		if (l != null) {
-
-			Iterator it = l.iterator();
-			while (it.hasNext()) {
-
-				List<String> tokens = (ArrayList<String>) it.next();
-				Iterator itx = tokens.iterator();
-
-				while (itx.hasNext()) {
-
-					String res = (String) itx.next();
-
-					if (res != null) {
-						buffer.append(res);
-					} else {
-						buffer.append("");
-					}
-
-					if (itx.hasNext()) {
-						buffer.append(separator);
-					}
-
-				}
-
-				if (it.hasNext()) {
-					buffer.append(Converter.getStringCarriageReturn(getCarriageReturn()));
-				}
-
-			}
-
-		}
-
-		return buffer.toString();
-       
     }
-    
-    private List<List> product(Map<Integer, List> values) {
 
-		TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
-
-		List<List> product = new ArrayList<List>();
-		Map<Integer, Integer> index = new HashMap<Integer, Integer>();
-
-		boolean cont = true;
-		int idx = 0;
-		int idxSize;
-
-		do {
-
-			idxSize = 0;
-			List v = new ArrayList();
-
-			for (int ii = 1; ii <= sortValues.lastKey(); ii++) {
-
-				List l = values.get(ii);
-
-				if (l == null) {
-					v.add("");
-					++idxSize;
-					continue;
-				}
-
-				if (l.size() >= idx + 1) {
-					v.add(l.get(idx));
-					index.put(ii, idx);
-					if (LOG.isDebugEnabled()) {
-	                    LOG.debug("Value : " + l.get(idx) + ", pos : " + ii + ", at :" + idx);
-					}
-
-				} else {
-					v.add(l.get(0));
-					index.put(ii, 0);
-					++idxSize;
-					if (LOG.isDebugEnabled()) {
-	                    LOG.debug("Value : " + l.get(0) + ", pos : " + ii + ", at index : " + 0);
-					}
-				}
-
-			}
-			
-			if ( idxSize != sortValues.lastKey()) {
-				product.add(v);
-			}
-			++idx;
-
-		} while (idxSize != sortValues.lastKey());
-
-		return product;
-	}
-	
-    
-    private void generateCsvPositionMap(Class clazz, Object obj) throws Exception {
-    	
-		String result = "";
-
-		for (Field field : clazz.getDeclaredFields()) {
-
-			field.setAccessible(true);
-
-			DataField datafield = field.getAnnotation(DataField.class);
-
-			if (datafield != null) {
-
-				if (obj != null) {
-
-					// Retrieve the format, pattern and precision associated to
-					// the type
-					Class type = field.getType();
-					String pattern = datafield.pattern();
-					int precision = datafield.precision();
-
-					// Create format
-					Format format = FormatFactory.getFormat(type, pattern, precision);
-
-					// Get field value
-					Object value = field.get(obj);
-
-					result = formatString(format, value);
-
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Value to be formatted : " + value + ", position : " + datafield.pos()
-								+ ", and its formated value : " + result);
-					}
-
-				} else {
-					result = "";
-				}
-
-				Integer key;
-
-				if (isMessageOrdered()) {
-
-					// Generate a key using the number of the section
-					// and the position of the field
-					Integer key1 = sections.get(obj.getClass().getName());
-					Integer key2 = datafield.position();
-					Integer keyGenerated = generateKey(key1, key2);
-
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
-					}
-
-					key = keyGenerated;
-
-				} else {
-
-					key = datafield.pos();
-				}
-
-				if (!results.containsKey(key)) {
-
-					List list = new LinkedList();
-					list.add(result);
-					results.put(key, list);
-
-				} else {
-
-					List list = (LinkedList) results.get(key);
-					list.add(result);
-				}
-
-			}
-
-			OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-			if (oneToMany != null) {
-				
-				// Set global variable
-				// Will be used during generation of CSV
-				isOneToMany = true;
-
-				ArrayList list = (ArrayList) field.get(obj);
-
-				if (list != null) {
-
-					Iterator it = list.iterator();
-
-					while (it.hasNext()) {
-
-						Object target = it.next();
-						generateCsvPositionMap(target.getClass(), target);
-
-					}
-
-				} else {
-					
-					// Call this function to add empty value
-					// in the table
-					generateCsvPositionMap(field.getClass(), null);
-				}
-
-			}
-		}
-    	
-    	
-    }
-    
     private String formatString(Format format, Object value) throws Exception {
-    	
-		String strValue = "";
 
-		if (value != null) {
+        String strValue = "";
 
-				// Format field value
-				try {
-					strValue = format.format(value);
-				} catch (Exception e) {
-					throw new IllegalArgumentException("Formating error detected for the value : " + value, e);
-				}
+        if (value != null) {
 
-		}
+            // Format field value
+            try {
+                strValue = format.format(value);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Formating error detected for the value : " + value, e);
+            }
 
-		return strValue;
+        }
 
-	}
-    
+        return strValue;
+
+    }
+
     public String generateHeader() {
 
         Map<Integer, DataField> dataFieldsSorted = new TreeMap<Integer, DataField>(dataFields);
@@ -672,14 +584,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
-     * 
      * Get paramaters defined in @Csvrecord annotation
-     * 
      */
     private void initCsvRecordParameters() {
         if (separator == null) {
             for (Class<?> cl : models) {
-            
+
                 // Get annotation @CsvRecord from the class
                 CsvRecord record = cl.getAnnotation(CsvRecord.class);
 
@@ -696,16 +606,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Skip First Line parameter of the CSV : " + skipFirstLine);
                     }
-                    
+
                     // Get generateHeaderColumnNames parameter
                     generateHeaderColumnNames = record.generateHeaderColumns();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Generate header column names parameter of the CSV : " + generateHeaderColumnNames);
                     }
-                    
+
                     // Get Separator parameter
-                    ObjectHelper.notNull(record.separator(),
-                            "No separator has been defined in the @Record annotation !");
+                    ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation !");
                     separator = record.separator();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Separator defined for the CSV : " + separator);
@@ -716,13 +625,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Carriage return defined for the CSV : " + crlf);
                     }
-                    
+
                     // Get isOrdered parameter
                     messageOrdered = record.isOrdered();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Must CSV record be ordered ? " + messageOrdered);
                     }
-                    
+
                 }
 
                 if (section != null) {
@@ -735,7 +644,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             }
         }
     }
-    
+
     /**
      * Find the separator used to delimit the CSV fields
      */
@@ -749,7 +658,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public boolean getGenerateHeaderColumnNames() {
         return generateHeaderColumnNames;
     }
-    
+
     /**
      * Find the separator used to delimit the CSV fields
      */

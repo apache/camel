@@ -23,7 +23,6 @@ import java.lang.annotation.RetentionPolicy;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OneToMany {
-	
-	String mappedTo() default "";
 
+    String mappedTo() default "";
 }

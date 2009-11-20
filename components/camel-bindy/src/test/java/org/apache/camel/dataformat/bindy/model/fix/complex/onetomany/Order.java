@@ -25,32 +25,37 @@ import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1")
 public class Order {
-    
-    @Link Header header;
-    
-    @Link Trailer trailer;
 
-    @KeyValuePairField(tag = 1) // Client reference
+    @Link
+    Header header;
+
+    @Link
+    Trailer trailer;
+
+    @KeyValuePairField(tag = 1)
+    // Client reference
     private String account;
 
-    @KeyValuePairField(tag = 11) // Order reference
+    @KeyValuePairField(tag = 11)
+    // Order reference
     private String clOrdId;
-    
-    @KeyValuePairField(tag = 58) // Free text
+
+    @KeyValuePairField(tag = 58)
+    // Free text
     private String text;
-    
+
     @OneToMany(mappedTo = "org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Security")
-    List<Security> securities;
+    private List<Security> securities;
 
     public List<Security> getSecurities() {
-		return securities;
-	}
+        return securities;
+    }
 
-	public void setSecurities(List<Security> securities) {
-		this.securities = securities;
-	}
+    public void setSecurities(List<Security> securities) {
+        this.securities = securities;
+    }
 
-	public Header getHeader() {
+    public Header getHeader() {
         return header;
     }
 
@@ -65,7 +70,7 @@ public class Order {
     public void setTrailer(Trailer trailer) {
         this.trailer = trailer;
     }
- 
+
     public String getAccount() {
         return account;
     }
@@ -89,20 +94,20 @@ public class Order {
     public void setText(String text) {
         this.text = text;
     }
-    
+
     @Override
     public String toString() {
-		StringBuffer temp = new StringBuffer();
-		temp.append(Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 58: " + this.text);
-		temp.append("\r");
+        StringBuffer temp = new StringBuffer();
+        temp.append(Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 58: " + this.text);
+        temp.append("\r");
 
-		if (this.securities != null) {
-			for (Security sec : this.securities) {
-				temp.append(sec.toString());
-				temp.append("\r");
-			}
-		}
-		return temp.toString();
-	}
+        if (this.securities != null) {
+            for (Security sec : this.securities) {
+                temp.append(sec.toString());
+                temp.append("\r");
+            }
+        }
+        return temp.toString();
+    }
 
 }

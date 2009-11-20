@@ -31,7 +31,7 @@ public class Order {
 
     @Link
     private Client client;
-    
+
     @Link
     private Security security;
 
@@ -89,7 +89,7 @@ public class Order {
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
-    
+
     public Security getSecurity() {
         return security;
     }
@@ -116,13 +116,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Model : " + Order.class.getName() + " : "
-            + String.valueOf(this.orderNr) + ", " 
-            + String.valueOf(this.amount) + ", "
-            + String.valueOf(this.instrumentType) + ", "
-            + String.valueOf(this.orderType) + ", "
-            + String.valueOf(this.currency) + ", "
-            + String.valueOf(this.client) + ","
-            + String.valueOf(this.orderDate);
+        return "Model : " + Order.class.getName() + " : " + String.valueOf(this.orderNr) + ", " + String.valueOf(this.amount) + ", " + String.valueOf(this.instrumentType) + ", "
+               + String.valueOf(this.orderType) + ", " + String.valueOf(this.currency) + ", " + String.valueOf(this.client) + "," + String.valueOf(this.orderDate);
     }
 }

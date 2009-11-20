@@ -17,7 +17,8 @@
 package org.apache.camel.dataformat.bindy;
 
 /**
- * Format allows to format object to and from string received using format or parse method
+ * Format allows to format object to and from string received using format or
+ * parse method
  */
 public interface Format<T> {
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import static org.junit.Assert.assertEquals;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,14 +25,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
@@ -48,36 +43,35 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests {
+    
+    private static final String URI_MOCK_RESULT = "mock:result";
+    private static final String URI_MOCK_ERROR = "mock:error";
+    private static final String URI_DIRECT_START = "direct:start";
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
     private String expected;
-    
-    private static final String URI_MOCK_RESULT = "mock:result";
-    private static final String URI_MOCK_ERROR = "mock:error";  
-    private static final String URI_DIRECT_START = "direct:start";
 
     @Produce(uri = URI_DIRECT_START)
     private ProducerTemplate template;
 
     @EndpointInject(uri = URI_MOCK_RESULT)
     private MockEndpoint result;
-    
+
     @EndpointInject(uri = URI_MOCK_ERROR)
     private MockEndpoint error;
 
     @Test
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
-    	
-    	expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
-    	
+
+        expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
+
         result.expectedBodiesReceived(expected);
 
         template.sendBody(generateModel());
 
         result.assertIsSatisfied();
     }
-    
 
     public List<Map<String, Object>> generateModel() {
         Map<String, Object> modelObjects = new HashMap<String, Object>();
@@ -115,18 +109,18 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
             return new RouteBuilder() {
                 @Override
                 public void configure() {
-                	
+
                     Tracer tracer = new Tracer();
                     tracer.setLogLevel(LoggingLevel.FATAL);
                     tracer.setLogName("org.apache.camel.bindy");
 
                     getContext().addInterceptStrategy(tracer);
-            
+
                     // default should errors go to mock:error
                     errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
-                
-                    onException(Exception.class).maximumRedeliveries(0).handled(true);                	
-                	
+
+                    onException(Exception.class).maximumRedeliveries(0).handled(true);
+
                     from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
                 }
             };

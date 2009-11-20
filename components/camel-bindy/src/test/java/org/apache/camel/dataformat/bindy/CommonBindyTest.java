@@ -25,22 +25,22 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 public class CommonBindyTest extends AbstractJUnit4SpringContextTests {
-	
-	protected static final transient Log LOG = LogFactory.getLog(CommonBindyTest.class);
-	
+
     public static final String URI_MOCK_RESULT = "mock:result";
-    public static final String URI_MOCK_ERROR = "mock:error";  
+    public static final String URI_MOCK_ERROR = "mock:error";
     public static final String URI_DIRECT_START = "direct:start";
     public static final String URI_FILE_FIX = "file://src/test/data/fix?noop=true";
     public static final String URI_FILE_FIX_TAB = "file://src/test/data/fix_tab?noop=true";
+
+    protected static final transient Log LOG = LogFactory.getLog(CommonBindyTest.class);
 
     @Produce(uri = URI_DIRECT_START)
     public ProducerTemplate template;
 
     @EndpointInject(uri = URI_MOCK_RESULT)
     public MockEndpoint result;
-    
+
     @EndpointInject(uri = URI_MOCK_ERROR)
     public MockEndpoint error;
-    
+
 }

@@ -41,21 +41,21 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
-	
+
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
-    	
+
         result.expectedMessageCount(1);
         result.expectedBodiesReceived(generateModel().toString());
         result.assertIsSatisfied();
-         
+
     }
-    
+
     public List<Map<String, Object>> generateModel() {
         Map<String, Object> model = new HashMap<String, Object>();
-    	List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    	
+        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+
         Header header = new Header();
         header.setBeginString("FIX.4.1");
         header.setBodyLength(20);
@@ -63,10 +63,10 @@ public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
         header.setMsgType("0");
         header.setSendCompId("INVMGR");
         header.setTargetCompId("BRKR");
-        
+
         Trailer trailer = new Trailer();
-        trailer.setCheckSum(220); 
-        
+        trailer.setCheckSum(220);
+
         Order order = new Order();
         order.setAccount("BE.CHM.001");
         order.setClOrdId("CHM0001-01");
@@ -74,18 +74,17 @@ public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
         order.setIDSource("4");
         order.setSecurityId("BE0001245678");
         order.setSide("1");
-        
+
         order.setHeader(header);
         order.setTrailer(trailer);
-        
+
         model.put(order.getClass().getName(), order);
         model.put(header.getClass().getName(), header);
         model.put(trailer.getClass().getName(), trailer);
- 
+
         models.add(model);
         return models;
     }
-
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
