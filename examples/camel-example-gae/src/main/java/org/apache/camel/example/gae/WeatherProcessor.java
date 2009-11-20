@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 
 public class WeatherProcessor implements Processor {
 
-    @Override
     public void process(Exchange exchange) throws Exception {
         // convert XML body to DOM tree
         Document doc = exchange.getIn().getBody(Document.class);
