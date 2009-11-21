@@ -17,8 +17,9 @@
 package org.apache.camel.bam.processor;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
@@ -29,7 +30,6 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.CastUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
@@ -76,7 +76,11 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        List<ActivityState> list = CastUtils.cast(template.find("select x from " + ActivityState.class.getName() + " x where x.timeOverdue < ?1", timeNow));
+                        Map<String, Object> params = new HashMap<String, Object>(1);
+                        params.put("timeNow", timeNow);
+
+                        List<ActivityState> list = CastUtils.cast(template.findByNamedParams("select x from "
+                                + ActivityState.class.getName() + " x where x.timeOverdue < :timeNow", params));
                         for (ActivityState activityState : list) {
                             fireExpiredEvent(activityState);
                         }

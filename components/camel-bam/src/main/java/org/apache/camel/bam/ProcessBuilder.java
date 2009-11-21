@@ -17,7 +17,9 @@
 package org.apache.camel.bam;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -173,8 +175,13 @@ public abstract class ProcessBuilder extends RouteBuilder {
     // -------------------------------------------------------------------------
     public ActivityDefinition findOrCreateActivityDefinition(String activityName) {
         ProcessDefinition definition = getProcessDefinition();
-        List<ActivityDefinition> list = CastUtils.cast(jpaTemplate.find("select x from " 
-            + ActivityDefinition.class.getName() + " x where x.processDefinition = ?1 and x.name = ?2", definition, activityName));
+
+        Map<String, Object> params = new HashMap<String, Object>(2);
+        params.put("definition", definition);
+        params.put("name", activityName);
+
+        List<ActivityDefinition> list = CastUtils.cast(jpaTemplate.findByNamedParams("select x from "
+            + ActivityDefinition.class.getName() + " x where x.processDefinition = :definition and x.name = :name", params));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
@@ -187,8 +194,11 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     protected ProcessDefinition findOrCreateProcessDefinition() {
-        List<ProcessDefinition> list = CastUtils.cast(jpaTemplate.find("select x from " 
-            + ProcessDefinition.class.getName() + " x where x.name = ?1", processName));
+        Map<String, Object> params = new HashMap<String, Object>(1);
+        params.put("name", processName);
+
+        List<ProcessDefinition> list = CastUtils.cast(jpaTemplate.findByNamedParams("select x from "
+            + ProcessDefinition.class.getName() + " x where x.name = :name", params));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {

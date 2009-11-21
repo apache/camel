@@ -89,7 +89,7 @@ public class ProcessContext {
      * for dependent actions
      */
     public void onStarted(ActivityState activityState) {
-        /** TODO */
+        // noop
     }
 
     /**
@@ -97,6 +97,6 @@ public class ProcessContext {
      * for dependent actions
      */
     public void onCompleted(ActivityState activityState) {
-        /** TODO */
+        // noop
     }
 }

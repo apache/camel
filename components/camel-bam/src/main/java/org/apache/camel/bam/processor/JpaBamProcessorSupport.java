@@ -17,7 +17,9 @@
 package org.apache.camel.bam.processor;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -116,9 +118,8 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
             if (entity == null) {
                 entity = createEntity(exchange, key);
                 setKeyProperty(entity, key);
-                ProcessDefinition definition = ProcessDefinition
-                    .getRefreshedProcessDefinition(template, getActivityRules().getProcessRules()
-                        .getProcessDefinition());
+                ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(template,
+                        getActivityRules().getProcessRules().getProcessDefinition());
                 setProcessDefinitionProperty(entity, definition);
                 template.persist(entity);
 
@@ -138,7 +139,9 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         if (isCorrelationKeyIsPrimary()) {
             return template.find(getEntityType(), key);
         } else {
-            List<T> list = template.find(getFindByKeyQuery(), key);
+            Map<String, Object> params = new HashMap<String, Object>(1);
+            params.put("key", key);
+            List<T> list = template.findByNamedParams(getFindByKeyQuery(), params);
             if (list.isEmpty()) {
                 return null;
             } else {
@@ -152,8 +155,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
             Method getter = IntrospectionSupport.getPropertyGetter(getEntityType(), getKeyPropertyName());
             return getter.getReturnType();
         } catch (NoSuchMethodException e) {
-            LOG.warn("no such getter for: " + getKeyPropertyName() + " on " + getEntityType() + ". Reason: "
-                     + e, e);
+            LOG.warn("no such getter for: " + getKeyPropertyName() + " on " + getEntityType() + ". Reason: " + e, e);
             return null;
         }
     }
@@ -188,6 +190,6 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     }
 
     protected String createFindByKeyQuery() {
-        return "select x from " + getEntityType().getName() + " x where x." + getKeyPropertyName() + " = ?1";
+        return "select x from " + getEntityType().getName() + " x where x." + getKeyPropertyName() + " = :key";
     }
 }

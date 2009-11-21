@@ -16,7 +16,9 @@
  */
 package org.apache.camel.bam.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +30,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.orm.jpa.JpaTemplate;
 
 /**
@@ -74,8 +75,11 @@ public class ProcessDefinition extends EntitySupport {
     }
 
     public static ProcessDefinition findOrCreateProcessDefinition(JpaTemplate template, String processName) {
-        List<ProcessDefinition> list = CastUtils.cast(template.find("select x from " 
-            + ProcessDefinition.class.getName() + " x where x.name = ?1", processName));
+        Map<String, Object> params = new HashMap<String, Object>(1);
+        params.put("processName", processName);
+
+        List<ProcessDefinition> list = CastUtils.cast(template.findByNamedParams("select x from "
+            + ProcessDefinition.class.getName() + " x where x.name = :processName", params));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
