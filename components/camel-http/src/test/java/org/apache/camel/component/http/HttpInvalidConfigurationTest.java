@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -26,7 +27,7 @@ import org.junit.Test;
 import static org.apache.camel.component.http.HttpMethods.POST;
 
 /**
- * Unit test of invalid configuraiton
+ * Unit test of invalid configuration
  */
 public class HttpInvalidConfigurationTest extends CamelTestSupport {
 
@@ -35,8 +36,9 @@ public class HttpInvalidConfigurationTest extends CamelTestSupport {
         try {
             super.setUp();
             fail("Should have thrown ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getMessage().endsWith("You have duplicated the http(s) protocol."));
+        } catch (FailedToCreateRouteException e) {
+            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            assertTrue(cause.getMessage().endsWith("You have duplicated the http(s) protocol."));
         }
     }
 
