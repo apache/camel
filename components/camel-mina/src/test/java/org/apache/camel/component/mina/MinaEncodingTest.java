@@ -19,6 +19,7 @@ package org.apache.camel.component.mina;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -179,9 +180,10 @@ public class MinaEncodingTest extends ContextTestSupport {
                 }
             });
             fail("Should have thrown a ResolveEndpointFailedException due invalid encoding parameter");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("The encoding: XXX is not supported", e.getCause().getMessage());
+        } catch (FailedToCreateRouteException e) {
+            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            assertTrue(cause.getCause() instanceof IllegalArgumentException);
+            assertEquals("The encoding: XXX is not supported", cause.getCause().getMessage());
         }
     }
 
