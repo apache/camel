@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.processor.SetBodyProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -59,7 +58,9 @@ public class SetBodyDefinition extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr = getExpression().createExpression(routeContext);
-        return ProcessorBuilder.setBody(expr);
+        Processor childProcessor = routeContext.createProcessor(this);
+
+        return new SetBodyProcessor(expr, childProcessor);
     }
     
      // Fluent API
