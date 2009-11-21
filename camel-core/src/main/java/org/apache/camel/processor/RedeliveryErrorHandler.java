@@ -101,15 +101,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 return;
             }
 
-            // do not handle transacted exchanges that failed as this error handler does not support it
-            if (exchange.isTransacted() && !supportTransacted() && exchange.getException() != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("This error handler does not support transacted exchanges."
-                        + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
-                }
-                return;
-            }
-
             // did previous processing cause an exception?
             boolean handle = shouldHandleException(exchange);
             if (handle) {

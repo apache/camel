@@ -76,7 +76,7 @@ public final class ObjectHelper {
 
         if (leftValue == null || rightValue == null) {
             // no reason to continue as the first equal did not match and now one of the values is null
-            // so it wont help to type coerece to a null type
+            // so it wont help to type coerce to a null type
             return false;
         }
 
