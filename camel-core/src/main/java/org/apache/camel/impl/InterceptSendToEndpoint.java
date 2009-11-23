@@ -116,16 +116,24 @@ public class InterceptSendToEndpoint implements Endpoint {
                 exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
 
                 detour.process(exchange);
-                // copy OUT to IN
-                if (exchange.hasOut()) {
-                    // replace OUT with IN as detour changed something
-                    exchange.setIn(exchange.getOut());
-                    exchange.setOut(null);
-                }
 
                 if (!skip) {
-                    // route to original destination
-                    producer.process(exchange);
+                    if (!exchange.isFailed()) {
+                        if (exchange.hasOut()) {
+                            // replace OUT with IN as detour changed something
+                            exchange.setIn(exchange.getOut());
+                            exchange.setOut(null);
+                        }
+
+                        // route to original destination
+                        producer.process(exchange);
+                    } else {
+                        // exception is failed so do not route to original destination as we can use this to simulate errors
+                        // caused from the intended destination
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Exchange has failed so skip sending to original intended destination: " + getEndpointUri() + " for exchange: " + exchange);
+                        }
+                    }
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Stop() means skip sending exchange to original intended destination: " + getEndpointUri() + " for exchange: " + exchange);
