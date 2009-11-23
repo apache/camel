@@ -252,7 +252,7 @@ public class JmsConfiguration implements Cloneable {
 
                 int priority = message.getJMSPriority();
                 if (priority < 0 || priority > 9) {
-                    // use prioriry from endpoint if not provided on message with a valid range
+                    // use priority from endpoint if not provided on message with a valid range
                     priority = this.getPriority();
                 }
 
@@ -263,7 +263,7 @@ public class JmsConfiguration implements Cloneable {
                 int deliveryMode;
                 if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
                     deliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
-                    // remove the temporary propery
+                    // remove the temporary property
                     JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
                 } else {
                     deliveryMode = this.getDeliveryMode();
