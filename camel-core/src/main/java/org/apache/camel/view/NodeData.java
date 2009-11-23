@@ -51,7 +51,7 @@ public class NodeData {
     public String nodeType;
     public boolean nodeWritten;
     public String url;
-    public List<ProcessorDefinition<?>> outputs;
+    public List<ProcessorDefinition> outputs;
     public String association = "property";
 
     @SuppressWarnings("unchecked")
@@ -94,7 +94,7 @@ public class NodeData {
             this.edgeLabel = "";
 
             ChoiceDefinition choice = (ChoiceDefinition)node;
-            List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>(choice.getWhenClauses());
+            List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>(choice.getWhenClauses());
             if (choice.getOtherwise() != null) {
                 outputs.add(choice.getOtherwise());
             }

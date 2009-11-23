@@ -61,13 +61,13 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";
     private Logger logger;
     private Producer traceEventProducer;
-    private final ProcessorDefinition<?> node;
+    private final ProcessorDefinition node;
     private final Tracer tracer;
     private TraceFormatter formatter;
     private Class<?> jpaTraceEventMessageClass;
     private RouteContext routeContext;
 
-    public TraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer) {
+    public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
         this.tracer = tracer;
         this.node = node;

@@ -87,14 +87,14 @@ public final class ProcessorDefinitionHelper {
             return;
         }
 
-        for (ProcessorDefinition<?> out : outputs) {
+        for (ProcessorDefinition out : outputs) {
             if (type.isInstance(out)) {
                 found.add((T)out);
             }
 
             // send is much common
             if (out instanceof SendDefinition) {
-                SendDefinition<?> send = (SendDefinition<?>) out;
+                SendDefinition send = (SendDefinition) out;
                 List<ProcessorDefinition> children = send.getOutputs();
                 doFindType(children, type, found);
             }

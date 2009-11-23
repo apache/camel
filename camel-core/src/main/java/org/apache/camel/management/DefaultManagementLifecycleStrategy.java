@@ -84,8 +84,8 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service {
 
     private static final Log LOG = LogFactory.getLog(DefaultManagementLifecycleStrategy.class);
-    private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors =
-            new HashMap<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>>();
+    private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
+            new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
     private final CamelContext context;
     private boolean initialized;
 
@@ -309,7 +309,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
-        KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
+        KeyValueHolder<ProcessorDefinition, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
         if (holder == null) {
             // skip as its not an well known processor we want to manage anyway, such as Channel/UnitOfWork/Pipeline etc.
             return null;
@@ -332,8 +332,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         return managedObject;
     }
 
-    private Object createManagedObjectForProcessor(CamelContext context, 
-            Processor processor, ProcessorDefinition<?> definition, Route route) {
+    private Object createManagedObjectForProcessor(CamelContext context, Processor processor,
+                                                   ProcessorDefinition definition, Route route) {
         // skip error handlers
         if (processor instanceof ErrorHandler) {
             return false;
@@ -434,8 +434,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters =
-                new HashMap<ProcessorDefinition<?>, PerformanceCounter>();
+        Map<ProcessorDefinition, PerformanceCounter> registeredCounters =
+                new HashMap<ProcessorDefinition, PerformanceCounter>();
 
         // Each processor in a route will have its own performance counter.
         // These performance counter will be embedded to InstrumentationProcessor
@@ -443,7 +443,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         RouteDefinition route = routeContext.getRoute();
 
         // register performance counters for all processors and its children
-        for (ProcessorDefinition<?> processor : route.getOutputs()) {
+        for (ProcessorDefinition processor : route.getOutputs()) {
             registerPerformanceCounters(routeContext, processor, registeredCounters);
         }
 
@@ -453,8 +453,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     @SuppressWarnings("unchecked")
-    private void registerPerformanceCounters(RouteContext routeContext, 
-            ProcessorDefinition processor, Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters) {
+    private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition processor,
+                                             Map<ProcessorDefinition, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition> children = processor.getOutputs();
@@ -484,7 +484,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     /**
      * Should the given processor be registered.
      */
-    protected boolean registerProcessor(ProcessorDefinition<?> processor) {
+    protected boolean registerProcessor(ProcessorDefinition processor) {
         // skip on exception
         if (processor instanceof OnExceptionDefinition) {
             return false;

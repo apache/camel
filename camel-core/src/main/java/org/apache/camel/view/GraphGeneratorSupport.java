@@ -112,7 +112,7 @@ public abstract class GraphGeneratorSupport {
 
     protected abstract void generateFile(PrintWriter writer, Map<String, List<RouteDefinition>> map);
 
-    protected boolean isMulticastNode(ProcessorDefinition<?> node) {
+    protected boolean isMulticastNode(ProcessorDefinition node) {
         return node instanceof MulticastDefinition || node instanceof ChoiceDefinition;
     }
 

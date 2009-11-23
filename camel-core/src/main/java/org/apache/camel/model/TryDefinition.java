@@ -250,7 +250,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             catchClauses = new ArrayList<CatchDefinition>();
             finallyClause = null;
 
-            for (ProcessorDefinition<?> output : outputs) {
+            for (ProcessorDefinition output : outputs) {
                 if (output instanceof CatchDefinition) {
                     catchClauses.add((CatchDefinition)output);
                 } else if (output instanceof FinallyDefinition) {

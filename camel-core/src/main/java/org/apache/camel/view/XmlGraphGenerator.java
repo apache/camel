@@ -127,7 +127,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
 
         // now lets write any children
-        List<ProcessorDefinition<?>> outputs = toData.outputs;
+        List<ProcessorDefinition> outputs = toData.outputs;
         if (outputs != null) {
             for (ProcessorDefinition output : outputs) {
                 NodeData newData = printNode(writer, toData, output);
