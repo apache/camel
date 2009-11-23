@@ -140,7 +140,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param componentName the name of the component
      * @param factory       used to create a new component instance if the component was not previously added.
      * @return the component
-     * @deprecated will be removed in Camel 2.2
+     * @deprecated will be removed in Camel 2.3.
      */
     @Deprecated
     Component getOrCreateComponent(String componentName, Callable<Component> factory);
@@ -198,7 +198,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param uri  the URI of the endpoints
      * @return  collection of endpoints
-     * @deprecated not used will be removed in Camel 2.2.
+     * @deprecated not used will be removed in Camel 2.3.
      */
     @Deprecated
     Collection<Endpoint> getEndpoints(String uri);
@@ -207,7 +207,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * Returns the collection of all registered singleton endpoints.
      *
      * @return  all the singleton endpoints
-     * @deprecated not used will be removed in Camel 2.2.
+     * @deprecated not used will be removed in Camel 2.3.
      */
     @Deprecated
     Collection<Endpoint> getSingletonEndpoints();
@@ -228,7 +228,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param uri the URI to be used to remove
      * @return a collection of endpoints removed or null if there are no endpoints for this URI
      * @throws Exception if at least one endpoint could not be stopped
-     * @deprecated not used will be removed in Camel 2.2.
+     * @deprecated not used will be removed in Camel 2.3.
      */
     @Deprecated
     Collection<Endpoint> removeEndpoints(String uri) throws Exception;
@@ -341,7 +341,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param route the route
      * @return the status for the route
-     * @deprecated will be removed in Camel 2.2
+     * @deprecated will be removed in Camel 2.3.
      */
     @Deprecated
     ServiceStatus getRouteStatus(RouteDefinition route);
