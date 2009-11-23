@@ -63,7 +63,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     String getVersion();
 
-    // Component Management Methods
+    // Service Methods
     //-----------------------------------------------------------------------
 
     /**
@@ -81,6 +81,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @return <tt>true</tt> if already added, <tt>false</tt> if not.
      */
     boolean hasService(Object object);
+
+    // Component Management Methods
+    //-----------------------------------------------------------------------
 
     /**
      * Adds a component to the context.
@@ -146,9 +149,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     //-----------------------------------------------------------------------
 
     /**
-     * Resolves the given URI to an {@link Endpoint}.  If the URI has a singleton endpoint
-     * registered, then the singleton is returned.  Otherwise, a new {@link Endpoint} is created
-     * and if the endpoint is a singleton it is registered as a singleton endpoint.
+     * Resolves the given name to an {@link Endpoint} of the specified type.
+     * If the name has a singleton endpoint registered, then the singleton is returned.
+     * Otherwise, a new {@link Endpoint} is created and registered.
      *
      * @param uri  the URI of the endpoint
      * @return  the endpoint
@@ -158,8 +161,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
      * If the name has a singleton endpoint registered, then the singleton is returned.
-     * Otherwise, a new {@link Endpoint} is created and if the endpoint is a
-     * singleton it is registered as a singleton endpoint.
+     * Otherwise, a new {@link Endpoint} is created and registered.
      *
      * @param name  the name of the endpoint
      * @param endpointType  the expected type
@@ -196,7 +198,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param uri  the URI of the endpoints
      * @return  collection of endpoints
-     * @deprecated makes no sense, is removed in Camel 2.2
+     * @deprecated not used will be removed in Camel 2.2.
      */
     @Deprecated
     Collection<Endpoint> getEndpoints(String uri);
@@ -205,7 +207,9 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * Returns the collection of all registered singleton endpoints.
      *
      * @return  all the singleton endpoints
+     * @deprecated not used will be removed in Camel 2.2.
      */
+    @Deprecated
     Collection<Endpoint> getSingletonEndpoints();
 
     /**
@@ -213,10 +217,8 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @param uri the URI to be used to resolve this endpoint
      * @param endpoint the endpoint to be added to the context
-     * @return the old endpoint that was previously registered to the context if 
-     * there was already an singleton endpoint for that URI or null
-     * @throws Exception if the new endpoint could not be started or the old 
-     * singleton endpoint could not be stopped
+     * @return the old endpoint that was previously registered or <tt>null</tt> if none was registered
+     * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
      */
     Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
 
@@ -226,7 +228,7 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param uri the URI to be used to remove
      * @return a collection of endpoints removed or null if there are no endpoints for this URI
      * @throws Exception if at least one endpoint could not be stopped
-     * @deprecated makes no sense, is removed in Camel 2.2
+     * @deprecated not used will be removed in Camel 2.2.
      */
     @Deprecated
     Collection<Endpoint> removeEndpoints(String uri) throws Exception;

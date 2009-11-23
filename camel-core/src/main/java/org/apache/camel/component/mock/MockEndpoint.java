@@ -142,7 +142,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public static void assertIsSatisfied(CamelContext context) throws InterruptedException {
         ObjectHelper.notNull(context, "camelContext");
-        Collection<Endpoint> endpoints = context.getSingletonEndpoints();
+        Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
