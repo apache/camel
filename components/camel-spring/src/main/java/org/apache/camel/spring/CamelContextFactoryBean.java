@@ -290,7 +290,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // do special preparation for some concepts such as interceptors and policies
-        // this is needed as JAXB does not build excaclty the same model definition as Spring DSL would do
+        // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
         // using route builders. So we have here a little custom code to fix the JAXB gaps
         for (RouteDefinition route : routes) {
             // interceptors should be first
@@ -322,7 +322,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initParent(RouteDefinition route) {
-        for (ProcessorDefinition<?> output : route.getOutputs()) {
+        for (ProcessorDefinition output : route.getOutputs()) {
             output.setParent(route);
             if (output.getOutputs() != null) {
                 // recursive the outputs
@@ -331,7 +331,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
     }
 
-    private void initParent(ProcessorDefinition<?> parent) {
+    @SuppressWarnings("unchecked")
+    private void initParent(ProcessorDefinition parent) {
         List<ProcessorDefinition> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
             child.setParent(parent);
@@ -343,7 +344,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initToAsync(RouteDefinition route) {
-        List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+        List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
         ToDefinition toAsync = null;
 
         for (ProcessorDefinition output : route.getOutputs()) {
@@ -370,8 +371,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initOnExceptions(RouteDefinition route) {
-        List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
-        List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
+        List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+        List<ProcessorDefinition> exceptionHandlers = new ArrayList<ProcessorDefinition>();
 
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
@@ -404,7 +405,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // configure intercept
         for (InterceptDefinition intercept : getIntercepts()) {
             intercept.afterPropertiesSet();
-            // add as first output so intercept is handled before the acutal route and that gives
+            // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             route.getOutputs().add(0, intercept);
         }
@@ -426,7 +427,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
             if (match) {
                 intercept.afterPropertiesSet();
-                // add as first output so intercept is handled before the acutal route and that gives
+                // add as first output so intercept is handled before the actual route and that gives
                 // us the needed head start to init and be able to intercept all the remaining processing steps
                 route.getOutputs().add(0, intercept);
             }
@@ -435,7 +436,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // configure intercept send to endpoint
         for (InterceptSendToEndpointDefinition intercept : getInterceptSendToEndpoints()) {
             intercept.afterPropertiesSet();
-            // add as first output so intercept is handled before the acutal route and that gives
+            // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
             route.getOutputs().add(0, intercept);
         }
@@ -443,7 +444,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initOnCompletions(RouteDefinition route) {
-        // only add global onCompletion if there are no route alredy
+        // only add global onCompletion if there are no route already
         boolean hasRouteScope = false;
         for (ProcessorDefinition out : route.getOutputs()) {
             if (out instanceof OnCompletionDefinition) {
@@ -478,7 +479,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         TransactedDefinition transacted = null;
 
         // add to correct type
-        for (ProcessorDefinition<?> type : types) {
+        for (ProcessorDefinition type : types) {
             if (type instanceof PolicyDefinition) {
                 policy = (PolicyDefinition) type;
             } else if (type instanceof TransactedDefinition) {
