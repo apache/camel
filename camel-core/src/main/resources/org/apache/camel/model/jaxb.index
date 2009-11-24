@@ -58,6 +58,7 @@ RouteBuilderDefinition
 RouteDefinition
 RoutesDefinition
 RoutingSlipDefinition
+SamplingDefinition
 SetBodyDefinition
 SetExchangePatternDefinition
 SetHeaderDefinition

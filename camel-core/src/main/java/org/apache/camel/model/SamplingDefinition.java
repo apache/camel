@@ -1,0 +1,138 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.apache.camel.Processor;
+import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.processor.SamplingThrottler;
+import org.apache.camel.spi.RouteContext;
+
+/**
+ * Represents an XML &lt;sample/&gt; element
+ *
+ * @version $Revision$
+ */
+@XmlRootElement(name = "sample")
+@XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("unchecked")
+public class SamplingDefinition extends ProcessorDefinition<ProcessorDefinition> {
+
+    // use Long to let it be optional in JAXB so when using XML the default is 1 second
+    
+    @XmlAttribute()
+    private Long samplePeriod = 1L;
+
+    @XmlAttribute()
+    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    private TimeUnit units = TimeUnit.SECONDS;
+
+    @XmlElementRef
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+
+    public SamplingDefinition() {
+    }
+
+    public SamplingDefinition(long samplePeriod, TimeUnit units) {
+        this.samplePeriod = samplePeriod;
+        this.units = units;
+    }
+
+    @Override
+    public String toString() {
+        return "Sample[1 Exchange per " + samplePeriod + " " + units.toString().toLowerCase() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "sample";
+    }
+
+    @Override
+    public String getLabel() {
+        return "sample[1 Exchange per " + samplePeriod + " " + units.toString().toLowerCase() + "]";
+    }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Processor childProcessor = routeContext.createProcessor(this);
+        return new SamplingThrottler(childProcessor, samplePeriod, units);
+    }
+
+    // Fluent API
+    // -------------------------------------------------------------------------
+
+    /**
+     * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
+     *
+     * @param samplePeriod the period
+     * @return the builder
+     */
+    public SamplingDefinition samplePeriod(long samplePeriod) {
+        setSamplePeriod(samplePeriod);
+        return this;
+    }
+
+    /**
+     * Sets the time units for the sample period, defaulting to seconds.
+     *
+     * @param units the time unit of the sample period.
+     * @return the builder
+     */
+    public SamplingDefinition timeUnits(TimeUnit units) {
+        setUnits(units);
+        return this;
+    }
+
+    // Properties
+    // -------------------------------------------------------------------------
+
+    public List<ProcessorDefinition> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorDefinition> outputs) {
+        this.outputs = outputs;
+    }
+
+    public long getSamplePeriod() {
+        return samplePeriod;
+    }
+
+    public void setSamplePeriod(long samplePeriod) {
+        this.samplePeriod = samplePeriod;
+    }
+
+    public void setUnits(String units) {
+        this.units = TimeUnit.valueOf(units);
+    }
+
+    public void setUnits(TimeUnit units) {
+        this.units = units;
+    }
+
+}

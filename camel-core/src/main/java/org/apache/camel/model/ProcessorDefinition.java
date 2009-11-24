@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -1134,6 +1135,39 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         RoutingSlipDefinition answer = new RoutingSlipDefinition(header);
         addOutput(answer);
         return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
+     * Creates a sampling throttler allowing you to extract a sample of
+     * exchanges from the traffic on a route. It is configured with a sampling
+     * period, during which only a single exchange is allowed to pass through.
+     * All other exchanges will be stopped.
+     * <p/>
+     * Default period is one second.
+     *
+     * @return the builder
+     */
+    public SamplingDefinition sample() {
+        return sample(1, TimeUnit.SECONDS);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a>
+     * Creates a sampling throttler allowing you to extract a sample of exchanges
+     * from the traffic through a route. It is configured with a sampling period
+     * during which only a single exchange is allowed to pass through.
+     * All other exchanges will be stopped.
+     *
+     * @param samplePeriod this is the sample interval, only one exchange is
+     *            allowed through in this interval
+     * @param unit this is the units for the samplePeriod e.g. Seconds
+     * @return the builder
+     */
+    public SamplingDefinition sample(long samplePeriod, TimeUnit unit) {
+        SamplingDefinition answer = new SamplingDefinition(samplePeriod, unit);
+        addOutput(answer);
+        return answer;
     }
 
     /**
