@@ -182,12 +182,18 @@ public class BeanInfo {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Introspecting class: " + clazz);
         }
+
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            if (isValidMethod(clazz, method)) {
+            boolean valid = isValidMethod(clazz, method);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Method:  " + method + " is valid: " + valid);
+            }
+            if (valid) {
                 introspect(clazz, method);
             }
         }
+
         Class<?> superclass = clazz.getSuperclass();
         if (superclass != null && !superclass.equals(Object.class)) {
             introspect(superclass);
@@ -506,7 +512,7 @@ public class BeanInfo {
     }
 
     /**
-     * Validates wheter the given method is a valid candidate for Camel Bean Binding.
+     * Validates whether the given method is a valid candidate for Camel Bean Binding.
      *
      * @param clazz   the class
      * @param method  the method
