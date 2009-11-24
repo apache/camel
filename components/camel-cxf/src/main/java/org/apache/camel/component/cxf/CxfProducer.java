@@ -95,22 +95,6 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
 
     // If cfb is null, we will try to find the right cfb to use.
     private Client createClientFromClientFactoryBean(ClientProxyFactoryBean cfb) throws Exception {
-        Bus bus = null;
-        if (endpoint.getApplicationContext() != null) {            
-            if (endpoint.getCxfEndpointBean() != null) {
-                bus = endpoint.getCxfEndpointBean().getBus();                
-            } else {
-                SpringBusFactory busFactory = new SpringBusFactory(endpoint.getApplicationContext());
-                bus = busFactory.createBus();
-            }
-            if (CxfEndpointUtils.getSetDefaultBus(endpoint)) {
-                BusFactory.setDefaultBus(bus);
-            }
-        } else {
-            // now we just use the default bus here
-            bus = BusFactory.getDefaultBus();
-        }
-        
         Class serviceClass = CxfEndpointUtils.getServiceClass(endpoint);
         // We need to choose the right front end to create the clientFactoryBean        
         if (cfb == null) {
@@ -147,7 +131,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             cfb.getFeatures().add(new PayLoadDataFormatFeature());
         }
         
-        cfb.setBus(bus);
+        cfb.setBus(endpoint.getBus());
         return ((ClientProxy)Proxy.getInvocationHandler(cfb.create())).getClient();
     }
 

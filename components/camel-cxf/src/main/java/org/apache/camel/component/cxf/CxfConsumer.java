@@ -41,23 +41,9 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     public CxfConsumer(CxfEndpoint endpoint, Processor processor) throws Exception {
 
         super(endpoint, processor);
-        Bus bus = null;
         this.endpoint = endpoint;
         boolean isWebServiceProvider = false;
-        if (endpoint.getApplicationContext() != null) {            
-            if (endpoint.getCxfEndpointBean() != null) {
-                bus = endpoint.getCxfEndpointBean().getBus();
-            } else {
-                SpringBusFactory busFactory = new SpringBusFactory(endpoint.getApplicationContext());
-                bus = busFactory.createBus();
-            }
-            if (CxfEndpointUtils.getSetDefaultBus(endpoint)) {
-                BusFactory.setDefaultBus(bus);
-            }
-        } else {
-            // now we just use the default bus here
-            bus = BusFactory.getDefaultBus();
-        }
+       
         
         Class serviceClass = CxfEndpointUtils.getServiceClass(endpoint);
         ServerFactoryBean svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
@@ -98,7 +84,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
                 //features.add(new LoggingFeature());
             }
         }
-        svrBean.setBus(bus);
+        svrBean.setBus(endpoint.getBus());
         svrBean.setStart(false);
         server = svrBean.create();
 

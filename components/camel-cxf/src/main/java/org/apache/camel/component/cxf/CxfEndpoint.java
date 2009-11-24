@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -30,10 +31,14 @@ import org.apache.camel.component.cxf.headers.DefaultMessageHeadersRelay;
 import org.apache.camel.component.cxf.headers.MessageHeadersRelay;
 import org.apache.camel.component.cxf.headers.SoapMessageHeadersRelay;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
@@ -61,6 +66,8 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private boolean isSpringContextEndpoint;
     private boolean inOut = true;
     private boolean relayHeaders = true;
+    private Bus bus;
+    private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
     private Boolean isSetDefaultBus;
     private ConfigurerImpl configurer;
@@ -108,6 +115,33 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
 
     public CxfExchange createExchange(Message inMessage) {
         return new CxfExchange(getCamelContext(), getExchangePattern(), inMessage);
+    }
+    
+    public Bus getBus() {
+        if (bus == null) {
+            bus = doGetBus();
+        }
+        
+        if (!getBusHasBeenCalled.getAndSet(true) && CxfEndpointUtils.getSetDefaultBus(this)) {
+            BusFactory.setDefaultBus(bus);
+        }
+        return bus;
+    }
+    
+    public Bus doGetBus() {
+        Bus bus = null;
+        if (getApplicationContext() != null) {            
+            if (getCxfEndpointBean() != null) {
+                bus = getCxfEndpointBean().getBus();
+            } else {
+                SpringBusFactory busFactory = new SpringBusFactory(getApplicationContext());
+                bus = busFactory.createBus();
+            }
+        } else {
+            // now we just create a new bus 
+            bus = SpringBusFactory.newInstance().createBus();
+        }
+        return bus;
     }
 
     public String getDataFormat() {

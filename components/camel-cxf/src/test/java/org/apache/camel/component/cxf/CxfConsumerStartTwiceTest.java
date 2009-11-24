@@ -53,7 +53,6 @@ public class CxfConsumerStartTwiceTest extends TestCase {
             context.start();
             fail("Expect an exception here");
         } catch (Exception ex) {
-            ex.printStackTrace();
             assertTrue("Expect the exception message has a Soap errror", ex.getMessage().equals("Soap 1.1 endpoint already registered on address http://localhost:7070/test"));
             context.stop();
         }
