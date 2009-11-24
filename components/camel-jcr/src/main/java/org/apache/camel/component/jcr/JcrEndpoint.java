@@ -42,8 +42,14 @@ public class JcrEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
         try {
             URI uri = new URI(endpointUri);
-            if (uri.getUserInfo() != null && uri.getAuthority() != null) {
-                this.credentials = new SimpleCredentials(uri.getUserInfo(), uri.getAuthority().toCharArray());
+            if (uri.getUserInfo() != null) {
+                String[] creds = uri.getUserInfo().split(":");
+                if (creds != null) {
+                    String username = creds[0];
+                    String password = creds.length > 1 ? creds[1] : null;
+                    this.credentials = new SimpleCredentials(username, password
+                            .toCharArray());
+                }
             }
             this.repository = component.getCamelContext().getRegistry().lookup(uri.getHost(), Repository.class);
             if (repository == null) {

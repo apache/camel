@@ -24,6 +24,7 @@ import javax.jcr.Value;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.jackrabbit.util.Text;
 
 public class JcrProducer extends DefaultProducer {
 
@@ -34,12 +35,13 @@ public class JcrProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Session session = openSession();
         try {
-            Node base = getBaseNode(session);
-            Node node = base.addNode(getNodeName(exchange));
+            Node base = findOrCreateNode(session.getRootNode(),
+                    getJcrEndpoint().getBase());
+            Node node = findOrCreateNode(base, getNodeName(exchange));
             TypeConverter converter = exchange.getContext().getTypeConverter();
             for (String key : exchange.getProperties().keySet()) {
-                Value value = converter.convertTo(Value.class, 
-                    exchange, exchange.getProperty(key));
+                Value value = converter.convertTo(Value.class, exchange,
+                        exchange.getProperty(key));
                 node.setProperty(key, value);
             }
             node.addMixin("mix:referenceable");
@@ -54,21 +56,27 @@ public class JcrProducer extends DefaultProducer {
 
     private String getNodeName(Exchange exchange) {
         if (exchange.getProperty(JcrConstants.JCR_NODE_NAME) != null) {
-            return exchange.getProperty(JcrConstants.JCR_NODE_NAME, String.class);
+            return exchange.getProperty(JcrConstants.JCR_NODE_NAME,
+                    String.class);
         }
         return exchange.getExchangeId();
     }
 
-    private Node getBaseNode(Session session) throws Exception {
-        Node baseNode = session.getRootNode();
-        for (String node : getJcrEndpoint().getBase().split("/")) {
-            baseNode = baseNode.addNode(node);
+    private Node findOrCreateNode(Node parent, String path)
+            throws RepositoryException {
+        Node result = parent;
+        for (String component : path.split("/")) {
+            component = Text.escapeIllegalJcrChars(component);
+            if (component.length() > 0 && !result.hasNode(component)) {
+                result = result.addNode(component);
+            }
         }
-        return baseNode;
+        return result;
     }
 
     protected Session openSession() throws RepositoryException {
-        return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        return getJcrEndpoint().getRepository().login(
+                getJcrEndpoint().getCredentials());
     }
 
     private JcrEndpoint getJcrEndpoint() {
