@@ -24,16 +24,14 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-
 
 public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
 
@@ -93,7 +91,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
         public void setApplicationContext(ApplicationContext ctx) throws BeansException {
             applicationContext = ctx;
             if (getBus() == null) {
-                Bus bus = BusFactory.getThreadDefaultBus();                
+                // Don't relate on the DefaultBus
+                Bus bus = SpringBusFactory.newInstance().createBus();               
                 setBus(bus);
             }
             BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx);

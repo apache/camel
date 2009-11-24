@@ -26,6 +26,7 @@ import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.model.UserResource;
@@ -98,7 +99,8 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
 
         public void setApplicationContext(ApplicationContext ctx) throws BeansException {
             if (getBus() == null) {
-                Bus bus = BusFactory.getThreadDefaultBus();
+                // Don't relate on the DefaultBus
+                Bus bus = SpringBusFactory.newInstance().createBus();  
                 BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
                 setBus(bus);
             }
