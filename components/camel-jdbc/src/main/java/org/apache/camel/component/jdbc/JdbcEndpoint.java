@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jdbc;
 
+import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
@@ -30,6 +31,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 public class JdbcEndpoint extends DefaultEndpoint {
     private int readSize;
     private DataSource dataSource;
+    private Map<String, Object> parameters;
 
     public JdbcEndpoint() {
     }
@@ -48,7 +50,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new JdbcProducer(this, dataSource, readSize);
+        return new JdbcProducer(this, dataSource, readSize, parameters);
     }
 
     public int getReadSize() {
@@ -65,6 +67,21 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    /**
+     * Optional parameters to the {@link java.sql.Statement}.
+     * <p/>
+     * For example to set maxRows, fetchSize etc.
+     * 
+     * @param parameters parameters which will be set using reflection
+     */
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
     }
 
     @Override

@@ -23,6 +23,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
 
 /**
  * @version $Revision:520964 $
@@ -48,8 +50,12 @@ public class JdbcComponent extends DefaultComponent {
             dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, DataSource.class);
         }
 
+        Map<String, Object> params = IntrospectionSupport.extractProperties(parameters, "statement.");
+
         JdbcEndpoint jdbc = new JdbcEndpoint(uri, this, dataSource);
+        jdbc.setParameters(params);
         setProperties(jdbc, parameters);
+
         return jdbc;
     }
 

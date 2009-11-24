@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,11 +41,13 @@ public class JdbcProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(JdbcProducer.class);
     private DataSource dataSource;
     private int readSize;
+    private Map<String, Object> parameters;
 
-    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, int readSize) throws Exception {
+    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, int readSize, Map<String, Object> parameters) throws Exception {
         super(endpoint);
         this.dataSource = dataSource;
         this.readSize = readSize;
+        this.parameters = parameters;
     }
 
     /**
@@ -58,6 +61,11 @@ public class JdbcProducer extends DefaultProducer {
         try {
             conn = dataSource.getConnection();
             stmt = conn.createStatement();
+
+            if (parameters != null && !parameters.isEmpty()) {
+                IntrospectionSupport.setProperties(stmt, parameters);
+            }
+            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Executing JDBC statement: " + sql);
             }
