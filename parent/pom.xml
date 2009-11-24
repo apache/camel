@@ -84,7 +84,7 @@
     <qpid-version>0.5.0</qpid-version>
     <restlet-version>1.1.5</restlet-version>
     <saxon-version>9.1.0.1</saxon-version>
-    <scala-version>2.7.3</scala-version>
+    <scala-version>2.7.7</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
     <smack-version>3.0.4</smack-version>
     <spring-ehcache-version>1.6.2</spring-ehcache-version>
