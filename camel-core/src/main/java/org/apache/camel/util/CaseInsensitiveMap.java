@@ -38,7 +38,7 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
     // holds a map of lower case key -> original key
     private Map<String, String> originalKeys;
     // holds a snapshot view of current entry set
-    private Set<Map.Entry<String, Object>> entrySetView;
+    private transient Set<Map.Entry<String, Object>> entrySetView;
 
     public CaseInsensitiveMap() {
         super();

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -287,6 +291,22 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(false, other.containsKey("foo"));
         assertEquals(true, other.containsKey("FOO"));
         assertEquals(1, other.size());
+    }
+
+    public void testSerialization() throws Exception {
+        CaseInsensitiveMap testMap = new CaseInsensitiveMap();
+        testMap.put("key", "value");
+        // force entry set to be created which could cause the map to be non serializable
+        testMap.entrySet();
+
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        ObjectOutputStream objStream = new ObjectOutputStream(bStream);
+        objStream.writeObject(testMap);
+
+        ObjectInputStream inStream = new ObjectInputStream(new ByteArrayInputStream(bStream.toByteArray()));
+        CaseInsensitiveMap testMapCopy = (CaseInsensitiveMap) inStream.readObject();
+
+        assertTrue(testMapCopy.containsKey("key"));
     }
 
 }
