@@ -36,7 +36,7 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         if (oldExchange == null) {
             return newExchange.getException();
         } else {
-            return newExchange.getException() != null
+            return (newExchange != null && newExchange.getException() != null)
                 ? newExchange.getException()
                 : oldExchange.getException();
         }
