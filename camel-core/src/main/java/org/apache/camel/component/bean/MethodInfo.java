@@ -115,6 +115,8 @@ public class MethodInfo {
                 Object result = invoke(method, pojo, arguments, exchange);
                 if (recipientList != null) {
                     recipientList.sendToRecipientList(exchange, result);
+                    // we don't want to return the list of endpoints
+                    return null;
                 }
                 return result;
             }
