@@ -16,43 +16,30 @@
  */
 package org.apache.camel.example.guice.jms;
 
-import java.net.URL;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import junit.framework.TestCase;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.guice.GuiceCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.springframework.osgi.util.BundleDelegatingClassLoader;
+import org.guiceyfruit.Injectors;
 
-public class MyActivator implements BundleActivator {
-    CamelContext camelContext;
-   
-    public void start(BundleContext context) throws Exception {
-
-        Injector injector = Guice.createInjector(new MyOSGiModule(context));
-
-        camelContext = injector.getInstance(CamelContext.class);
+// Test loading the Guice Module directly 
+public class GuiceTest extends TestCase {
+    
+    public void testCreateGuiceContextOSGi() throws Exception {
+        Injector injector = Guice.createInjector(new MyOSGiModule(null));
+        CamelContext camelContext = injector.getInstance(CamelContext.class);
 
         if (camelContext instanceof DefaultCamelContext) {
             if (!((DefaultCamelContext)camelContext).isStarted()) {
                 ((DefaultCamelContext)camelContext).start();
             }
-
         }
-    }
-
-    public void stop(BundleContext context) throws Exception {
-        // stop the camel context
-        if (camelContext != null) {
-            camelContext.stop();
-        }        
+        Thread.sleep(2000);
+        Injectors.close(injector);
     }
 
 }
