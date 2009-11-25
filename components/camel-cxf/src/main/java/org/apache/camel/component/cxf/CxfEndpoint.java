@@ -190,7 +190,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     protected Bus doGetBus() {
-        return SpringBusFactory.newInstance().createBus();
+        return BusFactory.newInstance().createBus();
     }
     
     /**

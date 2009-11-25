@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
@@ -92,7 +93,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
             applicationContext = ctx;
             if (getBus() == null) {
                 // Don't relate on the DefaultBus
-                Bus bus = SpringBusFactory.newInstance().createBus();               
+                BusFactory factory = new SpringBusFactory();
+                Bus bus = factory.createBus();               
                 setBus(bus);
             }
             BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx);
