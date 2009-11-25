@@ -45,12 +45,16 @@ import org.guiceyfruit.jsr250.Jsr250Module;
  * @version $Revision$
  */
 public class CamelModule extends Jsr250Module {
+    
+    protected void configureCamelContext() {
+        bind(CamelContext.class).to(GuiceCamelContext.class).asEagerSingleton();
+    }
 
     protected void configure() {
         super.configure();
         
-        bind(CamelContext.class).to(GuiceCamelContext.class).asEagerSingleton();
-
+        configureCamelContext();
+        
         bindAnnotationInjector(EndpointInject.class, EndpointInjector.class);
         bindAnnotationInjector(Produce.class, ProduceInjector.class);
 

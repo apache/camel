@@ -19,6 +19,7 @@ package org.apache.camel.guice;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -43,7 +44,6 @@ import org.guiceyfruit.Injectors;
  */
 public class Main extends MainSupport {
     private static Main instance;
-    private InitialContext context;
     private Injector injector;
 
 
@@ -77,18 +77,25 @@ public class Main extends MainSupport {
 
     // Properties
     // -------------------------------------------------------------------------
-
-
+    protected void setInjector(Injector injector) {
+        this.injector = injector;        
+    }
+    
+    protected Injector getInjector() {
+        return injector;
+    }
+    
     // Implementation methods
     // -------------------------------------------------------------------------
-
+    protected Injector getInjectorFromContext() throws Exception {
+        Context context = new InitialContext();
+        return (Injector) context.lookup(Injector.class.getName());
+    }
+    
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        context = new InitialContext();
-
-        injector = (Injector) context.lookup(Injector.class.getName());
+        setInjector(getInjectorFromContext());
         postProcessContext();
     }
 
@@ -105,7 +112,7 @@ public class Main extends MainSupport {
         if (injector != null) {
             Set<ProducerTemplate> set = Injectors.getInstancesOf(injector, ProducerTemplate.class);
             if (!set.isEmpty()) {
-                // TODO shouldbe Iterables.get(set, 0);
+                // TODO should be Iterables.get(set, 0);
                 return Iterables.getOnlyElement(set);
             }
         }
