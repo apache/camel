@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
  *   <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
  *   <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Additional Supported commands are: <tt>file</tt> for the last modified timestamp of the file.
- *     All the commands from {@link SimpleLanguage} is also avaiable.
+ *     All the commands from {@link SimpleLanguage} is also available.
  *   </li>
  * </ul>
  * The <b>relative</b> file is the filename with the starting directory clipped, as opposed to <b>path</b> that will

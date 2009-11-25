@@ -879,7 +879,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // resolve language using context to have a clear separation of packages
-                // must call evalute to return the nested langauge evaluate when evaluating
+                // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
                 Language language = exchange.getContext().resolveLanguage("simple");
                 return language.createExpression(expression).evaluate(exchange, Object.class);
