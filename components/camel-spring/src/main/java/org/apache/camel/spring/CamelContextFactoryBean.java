@@ -32,7 +32,6 @@ import org.apache.camel.CamelException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;

@@ -63,7 +63,7 @@ public class JcrProducer extends DefaultProducer {
     }
 
     private Node findOrCreateNode(Node parent, String path)
-            throws RepositoryException {
+        throws RepositoryException {
         Node result = parent;
         for (String component : path.split("/")) {
             component = Text.escapeIllegalJcrChars(component);

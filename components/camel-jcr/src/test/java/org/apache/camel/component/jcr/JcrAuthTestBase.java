@@ -50,8 +50,8 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
     private Repository repository;
 
     private void clean() throws IOException {
-        File[] files = { new File("target/repository_with_auth"),
-                new File("derby.log") };
+        File[] files = {new File("target/repository_with_auth"),
+                        new File("derby.log") };
         for (File file : files) {
             if (file.exists()) {
                 FileUtil.delete(file);
@@ -64,8 +64,9 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
         Context context = super.createJndiContext();
 
         File config = new File(CONFIG_FILE);
-        if (!config.exists())
+        if (!config.exists()) {
             throw new Exception("missing config file: " + config.getPath());
+        }
         repository = new TransientRepository(CONFIG_FILE,
                 "target/repository_with_auth");
 
@@ -74,9 +75,9 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
                 .login(new SimpleCredentials("admin", "admin".toCharArray()));
         UserManager userManager = session.getUserManager();
         User user = (User) userManager.getAuthorizable("test");
-        if (user == null)
+        if (user == null) {
             user = userManager.createUser("test", "quatloos");
-
+        }
         // set up permissions
         String permissionsPath = session.getRootNode().getPath();
         AccessControlManager accessControlManager = session
