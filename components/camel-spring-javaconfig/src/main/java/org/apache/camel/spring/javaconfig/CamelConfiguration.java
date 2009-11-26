@@ -52,7 +52,7 @@ public abstract class CamelConfiguration extends ConfigurationSupport {
      */
     @Bean
     public CamelContext camelContext() throws Exception {
-        SpringCamelContext camelContext = new SpringCamelContext(getApplicationContext());
+        CamelContext camelContext = createCamelContext();
         setupCamelContext(camelContext);
         List<RouteBuilder> routes = routes();
         for (RoutesBuilder route : routes) {
@@ -61,8 +61,13 @@ public abstract class CamelConfiguration extends ConfigurationSupport {
         return camelContext;
     }
     
-    // maybe register the camel component, language here
-    public void setupCamelContext(CamelContext camelContext) throws Exception {
+    // Can register the camel component, language here
+    protected void setupCamelContext(CamelContext camelContext) throws Exception {
+        
+    }
+    
+    protected CamelContext createCamelContext() throws Exception {
+        return new SpringCamelContext(getApplicationContext());
     }
 
     /**

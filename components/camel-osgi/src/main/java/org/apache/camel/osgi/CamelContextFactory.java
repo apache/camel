@@ -47,10 +47,14 @@ public class CamelContextFactory implements BundleContextAware {
         this.bundleContext = bundleContext;
     }
     
+    protected DefaultCamelContext newCamelContext() {
+        return new DefaultCamelContext();
+    }
+    
     public DefaultCamelContext createContext() {
         LOG.debug("Creating DefaultCamelContext");
 
-        DefaultCamelContext context = new DefaultCamelContext();
+        DefaultCamelContext context = newCamelContext();
         if (bundleContext != null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Using OSGI resolvers");

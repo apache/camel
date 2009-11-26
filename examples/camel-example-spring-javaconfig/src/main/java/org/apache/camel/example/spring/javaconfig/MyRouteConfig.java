@@ -16,14 +16,23 @@
  */
 package org.apache.camel.example.spring.javaconfig;
 
+import java.util.List;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+
+import org.apache.camel.osgi.SpringCamelContextFactory;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.javaconfig.Main;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
+import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.osgi.context.BundleContextAware;
 
 //START SNIPPET: RouteConfig
 /**
@@ -32,7 +41,10 @@ import org.springframework.config.java.annotation.Configuration;
  * @version $Revision$
  */
 @Configuration
-public class MyRouteConfig extends SingleRouteCamelConfiguration {
+public class MyRouteConfig extends SingleRouteCamelConfiguration implements InitializingBean, BundleContextAware {
+    
+    private BundleContext bundleContext;
+    
     /**
      * Allow this route to be run as an application
      *
@@ -43,19 +55,38 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration {
         new Main().run(args);
     }
     
+    public BundleContext getBundleContext() {
+        return bundleContext;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) { 
+        this.bundleContext = bundleContext;
+    }
+    
+    
+    /**
+     * Returns the CamelContext which support OSGi
+     */
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        SpringCamelContextFactory factory = new SpringCamelContextFactory();
+        factory.setApplicationContext(getApplicationContext());
+        factory.setBundleContext(getBundleContext());
+        return factory.createContext();
+    }
+    
     @Override
     // setup the ActiveMQ component and register it into the camel context
-    public void setupCamelContext(CamelContext camelContext) throws Exception {
+    protected void setupCamelContext(CamelContext camelContext) throws Exception {
         JmsComponent answer = new JmsComponent();
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
-        connectionFactory.setBrokerURL("vm://localhost?broker.persistent=false&broker.useJmx=false");
+        connectionFactory.setBrokerURL("vm://localhost.spring.javaconfig?marshal=false&broker.persistent=false&broker.useJmx=false");
         answer.setConnectionFactory(connectionFactory);        
         camelContext.addComponent("jms", answer);        
     }
 
     
     public static class SomeBean {
-        
         public void someMethod(String body) {
             System.out.println("Received: " + body);
         }
@@ -79,6 +110,10 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration {
                         bean(new SomeBean());
             }
         };
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        // just to make SpringDM happy do nothing here
     }
 }
 //END SNIPPET: RouteConfig

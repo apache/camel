@@ -33,8 +33,10 @@
   <description>An example showing how to work with Camel and Spring Java Config</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.example.spring.*</camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool,*</camel.osgi.import.pkg>
+    <camel.osgi.export>org.apache.camel.example.spring.*</camel.osgi.export>
+    <camel.osgi.import>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import>
+    <!-- avoid to import the bunch of spring related package -->
+    <camel.osgi.dynamic>*</camel.osgi.dynamic>
   </properties>
 
   <dependencies>
@@ -46,6 +48,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-javaconfig</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-osgi</artifactId>
     </dependency>    
 
     <dependency>
@@ -56,6 +63,12 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-core</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
