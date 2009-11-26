@@ -234,6 +234,10 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
 
         if (!connected) {
+            // ensure resources get recreated on reconnection
+            store = null;
+            folder = null;
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Connecting to MailStore: " + endpoint.getConfiguration().getMailStoreLogInformation());
             }
@@ -242,6 +246,9 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
 
         if (folder == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Getting folder " + config.getFolderName());
+            }
             folder = store.getFolder(config.getFolderName());
             if (folder == null || !folder.exists()) {
                 throw new FolderNotFoundException(folder, "Folder not found or invalid: " + config.getFolderName());
