@@ -35,14 +35,13 @@
   
    <properties>
      <camel.osgi.export.pkg>
-     	org.apache.camel.example.cxf.*;${camel.osgi.version},
-     	org.apache.camel.example.camel.transport.*;${camel.osgi.version}
+     	org.apache.camel.example.*
      </camel.osgi.export.pkg>
-     <camel.osgi.import.pkg>
+     <camel.osgi.import.additional>
         META-INF.cxf,
-        org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool,*</camel.osgi.import.pkg>
+        org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
+     </camel.osgi.import.additional>
      <camel.osgi.private.pkg>
-        org.apache.camel.example.jms,
         org.apache.hello_world_soap_http,
         org.apache.hello_world_soap_http.types
      </camel.osgi.private.pkg>

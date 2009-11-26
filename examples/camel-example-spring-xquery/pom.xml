@@ -33,7 +33,7 @@
   <description>An example using Spring XML to transform a message using XQuery</description>
 
   <properties>
-    <camel.osgi.export.pkg></camel.osgi.export.pkg>
+     <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
   </properties>
 
   <dependencies>

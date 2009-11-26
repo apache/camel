@@ -26,9 +26,15 @@
     </parent>
 
     <artifactId>camel-example-http-async</artifactId>
+    <packaging>bundle</packaging>
     <name>Camel :: Example :: HTTP :: Asynchronous request reply</name>
     <description>A client-server example using HTTP transport which is using non blocking asynchronous request/reply</description>
 
+    <properties>
+       <camel.osgi.export.pkg>
+     	  org.apache.camel.example.client.*
+       </camel.osgi.export.pkg>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

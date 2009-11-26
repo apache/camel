@@ -34,7 +34,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.example.guice.jms.*</camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool,*</camel.osgi.import.pkg>
+    <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
     <camel.osgi.activator>org.apache.camel.example.guice.jms.MyActivator</camel.osgi.activator>
   </properties>
 

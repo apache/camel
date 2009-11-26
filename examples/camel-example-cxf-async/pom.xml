@@ -26,9 +26,23 @@
     </parent>
 
     <artifactId>camel-example-cxf-async</artifactId>
+    <packaging>bundle</packaging>
     <name>Camel :: Example :: CXF :: Asynchronous request reply</name>
     <description>A client-server example using CXF webservice which is using non blocking asynchronous request/reply</description>
 
+    <properties>
+     <camel.osgi.export.pkg>
+     	org.apache.camel.example.*     	
+     </camel.osgi.export.pkg>
+     <camel.osgi.import.additional>
+        META-INF.cxf
+     </camel.osgi.import.additional>
+     <!-- to avoid us import bunch of cxf packages -->
+     <camel.osgi.dynamic>
+      *
+     </camel.osgi.dynamic>
+   </properties>
+   
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

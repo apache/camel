@@ -26,9 +26,15 @@
     </parent>
 
     <artifactId>camel-example-route-throttling</artifactId>
+    <packaging>bundle</packaging>
     <name>Camel :: Example :: Route :: Throttling</name>
     <description>A client-server example using JMS transport where we on the server side can throttle the Camel
         route dynamically based on the flow of messages</description>
+        
+    <properties>
+    <camel.osgi.export.pkg>org.apache.camel.example.client.*</camel.osgi.export.pkg>
+    <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
+  </properties>
 
     <dependencies>
         <dependency>

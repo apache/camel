@@ -29,7 +29,7 @@
     </camel:camelContext>
 
     <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="tcp://localhost:51616"/>
     </bean>
 
 </beans>

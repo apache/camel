@@ -81,7 +81,7 @@
 
     <broker:broker useJmx="false" persistent="true" brokerName="localhost" dataDirectory="target/data" useShutdownHook="true">
         <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
+            <broker:transportConnector name="tcp" uri="tcp://localhost:51616"/>
         </broker:transportConnectors>
     </broker:broker>
 

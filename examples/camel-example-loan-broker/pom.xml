@@ -33,10 +33,11 @@
 
   <properties>
     <camel.osgi.export.pkg>
-       org.apache.camel.loanbroker.queue.version;${camel.osgi.version},
-       org.apache.camel.loanbroker.webservice.version;${camel.osgi.version}       
+       org.apache.camel.loanbroker.*
     </camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool,*</camel.osgi.import.pkg>
+    <camel.osgi.import.additional>
+       org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
+    </camel.osgi.import.additional>
   </properties>
     
    <dependencies>
