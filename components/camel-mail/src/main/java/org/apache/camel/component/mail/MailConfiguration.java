@@ -71,7 +71,11 @@ public class MailConfiguration implements Cloneable {
      */
     public MailConfiguration copy() {
         try {
-            return (MailConfiguration) clone();
+            MailConfiguration copy = (MailConfiguration) clone();
+            // must set a new recipients map as clone just reuse the same reference
+            copy.recipients = new HashMap<Message.RecipientType, String>();
+            copy.recipients.putAll(this.recipients);
+            return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

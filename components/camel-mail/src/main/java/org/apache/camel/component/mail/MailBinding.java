@@ -196,7 +196,7 @@ public class MailBinding {
     }
 
     /**
-     * Appends the Mail headers from the endpoint configuraiton.
+     * Appends the Mail headers from the endpoint configuration.
      */
     protected void setRecipientFromEndpointConfiguration(MimeMessage mimeMessage, MailEndpoint endpoint)
         throws MessagingException {
