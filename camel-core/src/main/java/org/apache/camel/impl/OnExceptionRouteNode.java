@@ -38,7 +38,13 @@ public class OnExceptionRouteNode implements RouteNode {
     }
 
     public String getLabel(Exchange exchange) {
-        return "OnException[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
+        if (exchange.getProperty(Exchange.EXCEPTION_CAUGHT) != null) {
+            return "OnException[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
+        } else if (exchange.getException() != null) {
+            return "OnException[" + exchange.getException().getClass().getSimpleName() + "]";
+        } else {
+            return "OnException[]";
+        }
     }
 
     public boolean isAbstract() {

@@ -38,7 +38,13 @@ public class DoCatchRouteNode implements RouteNode {
     }
 
     public String getLabel(Exchange exchange) {
-        return "doCatch[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
+        if (exchange.getProperty(Exchange.EXCEPTION_CAUGHT) != null) {
+            return "doCatch[" + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getClass().getSimpleName() + "]";
+        } else if (exchange.getException() != null) {
+            return "doCatch[" + exchange.getException().getClass().getSimpleName() + "]";
+        } else {
+            return "doCatch[]";
+        }
     }
 
     public boolean isAbstract() {
