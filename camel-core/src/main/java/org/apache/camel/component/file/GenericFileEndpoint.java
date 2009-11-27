@@ -385,6 +385,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
 
     public void setBufferSize(int bufferSize) {
+        if (bufferSize <= 0) {
+            throw new IllegalArgumentException("BufferSize must be a positive value, was " + bufferSize);
+        }
         this.bufferSize = bufferSize;
     }
 

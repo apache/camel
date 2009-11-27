@@ -222,7 +222,12 @@ public class FileOperations implements GenericFileOperations<File> {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using FileChannel to transfer from: " + in + " to: " + out);
             }
-            in.transferTo(0, in.size(), out);
+
+            long size = in.size();
+            long position = 0;
+            while (position < size) {
+                position += in.transferTo(position, endpoint.getBufferSize(), out);
+            }
         } finally {
             ObjectHelper.close(in, source.getName(), LOG);
             ObjectHelper.close(out, source.getName(), LOG);
