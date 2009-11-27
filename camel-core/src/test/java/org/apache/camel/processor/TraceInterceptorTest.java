@@ -38,7 +38,7 @@ public class TraceInterceptorTest extends ContextTestSupport {
                 // enable tracing
                 getContext().setTracing(true);
 
-                from("direct:start").
+                from("direct:start").routeId("foo").
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // do nothing
@@ -49,8 +49,10 @@ public class TraceInterceptorTest extends ContextTestSupport {
                                 return "MyProcessor";
                             }
                         }).
-                        to("mock:a").
-                        to("mock:b");
+                        to("mock:foo").
+                        to("direct:bar");
+
+                from("direct:bar").routeId("bar").to("mock:bar");
             }
         };
     }

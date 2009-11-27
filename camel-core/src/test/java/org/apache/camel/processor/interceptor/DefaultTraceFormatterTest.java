@@ -152,6 +152,9 @@ public class DefaultTraceFormatterTest extends ContextTestSupport {
         formatter.setShowShortExchangeId(true);
         assertEquals(true, formatter.isShowShortExchangeId());
 
+        formatter.setShowRouteId(false);
+        assertEquals(false, formatter.isShowRouteId());
+
         return formatter;
     }
 

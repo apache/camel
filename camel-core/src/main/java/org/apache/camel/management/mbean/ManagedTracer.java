@@ -331,6 +331,22 @@ public class ManagedTracer {
         tracer.getDefaultTraceFormatter().setShowException(showException);
     }
 
+    @ManagedAttribute(description = "Formatter show route id")
+    public boolean getFormatterShowRouteId() {
+        if (tracer.getDefaultTraceFormatter() == null) {
+            return false;
+        }
+        return tracer.getDefaultTraceFormatter().isShowRouteId();
+    }
+
+    @ManagedAttribute(description = "Formatter show route id")
+    public void setFormatterShowRouteId(boolean showRouteId) {
+        if (tracer.getDefaultTraceFormatter() == null) {
+            return;
+        }
+        tracer.getDefaultTraceFormatter().setShowRouteId(showRouteId);
+    }
+
     @ManagedAttribute(description = "Formatter breadcrumb length")
     public int getFormatterBreadCrumbLength() {
         if (tracer.getDefaultTraceFormatter() == null) {
@@ -394,5 +410,5 @@ public class ManagedTracer {
         }
         tracer.getDefaultTraceFormatter().setMaxChars(maxChars);
     }
-    
+
 }

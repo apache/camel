@@ -138,6 +138,10 @@ public class ManagedTracerOptionsTest extends ContextTestSupport {
         Boolean fsn = (Boolean) mbeanServer.getAttribute(on, "FormatterShowNode");
         assertEquals(true, fsn.booleanValue());
 
+        mbeanServer.setAttribute(on, new Attribute("FormatterShowRouteId", Boolean.FALSE));
+        Boolean fsr = (Boolean) mbeanServer.getAttribute(on, "FormatterShowRouteId");
+        assertEquals(false, fsr.booleanValue());
+
         mbeanServer.setAttribute(on, new Attribute("FormatterShowExchangePattern", Boolean.TRUE));
         Boolean fsep = (Boolean) mbeanServer.getAttribute(on, "FormatterShowExchangePattern");
         assertEquals(true, fsep.booleanValue());

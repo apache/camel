@@ -722,14 +722,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     @SuppressWarnings("unchecked")
     public Type routeId(String id) {
         ProcessorDefinition def = this;
-        // drill to the top
-        while (def.getParent() != null) {
-            def = def.getParent();
-        }
-        if (def instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition) def;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
             route.setId(id);
         }
+
         return (Type) this;
     }
 

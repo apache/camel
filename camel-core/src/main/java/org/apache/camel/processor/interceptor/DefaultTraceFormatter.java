@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.MessageHelper;
 
@@ -42,6 +44,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showOutBody;
     private boolean showOutBodyType;
     private boolean showException = true;
+    private boolean showRouteId = true;
     private int maxChars;
 
     public Object format(final TraceInterceptor interceptor, final ProcessorDefinition<?> node, final Exchange exchange) {
@@ -84,14 +87,17 @@ public class DefaultTraceFormatter implements TraceFormatter {
             sb.append(", Exception:").append(exchange.getException());
         }
 
+        // replace ugly <<<, with <<<
+        String s = sb.toString();
+        s = s.replaceFirst("<<<,", "<<<");
+
         if (maxChars > 0) {
-            String s = sb.toString();
             if (s.length() > maxChars) {
                 s = s.substring(0, maxChars) + "...";
             }
             return s;
         } else {
-            return sb.toString();
+            return s;
         }
     }
 
@@ -191,6 +197,14 @@ public class DefaultTraceFormatter implements TraceFormatter {
         this.showException = showException;
     }
 
+    public boolean isShowRouteId() {
+        return showRouteId;
+    }
+
+    public void setShowRouteId(boolean showRouteId) {
+        this.showRouteId = showRouteId;
+    }
+
     public int getBreadCrumbLength() {
         return breadCrumbLength;
     }
@@ -225,6 +239,17 @@ public class DefaultTraceFormatter implements TraceFormatter {
 
     // Implementation methods
     //-------------------------------------------------------------------------
+
+    protected String extractRoute(ProcessorDefinition<?> node) {
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(node);
+        if (route != null) {
+            return route.getId();
+        } else {
+            return null;
+        }
+    }
+
+
     protected Object getBreadCrumbID(Exchange exchange) {
         return exchange.getExchangeId();
     }
@@ -264,10 +289,11 @@ public class DefaultTraceFormatter implements TraceFormatter {
             }
         }
 
-        // compute from and to
+        // compute from, to and route
         String from = "";
         String to = "";
-        if (showNode) {
+        String route = "";
+        if (showNode || showRouteId) {
             TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
 
             RouteNode traceFrom = traced.getSecondLastNode();
@@ -280,12 +306,23 @@ public class DefaultTraceFormatter implements TraceFormatter {
             RouteNode traceTo = traced.getLastNode();
             if (traceTo != null) {
                 to = getNodeMessage(traceTo, exchange);
+                // if its an abstract dummy holder then get the 2nd last so we can get the real node that has
+                // information which route it belongs to
+                if (traceTo.isAbstract()) {
+                    traceTo = traced.getSecondLastNode();
+                }
+                route = extractRoute(traceTo.getProcessorDefinition());
             }
         }
 
         // assemble result with and without the to/from
         if (showNode) {
-            result = id.trim() + " >>> " + from + " --> " + to.trim();
+            if (showRouteId && route != null) {
+                result = id.trim() + " >>> (" + route + ") " + from + " --> " + to.trim() + " <<< ";
+            } else {
+                result = id.trim() + " >>> " + from + " --> " + to.trim() + " <<< ";
+            }
+
             if (interceptor.shouldTraceOutExchanges() && exchange.hasOut()) {
                 result += " (OUT) ";
             }

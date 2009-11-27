@@ -28,7 +28,7 @@ public interface TraceFormatter {
      * Formats a log message at given point of interception.
      * 
      * @param interceptor    the tracing interceptor
-     * @param node           the node where the interception occured
+     * @param node           the node where the interception occurred
      * @param exchange       the current exchange
      * @return the log message
      */

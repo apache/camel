@@ -81,6 +81,32 @@ public final class ProcessorDefinitionHelper {
         return node.getParent().getOutputs().get(0).equals(node);
     }
 
+    /**
+     * Gets the route definition the given node belongs to.
+     *
+     * @param node the node
+     * @return the route, or <tt>null</tt> if not possible to find
+     */
+    public static RouteDefinition getRoute(ProcessorDefinition<?> node) {
+        if (node == null) {
+            return null;
+        }
+
+        ProcessorDefinition def = node;
+        // drill to the top
+        while (def != null && def.getParent() != null) {
+            def = def.getParent();
+        }
+
+        if (def instanceof RouteDefinition) {
+            return (RouteDefinition) def;
+        } else {
+            // not found
+            return null;
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     private static <T> void doFindType(List<ProcessorDefinition> outputs, Class<T> type, List<T> found) {
         if (outputs == null || outputs.isEmpty()) {
