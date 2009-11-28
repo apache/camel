@@ -38,7 +38,8 @@ public class BeanAndMethodELResolver extends BeanELResolver {
     @Override
     public Object getValue(ELContext elContext, Object base, Object property) {
         try {
-            return super.getValue(elContext, base, property);
+            return (property instanceof Method) ? property : 
+                super.getValue(elContext, base, property);
         } catch (PropertyNotFoundException e) {
             // lets see if its a method call...
             Method method = findMethod(elContext, base, property);
@@ -52,11 +53,11 @@ public class BeanAndMethodELResolver extends BeanELResolver {
     }
 
     protected Method findMethod(ELContext elContext, Object base, Object property) {
-        if (base != null && property instanceof String) {
+        if (base != null) {
             Method[] methods = base.getClass().getMethods();
             List<Method> matching = new ArrayList<Method>();
             for (Method method : methods) {
-                if (method.getName().equals(property) && Modifier.isPublic(method.getModifiers())) {
+                if (method.getName().equals(property.toString()) && Modifier.isPublic(method.getModifiers())) {
                     matching.add(method);
                 }
             }

@@ -41,9 +41,15 @@
     <cxf-version>2.2.5</cxf-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
+    <geronimo-el-spec-version>1.0.1</geronimo-el-spec-version>
+    <geronimo-j2ee-connector-spec-version>2.0.0</geronimo-j2ee-connector-spec-version>
+    <geronimo-j2ee-jacc-spec-version>1.1</geronimo-j2ee-jacc-spec-version>
+    <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
     <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
+    <geronimo-jsp-spec-version>1.0.1</geronimo-jsp-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
+    <geronimo-servlet-spec-version>1.1.1</geronimo-servlet-spec-version>
     <httpcore-version>4.0</httpcore-version>
     <httpclient-version>3.1</httpclient-version>
     <jetty-version>6.1.16</jetty-version>
@@ -103,6 +109,7 @@
     <xmlbeans-version>2.4.0</xmlbeans-version>
     <snmp4j-version>1.8.1_1</snmp4j-version>
     <quartz-version>1.6.6</quartz-version>
+    <juel-version>2.1.2</juel-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
@@ -657,8 +664,38 @@
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+        <version>${geronimo-j2ee-connector-spec-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
+        <version>${geronimo-j2ee-jacc-spec-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
+        <version>${geronimo-j2ee-management-spec-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
         <version>${geronimo-jms-spec-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jpa_3.0_spec</artifactId>
+        <version>${geronimo-jpa-spec-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jsp_2.1_spec</artifactId>
+        <version>${geronimo-jsp-spec-version}</version>
       </dependency>
 
       <dependency>
@@ -669,38 +706,8 @@
 
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
-        <version>1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
-        <version>1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>2.0.0</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jsp_2.0_spec</artifactId>
-        <version>1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-servlet_2.4_spec</artifactId>
-        <version>1.1.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jpa_3.0_spec</artifactId>
-        <version>${geronimo-jpa-spec-version}</version>
+        <version>${geronimo-servlet-spec-version}</version>
       </dependency>
 
       <!-- Optional Spring Support -->
