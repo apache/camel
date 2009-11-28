@@ -91,21 +91,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <childDelegation>false</childDelegation>
-          <useFile>true</useFile>
-          <forkMode>pertest</forkMode>
-          <includes>
-            <include>**/*Test.*</include>
-          </includes>
-          <excludes>
-            <!-- TODO no idea yet why this seems to fail in a recursive build -
-                 but works in a build of just the camel-bam module -->
-
-            <!--<exclude>**/MultipleActivitiesConcurrentlyTest.*</exclude>-->
-          </excludes>
+          <forkMode>always</forkMode>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 
