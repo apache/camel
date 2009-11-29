@@ -80,7 +80,7 @@
       <josql-bundle-version>1.5_3</josql-bundle-version>
       <jsch-bundle-version>0.1.31_3</jsch-bundle-version>
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
-      <juel-bundle-version>2.1.2_1-SNAPSHOT</juel-bundle-version>
+      <juel-bundle-version>2.1.2_1</juel-bundle-version>
       <junit-bundle-version>4.7_1</junit-bundle-version>
       <mvel-bundle-version>2.0.8_3</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
