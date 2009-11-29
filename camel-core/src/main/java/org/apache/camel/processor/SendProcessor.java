@@ -62,7 +62,7 @@ public class SendProcessor extends ServiceSupport implements Processor, Traceabl
     }
 
     public String getTraceLabel() {
-        return "to(" + destination.getEndpointUri() + ")";
+        return destination.getEndpointUri();
     }
 
     public void process(final Exchange exchange) throws Exception {
