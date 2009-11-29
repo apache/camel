@@ -242,14 +242,14 @@ public class JmsProducer extends DefaultProducer {
 
                 if (endpoint.isTransferException() && body instanceof Exception) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Reply recieved. Setting reply as an Exception: " + body);
+                        LOG.debug("Reply received. Setting reply as an Exception: " + body);
                     }
                     // we got an exception back and endpoint was configured to transfer exception
                     // therefore set response as exception
                     exchange.setException((Exception) body);
                 } else {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Reply recieved. Setting reply as OUT message: " + body);
+                        LOG.debug("Reply received. Setting reply as OUT message: " + body);
                     }
                     // regular response
                     exchange.setOut(response);
@@ -295,7 +295,7 @@ public class JmsProducer extends DefaultProducer {
             destinationName = null;
         }
 
-        // we must honor these special flags to preverse QoS
+        // we must honor these special flags to preserve QoS
         if (!endpoint.isPreserveMessageQos() && !endpoint.isExplicitQosEnabled()) {
             Object replyTo = exchange.getIn().getHeader("JMSReplyTo");
             if (replyTo != null) {

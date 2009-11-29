@@ -42,6 +42,9 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
         });
         context.start();
 
+        // give it a bit time to setup both topic listeners
+        Thread.sleep(2000);
+
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
