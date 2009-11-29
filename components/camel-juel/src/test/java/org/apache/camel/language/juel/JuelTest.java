@@ -22,6 +22,7 @@ import javax.el.ValueExpression;
 
 import junit.framework.TestCase;
 
+import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
 
 /**
@@ -30,7 +31,7 @@ import de.odysseus.el.util.SimpleContext;
 public class JuelTest extends TestCase {
 
     public void testJuel() throws Exception {
-        ExpressionFactory factory = ExpressionFactory.newInstance();
+        ExpressionFactory factory = new ExpressionFactoryImpl();
         ELContext context  = new SimpleContext();
         ValueExpression valueExpression = factory.createValueExpression(context, "${123 * 2}", Object.class);
         Object value = valueExpression.getValue(context);

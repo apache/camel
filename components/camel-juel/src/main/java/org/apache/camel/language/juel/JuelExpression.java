@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.juel;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.el.ArrayELResolver;
@@ -29,9 +30,14 @@ import javax.el.ResourceBundleELResolver;
 import javax.el.ValueExpression;
 import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.ExpressionSupport;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
@@ -40,6 +46,9 @@ import org.apache.camel.impl.ExpressionSupport;
  * @version $Revision$
  */
 public class JuelExpression extends ExpressionSupport {
+    public static final String DEFAULT_EXPRESSION_FACTORY_IMPL_CLASS = "de.odysseus.el.ExpressionFactoryImpl";
+    private static final Log LOG = LogFactory.getLog(JuelExpression.class);
+
     private final String expression;
     private final Class<?> type;
     private ExpressionFactory expressionFactory;
@@ -58,9 +67,30 @@ public class JuelExpression extends ExpressionSupport {
         // TODO we could use caching here but then we'd have possible concurrency issues
         // so lets assume that the provider caches
         ELContext context = populateContext(createContext(), exchange);
-        ValueExpression valueExpression = getExpressionFactory().createValueExpression(context, expression, type);
+        ValueExpression valueExpression = getExpressionFactory(exchange.getContext()).createValueExpression(context, expression, type);
         Object value = valueExpression.getValue(context);
         return exchange.getContext().getTypeConverter().convertTo(tClass, value);
+    }
+
+    public ExpressionFactory getExpressionFactory(CamelContext context) {
+        if (expressionFactory == null && context != null) {
+            try {
+                FactoryFinder finder = context.getFactoryFinder("META-INF/services/org/apache/camel/component/");
+                Class<?> clazz = finder.findClass("juel", "impl.");
+                if (clazz != null) {
+                    expressionFactory = (ExpressionFactory)clazz.newInstance();
+                }
+            } catch (ClassNotFoundException e) {
+                LOG.debug("'impl.class' not found", e);
+            } catch (IOException e) {
+                LOG.debug("No impl class for juel ExpressionFactory defined in 'META-INF/services/org/apache/camel/component/el'", e);
+            } catch (InstantiationException e) {
+                LOG.debug("Failed to instantiate juel ExpressionFactory implementation class.", e);
+            } catch (IllegalAccessException e) {
+                LOG.debug("Failed to instantiate juel ExpressionFactory implementation class.", e);
+            }
+        }
+        return getExpressionFactory();
     }
 
     public ExpressionFactory getExpressionFactory() {

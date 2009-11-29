@@ -38,8 +38,7 @@ public class BeanAndMethodELResolver extends BeanELResolver {
     @Override
     public Object getValue(ELContext elContext, Object base, Object property) {
         try {
-            return (property instanceof Method) ? property : 
-                super.getValue(elContext, base, property);
+            return (property instanceof Method) ? property : super.getValue(elContext, base, property);
         } catch (PropertyNotFoundException e) {
             // lets see if its a method call...
             Method method = findMethod(elContext, base, property);

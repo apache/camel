@@ -40,6 +40,11 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-el_1.0_spec</artifactId>
+      <version>${geronimo-el-spec-version}</version>
+    </dependency>
+    <dependency>
       <groupId>de.odysseus.juel</groupId>
       <artifactId>juel</artifactId>
       <version>${juel-version}</version>
