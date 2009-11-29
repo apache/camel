@@ -52,7 +52,6 @@ public class JuelExpression extends ExpressionSupport {
     private final String expression;
     private final Class<?> type;
     private ExpressionFactory expressionFactory;
-    private Properties expressionFactoryProperties;
 
     public JuelExpression(String expression, Class<?> type) {
         this.expression = expression;
@@ -66,8 +65,11 @@ public class JuelExpression extends ExpressionSupport {
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         // TODO we could use caching here but then we'd have possible concurrency issues
         // so lets assume that the provider caches
+        
+        // Create (if needed) the ExpressionFactory first from the CamelContext using FactoryFinder
+        ExpressionFactory factory = getExpressionFactory(exchange.getContext());
         ELContext context = populateContext(createContext(), exchange);
-        ValueExpression valueExpression = getExpressionFactory(exchange.getContext()).createValueExpression(context, expression, type);
+        ValueExpression valueExpression = factory.createValueExpression(context, expression, type);
         Object value = valueExpression.getValue(context);
         return exchange.getContext().getTypeConverter().convertTo(tClass, value);
     }
@@ -95,26 +97,13 @@ public class JuelExpression extends ExpressionSupport {
 
     public ExpressionFactory getExpressionFactory() {
         if (expressionFactory == null) {
-            Properties properties = getExpressionFactoryProperties();
-            expressionFactory = new ExpressionFactoryImpl(properties);
+            expressionFactory = new ExpressionFactoryImpl();
         }
         return expressionFactory;
     }
 
     public void setExpressionFactory(ExpressionFactory expressionFactory) {
         this.expressionFactory = expressionFactory;
-    }
-
-    public Properties getExpressionFactoryProperties() {
-        if (expressionFactoryProperties == null) {
-            expressionFactoryProperties = new Properties();
-            populateDefaultExpressionProperties(expressionFactoryProperties);
-        }
-        return expressionFactoryProperties;
-    }
-
-    public void setExpressionFactoryProperties(Properties expressionFactoryProperties) {
-        this.expressionFactoryProperties = expressionFactoryProperties;
     }
 
     protected ELContext populateContext(ELContext context, Exchange exchange) {
@@ -124,14 +113,6 @@ public class JuelExpression extends ExpressionSupport {
             setVariable(context, "out", exchange.getOut(), Message.class);
         }
         return context;
-    }
-
-    /**
-     * A Strategy Method to populate the default properties used to create the expression factory
-     */
-    protected void populateDefaultExpressionProperties(Properties properties) {
-        // lets enable method invocations
-        properties.setProperty("javax.el.methodInvocations", "true");
     }
 
     protected void setVariable(ELContext context, String name, Object value, Class<?> type) {
