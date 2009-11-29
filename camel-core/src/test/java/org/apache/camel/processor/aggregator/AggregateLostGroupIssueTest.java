@@ -33,6 +33,8 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
     private int messageIndex;
 
     public void testAggregateLostGroupIssue() throws Exception {
+        messageIndex = 0;
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.message(0).body().isEqualTo("0,1,2,3,4,5,6,7,8,9");
@@ -46,7 +48,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://foo?period=100")
+                from("timer://foo?period=100").startupOrder(2)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(messageIndex++);
@@ -54,7 +56,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                             }
                         }).to("direct:aggregator");
 
-                from("direct:aggregator").aggregate(header("aggregateGroup"), new AggregationStrategy() {
+                from("direct:aggregator").startupOrder(1).aggregate(header("aggregateGroup"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         if (oldExchange == null) {
                             return newExchange;

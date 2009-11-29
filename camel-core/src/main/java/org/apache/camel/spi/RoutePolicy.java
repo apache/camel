@@ -42,7 +42,7 @@ public interface RoutePolicy {
      * <p/>
      * Notice this callback is invoked when the <b>Exchange</b> is done and the {@link Route} is the route where
      * the {@link Exchange} was started. Most often its also the route where the exchange is done. However its
-     * possible to route an en route {@link Exchange} to other routes using endpoints such as
+     * possible to route an {@link Exchange} to other routes using endpoints such as
      * <b>direct</b> or <b>seda</b>. Bottom line is that the {@link Route} parameter may not be the endpoint
      * route and thus why we state its the starting route.
      *

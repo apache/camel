@@ -78,11 +78,11 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> 
     @Override
     public String getLabel() {
         if (ref != null) {
-            return "ref:" + ref;
+            return "transacted[ref:" + ref + "]";
         } else if (policy != null) {
-            return policy.toString();
+            return "transacted[" + policy.toString() + "]";
         } else {
-            return "";
+            return "transacted";
         }
     }
 

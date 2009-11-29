@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -59,17 +60,19 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
     @Override
     public String getShortName() {
-        return "policy";
+        // a policy can be a hidden disguise for a transacted definition
+        boolean transacted = type != null && type.isAssignableFrom(TransactedPolicy.class);
+        return transacted ? "transacted" : "policy";
     }
 
     @Override
     public String getLabel() {
         if (ref != null) {
-            return "ref:" + ref;
+            return getShortName() + "[ref:" + ref + "]";
         } else if (policy != null) {
-            return policy.toString();
+            return getShortName() + "[" + policy.toString() + "]";
         } else {
-            return "";
+            return getShortName();
         }
     }
 
