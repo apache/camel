@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -71,6 +72,7 @@ public class MyOSGiModule extends MyModule {
     
     @Override
     protected void configure() {
+        // loading the properties into Guice Context
         Names.bindProperties(binder(), properties);
         super.configure();
     }

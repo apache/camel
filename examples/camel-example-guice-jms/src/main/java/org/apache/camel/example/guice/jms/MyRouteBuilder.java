@@ -45,8 +45,7 @@ public class MyRouteBuilder extends RouteBuilder {
                 to("file://target/routeOutput");
 
         // set up a listener on the file component
-        from("file://target/routeOutput?noop=true").
-                bean(new SomeBean());
+        from("file://target/routeOutput?noop=true").beanRef("myBean");
     }
 
 }

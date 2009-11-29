@@ -16,6 +16,7 @@
  */
 package org.apache.camel.example.guice.jms;
 
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -37,6 +38,7 @@ public class MyModule extends CamelModuleWithMatchingRoutes {
 
         // lets add in any RouteBuilder instances we want to use
         bind(MyRouteBuilder.class);
+        bind(Printer.class);
     }
 
     /**
@@ -47,5 +49,11 @@ public class MyModule extends CamelModuleWithMatchingRoutes {
     @JndiBind("jms")
     JmsComponent jms(@Named("activemq.brokerURL") String brokerUrl) {
         return JmsComponent.jmsComponent(new ActiveMQConnectionFactory(brokerUrl));
+    }
+    
+    @Provides
+    @JndiBind("myBean") 
+    SomeBean someBean(Injector injector) {
+        return injector.getInstance(SomeBean.class); 
     }
 }

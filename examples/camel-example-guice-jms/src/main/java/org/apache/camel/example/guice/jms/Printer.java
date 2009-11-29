@@ -16,22 +16,10 @@
  */
 package org.apache.camel.example.guice.jms;
 
-import com.google.inject.Inject;
-
-/**
- * @version $Revision$
-*/
-public class SomeBean {
-    @Inject
-    private Printer printer;
-
-    public void someMethod(String body) {
-        printer.print(body);
-        //System.out.println("Received: " + body);
+public class Printer {
+    
+    public void print(String body) {
+        System.out.println("Received: " + body);
     }
 
-    @Override
-    public String toString() {
-        return "SomeBean";
-    }
 }
