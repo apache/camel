@@ -306,12 +306,14 @@ public class DefaultTraceFormatter implements TraceFormatter {
             RouteNode traceTo = traced.getLastNode();
             if (traceTo != null) {
                 to = getNodeMessage(traceTo, exchange);
-                // if its an abstract dummy holder then get the 2nd last so we can get the real node that has
+                // if its an abstract dummy holder then we have to get the 2nd last so we can get the real node that has
                 // information which route it belongs to
-                if (traceTo.isAbstract()) {
+                if (traceTo.isAbstract() && traceTo.getProcessorDefinition() == null) {
                     traceTo = traced.getSecondLastNode();
                 }
-                route = extractRoute(traceTo.getProcessorDefinition());
+                if (traceTo != null) {
+                    route = extractRoute(traceTo.getProcessorDefinition());
+                }
             }
         }
 

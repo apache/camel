@@ -74,6 +74,11 @@ public class WireTapProcessor extends SendProcessor {
         return "WireTap[" + destination.getEndpointUri() + "]";
     }
 
+    @Override
+    public String getTraceLabel() {
+        return "wireTap(" + destination.getEndpointUri() + ")";
+    }
+
     public void process(Exchange exchange) throws Exception {
         getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {

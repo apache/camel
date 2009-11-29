@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 /**
  * The processor which implements the ThrowException DSL
  */
-public class ThrowExceptionProcessor implements Processor {
+public class ThrowExceptionProcessor implements Processor, Traceable {
     private final Exception exception;
 
     public ThrowExceptionProcessor(Exception exception) {
@@ -36,8 +36,11 @@ public class ThrowExceptionProcessor implements Processor {
         exchange.setException(exception);
     }
 
+    public String getTraceLabel() {
+        return "throwException[" + exception.getClass().getSimpleName() + "]";
+    }
+
     public String toString() {
         return "ThrowException";
     }
-
 }

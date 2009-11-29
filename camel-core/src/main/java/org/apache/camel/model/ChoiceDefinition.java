@@ -84,7 +84,9 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      * @return the builder
      */
     public ChoiceDefinition when(Predicate predicate) {
-        getWhenClauses().add(new WhenDefinition(predicate));
+        WhenDefinition when = new WhenDefinition(predicate);
+        when.setParent(this);
+        getWhenClauses().add(when);
         return this;
     }
 
@@ -95,6 +97,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      */
     public ExpressionClause<ChoiceDefinition> when() {
         WhenDefinition when = new WhenDefinition();
+        when.setParent(this);
         getWhenClauses().add(when);
         ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<ChoiceDefinition>(this);
         when.setExpression(clause);
@@ -108,6 +111,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      */
     public ChoiceDefinition otherwise() {
         OtherwiseDefinition answer = new OtherwiseDefinition();
+        answer.setParent(this);
         setOtherwise(answer);
         return this;
     }
