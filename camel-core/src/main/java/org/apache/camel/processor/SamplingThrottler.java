@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static java.lang.String.format;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -117,12 +115,12 @@ public class SamplingThrottler extends DelegateProcessor {
         }
 
         String getSampledLog() {
-            return format("Sampled %d of %d total exchanges", totalSampled, totalSampled + totalDropped);
+            return String.format("Sampled %d of %d total exchanges", totalSampled, totalSampled + totalDropped);
         }
 
         String getDroppedLog() {
-            return format("Dropped %d of %d exchanges in this period, totalling %d dropped of %d exchanges overall.",
-                          droppedThisPeriod, totalThisPeriod, totalDropped, totalSampled + totalDropped);
+            return String.format("Dropped %d of %d exchanges in this period, totalling %d dropped of %d exchanges overall.",
+                droppedThisPeriod, totalThisPeriod, totalDropped, totalSampled + totalDropped);
         }
     }
 

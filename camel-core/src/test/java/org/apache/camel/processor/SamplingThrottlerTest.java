@@ -76,7 +76,9 @@ public class SamplingThrottlerTest extends ContextTestSupport {
                 public void run() {
                     try {
                         sendExchangesThroughDroppingThrottler(sentExchanges, 35);
-                    } catch (InterruptedException e) {}
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
                 }
             });
         }
