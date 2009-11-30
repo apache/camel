@@ -88,8 +88,12 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     protected void sendSynchronous(Exchange exchange, HttpClient client, JettyContentExchange httpExchange) throws Exception {
         doSendExchange(client, httpExchange);
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for HTTP exchange to be done");
+        }
         // we send synchronous so wait for it to be done
-        int exchangeState = httpExchange.waitForDone();
+        // must use our own lock detection as Jettys waitForDone will wait forever in case of connection issues
+        int exchangeState = httpExchange.waitForDoneOrFailure();
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP exchange is done with state " + exchangeState);
         }

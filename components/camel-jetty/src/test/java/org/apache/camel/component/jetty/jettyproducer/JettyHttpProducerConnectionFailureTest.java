@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import org.apache.camel.Exchange;
+import java.net.ConnectException;
+
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -25,50 +28,25 @@ import org.junit.Test;
 /**
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
-public class JettyHttpProducerGetWithParamAsExchangeHeaderTest extends CamelTestSupport {
+public class JettyHttpProducerConnectionFailureTest extends CamelTestSupport {
 
     private String serverUri = "jetty://http://localhost:9080/myservice";
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedHeaderReceived("one", "einz");
-        mock.expectedHeaderReceived("two", "twei");
-        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+        mock.expectedMessageCount(0);
 
         // give Jetty time to startup properly
         Thread.sleep(1000);
 
-        template.requestBody(serverUri + "?one=einz&two=twei", null, Object.class);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpGetWithParamsViaHeader() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedHeaderReceived("one", "uno");
-        mock.expectedHeaderReceived("two", "dos");
-        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-
-        // give Jetty time to startup properly
-        Thread.sleep(1000);
-
-        template.requestBodyAndHeader(serverUri, null, Exchange.HTTP_QUERY, "one=uno&two=dos");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpPost() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
-
-        // give Jetty time to startup properly
-        Thread.sleep(1000);
-
-        template.requestBody(serverUri, "Hello World");
+        // use another port with no connection
+        try {
+            template.requestBody("jetty://http://localhost:9999/myservice", null, Object.class);
+        } catch (CamelExecutionException e) {
+            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+            assertIsInstanceOf(ConnectException.class, cause.getCause());
+        }
 
         assertMockEndpointsSatisfied();
     }

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
@@ -49,6 +50,7 @@ public class JettyContentExchange extends ContentExchange {
     private volatile AsyncCallback callback;
     private volatile JettyHttpBinding jettyBinding;
     private volatile HttpClient client;
+    private final CountDownLatch done = new CountDownLatch(1);
 
     public JettyContentExchange(Exchange exchange, JettyHttpBinding jettyBinding, HttpClient client) {
         super(true); // keep headers by default
@@ -77,23 +79,44 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     @Override
-    protected void onResponseComplete() {
-        doTaskCompleted();
+    protected void onResponseComplete() throws IOException {
+        try {
+            super.onResponseComplete();
+        } finally {
+            doTaskCompleted();
+        }
     }
 
     @Override
     protected void onExpire() {
-        doTaskCompleted();
+        try {
+            super.onExpire();
+        } finally {
+            doTaskCompleted();
+        }
     }
 
     @Override
     protected void onException(Throwable ex) {
-        doTaskCompleted(ex);
+        try {
+            super.onException(ex);
+        } finally {
+            doTaskCompleted(ex);
+        }
     }
 
     @Override
     protected void onConnectionFailed(Throwable ex) {
-        doTaskCompleted(ex);
+        try {
+            super.onConnectionFailed(ex);
+        } finally {
+            doTaskCompleted(ex);
+        }
+    }
+
+    protected int waitForDoneOrFailure() throws InterruptedException {
+        done.await();
+        return getStatus();
     }
 
     public Map<String, String> getHeaders() {
@@ -110,6 +133,9 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     protected void doTaskCompleted() {
+        // make sure to lower the latch
+        done.countDown();
+
         if (callback == null) {
             // this is only for the async callback
             return;
@@ -143,6 +169,9 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     protected void doTaskCompleted(Throwable ex) {
+        // make sure to lower the latch
+        done.countDown();
+
         // some kind of other error
         exchange.setException(new CamelExchangeException("JettyClient failed cause by: " + ex.getMessage(), exchange, ex));
 
