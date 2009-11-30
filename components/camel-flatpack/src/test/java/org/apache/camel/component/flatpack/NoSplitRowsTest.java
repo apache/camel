@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.flatpack;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test to verify that splitRows=false option.

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.bam.processor;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -29,6 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A base {@link Processor} for working on <a
