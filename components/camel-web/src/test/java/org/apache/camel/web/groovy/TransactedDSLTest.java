@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.web.groovy;
 
 import org.junit.Test;
 
-/**
- * 
- */
 public class TransactedDSLTest extends GroovyRendererTestSupport {
 
     @Test
     public void testTransacted() throws Exception {
         String dsl = "from(\"direct:start\").transacted(\"myTransacted\").to(\"mock:result\")";
-        String expected = "from(\"direct:start\").policy(\"myTransacted\").to(\"mock:result\")";
+        String expected = "from(\"direct:start\").transacted(\"myTransacted\").to(\"mock:result\")";
 
         assertEquals(expected, render(dsl));
     }
@@ -35,7 +31,7 @@ public class TransactedDSLTest extends GroovyRendererTestSupport {
     @Test
     public void testTransactedWithPolicy() throws Exception {
         String dsl = "from(\"direct:start\").transacted().policy(\"myPolicy\").to(\"mock:result\")";
-        String expected = "from(\"direct:start\").policy().policy(\"myPolicy\").to(\"mock:result\")";
+        String expected = "from(\"direct:start\").transacted().policy(\"myPolicy\").to(\"mock:result\")";
 
         assertEquals(expected, render(dsl));
     }
