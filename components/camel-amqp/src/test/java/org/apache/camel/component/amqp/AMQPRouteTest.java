@@ -25,6 +25,7 @@ import org.apache.qpid.client.transport.TransportConnection;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
@@ -53,6 +54,7 @@ public class AMQPRouteTest extends CamelTestSupport {
     
 
     @Test
+    @Ignore("AMQP testing is a bit unstable")
     public void testJmsRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
 
@@ -78,6 +80,7 @@ public class AMQPRouteTest extends CamelTestSupport {
     }
 
     @Test
+    @Ignore("AMQP testing is a bit unstable")
     public void testJmsRouteWithObjectMessage() throws Exception {
         PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
 
@@ -90,6 +93,7 @@ public class AMQPRouteTest extends CamelTestSupport {
     }
 
     @Test
+    @Ignore("AMQP testing is a bit unstable")
     public void testJmsRouteWithByteArrayMessage() throws Exception {
         PurchaseOrder aPO = new PurchaseOrder("Beer", 10);
         byte[] expectedBody = SerializationUtils.serialize(aPO);

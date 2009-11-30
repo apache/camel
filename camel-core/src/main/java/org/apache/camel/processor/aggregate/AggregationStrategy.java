@@ -28,9 +28,12 @@ import org.apache.camel.Exchange;
  * or remove some headers. And a more common use case is for instance to count some values from the body payload. That
  * could be to sum up a total amount etc.
  * <p/>
- * Possible implementations include performing some kind of combining or delta
- * processing, such as adding line items together into an invoice or just using
- * the newest exchange and removing old exchanges such as for state tracking or
+ * It is possible that <tt>newExchange</tt> is <tt>null</tt> which could happen if there was no data possible
+ * to acquire. Such as when using a {@link org.apache.camel.processor.PollEnricher} to poll from a JMS queue which
+ * is empty and a timeout was set.
+ * <p/>
+ * Possible implementations include performing some kind of combining or delta processing, such as adding line items
+ * together into an invoice or just using the newest exchange and removing old exchanges such as for state tracking or
  * market data prices; where old values are of little use.
  * 
  * @version $Revision$
@@ -41,7 +44,7 @@ public interface AggregationStrategy {
      * Aggregates an old and new exchange together to create a single combined exchange
      *
      * @param oldExchange the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new exchange)
-     * @param newExchange the newest exchange
+     * @param newExchange the newest exchange (can be <tt>null</tt> if there was no data possible to acquire)
      * @return a combined composite of the two exchanges
      */
     Exchange aggregate(Exchange oldExchange, Exchange newExchange);

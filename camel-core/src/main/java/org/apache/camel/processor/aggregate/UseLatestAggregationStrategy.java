@@ -28,6 +28,9 @@ import org.apache.camel.Exchange;
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        if (newExchange == null) {
+            return oldExchange;
+        }
         newExchange.setException(checkException(oldExchange, newExchange));
         return newExchange;
     }
@@ -44,6 +47,6 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
 
     @Override
     public String toString() {
-        return "useLatestAggregationStrategy";
+        return "UseLatestAggregationStrategy";
     }
 }

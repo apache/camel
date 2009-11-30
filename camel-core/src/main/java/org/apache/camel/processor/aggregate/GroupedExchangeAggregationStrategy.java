@@ -44,7 +44,9 @@ public class GroupedExchangeAggregationStrategy implements AggregationStrategy {
             list = oldExchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
         }
 
-        list.add(newExchange);
+        if (newExchange != null) {
+            list.add(newExchange);
+        }
         return answer;
     }
 
