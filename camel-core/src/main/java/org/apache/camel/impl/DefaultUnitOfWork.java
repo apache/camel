@@ -110,10 +110,15 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         boolean failed = exchange.isFailed();
 
         // fire event to signal the exchange is done
-        if (failed) {
-            EventHelper.notifyExchangeFailed(exchange.getContext(), exchange);
-        } else {
-            EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
+        try {
+            if (failed) {
+                EventHelper.notifyExchangeFailed(exchange.getContext(), exchange);
+            } else {
+                EventHelper.notifyExchangeDone(exchange.getContext(), exchange);
+            }
+        } catch (Exception e) {
+            // must catch exceptions to ensure synchronizations is also invoked
+            LOG.warn("Exception occurred during event notification. This exception will be ignored.", e);
         }
 
         if (synchronizations != null && !synchronizations.isEmpty()) {
@@ -127,7 +132,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                     }
                 } catch (Exception e) {
                     // must catch exceptions to ensure all synchronizations have a chance to run
-                    LOG.warn("Exception occurred during onCompletion. This exception will be ignored: ", e);
+                    LOG.warn("Exception occurred during onCompletion. This exception will be ignored.", e);
                 }
             }
         }
@@ -136,7 +141,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (exchange.getContext() != null) {
             exchange.getContext().getInflightRepository().remove(exchange);
         }
-
     }
 
     public String getId() {
