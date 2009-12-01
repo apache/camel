@@ -16,7 +16,11 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
@@ -163,7 +167,6 @@ public final class EndpointHelper {
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
      */
-    @SuppressWarnings("unchecked")
     public static void setReferenceProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
         Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
         while (it.hasNext()) {
@@ -194,7 +197,7 @@ public final class EndpointHelper {
      * @return <tt>true</tt> if its a reference parameter
      */
     public static boolean isReferenceParameter(String parameter) {
-        return parameter != null && parameter.startsWith("#");
+        return parameter != null && parameter.trim().startsWith("#");
     }
     
     /**
@@ -209,6 +212,56 @@ public final class EndpointHelper {
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type) {
         assert isReferenceParameter(value);
         return context.getRegistry().lookup(value.substring(1), type);
+        
+    }
+
+    /**
+     * Resolves a reference list parameter by making lookups in the registry.
+     * The parameter value must be one of the following:
+     * <ul>
+     * <li>a comma-separated list of references to beans of type T</li>
+     * <li>a single reference to a bean type T</li>
+     * <li>a single reference to a bean of type java.util.List</li>
+     * </ul>
+     * Only bean lookup results that are not <code>null</code> are added to the
+     * result list.
+     * 
+     * @param context
+     *            Camel content to use for lookup.
+     * @param value
+     *            reference parameter value.
+     * @param elementType
+     *            result list element type.
+     * @return list of non-null lookup results or an empty list, never
+     *         <code>null</code>.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        List<String> elements = Arrays.asList(value.split(","));
+        if (elements.size() == 1) {
+            Object bean = resolveReferenceParameter(context, elements.get(0).trim(), Object.class);
+            if (bean instanceof List) {
+                // The bean is a list
+                return (List)bean;
+            } else if (elementType.isInstance(bean)) {
+                // The bean is a list element
+                return (List<T>)Arrays.asList(bean);
+            } else {
+                return Collections.emptyList();
+            }
+        } else { // more than one list element
+            ArrayList<T> result = new ArrayList<T>(elements.size());
+            for (String element : elements) {
+                T bean = resolveReferenceParameter(context, element.trim(), elementType);
+                if (bean != null) {
+                    result.add(bean);
+                }
+            }
+            return result;
+        }
     }
     
 }

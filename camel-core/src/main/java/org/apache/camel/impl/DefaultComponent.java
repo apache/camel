@@ -17,6 +17,8 @@
 package org.apache.camel.impl;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -363,13 +365,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Resolves a reference parameter in the registry and removes it from the map. 
      * 
-     * @param <T>           type of object to lookup in th registry.
+     * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
-     * @param type          type of object to lookup in th registry.
-     * @param defaultValue  default value to use if neither the parameter map contains
-     *                      the key nor the registry contains an object of requested
-     *                      type.
+     * @param type          type of object to lookup in the registry.
+     * @param defaultValue  default value to use if either the parameter map doesn't 
+     *                      contain the key or the registry doesn't contain an object
+     *                      of requested type.
      * @return the referenced object, the default value or <code>null</code>.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
@@ -381,6 +383,54 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return defaultValue;
         } else {
             throw new IllegalArgumentException("Parameter value " + value + " is not a valid reference");
+        }
+    }
+    
+    /**
+     * Resolves a reference list parameter in the registry and removes it from
+     * the map.
+     * 
+     * @param parameters
+     *            parameter map.
+     * @param key
+     *            parameter map key.
+     * @param elementType
+     *            result list element type.
+     * @return the list of referenced objects or an empty list, never
+     *         <code>null</code>.
+     * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
+     */
+    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType) {
+        return resolveAndRemoveReferenceListParameter(parameters, key, elementType, new ArrayList<T>(0));
+    }
+
+    /**
+     * Resolves a reference list parameter in the registry and removes it from
+     * the map.
+     * 
+     * @param parameters
+     *            parameter map.
+     * @param key
+     *            parameter map key.
+     * @param elementType
+     *            result list element type.
+     * @param defaultValue
+     *            default value to use if either the parameter map doesn't
+     *            contain the key or the lookup for none of the references
+     *            was successful.
+     * @return the list of referenced objects, the default value or an empty list, never
+     *         <code>null</code>.
+     * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
+     */
+    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType, List<T>  defaultValue) {
+        String value = getAndRemoveParameter(parameters, key, String.class);
+        if (EndpointHelper.isReferenceParameter(value)) {
+            List<T> result = EndpointHelper.resolveReferenceListParameter(getCamelContext(), value.toString(), elementType);
+            return result.isEmpty() ? defaultValue : result;
+        } else if (value == null) {
+            return defaultValue;
+        } else {
+            throw new IllegalArgumentException("Parameter value " + value + " is not a valid reference (list)");
         }
     }
     

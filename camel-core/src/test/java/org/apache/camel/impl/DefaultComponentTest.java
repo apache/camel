@@ -16,8 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -130,6 +132,54 @@ public class DefaultComponentTest extends ContextTestSupport {
         }
     }
 
+    public void testResolveAndRemoveReferenceListParameterElement() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("dates", "#bean1");
+        MyComponent my = new MyComponent(this.context);
+        List<Date> values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(1, values.size());
+        assertEquals(new Date(10), values.get(0));
+    }
+    
+    public void testResolveAndRemoveReferenceListParameterListComma() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("dates", "#bean1,#bean2");
+        MyComponent my = new MyComponent(this.context);
+        List<Date> values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(2, values.size());
+        assertEquals(new Date(10), values.get(0));
+        assertEquals(new Date(11), values.get(1));
+    }
+
+    public void testResolveAndRemoveReferenceListParameterListCommaTrim() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("dates", " #bean1 , #bean2 ");
+        MyComponent my = new MyComponent(this.context);
+        List<Date> values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(2, values.size());
+        assertEquals(new Date(10), values.get(0));
+        assertEquals(new Date(11), values.get(1));
+    }
+
+    public void testResolveAndRemoveReferenceListParameterListBean() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("dates", "#listBean");
+        MyComponent my = new MyComponent(this.context);
+        List<Date> values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(2, values.size());
+        assertEquals(new Date(10), values.get(0));
+        assertEquals(new Date(11), values.get(1));
+    }
+
+    public void testResolveAndRemoveReferenceListParameterInvalidBean() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("dates", "#bean1,#bean3");
+        MyComponent my = new MyComponent(this.context);
+        List<Date> values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(1, values.size());
+        assertEquals(new Date(10), values.get(0));
+    }
+
     public void testContextShouldBeSet() throws Exception {
         MyComponent my = new MyComponent(null);
         try {
@@ -141,8 +191,13 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     protected JndiRegistry createRegistry() throws Exception {
+        Date bean1 = new Date(10);
+        Date bean2 = new Date(11);
         JndiRegistry jndiRegistry = super.createRegistry();
         jndiRegistry.bind("beginning", new Date(0));
+        jndiRegistry.bind("bean1", bean1);
+        jndiRegistry.bind("bean2", bean2);
+        jndiRegistry.bind("listBean", Arrays.asList(bean1, bean2));
         return jndiRegistry;
     }
 
