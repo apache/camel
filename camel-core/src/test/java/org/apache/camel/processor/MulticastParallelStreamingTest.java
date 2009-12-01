@@ -39,7 +39,7 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
 
     public void testMulticastParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(20);
+        mock.expectedMessageCount(10);
         mock.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // they should all be BA as B is faster than A
@@ -47,7 +47,7 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
             }
         });
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             template.sendBody("direct:start", "Hello");
         }
 
@@ -76,7 +76,7 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
                     .end()
                     .to("mock:result");
 
-                from("direct:a").delay(100).setBody(constant("A"));
+                from("direct:a").delay(500).setBody(constant("A"));
 
                 from("direct:b").setBody(constant("B"));
             }
