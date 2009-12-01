@@ -103,6 +103,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, Exchange.ACCEPT_CONTENT_TYPE);
         
         camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, method.getReturnType());
+        
+        camelMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, method.getGenericReturnType());
                
         copyOperationResourceInfoStack(cxfMessage, camelMessage);
         

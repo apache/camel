@@ -18,10 +18,15 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import javax.ws.rs.core.Response;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
@@ -32,6 +37,7 @@ import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
+
 
 /**
  * CxfRsProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
@@ -72,10 +78,10 @@ public class CxfRsProducer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     protected void invokeHttpClient(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();       
-        WebClient client = cfb.createWebClient();
-        
-        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class); 
-        Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);        
+        WebClient client = cfb.createWebClient();        
+        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+        Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
+        Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
         String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
        
         if (LOG.isTraceEnabled()) {
@@ -118,9 +124,17 @@ public class CxfRsProducer extends DefaultProducer {
                                                                 exchange));
         
         // invoke the client
-        Object response = null;        
+        Object response = null;
         if (responseClass == null || Response.class.equals(responseClass)) {
             response = client.invoke(httpMethod, body);
+        } else if (Collection.class.isAssignableFrom(responseClass)) {
+            if (genericType instanceof ParameterizedType) {
+                // Get the collection member type first
+                Type[] actualTypeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
+                response = client.invokeAndGetCollection(httpMethod, body, (Class)actualTypeArguments[0]);
+            } else {
+                throw new CamelException("Can't find the Collection member type");
+            }
         } else {
             response = client.invoke(httpMethod, body, responseClass);
         }
@@ -129,8 +143,7 @@ public class CxfRsProducer extends DefaultProducer {
         if (exchange.getPattern().isOutCapable()) {     
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Response body = " + response);
-            }
-            
+            }            
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
         }

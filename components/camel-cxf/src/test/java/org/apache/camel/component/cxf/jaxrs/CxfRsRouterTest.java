@@ -54,6 +54,22 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     }
     
     @Test
+    public void testGetCustomers() throws Exception {      
+        GetMethod get = new GetMethod("http://localhost:9000/customerservice/customers/");
+        get.addRequestHeader("Accept" , "application/xml");
+        
+        HttpClient httpclient = new HttpClient();
+
+        try {
+            assertEquals(200, httpclient.executeMethod(get));
+            assertEquals("<Customers><Customer><id>123</id><name>John</name></Customer><Customer><id>113</id><name>Dan</name></Customer></Customers>", 
+                         get.getResponseBodyAsString());
+        } finally {
+            get.releaseConnection();
+        }
+    }
+    
+    @Test
     public void testGetSubResource() throws Exception {
         GetMethod get = new GetMethod("http://localhost:9000/customerservice/orders/223/products/323");
         get.addRequestHeader("Accept" , "application/json");
