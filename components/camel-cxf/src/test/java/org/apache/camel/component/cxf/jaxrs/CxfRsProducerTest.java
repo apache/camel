@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -132,6 +134,36 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
         
+    }
+    
+    @Test
+    public void testAddCustomerUniqueResponseCode() {
+        Exchange exchange = template.send("cxfrs://http://localhost:9002?httpClientAPI=true", new Processor() {
+            
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                Message inMessage = exchange.getIn();
+                // set the Http method
+                inMessage.setHeader(Exchange.HTTP_METHOD, "POST");
+                // set the relative path
+                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customersUniqueResponseCode");                
+                // put the response's entity into out message body
+                inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
+                // create a new customer object
+                Customer customer = new Customer();
+                customer.setId(8888);
+                customer.setName("Willem");
+                inMessage.setBody(customer);                
+            }
+            
+        });
+        
+        // get the response message 
+        Customer response = (Customer) exchange.getOut().getBody();
+        
+        assertNotNull("The response should not be null ", response);
+        assertTrue("Get a wrong customer id ", response.getId() != 8888);
+        assertEquals("Get a wrong customer name", response.getName(), "Willem");
     }
     
     @Test
