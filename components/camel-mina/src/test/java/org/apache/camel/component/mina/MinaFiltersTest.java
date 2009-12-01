@@ -37,8 +37,19 @@ import org.apache.mina.common.IoSession;
  */
 public class MinaFiltersTest extends ContextTestSupport {
 
-    public void testFilter() throws Exception {
-        final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=true&sync=false&filters=#myFilters";
+    public void testFilterListRef() throws Exception {
+        testFilter("mina:tcp://localhost:6321?textline=true&minaLogger=true&sync=false&filters=#myFilters");
+    }
+    
+    public void testFilterElementRef() throws Exception {
+        testFilter("mina:tcp://localhost:6322?textline=true&minaLogger=true&sync=false&filters=#myFilter");
+    }
+    
+    protected void tearDown() {
+        TestFilter.called = 0;
+    }
+    
+    private void testFilter(final String uri) throws Exception {
         context.addRoutes(new RouteBuilder() {
 
             public void configure() throws Exception {
@@ -73,10 +84,12 @@ public class MinaFiltersTest extends ContextTestSupport {
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
+        IoFilter myFilter = new TestFilter();
         List<IoFilter> myFilters = new ArrayList<IoFilter>();
-        myFilters.add(new TestFilter());
+        myFilters.add(myFilter);
 
         answer.bind("myFilters", myFilters);
+        answer.bind("myFilter", myFilter);
         return answer;
     }
 }

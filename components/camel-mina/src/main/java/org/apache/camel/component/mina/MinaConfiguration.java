@@ -42,6 +42,7 @@ public class MinaConfiguration implements Cloneable {
     private int encoderMaxLineLength = -1;
     private int decoderMaxLineLength = -1;
     private List<IoFilter> filters;
+    private boolean allowDefaultCodec = true;
 
     /**
      * Returns a copy of this configuration
@@ -190,4 +191,11 @@ public class MinaConfiguration implements Cloneable {
         return protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast");
     }
     
+    public void setAllowDefaultCodec(boolean allowDefaultCodec) {
+        this.allowDefaultCodec = allowDefaultCodec;
+    }
+
+    public boolean isAllowDefaultCodec() {
+        return allowDefaultCodec;
+    }
 }

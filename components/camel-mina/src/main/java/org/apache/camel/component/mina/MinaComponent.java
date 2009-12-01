@@ -87,6 +87,7 @@ public class MinaComponent extends DefaultComponent {
         config.setHost(u.getHost());
         config.setPort(u.getPort());
         config.setProtocol(u.getScheme());
+        config.setFilters(resolveAndRemoveReferenceListParameter(parameters, "filters", IoFilter.class));
         setProperties(config, parameters);
 
         return createEndpoint(uri, config);
@@ -214,38 +215,42 @@ public class MinaComponent extends DefaultComponent {
     }
 
     protected void configureCodecFactory(String type, IoServiceConfig config, MinaConfiguration configuration) {
-        ProtocolCodecFactory codecFactory = configuration.getCodec();
-
-        if (codecFactory == null) {
-            if (configuration.isTextline()) {
-                Charset charset = getEncodingParameter(type, configuration);
-                LineDelimiter delimiter = getLineDelimiterParameter(configuration.getTextlineDelimiter());
-                TextLineCodecFactory tmpCodecFactory = new TextLineCodecFactory(charset, delimiter);
-                if (configuration.getEncoderMaxLineLength() > 0) {
-                    tmpCodecFactory.setEncoderMaxLineLength(configuration.getEncoderMaxLineLength());
-                }
-                if (configuration.getDecoderMaxLineLength() > 0) {
-                    tmpCodecFactory.setDecoderMaxLineLength(configuration.getDecoderMaxLineLength());
-                }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: "
-                            + charset + " line delimiter: " + configuration.getTextlineDelimiter()
-                            + "(" + delimiter + ")");
-                    LOG.debug("Encoder maximum line length: " + tmpCodecFactory.getEncoderMaxLineLength()
-                            + "Decoder maximum line length: " + tmpCodecFactory.getDecoderMaxLineLength());
-                }
-                codecFactory = tmpCodecFactory;
-            } else {
-                codecFactory = new ObjectSerializationCodecFactory();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(type + ": Using ObjectSerializationCodecFactory: " + codecFactory);
-                }
-            }
+        if (configuration.getCodec() != null) {
+            addCodecFactory(config, configuration.getCodec());
+        } else if (configuration.isAllowDefaultCodec()) {
+            configureDefaultCodecFactory(type, config, configuration);
         }
-
-        addCodecFactory(config, codecFactory);
     }
 
+    protected void configureDefaultCodecFactory(String type, IoServiceConfig config, MinaConfiguration configuration) {
+        if (configuration.isTextline()) {
+            Charset charset = getEncodingParameter(type, configuration);
+            LineDelimiter delimiter = getLineDelimiterParameter(configuration.getTextlineDelimiter());
+            TextLineCodecFactory codecFactory = new TextLineCodecFactory(charset, delimiter);
+            if (configuration.getEncoderMaxLineLength() > 0) {
+                codecFactory.setEncoderMaxLineLength(configuration.getEncoderMaxLineLength());
+            }
+            if (configuration.getDecoderMaxLineLength() > 0) {
+                codecFactory.setDecoderMaxLineLength(configuration.getDecoderMaxLineLength());
+            }
+            addCodecFactory(config, codecFactory);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: "
+                        + charset + " line delimiter: " + configuration.getTextlineDelimiter()
+                        + "(" + delimiter + ")");
+                LOG.debug("Encoder maximum line length: " + codecFactory.getEncoderMaxLineLength()
+                        + "Decoder maximum line length: " + codecFactory.getDecoderMaxLineLength());
+            }
+        } else {
+            ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
+            addCodecFactory(config, codecFactory);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(type + ": Using ObjectSerializationCodecFactory: " + codecFactory);
+            }
+        }
+        
+    }
+    
     protected MinaEndpoint createDatagramEndpoint(String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
