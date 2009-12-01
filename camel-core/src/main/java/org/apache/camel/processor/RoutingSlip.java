@@ -28,6 +28,8 @@ import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -37,6 +39,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * dependent on the value of a message header.
  */
 public class RoutingSlip extends ServiceSupport implements Processor, Traceable {
+    private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
     private ProducerCache producerCache;
     private final String header;
     private final String uriDelimiter;
@@ -74,20 +77,54 @@ public class RoutingSlip extends ServiceSupport implements Processor, Traceable 
             updateRoutingSlip(current);
             copyOutToIn(copy, current);
 
-            getProducerCache(exchange).doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
-                public Object doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
-                    // set property which endpoint we send to
-                    exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
-                    producer.process(exchange);
-                    return exchange;
+            try {                
+                getProducerCache(exchange).doInProducer(endpoint, copy, null, new ProducerCallback<Object>() {
+                    public Object doInProducer(Producer producer, Exchange exchange, ExchangePattern exchangePattern) throws Exception {
+                        // set property which endpoint we send to
+                        exchange.setProperty(Exchange.TO_ENDPOINT, producer.getEndpoint().getEndpointUri());
+                        producer.process(exchange);
+                        return exchange;
+                    }
+                });  
+            } catch (Exception e) {
+                // catch exception so we can decide if we want to continue or not
+                copy.setException(e);
+            } finally {
+                current = copy;
+            }
+            
+            // Decide whether to continue with the recipients or not; similar logic to the Pipeline
+            boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(current);
+            if (current.isFailed() || current.isRollbackOnly() || exceptionHandled) {
+                // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
+                // by the error handler. It's still an exception, the exchange still failed.
+                if (LOG.isDebugEnabled()) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Message exchange has failed so breaking out of the routing slip: ").append(current);
+                    if (current.isRollbackOnly()) {
+                        sb.append(" Marked as rollback only.");
+                    }
+                    if (current.getException() != null) {
+                        sb.append(" Exception: ").append(current.getException());
+                    }
+                    if (current.hasOut() && current.getOut().isFault()) {
+                        sb.append(" Fault: ").append(current.getOut());
+                    }
+                    if (exceptionHandled) {
+                        sb.append(" Handled by the error handler.");
+                    }
+                    LOG.debug(sb.toString());
                 }
-            });
-
-            current = copy;
+                break;
+            }
         }
         ExchangeHelper.copyResults(exchange, current);
     }
 
+    private static boolean hasExceptionBeenHandledByErrorHandler(Exchange nextExchange) {
+        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
+    }
+    
     protected ProducerCache getProducerCache(Exchange exchange) throws Exception {
         // setup producer cache as we need to use the pluggable service pool defined on camel context
         if (producerCache == null) {
