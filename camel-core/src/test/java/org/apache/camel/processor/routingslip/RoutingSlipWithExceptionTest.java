@@ -35,11 +35,13 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     private MockEndpoint endEndpoint;
     private MockEndpoint exceptionEndpoint;
     private MockEndpoint exceptionSettingEndpoint;
+    private MockEndpoint aEndpoint;
 
     public void testNoException() throws Exception {
         endEndpoint.expectedMessageCount(1);
         exceptionEndpoint.expectedMessageCount(0);
-
+        aEndpoint.expectedMessageCount(1);
+        
         sendRoutingSlipWithNoExceptionThrowingComponent();
 
         assertEndpointsSatisfied();
@@ -48,6 +50,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     public void testWithExceptionThrowingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
+        aEndpoint.expectedMessageCount(0);
 
         sendRoutingSlipWithExceptionThrowingComponentFirstInList();
 
@@ -57,6 +60,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     public void testWithExceptionThrowingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
+        aEndpoint.expectedMessageCount(1);
 
         sendRoutingSlipWithExceptionThrowingComponentSecondInList();
 
@@ -66,6 +70,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     public void testWithExceptionSettingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
+        aEndpoint.expectedMessageCount(0);
 
         sendRoutingSlipWithExceptionSettingComponentFirstInList();
 
@@ -75,6 +80,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     public void testWithExceptionSettingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
+        aEndpoint.expectedMessageCount(1);
 
         sendRoutingSlipWithExceptionSettingComponentSecondInList();
 
@@ -82,18 +88,18 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     }
 
     private void assertEndpointsSatisfied() throws InterruptedException {
-        MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, endEndpoint, exceptionEndpoint);
+        MockEndpoint.assertIsSatisfied(5, TimeUnit.SECONDS, endEndpoint, exceptionEndpoint, aEndpoint);
     }
 
 
     protected void sendRoutingSlipWithExceptionThrowingComponentFirstInList() {
         template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER,
-                "myBean?method=throwException,mock:x");
+                "bean:myBean?method=throwException,mock:a");
     }
 
     protected void sendRoutingSlipWithExceptionThrowingComponentSecondInList() {
         template.sendBodyAndHeader("direct:start", ANSWER, ROUTING_SLIP_HEADER,
-                "mock:a,myBean?method=throwException");
+                "mock:a,bean:myBean?method=throwException");
     }
 
     protected void sendRoutingSlipWithNoExceptionThrowingComponent() {
@@ -118,7 +124,8 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         endEndpoint = resolveMandatoryEndpoint("mock:noexception", MockEndpoint.class);
         exceptionEndpoint = resolveMandatoryEndpoint("mock:exception", MockEndpoint.class);
         exceptionSettingEndpoint = resolveMandatoryEndpoint("mock:exceptionSetting", MockEndpoint.class);
-
+        aEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
+        
         exceptionSettingEndpoint.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setException(new Exception("Throw me!"));

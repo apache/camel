@@ -16,10 +16,8 @@
  */
 package org.apache.camel.processor;
 
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -42,7 +40,6 @@ public class RoutingSlip extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
     private final String header;
     private final String uriDelimiter;
-
     private ProducerCache<Exchange> producerCache = new ProducerCache<Exchange>();
 
     public RoutingSlip(String header) {
@@ -75,9 +72,27 @@ public class RoutingSlip extends ServiceSupport implements Processor {
             updateRoutingSlip(current);
             copyOutToIn(ex, current);
 
-            producer.process(ex);
+            try {
+                producer.process(ex);
+            } catch (Exception e) {
+                ex.setException(e);
+            }
 
             current = ex;
+
+            boolean exceptionHandled = hasExceptionBeenHandled(current);
+            if (current.isFailed() || exceptionHandled) {
+                // The Exchange.EXCEPTION_HANDLED_PROPERTY property is only set if satisfactory handling was done
+                //  by the error handler.  It's still an exception, the exchange still failed.
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Message exchange has failed so breaking out of routing slip: " + current
+                              + " exception: " + current.getException() + " fault: "
+                              + current.getFault(false)
+                              + (exceptionHandled ? " handled by the error handler" : ""));
+                }
+                break;
+            }
+
         }
         ExchangeHelper.copyResults(exchange, current);
     }
@@ -96,6 +111,10 @@ public class RoutingSlip extends ServiceSupport implements Processor {
     private void updateRoutingSlip(Exchange current) {
         Message message = getResultMessage(current);
         message.setHeader(header, removeFirstElement(recipients(message)));
+    }
+
+    private static boolean hasExceptionBeenHandled(Exchange nextExchange) {
+        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.EXCEPTION_HANDLED_PROPERTY));
     }
 
     /**
