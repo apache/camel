@@ -64,6 +64,11 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-core</artifactId>
     </dependency>
+    
+    <dependency>
+	  <groupId>org.apache.xbean</groupId>
+	  <artifactId>xbean-spring</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>xerces</groupId>
