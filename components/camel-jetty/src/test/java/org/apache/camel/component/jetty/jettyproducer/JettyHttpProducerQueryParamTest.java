@@ -32,6 +32,9 @@ public class JettyHttpProducerQueryParamTest extends CamelTestSupport {
 
     @Test
     public void testQueryParameters() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         Exchange exchange = template.request(url + "?quote=Camel%20rocks", null);
         assertNotNull(exchange);
 
@@ -44,6 +47,9 @@ public class JettyHttpProducerQueryParamTest extends CamelTestSupport {
 
     @Test
     public void testQueryParametersWithHeader() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         Exchange exchange = template.request(url, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_QUERY, "quote=Camel rocks");

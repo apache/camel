@@ -27,7 +27,7 @@ import org.junit.Test;
  */
 public class JettyHttpProducerGetWithParamAsExchangeHeaderTest extends CamelTestSupport {
 
-    private String serverUri = "jetty://http://localhost:9080/myservice";
+    private String serverUri = "jetty://http://localhost:9088/myservice";
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {

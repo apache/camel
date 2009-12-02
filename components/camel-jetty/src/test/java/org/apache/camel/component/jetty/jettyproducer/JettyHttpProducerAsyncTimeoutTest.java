@@ -30,6 +30,9 @@ public class JettyHttpProducerAsyncTimeoutTest extends CamelTestSupport {
 
     @Test
     public void testTimeout() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:timeout").expectedMessageCount(1);

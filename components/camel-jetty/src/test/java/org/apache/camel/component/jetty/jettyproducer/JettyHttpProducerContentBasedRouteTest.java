@@ -26,10 +26,13 @@ import org.junit.Test;
  */
 public class JettyHttpProducerContentBasedRouteTest extends CamelTestSupport {
 
-    private String serverUri = "jetty://http://localhost:9080/myservice";
+    private String serverUri = "jetty://http://localhost:9087/myservice";
 
     @Test
     public void testSendOne() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         MockEndpoint mock = getMockEndpoint("mock:one");
 
         mock.expectedHeaderReceived("one", "true");
@@ -41,6 +44,9 @@ public class JettyHttpProducerContentBasedRouteTest extends CamelTestSupport {
 
     @Test
     public void testSendOther() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         MockEndpoint mock = getMockEndpoint("mock:other");
 
         mock.expectedHeaderReceived("two", "true");

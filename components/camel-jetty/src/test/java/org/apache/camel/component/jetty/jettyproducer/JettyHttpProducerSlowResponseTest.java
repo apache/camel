@@ -34,6 +34,9 @@ public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
 
     @Test
     public void testSlowReply() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 

@@ -29,7 +29,10 @@ public class JettyProducerHttpsRouteTest extends HttpsRouteTest {
     }
 
     @Test
-    public void testEndpointWithoutHttps() {
+    public void testEndpointWithoutHttps() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
             template.sendBodyAndHeader("jetty://http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");

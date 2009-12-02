@@ -32,6 +32,9 @@ public class JettyHttpProducerSimulate404ErrorTest extends CamelTestSupport {
 
     @Test
     public void test404() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         try {
             template.request(url, null);
         } catch (Exception e) {

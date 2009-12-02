@@ -29,6 +29,9 @@ public class HttpJettyProducerTwoEndpointTest extends CamelTestSupport {
 
     @Test
     public void testTwoEndpoints() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         Exchange a = template.request("direct:a", null);
         assertNotNull(a);
 

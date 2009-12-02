@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public class JettyHttpProducerGetWithParamTest extends CamelTestSupport {
 
-    private String serverUri = "jetty://http://localhost:9080/myservice";
+    private String serverUri = "jetty://http://localhost:9086/myservice";
     private MyParamsProcessor processor = new MyParamsProcessor();
 
     @Test
@@ -39,6 +39,9 @@ public class JettyHttpProducerGetWithParamTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Bye World");
         mock.expectedHeaderReceived("one", "eins");
         mock.expectedHeaderReceived("two", "zwei");
+
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
 
         template.requestBody(serverUri + "?one=uno&two=dos", "Hello World");
 
@@ -51,6 +54,9 @@ public class JettyHttpProducerGetWithParamTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Bye World");
         mock.expectedHeaderReceived("one", "eins");
         mock.expectedHeaderReceived("two", "zwei");
+
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
 
         template.requestBodyAndHeader(serverUri, "Hello World", Exchange.HTTP_QUERY, "one=uno&two=dos");
 

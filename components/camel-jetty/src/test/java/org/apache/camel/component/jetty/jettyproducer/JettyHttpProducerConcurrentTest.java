@@ -38,11 +38,17 @@ public class JettyHttpProducerConcurrentTest extends CamelTestSupport {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         doSendMessages(1, 1);
     }
 
     @Test
     public void testConcurrentProducers() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         doSendMessages(10, 5);
     }
 

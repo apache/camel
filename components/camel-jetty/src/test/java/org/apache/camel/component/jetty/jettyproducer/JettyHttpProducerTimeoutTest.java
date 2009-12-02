@@ -30,6 +30,9 @@ public class JettyHttpProducerTimeoutTest extends CamelTestSupport {
 
     @Test
     public void testTimeout() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         try {
             template.request(url, null);
             fail("Should have thrown a timeout exception");

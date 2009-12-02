@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
@@ -115,7 +116,14 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     protected int waitForDoneOrFailure() throws InterruptedException {
-        done.await();
+
+        long timeout = client.getTimeout();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for done or failure with timeout: " + timeout);
+        }
+        done.await(timeout, TimeUnit.MILLISECONDS);
+
         return getStatus();
     }
 

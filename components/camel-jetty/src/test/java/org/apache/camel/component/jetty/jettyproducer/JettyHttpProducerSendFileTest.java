@@ -33,6 +33,9 @@ public class JettyHttpProducerSendFileTest extends CamelTestSupport {
 
     @Test
     public void testSendImage() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.message(0).body().isInstanceOf(InputStream.class);

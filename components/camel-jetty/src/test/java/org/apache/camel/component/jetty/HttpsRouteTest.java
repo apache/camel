@@ -107,7 +107,7 @@ public class HttpsRouteTest extends CamelTestSupport {
     }
     
     @Test
-    public void testEndpointWithoutHttps() {
+    public void testEndpointWithoutHttps() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);    
         try {
             template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");

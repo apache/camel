@@ -37,6 +37,9 @@ public class JettyHttpProducerAsynchronousTest extends CamelTestSupport {
 
     @Test
     public void testAsynchronous() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         thread1 = "";
         thread2 = "";
 

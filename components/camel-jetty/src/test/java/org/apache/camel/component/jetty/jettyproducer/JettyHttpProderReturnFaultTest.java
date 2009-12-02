@@ -29,7 +29,10 @@ public class JettyHttpProderReturnFaultTest extends CamelTestSupport {
 
     @Test
     public void testHttpFault() throws Exception {
-        String out = template.requestBody("jetty://http://localhost:9080/test", "Hello World", String.class);
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
+        String out = template.requestBody("jetty://http://localhost:9082/test", "Hello World", String.class);
         assertEquals("This is a fault", out);
     }
 
@@ -38,7 +41,7 @@ public class JettyHttpProderReturnFaultTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:9080/test")
+                from("jetty://http://localhost:9082/test")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setFault(true);

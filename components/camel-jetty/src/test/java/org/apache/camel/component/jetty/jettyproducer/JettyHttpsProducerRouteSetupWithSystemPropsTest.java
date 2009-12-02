@@ -28,6 +28,9 @@ public class JettyHttpsProducerRouteSetupWithSystemPropsTest extends JettyProduc
     @Override
     @Before
     public void setUp() throws Exception {
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
         // ensure jsse clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
