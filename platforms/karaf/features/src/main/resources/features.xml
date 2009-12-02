@@ -204,7 +204,7 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
-    <bundle>mvn:org.codehaus.groovy/groovy-all/1.6.1</bundle>
+    <bundle>mvn:org.codehaus.groovy/groovy-all/1.6.7</bundle>
     <bundle>mvn:org.apache.camel/camel-groovy/${pom.version}</bundle>
   </feature>
   <feature name='camel-hl7' version='${pom.version}'>
