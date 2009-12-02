@@ -37,10 +37,10 @@
   		org.apache.camel.*
     </camel.osgi.export.pkg>
   	<camel.osgi.import>
-  		!javax.xml.bind.annotation.adapters,
-  	    !org.apache.camel.*,
-  		org.apache.xalan.xsltc.trax;resolution:=optional,
+        !org.apache.camel.*,
+  	org.apache.xalan.xsltc.trax;resolution:=optional,
         javax.activation;resolution:=optional,
+        javax.xml.bind.annotation.adapters:=optional,
         javax.xml.bind;resolution:=optional,
         javax.xml.bind.annotation;resolution:=optional,
         javax.xml.stream;resolution:=optional,
