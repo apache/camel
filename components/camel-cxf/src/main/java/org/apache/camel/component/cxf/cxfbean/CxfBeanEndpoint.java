@@ -74,7 +74,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         }
         
         if (bus == null) {
-            bus = BusFactory.getDefaultBus();
+            bus = BusFactory.newInstance().createBus();
         }
         
         if (isSetDefaultBus) {
