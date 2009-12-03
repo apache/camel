@@ -21,7 +21,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.ExchangeHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,7 +56,7 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
 
         boolean done = false;
         while (!done) {
-            Exchange exchange = consumer.receive(2000);
+            Exchange exchange = consumer.receive(5000);
             if (exchange == null) {
                 done = true;
                 break;
@@ -67,8 +66,13 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
             template.sendBody("mock:result", body);
 
             // must done to move the files
-            ExchangeHelper.done(exchange);
+            if (exchange.getUnitOfWork() == null) {
+                UnitOfWork uow = new DefaultUnitOfWork(exchange);
+                exchange.setUnitOfWork(uow);
+            }
+            exchange.getUnitOfWork().done(exchange);
         }
+
         consumer.stop();
 
         assertMockEndpointsSatisfied();

@@ -36,7 +36,6 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -61,20 +60,6 @@ public final class ExchangeHelper {
      */
     public static <T> T getBinding(Exchange exchange, Class<T> type) {
         return exchange != null ? exchange.getProperty(Exchange.BINDING, type) : null;
-    }
-
-    /**
-     * Done the given {@link Exchange} which allows {@link org.apache.camel.spi.UnitOfWork}
-     * to done.
-     *
-     * @param exchange the given exchange
-     */
-    public static void done(Exchange exchange) {
-        if (exchange.getUnitOfWork() == null) {
-            UnitOfWork uow = new DefaultUnitOfWork(exchange);
-            exchange.setUnitOfWork(uow);
-        }
-        exchange.getUnitOfWork().done(exchange);
     }
 
     /**
