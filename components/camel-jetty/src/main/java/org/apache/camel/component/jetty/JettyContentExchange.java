@@ -116,8 +116,9 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     protected int waitForDoneOrFailure() throws InterruptedException {
-
-        long timeout = client.getTimeout();
+        // just wait a little longer than Jetty itself to be safe
+        // as this timeout is a failsafe in case for some reason Jetty does not callback
+        long timeout = client.getTimeout() + 5000;
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for done or failure with timeout: " + timeout);
@@ -166,9 +167,11 @@ public class JettyContentExchange extends ContentExchange {
             } else if (exchangeState == HttpExchange.STATUS_EXPIRED) {
                 // we did timeout
                 exchange.setException(new ExchangeTimedOutException(exchange, client.getTimeout()));
-            } else if (exchangeState == HttpExchange.STATUS_EXCEPTED) {
+            } else {
                 // some kind of other error
-                exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
+                if (exchange.getException() != null) {
+                    exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
+                }
             }
         } finally {
             // now invoke callback
@@ -177,11 +180,13 @@ public class JettyContentExchange extends ContentExchange {
     }
 
     protected void doTaskCompleted(Throwable ex) {
-        // make sure to lower the latch
-        done.countDown();
-
-        // some kind of other error
-        exchange.setException(new CamelExchangeException("JettyClient failed cause by: " + ex.getMessage(), exchange, ex));
+        try {
+            // some kind of other error
+            exchange.setException(new CamelExchangeException("JettyClient failed cause by: " + ex.getMessage(), exchange, ex));
+        } finally {
+            // make sure to lower the latch
+            done.countDown();
+        }
 
         if (callback != null) {
             callback.onTaskCompleted(exchange);

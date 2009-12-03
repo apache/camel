@@ -104,9 +104,13 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         } else if (exchangeState == HttpExchange.STATUS_EXPIRED) {
             // we did timeout
             throw new ExchangeTimedOutException(exchange, client.getTimeout());
-        } else if (exchangeState == HttpExchange.STATUS_EXCEPTED) {
+        } else {
             // some kind of other error
-            throw new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange);
+            if (exchange.getException() != null) {
+                throw exchange.getException();
+            } else {
+                exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
+            }
         }
     }
 

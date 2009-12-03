@@ -43,7 +43,8 @@ public class JettyHttpProducerConnectionFailureTest extends CamelTestSupport {
         // use another port with no connection
         try {
             template.requestBody("jetty://http://localhost:9999/myservice", null, Object.class);
-        } catch (CamelExecutionException e) {
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
             assertIsInstanceOf(ConnectException.class, cause.getCause());
         }
