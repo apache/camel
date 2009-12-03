@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -70,6 +71,31 @@ public class AdviceWithTest extends ContextTestSupport {
         } catch (IllegalArgumentException e) {
             // expected
         }
+    }
+
+    public void testAdvisedThrowException() throws Exception {
+        context.getRouteDefinitions().get(0).adviceWith(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("mock:foo")
+                    .to("mock:advised")
+                    .throwException(new IllegalArgumentException("Damn"));
+            }
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(0);
+        getMockEndpoint("mock:advised").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Damn", e.getCause().getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override

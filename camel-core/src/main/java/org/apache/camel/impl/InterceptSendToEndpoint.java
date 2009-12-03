@@ -115,25 +115,47 @@ public class InterceptSendToEndpoint implements Endpoint {
                 // add header with the real endpoint uri
                 exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
 
-                detour.process(exchange);
+                try {
+                    detour.process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+
+                // check for error if so we should break out
+                boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
+                if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {
+                    // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
+                    // by the error handler. It's still an exception, the exchange still failed.
+                    if (LOG.isDebugEnabled()) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Message exchange has failed so skip sending to original intended destination: ").append(getEndpointUri());
+                        sb.append(" for Exchange: ").append(exchange);
+                        if (exchange.isRollbackOnly()) {
+                            sb.append(" Marked as rollback only.");
+                        }
+                        if (exchange.getException() != null) {
+                            sb.append(" Exception: ").append(exchange.getException());
+                        }
+                        if (exchange.hasOut() && exchange.getOut().isFault()) {
+                            sb.append(" Fault: ").append(exchange.getOut());
+                        }
+                        if (exceptionHandled) {
+                            sb.append(" Handled by the error handler.");
+                        }
+                        LOG.debug(sb.toString());
+                    }
+                    return;
+                }
 
                 if (!skip) {
-                    if (!exchange.isFailed()) {
-                        if (exchange.hasOut()) {
-                            // replace OUT with IN as detour changed something
-                            exchange.setIn(exchange.getOut());
-                            exchange.setOut(null);
-                        }
-
-                        // route to original destination
-                        producer.process(exchange);
-                    } else {
-                        // exception is failed so do not route to original destination as we can use this to simulate errors
-                        // caused from the intended destination
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Exchange has failed so skip sending to original intended destination: " + getEndpointUri() + " for exchange: " + exchange);
-                        }
+                    if (exchange.hasOut()) {
+                        // replace OUT with IN as detour changed something
+                        exchange.setIn(exchange.getOut());
+                        exchange.setOut(null);
                     }
+
+                    // route to original destination
+                    producer.process(exchange);
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Stop() means skip sending exchange to original intended destination: " + getEndpointUri() + " for exchange: " + exchange);
@@ -153,6 +175,10 @@ public class InterceptSendToEndpoint implements Endpoint {
                 ServiceHelper.stopService(detour);
             }
         };
+    }
+
+    private static boolean hasExceptionBeenHandledByErrorHandler(Exchange nextExchange) {
+        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
