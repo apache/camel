@@ -16,22 +16,18 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.apache.camel.RuntimeCamelException;
-
 /**
+ * We use a runtime exception to force Spring transaction manager to rollback the transaction.
+ *
  * @version $Revision$
  */
-public class TransactedRuntimeCamelException extends RuntimeCamelException {
+public class TransactionRollbackException extends RuntimeException {
 
-    private final boolean handled;
-
-    public TransactedRuntimeCamelException(Throwable cause, boolean handled) {
-        super(cause);
-        this.handled = handled;
+    public TransactionRollbackException() {
     }
 
-    public boolean isHandled() {
-        return handled;
+    @Override
+    public String getMessage() {
+        return "Rollback";
     }
-
 }

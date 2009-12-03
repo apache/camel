@@ -1059,7 +1059,7 @@ public final class ObjectHelper {
     /**
      * Cleans the string to pure java identifier so we can use it for loading class names.
      * <p/>
-     * Especially from Sping DSL people can have \n \t or other characters that otherwise
+     * Especially from Spring DSL people can have \n \t or other characters that otherwise
      * would result in ClassNotFoundException
      *
      * @param name the class name

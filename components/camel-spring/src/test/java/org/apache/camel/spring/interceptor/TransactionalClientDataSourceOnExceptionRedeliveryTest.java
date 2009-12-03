@@ -18,9 +18,9 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.spring.spi.TransactedRuntimeCamelException;
 
 /**
  * @version $Revision$
@@ -40,7 +40,7 @@ public class TransactionalClientDataSourceOnExceptionRedeliveryTest extends Tran
         assertNotNull(out);
 
         Exception e = out.getException();
-        assertIsInstanceOf(TransactedRuntimeCamelException.class, e);
+        assertIsInstanceOf(RuntimeCamelException.class, e);
         assertTrue(e.getCause()instanceof IllegalArgumentException);
         assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
 

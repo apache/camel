@@ -22,13 +22,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
-import org.apache.camel.spring.spi.TransactedRuntimeCamelException;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
- * For testing with mixed transacted propagations (required, requires new)
+ * For testing with mixed transacted propagation (required, requires new)
  */
 public class MixedPropagationTransactedTest extends SpringTestSupport {
 
@@ -98,8 +97,8 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         try {
             template.sendBody("direct:required", "Donkey in Action");
         } catch (RuntimeCamelException e) {
-            // expeced as we fail
-            assertIsInstanceOf(TransactedRuntimeCamelException.class, e.getCause());
+            // expected as we fail
+            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }
@@ -113,8 +112,8 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         try {
             template.sendBody("direct:new", "Donkey in Action");
         } catch (RuntimeCamelException e) {
-            // expeced as we fail
-            assertIsInstanceOf(TransactedRuntimeCamelException.class, e.getCause());
+            // expected as we fail
+            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }
@@ -129,7 +128,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
             template.sendBody("direct:new", "Tiger in Action");
         } catch (RuntimeCamelException e) {
             // expeced as we fail
-            assertIsInstanceOf(TransactedRuntimeCamelException.class, e.getCause());
+            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }

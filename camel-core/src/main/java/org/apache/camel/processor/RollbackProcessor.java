@@ -28,6 +28,7 @@ import org.apache.camel.RollbackExchangeException;
 public class RollbackProcessor implements Processor, Traceable {
 
     private boolean markRollbackOnly;
+    private boolean markRollbackOnlyLast;
     private String message;
 
     public RollbackProcessor() {
@@ -38,10 +39,16 @@ public class RollbackProcessor implements Processor, Traceable {
     }
 
     public void process(Exchange exchange) throws Exception {
-        // mark the exchange for rollback
-        exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
+        if (isMarkRollbackOnlyLast()) {
+            // only mark the last route (current) as rollback
+            // this is needed when you have multiple transactions in play
+            exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, Boolean.TRUE);
+        } else {
+            // default to mark the entire route as rollback
+            exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
+        }
 
-        if (markRollbackOnly) {
+        if (markRollbackOnly || markRollbackOnlyLast) {
             // do not do anything more as we should only mark the rollback
             return;
         }
@@ -74,4 +81,11 @@ public class RollbackProcessor implements Processor, Traceable {
         this.markRollbackOnly = markRollbackOnly;
     }
 
+    public boolean isMarkRollbackOnlyLast() {
+        return markRollbackOnlyLast;
+    }
+
+    public void setMarkRollbackOnlyLast(boolean markRollbackOnlyLast) {
+        this.markRollbackOnlyLast = markRollbackOnlyLast;
+    }
 }

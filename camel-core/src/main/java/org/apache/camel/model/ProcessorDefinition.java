@@ -1458,11 +1458,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      * @see #rollback()
      * @see #rollback(String)
+     * @see #markRollbackOnlyLast()
      */
     @SuppressWarnings("unchecked")
     public Type markRollbackOnly() {
         RollbackDefinition answer = new RollbackDefinition();
         answer.setMarkRollbackOnly(true);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Marks the exchange for rollback only, but only for the last (current) transaction.
+     * <p/>
+     * A last rollback is used when you have nested transactions and only want the last local transaction to rollback,
+     * where as the outer transaction can still be completed
+     * <p/>
+     * Does <b>not</b> set any exception as opposed to {@link #rollback()} methods.
+     *
+     * @return the builder
+     * @see #rollback()
+     * @see #rollback(String)
+     * @see #markRollbackOnly()
+     */
+    @SuppressWarnings("unchecked")
+    public Type markRollbackOnlyLast() {
+        RollbackDefinition answer = new RollbackDefinition();
+        answer.setMarkRollbackOnlyLast(true);
         addOutput(answer);
         return (Type) this;
     }

@@ -95,6 +95,7 @@ public interface Exchange {
     String REDELIVERED        = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
     String ROLLBACK_ONLY      = "CamelRollbackOnly";
+    String ROLLBACK_ONLY_LAST = "CamelRollbackOnlyLast";
 
     String SPLIT_INDEX = "CamelSplitIndex";
     String SPLIT_SIZE  = "CamelSplitSize";

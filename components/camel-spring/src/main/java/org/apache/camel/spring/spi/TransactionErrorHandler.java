@@ -19,17 +19,15 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -40,7 +38,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
-    private static final transient Log LOG = LogFactory.getLog(TransactionErrorHandler.class);
     private final TransactionTemplate transactionTemplate;
 
     /**
@@ -78,38 +75,67 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     }
 
     public void process(final Exchange exchange) throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("Transaction error handler is processing: " + exchange);
+        if (exchange.getUnitOfWork().isTransactedBy(transactionTemplate)) {
+            // already transacted by this transaction template
+            // so lets just let the regular default error handler process it
+            processByRegularErrorHandler(exchange);
+        } else {
+            // not yet wrapped in transaction so lets do that
+            processInTransaction(exchange);
         }
+    }
 
-        // just to let the stacktrace reveal that this is a transaction error handler
+    protected void processByRegularErrorHandler(Exchange exchange) {
+        try {
+            super.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+    }
+
+    protected void processInTransaction(final Exchange exchange) throws Exception {
+        String id = ObjectHelper.getIdentityHashCode(transactionTemplate);
+        try {
+            // mark the beginning of this transaction boundary
+            exchange.getUnitOfWork().beginTransactedBy(transactionTemplate);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Transaction begin (" + id + ") for ExchangeId: " + exchange.getExchangeId());
+            }
+
+            doInTransactionTemplate(exchange);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Transaction commit (" + id + ") for ExchangeId: " + exchange.getExchangeId());
+            }
+        } catch (TransactionRollbackException e) {
+            // ignore as its just a dummy exception to force spring TX to rollback
+            if (log.isDebugEnabled()) {
+                log.debug("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId());
+            }
+        } catch (Exception e) {
+            log.warn("Transaction rollback (" + id + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
+            exchange.setException(e);
+        } finally {
+            // mark the end of this transaction boundary
+            exchange.getUnitOfWork().endTransactedBy(transactionTemplate);
+        }
+    }
+
+    protected void doInTransactionTemplate(final Exchange exchange) {
+
+        // spring transaction template is working best with rollback if you throw it a runtime exception
+        // otherwise it may not rollback messages send to JMS queues etc.
+
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
-                TransactedRuntimeCamelException rce = null;
+                RuntimeCamelException rce = null;
 
-                // find out if there is an actual transaction alive, and thus we are in transacted mode
-                boolean activeTx = TransactionSynchronizationManager.isActualTransactionActive();
-                if (!activeTx) {
-                    activeTx = status.isNewTransaction() && !status.isCompleted();
-                    if (!activeTx) {
-                        if (DefaultTransactionStatus.class.isAssignableFrom(status.getClass())) {
-                            DefaultTransactionStatus defStatus = DefaultTransactionStatus.class.cast(status);
-                            activeTx = defStatus.hasTransaction() && !status.isCompleted();
-                        }
-                    }
-                }
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Is actual transaction active: " + activeTx);
-                }
+                exchange.setProperty(Exchange.TRANSACTED, Boolean.TRUE);
 
-                // okay mark the exchange as transacted, then the DeadLetterChannel or others know
-                // its a transacted exchange
-                if (activeTx) {
-                    exchange.setProperty(Exchange.TRANSACTED, Boolean.TRUE);
-                }
-
+                // and now let process the exchange
                 try {
                     TransactionErrorHandler.super.process(exchange);
                 } catch (Exception e) {
@@ -118,60 +144,30 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
                 // after handling and still an exception or marked as rollback only then rollback
                 if (exchange.getException() != null || exchange.isRollbackOnly()) {
+
+                    // if it was a local rollback only then remove its marker so outer transaction
+                    // wont rollback as well (Note: isRollbackOnly() also returns true for ROLLBACK_ONLY_LAST)
+                    exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {
-                        rce = wrapTransactedRuntimeException(exchange.getException());
+                        rce = ObjectHelper.wrapRuntimeCamelException(exchange.getException());
                     }
 
-                    if (activeTx && !status.isRollbackOnly()) {
+                    if (!status.isRollbackOnly()) {
                         status.setRollbackOnly();
-                        if (LOG.isDebugEnabled()) {
-                            if (rce != null) {
-                                LOG.debug("Setting transaction to rollbackOnly due to exception being thrown: " + rce.getMessage());
-                            } else {
-                                LOG.debug("Setting transaction to rollbackOnly as Exchange was marked as rollback only");
-                            }
-                        }
                     }
 
                     // rethrow if an exception occurred
                     if (rce != null) {
                         throw rce;
+                    } else {
+                        // create dummy exception to force spring transaction manager to rollback
+                        throw new TransactionRollbackException();
                     }
                 }
             }
         });
-
-        log.trace("Transaction error handler done");
-    }
-
-    @Override
-    protected boolean shouldHandleException(Exchange exchange) {
-        boolean answer = false;
-        if (exchange.getException() != null) {
-            answer = true;
-            // handle onException
-            // but test beforehand if we have already handled it, if so we should not do it again
-            if (exchange.getException() instanceof TransactedRuntimeCamelException) {
-                TransactedRuntimeCamelException trce = exchange.getException(TransactedRuntimeCamelException.class);
-                answer = !trce.isHandled();
-            }
-        }
-        return answer;
-    }
-
-    protected TransactedRuntimeCamelException wrapTransactedRuntimeException(Exception exception) {
-        if (exception instanceof TransactedRuntimeCamelException) {
-            return (TransactedRuntimeCamelException) exception;
-        } else {
-            // Mark as handled so we don't want to handle the same exception twice or more in other
-            // wrapped transaction error handlers in this route.
-            // We need to mark this information in the exception as we need to propagate
-            // the exception back by rehtrowing it. We cannot mark it on the exchange as Camel
-            // uses copies of exchanges in its pipeline and the data isn't copied back in case
-            // when an exception occurred
-            return new TransactedRuntimeCamelException(exception, true);
-        }
     }
 
     protected String propagationBehaviorToString(int propagationBehavior) {

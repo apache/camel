@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.spring.spi.TransactedRuntimeCamelException;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -41,7 +40,7 @@ public class TransactionalClientDataSourceWithOnExceptionRollbackTest extends Tr
             template.sendBody("direct:fail", "Hello World");
         } catch (RuntimeCamelException e) {
             // expected as we fail
-            assertIsInstanceOf(TransactedRuntimeCamelException.class, e.getCause());
+            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             RollbackExchangeException rollback = assertIsInstanceOf(RollbackExchangeException.class, e.getCause().getCause());
             assertEquals("Donkey in Action", rollback.getExchange().getIn().getBody());
         }

@@ -80,4 +80,34 @@ public interface UnitOfWork {
      * @return trace information
      */
     TracedRouteNodes getTracedRouteNodes();
+
+    /**
+     * Are we already transacted by the given transaction definition
+     * <p/>
+     * The definition will most likely be a Spring TransactionTemplate when using Spring Transaction
+     *
+     * @param transactionDefinition the transaction definition
+     * @return <tt>true</tt> if already, <tt>false</tt> otherwise
+     */
+    boolean isTransactedBy(Object transactionDefinition);
+
+    /**
+     * Mark this UnitOfWork as being transacted by the given transaction definition.
+     * <p/>
+     * The definition will most likely be a Spring TransactionTemplate when using Spring Transaction
+     * <p/>
+     * When the transaction is completed then invoke the {@link #endTransactedBy(Object)} method.
+     *
+     * @param transactionDefinition the transaction definition
+     */
+    void beginTransactedBy(Object transactionDefinition);
+
+    /**
+     * Mark this UnitOfWork as not transacted anymore by the given transaction definition.
+     * <p/>
+     * The definition will most likely be a Spring TransactionTemplate when using Spring Transaction
+     *
+     * @param transactionDefinition the transaction definition
+     */
+    void endTransactedBy(Object transactionDefinition);
 }

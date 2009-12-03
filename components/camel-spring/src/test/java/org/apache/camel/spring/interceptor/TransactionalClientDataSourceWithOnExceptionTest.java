@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.spring.spi.TransactedRuntimeCamelException;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -39,8 +38,8 @@ public class TransactionalClientDataSourceWithOnExceptionTest extends Transactio
         try {
             template.sendBody("direct:fail", "Hello World");
         } catch (RuntimeCamelException e) {
-            // expeced as we fail
-            assertIsInstanceOf(TransactedRuntimeCamelException.class, e.getCause());
+            // expected as we fail
+            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }

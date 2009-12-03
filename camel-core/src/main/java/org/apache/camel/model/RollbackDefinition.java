@@ -37,6 +37,8 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
     @XmlAttribute
     private Boolean markRollbackOnly;
     @XmlAttribute
+    private Boolean markRollbackOnlyLast;
+    @XmlAttribute
     private String message;
 
     public RollbackDefinition() {
@@ -66,8 +68,15 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
+        // validate that only either mark rollbacks is chosen and not both
+        if (markRollbackOnly != null && markRollbackOnly.booleanValue()
+            && markRollbackOnlyLast != null && markRollbackOnlyLast.booleanValue()) {
+            throw new IllegalArgumentException("Only either one of markRollbackOnly and markRollbackOnlyLast is possible to select as true");
+        }
+
         RollbackProcessor answer = new RollbackProcessor(message);
         answer.setMarkRollbackOnly(markRollbackOnly != null ? markRollbackOnly : false);
+        answer.setMarkRollbackOnlyLast(markRollbackOnlyLast != null ? markRollbackOnlyLast : false);
         return answer;
     }
 
@@ -83,5 +92,13 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
 
     public void setMarkRollbackOnly(Boolean markRollbackOnly) {
         this.markRollbackOnly = markRollbackOnly;
+    }
+
+    public Boolean isMarkRollbackOnlyLast() {
+        return markRollbackOnlyLast;
+    }
+
+    public void setMarkRollbackOnlyLast(Boolean markRollbackOnlyLast) {
+        this.markRollbackOnlyLast = markRollbackOnlyLast;
     }
 }

@@ -268,7 +268,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean isRollbackOnly() {
-        return Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY));
+        return Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY)) || Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY_LAST));
     }
 
     public UnitOfWork getUnitOfWork() {

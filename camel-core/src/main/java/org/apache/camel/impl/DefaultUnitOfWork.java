@@ -17,7 +17,9 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -42,12 +44,14 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private final TracedRouteNodes tracedRouteNodes;
+    private Set<Object> transactedBy;
 
     public DefaultUnitOfWork(Exchange exchange) {
         tracedRouteNodes = new DefaultTracedRouteNodes();
 
         // TODO: optimize to only copy original message if enabled to do so in the route
         // special for JmsMessage as it can cause it to loose headers later.
+        // This will be resolved when we get the message facade with copy on write implemented
         if (exchange.getIn().getClass().getSimpleName().equals("JmsMessage")) {
             this.originalInMessage = new DefaultMessage();
             this.originalInMessage.setBody(exchange.getIn().getBody());
@@ -76,6 +80,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
         if (tracedRouteNodes != null) {
             tracedRouteNodes.clear();
+        }
+        if (transactedBy != null) {
+            transactedBy.clear();
         }
         originalInMessage = null;
     }
@@ -158,4 +165,22 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return tracedRouteNodes;
     }
 
+    public boolean isTransactedBy(Object transactionDefinition) {
+        return getTransactedBy().contains(transactionDefinition);
+    }
+
+    public void beginTransactedBy(Object transactionDefinition) {
+        getTransactedBy().add(transactionDefinition);
+    }
+
+    public void endTransactedBy(Object transactionDefinition) {
+        getTransactedBy().remove(transactionDefinition);
+    }
+
+    private Set<Object> getTransactedBy() {
+        if (transactedBy == null) {
+            transactedBy = new LinkedHashSet<Object>();
+        }
+        return transactedBy;
+    }
 }
