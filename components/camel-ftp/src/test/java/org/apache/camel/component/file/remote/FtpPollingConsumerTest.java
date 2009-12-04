@@ -44,7 +44,7 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
     @Test
     public void testPollingConsumer() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceivedInAnyOrder("Message 1", "Message 2", "Message 3", "Message 4", "Message 5");
+        result.expectedBodiesReceived(5);
         result.expectedFileExists(FTP_ROOT_DIR + "polling/done/1.txt");
         result.expectedFileExists(FTP_ROOT_DIR + "polling/done/2.txt");
         result.expectedFileExists(FTP_ROOT_DIR + "polling/done/3.txt");
