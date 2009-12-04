@@ -37,7 +37,6 @@
         !org.apache.camel.component.event,
         !org.apache.camel.component.validator,
         !org.apache.camel.component.xslt,
-        !javax.xml.bind.annotation.adapters,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         *
       </camel.osgi.import>

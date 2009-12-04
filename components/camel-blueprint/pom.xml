@@ -34,7 +34,6 @@
     <properties>
         <camel.osgi.import>
             !org.apache.camel.blueprint.*,
-            !javax.xml.bind.annotation.adapters,
             org.apache.camel.*;${camel.osgi.import.strict.version},
             *
         </camel.osgi.import>
