@@ -41,13 +41,13 @@ import org.apache.camel.spi.BrowsableEndpoint;
  * @version $Revision$
  */
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
-    private BlockingQueue<Exchange> queue;
+    private volatile BlockingQueue<Exchange> queue;
     private int size = 1000;
     private int concurrentConsumers = 1;
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     private long timeout = 30000;
-    private Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
-    private Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
+    private volatile Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
+    private volatile Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
 
     public SedaEndpoint() {
     }

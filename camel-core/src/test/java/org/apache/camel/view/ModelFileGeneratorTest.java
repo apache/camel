@@ -31,8 +31,17 @@ public class ModelFileGeneratorTest extends ContextTestSupport {
     public void testGenerateModel() throws Exception {
         deleteDirectory(outputDirectory);
 
-        ModelFileGenerator generator = new ModelFileGenerator(JAXBContext.newInstance("org.apache.camel.model"));
-        generator.marshalRoutesUsingJaxb(outputDirectory + "/route.xml", context.getRouteDefinitions());
+        try {
+            ModelFileGenerator generator = new ModelFileGenerator(JAXBContext.newInstance("org.apache.camel.model"));
+            generator.marshalRoutesUsingJaxb(outputDirectory + "/route.xml", context.getRouteDefinitions());
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().startsWith("Not supported")) {
+                // ignore as some OS does not support indent-number etc.
+                return;
+            } else {
+                throw e;
+            }
+        }
 
         File out = new File(outputDirectory + "/route.xml").getAbsoluteFile();
         assertTrue("File should have been generated", out.exists());
