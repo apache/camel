@@ -34,11 +34,10 @@
 
   <properties>
     <camel.osgi.export.pkg>
-      org.apache.camel.component.jpa.*,
+      org.apache.camel.component.jpa.*;${camel.osgi.version},
       org.apache.camel.processor.idempotent.jpa.*
     </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
-      !javax.xml.bind.annotation.adapters,
       !org.apache.camel.component.jpa.*,
       !org.apache.camel.processor.idempotent.jpa.*,
       org.apache.camel.*;${camel.osgi.import.camel.version},

@@ -37,7 +37,6 @@
         org.apache.camel.osgi.*
     </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
-        !javax.xml.bind.annotation.adapters,
         !org.apache.camel.osgi.*,
         org.osgi.framework;version="[1.3,2)",
         org.apache.camel.*;${camel.osgi.import.strict.version},
