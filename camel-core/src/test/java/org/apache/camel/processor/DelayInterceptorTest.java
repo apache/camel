@@ -36,7 +36,8 @@ public class DelayInterceptorTest extends ContextTestSupport {
         }
         long delta = System.currentTimeMillis() - start;
         assertTrue("Should not be that fast to run: " + delta, delta > 4000);
-        assertTrue("Should not take that long to run: " + delta, delta < 9000);
+        // some OS boxes are slow
+        assertTrue("Should not take that long to run: " + delta, delta < 11000);
     }
 
     @Override

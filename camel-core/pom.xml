@@ -31,12 +31,12 @@
   <description>The Core Camel Java DSL based router</description>
 
   <properties>
-	<camel.osgi.export.pkg>
-		org.apache.camel.*
+    <camel.osgi.export.pkg>
+        org.apache.camel.*
     </camel.osgi.export.pkg>
-	<camel.osgi.import>
-	    !org.apache.camel.*,
-	org.apache.xalan.xsltc.trax;resolution:=optional,
+    <camel.osgi.import>
+        !org.apache.camel.*,
+        org.apache.xalan.xsltc.trax;resolution:=optional,
         javax.activation;resolution:=optional,
         javax.xml.bind;resolution:=optional,
         javax.xml.bind.annotation;resolution:=optional,
@@ -45,7 +45,7 @@
         org.springframework.jmx.export.annotation;resolution:=optional,
         org.springframework.jmx.export.assembler;resolution:=optional,
         org.springframework.jmx.export.metadata;resolution:=optional,
-		*
+        *
     </camel.osgi.import>
     <camel.osgi.dynamic>
         org.apache.camel.spring.util;${camel.osgi.import.strict.version},org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version}
