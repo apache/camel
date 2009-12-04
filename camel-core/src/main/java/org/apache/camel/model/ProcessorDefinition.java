@@ -1063,10 +1063,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type recipientList(Expression recipients) {
+    public RecipientListDefinition recipientList(Expression recipients) {
         RecipientListDefinition answer = new RecipientListDefinition(recipients);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -1078,11 +1078,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type recipientList(Expression recipients, String delimiter) {
+    public RecipientListDefinition recipientList(Expression recipients, String delimiter) {
         RecipientListDefinition answer = new RecipientListDefinition(recipients);
         answer.setDelimiter(delimiter);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -1091,12 +1091,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the expression clause to configure the expression to decide the destinations
      */
-    public ExpressionClause<ProcessorDefinition<Type>> recipientList() {
+    public ExpressionClause<RecipientListDefinition> recipientList() {
         RecipientListDefinition answer = new RecipientListDefinition();
         addOutput(answer);
-        ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<ProcessorDefinition<Type>>(this);
-        answer.setExpression(clause);
-        return clause;
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**

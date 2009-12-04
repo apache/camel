@@ -44,4 +44,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface RecipientList {
     String context() default "";
+    String delimiter() default ",";
+    boolean parallelProcessoing() default false;
+    boolean stopOnException() default false;
+    String strategyRef() default "";
+    String executorServiceRef() default "";
 }

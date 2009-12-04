@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,6 +31,7 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;split/&gt; element
@@ -109,8 +109,7 @@ public class SplitDefinition extends ExpressionNode {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
         }
         if (executorService == null) {
-            // fall back and use default
-            executorService = Executors.newScheduledThreadPool(5);
+            executorService = ExecutorServiceHelper.newScheduledThreadPool(10, "Split", true);
         }
         return executorService;
     }         
@@ -196,6 +195,9 @@ public class SplitDefinition extends ExpressionNode {
         return this;
     }
     
+    // Properties
+    //-------------------------------------------------------------------------
+
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
     }

@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -27,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -43,10 +45,18 @@ public class RecipientList extends ServiceSupport implements Processor {
     private ProducerCache producerCache;
     private Expression expression;
     private final String delimiter;
+    private boolean parallelProcessing;
+    private boolean stopOnException;
+    private ExecutorService executorService;
+    private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
 
     public RecipientList() {
         // use comma by default as delimiter
         this.delimiter = ",";
+    }
+
+    public RecipientList(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     public RecipientList(Expression expression) {
@@ -76,6 +86,7 @@ public class RecipientList extends ServiceSupport implements Processor {
      */
     public void sendToRecipientList(Exchange exchange, Object receipientList) throws Exception {
         Iterator<Object> iter = ObjectHelper.createIterator(receipientList, delimiter);
+
         List<Processor> processors = new ArrayList<Processor>();
         while (iter.hasNext()) {
             Object recipient = iter.next();
@@ -83,7 +94,11 @@ public class RecipientList extends ServiceSupport implements Processor {
             Producer producer = getProducerCache(exchange).getProducer(endpoint);
             processors.add(producer);
         }
-        MulticastProcessor mp = new MulticastProcessor(processors, new UseLatestAggregationStrategy());
+
+        MulticastProcessor mp = new MulticastProcessor(processors, getAggregationStrategy(), isParallelProcessing(),
+                                                       getExecutorService(), false, isStopOnException());
+
+        // now let the multicast process the exchange
         mp.process(exchange);
     }
 
@@ -116,4 +131,35 @@ public class RecipientList extends ServiceSupport implements Processor {
         }
     }
 
+    public boolean isParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
+    public boolean isStopOnException() {
+        return stopOnException;
+    }
+
+    public void setStopOnException(boolean stopOnException) {
+        this.stopOnException = stopOnException;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
 }

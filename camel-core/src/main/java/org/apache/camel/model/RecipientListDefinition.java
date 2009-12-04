@@ -16,16 +16,23 @@
  */
 package org.apache.camel.model;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;recipientList/&gt; element
@@ -36,8 +43,20 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecipientListDefinition extends ExpressionNode {
 
+    @XmlTransient
+    private AggregationStrategy aggregationStrategy;
+    @XmlTransient
+    private ExecutorService executorService;
     @XmlAttribute(required = false)
     private String delimiter;
+    @XmlAttribute(required = false)
+    private Boolean parallelProcessing;
+    @XmlAttribute(required = false)
+    private String strategyRef;
+    @XmlAttribute(required = false)
+    private String executorServiceRef;
+    @XmlAttribute(required = false)
+    private Boolean stopOnException;
 
     public RecipientListDefinition() {
     }
@@ -64,13 +83,107 @@ public class RecipientListDefinition extends ExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expression = getExpression().createExpression(routeContext);
 
+        RecipientList answer;
         if (delimiter != null) {
-            return new RecipientList(expression, delimiter);
+            answer = new RecipientList(expression, delimiter);
         } else {
-            return new RecipientList(expression);
+            answer = new RecipientList(expression);
         }
+
+        if (parallelProcessing != null) {
+            answer.setParallelProcessing(isParallelProcessing());
+        }
+        if (stopOnException != null) {
+            answer.setStopOnException(isStopOnException());
+        }
+        
+        answer.setAggregationStrategy(createAggregationStrategy(routeContext));
+        answer.setExecutorService(createExecutorService(routeContext));
+
+        return answer;
     }
     
+    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+        if (aggregationStrategy == null && strategyRef != null) {
+            aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+        }
+        if (aggregationStrategy == null) {
+            // fallback to use latest
+            aggregationStrategy = new UseLatestAggregationStrategy();
+        }
+        return aggregationStrategy;
+    }
+
+    private ExecutorService createExecutorService(RouteContext routeContext) {
+        if (executorService == null && executorServiceRef != null) {
+            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+        }
+        if (executorService == null) {
+            // fall back and use default
+            executorService = ExecutorServiceHelper.newScheduledThreadPool(10, "RecipientList", true);
+        }
+        return executorService;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ProcessorDefinition> getOutputs() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition processorType) {
+        // add it to the parent as a recipient list does not support outputs
+        getParent().addOutput(processorType);
+    }
+
+    // Fluent API
+    // -------------------------------------------------------------------------
+
+    /**
+     * Set the aggregationStrategy
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * Doing the splitting work in parallel
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition parallelProcessing() {
+        setParallelProcessing(true);
+        return this;
+    }
+
+    /**
+     * Will now stop further processing if an exception occurred during processing of an
+     * {@link org.apache.camel.Exchange} and the caused exception will be thrown.
+     * <p/>
+     * The default behavior is to <b>not</b> stop but continue processing till the end
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition stopOnException() {
+        setStopOnException(true);
+        return this;
+    }
+
+    /**
+     * Setting the executor service for executing the sending to the recipients.
+     *
+     * @param executorService the executor service
+     * @return the builder
+     */
+    public RecipientListDefinition executorService(ExecutorService executorService) {
+        setExecutorService(executorService);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -80,5 +193,53 @@ public class RecipientListDefinition extends ExpressionNode {
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
+    }
+
+    public Boolean isParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(Boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
+    }
+
+    public Boolean isStopOnException() {
+        return stopOnException;
+    }
+
+    public void setStopOnException(Boolean stopOnException) {
+        this.stopOnException = stopOnException;
+    }
+
+    public AggregationStrategy getAggregationStrategy() {
+        return aggregationStrategy;
+    }
+
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 }

@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -32,6 +33,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.processor.RecipientList;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,7 +78,22 @@ public class MethodInfo {
 
         if (method.getAnnotation(org.apache.camel.RecipientList.class) != null
                 && matchContext(method.getAnnotation(org.apache.camel.RecipientList.class).context())) {
-            recipientList = new RecipientList();
+
+            org.apache.camel.RecipientList annotation = method.getAnnotation(org.apache.camel.RecipientList.class);
+
+            recipientList = new RecipientList(annotation.delimiter());
+            recipientList.setStopOnException(annotation.stopOnException());
+            recipientList.setParallelProcessing(annotation.parallelProcessoing());
+
+            if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
+                ExecutorService executor = CamelContextHelper.mandatoryLookup(camelContext, annotation.executorServiceRef(), ExecutorService.class);
+                recipientList.setExecutorService(executor);
+            }
+
+            if (ObjectHelper.isNotEmpty(annotation.strategyRef())) {
+                AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, annotation.strategyRef(), AggregationStrategy.class);
+                recipientList.setAggregationStrategy(strategy);
+            }
         }
     }
 
