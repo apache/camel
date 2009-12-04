@@ -44,12 +44,10 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
     @Test
     public void testPollingConsumer() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived(5);
+        result.expectedMessageCount(3);
         result.expectedFileExists(FTP_ROOT_DIR + "polling/done/1.txt");
         result.expectedFileExists(FTP_ROOT_DIR + "polling/done/2.txt");
         result.expectedFileExists(FTP_ROOT_DIR + "polling/done/3.txt");
-        result.expectedFileExists(FTP_ROOT_DIR + "polling/done/4.txt");
-        result.expectedFileExists(FTP_ROOT_DIR + "polling/done/5.txt");
 
         PollingConsumer consumer = context.getEndpoint(getFtpUrl()).createPollingConsumer();
         consumer.start();
@@ -82,8 +80,6 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Message 1", "1.txt");
         sendFile(getFtpUrl(), "Message 2", "2.txt");
         sendFile(getFtpUrl(), "Message 3", "3.txt");
-        sendFile(getFtpUrl(), "Message 4", "4.txt");
-        sendFile(getFtpUrl(), "Message 5", "5.txt");
     }
 
 }
