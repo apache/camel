@@ -30,6 +30,7 @@ import javax.ws.rs.PathParam;
  * @version $Revision$
  */
 public class LanguagesResource extends CamelChildResourceSupport {
+
     public LanguagesResource(CamelContextResource contextResource) {
         super(contextResource);
     }

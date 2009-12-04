@@ -16,7 +16,6 @@
  */
 package org.apache.camel.web.resources;
 
-
 /**
  * @version $Revision$
  */
@@ -27,7 +26,6 @@ public class LanguageResource extends CamelChildResourceSupport {
         super(contextResource);
         this.id = id;
     }
-
 
     public String getId() {
         return id;

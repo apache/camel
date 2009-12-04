@@ -56,7 +56,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jruby.Main;
 
-
 /**
  * A single Camel Route which is used to implement one or more
  * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>

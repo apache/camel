@@ -51,7 +51,7 @@ public final class GroovyRenderer {
         // render the global dsl not started with from, like global
         // intercept, interceptFrom,interceptSendToEndpoint, onCompletion,
         // onException
-        for (ProcessorDefinition<?> processor : outputs) {
+        for (ProcessorDefinition processor : outputs) {
             if (processor.getParent() == null && !(processor instanceof SendDefinition)) {
                 ProcessorDefinitionRenderer.render(buffer, processor);
                 buffer.append(";");
@@ -81,7 +81,7 @@ public final class GroovyRenderer {
         }
 
         // render the outputs of the router
-        for (ProcessorDefinition<?> processor : outputs) {
+        for (ProcessorDefinition processor : outputs) {
             if (processor.getParent() == route || processor instanceof SendDefinition) {
                 ProcessorDefinitionRenderer.render(buffer, processor);
             }

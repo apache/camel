@@ -46,7 +46,6 @@ public class Camel {
         setVersion(version);
     }
 
-
     @Override
     public String toString() {
         return "CamelContext: " + getName();

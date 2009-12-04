@@ -54,8 +54,8 @@ public final class OutputDefinitionRenderer {
         // Utility class, no public or protected default constructor
     }
 
-    public static void render(StringBuilder buffer, ProcessorDefinition<?> processor) {
-        OutputDefinition<?> out = (OutputDefinition<?>)processor;
+    public static void render(StringBuilder buffer, ProcessorDefinition processor) {
+        OutputDefinition out = (OutputDefinition)processor;
         boolean notGlobal = buffer.toString().endsWith(")");
         if (notGlobal) {
             buffer.append(".");
@@ -134,7 +134,7 @@ public final class OutputDefinitionRenderer {
         }
     }
 
-    private static void renderAop(StringBuilder buffer, OutputDefinition<?> out) {
+    private static void renderAop(StringBuilder buffer, OutputDefinition out) {
         buffer.append("()");
         AOPDefinition aop = (AOPDefinition)out;
         if (aop.getBeforeUri() != null) {
@@ -154,7 +154,7 @@ public final class OutputDefinitionRenderer {
         }
     }
 
-    private static void renderBean(StringBuilder buffer, ProcessorDefinition<?> processor) {
+    private static void renderBean(StringBuilder buffer, ProcessorDefinition processor) {
         BeanDefinition beanDef = (BeanDefinition)processor;
         if (beanDef.getRef() != null) {
             buffer.append("Ref(\"").append(beanDef.getRef()).append("\"");
@@ -165,7 +165,7 @@ public final class OutputDefinitionRenderer {
         }
     }
 
-    private static void renderFinally(StringBuilder buffer, OutputDefinition<?> out) {
+    private static void renderFinally(StringBuilder buffer, OutputDefinition out) {
         buffer.append("()");
         FinallyDefinition finallyDef = (FinallyDefinition)out;
         List<ProcessorDefinition> branches = finallyDef.getOutputs();
@@ -175,7 +175,7 @@ public final class OutputDefinitionRenderer {
         buffer.append(".end()");
     }
 
-    private static void renderPolicy(StringBuilder buffer, OutputDefinition<?> out) {
+    private static void renderPolicy(StringBuilder buffer, OutputDefinition out) {
         PolicyDefinition policy = (PolicyDefinition)out;
         buffer.append("(");
         if (policy.getRef() != null) {
@@ -184,7 +184,7 @@ public final class OutputDefinitionRenderer {
         buffer.append(")");
     }
 
-    private static void renderPollEnrich(StringBuilder buffer, OutputDefinition<?> out) {
+    private static void renderPollEnrich(StringBuilder buffer, OutputDefinition out) {
         PollEnrichDefinition pollEnrich = (PollEnrichDefinition)out;
         buffer.append("(\"");
         buffer.append(pollEnrich.getResourceUri()).append("\", ").append(pollEnrich.getTimeout());
@@ -194,7 +194,7 @@ public final class OutputDefinitionRenderer {
         buffer.append(")");
     }
 
-    private static void renderProcess(StringBuilder buffer, OutputDefinition<?> out) {
+    private static void renderProcess(StringBuilder buffer, OutputDefinition out) {
         ProcessDefinition process = (ProcessDefinition)out;
         if (process.getRef() != null) {
             buffer.append("Ref(\"").append(process.getRef()).append("\")");
@@ -205,7 +205,7 @@ public final class OutputDefinitionRenderer {
         }
     }
 
-    private static void renderThreads(StringBuilder buffer, OutputDefinition<?> out) {
+    private static void renderThreads(StringBuilder buffer, OutputDefinition out) {
         ThreadsDefinition threads = (ThreadsDefinition)out;
         buffer.append("(");
         if (threads.getPoolSize() != null) {
@@ -219,7 +219,7 @@ public final class OutputDefinitionRenderer {
         }
     }
 
-    private static void renderTransacted(StringBuilder buffer, OutputDefinition<?> out) {
+    private static void renderTransacted(StringBuilder buffer, OutputDefinition out) {
         TransactedDefinition transacted = (TransactedDefinition)out;
         buffer.append("(");
         if (transacted.getRef() != null) {
