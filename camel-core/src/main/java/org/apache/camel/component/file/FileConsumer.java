@@ -96,6 +96,12 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                     LOG.trace("Polling directory " + fileOrDirectory);
                 }
                 File[] files = fileOrDirectory.listFiles();
+
+                if (files == null || files.length == 0) {
+                    // no files in this directory to poll
+                    return rc;
+                }
+
                 for (File file : files) {
                     rc += pollFileOrDirectory(file, isRecursive()); // self-recursion
                 }
