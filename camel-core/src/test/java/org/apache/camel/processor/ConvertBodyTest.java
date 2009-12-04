@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 public class ConvertBodyTest extends ContextTestSupport {
 
@@ -88,8 +90,14 @@ public class ConvertBodyTest extends ContextTestSupport {
 
     public void testConvertToStringCharsetFail() throws Exception {
 
-        String body = "Hell\u00F6 W\u00F6rld";
+        // does not work on AIX
+        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        boolean aix = osName.indexOf("aix") > -1;
+        if (aix) {
+            return;
+        }
 
+        String body = "Hell\u00F6 W\u00F6rld";
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(body);
