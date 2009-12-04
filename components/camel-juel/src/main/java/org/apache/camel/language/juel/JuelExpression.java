@@ -77,15 +77,15 @@ public class JuelExpression extends ExpressionSupport {
     public ExpressionFactory getExpressionFactory(CamelContext context) {
         if (expressionFactory == null && context != null) {
             try {
-                FactoryFinder finder = context.getFactoryFinder("META-INF/services/org/apache/camel/component/");
-                Class<?> clazz = finder.findClass("juel", "impl.");
+                FactoryFinder finder = context.getFactoryFinder("META-INF/services/org/apache/camel/language/");
+                Class<?> clazz = finder.findClass("el", "impl.");
                 if (clazz != null) {
                     expressionFactory = (ExpressionFactory)clazz.newInstance();
                 }
             } catch (ClassNotFoundException e) {
                 LOG.debug("'impl.class' not found", e);
             } catch (IOException e) {
-                LOG.debug("No impl class for juel ExpressionFactory defined in 'META-INF/services/org/apache/camel/component/el'", e);
+                LOG.debug("No impl class for juel ExpressionFactory defined in 'META-INF/services/org/apache/camel/language/el'", e);
             } catch (InstantiationException e) {
                 LOG.debug("Failed to instantiate juel ExpressionFactory implementation class.", e);
             } catch (IllegalAccessException e) {
