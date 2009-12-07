@@ -60,6 +60,23 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
     }
+    
+    @Test
+    public void testFtpsConfigurationDefaults() {
+        Endpoint endpoint = context.getEndpoint("ftps://hostname");
+        assertIsInstanceOf(FtpsEndpoint.class, endpoint);
+        FtpsEndpoint ftpsEndpoint = (FtpsEndpoint) endpoint;
+        FtpsConfiguration config = (FtpsConfiguration) ftpsEndpoint.getConfiguration();
+
+        assertEquals("ftps", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(2222, config.getPort());
+        assertNull(config.getUsername());
+        assertNull(config.getPassword());
+        assertEquals(false, config.isBinary());
+        assertEquals(false, config.isImplicit());
+        assertEquals("TLS", config.getSecurityProtocol());
+    }
 
     @Test
     public void testFtpExplicitConfiguration() {
@@ -92,6 +109,23 @@ public class UriConfigurationTest extends CamelTestSupport {
     }
     
     @Test
+    public void testFtpsExplicitConfiguration() {
+        Endpoint endpoint = context.getEndpoint("ftps://user@hostname:1021/some/file?password=secret&binary=true&securityProtocol=SSL&isImplicit=true");
+        assertIsInstanceOf(FtpsEndpoint.class, endpoint);
+        FtpsEndpoint sftpEndpoint = (FtpsEndpoint) endpoint;
+        FtpsConfiguration config = (FtpsConfiguration) sftpEndpoint.getConfiguration();
+
+        assertEquals("ftps", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(1021, config.getPort());
+        assertEquals("user", config.getUsername());
+        assertEquals("secret", config.getPassword());
+        assertEquals(true, config.isBinary());
+        assertEquals(true, config.isImplicit());
+        assertEquals("SSL", config.getSecurityProtocol());
+    }
+    
+    @Test
     public void testRemoteFileEndpointFiles() {
         assertRemoteFileEndpointFile("ftp://hostname/foo/bar", "foo/bar");
         assertRemoteFileEndpointFile("ftp://hostname/foo/bar/", "foo/bar");
@@ -113,6 +147,17 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertRemoteFileEndpointFile("sftp://hostname//", "");
         assertRemoteFileEndpointFile("sftp://hostname//foo/bar", "foo/bar");
         assertRemoteFileEndpointFile("sftp://hostname//foo/bar/", "foo/bar");
+        assertRemoteFileEndpointFile("ftps://user@hostname:123//foo/bar?password=secret", "foo/bar");
+        assertRemoteFileEndpointFile("ftps://user@hostname:123?password=secret", "");
+        assertRemoteFileEndpointFile("ftps://hostname/foo/bar", "foo/bar");
+        assertRemoteFileEndpointFile("ftps://hostname/foo/bar/", "foo/bar");
+        assertRemoteFileEndpointFile("ftps://hostname/foo/", "foo");
+        assertRemoteFileEndpointFile("ftps://hostname/foo", "foo");
+        assertRemoteFileEndpointFile("ftps://hostname/", "");
+        assertRemoteFileEndpointFile("ftps://hostname", "");
+        assertRemoteFileEndpointFile("ftps://hostname//", "");
+        assertRemoteFileEndpointFile("ftps://hostname//foo/bar", "foo/bar");
+        assertRemoteFileEndpointFile("ftps://hostname//foo/bar/", "foo/bar");
     }
 
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
@@ -157,5 +202,4 @@ public class UriConfigurationTest extends CamelTestSupport {
             assertEquals("Only directory is supported. Endpoint must be configured with a valid directory: some/file.txt", e.getMessage());
         }
     }
-
 }

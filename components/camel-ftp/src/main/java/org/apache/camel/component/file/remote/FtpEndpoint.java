@@ -30,17 +30,17 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP endpoint
  */
-public class FtpEndpoint extends RemoteFileEndpoint<FTPFile> {
+public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
-    private FTPClient ftpClient;
-    private FTPClientConfig ftpClientConfig;
-    private Map<String, Object> ftpClientParameters;
-    private Map<String, Object> ftpClientConfigParameters;
+    protected FTPClient ftpClient;
+    protected FTPClientConfig ftpClientConfig;
+    protected Map<String, Object> ftpClientParameters;
+    protected Map<String, Object> ftpClientConfigParameters;
 
     public FtpEndpoint() {
     }
 
-    public FtpEndpoint(String uri, FtpComponent component, RemoteFileConfiguration configuration) {
+    public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, RemoteFileConfiguration configuration) {
         super(uri, component, configuration);
     }
 
@@ -69,14 +69,16 @@ public class FtpEndpoint extends RemoteFileEndpoint<FTPFile> {
     protected RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
         // configure ftp client
         FTPClient client = ftpClient;
+        
         if (client == null) {
             // must use a new client if not explicit configured to use a custom client
-            client = new FTPClient();
+            client = createFtpClient();
         }
 
         if (ftpClientParameters != null) {
             IntrospectionSupport.setProperties(client, ftpClientParameters);
         }
+        
         if (ftpClientConfigParameters != null) {
             // client config is optional so create a new one if we have parameter for it
             if (ftpClientConfig == null) {
@@ -88,6 +90,10 @@ public class FtpEndpoint extends RemoteFileEndpoint<FTPFile> {
         FtpOperations operations = new FtpOperations(client, getFtpClientConfig());
         operations.setEndpoint(this);
         return operations;
+    }
+
+    protected FTPClient createFtpClient() throws Exception {
+        return new FTPClient();
     }
 
     public FTPClient getFtpClient() {

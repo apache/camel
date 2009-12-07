@@ -38,39 +38,60 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
     @Override
     protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
-        // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
-        // to escape the $ for the expression (file language)
-        String baseUri = uri;
-        if (uri.indexOf("?") != -1) {
-            baseUri = uri.substring(0, uri.indexOf("?"));
-        }
+        String baseUri = getBaseUri(uri);
 
         // lets make sure we create a new configuration as each endpoint can customize its own version
         // must pass on baseUri to the configuration (see above)
         FtpConfiguration config = new FtpConfiguration(new URI(baseUri));
 
-        FtpEndpoint answer = new FtpEndpoint(uri, this, config);
-
-        // additional client configuration options
-        if (IntrospectionSupport.hasProperties(parameters, "ftpClientConfig.")) {
-            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClientConfig.");
-            // remember these parameters so we can use them when creating a client
-            answer.setFtpClientConfigParameters(param);
-        }
-
-        // additional client options
-        if (IntrospectionSupport.hasProperties(parameters, "ftpClient.")) {
-            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.");
-            // remember these parameters so we can use them when creating a client
-            answer.setFtpClientParameters(param);
-        }
+        FtpEndpoint<FTPFile> answer = new FtpEndpoint<FTPFile>(uri, this, config);
+        extractAndSetFtpClientConfigParameters(parameters, answer);
+        extractAndSetFtpClientParameters(parameters, answer);
 
         return answer;
+    }
+
+    /**
+     * get the base uri part before the options as they can be non URI valid such as the expression using $ chars
+     * and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
+     * to escape the $ for the expression (file language)
+     * 
+     * @param uri
+     * @return baseUri
+     */
+    protected String getBaseUri(String uri) {
+        String baseUri = uri;
+        if (uri.indexOf("?") != -1) {
+            baseUri = uri.substring(0, uri.indexOf("?"));
+        }
+        return baseUri;
+    }
+
+    /**
+     * Extract additional ftp client configuration options from the parameters map (parameters starting with 
+     * 'ftpClientConfig.'). To remember these parameters, we set them in the endpoint and we can use them 
+     * when creating a client.
+     */
+    protected void extractAndSetFtpClientConfigParameters(Map<String, Object> parameters, FtpEndpoint<FTPFile> answer) {
+        if (IntrospectionSupport.hasProperties(parameters, "ftpClientConfig.")) {
+            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClientConfig.");
+            answer.setFtpClientConfigParameters(param);
+        }
+    }
+    
+    /**
+     * Extract additional ftp client options from the parameters map (parameters starting with 
+     * 'ftpClient.'). To remember these parameters, we set them in the endpoint and we can use them 
+     * when creating a client.
+     */
+    protected void extractAndSetFtpClientParameters(Map<String, Object> parameters, FtpEndpoint<FTPFile> answer) {
+        if (IntrospectionSupport.hasProperties(parameters, "ftpClient.")) {
+            Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.");
+            answer.setFtpClientParameters(param);
+        }
     }
 
     protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {
         // noop
     }
 }
-

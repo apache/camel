@@ -16,26 +16,34 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.net.URI;
 
 /**
- * FTP configuration
+ * Abstract base class for unit testing using a secure FTP Server over SSL (implicit)
+ * and without client authentication.
+ * 
+ * @version $Revision$
+ * @author muellerc
  */
-public class FtpConfiguration extends RemoteFileConfiguration {
-
-    public static final int DEFAULT_FTP_PORT = 21;
-
-    public FtpConfiguration() {
-        setProtocol("ftp");
+public abstract class FtpsServerImplicitSSLWithoutClientAuthTestSupport extends FtpsServerTestSupport {
+    
+    /*
+     * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#getClientAuth()
+     */
+    protected String getClientAuth() {
+        return "false";
+    }
+    
+    /*
+     * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#useImplicit()
+     */
+    protected boolean useImplicit() {
+        return true;
     }
 
-    public FtpConfiguration(URI uri) {
-        super(uri);
+    /*
+     * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#getAuthValue()
+     */
+    protected String getAuthValue() {
+        return AUTH_VALUE_SSL;
     }
-
-    @Override
-    protected void setDefaultPort() {
-        setPort(DEFAULT_FTP_PORT);
-    }
-
 }

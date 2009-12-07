@@ -29,7 +29,7 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
-    private String endpointPath;
+    protected String endpointPath;
 
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
@@ -74,7 +74,6 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private RemoteFile<FTPFile> asRemoteFile(String directory, FTPFile file) {
         RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
 

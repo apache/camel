@@ -23,14 +23,17 @@ import java.util.Random;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.ftpserver.ConnectionConfigFactory;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
 import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
-import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
+import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 /**
@@ -38,59 +41,14 @@ import org.junit.BeforeClass;
  */
 public abstract class FtpServerTestSupport extends CamelTestSupport {
 
-    public static final String FTP_ROOT_DIR = "./res/home/";
-
-    protected static FtpServer ftpServer;
-
-    private static int port;
-
-    public static int getPort() {
-        return port;
-    }
+    protected static final String FTP_ROOT_DIR = "./res/home/";
+    protected static final File USERS_FILE = new File("./src/test/resources/users.properties");
+    protected static final String DEFAULT_LISTENER = "default";
+    protected static int port;
+    
+    protected FtpServer ftpServer;
 
     @BeforeClass
-    public static void startServer() throws Exception {
-        initPort();        
-        initFtpServer();
-        ftpServer.start();
-    }
-
-    @AfterClass
-    public static void shutdownServer() throws Exception {
-        try {            
-            ftpServer.stop();
-            ftpServer = null;
-            port = 0;
-        } catch (Exception e) {
-            // ignore while shutting down as we could be polling during shutdown
-            // and get errors when the ftp server is stopping. This is only an issue
-            // since we host the ftp server embedded in the same jvm for unit testing
-        }
-    }
-
-    public static void initFtpServer() throws Exception {
-        if (port < 21000) {
-            throw new IllegalArgumentException("Port number is not initialized in an expected range: " + getPort());
-        }
-
-        FtpServerFactory serverFactory = new FtpServerFactory();
-
-        // setup user management to read our users.properties and use clear text passwords
-        File file = new File("./src/test/resources/users.properties").getAbsoluteFile();
-        UserManager uman = new PropertiesUserManager(new ClearTextPasswordEncryptor(), file, "admin");
-        serverFactory.setUserManager(uman);
-
-        NativeFileSystemFactory fsf = new NativeFileSystemFactory();
-        fsf.setCreateHome(true);
-        serverFactory.setFileSystem(fsf);
-
-        ListenerFactory factory = new ListenerFactory();
-        factory.setPort(port);
-        serverFactory.addListener("default", factory.createListener());
-
-        ftpServer = serverFactory.createServer();
-    }
-
     public static void initPort() throws Exception {
         File file = new File("./target/ftpport.txt");
         file = file.getAbsoluteFile();
@@ -100,7 +58,7 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
             port = 21000 + new Random().nextInt(900);
         } else {
             // read port number from file
-            String s = IOConverter.toString(file);
+            String s = IOConverter.toString(file, null);
             port = Integer.parseInt(s);
             // use next number
             port++;
@@ -109,13 +67,73 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
         // save to file, do not append
         FileOutputStream fos = new FileOutputStream(file, false);
         try {
-            fos.write(("" + getPort()).getBytes());
+            fos.write(String.valueOf(port).getBytes());
         } finally {
             fos.close();
         }
     }
     
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory(FTP_ROOT_DIR);
+
+        ftpServer = createFtpServerFactory().createServer();
+        ftpServer.start();
+        
+        super.setUp();
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        
+        try {            
+            ftpServer.stop();
+            ftpServer = null;
+        } catch (Exception e) {
+            // ignore while shutting down as we could be polling during shutdown
+            // and get errors when the ftp server is stopping. This is only an issue
+            // since we host the ftp server embedded in the same jvm for unit testing
+        }
+    }
+    
+    @AfterClass
+    public static void resetPort() throws Exception {
+        port = 0;
+    }
+
+    protected FtpServerFactory createFtpServerFactory() throws Exception {
+        assertTrue(USERS_FILE.exists());
+        assertTrue("Port number is not initialized in an expected range: " + port, port > 21000);
+
+        NativeFileSystemFactory fsf = new NativeFileSystemFactory();
+        fsf.setCreateHome(true);
+
+        PropertiesUserManagerFactory pumf = new PropertiesUserManagerFactory();
+        pumf.setAdminName("admin");
+        pumf.setPasswordEncryptor(new ClearTextPasswordEncryptor());
+        pumf.setFile(USERS_FILE);
+        UserManager userMgr = pumf.createUserManager();
+        
+        ListenerFactory factory = new ListenerFactory();
+        factory.setPort(port);
+        
+        FtpServerFactory serverFactory = new FtpServerFactory();
+        serverFactory.setUserManager(userMgr);
+        serverFactory.setFileSystem(fsf);
+        serverFactory.setConnectionConfig(new ConnectionConfigFactory().createConnectionConfig());
+        serverFactory.addListener(DEFAULT_LISTENER, factory.createListener());
+
+        return serverFactory;
+    }
+    
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, fileName);
+    }
+    
+    protected int getPort() {
+        return port;
     }
 }

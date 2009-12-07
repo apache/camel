@@ -46,18 +46,19 @@ import org.apache.commons.net.ftp.FTPReply;
  * FTP remote file operations
  */
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
-    private static final transient Log LOG = LogFactory.getLog(FtpOperations.class);
-    private final FTPClient client;
-    private final FTPClientConfig clientConfig;
-    private RemoteFileEndpoint endpoint;
+    
+    protected final transient Log LOG = LogFactory.getLog(getClass());
+    protected final FTPClient client;
+    protected final FTPClientConfig clientConfig;
+    protected RemoteFileEndpoint<FTPFile> endpoint;
 
     public FtpOperations(FTPClient client, FTPClientConfig clientConfig) {
         this.client = client;
         this.clientConfig = clientConfig;
     }
 
-    public void setEndpoint(GenericFileEndpoint endpoint) {
-        this.endpoint = (RemoteFileEndpoint) endpoint;
+    public void setEndpoint(GenericFileEndpoint<FTPFile> endpoint) {
+        this.endpoint = (RemoteFileEndpoint<FTPFile>) endpoint;
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
@@ -238,6 +239,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         OutputStream os = null;
         try {
@@ -253,6 +255,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private boolean retrieveFileToFileInLocalWorkDirectory(String name, Exchange exchange) throws GenericFileOperationFailedException {
         File temp;        
         File local = new File(FileUtil.normalizePath(endpoint.getLocalWorkDirectory()));
