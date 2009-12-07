@@ -88,9 +88,24 @@
       <artifactId>spring-context</artifactId>
       <optional>true</optional>
       <scope>compile</scope>
+      <exclusions>
+        <!-- we only need spring-context.jar as optional as we need the JMX export annotations -->
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>aopalliance</groupId>
+          <artifactId>aopalliance</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
-    <!-- testing -->
+      <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
