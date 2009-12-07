@@ -1,13 +1,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://camel.apache.org/schema/spring
+http://camel.apache.org/schema/spring/camel-spring.xsd">
     
-    <bean id="camelContext" 
-        class="org.apache.camel.component.gae.context.GaeSpringCamelContext">
-        <property name="routeBuilder" ref="tutorialRouteBuilder" />
-    </bean>
+    <camel:camelContext id="camelContext">
+        <camel:jmxAgent id="agent" disabled="true" />
+        <camel:routeBuilder ref="tutorialRouteBuilder"/>
+    </camel:camelContext>
     
     <bean id="tutorialRouteBuilder"
         class="org.apache.camel.example.gae.TutorialRouteBuilder">
