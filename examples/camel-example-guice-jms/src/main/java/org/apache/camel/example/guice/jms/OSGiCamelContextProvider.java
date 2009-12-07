@@ -16,24 +16,21 @@
  */
 package org.apache.camel.example.guice.jms;
 
-import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.naming.Context;
-import javax.naming.NamingException;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.osgi.CamelContextFactory;
-import org.apache.camel.osgi.CompositeRegistry;
-import org.apache.camel.spi.Registry;
 import org.guiceyfruit.jndi.JndiBindings;
 import org.guiceyfruit.jndi.internal.JndiContext;
 import org.osgi.framework.BundleContext;
@@ -63,12 +60,9 @@ public class OSGiCamelContextProvider implements Provider<CamelContext> {
         }
     }
     
-    // Add the JndiRegistry to the camel context
-    protected void updateRegistry(DefaultCamelContext camelContext) {        
-        CompositeRegistry compositeRegistry = new CompositeRegistry();
-        compositeRegistry.addRegistry(new JndiRegistry(getJndiContext()));
-        compositeRegistry.addRegistry(camelContext.getRegistry());
-        camelContext.setRegistry(compositeRegistry);
+    // set the JndiRegistry to the camel context
+    protected void updateRegistry(DefaultCamelContext camelContext) {
+        camelContext.setRegistry(new JndiRegistry(getJndiContext()));
     }
 
     public CamelContext get() {

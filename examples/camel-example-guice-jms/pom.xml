@@ -103,6 +103,8 @@
           <arguments>
              <argument>-duration</argument>
              <argument>5s</argument>
+              <argument>-jndiProperties</argument>
+             <argument>/guicejndi.properties</argument>
           </arguments> 
         </configuration>
       </plugin>

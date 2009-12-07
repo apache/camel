@@ -16,7 +16,10 @@
  */
 package org.apache.camel.guice;
 
+import java.net.URL;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.naming.Context;
@@ -33,6 +36,7 @@ import com.google.inject.internal.Maps;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.MainSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.guiceyfruit.Injectors;
 
@@ -45,18 +49,28 @@ import org.guiceyfruit.Injectors;
 public class Main extends MainSupport {
     private static Main instance;
     private Injector injector;
-
-
+    private String jndiProperties;
+ 
     public Main() {
 
-/*
-        addOption(new ParameterOption("a", "applicationContext",
-                "Sets the classpath based spring ApplicationContext", "applicationContext") {
+
+        addOption(new ParameterOption("j", "jndiProperties",
+                "Sets the classpath based jndi properties file location", "jndiProperties") {
+            @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setApplicationContextUri(parameter);
+                setJndiProperties(parameter);
+                
             }
         });
-*/
+
+    }
+    
+    public void setJndiProperties(String properties) {
+        this.jndiProperties = properties;
+    }
+
+    public String getJndiProperties() {
+        return this.jndiProperties;
     }
 
     public static void main(String... args) throws Exception {
@@ -88,7 +102,18 @@ public class Main extends MainSupport {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected Injector getInjectorFromContext() throws Exception {
-        Context context = new InitialContext();
+        Context context = null;
+        URL jndiPropertiesUrl = null;
+        if (ObjectHelper.isNotEmpty(jndiProperties)) {
+            jndiPropertiesUrl = this.getClass().getResource(jndiProperties);
+        }
+        if (jndiPropertiesUrl != null) {
+            Properties properties = new Properties();
+            properties.load(jndiPropertiesUrl.openStream());
+            context = new InitialContext(properties);
+        } else {
+            context = new InitialContext();
+        }
         return (Injector) context.lookup(Injector.class.getName());
     }
     
