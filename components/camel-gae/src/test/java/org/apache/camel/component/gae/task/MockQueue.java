@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.gae.task;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.appengine.api.datastore.Transaction;
@@ -63,8 +64,8 @@ public class MockQueue implements Queue {
             if (accessor.getTaskName() != null) {
                 request.setHeaderField(GTaskBinding.GAE_TASK_NAME, accessor.getTaskName());
             }
-            for (Map.Entry<String, String> entry : accessor.getHeaders().entrySet()) {
-                request.setHeaderField(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, List<String>> entry : accessor.getHeaders().entrySet()) {
+                request.setHeaderField(entry.getKey(), entry.getValue().get(0));
             }
             servletUnitClient.getResponse(request);
         } catch (Exception e) {

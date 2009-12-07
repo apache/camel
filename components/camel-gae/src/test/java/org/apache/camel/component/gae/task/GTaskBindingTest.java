@@ -60,7 +60,7 @@ public class GTaskBindingTest {
         exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=y");
         binding.writeRequestHeaders(endpoint, exchange, accessor.getTaskOptions());
         assertEquals(1, accessor.getHeaders().size());
-        assertEquals("abc", accessor.getHeaders().get("test"));
+        assertEquals("abc", accessor.getHeaders().get("test").get(0));
     }
     
     @Test

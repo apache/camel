@@ -18,6 +18,7 @@ package com.google.appengine.api.labs.taskqueue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 public class TaskOptionsAccessor {
@@ -40,7 +41,7 @@ public class TaskOptionsAccessor {
         return taskOptions.getUrl();
     }
     
-    public Map<String, String> getHeaders() {
+    public Map<String, List<String>> getHeaders() {
         return taskOptions.getHeaders();
     }
     
