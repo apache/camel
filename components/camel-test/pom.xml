@@ -60,6 +60,12 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- needed for unit test as Spring JMX stuff deps on AopUtil -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
