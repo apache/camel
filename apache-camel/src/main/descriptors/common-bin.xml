@@ -80,6 +80,7 @@
         <include>org.apache.camel:camel-scala</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-servlet</include>
+        <include>org.apache.camel:camel-smpp</include>
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-integration</include>
