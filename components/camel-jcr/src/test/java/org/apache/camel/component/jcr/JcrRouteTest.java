@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jcr;
 
-import java.io.File;
-import java.io.IOException;
-
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
@@ -29,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.apache.jackrabbit.core.fs.local.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,18 +36,8 @@ public class JcrRouteTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        clean();
+        deleteDirectory("target/repository");
         super.setUp();
-    }
-
-    private void clean() throws IOException {
-        File[] files = {new File("target/repository"), new File("target/repository.xml"),
-                        new File("derby.log")};
-        for (File file : files) {
-            if (file.exists()) {
-                FileUtil.delete(file);
-            }
-        }
     }
 
     @Test

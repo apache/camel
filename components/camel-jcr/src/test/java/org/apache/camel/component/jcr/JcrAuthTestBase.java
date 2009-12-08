@@ -17,8 +17,6 @@
 package org.apache.camel.component.jcr;
 
 import java.io.File;
-import java.io.IOException;
-
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
@@ -30,7 +28,6 @@ import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.apache.jackrabbit.core.fs.local.FileUtil;
 import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
 import org.junit.Before;
 
@@ -49,14 +46,11 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     private Repository repository;
 
-    private void clean() throws IOException {
-        File[] files = {new File("target/repository_with_auth"),
-                        new File("derby.log") };
-        for (File file : files) {
-            if (file.exists()) {
-                FileUtil.delete(file);
-            }
-        }
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        deleteDirectory("target/repository");
+        super.setUp();
     }
 
     @Override
@@ -104,13 +98,6 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     protected Repository getRepository() {
         return repository;
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        clean();
-        super.setUp();
     }
 
 }
