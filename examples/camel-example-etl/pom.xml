@@ -1,139 +1,214 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
-  
-  http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more
+		contributor license agreements. See the NOTICE file distributed with
+		this work for additional information regarding copyright ownership.
+		The ASF licenses this file to You under the Apache License, Version
+		2.0 (the "License"); you may not use this file except in compliance
+		with the License. You may obtain a copy of the License at
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
 
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>examples</artifactId>
-    <version>2.2-SNAPSHOT</version>
-  </parent>
+	<modelVersion>4.0.0</modelVersion>
 
-  <artifactId>camel-example-etl</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: Example :: ETL</name>
-  <description>An example showing how to use Camel as an Extract Transform and Load (ETL) tool</description>
+	<parent>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>examples</artifactId>
+		<version>2.2-SNAPSHOT</version>
+	</parent>
 
-  <properties>
-     <camel.osgi.export.pkg>
-     	org.apache.camel.example.etl.*
+	<artifactId>camel-example-etl</artifactId>
+	<packaging>bundle</packaging>
+	<name>Camel :: Example :: ETL</name>
+	<description>An example showing how to use Camel as an Extract Transform and Load (ETL) tool</description>
+
+	<properties>
+		<camel.osgi.export.pkg>
+			org.apache.camel.example.etl.*
      </camel.osgi.export.pkg>
-  </properties>
+		<camel.osgi.import.additional>
+			org.hsqldb,org.hsqldb.util,org.hsqldb.jdbc,org.hibernate.ejb
+     </camel.osgi.import.additional>
+		<!-- to avoid us import bunch other package -->
+		<camel.osgi.dynamic>
+			*
+     </camel.osgi.dynamic>
+	</properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jpa</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jaxb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-juel</artifactId>
-    </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jaxb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-juel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
 
-    <!-- lets use log4j -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
+		<!-- lets use log4j -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jta_1.1_spec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</dependency>
 
-    <!-- lets use hibernate by default -->
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
-    </dependency>
+		<!-- testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+	</dependencies>
 
-  <build>
-    <plugins>
+	<build>
+		<plugins>
+			<!-- Allows the example to be run via 'mvn camel:run' -->
+			<plugin>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<version>${project.version}</version>
+			</plugin>
 
-      <!-- Allows the example to be run via 'mvn camel:run' -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </plugin>
+			<!-- Allows the example to be run via 'mvn compile exec:java' -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>org.apache.camel.example.etl.Main</mainClass>
+					<includePluginDependencies>false</includePluginDependencies>
+				</configuration>
+			</plugin>
 
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>org.apache.camel.example.etl.Main</mainClass>
-          <includePluginDependencies>false</includePluginDependencies>
-        </configuration>
-      </plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<childDelegation>false</childDelegation>
+					<useFile>true</useFile>
+					<excludes>
+						<exclude>**/RunTest.*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <childDelegation>false</childDelegation>
-          <useFile>true</useFile>
-          <excludes>
-            <exclude>**/RunTest.*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
+		</plugins>
+	</build>
 
-    </plugins>
-  </build>
-  
-  <reporting>
-    <plugins>
-      <!-- let's generate nice PNG / SVG diagrams from our routes -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </plugin>
-    </plugins>
-  </reporting>
+	<profiles>
+		<profile>
+			<id>hibernate</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-entitymanager</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>openjpa</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/profiles/openjpa</directory>
+					</resource>
+					<resource>
+						<directory>${basedir}/src/main/resources</directory>
+						<excludes>
+							<exclude>**/persistence.xml</exclude>
+							<exclude>**/camel-context.xml</exclude>
+						</excludes>
+					</resource>
+				</resources>
+				<!--  Will enhance classes as we run in a non J2EE 5 env -->
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>openjpa-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>JPA Enhance</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>enhance</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<includes>org/apache/camel/example/etl/*Entity.class</includes>
+							<toolProperties>
+								<property>
+									<name>addDefaultConstructor</name>
+									<value>true</value>
+								</property>
+								<property>
+									<name>enforcePropertyRestrictions</name>
+									<value>true</value>
+								</property>
+							</toolProperties>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.openjpa</groupId>
+					<artifactId>openjpa-persistence-jdbc</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+	<reporting>
+		<plugins>
+			<!-- let's generate nice PNG / SVG diagrams from our routes -->
+			<plugin>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<version>${project.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

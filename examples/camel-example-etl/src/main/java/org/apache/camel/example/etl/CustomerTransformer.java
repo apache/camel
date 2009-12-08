@@ -64,7 +64,6 @@ public class CustomerTransformer {
         if (list.isEmpty()) {
             CustomerEntity answer = new CustomerEntity();
             answer.setUserName(user);
-            template.persist(answer);
             return answer;
         } else {
             return list.get(0);
