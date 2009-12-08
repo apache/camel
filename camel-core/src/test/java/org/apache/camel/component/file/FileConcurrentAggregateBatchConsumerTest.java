@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.language.simple.FileLanguage.file;
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * File being processed sync vs async to demonstrate the time difference.
@@ -36,7 +36,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
             @Override
             public void configure() throws Exception {
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
-                    .setHeader("id", file("${file:onlyname.noext}"))
+                    .setHeader("id", simple("${file:onlyname.noext}"))
                     .threads(20)
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal()).batchSizeFromConsumer().batchTimeout(60000).to("mock:result");
@@ -59,7 +59,7 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
             @Override
             public void configure() throws Exception {
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
-                    .setHeader("id", file("${file:onlyname.noext}"))
+                    .setHeader("id", simple("${file:onlyname.noext}"))
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal()).batchSizeFromConsumer().batchTimeout(60000).to("mock:result");
             }

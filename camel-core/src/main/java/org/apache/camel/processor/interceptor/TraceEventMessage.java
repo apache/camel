@@ -19,14 +19,14 @@ package org.apache.camel.processor.interceptor;
 import java.util.Date;
 
 /**
- * A trace event message that contains decomposited information about the traced
+ * A trace event message that contains decomposed information about the traced
  * {@link org.apache.camel.Exchange} at the point of interception. The information is stored as snapshot copies
  * using String types.
  */
 public interface TraceEventMessage {
 
     /**
-     * Gets the timestamp when the interception occured
+     * Gets the timestamp when the interception occurred
      */
     Date getTimestamp();
 
@@ -39,14 +39,14 @@ public interface TraceEventMessage {
      * Gets the previous node.
      * <p/>
      * Will return <tt>null</tt> if this is the first node, then you can use the from endpoint uri
-     * instread to indicate the start
+     * instead to indicate the start
      */
     String getPreviousNode();
 
     /**
      * Gets the current node that just have been intercepted and processed
      * <p/>
-     * Is never null.
+     * Is never <tt>null</tt>.
      */
     String getToNode();
 

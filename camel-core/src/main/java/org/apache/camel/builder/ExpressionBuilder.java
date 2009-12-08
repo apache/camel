@@ -36,6 +36,7 @@ import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -624,7 +625,7 @@ public final class ExpressionBuilder {
 
     /**
      * Returns an expression which converts the given expression to the given type the type
-     * expression is evaluted to
+     * expression is evaluated to
      */
     public static Expression convertToExpression(final Expression expression, final Expression type) {
         return new ExpressionAdapter() {
@@ -852,13 +853,18 @@ public final class ExpressionBuilder {
                     String key = command.substring(command.lastIndexOf('.') + 1);
                     date = exchange.getIn().getHeader(key, Date.class);
                     if (date == null) {
-                        throw new IllegalArgumentException("Cannot find java.util.Date object at " + command);
+                        throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }
                 } else if (command.startsWith("out.header.")) {
                     String key = command.substring(command.lastIndexOf('.') + 1);
                     date = exchange.getOut().getHeader(key, Date.class);
                     if (date == null) {
-                        throw new IllegalArgumentException("Cannot find java.util.Date object at " + command);
+                        throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
+                    }
+                } else if ("file".equals(command)) {
+                    date = exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+                    if (date == null) {
+                        throw new IllegalArgumentException("Cannot find CamelFileLastModified header at command: " + command);
                     }
                 } else {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
@@ -956,4 +962,160 @@ public final class ExpressionBuilder {
             }
         };
     }
+
+    public static Expression fileNameExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:name";
+            }
+        };
+    }
+
+    public static Expression fileOnlyNameExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String answer = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
+                if (answer == null) {
+                    answer = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                    answer = FileUtil.stripPath(answer);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "file:onlyname";
+            }
+        };
+    }
+
+    public static Expression fileNameNoExtensionExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                return FileUtil.stripExt(name);
+            }
+
+            @Override
+            public String toString() {
+                return "file:name.noext";
+            }
+        };
+    }
+
+    public static Expression fileOnlyNameNoExtensionExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = fileOnlyNameExpression().evaluate(exchange, String.class);
+                return FileUtil.stripExt(name);
+            }
+
+            @Override
+            public String toString() {
+                return "file:onlyname.noext";
+            }
+        };
+    }
+
+    public static Expression fileExtensionExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                if (name != null) {
+                    return name.substring(name.lastIndexOf('.') + 1);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "file:ext";
+            }
+        };
+    }
+
+    public static Expression fileParentExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFileParent", String.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:parent";
+            }
+        };
+    }
+
+    public static Expression filePathExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFilePath", String.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:path";
+            }
+        };
+    }
+
+    public static Expression fileAbsolutePathExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFileAbsolutePath", String.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:absolute.path";
+            }
+        };
+    }
+
+    public static Expression fileAbsoluteExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFileAbsolute", Boolean.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:absolute";
+            }
+        };
+    }
+
+    public static Expression fileSizeExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFileLength", Long.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:length";
+            }
+        };
+    }
+
+    public static Expression fileLastModifiedExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:modified";
+            }
+        };
+    }
+
 }

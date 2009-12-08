@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.builder;
 
 import java.text.SimpleDateFormat;
@@ -33,7 +32,9 @@ import org.apache.camel.util.FileUtil;
  * This expression expects the headers from the {@link org.apache.camel.language.simple.FileLanguage} on the <b>IN</b> message.
  *
  * @see org.apache.camel.language.simple.FileLanguage
+ * @deprecated will be removed in Camel 2.3
  */
+@Deprecated
 public final class FileExpressionBuilder {
 
     private FileExpressionBuilder() {

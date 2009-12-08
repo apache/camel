@@ -17,9 +17,6 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
-import org.apache.camel.ExpressionIllegalSyntaxException;
-import org.apache.camel.builder.FileExpressionBuilder;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * File language is an extension to Simple language to add file specific expressions.
@@ -51,59 +48,18 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @see org.apache.camel.language.simple.SimpleLanguage
  * @see org.apache.camel.language.bean.BeanLanguage
+ * @deprecated file language is now included as standard in simple language, will be removed in Camel 2.4
  */
+@Deprecated
 public class FileLanguage extends SimpleLanguageSupport {
 
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
     public static Expression file(String expression) {
-        FileLanguage language = new FileLanguage();
-        return language.createExpression(expression);
+        return SimpleLanguage.simple(expression);
     }
 
     protected Expression createSimpleExpression(String expression, boolean strict) {
-
-        // file: prefix
-        String remainder = ifStartsWithReturnRemainder("file:", expression);
-        if (remainder != null) {
-            if (ObjectHelper.equal(remainder, "name")) {
-                return FileExpressionBuilder.fileNameExpression();
-            } else if (ObjectHelper.equal(remainder, "name.noext")) {
-                return FileExpressionBuilder.fileNameNoExtensionExpression();
-            } else if (ObjectHelper.equal(remainder, "onlyname")) {
-                return FileExpressionBuilder.fileOnlyNameExpression();
-            } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
-                return FileExpressionBuilder.fileOnlyNameNoExtensionExpression();
-            } else if (ObjectHelper.equal(remainder, "ext")) {
-                return FileExpressionBuilder.fileExtensionExpression();
-            } else if (ObjectHelper.equal(remainder, "parent")) {
-                return FileExpressionBuilder.fileParentExpression();
-            } else if (ObjectHelper.equal(remainder, "path")) {
-                return FileExpressionBuilder.filePathExpression();
-            } else if (ObjectHelper.equal(remainder, "absolute")) {
-                return FileExpressionBuilder.fileAbsoluteExpression();
-            } else if (ObjectHelper.equal(remainder, "absolute.path")) {
-                return FileExpressionBuilder.fileAbsolutePathExpression();
-            } else if (ObjectHelper.equal(remainder, "length")) {
-                return FileExpressionBuilder.fileSizeExpression();
-            } else if (ObjectHelper.equal(remainder, "modified")) {
-                return FileExpressionBuilder.fileLastModifiedExpression();
-            }
-        }
-
-        // date: prefix
-        remainder = ifStartsWithReturnRemainder("date:", expression);
-        if (remainder != null) {
-            String[] parts = remainder.split(":");
-            if (parts.length != 2) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${date:command:pattern} was: " + expression);
-            }
-            String command = parts[0];
-            String pattern = parts[1];
-            return FileExpressionBuilder.dateExpression(command, pattern);
-        }
-
-        // fallback to simple language if not file specific
         return SIMPLE.createSimpleExpression(expression, strict);
     }
 

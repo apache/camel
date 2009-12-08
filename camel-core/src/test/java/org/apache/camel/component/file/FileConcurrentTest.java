@@ -32,7 +32,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.language.simple.FileLanguage.file;
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * File being processed sync vs async to demonstrate the time difference.
@@ -65,7 +65,7 @@ public class FileConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
-                    .setHeader("id", file("${file:onlyname.noext}"))
+                    .setHeader("id", simple("${file:onlyname.noext}"))
                     .threads(20)
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal()).batchSize(10).batchTimeout(60000).to("mock:result");
@@ -88,7 +88,7 @@ public class FileConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
-                    .setHeader("id", file("${file:onlyname.noext}"))
+                    .setHeader("id", simple("${file:onlyname.noext}"))
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal()).batchSize(10).batchTimeout(60000).to("mock:result");
             }

@@ -29,7 +29,7 @@ import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.language.simple.FileLanguage;
+import org.apache.camel.language.simple.SimpleLanguage;
 
 /**
  * Unit test for File Language.
@@ -71,7 +71,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:length}", file.length());
 
         // modified is a Date object
-        Date modified = FileLanguage.file("file:modified").evaluate(exchange, Date.class);
+        Date modified = SimpleLanguage.simple("file:modified").evaluate(exchange, Date.class);
         assertEquals(new Date(file.lastModified()), modified);
     }
 
