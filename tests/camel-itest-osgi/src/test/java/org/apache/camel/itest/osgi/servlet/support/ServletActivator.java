@@ -22,27 +22,47 @@ import java.util.Hashtable;
 import javax.servlet.Servlet;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
+import org.springframework.osgi.context.BundleContextAware;
 
-public final class ServletActivator implements BundleActivator {
+public final class ServletActivator implements BundleActivator, BundleContextAware {
+    private static final transient Log LOG = LogFactory.getLog(ServletActivator.class);
+    private static boolean registerService;
     
     /**
      * HttpService reference.
      */
     private ServiceReference httpServiceRef;
-
+    
     /**
      * Called when the OSGi framework starts our bundle
      */
-    @SuppressWarnings("unchecked")
     public void start(BundleContext bc) throws Exception {
-        httpServiceRef = bc.getServiceReference(HttpService.class.getName());
+        registerServlet(bc);
+    }
+
+    /**
+     * Called when the OSGi framework stops our bundle
+     */
+    public void stop(BundleContext bc) throws Exception {
         if (httpServiceRef != null) {
-            final HttpService httpService = (HttpService)bc.getService(httpServiceRef);
+            bc.ungetService(httpServiceRef);
+            httpServiceRef = null;
+        }
+    }
+    
+    protected void registerServlet(BundleContext bundleContext) throws Exception {
+        httpServiceRef = bundleContext.getServiceReference(HttpService.class.getName());
+        
+        if (httpServiceRef != null && !registerService) {
+            LOG.info("Regist the servlet service");
+            final HttpService httpService = (HttpService)bundleContext.getService(httpServiceRef);
             if (httpService != null) {
                 // create a default context to share between registrations
                 final HttpContext httpContext = httpService.createDefaultHttpContext();
@@ -55,18 +75,16 @@ public final class ServletActivator implements BundleActivator {
                     initParams, // init params
                     httpContext // http context
                 );
-
+                registerService = true;
             }
         }
     }
 
-    /**
-     * Called when the OSGi framework stops our bundle
-     */
-    public void stop(BundleContext bc) throws Exception {
-        if (httpServiceRef != null) {
-            bc.ungetService(httpServiceRef);
-            httpServiceRef = null;
+    public void setBundleContext(BundleContext bc) {
+        try {
+            registerServlet(bc);
+        } catch (Exception e) {
+            LOG.error("Can't register the servlet, the reason is " + e);
         }
     }
 

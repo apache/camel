@@ -31,11 +31,6 @@
   <name>Camel :: OSGi Integration Tests</name>
   <description>Performs OSGi compliance integration tests</description>
 
-  <properties>
-    <pax-exam-version>1.0.0</pax-exam-version>
-    <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
-  </properties>
-
   <repositories>
     <repository>
       <id>biz.aQute</id>
@@ -142,35 +137,20 @@
 
   </dependencies>
 
-  <build>
-    <plugins>
-      <!-- generate dependencies versions -->
-      <plugin>
-        <groupId>org.apache.servicemix.tooling</groupId>
-        <artifactId>depends-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-depends-file</id>
-            <goals>
-              <goal>generate-depends-file</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-              <includes>
-                  <include>**/*Test.*</include>
-              </includes>
-              <excludes>
-                  <exclude>**/XXXTest.*</exclude>
-              </excludes>               
-          </configuration>
-      </plugin>
-
-    </plugins>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*Test.*</include>
+					</includes>
+					<excludes>
+						<exclude>**/XXXTest.*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
   </build>
 
   <profiles>

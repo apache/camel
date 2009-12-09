@@ -85,8 +85,8 @@
     <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
     <junit-version>4.4</junit-version>
     <ognl-version>2.7.3_1</ognl-version>
-    <pax-exam-version>1.0.0</pax-exam-version>
-    <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>
+    <pax-exam-version>1.2.0</pax-exam-version>
+    <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
     <qpid-version>0.5.0</qpid-version>
     <restlet-version>1.1.5</restlet-version>
     <saxon-version>9.1.0.1</saxon-version>

@@ -28,17 +28,19 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.options.SystemPropertyOption;
+import org.ops4j.pax.swissbox.tinybundles.core.metadata.BndBuilder;
 import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
+import org.osgi.service.http.HttpService;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.bundle;
+
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.asURL;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
@@ -55,14 +57,13 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
     @Configuration
     public static Option[] configure() {
         Option[] options = options(
-           
+            
             // install the spring dm profile            
             profile("spring.dm").version("1.2.0"),
+            profile("compendium"),
+            profile("web"),
             // set the system property for pax web
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.osgi.service.http.port").value("9080"),
-            
-            // install the profile for OSGi web
-            mavenBundle().groupId("org.ops4j.pax.web").artifactId("pax-web-service").version("0.6.0"),
             
             // this is how you set the default log level when using pax logging (logProfile)
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
@@ -70,12 +71,9 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("features").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-http", "camel-servlet"),
-            
-            // create a customer bundle start up the CamelHttpTransportServlet
-            bundle(newBundle().addClass(ServletActivator.class)
-                .prepare(withBnd().set(Constants.BUNDLE_SYMBOLICNAME, "CamelServletTinyBundle")
-                                  .set(Constants.BUNDLE_ACTIVATOR, ServletActivator.class.getName())).build(asURL()).toString()),
+                          "camel-core", "camel-spring-osgi", "camel-test", "camel-http", "camel-servlet"),
+          
+                
             felix());
         
         return options;
@@ -83,7 +81,8 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
     
     @Override
     protected OsgiBundleXmlApplicationContext createApplicationContext() {
-        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/servlet/CamelServletContext.xml"});
+        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/servlet/ServletService.xml",
+                                                                "org/apache/camel/itest/osgi/servlet/CamelServletContext.xml"});
     }
    
 

@@ -28,6 +28,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
@@ -74,9 +75,9 @@ public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("features").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-osgi", "camel-spring", "camel-test", "camel-jaxb"),
+                          "camel-core", "camel-spring-osgi", "camel-test", "camel-jaxb"),
             
-            felix());
+            equinox().version("3.5.1"));
         
         return options;
     }

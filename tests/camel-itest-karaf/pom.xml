@@ -31,11 +31,6 @@
   <name>Camel :: Karaf Integration Tests</name>
   <description>Performs Karaf compliance integration tests</description>
 
-  <properties>
-    <pax-exam-version>1.0.0</pax-exam-version>
-    <pax-tiny-bundle-version>1.0.0</pax-tiny-bundle-version>  
-  </properties>
-
   <repositories>
     <repository>
       <id>biz.aQute</id>
