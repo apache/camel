@@ -27,7 +27,7 @@ import java.net.URI;
 public class FtpsConfiguration extends FtpConfiguration {
 
     private String securityProtocol = "TLS";
-    private boolean isImplicit = false;
+    private boolean isImplicit;
 
     public FtpsConfiguration() {
         setProtocol("ftps");
@@ -57,17 +57,15 @@ public class FtpsConfiguration extends FtpConfiguration {
     }
 
     /**
-     * Returns the secutiry mode(Implicit/Explicit).
+     * Returns the security mode(Implicit/Explicit).
      * true - Implicit Mode / False - Explicit Mode
-     * 
-     * @return isImplicit
      */
     public boolean isImplicit() {
         return isImplicit;
     }
 
     /**
-     * Set the secutiry mode(Implicit/Explicit).
+     * Set the security mode(Implicit/Explicit).
      * true - Implicit Mode / False - Explicit Mode
      */
     public void setIsImplicit(boolean isImplicit) {

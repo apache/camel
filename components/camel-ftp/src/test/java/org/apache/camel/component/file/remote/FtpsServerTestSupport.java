@@ -65,7 +65,7 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
         
         sslConfigFactory.setClientAuthentication(getClientAuth());
         
-        if (Boolean.valueOf(getClientAuth()).booleanValue() == true) {
+        if (Boolean.valueOf(getClientAuth())) {
             sslConfigFactory.setTruststoreFile(FTPSERVER_KEYSTORE);
             sslConfigFactory.setTruststoreType("JKS");
             sslConfigFactory.setTruststoreAlgorithm("SunX509");

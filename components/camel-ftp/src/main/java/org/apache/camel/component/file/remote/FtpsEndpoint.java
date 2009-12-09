@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
@@ -52,30 +53,29 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     }
     
     /**
-     * create the FTPS client.
-     * 
-     * @throws Exception 
+     * Create the FTPS client.
      */
     protected FTPClient createFtpClient() throws Exception {
-        FTPSClient client = new FTPSClient(
-                getFtpsConfiguration().getSecurityProtocol(),
-                getFtpsConfiguration().isImplicit());
+        FTPSClient client = new FTPSClient(getFtpsConfiguration().getSecurityProtocol(),
+                                           getFtpsConfiguration().isImplicit());
         
         if (ftpClientKeyStoreParameters != null) {
-            String type = (ftpClientKeyStoreParameters.containsKey("type")) ? 
-                    (String) ftpClientKeyStoreParameters.get("type") : 
-                        KeyStore.getDefaultType();
+            String type = (ftpClientKeyStoreParameters.containsKey("type"))
+                    ? (String) ftpClientKeyStoreParameters.get("type") : KeyStore.getDefaultType();
             String file = (String) ftpClientKeyStoreParameters.get("file");
             String password = (String) ftpClientKeyStoreParameters.get("password");
-            String algorithm = (ftpClientKeyStoreParameters.containsKey("algorithm")) ? 
-                    (String) ftpClientKeyStoreParameters.get("algorithm") : 
-                        KeyManagerFactory.getDefaultAlgorithm();
+            String algorithm = (ftpClientKeyStoreParameters.containsKey("algorithm"))
+                    ? (String) ftpClientKeyStoreParameters.get("algorithm")
+                    : KeyManagerFactory.getDefaultAlgorithm();
             String keyPassword = (String) ftpClientKeyStoreParameters.get("keyPassword");
             
             KeyStore keyStore = KeyStore.getInstance(type);
             FileInputStream keyStoreFileInputStream = new FileInputStream(new File(file));
-            keyStore.load(keyStoreFileInputStream, password.toCharArray());
-            keyStoreFileInputStream.close();
+            try {
+                keyStore.load(keyStoreFileInputStream, password.toCharArray());
+            } finally {
+                ObjectHelper.close(keyStoreFileInputStream, "keyStore", log);
+            }
 
             KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(algorithm);
             keyMgrFactory.init(keyStore, keyPassword.toCharArray());
@@ -84,20 +84,22 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (ftpClientTrustStoreParameters != null) {
-            String type = (ftpClientTrustStoreParameters.containsKey("type")) ? 
-                    (String) ftpClientTrustStoreParameters.get("type") : 
-                        KeyStore.getDefaultType();
+            String type = (ftpClientTrustStoreParameters.containsKey("type"))
+                    ? (String) ftpClientTrustStoreParameters.get("type") : KeyStore.getDefaultType();
             String file = (String) ftpClientTrustStoreParameters.get("file");
             String password = (String) ftpClientTrustStoreParameters.get("password");
-            String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm")) ? 
-                    (String) ftpClientTrustStoreParameters.get("algorithm") : 
-                        TrustManagerFactory.getDefaultAlgorithm();
+            String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm"))
+                    ? (String) ftpClientTrustStoreParameters.get("algorithm")
+                    : TrustManagerFactory.getDefaultAlgorithm();
                     
             KeyStore trustStore = KeyStore.getInstance(type);
             FileInputStream trustStoreFileInputStream = new FileInputStream(new File(file));
-            trustStore.load(trustStoreFileInputStream, password.toCharArray());
-            trustStoreFileInputStream.close();
-            
+            try {
+                trustStore.load(trustStoreFileInputStream, password.toCharArray());
+            } finally {
+                ObjectHelper.close(trustStoreFileInputStream, "trustStore", log);
+            }
+
             TrustManagerFactory trustMgrFactory = TrustManagerFactory.getInstance(algorithm);
             trustMgrFactory.init(trustStore);
             
@@ -126,14 +128,14 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     }
 
     /**
-     * Set the key store parameter
+     * Set the key store parameters
      */
     public void setFtpClientKeyStoreParameters(Map<String, Object> param) {
         this.ftpClientKeyStoreParameters = param;
     }
 
     /**
-     * Set the trust store parameter
+     * Set the trust store parameters
      */
     public void setFtpClientTrustStoreParameters(Map<String, Object> param) {
         this.ftpClientTrustStoreParameters = param;
