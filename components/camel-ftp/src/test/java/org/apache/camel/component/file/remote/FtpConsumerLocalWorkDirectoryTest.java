@@ -35,7 +35,8 @@ import org.junit.Test;
 public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/lwd/?password=admin&delay=5000&localWorkDirectory=target/lwd";
+        return "ftp://admin@localhost:" + getPort()
+               + "/lwd/?password=admin&delay=5000&localWorkDirectory=target/lwd&noop=true";
     }
 
     @Override
@@ -48,7 +49,8 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -69,16 +71,16 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         // give test some time to close file resources
-        Thread.sleep(2000);
-
-        // now the lwd file should be deleted
-        File local = new File("target/lwd/hello.txt").getAbsoluteFile();
-        assertFalse("Local work file should have been deleted", local.exists());
+        Thread.sleep(6000);
 
         // and the out file should exists
         File out = new File("target/out/hello.txt").getAbsoluteFile();
         assertTrue("file should exists", out.exists());
         assertEquals("Hello World", IOConverter.toString(out, null));
+
+        // now the lwd file should be deleted
+        File local = new File("target/lwd/hello.txt").getAbsoluteFile();
+        assertFalse("Local work file should have been deleted", local.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -88,7 +90,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         File body = exchange.getIn().getBody(File.class);
                         assertNotNull(body);
-                        assertTrue("Local work file should exists", body.exists());                        
+                        assertTrue("Local work file should exists", body.exists());
                         assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
                     }
                 }).to("mock:result", "file://target/out");

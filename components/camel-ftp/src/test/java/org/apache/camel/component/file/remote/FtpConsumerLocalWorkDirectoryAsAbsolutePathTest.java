@@ -72,7 +72,7 @@ public class FtpConsumerLocalWorkDirectoryAsAbsolutePathTest extends FtpServerTe
         assertMockEndpointsSatisfied();
 
         // give test some time to close file resources
-        Thread.sleep(2000);
+        Thread.sleep(6000);
 
         // now the lwd file should be deleted
         File local = new File("target/lwd/hello.txt").getAbsoluteFile();
