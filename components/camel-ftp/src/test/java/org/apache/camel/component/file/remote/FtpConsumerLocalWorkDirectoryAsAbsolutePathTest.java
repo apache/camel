@@ -38,7 +38,7 @@ public class FtpConsumerLocalWorkDirectoryAsAbsolutePathTest extends FtpServerTe
 
     protected String getFtpUrl() {
         base = new File("target/lwd").getAbsolutePath();
-        return "ftp://admin@localhost:" + getPort() + "/lwd/?password=admin&delay=5000&localWorkDirectory=" + base;
+        return "ftp://admin@localhost:" + getPort() + "/lwd/?password=admin&delay=5000&noop=true&localWorkDirectory=" + base;
     }
 
     @Override
