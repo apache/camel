@@ -231,7 +231,8 @@
 
   <profiles>
     <profile>
-      <activation>
+        <id>jdk1.5</id>
+        <activation>
         <jdk>1.5</jdk>
       </activation>
       <dependencies>
