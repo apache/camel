@@ -24,6 +24,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.util.ClassUtils;
 
 /**
  * A Message Transformer of an XML document to a Customer entity bean
@@ -39,28 +40,32 @@ public class CustomerTransformer {
     /**
      * A transformation method to convert a person document into a customer
      * entity
+     * @throws Exception 
      */
     @Converter
-    public CustomerEntity toCustomer(PersonDocument doc, Exchange exchange) {
+    public CustomerEntity toCustomer(PersonDocument doc, Exchange exchange) throws Exception {
         JpaTemplate template = exchange.getIn().getHeader("CamelJpaTemplate", JpaTemplate.class);
 
+        
         String user = doc.getUser();
         CustomerEntity customer = findCustomerByName(template, user);
 
         // let's convert information from the document into the entity bean
+        customer.setUserName(user);
         customer.setFirstName(doc.getFirstName());
         customer.setSurname(doc.getLastName());
         customer.setCity(doc.getCity());
 
-        LOG.debug("Created customer: " + customer);
+        LOG.debug("Created object customer: " + customer);
         return customer;
     }
 
     /**
-     * Finds a customer for the given username, or creates and inserts a new one
+     * Finds a customer for the given username
      */
-    protected CustomerEntity findCustomerByName(JpaTemplate template, String user) {
-        List<CustomerEntity> list = CastUtils.cast(template.find("select x from " + CustomerEntity.class.getName() + " x where x.userName = ?1", user));
+    protected CustomerEntity findCustomerByName(JpaTemplate template, String user) throws Exception {
+        List<CustomerEntity> list = CastUtils.cast(template.find("select x from customer"
+                                                                 + " x where x.userName = ?1", user));
         if (list.isEmpty()) {
             CustomerEntity answer = new CustomerEntity();
             answer.setUserName(user);
@@ -69,5 +74,6 @@ public class CustomerTransformer {
             return list.get(0);
         }
     }
+
 }
 // END SNIPPET: example

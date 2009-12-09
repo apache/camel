@@ -20,10 +20,12 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring
-       http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/osgi
+	   http://camel.apache.org/schema/osgi/camel-osgi.xsd">
 
 	<camel:camelContext id="camel" trace="true"
-		xmlns="http://camel.apache.org/schema/spring">
+		xmlns="http://camel.apache.org/schema/osgi">
 		<camel:package>org.apache.camel.example.etl</camel:package>
 	</camel:camelContext>
 
@@ -51,31 +53,25 @@
 		<property name="jpaVendorAdapter" ref="jpaAdapter" />
 	</bean>
 
-	<!--
-		Hibernate addapter <bean id="jpaAdapter"
-		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="databasePlatform"
-		value="org.hibernate.dialect.HSQLDialect" /> </bean>
-	-->
-
-	<!-- OpenJPA addapter -->
-	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter">
-		<property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.HSQLDictionary" />
+	<!-- EclipseLink addapter -->
+	<bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+		<property name="databasePlatform" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
 		<property name="database" value="HSQL" />
 	</bean>
 
 
-	<!-- lets show a simple UI to browse the database -->
+	<!-- lets show a simple UI to browse the database 
 	<bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner"
 		lazy-init="false">
 		<property name="main" value="org.hsqldb.util.DatabaseManagerSwing" />
 		<property name="args">
 			<list>
-				<value>--url</value>
+				<value>url</value>
 				<value>jdbc:hsqldb:mem:camel_etl</value>
 			</list>
 		</property>
 		<property name="delay" value="3000" />
 	</bean>
+    -->
 
 </beans>

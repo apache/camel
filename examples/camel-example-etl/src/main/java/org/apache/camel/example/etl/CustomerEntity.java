@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @version $Revision$
  */
-@Entity(name = "Customer")
+@Entity(name = "customer")
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerEntity {

@@ -33,16 +33,9 @@
 	<description>An example showing how to use Camel as an Extract Transform and Load (ETL) tool</description>
 
 	<properties>
-		<camel.osgi.export.pkg>
-			org.apache.camel.example.etl.*
-     </camel.osgi.export.pkg>
-		<camel.osgi.import.additional>
-			org.hsqldb,org.hsqldb.util,org.hsqldb.jdbc,org.hibernate.ejb
-     </camel.osgi.import.additional>
-		<!-- to avoid us import bunch other package -->
-		<camel.osgi.dynamic>
-			*
-     </camel.osgi.dynamic>
+		<camel.osgi.export.pkg>org.apache.camel.example.etl.*</camel.osgi.export.pkg>
+	 	<!-- to avoid us import bunch other package -->
+		<camel.osgi.dynamic>*</camel.osgi.dynamic>
 	</properties>
 
 	<dependencies>
@@ -137,6 +130,24 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<camel.osgi.import.additional>
+					org.hsqldb,
+					org.hsqldb.util,
+					org.hsqldb.jdbc,
+					org.hibernate.ejb
+     			</camel.osgi.import.additional>
+			</properties>
+			<build>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/profiles/hibernate</directory>
+					</resource>
+					<resource>
+						<directory>${basedir}/src/main/resources</directory>
+					</resource>
+				</resources>
+			</build>
 			<dependencies>
 				<dependency>
 					<groupId>org.hibernate</groupId>
@@ -157,10 +168,6 @@
 					</resource>
 					<resource>
 						<directory>${basedir}/src/main/resources</directory>
-						<excludes>
-							<exclude>**/persistence.xml</exclude>
-							<exclude>**/camel-context.xml</exclude>
-						</excludes>
 					</resource>
 				</resources>
 				<!--  Will enhance classes as we run in a non J2EE 5 env -->
@@ -193,6 +200,13 @@
 					</plugin>
 				</plugins>
 			</build>
+			<properties>
+				<camel.osgi.import.additional>
+					org.hsqldb,
+					org.hsqldb.util,
+					org.hsqldb.jdbc
+     			</camel.osgi.import.additional>
+			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>org.apache.openjpa</groupId>
@@ -200,6 +214,66 @@
 				</dependency>
 			</dependencies>
 		</profile>
+
+		<!-- EclipseLink - HSQLDB -->
+		<profile>
+			<id>eclipselink</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/profiles/eclipselink</directory>
+					</resource>
+					<resource>
+						<directory>${basedir}/src/main/resources</directory>
+					</resource>
+				</resources>
+			</build>
+			<properties>
+				<camel.osgi.import.additional>
+					org.hsqldb,
+					org.hsqldb.util,
+					org.hsqldb.jdbc
+     			</camel.osgi.import.additional>
+			</properties>
+			<dependencies>
+				<dependency>
+					  <groupId>org.eclipse.persistence</groupId>
+					  <artifactId>javax.persistence</artifactId>
+					  <version>1.2.0</version>
+				</dependency>
+				<dependency>
+  					<groupId>org.eclipse.persistence</groupId>
+  					<artifactId>org.eclipse.persistence.antlr</artifactId>
+  					<version>1.2.0</version>
+				</dependency>
+				<dependency>
+  					<groupId>org.eclipse.persistence</groupId>
+  					<artifactId>org.eclipse.persistence.asm</artifactId>
+  					<version>1.2.0</version>
+				</dependency>
+				<dependency>
+  					<groupId>org.eclipse.persistence</groupId>
+  					<artifactId>org.eclipse.persistence.core</artifactId>
+  					<version>1.2.0</version>
+				</dependency>
+				<dependency>
+  					<groupId>org.eclipse.persistence</groupId>
+  					<artifactId>org.eclipse.persistence.jpa</artifactId>
+  					<version>1.2.0</version>
+				</dependency>
+				<dependency>
+					<groupId>hsqldb</groupId>
+					<artifactId>hsqldb</artifactId>
+				</dependency>
+			</dependencies>
+			<repositories>
+				<repository>
+					<id>Eclipse</id>
+					<url>http://eclipse.ialto.org/rt/eclipselink/maven.repo</url>
+				</repository>
+			</repositories>
+		</profile>
+
 	</profiles>
 	<reporting>
 		<plugins>
