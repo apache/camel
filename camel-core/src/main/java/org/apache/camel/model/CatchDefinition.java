@@ -87,6 +87,11 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
 
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
+        // must have at least one exception
+        if (getExceptionClasses().isEmpty()) {
+            throw new IllegalArgumentException("At least one Exception must be configured to catch");
+        }
+
         Processor childProcessor = routeContext.createProcessor(this);
 
         Predicate when = null;
