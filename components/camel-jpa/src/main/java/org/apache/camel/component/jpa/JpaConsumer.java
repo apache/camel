@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
@@ -36,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.util.ClassUtils;
 
 /**
  * @version $Revision$
@@ -234,12 +236,38 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
             return QueryBuilder.nativeQuery(nativeQuery);
         } else {
             Class<?> entityType = endpoint.getEntityType();
+            
             if (entityType == null) {
                 return null;
             } else {
-                return QueryBuilder.query("select x from " + entityType.getName() + " x");
+                
+                // Check if we have a property name on the @Entity annotation
+                String name = getEntityName(entityType);
+                
+                if ( name != null ) {
+                    return QueryBuilder.query("select x from " + name + " x");
+                } else {
+                    // Remove package name of the entity to be conform with JPA 1.0 spec
+                    return QueryBuilder.query("select x from " + entityType.getSimpleName() + " x");
+                }
+                    
+
+                
             }
         }
+    }
+    
+    protected String getEntityName(Class<?> clazz) {
+        
+        Entity entity = clazz.getAnnotation(Entity.class);
+        
+        // Check if the property name has been defined for Entity annotation
+        if ( ! entity.name().equals("") ) {
+            return entity.name();
+        } else {
+            return null;
+        }
+ 
     }
 
     protected DeleteHandler<Object> createDeleteHandler() {
