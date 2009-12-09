@@ -30,7 +30,7 @@ public class AtomPollingLowDelayTest extends CamelTestSupport {
     public void testLowDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(7);
-        mock.setResultWaitTime(1000L);
+        mock.setResultWaitTime(3000L);
         mock.assertIsSatisfied();
     }
 

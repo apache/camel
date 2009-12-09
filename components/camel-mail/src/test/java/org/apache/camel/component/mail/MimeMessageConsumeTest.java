@@ -40,6 +40,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * @version $Revision$
@@ -49,6 +50,8 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
 
     @Test
     public void testSendAndReceiveMails() throws Exception {
+        Mailbox.clearAll();
+
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 

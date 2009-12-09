@@ -47,14 +47,14 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
 
         template.asyncSendBody("direct:start", "Hello World");
 
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         Integer inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
         assertEquals(1, inFlight.longValue());
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, completed.longValue());

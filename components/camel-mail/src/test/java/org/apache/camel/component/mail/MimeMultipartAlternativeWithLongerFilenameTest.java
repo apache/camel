@@ -28,6 +28,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.jvnet.mock_javamail.Mailbox;
+
 import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
 
 public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSupport {
@@ -35,6 +37,8 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";
 
     private void sendMultipartEmail(boolean useInlineattachments) throws Exception {
+        Mailbox.clearAll();
+
         // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint("smtp://ryan@mymailserver.com?password=secret", MailEndpoint.class);
         endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);

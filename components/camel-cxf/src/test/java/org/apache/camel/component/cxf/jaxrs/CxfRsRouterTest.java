@@ -62,8 +62,14 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
 
         try {
             assertEquals(200, httpclient.executeMethod(get));
-            assertEquals("<Customers><Customer><id>123</id><name>John</name></Customer><Customer><id>113</id><name>Dan</name></Customer></Customers>", 
-                         get.getResponseBodyAsString());
+            // order returned can differ on OS so match for both orders
+            String s = get.getResponseBodyAsString();
+            boolean m1 = "<Customers><Customer><id>123</id><name>John</name></Customer><Customer><id>113</id><name>Dan</name></Customer></Customers>".equals(s);
+            boolean m2 = "<Customers><Customer><id>113</id><name>Dan</name></Customer><Customer><id>123</id><name>John</name></Customer></Customers>".equals(s);
+
+            if (!m1 && !m2) {
+                fail("Not expected body returned: " + s);
+            }
         } finally {
             get.releaseConnection();
         }

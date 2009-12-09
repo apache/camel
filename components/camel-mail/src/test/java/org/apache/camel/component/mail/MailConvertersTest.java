@@ -26,11 +26,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * @version $Revision$
  */
 public class MailConvertersTest extends CamelTestSupport {
+
+    @Override
+    public void setUp() throws Exception {
+        Mailbox.clearAll();
+        super.setUp();
+    }
 
     @Test
     public void testMailMessageToString() throws Exception {

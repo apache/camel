@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.mail.MailPreparationException;
 
 /**
@@ -40,6 +41,8 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testSencUnsupportedCharset() throws Exception {
+        Mailbox.clearAll();
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -68,6 +71,8 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testSencUnsupportedCharsetDisabledOption() throws Exception {
+        Mailbox.clearAll();
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

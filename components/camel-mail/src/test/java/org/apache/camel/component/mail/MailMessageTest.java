@@ -32,6 +32,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
 import org.junit.Test;
+import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * @version $Revision$
@@ -84,6 +85,7 @@ public class MailMessageTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        Mailbox.clearAll();
 
         endpoint = resolveMandatoryEndpoint("pop3://someone@myhost:30/subject");
 
