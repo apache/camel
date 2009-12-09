@@ -35,9 +35,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.orm.jpa.JpaCallback;
-import org.springframework.util.ClassUtils;
 
 /**
  * @version $Revision$
@@ -68,6 +66,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
         this.template = endpoint.createTransactionStrategy();
     }
 
+    @Override
     protected void poll() throws Exception {
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
@@ -145,6 +144,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
 
     // Properties
     // -------------------------------------------------------------------------
+    @Override
     public JpaEndpoint getEndpoint() {
         return endpoint;
     }
@@ -244,7 +244,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
                 // Check if we have a property name on the @Entity annotation
                 String name = getEntityName(entityType);
                 
-                if ( name != null ) {
+                if (name != null) {
                     return QueryBuilder.query("select x from " + name + " x");
                 } else {
                     // Remove package name of the entity to be conform with JPA 1.0 spec
@@ -262,7 +262,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
         Entity entity = clazz.getAnnotation(Entity.class);
         
         // Check if the property name has been defined for Entity annotation
-        if ( ! entity.name().equals("") ) {
+        if (!entity.name().equals("")) {
             return entity.name();
         } else {
             return null;
