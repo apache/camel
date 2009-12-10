@@ -34,7 +34,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
         deleteDirectory("target/suspended");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World");
+        mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader("file://target/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
