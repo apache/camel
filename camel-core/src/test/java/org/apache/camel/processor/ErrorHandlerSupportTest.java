@@ -22,6 +22,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
 
 public class ErrorHandlerSupportTest extends TestCase {
@@ -89,6 +90,10 @@ public class ErrorHandlerSupportTest extends TestCase {
 
         public boolean supportTransacted() {
             return false;
+        }
+
+        public Processor getOutput() {
+            return null;
         }
 
         public void process(Exchange exchange) throws Exception {

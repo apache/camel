@@ -104,4 +104,9 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
      */
     public abstract boolean supportTransacted();
 
+    /**
+     * Gets the output
+     */
+    public abstract Processor getOutput();
+
 }

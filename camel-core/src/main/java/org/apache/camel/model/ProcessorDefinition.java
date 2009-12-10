@@ -180,22 +180,39 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             return channel;
+        } else if (defn instanceof MulticastDefinition) {
+            // do not use error handler for multicast based as it offers fine grained error handlers for its outputs
+            return channel;
         } else {
             // regular definition so add the error handler
             Processor output = channel.getOutput();
-            // create error handler
-            ErrorHandlerBuilder builder = getErrorHandlerBuilder();
-            Processor errorHandler = builder.createErrorHandler(routeContext, output);
+            Processor errorHandler = wrapInErrorHandler(routeContext, output);
             // set error handler on channel
             channel.setErrorHandler(errorHandler);
 
-            // invoke lifecycles so we can manage this error handler builder
-            for (LifecycleStrategy strategy : routeContext.getCamelContext().getLifecycleStrategies()) {
-                strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
-            }
-
             return channel;
         }
+    }
+
+    /**
+     * Wraps the given output in an error handler
+     *
+     * @param routeContext the route context
+     * @param output the output
+     * @return the output wrapped with the error handler
+     * @throws Exception can be thrown
+     */
+    protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
+        // create error handler
+        ErrorHandlerBuilder builder = getErrorHandlerBuilder();
+        Processor errorHandler = builder.createErrorHandler(routeContext, output);
+
+        // invoke lifecycles so we can manage this error handler builder
+        for (LifecycleStrategy strategy : routeContext.getCamelContext().getLifecycleStrategies()) {
+            strategy.onErrorHandlerAdd(routeContext, errorHandler, builder);
+        }
+
+        return errorHandler;
     }
 
     /**
@@ -243,14 +260,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Creates a new instance of some kind of composite processor which defaults
      * to using a {@link Pipeline} but derived classes could change the behaviour
      */
-    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
+    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
         return new Pipeline(list);
     }
 
     /**
      * Creates a new instance of the {@link Channel}.
      */
-    protected Channel createChannel(RouteContext routeContext) {
+    protected Channel createChannel(RouteContext routeContext) throws Exception {
         return new DefaultChannel();
     }
 
