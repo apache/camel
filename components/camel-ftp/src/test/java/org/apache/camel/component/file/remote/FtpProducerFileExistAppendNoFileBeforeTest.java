@@ -35,7 +35,6 @@ public class FtpProducerFileExistAppendNoFileBeforeTest extends FtpServerTestSup
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory(FTP_ROOT_DIR + "exist");
         deleteDirectory("target/exist");
     }
 
@@ -59,5 +58,4 @@ public class FtpProducerFileExistAppendNoFileBeforeTest extends FtpServerTestSup
             }
         };
     }
-
 }

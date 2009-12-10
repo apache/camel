@@ -62,5 +62,4 @@ public class FtpConsumerIncludeNameTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

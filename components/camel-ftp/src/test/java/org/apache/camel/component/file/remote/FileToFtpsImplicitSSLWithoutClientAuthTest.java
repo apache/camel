@@ -44,8 +44,8 @@ public class FileToFtpsImplicitSSLWithoutClientAuthTest extends FtpsServerImplic
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:src/main/data?noop=true&consumer.delay=5000").to(getFtpUrl());
                 from(getFtpUrl()).to("mock:result");
+                from("file:src/main/data?noop=true&consumer.delay=5000").to(getFtpUrl());
             }
         };
     }

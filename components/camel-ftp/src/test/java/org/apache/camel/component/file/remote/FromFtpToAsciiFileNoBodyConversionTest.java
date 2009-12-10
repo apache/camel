@@ -34,13 +34,6 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         return "ftp://admin@localhost:" + getPort() + "/tmp5/camel?password=admin&binary=false";
     }
 
-    @Test
-    public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMinimumMessageCount(1);
-        resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
@@ -48,6 +41,13 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         prepareFtpServer();
     }
 
+    @Test
+    public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMinimumMessageCount(1);
+        resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
+    }
+    
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
@@ -69,5 +69,4 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
             }
         };
     }
-
 }

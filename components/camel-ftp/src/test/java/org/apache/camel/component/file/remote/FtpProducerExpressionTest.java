@@ -36,15 +36,9 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
-    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory(FTP_ROOT_DIR + "filelanguage");
         deleteDirectory("target/filelanguage");
     }
 
@@ -53,6 +47,11 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myguidgenerator", new MyGuidGenerator());
         return jndi;
+    }
+    
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     @Test
@@ -125,5 +124,4 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
             return "123";
         }
     }
-
 }

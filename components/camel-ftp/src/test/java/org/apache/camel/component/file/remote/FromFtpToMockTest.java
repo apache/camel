@@ -24,7 +24,6 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class FromFtpToMockTest extends FtpServerTestSupport {
-    protected MockEndpoint resultEndpoint;
     protected String expectedBody = "Hello there!";
 
     private String getFtpUrl() {
@@ -48,5 +47,4 @@ public class FromFtpToMockTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

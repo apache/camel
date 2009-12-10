@@ -41,16 +41,6 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         return jndi;
     }
 
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-            }
-        };
-    }
-
     @Test
     public void testIdempotent() throws Exception {
         // consume the file the first time
@@ -77,6 +67,15 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
         assertTrue("MyIdempotentRepository should have been invoked", invoked);
     }
+    
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from(getFtpUrl()).to("mock:result");
+            }
+        };
+    }
 
     public class MyIdempotentRepository implements IdempotentRepository<String> {
 
@@ -100,5 +99,4 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
             return true;
         }
     }
-
 }

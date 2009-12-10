@@ -42,19 +42,6 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
-    private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
-        // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(getFtpUrl());
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello World");
-        exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
-    }
-
     @Test
     public void testNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -69,6 +56,19 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
         assertTrue("The file should exists", file.exists());
     }
 
+    private void prepareFtpServer() throws Exception {
+        // prepares the FTP Server by creating a file on the server that we want to unit
+        // test that we can pool and store as a local file
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody("Hello World");
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
+        Producer producer = endpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
+    }
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -76,5 +76,4 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

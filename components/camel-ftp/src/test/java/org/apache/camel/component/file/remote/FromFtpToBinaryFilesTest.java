@@ -99,5 +99,4 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

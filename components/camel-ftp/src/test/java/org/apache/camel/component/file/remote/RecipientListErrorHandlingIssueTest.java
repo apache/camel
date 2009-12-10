@@ -105,5 +105,4 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }

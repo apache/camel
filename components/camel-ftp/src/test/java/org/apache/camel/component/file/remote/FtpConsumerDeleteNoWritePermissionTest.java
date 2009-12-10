@@ -61,5 +61,4 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/deletenoperm/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
-
 }

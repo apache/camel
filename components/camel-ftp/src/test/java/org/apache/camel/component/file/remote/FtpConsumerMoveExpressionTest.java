@@ -39,7 +39,6 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("res/home/filelanguage");
         deleteDirectory("target/filelanguage");
     }
 
@@ -49,7 +48,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
         jndi.bind("myguidgenerator", new MyGuidGenerator());
         return jndi;
     }
-
+    
     @Test
     public void testMoveUsingExpression() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -83,5 +82,4 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
             return "123";
         }
     }
-
 }

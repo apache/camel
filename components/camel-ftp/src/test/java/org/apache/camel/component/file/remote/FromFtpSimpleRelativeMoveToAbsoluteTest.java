@@ -32,19 +32,11 @@ public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSuppor
                 + "&move=/movefile/.done&initialDelay=2500&delay=5000";
     }
 
-
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "movefile");
         super.setUp();
         prepareFtpServer();
-    }
-
-    private void prepareFtpServer() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl(), "Hello", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Bye", Exchange.FILE_NAME, "sub/bye.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
 
     @Test
@@ -57,6 +49,12 @@ public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSuppor
 
         mock.assertIsSatisfied();
     }
+    
+    private void prepareFtpServer() throws Exception {
+        template.sendBodyAndHeader(getFtpUrl(), "Hello", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye", Exchange.FILE_NAME, "sub/bye.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -65,5 +63,4 @@ public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSuppor
             }
         };
     }
-
 }

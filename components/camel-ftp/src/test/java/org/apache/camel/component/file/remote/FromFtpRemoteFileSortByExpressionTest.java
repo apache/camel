@@ -58,6 +58,7 @@ public class FromFtpRemoteFileSortByExpressionTest extends FtpServerTestSupport 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSortFilesReverse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -80,5 +81,4 @@ public class FromFtpRemoteFileSortByExpressionTest extends FtpServerTestSupport 
         sendFile(getFtpUrl(), "Hello London", "london.txt");
         sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.xml");
     }
-
 }

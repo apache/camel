@@ -36,11 +36,22 @@ public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "/tempfile");
         super.setUp();
         prepareFtpServer();
     }
 
+    @Test
+    public void testSendFileTargetFileExist() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello Again World");
+        mock.expectedFileExists(FTP_ROOT_DIR + "/tempfile/foo/bar/message.txt", "Hello Again World");
+
+        template.sendBody("direct:start", "Hello Again World");
+
+        mock.assertIsSatisfied();
+    }
+    
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
@@ -58,18 +69,6 @@ public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
         assertTrue("The file should exists", file.exists());
     }
 
-    @Test
-    public void testSendFileTargetFileExist() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello Again World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/tempfile/foo/bar/message.txt", "Hello Again World");
-
-        template.sendBody("direct:start", "Hello Again World");
-
-        mock.assertIsSatisfied();
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -77,5 +76,4 @@ public class ToFtpTempFileTargetFileExistTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

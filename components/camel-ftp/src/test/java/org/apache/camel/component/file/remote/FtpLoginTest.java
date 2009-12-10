@@ -22,20 +22,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Unit test for login failure due bad password and login with accepted password
  */
 public class FtpLoginTest extends FtpServerTestSupport {
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        deleteDirectory(FTP_ROOT_DIR + "login");
-    }
 
     @Test
     public void testBadLogin() throws Exception {
@@ -53,6 +45,7 @@ public class FtpLoginTest extends FtpServerTestSupport {
         assertFalse("The file should NOT exists", file.exists());
     }
 
+    @Test
     public void testGoodLogin() throws Exception {
         uploadFile("scott", "tiger");
 
@@ -73,5 +66,4 @@ public class FtpLoginTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
     }
-
 }

@@ -41,6 +41,15 @@ public class FtpConsumerBodyAsStringTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
+    @Test
+    public void testSingleFileTest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        mock.expectedMessageCount(1);
+
+        assertMockEndpointsSatisfied();
+    }
+
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool
@@ -53,16 +62,7 @@ public class FtpConsumerBodyAsStringTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
     }
-
-    @Test
-    public void testSingleFileTest() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedMessageCount(1);
-
-        assertMockEndpointsSatisfied();
-    }
-
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -76,5 +76,4 @@ public class FtpConsumerBodyAsStringTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

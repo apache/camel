@@ -50,5 +50,4 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
         };
     }
     // END SNIPPET: e1
-
 }

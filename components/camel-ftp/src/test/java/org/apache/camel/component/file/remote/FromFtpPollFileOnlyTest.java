@@ -33,14 +33,6 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin";
     }
 
-    @Test
-    public void testPollFileOnly() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World from FTPServer");
-
-        mock.assertIsSatisfied();
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
@@ -48,6 +40,14 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
+    @Test
+    public void testPollFileOnly() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World from FTPServer");
+
+        mock.assertIsSatisfied();
+    }
+    
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
@@ -68,5 +68,4 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

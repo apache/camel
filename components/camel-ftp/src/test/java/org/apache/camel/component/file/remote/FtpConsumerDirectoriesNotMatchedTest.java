@@ -63,5 +63,4 @@ public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

@@ -39,7 +39,6 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("res/home/thirdpool");
         deleteDirectory("target/thridpool");
         super.setUp();
     }
@@ -86,5 +85,4 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

@@ -41,7 +41,6 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "incoming");
         super.setUp();
         prepareFtpServer();
     }
@@ -96,5 +95,4 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

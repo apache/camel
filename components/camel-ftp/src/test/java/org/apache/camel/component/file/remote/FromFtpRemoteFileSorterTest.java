@@ -40,19 +40,19 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
         return jndi;
     }
 
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
+    
     @Test
     public void testFtpSorter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
         mock.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
         mock.assertIsSatisfied();
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
     }
 
     private void prepareFtpServer() throws Exception {
@@ -79,6 +79,4 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
         }
     }
     // END SNIPPET: e1
-
-
 }

@@ -50,11 +50,18 @@ public class FromFtpClientConfigRefTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "timeout");
         super.setUp();
         prepareFtpServer();
     }
-
+    
+    @Test
+    public void testTimeout() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        
+        mock.assertIsSatisfied();
+    }
+    
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
@@ -74,12 +81,4 @@ public class FromFtpClientConfigRefTest extends FtpServerTestSupport {
             }
         };
     }
-
-    @Test
-    public void testTimeout() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.assertIsSatisfied();
-    }
-
 }

@@ -39,11 +39,20 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "movefile");
         super.setUp();
         prepareFtpServer();
     }
 
+    @Test
+    public void testPollFileAndShouldBeMoved() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello World this file will be moved");
+        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/sub2/hello.txt.old");
+
+        mock.assertIsSatisfied();
+    }
+    
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
@@ -62,16 +71,6 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
         assertTrue("The file should exists", file.exists());
     }
 
-    @Test
-    public void testPollFileAndShouldBeMoved() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World this file will be moved");
-        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/sub2/hello.txt.old");
-
-        mock.assertIsSatisfied();
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -79,5 +78,4 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

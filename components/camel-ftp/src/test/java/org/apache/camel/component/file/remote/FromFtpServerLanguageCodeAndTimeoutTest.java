@@ -37,9 +37,16 @@ public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSuppor
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "codetimeout");
         super.setUp();
         prepareFtpServer();
+    }
+    
+    @Test
+    public void testLanguageCodeAndTimeout() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        
+        mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
@@ -61,12 +68,4 @@ public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSuppor
             }
         };
     }
-
-    @Test
-    public void testLanguageCodeAndTimeout() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.assertIsSatisfied();
-    }
-
 }

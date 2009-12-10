@@ -47,8 +47,6 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
     @Test
     public void testWriteUsingTempPrefixButFileExist() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "tempprefix");
-
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Thread.sleep(500);
@@ -64,8 +62,6 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
     @Test
     public void testWriteUsingTempPrefixButBothFileExist() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "tempprefix");
-
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "foohello.txt");
 
@@ -82,8 +78,6 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
     @Test
     public void testWriteUsingTempPrefixButFileExistOverride() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "tempprefix");
-
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Thread.sleep(500);
@@ -99,8 +93,6 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
     @Test
     public void testWriteUsingTempPrefixButFileExistIgnore() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "tempprefix");
-
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Thread.sleep(500);
@@ -116,8 +108,6 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
     @Test
     public void testWriteUsingTempPrefixButFileExistFail() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "tempprefix");
-
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Thread.sleep(500);
@@ -135,5 +125,4 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
         // should not write new file as we should ignore
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
-
 }

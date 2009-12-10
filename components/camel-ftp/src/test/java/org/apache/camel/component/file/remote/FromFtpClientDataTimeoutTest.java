@@ -36,9 +36,16 @@ public class FromFtpClientDataTimeoutTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "timeout");
         super.setUp();
         prepareFtpServer();
+    }
+    
+    @Test
+    public void testTimeout() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        
+        mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
@@ -60,12 +67,4 @@ public class FromFtpClientDataTimeoutTest extends FtpServerTestSupport {
             }
         };
     }
-
-    @Test
-    public void testTimeout() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-        mock.assertIsSatisfied();
-    }
-
 }

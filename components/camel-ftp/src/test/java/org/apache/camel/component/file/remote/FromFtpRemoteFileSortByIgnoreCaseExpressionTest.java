@@ -97,5 +97,4 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTe
         sendFile(getFtpUrl(), "Hello London", "REPORT-2.txt");
         sendFile(getFtpUrl(), "Hello Copenhagen", "Report-1.xml");
     }
-
 }

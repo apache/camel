@@ -35,24 +35,25 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/tmp3/camel?password=admin&binary=false&fileExist=Override";
     }
 
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
+    
     @Test
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello World from FTPServer");
+        
         resultEndpoint.assertIsSatisfied();
 
         // assert the file
         File file = new File("target/ftptest/deleteme.txt");
         assertTrue("The ASCII file should exists", file.exists());
         assertTrue("File size wrong", file.length() > 10);
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
     }
 
     private void prepareFtpServer() throws Exception {

@@ -48,5 +48,4 @@ public class FromFtpNoFilesTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

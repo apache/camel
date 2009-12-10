@@ -38,13 +38,7 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory(FTP_ROOT_DIR);
-        createDirectory(FTP_ROOT_DIR);
         prepareFtpServer();
-    }
-
-    private void prepareFtpServer() throws Exception {
-        sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
     @Test
@@ -60,6 +54,10 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
         assertEquals("hello.txt", file.getAbsoluteFilePath());
         assertEquals("hello.txt", file.getRelativeFilePath());
         assertEquals("hello.txt", file.getFileName());
+    }
+    
+    private void prepareFtpServer() throws Exception {
+        sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

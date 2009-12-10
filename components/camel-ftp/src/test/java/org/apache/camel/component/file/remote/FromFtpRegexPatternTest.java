@@ -31,19 +31,19 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/regexp?password=admin&include=report.*";
     }
 
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
+    
     @Test
     public void testFtpRegexPattern() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceived("Reports", "Reports");
         mock.assertIsSatisfied();
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
     }
 
     private void prepareFtpServer() throws Exception {
@@ -63,5 +63,4 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

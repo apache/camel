@@ -47,5 +47,4 @@ public class FtpReconnectAttemptUnknownHostTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

@@ -74,5 +74,4 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

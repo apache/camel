@@ -36,14 +36,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory(FTP_ROOT_DIR + "multidir");
         prepareFtpServer();
-    }
-
-    private void prepareFtpServer() throws Exception {
-        sendFile(getFtpUrl(), "Bye World", "bye.txt");
-        sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");
-        sendFile(getFtpUrl(), "Godday World", "sub/sub2/godday.txt");
     }
 
     @Test
@@ -73,6 +66,12 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
         assertDirectoryEquals("multidir/sub/sub2/godday.txt", file.getAbsoluteFilePath());
         assertDirectoryEquals("sub/sub2/godday.txt", file.getRelativeFilePath());
         assertEquals("godday.txt", file.getFileName());
+    }
+    
+    private void prepareFtpServer() throws Exception {
+        sendFile(getFtpUrl(), "Bye World", "bye.txt");
+        sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");
+        sendFile(getFtpUrl(), "Godday World", "sub/sub2/godday.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

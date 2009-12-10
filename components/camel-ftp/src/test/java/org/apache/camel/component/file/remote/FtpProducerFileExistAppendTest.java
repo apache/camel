@@ -36,7 +36,6 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory(FTP_ROOT_DIR + "exist");
         deleteDirectory("target/exist");
 
         template.sendBodyAndHeader(getFtpUrl(), "Hello World\n", Exchange.FILE_NAME, "hello.txt");
@@ -65,5 +64,4 @@ public class FtpProducerFileExistAppendTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

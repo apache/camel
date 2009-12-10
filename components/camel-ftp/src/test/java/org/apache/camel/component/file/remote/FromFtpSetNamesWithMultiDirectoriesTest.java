@@ -42,7 +42,6 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "/incoming");
         deleteDirectory("./target/ftpsetnamestest");
         super.setUp();
         prepareFtpServer();
@@ -99,5 +98,4 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
             }
         };
     }
-
 }

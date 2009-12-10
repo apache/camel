@@ -82,5 +82,4 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.xml");
         sendFile(getFtpUrl(), "Hello Dublin", "dublin.txt");
     }
-
 }

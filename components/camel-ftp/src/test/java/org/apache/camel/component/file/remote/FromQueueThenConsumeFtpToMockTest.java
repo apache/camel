@@ -47,8 +47,17 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory(FTP_ROOT_DIR + "getme");
         prepareFtpServer();
+    }
+
+    @Test
+    public void testFromQueueThenConsumeFtp() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World");
+
+        template.sendBodyAndHeader("seda:start", "Hello World", "myfile", "hello.txt");
+
+        assertMockEndpointsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
@@ -63,17 +72,7 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
     }
-
-    @Test
-    public void testFromQueueThenConsumeFtp() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Bye World");
-
-        template.sendBodyAndHeader("seda:start", "Hello World", "myfile", "hello.txt");
-
-        assertMockEndpointsSatisfied();
-    }
-
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -111,5 +110,4 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

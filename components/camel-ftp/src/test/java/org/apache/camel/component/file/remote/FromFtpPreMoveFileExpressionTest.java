@@ -40,9 +40,17 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "movefile");
         super.setUp();
         prepareFtpServer();
+    }
+
+    @Test
+    public void testPollFileAndShouldBeMoved() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello World this file will be moved");
+
+        mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
@@ -62,16 +70,7 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
         file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
-
-    @Test
-    public void testPollFileAndShouldBeMoved() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World this file will be moved");
-
-        mock.assertIsSatisfied();
-    }
-
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -86,5 +85,4 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

@@ -39,7 +39,6 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR + "filestress");
         super.setUp();
         for (int i = 0; i < files; i++) {
             template.sendBodyAndHeader("file://" + FTP_ROOT_DIR + "filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
@@ -75,5 +74,4 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

@@ -42,6 +42,23 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         super.setUp();
         prepareFtpServer();
     }
+    
+    @Test
+    public void testPollFileAndShouldNotBeDeleted() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:error");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello World this file will NOT be deleted");
+
+        mock.assertIsSatisfied();
+
+        // give time to NOT delete file
+        Thread.sleep(200);
+
+        // assert the file is deleted
+        File file = new File("./res/home/deletefile/hello.txt");
+        file = file.getAbsoluteFile();
+        assertTrue("The file should NOT have been deleted", file.exists());
+    }
 
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
@@ -59,23 +76,6 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         File file = new File("./res/home/deletefile/hello.txt");
         file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
-    }
-
-    @Test
-    public void testPollFileAndShouldNotBeDeleted() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World this file will NOT be deleted");
-
-        mock.assertIsSatisfied();
-
-        // give time to NOT delete file
-        Thread.sleep(200);
-
-        // assert the file is deleted
-        File file = new File("./res/home/deletefile/hello.txt");
-        file = file.getAbsoluteFile();
-        assertTrue("The file should NOT have been deleted", file.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

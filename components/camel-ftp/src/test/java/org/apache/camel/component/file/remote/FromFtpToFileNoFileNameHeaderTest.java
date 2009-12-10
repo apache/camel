@@ -74,5 +74,4 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

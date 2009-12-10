@@ -45,8 +45,6 @@ public class FtpProducerConcurrentTest extends FtpServerTestSupport {
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
-        deleteDirectory("res/home/concurrent");
-
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);

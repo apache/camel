@@ -39,12 +39,6 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
     }
 
     @Override
-    public void setUp() throws Exception {
-        deleteDirectory("./res/home/recover");
-        super.setUp();
-    }
-
-    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myPoll", new MyPollStrategy());
@@ -91,5 +85,4 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
             return super.rollback(consumer, endpoint, retryCounter, e);
         }
     }
-
 }

@@ -31,22 +31,6 @@ public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
                 + "/idempotent?password=admin&binary=false&idempotent=true&delete=true&delay=1000";
     }
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        deleteDirectory("target/idempotent");
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
-            }
-        };
-    }
-
     @Test
     public void testIdempotent() throws Exception {
         // consume the file the first time
@@ -72,4 +56,12 @@ public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from(getFtpUrl()).to("mock:result");
+            }
+        };
+    }
 }

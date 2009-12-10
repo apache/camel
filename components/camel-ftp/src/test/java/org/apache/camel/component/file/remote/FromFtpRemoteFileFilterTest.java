@@ -40,19 +40,20 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
         return jndi;
     }
 
-    @Test
-    public void testFtpFilter() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceivedInAnyOrder("Report 1", "Report 2");
-        mock.assertIsSatisfied();
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
+    }
+    
+    @Test
+    public void testFtpFilter() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceivedInAnyOrder("Report 1", "Report 2");
+        
+        mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
@@ -81,6 +82,4 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
         }
     }
     // END SNIPPET: e1
-
-
 }

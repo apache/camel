@@ -35,14 +35,7 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory(FTP_ROOT_DIR + "poll");
         prepareFtpServer();
-    }
-
-    private void prepareFtpServer() throws Exception {
-        sendFile(getFtpUrl(), "Bye World", "bye.txt");
-        sendFile(getFtpUrl(), "Hello World", "hello.txt");
-        sendFile(getFtpUrl(), "Godday World", "godday.txt");
     }
 
     @Test
@@ -60,6 +53,12 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    private void prepareFtpServer() throws Exception {
+        sendFile(getFtpUrl(), "Bye World", "bye.txt");
+        sendFile(getFtpUrl(), "Hello World", "hello.txt");
+        sendFile(getFtpUrl(), "Godday World", "godday.txt");
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -68,5 +67,4 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
             }
         };
     }
-
 }
