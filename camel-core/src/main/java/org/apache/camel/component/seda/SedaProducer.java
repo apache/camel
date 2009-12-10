@@ -74,10 +74,22 @@ public class SedaProducer extends CollectionProducer {
             });
 
             queue.add(copy);
-            // lets see if we can get the task done before the timeout
-            boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
-            if (!done) {
-                exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+
+            if (timeout > 0) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Waiting for task to complete using timeout (ms): " + timeout);
+                }
+                // lets see if we can get the task done before the timeout
+                boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
+                if (!done) {
+                    exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+                }
+            } else {
+                if (log.isTraceEnabled()) {
+                    log.trace("Waiting for task to complete (blocking)");
+                }
+                // no timeout then wait until its done
+                latch.await();
             }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
