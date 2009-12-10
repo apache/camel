@@ -83,6 +83,12 @@ public class CamelInvocationHandler implements InvocationHandler {
             return null;
         }
 
+        // only convert if there is a body
+        if (!exchange.hasOut() || exchange.getOut().getBody() == null) {
+            // there is no body so return null
+            return null;
+        }
+
         // use type converter so we can convert output in the desired type defined by the method
         // and let it be mandatory so we know wont return null if we cant convert it to the defined type
         Object answer = exchange.getOut().getMandatoryBody(to);
