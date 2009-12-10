@@ -20,12 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -36,22 +38,13 @@ import org.springframework.orm.jpa.JpaTemplate;
  * @version $Revision$
  */
 @Entity
-@Table(
-    name = "CAMEL_PROCESSDEFINITION",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
-)
+@Table(name = "CAMEL_PROCESSDEFINITION")
 public class ProcessDefinition extends EntitySupport {
+
     private static final transient Log LOG = LogFactory.getLog(ProcessDefinition.class);
     private String name;
 
-    // This crap is required to work around a bug in hibernate
-    @Override
-    @Id
-    @GeneratedValue
-    public Long getId() {
-        return super.getId();
-    }
-
+    @Column(unique = true)
     public String getName() {
         return name;
     }
@@ -78,8 +71,8 @@ public class ProcessDefinition extends EntitySupport {
         Map<String, Object> params = new HashMap<String, Object>(1);
         params.put("processName", processName);
 
-        List<ProcessDefinition> list = CastUtils.cast(template.findByNamedParams("select x from "
-            + ProcessDefinition.class.getName() + " x where x.name = :processName", params));
+        List<ProcessDefinition> list = CastUtils.cast(template.findByNamedParams("select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
+                                                                                 + " x where x.name = :processName", params));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {

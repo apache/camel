@@ -17,6 +17,7 @@
 package org.apache.camel.bam.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,26 +31,19 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(
-    name = "CAMEL_ACTIVITYDEFINITION",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
+    name = "CAMEL_ACTIVITYDEFINITION"
 )
 public class ActivityDefinition extends EntitySupport {
+    
     private String name;
     private ProcessDefinition processDefinition;
-
-    // This crap is required to work around a bug in hibernate
-    @Override
-    @Id
-    @GeneratedValue
-    public Long getId() {
-        return super.getId();
-    }
 
     @Override
     public String toString() {
         return "Activity[" + getId() + " name: " + getName() + "]";
     }
-
+    
+    @Column(unique = true) 
     public String getName() {
         return name;
     }

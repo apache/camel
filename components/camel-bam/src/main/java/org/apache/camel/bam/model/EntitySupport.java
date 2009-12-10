@@ -18,12 +18,14 @@ package org.apache.camel.bam.model;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 /**
  * A base class for persistent entities
  *
  * @version $Revision$
  */
+@MappedSuperclass
 public class EntitySupport {
     private Long id;
 

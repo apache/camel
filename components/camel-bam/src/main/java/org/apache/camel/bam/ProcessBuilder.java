@@ -29,15 +29,19 @@ import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.processor.ActivityMonitorEngine;
 import org.apache.camel.bam.processor.JpaBamProcessor;
+import org.apache.camel.bam.processor.JpaBamProcessorSupport;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.ClassUtils;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -47,6 +51,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public abstract class ProcessBuilder extends RouteBuilder {
+    private static final transient Log LOG = LogFactory.getLog(ProcessBuilder.class);
     private static int processCounter;
     private JpaTemplate jpaTemplate;
     private TransactionTemplate transactionTemplate;
@@ -181,7 +186,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         params.put("name", activityName);
 
         List<ActivityDefinition> list = CastUtils.cast(jpaTemplate.findByNamedParams("select x from "
-            + ActivityDefinition.class.getName() + " x where x.processDefinition = :definition and x.name = :name", params));
+            + QueryUtils.getTypeName(ActivityDefinition.class) + " x where x.processDefinition = :definition and x.name = :name", params));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
@@ -198,7 +203,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         params.put("name", processName);
 
         List<ProcessDefinition> list = CastUtils.cast(jpaTemplate.findByNamedParams("select x from "
-            + ProcessDefinition.class.getName() + " x where x.name = :name", params));
+            + QueryUtils.getTypeName(ProcessDefinition.class) + " x where x.name = :name", params));
         if (!list.isEmpty()) {
             return list.get(0);
         } else {

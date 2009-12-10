@@ -35,14 +35,12 @@ import org.apache.camel.bam.rules.ActivityRules;
 
 /**
  * Represents a single business process
- *
+ * 
  * @version $Revision$
  */
 @Entity
-@Table(
-    name = "CAMEL_PROCESSINSTANCE"
-)
-public class ProcessInstance  {
+@Table(name = "CAMEL_PROCESSINSTANCE")
+public class ProcessInstance {
     private ProcessDefinition processDefinition;
     private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
     private String correlationKey;
@@ -66,7 +64,7 @@ public class ProcessInstance  {
         this.correlationKey = correlationKey;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     public ProcessDefinition getProcessDefinition() {
         return processDefinition;
     }
@@ -75,7 +73,7 @@ public class ProcessInstance  {
         this.processDefinition = processDefinition;
     }
 
-    @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = {CascadeType.ALL })
+    @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     public Collection<ActivityState> getActivityStates() {
         return activityStates;
     }
@@ -83,7 +81,6 @@ public class ProcessInstance  {
     public void setActivityStates(Collection<ActivityState> activityStates) {
         this.activityStates = activityStates;
     }
-
 
     @Transient
     public boolean isStarted() {
@@ -111,12 +108,13 @@ public class ProcessInstance  {
 
     public void setTimeCompleted(Date timeCompleted) {
         this.timeCompleted = timeCompleted;
-    }    // Helper methods
-    //-------------------------------------------------------------------------
+    } // Helper methods
+
+    // -------------------------------------------------------------------------
 
     /**
      * Returns the activity state for the given activity
-     *
+     * 
      * @param activityRules the activity to find the state for
      * @return the activity state or null if no state could be found for the
      *         given activity

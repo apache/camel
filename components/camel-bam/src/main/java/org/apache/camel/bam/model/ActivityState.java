@@ -50,17 +50,8 @@ public class ActivityState extends TemporalEntity {
     private Integer receivedMessageCount = 0;
     private ActivityDefinition activityDefinition;
     private Date timeExpected;
-    @Temporal(TemporalType.TIME)
     private Date timeOverdue;
     private Integer escalationLevel = 0;
-
-    // This crap is required to work around a bug in hibernate
-    @Override
-    @Id
-    @GeneratedValue
-    public Long getId() {
-        return super.getId();
-    }
 
     @Override
     public String toString() {

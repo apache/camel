@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
 
+import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.impl.ServiceSupport;
@@ -35,6 +36,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.ClassUtils;
 
 /**
  * A timer engine to monitor for expired activities and perform whatever actions
@@ -80,7 +82,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
                         params.put("timeNow", timeNow);
 
                         List<ActivityState> list = CastUtils.cast(template.findByNamedParams("select x from "
-                                + ActivityState.class.getName() + " x where x.timeOverdue < :timeNow", params));
+                                + QueryUtils.getTypeName(ActivityState.class) + " x where x.timeOverdue < :timeNow", params));
                         for (ActivityState activityState : list) {
                             fireExpiredEvent(activityState);
                         }

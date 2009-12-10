@@ -55,7 +55,7 @@ public class BamRouteTest extends CamelSpringTestSupport {
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/bam/spring.xml");
+        return new ClassPathXmlApplicationContext("META-INF/spring/spring.xml");
     }
 
     @Before

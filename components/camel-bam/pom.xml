@@ -1,300 +1,308 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
+	<!--
+		Licensed to the Apache Software Foundation (ASF) under one or more
+		contributor license agreements. See the NOTICE file distributed with
+		this work for additional information regarding copyright ownership.
+		The ASF licenses this file to You under the Apache License, Version
+		2.0 (the "License"); you may not use this file except in compliance
+		with the License. You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>camel-parent</artifactId>
+		<version>2.2-SNAPSHOT</version>
+	</parent>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
-    <version>2.2-SNAPSHOT</version>
-  </parent>
+	<artifactId>camel-bam</artifactId>
+	<packaging>bundle</packaging>
+	<name>Camel :: BAM</name>
+	<description>Camel BAM support</description>
 
-  <artifactId>camel-bam</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: BAM</name>
-  <description>Camel BAM support</description>
+	<properties>
+		<camel.osgi.export.pkg>org.apache.camel.bam.*</camel.osgi.export.pkg>
+	</properties>
 
-  <properties>
-	<camel.osgi.export.pkg>org.apache.camel.bam.*</camel.osgi.export.pkg>
-  </properties>
+	<dependencies>
 
-  <dependencies>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jpa_3.0_spec</artifactId>
+		</dependency>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jpa_3.0_spec</artifactId>
-    </dependency>
-
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>      
-      <scope>test</scope>
-    </dependency>   
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-juel</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+		<!-- testing -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-juel</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>always</forkMode>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>always</forkMode>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-  <profiles>
+	<profiles>
 
-    <profile>
-      <id>hibernate-hsqldb</id>
-      <build>
-        <testResources>
-          <testResource>
-            <directory>${basedir}/src/test/profiles/hibernate</directory>
-          </testResource>
-          <testResource>
-            <directory>${basedir}/src/test/resources</directory>
-          </testResource>
-        </testResources>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-entitymanager</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jta_1.1_spec</artifactId>
-          <version>${geronimo-spec-version}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>hibernate-derby</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <testResources>
-          <testResource>
-            <directory>${basedir}/src/test/profiles/derby</directory>
-          </testResource>
-          <testResource>
-            <directory>${basedir}/src/test/resources</directory>
-          </testResource>
-        </testResources>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-entitymanager</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.derby</groupId>
-          <artifactId>derby</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jta_1.1_spec</artifactId>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
+		<!--  Hibernate HSQL profile -->
+		<profile>
+			<id>hibernate-hsqldb</id>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>${basedir}/src/test/profiles/hibernate</directory>
+					</testResource>
+				</testResources>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-entitymanager</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>hsqldb</groupId>
+					<artifactId>hsqldb</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+					<version>${geronimo-jta-spec-version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
 
-    <profile>
-      <id>mysql</id>
-      <build>
-        <testResources>
-          <testResource>
-            <directory>${basedir}/src/test/profiles/mysql</directory>
-          </testResource>
-          <testResource>
-            <directory>${basedir}/src/test/resources</directory>
-          </testResource>
-        </testResources>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-entitymanager</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-          <version>5.1.6</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jta_1.1_spec</artifactId>
-          <version>${geronimo-spec-version}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
+		<!--  Hibernate Derby profile -->
+		<profile>
+			<id>hibernate-derby</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>${basedir}/src/test/profiles/derby</directory>
+					</testResource>
+				</testResources>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-entitymanager</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.derby</groupId>
+					<artifactId>derby</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+					<version>${geronimo-jta-spec-version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
 
-    <profile>
-      <id>openjpa</id>
-      <build>
-        <testResources>
-          <testResource>
-            <directory>${basedir}/src/test/profiles/openjpa</directory>
-          </testResource>
-          <testResource>
-            <directory>${basedir}/src/test/resources</directory>
-          </testResource>
-        </testResources>
+		<!--  Mysql profile -->
+		<profile>
+			<id>mysql</id>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>${basedir}/src/test/profiles/mysql</directory>
+					</testResource>
+				</testResources>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-entitymanager</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>5.1.6</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+					<version>${geronimo-spec-version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
 
-        <!-- lets enhance the classes for OpenJPA (shame it can't do it at runtime!) -->
-        <plugins>
+		<!-- EclipseLink - HSQLDB -->
+		<profile>
+			<id>eclipselink</id>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>${basedir}/src/test/profiles/eclipselink</directory>
+					</testResource>
+				</testResources>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>eclipselink</artifactId>
+					<version>2.0.0-SNAPSHOT</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>hsqldb</groupId>
+					<artifactId>hsqldb</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+			<repositories>
+				<repository>
+					<id>Eclipse</id>
+					<url>http://eclipse.ialto.org/rt/eclipselink/maven.repo</url>
+				</repository>
+			</repositories>
+		</profile>
 
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
+		<!--  OpenJPA profile -->
+		<profile>
+			<id>openjpa</id>
+			<build>
+				<testResources>
+					<testResource>
+						<directory>${basedir}/src/test/profiles/openjpa</directory>
+					</testResource>
+				</testResources>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/test/profiles/openjpa</directory>
+					</resource>
+				</resources>
+				<plugins>
+					<plugin>
 
-            <executions>
-              <execution>
-                <phase>process-test-classes</phase>
-                <configuration>
-                  <tasks>
-                    <path id="cp">
-                      <path refid="maven.test.classpath" />
-                      <path refid="maven.compile.classpath" />
-                      <path refid="maven.dependency.classpath" />
-                    </path>
-                    <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
-                      <classpath refid="cp" />
-                    </taskdef>
-
-                    <mkdir dir="${basedir}/target/jpa-classes" />
-                    <openjpac directory="${basedir}/target/jpa-classes">
-                      <classpath refid="cp" />
-                      <fileset dir="${basedir}/target/classes">
-                        <include name="org/apache/camel/bam/model/*.class" />
-                      </fileset>
-                    </openjpac>
-                    <copy overwrite="true" todir="${basedir}/target/classes">
-                      <fileset dir="${basedir}/target/jpa-classes" />
-                    </copy>
-
-                    <!--
-                                    <mkdir dir="${basedir}/target/jpa-test-classes" />
-                                    <openjpac directory="${basedir}/target/jpa-test-classes">
-                                      <classpath refid="cp" />
-                                      <fileset dir="${basedir}/target/test-classes">
-                                        <include name="org/apache/camel/examples/*.class" />
-                                      </fileset>
-                                    </openjpac>
-                                    <copy overwrite="true" todir="${basedir}/target/test-classes">
-                                      <fileset dir="${basedir}/target/jpa-test-classes" />
-                                    </copy>
-                    -->
-                  </tasks>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-        </plugins>
-      </build>
-
-      <dependencies>
-
-        <!-- mandatory dependency for the enhancer! -->
-        <dependency>
-          <groupId>org.apache.openjpa</groupId>
-          <artifactId>openjpa-persistence-jdbc</artifactId>
-          <!--<scope>test</scope>-->
-        </dependency>
-
-        <dependency>
-          <groupId>org.apache.derby</groupId>
-          <artifactId>derby</artifactId>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
+						<!-- Will enhance classes as we run in a non J2EE 5 env <plugin> -->
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>openjpa-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>JPA Enhance</id>
+								<phase>process-test-classes</phase>
+								<goals>
+									<goal>enhance</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<addDefaultConstructor>true</addDefaultConstructor>
+							<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.openjpa</groupId>
+					<artifactId>openjpa</artifactId>
+					<!--
+						Can't be used as we have this error : Caused by:
+						<openjpa-1.2.1-r752877:753278 nonfatal general error>
+						org.apache.openjpa.persistence.PersistenceException: Constraint
+						already exists: UNQ_NAME in statement [CREATE TABLE
+						CAMEL_PROCESSDEFINITION (id BIGINT NOT NULL, name VARCHAR(255) NOT
+						NULL, PRIMARY KEY (id), CONSTRAINT UNQ_name UNIQUE (name))] and
+						solved in openJpa 3.0 <version>1.2.1</version>
+					-->
+					<version>1.3.0-SNAPSHOT</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>hsqldb</groupId>
+					<artifactId>hsqldb</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.derby</groupId>
+					<artifactId>derby</artifactId>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>
+

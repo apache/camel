@@ -26,6 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.IntrospectionSupport;
@@ -114,6 +115,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     protected T loadEntity(Exchange exchange, Object key) throws Exception {
         LOCK.lock();
         try {
+            LOG.info(">> LoadEntity call");
             T entity = findEntityByCorrelationKey(key);
             if (entity == null) {
                 entity = createEntity(exchange, key);
@@ -190,6 +192,6 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     }
 
     protected String createFindByKeyQuery() {
-        return "select x from " + getEntityType().getName() + " x where x." + getKeyPropertyName() + " = :key";
+        return "select x from " + QueryUtils.getTypeName(getEntityType()) + " x where x." + getKeyPropertyName() + " = :key";
     }
 }
