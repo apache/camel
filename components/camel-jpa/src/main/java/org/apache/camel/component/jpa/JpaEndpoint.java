@@ -265,7 +265,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
                         answer = exchange.getIn().getMandatoryBody(getEntityType());
                     }
                 } catch (InvalidPayloadException e) {
-                    throw new InvalidPayloadRuntimeException(exchange, getEntityType());
+                    throw new InvalidPayloadRuntimeException(exchange, getEntityType(), e.getCause());
                 }
 
                 if (answer == null) {
