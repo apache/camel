@@ -127,28 +127,9 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", expression);
         if (remainder != null) {
-            if (ObjectHelper.equal(remainder, "name")) {
-                return ExpressionBuilder.fileNameExpression();
-            } else if (ObjectHelper.equal(remainder, "name.noext")) {
-                return ExpressionBuilder.fileNameNoExtensionExpression();
-            } else if (ObjectHelper.equal(remainder, "onlyname")) {
-                return ExpressionBuilder.fileOnlyNameExpression();
-            } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
-                return ExpressionBuilder.fileOnlyNameNoExtensionExpression();
-            } else if (ObjectHelper.equal(remainder, "ext")) {
-                return ExpressionBuilder.fileExtensionExpression();
-            } else if (ObjectHelper.equal(remainder, "parent")) {
-                return ExpressionBuilder.fileParentExpression();
-            } else if (ObjectHelper.equal(remainder, "path")) {
-                return ExpressionBuilder.filePathExpression();
-            } else if (ObjectHelper.equal(remainder, "absolute")) {
-                return ExpressionBuilder.fileAbsoluteExpression();
-            } else if (ObjectHelper.equal(remainder, "absolute.path")) {
-                return ExpressionBuilder.fileAbsolutePathExpression();
-            } else if (ObjectHelper.equal(remainder, "length")) {
-                return ExpressionBuilder.fileSizeExpression();
-            } else if (ObjectHelper.equal(remainder, "modified")) {
-                return ExpressionBuilder.fileLastModifiedExpression();
+            Expression fileExpression = createSimpleFileExpression(remainder);
+            if (expression != null) {
+                return fileExpression;
             }
         }
 
@@ -175,6 +156,33 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         } else {
             return ExpressionBuilder.constantExpression(expression);
         }
+    }
+    
+    public Expression createSimpleFileExpression(String remainder) {
+        if (ObjectHelper.equal(remainder, "name")) {
+            return ExpressionBuilder.fileNameExpression();
+        } else if (ObjectHelper.equal(remainder, "name.noext")) {
+            return ExpressionBuilder.fileNameNoExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "onlyname")) {
+            return ExpressionBuilder.fileOnlyNameExpression();
+        } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
+            return ExpressionBuilder.fileOnlyNameNoExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "ext")) {
+            return ExpressionBuilder.fileExtensionExpression();
+        } else if (ObjectHelper.equal(remainder, "parent")) {
+            return ExpressionBuilder.fileParentExpression();
+        } else if (ObjectHelper.equal(remainder, "path")) {
+            return ExpressionBuilder.filePathExpression();
+        } else if (ObjectHelper.equal(remainder, "absolute")) {
+            return ExpressionBuilder.fileAbsoluteExpression();
+        } else if (ObjectHelper.equal(remainder, "absolute.path")) {
+            return ExpressionBuilder.fileAbsolutePathExpression();
+        } else if (ObjectHelper.equal(remainder, "length")) {
+            return ExpressionBuilder.fileSizeExpression();
+        } else if (ObjectHelper.equal(remainder, "modified")) {
+            return ExpressionBuilder.fileLastModifiedExpression();
+        }
+        return null;
     }
 
     public boolean isSingleton() {

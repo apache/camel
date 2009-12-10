@@ -18,8 +18,6 @@ package org.apache.camel.example.etl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.processor.interceptor.Tracer;
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
@@ -28,15 +26,7 @@ import static org.apache.camel.language.juel.JuelExpression.el;
 // START SNIPPET: example
 public class EtlRoutes extends SpringRouteBuilder {
     public void configure() throws Exception {
-	
-        /**
-	Tracer tracer = new Tracer();
-        tracer.setLogLevel(LoggingLevel.FATAL);
-        tracer.setLogName("org.apache.camel.example.etl");
-        tracer.setLogStackTrace(true);
-        tracer.setTraceExceptions(true);
-        **/
-	    
+
         from("file:src/data?noop=true")
             .convertBodyTo(PersonDocument.class)
             .to("jpa:org.apache.camel.example.etl.CustomerEntity");
