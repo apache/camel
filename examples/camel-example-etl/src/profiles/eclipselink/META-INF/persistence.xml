@@ -21,8 +21,8 @@
 			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:camel_etl" />
-            <property name="eclipselink.logging.file" value="target\camel-example-etl.log" />
-			<property name="eclipselink.logging.level" value="FINE" />
+            <!-- property name="eclipselink.logging.file" value="target/camel-example-etl.log" />
+			<property name="eclipselink.logging.level" value="FINE" /-->
 			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
 			<property name="eclipselink.ddl-generation.output-mode"	value="database" />
 			<!-- <property name="eclipselink.logging.thread" value="false" />-->
