@@ -297,6 +297,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setTransactionTimeout(transactionTimeout);
     }
 
+    public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
+        getConfiguration().setTestConnectionOnStartup(testConnectionOnStartup);
+    }
+
     /**
      * @deprecated will be removed in Camel 2.2
      */
