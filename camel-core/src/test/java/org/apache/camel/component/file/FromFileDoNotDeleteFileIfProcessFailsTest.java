@@ -41,7 +41,9 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
         template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedBodiesReceived(body);
+        // it could potentially retry the file on the 2nd poll and then fail again
+        // so it should be minimum message count
+        mock.expectedMinimumMessageCount(1);
 
         mock.assertIsSatisfied();
 
