@@ -23,8 +23,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DeliverSm;
 
@@ -35,8 +33,6 @@ import org.jsmpp.bean.DeliverSm;
  * @author muellerc
  */
 public class SmppEndpoint extends DefaultEndpoint {
-
-    private static final transient Log LOG = LogFactory.getLog(SmppEndpoint.class);
 
     private SmppBinding binding;
     private SmppConfiguration configuration;

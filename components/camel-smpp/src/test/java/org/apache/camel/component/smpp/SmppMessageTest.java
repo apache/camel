@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.smpp;
 
-import org.jsmpp.bean.AlertNotification;
-import org.jsmpp.bean.DeliverSm;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.DeliverSm;
+import org.junit.Test;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppMessage</code>
@@ -36,13 +35,10 @@ public class SmppMessageTest {
     
     private SmppMessage message;
 
-    @Before
-    public void setUp() {
-        message = new SmppMessage();
-    }
-
     @Test
     public void emptyConstructorShouldReturnAnInstanceWithoutACommand() {
+        message = new SmppMessage(new SmppConfiguration());
+        
         assertNull(message.getCommand());
         assertTrue(message.getHeaders().isEmpty());
     }
@@ -50,7 +46,7 @@ public class SmppMessageTest {
     @Test
     public void alertNotificationConstructorShouldReturnAnInstanceWithACommandAndHeaderAttributes() {
         AlertNotification command = new AlertNotification();
-        message = new SmppMessage(command);
+        message = new SmppMessage(command, new SmppConfiguration());
         
         assertTrue(message.getCommand() instanceof AlertNotification);
         assertTrue(message.getHeaders().isEmpty());
@@ -59,7 +55,7 @@ public class SmppMessageTest {
     @Test
     public void testSmppMessageDeliverSm() {
         DeliverSm command = new DeliverSm();
-        message = new SmppMessage(command);
+        message = new SmppMessage(command, new SmppConfiguration());
         
         assertTrue(message.getCommand() instanceof DeliverSm);
         assertTrue(message.getHeaders().isEmpty());
@@ -67,6 +63,7 @@ public class SmppMessageTest {
 
     @Test
     public void newInstanceShouldReturnAnInstanceWithoutACommand() {
+        message = new SmppMessage(new SmppConfiguration());
         SmppMessage msg = message.newInstance();
         
         assertNotNull(msg);
@@ -76,13 +73,15 @@ public class SmppMessageTest {
     
     @Test
     public void createBodyShouldReturnNullIfTheCommandIsNull() {
+        message = new SmppMessage(new SmppConfiguration());
+        
         assertNull(message.createBody());
     }
     
     @Test
     public void createBodyShouldReturnNullIfTheCommandIsNotAMessageRequest() {
         AlertNotification command = new AlertNotification();
-        message = new SmppMessage(command);
+        message = new SmppMessage(command, new SmppConfiguration());
         
         assertNull(message.createBody());
     }
@@ -91,13 +90,15 @@ public class SmppMessageTest {
     public void createBodyShouldReturnTheShortMessageIfTheCommandIsAMessageRequest() {
         DeliverSm command = new DeliverSm();
         command.setShortMessage("Hello SMPP world!".getBytes());
-        message = new SmppMessage(command);
+        message = new SmppMessage(command, new SmppConfiguration());
         
         assertEquals("Hello SMPP world!", message.createBody());
     }
     
     @Test
     public void toStringShouldReturnTheBodyIfTheCommandIsNull() {
+        message = new SmppMessage(new SmppConfiguration());
+        
         assertEquals("SmppMessage: null", message.toString());
     }
     
@@ -105,7 +106,7 @@ public class SmppMessageTest {
     public void toStringShouldReturnTheShortMessageIfTheCommandIsNotNull() {
         DeliverSm command = new DeliverSm();
         command.setShortMessage("Hello SMPP world!".getBytes());
-        message = new SmppMessage(command);
+        message = new SmppMessage(command, new SmppConfiguration());
         
         assertEquals("SmppMessage: PDUHeader(0, 00000000, 00000000, 0)", message.toString());
     }

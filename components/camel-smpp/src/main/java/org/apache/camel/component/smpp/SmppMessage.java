@@ -33,21 +33,25 @@ import org.jsmpp.bean.MessageRequest;
 public class SmppMessage extends DefaultMessage {
 
     private Command command;
+    private SmppConfiguration configuration;
     
-    public SmppMessage() {
+    public SmppMessage(SmppConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    public SmppMessage(AlertNotification command) {
+    public SmppMessage(AlertNotification command, SmppConfiguration configuration) {
         this.command = command;
+        this.configuration = configuration;
     }
     
-    public SmppMessage(DeliverSm command) {
+    public SmppMessage(DeliverSm command, SmppConfiguration configuration) {
         this.command = command;
+        this.configuration = configuration;
     }
 
     @Override
     public SmppMessage newInstance() {
-        return new SmppMessage();
+        return new SmppMessage(this.configuration);
     }
 
     @Override
@@ -55,7 +59,7 @@ public class SmppMessage extends DefaultMessage {
         if (command instanceof MessageRequest) {
             byte[] shortMessage = ((MessageRequest) command).getShortMessage();
             try {
-                return new String(shortMessage, "ISO-8859-1");
+                return new String(shortMessage, configuration.getEncoding());
             } catch (UnsupportedEncodingException e) {
                 return new String(shortMessage);
             }

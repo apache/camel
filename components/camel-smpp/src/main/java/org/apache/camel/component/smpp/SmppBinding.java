@@ -85,7 +85,7 @@ public class SmppBinding {
         Message in = exchange.getIn();
 
         SubmitSm submitSm = new SubmitSm();
-        submitSm.setShortMessage(exchange.getIn().getBody(String.class).getBytes("ISO-8859-1"));
+        submitSm.setShortMessage(exchange.getIn().getBody(String.class).getBytes(configuration.getEncoding()));
 
         if (in.getHeaders().containsKey(DEST_ADDR)) {
             submitSm.setDestAddress((String) in.getHeader(DEST_ADDR));
@@ -170,7 +170,7 @@ public class SmppBinding {
      * Create a new SmppMessage from the inbound alert notification
      */
     public SmppMessage createSmppMessage(AlertNotification alertNotification) {
-        SmppMessage smppMessage = new SmppMessage(alertNotification);
+        SmppMessage smppMessage = new SmppMessage(alertNotification, configuration);
 
         smppMessage.setHeader(SEQUENCE_NUMBER, alertNotification.getSequenceNumber());
         smppMessage.setHeader(COMMAND_ID, alertNotification.getCommandId());
@@ -189,7 +189,7 @@ public class SmppBinding {
      * Create a new SmppMessage from the inbound deliver sm or deliver receipt
      */
     public SmppMessage createSmppMessage(DeliverSm deliverSm) throws Exception {
-        SmppMessage smppMessage = new SmppMessage(deliverSm);
+        SmppMessage smppMessage = new SmppMessage(deliverSm, configuration);
 
         if (deliverSm.isSmscDeliveryReceipt()) {
             DeliveryReceipt smscDeliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
