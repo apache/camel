@@ -76,7 +76,9 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
             try {
                 exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                }
                 continue;
             }
             if (exchange != null) {
@@ -87,11 +89,15 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                         getExceptionHandler().handleException(e);
                     }
                 } else {
-                    LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);
+                    }
                     try {
                         queue.put(exchange);
                     } catch (InterruptedException e) {
-                        LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                        }
                         continue;
                     }
                 }

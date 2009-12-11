@@ -84,8 +84,10 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         // noop
     }
 
-    private boolean sleep() {        
-        LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+    private boolean sleep() {  
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+        }
         try {
             Thread.sleep(1000);
             return false;

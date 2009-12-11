@@ -237,7 +237,9 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
             try {
                 exchange = completedTasks.poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                }
                 continue;
             }
 

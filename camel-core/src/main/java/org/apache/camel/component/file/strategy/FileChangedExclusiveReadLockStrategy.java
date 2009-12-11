@@ -111,7 +111,9 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             Thread.sleep(1000);
             return false;
         } catch (InterruptedException e) {
-            LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
+            }
             return true;
         }
     }

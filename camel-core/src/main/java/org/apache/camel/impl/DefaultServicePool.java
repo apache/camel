@@ -90,11 +90,15 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
     }
 
     protected void doStart() throws Exception {
-        log.debug("Starting service pool: " + this);
+        if (log.isDebugEnabled()) {
+            log.debug("Starting service pool: " + this);
+        }
     }
 
     protected void doStop() throws Exception {
-        log.debug("Stopping service pool: " + this);
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping service pool: " + this);
+        }
         for (BlockingQueue<Service> entry : pool.values()) {
             Collection<Service> values = new ArrayList<Service>();
             entry.drainTo(values);

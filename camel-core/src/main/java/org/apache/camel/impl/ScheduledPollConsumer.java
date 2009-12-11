@@ -97,9 +97,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                         }
                     } else {
                         if (LOG.isDebugEnabled()) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Retrying attempt " + retryCounter + " to poll: " + this.getEndpoint());
-                            }
+                            LOG.debug("Retrying attempt " + retryCounter + " to poll: " + this.getEndpoint());
                         }
                     }
 

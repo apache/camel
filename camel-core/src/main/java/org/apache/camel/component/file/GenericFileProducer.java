@@ -171,7 +171,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 boolean absolute = file.isAbsolute();
                 if (directory != null) {
                     if (!operations.buildDirectory(directory, absolute)) {
-                        log.debug("Cannot build directory [" + directory + "] (could be because of denied permissions)");
+                        if (log.isDebugEnabled()) {
+                            log.debug("Cannot build directory [" + directory + "] (could be because of denied permissions)");
+                        }
                     }
                 }
             }

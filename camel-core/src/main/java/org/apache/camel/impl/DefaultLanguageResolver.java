@@ -50,7 +50,9 @@ public class DefaultLanguageResolver implements LanguageResolver {
                 getLog().debug("Found language: " + name + " in registry: " + bean);
             }
         } catch (Exception e) {
-            getLog().debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            }
         }
         if (bean != null) {
             if (bean instanceof Language) {

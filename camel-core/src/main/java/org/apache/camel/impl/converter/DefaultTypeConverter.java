@@ -373,7 +373,9 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         // also use a atomic boolean so its state is visible for the other threads
         // this ensure that at most one thread is loading all the type converters
         if (loaded.compareAndSet(false, true)) {
-            LOG.debug("Loading type converters ...");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loading type converters ...");
+            }
             try {
                 for (TypeConverterLoader typeConverterLoader : typeConverterLoaders) {
                     typeConverterLoader.load(this);
@@ -388,7 +390,9 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
-            LOG.debug("Loading type converters done");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loading type converters done");
+            }
         }
     }
 

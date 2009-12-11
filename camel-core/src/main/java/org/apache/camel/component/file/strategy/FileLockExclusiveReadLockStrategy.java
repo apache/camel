@@ -125,12 +125,16 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
     }
 
     private boolean sleep() {
-        LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+        }
         try {
             Thread.sleep(1000);
             return false;
         } catch (InterruptedException e) {
-            LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
+            }
             return true;
         }
     }

@@ -134,7 +134,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 try {
                     data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
                 } catch (InterruptedException e) {
-                    log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                    if (log.isDebugEnabled()) {
+                        log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                    }
                     // continue from top
                     continue;
                 }

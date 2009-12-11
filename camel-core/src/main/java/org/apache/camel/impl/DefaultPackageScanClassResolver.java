@@ -415,20 +415,28 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     found = true;
                     break;
                 } catch (ClassNotFoundException e) {
-                    log.debug("Cannot find class '" + fqn + "' in classloader: " + classLoader
-                        + ". Reason: " + e, e);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cannot find class '" + fqn + "' in classloader: " + classLoader
+                                + ". Reason: " + e, e);
+                    }
                 } catch (NoClassDefFoundError e) {
-                    log.debug("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
-                        + ". Reason: " + e, e);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
+                            + ". Reason: " + e, e);
+                    }
                 }
             }
             if (!found) {
-                // use debug to avoid being noisy in logs
-                log.debug("Cannot find class '" + fqn + "' in any classloaders: " + set);
+                if (log.isDebugEnabled()) {
+                    // use debug to avoid being noisy in logs
+                    log.debug("Cannot find class '" + fqn + "' in any classloaders: " + set);
+                }
             }
         } catch (Exception e) {
-            log.warn("Cannot examine class '" + fqn + "' due to a " + e.getClass().getName()
-                + " with message: " + e.getMessage(), e);
+            if (log.isWarnEnabled()) {
+                log.warn("Cannot examine class '" + fqn + "' due to a " + e.getClass().getName()
+                    + " with message: " + e.getMessage(), e);
+            }
         }
     }
 

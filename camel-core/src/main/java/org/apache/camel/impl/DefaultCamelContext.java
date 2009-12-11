@@ -1021,7 +1021,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         if (isStreamCaching()) {
             // only add a new stream cache if not already configured
             if (StreamCaching.getStreamCaching(this) == null) {
-                LOG.debug("StreamCaching is enabled");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("StreamCaching is enabled");
+                }
                 addInterceptStrategy(new StreamCaching());
             }
         }
@@ -1166,7 +1168,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         ServiceStatus status = getRouteStatus(key);
 
         if (status != null && status.isStarted()) {
-            LOG.debug("Route " + key + " is already started");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Route " + key + " is already started");
+            }
         } else {
             routeServices.put(key, routeService);
             if (shouldStartRoutes()) {

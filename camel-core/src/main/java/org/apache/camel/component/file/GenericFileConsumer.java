@@ -59,7 +59,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         // before we poll is there anything we need to check ? Such as are we
         // connected to the FTP Server Still ?
         if (!prePollCheck()) {
-            log.debug("Skipping pool as pre poll check returned false");
+            if (log.isDebugEnabled()) {
+                log.debug("Skipping pool as pre poll check returned false");
+            }
         }
 
         // gather list of files to process
@@ -105,7 +107,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            if (log.isDebugEnabled()) {
+                log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            }
             total = maxMessagesPerPoll;
         }
 
@@ -165,7 +169,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             boolean begin = processStrategy.begin(operations, endpoint, exchange, file);
             if (!begin) {
-                log.debug(endpoint + " cannot begin processing file: " + file);
+                if (log.isDebugEnabled()) {
+                    log.debug(endpoint + " cannot begin processing file: " + file);
+                }
                 // remove file from the in progress list as its no longer in progress
                 endpoint.getInProgressRepository().remove(file.getFileName());
                 return;
