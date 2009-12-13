@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
@@ -99,18 +97,8 @@ public class JettyHttpComponent extends HttpComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         uri = uri.startsWith("jetty:") ? remaining : uri;
 
-        // handlers
-        List<Handler> handlerList = new ArrayList<Handler>();
-        String handlers = getAndRemoveParameter(parameters, "handlers", String.class);
-        if (handlers != null) {
-            // remove any leading # for reference lookup as we know its a reference lookup
-            handlers = handlers.replaceAll("#", "");
-            // lookup each individual handler and add it to the list
-            for (String key : handlers.split(",")) {
-                handlerList.add(CamelContextHelper.mandatoryLookup(getCamelContext(), key, Handler.class));
-            }
-        }
-
+        List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
+        
         // configure regular parameters
         configureParameters(parameters);
 

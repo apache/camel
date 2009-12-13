@@ -175,7 +175,8 @@ public final class EndpointHelper {
             Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
             if (value != null && isReferenceParameter(value)) {
-                Object ref = resolveReferenceParameter(context, value, Object.class);
+                // For backwards-compatibility reasons, no mandatory lookup is done here
+                Object ref = resolveReferenceParameter(context, value, Object.class, false);
                 if (ref != null) {
                     boolean hit = IntrospectionSupport.setProperty(context.getTypeConverter(), bean, name, ref);
                     if (hit) {
@@ -204,15 +205,36 @@ public final class EndpointHelper {
      * Resolves a reference parameter by making a lookup in the registry.
      * 
      * @param <T> type of object to lookup.
-     * @param context Camel content to use for lookup.
+     * @param context Camel context to use for lookup.
      * @param value reference parameter value.
      * @param type type of object to lookup.
-     * @return lookup result or <code>null</code>. 
+     * @return lookup result. 
+     * @throws IllegalArgumentException if referenced object was not found in 
+     *         registry.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type) {
-        assert isReferenceParameter(value);
-        return context.getRegistry().lookup(value.substring(1), type);
-        
+        return resolveReferenceParameter(context, value, type, true);
+    }
+
+    /**
+     * Resolves a reference parameter by making a lookup in the registry.
+     * 
+     * @param <T> type of object to lookup.
+     * @param context Camel context to use for lookup.
+     * @param value reference parameter value.
+     * @param type type of object to lookup.
+     * @return lookup result (or <code>null</code> only if 
+     *         <code>mandatory</code> is <code>false</code>). 
+     * @throws IllegalArgumentException if object was not found in registry and 
+     *         <code>mandatory</code> is <code>true</code>.
+     */
+    public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
+        String valueNoHash = value.replaceAll("#", "");
+        if (mandatory) {
+            return CamelContextHelper.mandatoryLookup(context, valueNoHash, type);
+        } else {
+            return CamelContextHelper.lookup(context, valueNoHash, type);
+        }
     }
 
     /**
@@ -223,17 +245,16 @@ public final class EndpointHelper {
      * <li>a single reference to a bean type T</li>
      * <li>a single reference to a bean of type java.util.List</li>
      * </ul>
-     * Only bean lookup results that are not <code>null</code> are added to the
-     * result list.
      * 
      * @param context
-     *            Camel content to use for lookup.
+     *            Camel context to use for lookup.
      * @param value
      *            reference parameter value.
      * @param elementType
      *            result list element type.
-     * @return list of non-null lookup results or an empty list, never
-     *         <code>null</code>.
+     * @return list of lookup results.
+     * @throws IllegalArgumentException if any referenced object was not found 
+     *         in registry.
      */
     @SuppressWarnings("unchecked")
     public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
@@ -246,19 +267,14 @@ public final class EndpointHelper {
             if (bean instanceof List) {
                 // The bean is a list
                 return (List)bean;
-            } else if (elementType.isInstance(bean)) {
-                // The bean is a list element
-                return (List<T>)Arrays.asList(bean);
             } else {
-                return Collections.emptyList();
+                // The bean is a list element
+                return Arrays.asList(elementType.cast(bean));
             }
         } else { // more than one list element
             ArrayList<T> result = new ArrayList<T>(elements.size());
             for (String element : elements) {
-                T bean = resolveReferenceParameter(context, element.trim(), elementType);
-                if (bean != null) {
-                    result.add(bean);
-                }
+                result.add(resolveReferenceParameter(context, element.trim(), elementType));
             }
             return result;
         }

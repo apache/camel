@@ -352,11 +352,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Resolves a reference parameter in the registry and removes it from the map. 
      * 
-     * @param <T>           type of object to lookup in th registry.
+     * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
-     * @param type          type of object to lookup in th registry.
-     * @return the referenced object or <code>null</code>.
+     * @param type          type of object to lookup in the registry.
+     * @return the referenced object or <code>null</code> if the parameter map 
+     *         doesn't contain the key.
+     * @throws IllegalArgumentException if a non-null reference was not found in 
+     *         registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
         return resolveAndRemoveReferenceParameter(parameters, key, type, null); 
@@ -369,20 +372,18 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters    parameter map.
      * @param key           parameter map key.
      * @param type          type of object to lookup in the registry.
-     * @param defaultValue  default value to use if either the parameter map doesn't 
-     *                      contain the key or the registry doesn't contain an object
-     *                      of requested type.
-     * @return the referenced object, the default value or <code>null</code>.
+     * @param defaultValue  default value to use if the parameter map doesn't 
+     *                      contain the key.
+     * @return the referenced object or the default value.
+     * @throws IllegalArgumentException if referenced object was not found in 
+     *         registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         String value = getAndRemoveParameter(parameters, key, String.class);
-        if (EndpointHelper.isReferenceParameter(value)) {
-            T result = EndpointHelper.resolveReferenceParameter(getCamelContext(), value.toString(), type);
-            return result == null ? defaultValue : result;
-        } else if (value == null) {
+        if (value == null) {
             return defaultValue;
         } else {
-            throw new IllegalArgumentException("Parameter value " + value + " is not a valid reference");
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value.toString(), type);
         }
     }
     
@@ -396,8 +397,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      *            parameter map key.
      * @param elementType
      *            result list element type.
-     * @return the list of referenced objects or an empty list, never
-     *         <code>null</code>.
+     * @return the list of referenced objects or an empty list if the parameter
+     *         map doesn't contain the key.
+     * @throws IllegalArgumentException if any of the referenced objects was 
+     *         not found in registry.
      * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
      */
     public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType) {
@@ -415,22 +418,20 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param elementType
      *            result list element type.
      * @param defaultValue
-     *            default value to use if either the parameter map doesn't
-     *            contain the key or the lookup for none of the references
-     *            was successful.
-     * @return the list of referenced objects, the default value or an empty list, never
-     *         <code>null</code>.
+     *            default value to use if the parameter map doesn't
+     *            contain the key.
+     * @return the list of referenced objects or the default value.
+     * @throws IllegalArgumentException if any of the referenced objects was 
+     *         not found in registry.
      * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
      */
     public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType, List<T>  defaultValue) {
         String value = getAndRemoveParameter(parameters, key, String.class);
-        if (EndpointHelper.isReferenceParameter(value)) {
-            List<T> result = EndpointHelper.resolveReferenceListParameter(getCamelContext(), value.toString(), elementType);
-            return result.isEmpty() ? defaultValue : result;
-        } else if (value == null) {
+        
+        if (value == null) {
             return defaultValue;
         } else {
-            throw new IllegalArgumentException("Parameter value " + value + " is not a valid reference (list)");
+            return EndpointHelper.resolveReferenceListParameter(getCamelContext(), value.toString(), elementType);
         }
     }
     

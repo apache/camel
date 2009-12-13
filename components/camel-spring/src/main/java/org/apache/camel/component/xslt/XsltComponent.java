@@ -53,11 +53,7 @@ public class XsltComponent extends ResourceBasedComponent {
         XsltBuilder xslt = getCamelContext().getInjector().newInstance(XsltBuilder.class);
 
         // lets allow the converter to be configured
-        XmlConverter converter = null;
-        String converterName = getAndRemoveParameter(parameters, "converter", String.class);        
-        if (converterName != null) {
-            converter = CamelContextHelper.mandatoryLookup(getCamelContext(), converterName, XmlConverter.class);
-        }
+        XmlConverter converter = resolveAndRemoveReferenceParameter(parameters, "converter", XmlConverter.class);
         if (converter == null) {
             converter = getXmlConverter();
         }
@@ -77,9 +73,8 @@ public class XsltComponent extends ResourceBasedComponent {
             }
         }
         
-        String transformerFactoryName = getAndRemoveParameter(parameters, "transformerFactory", String.class);        
-        if (transformerFactoryName != null) {
-            factory = CamelContextHelper.mandatoryLookup(getCamelContext(), transformerFactoryName, TransformerFactory.class);
+        if (parameters.get("transformerFactory") != null) {
+            factory = resolveAndRemoveReferenceParameter(parameters, "transformerFactory", TransformerFactory.class);
         }
         
         if (factory != null) {

@@ -54,6 +54,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
+    private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
     private Requestor requestor;
@@ -435,23 +436,17 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         }
 
         // jms header strategy
-        String strategy = getAndRemoveParameter(parameters, "jmsKeyFormatStrategy", String.class);
-        if (strategy != null) {
-            if (EndpointHelper.isReferenceParameter(strategy)) {
-                String key = strategy.substring(1);
-                endpoint.setJmsKeyFormatStrategy(getCamelContext().getRegistry().lookup(key, JmsKeyFormatStrategy.class));
-            } else {
-                // should be on of the default ones we support
-                if ("default".equalsIgnoreCase(strategy)) {
-                    endpoint.setJmsKeyFormatStrategy(new DefaultJmsKeyFormatStrategy());
-                } else if ("passthrough".equalsIgnoreCase(strategy)) {
-                    endpoint.setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
-                } else {
-                    throw new IllegalArgumentException("Unknown jmsKeyFormatStrategy option: " + strategy);
-                }
-            }
+        String strategyVal = getAndRemoveParameter(parameters, KEY_FORMAT_STRATEGY_PARAM, String.class);
+        if ("default".equalsIgnoreCase(strategyVal)) {
+            endpoint.setJmsKeyFormatStrategy(new DefaultJmsKeyFormatStrategy());
+        } else if ("passthrough".equalsIgnoreCase(strategyVal)) {
+            endpoint.setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
+        } else { // a reference
+            parameters.put(KEY_FORMAT_STRATEGY_PARAM, strategyVal);
+            endpoint.setJmsKeyFormatStrategy(resolveAndRemoveReferenceParameter(
+                    parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
         }
-
+        
         setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 

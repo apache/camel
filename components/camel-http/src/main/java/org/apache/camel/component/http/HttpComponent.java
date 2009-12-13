@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
@@ -69,16 +68,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      */
     protected void configureParameters(Map<String, Object> parameters) {
         // lookup http binding in registry if provided
-        String ref = getAndRemoveParameter(parameters, "httpBindingRef", String.class);
-        if (ref != null) {
-            httpBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpBinding.class);
-        }
+        httpBinding = resolveAndRemoveReferenceParameter(
+                parameters, "httpBindingRef", HttpBinding.class);
         
         // lookup http client front configurer in the registry if provided
-        ref = getAndRemoveParameter(parameters, "httpClientConfigurerRef", String.class);
-        if (ref != null) {
-            httpClientConfigurer = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpClientConfigurer.class);
-        }
+        httpClientConfigurer = resolveAndRemoveReferenceParameter(
+                parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         
         // check the user name and password for basic authentication
         String username = getAndRemoveParameter(parameters, "username", String.class);

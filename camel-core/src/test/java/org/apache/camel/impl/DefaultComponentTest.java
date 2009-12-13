@@ -86,22 +86,22 @@ public class DefaultComponentTest extends ContextTestSupport {
         MyComponent my = new MyComponent(this.context);
         Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
         assertEquals(new Date(0), value);
+        // usage of leading # is optional
+        parameters.put("date", "beginning");
+        value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
+        assertEquals(new Date(0), value);
     }
 
-    public void testResolveAndRemoveReferenceParameterNotInRegistryDefault() {
+    public void testResolveAndRemoveReferenceParameterNotInRegistry() {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("date", "#somewhen");
         MyComponent my = new MyComponent(this.context);
-        Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class, new Date(1));
-        assertEquals(new Date(1), value);
-    }
-
-    public void testResolveAndRemoveReferenceParameterNotInRegistryNull() {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("date", "#somewhen");
-        MyComponent my = new MyComponent(this.context);
-        Date value = my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
-        assertNull(value);
+        try {
+            my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
+            fail("returned without finding object in registry");
+        } catch (IllegalArgumentException e) {
+            // test passes
+        }
     }
 
     public void testResolveAndRemoveReferenceParameterNotInMapDefault() {
@@ -118,18 +118,6 @@ public class DefaultComponentTest extends ContextTestSupport {
         MyComponent my = new MyComponent(this.context);
         Date value = my.resolveAndRemoveReferenceParameter(parameters, "wrong", Date.class);
         assertNull(value);
-    }
-
-    public void testResolveAndRemoveInvalidReferenceParameter() {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("date", "beginning");
-        MyComponent my = new MyComponent(this.context);
-        try {
-            my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
-            fail("usage of invalid reference");
-        } catch (IllegalArgumentException e) {
-            // test passed
-        }
     }
 
     public void testResolveAndRemoveReferenceListParameterElement() {
@@ -149,6 +137,12 @@ public class DefaultComponentTest extends ContextTestSupport {
         assertEquals(2, values.size());
         assertEquals(new Date(10), values.get(0));
         assertEquals(new Date(11), values.get(1));
+        // usage of leading # is optional
+        parameters.put("dates", "bean1,bean2");
+        values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(2, values.size());
+        assertEquals(new Date(10), values.get(0));
+        assertEquals(new Date(11), values.get(1));
     }
 
     public void testResolveAndRemoveReferenceListParameterListCommaTrim() {
@@ -156,6 +150,12 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("dates", " #bean1 , #bean2 ");
         MyComponent my = new MyComponent(this.context);
         List<Date> values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(2, values.size());
+        assertEquals(new Date(10), values.get(0));
+        assertEquals(new Date(11), values.get(1));
+        // usage of leading # is optional
+        parameters.put("dates", " bean1 , bean2 ");
+        values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
         assertEquals(2, values.size());
         assertEquals(new Date(10), values.get(0));
         assertEquals(new Date(11), values.get(1));
@@ -169,15 +169,24 @@ public class DefaultComponentTest extends ContextTestSupport {
         assertEquals(2, values.size());
         assertEquals(new Date(10), values.get(0));
         assertEquals(new Date(11), values.get(1));
+        // usage of leading # is optional
+        parameters.put("dates", "#listBean");
+        values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+        assertEquals(2, values.size());
+        assertEquals(new Date(10), values.get(0));
+        assertEquals(new Date(11), values.get(1));
     }
 
     public void testResolveAndRemoveReferenceListParameterInvalidBean() {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("dates", "#bean1,#bean3");
         MyComponent my = new MyComponent(this.context);
-        List<Date> values = my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
-        assertEquals(1, values.size());
-        assertEquals(new Date(10), values.get(0));
+        try {
+            my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
+            fail("returned without finding object in registry");
+        } catch (IllegalArgumentException e) {
+            // test passes
+        }
     }
 
     public void testContextShouldBeSet() throws Exception {
