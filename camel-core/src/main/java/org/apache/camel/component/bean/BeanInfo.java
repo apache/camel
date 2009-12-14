@@ -221,7 +221,7 @@ public class BeanInfo {
         MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
         if (existingMethodInfo != null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("This method is already overriden in a subclass, so the method from the sub class is prefered: " + existingMethodInfo);
+                LOG.trace("This method is already overriden in a subclass, so the method from the sub class is preferred: " + existingMethodInfo);
             }
 
             return existingMethodInfo;
@@ -463,7 +463,7 @@ public class BeanInfo {
             return possibles.get(0);
         } else if (possibles.isEmpty()) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("No possible methods trying to convert body to parameter types");
+                LOG.trace("No possible methods so now trying to convert body to parameter types");
             }
 
             // lets try converting
