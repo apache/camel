@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -57,11 +59,8 @@ public class BindyCsvDataFormat implements DataFormat {
         BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
-        List<Map<String, Object>> models = (ArrayList<Map<String, Object>>)body;
-        byte[] bytesCRLF;
-
         // Get CRLF
-        bytesCRLF = Converter.getByteReturn(factory.getCarriageReturn());
+        byte[] bytesCRLF = Converter.getByteReturn(factory.getCarriageReturn());
 
         if (factory.getGenerateHeaderColumnNames()) {
 
@@ -71,6 +70,24 @@ public class BindyCsvDataFormat implements DataFormat {
 
             // Add a carriage return
             outputStream.write(bytesCRLF);
+        }
+
+        List<Map<String, Object>> models;
+
+        // the body is not a prepared list so help a bit here and create one for us
+        if (exchange.getContext().getTypeConverter().convertTo(List.class, body) == null) {
+            models = new ArrayList<Map<String, Object>>();
+            Iterator it = ObjectHelper.createIterator(body);
+            while (it.hasNext()) {
+                Object model = it.next();
+                String name = model.getClass().getName();
+                Map<String, Object> row = new HashMap<String, Object>();
+                row.put(name, body);
+                models.add(row);
+            }
+        } else {
+            // cast to the expected type
+            models = (List<Map<String, Object>>) body;
         }
 
         for (Map<String, Object> model : models) {
