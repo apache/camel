@@ -35,7 +35,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  * input data and additional data is delegated to an {@link AggregationStrategy}
  * object.
  * <p/>
- * Uses a {@link org.apache.camel.Producer} to obatin the additional data as opposed to {@link PollEnricher}
+ * Uses a {@link org.apache.camel.Producer} to obtain the additional data as opposed to {@link PollEnricher}
  * that uses a {@link org.apache.camel.PollingConsumer}.
  *
  * @see PollEnricher
@@ -107,21 +107,12 @@ public class Enricher extends ServiceSupport implements Processor {
         } else {
             prepareResult(exchange);
 
-            // aggregate original exchange and resource exchange
-            // but do not aggregate if the resource exchange was filtered
-            Boolean filtered = resourceExchange.getProperty(Exchange.FILTERED, Boolean.class);
-            if (filtered == null || !filtered) {
-                // prepare the exchanges for aggregation
-                ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-                Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
-                if (aggregatedExchange != null) {
-                    // copy aggregation result onto original exchange (preserving pattern)
-                    copyResultsPreservePattern(exchange, aggregatedExchange);
-                }
-            } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cannot aggregate exchange as its filtered: " + resourceExchange);
-                }
+            // prepare the exchanges for aggregation
+            ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+            Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+            if (aggregatedExchange != null) {
+                // copy aggregation result onto original exchange (preserving pattern)
+                copyResultsPreservePattern(exchange, aggregatedExchange);
             }
         }
     }

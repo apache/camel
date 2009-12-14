@@ -39,14 +39,14 @@ public class FilterProcessor extends DelegateProcessor implements Traceable {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (predicate.matches(exchange)) {
+        boolean matches = predicate.matches(exchange);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Filter matches: " + matches + " for exchange: " + exchange);
+        }
+
+        if (matches) {
             super.process(exchange);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Marking exchange as filtered: " + exchange);
-            }
-            // mark this exchange as filtered
-            exchange.setProperty(Exchange.FILTERED, Boolean.TRUE);
         }
     }
 

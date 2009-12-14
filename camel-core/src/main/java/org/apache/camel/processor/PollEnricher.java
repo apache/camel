@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.EventDrivenPollingConsumer;
@@ -35,7 +34,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  * input data and additional data is delegated to an {@link org.apache.camel.processor.aggregate.AggregationStrategy}
  * object.
  * <p/>
- * Uses a {@link org.apache.camel.PollingConsumer} to obatin the additional data as opposed to {@link Enricher}
+ * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher}
  * that uses a {@link org.apache.camel.Producer}.
  *
  * @see Enricher
@@ -145,24 +144,12 @@ public class PollEnricher extends ServiceSupport implements Processor {
         } else {
             prepareResult(exchange);
 
-            // aggregate original exchange and resource exchange
-            // but do not aggregate if the resource exchange was filtered
-            Boolean filtered = null;
-            if (resourceExchange != null) {
-                filtered = resourceExchange.getProperty(Exchange.FILTERED, Boolean.class);
-            }
-            if (filtered == null || !filtered) {
-                // prepare the exchanges for aggregation
-                ExchangeHelper.prepareAggregation(exchange, resourceExchange);
-                Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
-                if (aggregatedExchange != null) {
-                    // copy aggregation result onto original exchange (preserving pattern)
-                    copyResultsPreservePattern(exchange, aggregatedExchange);
-                }
-            } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cannot aggregate exchange as its filtered: " + resourceExchange);
-                }
+            // prepare the exchanges for aggregation
+            ExchangeHelper.prepareAggregation(exchange, resourceExchange);
+            Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
+            if (aggregatedExchange != null) {
+                // copy aggregation result onto original exchange (preserving pattern)
+                copyResultsPreservePattern(exchange, aggregatedExchange);
             }
         }
     }
@@ -187,21 +174,6 @@ public class PollEnricher extends ServiceSupport implements Processor {
                         + " Started from: " + exchange.getFromEndpoint().getEndpointUri() + " pollEnrich: " + edpc.getEndpoint().getEndpointUri());
             }
         }
-    }
-
-    /**
-     * Creates a new {@link org.apache.camel.impl.DefaultExchange} instance from the given
-     * <code>exchange</code>. The resulting exchange's pattern is defined by
-     * <code>pattern</code>.
-     *
-     * @param source  exchange to copy from.
-     * @param pattern exchange pattern to set.
-     * @return created exchange.
-     */
-    protected Exchange createResourceExchange(Exchange source, ExchangePattern pattern) {
-        Exchange target = source.copy();
-        target.setPattern(pattern);
-        return target;
     }
 
     private static void prepareResult(Exchange exchange) {

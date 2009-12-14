@@ -14,37 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.issues;
 
-import java.util.List;
-
-import org.apache.camel.Predicate;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test to verify that Splitter aggregator does not included filtered exchanges.
- *
  * @version $Revision$
  */
-public class SplitWithNestedFilterShouldSkipFilteredExchanges extends SplitShouldSkipFilteredExchanges {
+public class TryCatchFinallyOnExceptionIssueTest extends ContextTestSupport {
+
+    public void testTryCatchFinallyOnExceptionIssue() throws Exception {
+        // doTry .. doCatch .. doFinally uses its own error handling so we wont get one here
+        getMockEndpoint("mock:error").expectedMessageCount(0);
+
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
+        getMockEndpoint("mock:end").expectedMessageCount(0);
+
+        template.sendBody("seda:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Predicate goodWord = body().contains("World");
-
-                from("direct:start")
-                    .split(body(List.class), new MyAggregationStrategy())
-                        .to("mock:split")
-                        .filter(goodWord)
-                            .to("mock:filtered")
-                        .end()
-                    .end()                    
-                    .to("mock:result");
+                from("seda:start")
+                    .onException(Exception.class)
+                        .handled(true)
+                        .maximumRedeliveries(2)
+                        .to("mock:error")
+                    .end()
+                    .doTry()
+                        .throwException(new IllegalArgumentException("Damn"))
+                    .doFinally()
+                        .to("mock:finally")
+                    .end()
+                    .to("mock:end");
             }
         };
     }
-
 }

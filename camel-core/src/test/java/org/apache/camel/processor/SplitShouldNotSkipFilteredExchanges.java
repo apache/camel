@@ -27,15 +27,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
- * Unit test to verify that Splitter aggregator does not included filtered exchanges.
+ * Unit test to verify that Splitter aggregator always include any exchanges.
  *
  * @version $Revision$
  */
-public class SplitShouldSkipFilteredExchanges extends ContextTestSupport {
+public class SplitShouldNotSkipFilteredExchanges extends ContextTestSupport {
 
     public void testSplitWithFilter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World,Bye World");
+        mock.expectedBodiesReceived("Hello World,Hi there,Bye World,How do you do?");
 
         MockEndpoint filtered = getMockEndpoint("mock:filtered");
         filtered.expectedBodiesReceived("Hello World", "Bye World");

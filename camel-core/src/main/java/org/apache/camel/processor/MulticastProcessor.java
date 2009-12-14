@@ -291,17 +291,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
      * @param exchange the exchange to be added to the result
      */
     protected synchronized void doAggregate(AtomicExchange result, Exchange exchange) {
-        // only aggregate if the exchange is not filtered (eg by the FilterProcessor)
-        Boolean filtered = exchange.getProperty(Exchange.FILTERED, Boolean.class);
-        if (aggregationStrategy != null && (filtered == null || !filtered)) {
+        if (aggregationStrategy != null) {
             // prepare the exchanges for aggregation
             Exchange oldExchange = result.get();
             ExchangeHelper.prepareAggregation(oldExchange, exchange);
             result.set(aggregationStrategy.aggregate(oldExchange, exchange));
-        } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Cannot aggregate exchange as its filtered: " + exchange);
-            }
         }
     }
 
