@@ -32,7 +32,7 @@ public class CamelExchangeException extends CamelException {
     }
 
     public CamelExchangeException(String message, Exchange exchange, Throwable cause) {
-        super(createMessage(message, exchange), cause);
+        super(createMessage(message, exchange, cause), cause);
         this.exchange = exchange;
     }
 
@@ -45,5 +45,9 @@ public class CamelExchangeException extends CamelException {
 
     protected static String createMessage(String message, Exchange exchange) {
         return message + " on the exchange: " + exchange;
+    }
+
+    protected static String createMessage(String message, Exchange exchange, Throwable cause) {
+        return createMessage(message, exchange) + ". Cause by: [" + cause.getClass().getName() + " - " + cause.getMessage() + "]";
     }
 }

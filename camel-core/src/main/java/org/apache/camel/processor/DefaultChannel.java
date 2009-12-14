@@ -61,6 +61,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     private ProcessorDefinition<?> definition;
     private ProcessorDefinition<?> childDefinition;
     private CamelContext camelContext;
+    private RouteContext routeContext;
 
     public List<Processor> next() {
         List<Processor> answer = new ArrayList<Processor>(1);
@@ -128,6 +129,10 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
         this.childDefinition = childDefinition;
     }
 
+    public RouteContext getRouteContext() {
+        return routeContext;
+    }
+
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startServices(errorHandler, output);
@@ -139,6 +144,7 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     }
 
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
+        this.routeContext = routeContext;
         this.definition = outputDefinition;
         this.camelContext = routeContext.getCamelContext();
 
@@ -201,6 +207,11 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (exchange.getUnitOfWork() != null) {
+            // keep route context up to date
+            exchange.getUnitOfWork().setRouteContext(routeContext);
+        }
+
         Processor processor = getOutput();
         if (processor != null && continueProcessing(exchange)) {
             processor.process(exchange);

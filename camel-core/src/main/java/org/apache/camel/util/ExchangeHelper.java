@@ -426,6 +426,11 @@ public final class ExchangeHelper {
         exchange.setException(null);
     }
 
+    public static boolean isRedelieryExhausted(Exchange exchange) {
+        Boolean exhausted = exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.class);
+        return exhausted != null && exhausted;
+    }
+
     /**
      * Extracts the body from the given exchange.
      * <p/>

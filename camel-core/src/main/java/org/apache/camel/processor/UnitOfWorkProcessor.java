@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultUnitOfWork;
+import org.apache.camel.spi.RouteContext;
+
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /** 
@@ -27,10 +29,17 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public final class UnitOfWorkProcessor extends DelegateProcessor {
 
+    private final RouteContext routeContext;
+
     public UnitOfWorkProcessor(Processor processor) {
-        super(processor);
+        this(null, processor);
     }
-    
+
+    public UnitOfWorkProcessor(RouteContext routeContext, Processor processor) {
+        super(processor);
+        this.routeContext = routeContext;
+    }
+
     @Override
     public String toString() {
         return "UnitOfWork(" + processor + ")";

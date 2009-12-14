@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Service;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
@@ -45,6 +46,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Message originalInMessage;
     private final TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
+    private RouteContext routeContext;
 
     public DefaultUnitOfWork(Exchange exchange) {
         tracedRouteNodes = new DefaultTracedRouteNodes();
@@ -85,6 +87,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             transactedBy.clear();
         }
         originalInMessage = null;
+        routeContext = null;
     }
 
     public synchronized void addSynchronization(Synchronization synchronization) {
@@ -175,6 +178,14 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     public void endTransactedBy(Object transactionDefinition) {
         getTransactedBy().remove(transactionDefinition);
+    }
+
+    public RouteContext getRouteContext() {
+        return routeContext;
+    }
+
+    public void setRouteContext(RouteContext routeContext) {
+        this.routeContext = routeContext;
     }
 
     private Set<Object> getTransactedBy() {

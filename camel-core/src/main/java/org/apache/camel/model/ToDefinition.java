@@ -98,7 +98,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         Processor childProcessor = routeContext.createProcessor(this);
 
         // wrap it in a unit of work so the route that comes next is also done in a unit of work
-        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(childProcessor);
+        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(routeContext, childProcessor);
 
         // create async processor
         Endpoint endpoint = resolveEndpoint(routeContext);

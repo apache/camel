@@ -94,6 +94,7 @@ public interface Exchange {
     String ROUTE_STOP         = "CamelRouteStop";
     String REDELIVERED        = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
+    String REDELIVERY_EXHAUSTED = "CamelRedeliveryExhausted";
     String ROLLBACK_ONLY      = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST = "CamelRollbackOnlyLast";
 

@@ -94,7 +94,6 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             return;
         }
 
-
         // interceptor will also trace routes supposed only for TraceEvents so we need to skip
         // logging TraceEvents to avoid infinite looping
         if (exchange.getProperty(Exchange.TRACE_EVENT, Boolean.class) != null) {

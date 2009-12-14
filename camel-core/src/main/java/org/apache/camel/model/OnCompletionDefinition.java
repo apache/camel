@@ -74,7 +74,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
         Processor childProcessor = createOutputsProcessor(routeContext);
 
         // wrap the on completion route in a unit of work processor
-        childProcessor = new UnitOfWorkProcessor(childProcessor);
+        childProcessor = new UnitOfWorkProcessor(routeContext, childProcessor);
 
         Predicate when = null;
         if (onWhen != null) {

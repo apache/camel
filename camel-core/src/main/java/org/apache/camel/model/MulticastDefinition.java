@@ -16,10 +16,8 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,11 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -141,14 +137,7 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
         }
 
-        // wrap list of processors in error handlers so we have fine grained error handling
-        List<Processor> processors = new ArrayList<Processor>(list.size());
-        for (Processor output : list) {
-            Processor errorHandler = wrapInErrorHandler(routeContext, output);
-            processors.add(errorHandler);
-        }
-
-        return new MulticastProcessor(processors, aggregationStrategy, isParallelProcessing(), executorService,
+        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executorService,
                                       isStreaming(), isStopOnException());
     }
 

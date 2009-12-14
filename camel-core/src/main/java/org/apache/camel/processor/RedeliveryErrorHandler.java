@@ -231,7 +231,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected boolean isDone(Exchange exchange) throws Exception {
         // only done if the exchange hasn't failed
         // and it has not been handled by the failure processor
-        return exchange.getException() == null || ExchangeHelper.isFailureHandled(exchange);
+        // or we are exhausted
+        return exchange.getException() == null
+            || ExchangeHelper.isFailureHandled(exchange)
+            || ExchangeHelper.isRedelieryExhausted(exchange);
     }
 
     /**

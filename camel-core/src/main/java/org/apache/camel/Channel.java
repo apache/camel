@@ -114,9 +114,16 @@ public interface Channel extends Processor, Navigate<Processor> {
     Processor getNextProcessor();
 
     /**
-     * Gets the defintion of the next processor
+     * Gets the definition of the next processor
      *
      * @return the processor definition
      */
     ProcessorDefinition<?> getProcessorDefinition();
+
+    /**
+     * Gets the {@link RouteContext}
+     *
+     * @return the route context
+     */
+    RouteContext getRouteContext();
 }

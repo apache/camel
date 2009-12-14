@@ -180,13 +180,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             return channel;
-        } else if (defn instanceof MulticastDefinition) {
-            // do not use error handler for multicast based as it offers fine grained error handlers for its outputs
+        } else if (defn instanceof MulticastDefinition || defn instanceof RecipientListDefinition) {
+            // do not use error handler for multicast or recipientlist based as it offers fine grained error handlers for its outputs
             return channel;
         } else {
             // regular definition so add the error handler
             Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(routeContext, output);
+            Processor errorHandler = wrapInErrorHandler(routeContext, getErrorHandlerBuilder(), output);
             // set error handler on channel
             channel.setErrorHandler(errorHandler);
 
@@ -200,11 +200,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param routeContext the route context
      * @param output the output
      * @return the output wrapped with the error handler
-     * @throws Exception can be thrown
+     * @throws Exception can be thrown if failed to create error handler builder
      */
-    protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
+    protected Processor wrapInErrorHandler(RouteContext routeContext, ErrorHandlerBuilder builder, Processor output) throws Exception {
         // create error handler
-        ErrorHandlerBuilder builder = getErrorHandlerBuilder();
         Processor errorHandler = builder.createErrorHandler(routeContext, output);
 
         // invoke lifecycles so we can manage this error handler builder
@@ -214,6 +213,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
 
         return errorHandler;
     }
+
+
 
     /**
      * Adds the given list of interceptors to the channel.

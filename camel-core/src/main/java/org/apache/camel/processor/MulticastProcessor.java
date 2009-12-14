@@ -30,12 +30,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -80,12 +83,13 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    private final Collection<Processor> processors;
+    private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
     private final boolean isParallelProcessing;
     private final boolean streaming;
     private final boolean stopOnException;
     private ExecutorService executorService;
+    private Channel channel;
 
     public MulticastProcessor(Collection<Processor> processors) {
         this(processors, null);
@@ -122,18 +126,36 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         return "multicast";
     }
 
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
     public void process(Exchange exchange) throws Exception {
         final AtomicExchange result = new AtomicExchange();
         final Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
 
-        if (isParallelProcessing()) {
-            doProcessParallel(result, pairs, isStreaming());
-        } else {
-            doProcessSequential(result, pairs);
-        }
+        // multicast uses fine grained error handling on the output processors
+        // so use try .. catch to cater for this
+        try {
+            if (isParallelProcessing()) {
+                doProcessParallel(result, pairs, isStreaming());
+            } else {
+                doProcessSequential(result, pairs);
+            }
 
-        if (result.get() != null) {
-            ExchangeHelper.copyResults(exchange, result.get());
+            if (result.get() != null) {
+                ExchangeHelper.copyResults(exchange, result.get());
+            }
+        } catch (Exception e) {
+            // multicast uses error handling on its output processors and they have tried to redeliver
+            // so we shall signal back to the other error handlers that we are exhausted and they should not
+            // also try to redeliver as we will then do that twice
+            exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+            exchange.setException(e);
         }
     }
 
@@ -236,6 +258,19 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
             // set property which endpoint we send to
             setToEndpoint(exchange, producer);
+
+            if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
+                // wrap the producer in error handler so we have fine grained error handling on
+                // the output side instead of the input side
+                // this is needed to support redelivery on that output alone and not doing redelivery
+                // for the entire multicast block again which will start from scratch again
+                RouteContext routeContext = exchange.getUnitOfWork().getRouteContext();
+                ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+
+                // create error handler (create error handler directly to keep it light weight,
+                // instead of using ProcessorDefinitionHelper.wrapInErrorHandler)
+                producer = builder.createErrorHandler(routeContext, producer);
+            }
 
             // let the producer process it
             producer.process(exchange);

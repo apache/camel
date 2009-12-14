@@ -59,7 +59,7 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> {
         Processor childProcessor = routeContext.createProcessor(this);
 
         // wrap it in a unit of work so the route that comes next is also done in a unit of work
-        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(childProcessor);
+        UnitOfWorkProcessor uow = new UnitOfWorkProcessor(routeContext, childProcessor);
 
         return new ThreadsProcessor(uow, executorService, waitForTaskToComplete);
     }

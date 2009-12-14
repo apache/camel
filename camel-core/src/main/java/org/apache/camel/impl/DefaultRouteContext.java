@@ -144,7 +144,7 @@ public class DefaultRouteContext implements RouteContext {
             Processor processor = Pipeline.newInstance(eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            Processor unitOfWorkProcessor = new UnitOfWorkProcessor(processor);
+            Processor unitOfWorkProcessor = new UnitOfWorkProcessor(this, processor);
             Processor target = unitOfWorkProcessor;
 
             // and then optionally add route policy processor if a custom policy is set

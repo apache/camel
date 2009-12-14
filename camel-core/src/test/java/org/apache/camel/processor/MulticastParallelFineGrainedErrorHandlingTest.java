@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
+public class MulticastParallelFineGrainedErrorHandlingTest extends ContextTestSupport {
 
     public void testMulticastOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -32,7 +32,7 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
                 from("direct:start")
                     .to("mock:a")
-                    .multicast().stopOnException()
+                    .multicast().stopOnException().parallelProcessing()
                     .to("mock:foo", "mock:bar", "mock:baz");
             }
         });
@@ -56,7 +56,7 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
                 from("direct:start")
                     .to("mock:a")
-                    .multicast().stopOnException()
+                    .multicast().stopOnException().parallelProcessing()
                     .to("mock:foo", "mock:bar").throwException(new IllegalArgumentException("Damn")).to("mock:baz");
             }
         });
@@ -65,7 +65,7 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:baz").expectedMessageCount(0);
+        getMockEndpoint("mock:baz").expectedMessageCount(1);
 
         try {
             template.sendBody("direct:start", "Hello World");
