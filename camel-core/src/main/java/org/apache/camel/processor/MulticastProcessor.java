@@ -268,7 +268,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                 ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
 
                 // create error handler (create error handler directly to keep it light weight,
-                // instead of using ProcessorDefinitionHelper.wrapInErrorHandler)
+                // instead of using ProcessorDefinition.wrapInErrorHandler)
                 producer = builder.createErrorHandler(routeContext, producer);
             }
 
