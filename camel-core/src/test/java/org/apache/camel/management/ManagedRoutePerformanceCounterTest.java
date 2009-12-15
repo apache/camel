@@ -47,14 +47,14 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
 
         template.asyncSendBody("direct:start", "Hello World");
 
-        Thread.sleep(1000);
+        Thread.sleep(1500);
 
         Integer inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
         assertEquals(1, inFlight.longValue());
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, completed.longValue());
@@ -62,8 +62,8 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
         Long last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");
         Long total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
-        assertTrue("Should take around 2 sec: was " + last, last > 1900);
-        assertTrue("Should take around 2 sec: was " + total, total > 1900);
+        assertTrue("Should take around 3 sec: was " + last, last > 2900);
+        assertTrue("Should take around 3 sec: was " + total, total > 2900);
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
@@ -73,8 +73,8 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
         last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");
         total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
-        assertTrue("Should take around 2 sec: was " + last, last > 1900);
-        assertTrue("Should be around 4 sec now: was " + total, total > 3900);
+        assertTrue("Should take around 3 sec: was " + last, last > 2900);
+        assertTrue("Should be around 5 sec now: was " + total, total > 4900);
 
         Date lastFailed = (Date) mbeanServer.getAttribute(on, "LastExchangeFailureTimestamp");
         Date firstFailed = (Date) mbeanServer.getAttribute(on, "FirstExchangeFailureTimestamp");
@@ -90,7 +90,7 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").delay(2000).to("mock:result");
+                from("direct:start").to("log:foo").delay(3000).to("mock:result");
             }
         };
     }
