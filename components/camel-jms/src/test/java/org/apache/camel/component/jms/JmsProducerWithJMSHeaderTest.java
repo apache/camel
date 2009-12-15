@@ -162,12 +162,14 @@ public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
         template.sendBodyAndHeaders("activemq:queue:bar?preserveMessageQos=true", "Hello World", headers);
 
         // sleep just a little
-        Thread.sleep(500);
+        Thread.sleep(50);
 
-        Exchange bar = consumer.receive("activemq:queue:bar");
+        Exchange bar = consumer.receive("activemq:queue:bar", 5000);
         assertNotNull("Should be a message on queue", bar);
 
         template.send("activemq:queue:foo?preserveMessageQos=true", bar);
+
+        Thread.sleep(1000);
 
         assertMockEndpointsSatisfied();
     }
