@@ -27,7 +27,7 @@
         <property name="configuration" ref="mailConfig"/>
         <property name="consumerProperties">
             <map key-type="java.lang.String">
-                <entry key="delay" value="1000"/>
+                <entry key="delay" value="3000"/>
             </map>
         </property>
     </bean>
