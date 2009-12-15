@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
  * @version $Revision$
@@ -29,6 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {
 
     private static int counter;
+    private static int tries;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -58,6 +60,38 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo,mock:bar,mock:baz");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testRecipientListErrorAggregate() throws Exception {
+        counter = 0;
+        tries = 0;
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .onException(Exception.class).maximumRedeliveries(3).end()
+                    .to("mock:a")
+                    .recipientList(header("foo"))
+                        .aggregationStrategy(new MyAggregationStrategy())
+                        .parallelProcessing();
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:baz").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo,mock:bar,bean:fail,mock:baz");
+
+        assertMockEndpointsSatisfied();
+
+        // bean is invoked 4 times
+        assertEquals(4, counter);
+        // of which 3 of them is retries
+        assertEquals(3, tries);
     }
 
     public void testRecipientListError() throws Exception {
@@ -132,6 +166,22 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    public static class MyAggregationStrategy implements AggregationStrategy {
+
+        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+            // check whether we have attempted redelivery
+            Boolean redelivered = newExchange.getIn().getHeader(Exchange.REDELIVERED, Boolean.class);
+            if (redelivered != null && redelivered) {
+                // extract the number of times we tried
+                tries = newExchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+                // this is the endpoint that failed
+                assertEquals("bean://fail", newExchange.getProperty(Exchange.FAILURE_ENDPOINT, String.class));
+            }
+            // just let it pass through
+            return newExchange;
+        }
     }
 
     public static class MyRecipientBean {
