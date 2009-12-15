@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +28,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +46,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     private SedaEndpoint endpoint;
     private Processor processor;
     private ExecutorService executor;
+    private Processor multicast;
     private ExceptionHandler exceptionHandler;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
@@ -69,6 +74,10 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
         this.exceptionHandler = exceptionHandler;
     }
 
+    public Processor getProcessor() {
+        return processor;
+    }
+
     public void run() {
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         while (queue != null && isRunAllowed()) {
@@ -84,7 +93,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
             if (exchange != null) {
                 if (isRunAllowed()) {
                     try {
-                        processor.process(exchange);
+                        sendToConsumers(exchange);
                     } catch (Exception e) {
                         getExceptionHandler().handleException(e);
                     }
@@ -105,6 +114,51 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
         }
     }
 
+    /**
+     * Send the given {@link Exchange} to the consumer(s).
+     * <p/>
+     * If multiple consumers then they will each receive a copy of the Exchange.
+     * A multicast processor will send the exchange in parallel to the multiple consumers.
+     * <p/>
+     * If there is only a single consumer then its dispatched directly to it using same thread.
+     * 
+     * @param exchange the exchange
+     * @throws Exception can be thrown if processing of the exchange failed
+     */
+    protected void sendToConsumers(Exchange exchange) throws Exception {
+        int size = endpoint.getConsumers().size();
+
+        // if there are multiple consumers then multicast to them
+        if (size > 1) {
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Multicasting to " + endpoint.getConsumers().size() + " consumers for Exchange: " + exchange);
+            }
+
+            // use a multicast processor to process it
+            Processor mp = getMulticastProcessor();
+            mp.process(exchange);
+        } else {
+            // use the regular processor
+            processor.process(exchange);
+        }
+    }
+
+    protected synchronized Processor getMulticastProcessor() {
+        if (multicast == null) {
+            int size = endpoint.getConsumers().size();
+
+            List<Processor> processors = new ArrayList<Processor>(size);
+            for (SedaConsumer consumer : endpoint.getConsumers()) {
+                processors.add(consumer.getProcessor());
+            }
+
+            ExecutorService multicastExecutor = ExecutorServiceHelper.newFixedThreadPool(size, endpoint.getEndpointUri() + "(multicast)", true);
+            multicast = new MulticastProcessor(processors, null, true, multicastExecutor, false, false);
+        }
+        return multicast;
+    }
+
     protected void doStart() throws Exception {
         int poolSize = endpoint.getConcurrentConsumers();
         executor = ExecutorServiceHelper.newFixedThreadPool(poolSize, endpoint.getEndpointUri(), true);
@@ -118,6 +172,10 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
         endpoint.onStopped(this);
         executor.shutdownNow();
         executor = null;
+
+        if (multicast != null) {
+            ServiceHelper.stopServices(multicast);
+        }
     }
 
 }

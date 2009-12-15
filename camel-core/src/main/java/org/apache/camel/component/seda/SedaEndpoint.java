@@ -27,6 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
@@ -40,10 +41,11 @@ import org.apache.camel.spi.BrowsableEndpoint;
  *
  * @version $Revision$
  */
-public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
+public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private volatile BlockingQueue<Exchange> queue;
     private int size = 1000;
     private int concurrentConsumers = 1;
+    private boolean multipleConsumers;
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     private long timeout = 30000;
     private volatile Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
@@ -123,6 +125,14 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         this.timeout = timeout;
     }
 
+    public boolean isMultipleConsumers() {
+        return multipleConsumers;
+    }
+
+    public void setMultipleConsumers(boolean multipleConsumers) {
+        this.multipleConsumers = multipleConsumers;
+    }
+
     public boolean isSingleton() {
         return true;
     }
@@ -132,6 +142,10 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public List<Exchange> getExchanges() {
         return new ArrayList<Exchange>(getQueue());
+    }
+
+    public boolean isMultipleConsumersSupported() {
+        return isMultipleConsumers();
     }
 
     /**
@@ -163,4 +177,5 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     void onStopped(SedaConsumer consumer) {
         consumers.remove(consumer);
     }
+
 }
