@@ -94,8 +94,13 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                 if (isRunAllowed()) {
                     try {
                         sendToConsumers(exchange);
+
+                        // log exception if an exception occurred and was not handled
+                        if (exchange.getException() != null) {
+                            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                        }
                     } catch (Exception e) {
-                        getExceptionHandler().handleException(e);
+                        getExceptionHandler().handleException("Error processing exchange", exchange, e);
                     }
                 } else {
                     if (LOG.isWarnEnabled()) {

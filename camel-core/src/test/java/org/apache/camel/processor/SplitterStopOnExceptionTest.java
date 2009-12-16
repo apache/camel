@@ -48,7 +48,7 @@ public class SplitterStopOnExceptionTest extends ContextTestSupport {
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Sequential processing failed for number 1 on the exchange: Exchange[Message: Kaboom]"));
+            assertTrue(cause.getMessage().startsWith("Sequential processing failed for number 1. Exchange[Message: Kaboom]"));
             assertEquals("Forced", cause.getCause().getMessage());
         }
 

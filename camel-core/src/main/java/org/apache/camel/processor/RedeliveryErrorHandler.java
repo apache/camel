@@ -282,7 +282,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     protected void handleException(Exchange exchange, RedeliveryData data) {
-        Throwable e = exchange.getException();
+        Exception e = exchange.getException();
 
         // store the original caused exception in a property, so we can restore it later
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
@@ -341,6 +341,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      */
     protected void deliverToFailureProcessor(final Processor processor, final Exchange exchange,
                                              final RedeliveryData data) {
+
+        Exception caught = exchange.getException();
+
         // we did not success with the redelivery so now we let the failure processor handle it
         // clear exception as we let the failure processor handle it
         exchange.setException(null);
@@ -380,11 +383,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 exchange.setException(e);
             }
             log.trace("Failure processor done");
-
-            String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
-                    + ". Processed by failure processor: " + processor;
-            logFailedDelivery(false, exchange, msg, data, null);
         }
+
+        // create log message
+        String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId();
+        msg = msg + ". Exhausted after delivery attempt: " + data.redeliveryCounter + " caught: " + caught;
+        if (processor != null) {
+            msg = msg + ". Processed by failure processor: " + processor;
+        }
+
+        // log that we failed delivery as we are exhausted
+        logFailedDelivery(false, exchange, msg, data, null);
     }
 
     protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
@@ -445,7 +454,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 msg = msg + " due: " + exchange.getException().getMessage();
             }
             if (newLogLevel == LoggingLevel.ERROR || newLogLevel == LoggingLevel.FATAL) {
-                // log intented rollback on maximum WARN level (no ERROR or FATAL)
+                // log intended rollback on maximum WARN level (no ERROR or FATAL)
                 logger.log(msg, LoggingLevel.WARN);
             } else {
                 // otherwise use the desired logging level

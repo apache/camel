@@ -57,7 +57,7 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
             ExecutionException ee = assertIsInstanceOf(ExecutionException.class, e.getCause());
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, ee.getCause());
             assertTrue(cause.getMessage().startsWith("Parallel processing failed for number "));
-            assertTrue(cause.getMessage().contains("on the exchange: Exchange[Message: Kaboom]"));
+            assertTrue(cause.getMessage().contains("Exchange[Message: Kaboom]"));
             assertEquals("Forced", cause.getCause().getMessage());
         }
 

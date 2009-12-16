@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.util.ExchangeHelper;
+
 /**
  * An exception caused by a specific message {@link Exchange}
  *
@@ -27,12 +29,12 @@ public class CamelExchangeException extends CamelException {
     private final transient Exchange exchange;
 
     public CamelExchangeException(String message, Exchange exchange) {
-        super(createMessage(message, exchange));
+        super(ExchangeHelper.createExceptionMessage(message, exchange, null));
         this.exchange = exchange;
     }
 
     public CamelExchangeException(String message, Exchange exchange, Throwable cause) {
-        super(createMessage(message, exchange, cause), cause);
+        super(ExchangeHelper.createExceptionMessage(message, exchange, cause), cause);
         this.exchange = exchange;
     }
 
@@ -43,11 +45,4 @@ public class CamelExchangeException extends CamelException {
         return exchange;
     }
 
-    protected static String createMessage(String message, Exchange exchange) {
-        return message + " on the exchange: " + exchange;
-    }
-
-    protected static String createMessage(String message, Exchange exchange, Throwable cause) {
-        return createMessage(message, exchange) + ". Cause by: [" + cause.getClass().getName() + " - " + cause.getMessage() + "]";
-    }
 }

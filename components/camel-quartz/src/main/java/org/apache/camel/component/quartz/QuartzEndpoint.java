@@ -24,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -102,13 +103,18 @@ public class QuartzEndpoint extends DefaultEndpoint {
         try {
             getLoadBalancer().process(exchange);
 
-            // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
-                LOG.error("Quart Job processing Exchange: " + exchange + " failed with exception.", exchange.getException());
+                // propagate the exception back to Quartz
+                throw new JobExecutionException(exchange.getException());
             }
-        } catch (JobExecutionException e) {
-            throw e;
         } catch (Exception e) {
+            // log the error
+            LOG.error(ExchangeHelper.createExceptionMessage("Error processing exchange", exchange, e));
+
+            // and rethrow to let quartz handle it
+            if (e instanceof JobExecutionException) {
+                throw (JobExecutionException) e;
+            }
             throw new JobExecutionException(e);
         }
     }

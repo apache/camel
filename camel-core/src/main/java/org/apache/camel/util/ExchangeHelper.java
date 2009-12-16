@@ -560,4 +560,34 @@ public final class ExchangeHelper {
         return context.getTypeConverter().convertTo(type, result);
     }
 
+    /**
+     * Creates an exception message with the provided details.
+     * <p/>
+     * All fields is optional so you can pass in only an exception, or just a message etc. or any combination.
+     *
+     * @param message the message
+     * @param exchange the exchange
+     * @param cause the caused exception
+     * @return an error message (without stacktrace from exception)
+     */
+    public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
+        StringBuilder sb = new StringBuilder();
+        if (message != null) {
+            sb.append(message);
+        }
+        if (exchange != null) {
+            if (sb.length() > 0) {
+                sb.append(". ");
+            }
+            sb.append(exchange);
+        }
+        if (cause != null) {
+            if (sb.length() > 0) {
+                sb.append(". ");
+            }
+            sb.append("Caused by: [" + cause.getClass().getName() + " - " + cause.getMessage() + "]");
+        }
+        return sb.toString().trim();
+    }
+
 }

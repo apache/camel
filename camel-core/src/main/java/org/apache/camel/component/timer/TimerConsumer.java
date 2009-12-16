@@ -104,10 +104,10 @@ public class TimerConsumer extends DefaultConsumer {
 
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
-                handleException(exchange.getException());
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
         } catch (Exception e) {
-            handleException(e);
+            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
         }
     }
 }

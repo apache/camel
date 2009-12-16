@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Exchange;
+
 /**
  * A Strategy pattern for handling exceptions; particularly in asynchronous processes such as consumers
  *
@@ -29,4 +31,21 @@ public interface ExceptionHandler {
      * @param exception the exception
      */
     void handleException(Throwable exception);
+
+    /**
+     * Handles the given exception
+     *
+     * @param message additional message
+     * @param exception the exception
+     */
+    void handleException(String message, Throwable exception);
+
+    /**
+     * Handles the given exception
+     *
+     * @param message additional message
+     * @param exchange exchange which cause the exception
+     * @param exception the exception
+     */
+    void handleException(String message, Exchange exchange, Throwable exception);
 }
