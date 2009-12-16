@@ -47,9 +47,16 @@ public class ManagedRoutePerformanceCounterTest extends ContextTestSupport {
 
         template.asyncSendBody("direct:start", "Hello World");
 
-        Thread.sleep(1500);
-
-        Integer inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        // cater for slow boxes
+        Integer inFlight = null;
+        for (int i = 0; i < 10; i++) {
+            Thread.sleep(500);
+            inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+            if (inFlight.longValue() == 1) {
+                break;
+            }
+        }
+        assertNotNull("too slow server", inFlight);
         assertEquals(1, inFlight.longValue());
 
         assertMockEndpointsSatisfied();
