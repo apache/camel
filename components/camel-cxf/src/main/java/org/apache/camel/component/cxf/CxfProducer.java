@@ -25,17 +25,21 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Holder;
 import javax.xml.ws.handler.MessageContext.Scope;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 /**
@@ -151,14 +155,54 @@ public class CxfProducer extends DefaultProducer {
                     responseContext);
         }
     }
+    
+    private void checkParameterSize(CxfEndpoint endpoint, Exchange exchange, Object[] parameters) {
+        BindingOperationInfo boi = getBindingOperationInfo(exchange);
+        if (boi == null) {
+            throw new RuntimeCamelException("Can't find the binding operation information from camel exchange");
+        }
+        if (!endpoint.isWrapped() && boi != null) {
+            if (boi.isUnwrappedCapable()) {
+                boi = boi.getUnwrappedOperation();
+            }
+        }
+        int experctMessagePartsSize = boi.getInput().getMessageParts().size();
+        
+        if (parameters.length < experctMessagePartsSize) {
+            throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Experct size "
+                                               + experctMessagePartsSize + ", Parameter size " + parameters.length);
+        }
+        
+        if (parameters.length > experctMessagePartsSize) {
+            // need to check the holder parameters        
+            int holdersSize = 0;            
+            for (Object parameter : parameters) {
+                if (parameter instanceof Holder) {
+                    holdersSize++;
+                } 
+            }
+            // need to check the soap header information
+            int soapHeadersSize = 0; 
+            BindingMessageInfo bmi =  boi.getInput();
+            if (bmi != null) {
+                List<SoapHeaderInfo> headers = bmi.getExtensors(SoapHeaderInfo.class);
+                if (headers != null) {
+                    soapHeadersSize = headers.size();
+                }
+            }
+          
+            if (holdersSize + experctMessagePartsSize + soapHeadersSize < parameters.length) {
+                throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Experct size "
+                                                   + (experctMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length);
+            }
+        }
+    }
 
     /**
      * Get the parameters for the web service operation
      */
     private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) {
-
-        // TODO: this method should probably be more strict and validate (CAMEL-2195)
-
+      
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
             List<?> list = exchange.getIn().getBody(List.class);
@@ -180,6 +224,8 @@ public class CxfProducer extends DefaultProducer {
                     params[0] = exchange.getIn().getBody();
                 }
             }
+            checkParameterSize(endpoint, exchange, params);
+            
         } else if (endpoint.getDataFormat() == DataFormat.PAYLOAD) {
             params = new Object[1];
             // TODO: maybe it should be mandatory body?
