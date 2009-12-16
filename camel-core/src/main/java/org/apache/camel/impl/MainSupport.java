@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
@@ -317,6 +318,9 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected void postProcessContext() throws Exception {
         Map<String, CamelContext> map = getCamelContextMap();
+        if (map.size() == 0) {
+            throw new CamelException("Can't find any Camel Context from the Application Context. Please check your Application Context setting");
+        }
         Set<Map.Entry<String, CamelContext>> entries = map.entrySet();
         int size = entries.size();
         for (Map.Entry<String, CamelContext> entry : entries) {
