@@ -35,6 +35,7 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
@@ -673,6 +674,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public void start() throws Exception {
         super.start();
+        ServiceHelper.startService(producerCache);
         if (executor == null || executor.isShutdown()) {
             executor = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "ProducerTemplate", true);
         }
@@ -681,6 +683,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     @Override
     public void stop() throws Exception {
         super.stop();
+        ServiceHelper.stopService(producerCache);
         if (executor != null) {
             executor.shutdown();
         }

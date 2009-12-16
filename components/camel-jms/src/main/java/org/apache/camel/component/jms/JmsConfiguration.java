@@ -1235,8 +1235,7 @@ public class JmsConfiguration implements Cloneable {
         return replyToTempDestinationAffinity;
     }
 
-    public void setReplyToTempDestinationAffinity(
-            String replyToTempDestinationAffinity) {
+    public void setReplyToTempDestinationAffinity(String replyToTempDestinationAffinity) {
         this.replyToTempDestinationAffinity = replyToTempDestinationAffinity;
     }
 

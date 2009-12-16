@@ -218,8 +218,9 @@ public class ProducerCache extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        // the producers will be stopped from where they are acquired 
+        ServiceHelper.stopServices(producers);
         producers.clear();
+
         ServiceHelper.stopServices(pool);
     }
 
