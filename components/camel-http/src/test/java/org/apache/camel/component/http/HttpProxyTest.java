@@ -38,16 +38,16 @@ public class HttpProxyTest extends CamelTestSupport {
     public void testHttpProxyConfigured() throws Exception {
         HttpEndpoint http = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
 
-        System.setProperty("http.proxyHost", "myproxy");
-        System.setProperty("http.proxyPort", "1234");
+        context.getProperties().put("http.proxyHost", "myproxy");
+        context.getProperties().put("http.proxyPort", "1234");
 
         try {
             HttpClient client = http.createHttpClient();
             assertEquals("myproxy", client.getHostConfiguration().getProxyHost());
             assertEquals(1234, client.getHostConfiguration().getProxyPort());
         } finally {
-            System.clearProperty("http.proxyHost");
-            System.clearProperty("http.proxyPort");
+            context.getProperties().remove("http.proxyHost");
+            context.getProperties().remove("http.proxyPort");
         }
     }
 
@@ -55,16 +55,16 @@ public class HttpProxyTest extends CamelTestSupport {
     public void testHttpProxyEndpointConfigured() throws Exception {
         HttpEndpoint http = context.getEndpoint("http://www.google.com?proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
 
-        System.setProperty("http.proxyHost", "myproxy");
-        System.setProperty("http.proxyPort", "1234");
+        context.getProperties().put("http.proxyHost", "myproxy");
+        context.getProperties().put("http.proxyPort", "1234");
 
         try {
             HttpClient client = http.createHttpClient();
             assertEquals("myotherproxy", client.getHostConfiguration().getProxyHost());
             assertEquals(2345, client.getHostConfiguration().getProxyPort());
         } finally {
-            System.clearProperty("http.proxyHost");
-            System.clearProperty("http.proxyPort");
+            context.getProperties().remove("http.proxyHost");
+            context.getProperties().remove("http.proxyPort");
         }
     }
 
