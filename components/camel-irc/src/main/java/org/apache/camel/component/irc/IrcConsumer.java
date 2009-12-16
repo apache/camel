@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.irc;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
@@ -62,11 +65,30 @@ public class IrcConsumer extends DefaultConsumer {
         listener = new FilteredIRCEventAdapter();
         connection.addIRCEventListener(listener);
 
-        for (String channel : endpoint.getConfiguration().getChannels()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Joining: " + channel + " using " + connection.getClass().getName());
+        List<String> channels = endpoint.getConfiguration().getChannels();
+        for (String channel : channels) {
+
+            // find key for channel
+            int ndx = channels.indexOf(channel);
+            String key = null;
+            if (ndx >= 0) {
+                List<String> keys = endpoint.getConfiguration().getKeys();
+                if (keys.size() > 0 && ndx < keys.size()) {
+                    key = keys.get(ndx);
+                }
             }
-            connection.doJoin(channel);
+
+            if (ObjectHelper.isNotEmpty(key)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Joining: " + channel + " using " + connection.getClass().getName() + " with key " + key);
+                }
+                connection.doJoin(channel, key);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Joining: " + channel + " using " + connection.getClass().getName());
+                }
+                connection.doJoin(channel);
+            }
         }
     }
 
@@ -184,4 +206,5 @@ public class IrcConsumer extends DefaultConsumer {
             }
         }
     }
+
 }

@@ -30,6 +30,7 @@ import org.schwering.irc.lib.ssl.SSLTrustManager;
 public class IrcConfiguration implements Cloneable {
     private String target;
     private List<String> channels = new ArrayList<String>();
+    private List<String> keys = new ArrayList<String>();
     private String hostname;
     private String password;
     private String nickname;
@@ -100,11 +101,11 @@ public class IrcConfiguration implements Cloneable {
         } else if (!uriStr.startsWith("irc://")) {
             uriStr = uriStr.replace("irc:", "irc://");
         }
-        
+
         if (uriStr.contains("?")) {
             uriStr = ObjectHelper.before(uriStr, "?");
         }
-        
+
         URI uri = new URI(uriStr);
 
         setNickname(uri.getUserInfo());
@@ -139,6 +140,21 @@ public class IrcConfiguration implements Cloneable {
                 addChannel(channel);
             }
         }
+    }
+
+    public void setKeys(String keys) {
+        String[] s = keys.split(",");
+        for (String key : s) {
+            this.keys.add(key);
+        }
+    }
+
+    public void setKeys(List<String> keys) {
+        this.keys = keys;
+    }
+
+    public List<String> getKeys() {
+        return keys;
     }
 
     public void setTrustManager(SSLTrustManager trustManager) {
