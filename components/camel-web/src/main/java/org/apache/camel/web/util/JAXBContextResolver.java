@@ -16,12 +16,13 @@
  */
 package org.apache.camel.web.util;
 
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
-
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.api.json.JSONJAXBContext;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A resolver of the JAXB context primed for the Camel XML languages
@@ -35,13 +36,8 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
     private String packages;
 
     public JAXBContextResolver() throws Exception {
-
-        // TODO we can't use natural with JAXB 2.1.6 or 2.1 for some reason?
-        JSONConfiguration.Builder builder = JSONConfiguration.mapped();
-        //JSONConfiguration.Builder builder = JSONConfiguration.natural();
-
         this.packages = org.apache.camel.web.resources.Constants.JAXB_PACKAGES;
-        this.context = new JSONJAXBContext(builder.build(), packages);
+        this.context = JAXBContext.newInstance(packages);
     }
 
     public JAXBContext getContext(Class objectType) {
