@@ -34,6 +34,7 @@ import org.apache.camel.converter.HasAnnotation;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
+ * As we have the JAXB FallbackTypeConverter, so we don't need to register this converter
  * @version $Revision$
  */
 public final class JaxbConverter {
@@ -41,26 +42,35 @@ public final class JaxbConverter {
     private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
 
     @Converter
-    public JAXBSource toSource(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException {
+    public JAXBSource toSource(Object value) throws JAXBException {
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
         }
-        JAXBContext context = getJaxbContext(value);
-        return new JAXBSource(context, value);
+        // just need to check if the Object class has the XmlRootElement
+        if (value.getClass().getAnnotation(XmlRootElement.class) != null) {
+            JAXBContext context = getJaxbContext(value);
+            return new JAXBSource(context, value);
+        } else {
+            return null;
+        }
     }
 
     @Converter
-    public Document toDocument(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException, ParserConfigurationException {
+    public Document toDocument(Object value) throws JAXBException, ParserConfigurationException {
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
         }
-        JAXBContext context = getJaxbContext(value);
-        // must create a new instance of marshaller as its not thred safe
-        Marshaller marshaller = context.createMarshaller();
+        if (value.getClass().getAnnotation(XmlRootElement.class) != null) {
+            JAXBContext context = getJaxbContext(value);
+            // must create a new instance of marshaller as its not thread safe
+            Marshaller marshaller = context.createMarshaller();
 
-        Document doc = xmlConverter.createDocument();
-        marshaller.marshal(value, doc);
-        return doc;
+            Document doc = xmlConverter.createDocument();
+            marshaller.marshal(value, doc);
+            return doc;
+        } else {
+            return null;
+        }
     }
 
     @Converter
