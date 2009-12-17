@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.apache.camel.Consume;
@@ -25,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -144,6 +146,90 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testEndpointInjectProducerTemplateField() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyEndpointInjectProducerTemplate bean = new MyEndpointInjectProducerTemplate();
+        Field field = bean.getClass().getField("producer");
+
+        EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+        Class<?> type = field.getType();
+        String propertyName = "producer";
+        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.name(), propertyName);
+
+        field.set(bean, value);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello World");
+
+        bean.send(exchange);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testEndpointInjectProducerTemplateFieldNoDefaultEndpoint() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyEndpointInjectProducerTemplateNoDefaultEndpoint bean = new MyEndpointInjectProducerTemplateNoDefaultEndpoint();
+        Field field = bean.getClass().getField("producer");
+
+        EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+        Class<?> type = field.getType();
+        String propertyName = "producer";
+        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.name(), propertyName);
+
+        field.set(bean, value);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello World");
+
+        bean.send(exchange);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testEndpointInjectProducerTemplateFieldNameUnknown() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyEndpointInjectProducerTemplateNameUnknown bean = new MyEndpointInjectProducerTemplateNameUnknown();
+        Field field = bean.getClass().getField("producer");
+
+        EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+        Class<?> type = field.getType();
+        String propertyName = "producer";
+
+        try {
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.name(), propertyName);
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("registry entry called unknown of type org.apache.camel.Endpoint must be specified", e.getMessage());
+        }
+    }
+
+    public void testEndpointInjectProducerTemplateFieldUrlUnknown() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyEndpointInjectProducerTemplateUrlUnknown bean = new MyEndpointInjectProducerTemplateUrlUnknown();
+        Field field = bean.getClass().getField("producer");
+
+        EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+        Class<?> type = field.getType();
+        String propertyName = "producer";
+
+        try {
+            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.name(), propertyName);
+            fail("Should throw exception");
+        } catch (ResolveEndpointFailedException e) {
+            assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
+        }
+    }
+
     public class MyConsumeBean {
 
         @Consume(uri = "seda:foo")
@@ -205,6 +291,50 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         public Exchange consume() throws Exception {
             return consumer.receive(1000);
+        }
+
+    }
+
+    public class MyEndpointInjectProducerTemplate {
+
+        @EndpointInject(uri = "mock:result")
+        public ProducerTemplate producer;
+
+        public void send(Exchange exchange) throws Exception {
+            producer.send(exchange);
+        }
+
+    }
+
+    public class MyEndpointInjectProducerTemplateNoDefaultEndpoint {
+
+        @EndpointInject()
+        public ProducerTemplate producer;
+
+        public void send(Exchange exchange) throws Exception {
+            producer.send("mock:result", exchange);
+        }
+
+    }
+
+    public class MyEndpointInjectProducerTemplateNameUnknown {
+
+        @EndpointInject(name = "unknown")
+        public ProducerTemplate producer;
+
+        public void send(Exchange exchange) throws Exception {
+            producer.send(exchange);
+        }
+
+    }
+
+    public class MyEndpointInjectProducerTemplateUrlUnknown {
+
+        @EndpointInject(uri = "xxx:foo")
+        public ProducerTemplate producer;
+
+        public void send(Exchange exchange) throws Exception {
+            producer.send(exchange);
         }
 
     }

@@ -128,17 +128,23 @@ public final class CamelContextHelper {
      * Evaluates the @EndpointInject annotation using the given context
      */
     public static Endpoint getEndpointInjection(CamelContext camelContext, String uri, String name, String injectionPointName, boolean mandatory) {
-        Endpoint endpoint = null;
+        Endpoint endpoint;
         if (isNotEmpty(uri)) {
             endpoint = camelContext.getEndpoint(uri);
         } else {
-            if (isEmpty(name)) {
-                name = injectionPointName;
-            }
-            if (mandatory) {
+            // if a name is given then it should be possible to lookup
+            // otherwise we do not catch situations where there is a typo etc
+            if (isNotEmpty(name)) {
                 endpoint = mandatoryLookup(camelContext, name, Endpoint.class);
             } else {
-                endpoint = lookup(camelContext, name, Endpoint.class);
+                if (isEmpty(name)) {
+                    name = injectionPointName;
+                }
+                if (mandatory) {
+                    endpoint = mandatoryLookup(camelContext, name, Endpoint.class);
+                } else {
+                    endpoint = lookup(camelContext, name, Endpoint.class);
+                }
             }
         }
         return endpoint;
