@@ -34,7 +34,7 @@ public class SpringFileAntPathMatcherFileFilterTest extends AbstractJUnit38Sprin
     protected String expectedBody = "Godday World";
     @Autowired
     protected ProducerTemplate template;
-    @EndpointInject(name = "myFileEndpoint")
+    @EndpointInject(ref = "myFileEndpoint")
     protected Endpoint inputFile;
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;

@@ -26,7 +26,7 @@ import org.apache.camel.example.reportincident.OutputReportIncident;
  */
 public class ReportIncidentService {
 
-    @EndpointInject(name = "backup")
+    @EndpointInject(ref = "backup")
     private ProducerTemplate template;
 
     public OutputReportIncident reportIncident(InputReportIncident parameters) {

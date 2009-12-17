@@ -34,7 +34,7 @@ public class NodeIdReferenceTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected ProducerTemplate producer;
 
-    @EndpointInject(name = "foo")
+    @EndpointInject(ref = "foo")
     protected Endpoint start;
 
     @EndpointInject(uri = "mock:result")

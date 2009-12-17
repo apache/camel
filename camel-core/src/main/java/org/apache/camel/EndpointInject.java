@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * can be specified on this annotation, or a name can be specified which is resolved in the
  * {@link org.apache.camel.spi.Registry} such as in your Spring ApplicationContext.
  *
- * If no name or uri is specified then the name is defaulted from the field, property or method name.
+ * If no ref or uri is specified then the ref is defaulted from the field, property or method name.
  *
  * @version $Revision$
  */
@@ -39,6 +39,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface EndpointInject {
     String uri() default "";
-    String name() default "";
+    String ref() default "";
     String context() default "";
 }

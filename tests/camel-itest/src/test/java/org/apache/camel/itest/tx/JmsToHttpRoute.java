@@ -40,7 +40,7 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
     @Resource(name = "PROPAGATION_REQUIRED")
     protected SpringTransactionPolicy required;
 
-    @EndpointInject(name = "data")
+    @EndpointInject(ref = "data")
     protected Endpoint data;    
 
     protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";

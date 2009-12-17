@@ -39,7 +39,7 @@ public class SpringConsumerTemplateTest extends AbstractJUnit38SpringContextTest
     @Autowired
     private ConsumerTemplate consumer;
 
-    @EndpointInject(name = "result")
+    @EndpointInject(ref = "result")
     private MockEndpoint mock;
 
     public void testConsumeTemplate() throws Exception {

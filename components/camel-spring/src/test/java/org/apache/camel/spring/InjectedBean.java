@@ -53,7 +53,7 @@ public class InjectedBean {
         return propertyInjectedEndpoint;
     }
 
-    @EndpointInject(name = "namedEndpoint1")
+    @EndpointInject(ref = "namedEndpoint1")
     public void setPropertyInjectedEndpoint(Endpoint propertyInjectedEndpoint) {
         this.propertyInjectedEndpoint = propertyInjectedEndpoint;
     }

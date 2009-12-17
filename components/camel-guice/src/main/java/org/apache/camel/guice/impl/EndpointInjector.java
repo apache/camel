@@ -46,7 +46,7 @@ public class EndpointInjector extends CamelPostProcessorHelper implements
         Class<?> type = field.getType();
         String injectionPointName = field.getName();
         String uri = inject.uri();
-        String endpointRef = inject.name();
+        String endpointRef = inject.ref();
         return getInjectionValue(type, uri, endpointRef, injectionPointName);
     }
 
@@ -56,7 +56,7 @@ public class EndpointInjector extends CamelPostProcessorHelper implements
         Class<?>[] parameterTypes = method.getParameterTypes();
         Class<?> type = parameterTypes[index];
         String injectionPointName = ObjectHelper.getPropertyName(method);
-        String endpointRef = inject.name();
+        String endpointRef = inject.ref();
         String uri = inject.uri();
 
         return getInjectionValue(type, uri, endpointRef, injectionPointName);

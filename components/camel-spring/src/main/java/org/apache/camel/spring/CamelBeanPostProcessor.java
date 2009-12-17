@@ -200,7 +200,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
                 if (endpointInject != null && postProcessor.matchContext(endpointInject.context())) {
-                    injectField(field, endpointInject.uri(), endpointInject.name(), bean);
+                    injectField(field, endpointInject.uri(), endpointInject.ref(), bean);
                 }
 
                 Produce produce = field.getAnnotation(Produce.class);
@@ -228,7 +228,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     protected void setterInjection(Method method, Object bean) {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         if (endpointInject != null && postProcessor.matchContext(endpointInject.context())) {
-            setterInjection(method, bean, endpointInject.uri(), endpointInject.name());
+            setterInjection(method, bean, endpointInject.uri(), endpointInject.ref());
         }
 
         Produce produce = method.getAnnotation(Produce.class);
