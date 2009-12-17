@@ -44,7 +44,7 @@ import org.springframework.core.io.Resource;
  *
  * <b>OR</b>
  *
- * 2. A SqlMapClient explicityly set.
+ * 2. A SqlMapClient explicit set.
  *
  * Using Ibatis as a source of data (&lt;from&gt;) you can use this component
  * to treat a database table as a logical queue.
@@ -118,6 +118,10 @@ public class IBatisComponent extends ResourceBasedComponent {
      */
     public String getSqlMapConfig() {
         return sqlMapConfig;
+    }
+
+    public void setSqlMapConfig(String sqlMapConfig) {
+        this.sqlMapConfig = sqlMapConfig;
     }
 
     public boolean isUseTransactions() {
