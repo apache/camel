@@ -86,7 +86,7 @@ public class RouteResource extends CamelChildResourceSupport {
      * Returns the XML or JSON representation of this route
      */
     @GET
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/json"})
     public RouteDefinition getRoute() {
         return route;
     }
@@ -142,7 +142,7 @@ public class RouteResource extends CamelChildResourceSupport {
      */
     @POST
     @Consumes()
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/json"})
     public void postRoute(RouteDefinition routeDefinition) throws Exception {
         // lets preserve the ID
         routeDefinition.setId(id);

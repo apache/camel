@@ -53,7 +53,7 @@ public class EndpointsResource extends CamelChildResourceSupport {
      * Returns a list of endpoints available in this context
      */
     @GET
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/json"})
     public Endpoints getDTO() {
         return new Endpoints(getCamelContext());
     }
