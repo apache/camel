@@ -187,6 +187,12 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(new ProtobufDataFormat());
     }
     
+    public T protobuf(Object defaultInstance) {
+        ProtobufDataFormat dataFormat = new ProtobufDataFormat();
+        dataFormat.setDefaultInstance(defaultInstance);
+        return dataFormat(dataFormat);
+    }
+    
     public T protobuf(String instanceClassName) {
         return dataFormat(new ProtobufDataFormat(instanceClassName));
     }

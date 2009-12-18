@@ -53,6 +53,14 @@ public class ProtobufDataFormat implements DataFormat {
         this.defaultInstance = instance;
     }
     
+    public void setDefaultInstance(Object instance) {
+        if (instance instanceof Message) {
+            this.defaultInstance = (Message) instance;
+        } else {
+            throw new IllegalArgumentException("The instance should be subClass of com.google.protobuf.Message");
+        }
+    }
+    
     public void setInstanceClass(String className) throws Exception {
         ObjectHelper.notNull(className, "ProtobufDataFormat instaceClass");
         instanceClassName = className;
@@ -94,8 +102,10 @@ public class ProtobufDataFormat implements DataFormat {
             if (instanceClassName == null) {
                 throw new CamelException("There is not defaultInstance for protobuf unmarshaling");
             } else {
-                if (!setDefaultInstanceHasBeenCalled.getAndSet(true)) {
-                    defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
+                synchronized (this) {
+                    if (!setDefaultInstanceHasBeenCalled.getAndSet(true)) {
+                        defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
+                    }
                 }
             }
         }

@@ -38,6 +38,8 @@ public class ProtobufDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private String instanceClass;
     
+    private Object defaultInstance;
+    
     public ProtobufDataFormat() {
         super("protobuf");
     }
@@ -51,10 +53,17 @@ public class ProtobufDataFormat extends DataFormatDefinition {
         this.instanceClass = instanceClass;
     }
     
+    public void setDefaultInstance(Object instance) {
+        this.defaultInstance = instance;
+    }
+    
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         if (this.instanceClass != null) {
             setProperty(dataFormat, "instanceClass", instanceClass);
+        }
+        if (this.defaultInstance != null) {
+            setProperty(dataFormat, "defaultInstance", defaultInstance);
         }
     }
 
