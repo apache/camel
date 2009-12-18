@@ -26,34 +26,42 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for aggregate grouped exchanges.
  */
-public class AggregateGroupedExchangeTest extends ContextTestSupport {
+public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTestSupport {
 
     public void testGrouped() throws Exception {
         // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");
 
-        // we expect 1 messages since we group all we get in using the same correlation key
-        result.expectedMessageCount(1);
+        // we expect 2 messages since we group using A or B keys
+        result.expectedMessageCount(2);
 
         // then we sent all the message at once
-        template.sendBody("direct:start", "100");
-        template.sendBody("direct:start", "150");
-        template.sendBody("direct:start", "130");
-        template.sendBody("direct:start", "200");
-        template.sendBody("direct:start", "190");
+        template.sendBodyAndHeader("direct:start", "100", "foo", "A");
+        template.sendBodyAndHeader("direct:start", "130", "foo", "B");
+        template.sendBodyAndHeader("direct:start", "150", "foo", "A");
+        template.sendBodyAndHeader("direct:start", "200", "foo", "B");
+        template.sendBodyAndHeader("direct:start", "180", "foo", "B");
+        template.sendBodyAndHeader("direct:start", "120", "foo", "A");
 
         assertMockEndpointsSatisfied();
 
         Exchange out = result.getExchanges().get(0);
         List<Exchange> grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
 
-        assertEquals(5, grouped.size());
+        assertEquals(3, grouped.size());
 
         assertEquals("100", grouped.get(0).getIn().getBody(String.class));
         assertEquals("150", grouped.get(1).getIn().getBody(String.class));
-        assertEquals("130", grouped.get(2).getIn().getBody(String.class));
-        assertEquals("200", grouped.get(3).getIn().getBody(String.class));
-        assertEquals("190", grouped.get(4).getIn().getBody(String.class));
+        assertEquals("120", grouped.get(2).getIn().getBody(String.class));
+
+        out = result.getExchanges().get(1);
+        grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+
+        assertEquals(3, grouped.size());
+
+        assertEquals("130", grouped.get(0).getIn().getBody(String.class));
+        assertEquals("200", grouped.get(1).getIn().getBody(String.class));
+        assertEquals("180", grouped.get(2).getIn().getBody(String.class));
         // END SNIPPET: e2
     }
 
@@ -64,10 +72,10 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
-                    // aggregate all using same expression
-                    .aggregate().constant(true)
-                    // wait for 0.5 seconds to aggregate
-                    .batchTimeout(500L)
+                    // aggregate all using the foo header
+                    .aggregate().header("foo")
+                    // wait for 1 seconds to aggregate
+                    .batchTimeout(1000L)
                     // group the exchanges so we get one single exchange containing all the others
                     .groupExchanges()
                     .to("mock:result");

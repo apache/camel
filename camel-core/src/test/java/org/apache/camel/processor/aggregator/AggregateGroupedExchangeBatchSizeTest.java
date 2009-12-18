@@ -26,10 +26,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for aggregate grouped exchanges.
  */
-public class AggregateGroupedExchangeTest extends ContextTestSupport {
+public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
 
     public void testGrouped() throws Exception {
-        // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");
 
         // we expect 1 messages since we group all we get in using the same correlation key
@@ -40,20 +39,27 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
         template.sendBody("direct:start", "150");
         template.sendBody("direct:start", "130");
         template.sendBody("direct:start", "200");
-        template.sendBody("direct:start", "190");
 
         assertMockEndpointsSatisfied();
 
         Exchange out = result.getExchanges().get(0);
         List<Exchange> grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
 
-        assertEquals(5, grouped.size());
+        assertEquals(2, grouped.size());
 
         assertEquals("100", grouped.get(0).getIn().getBody(String.class));
         assertEquals("150", grouped.get(1).getIn().getBody(String.class));
-        assertEquals("130", grouped.get(2).getIn().getBody(String.class));
-        assertEquals("200", grouped.get(3).getIn().getBody(String.class));
-        assertEquals("190", grouped.get(4).getIn().getBody(String.class));
+
+        // wait a bit for the remainder to come in
+        Thread.sleep(1000);
+
+        out = result.getExchanges().get(1);
+        grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+
+        assertEquals(2, grouped.size());
+
+        assertEquals("130", grouped.get(0).getIn().getBody(String.class));
+        assertEquals("200", grouped.get(1).getIn().getBody(String.class));
         // END SNIPPET: e2
     }
 
@@ -64,8 +70,8 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
-                    // aggregate all using same expression
-                    .aggregate().constant(true)
+                    // aggregated all use same expression
+                    .aggregate().constant(true).batchSize(2)
                     // wait for 0.5 seconds to aggregate
                     .batchTimeout(500L)
                     // group the exchanges so we get one single exchange containing all the others

@@ -30,7 +30,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
@@ -350,32 +349,11 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
 
         @SuppressWarnings("unchecked")
         private void sendExchanges() throws Exception {
-            Exchange grouped = null;
-
             Iterator<Exchange> iter = collection.iterator();
             while (iter.hasNext()) {
                 Exchange exchange = iter.next();
                 iter.remove();
-                if (!groupExchanges) {
-                    // non grouped so process the exchange one at a time
-                    processExchange(exchange);
-                } else {
-                    // grouped so add all exchanges into one group
-                    if (grouped == null) {
-                        grouped = new DefaultExchange(exchange);
-                    }
-                    List<Exchange> list = grouped.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
-                    if (list == null) {
-                        list = new ArrayList<Exchange>();
-                        grouped.setProperty(Exchange.GROUPED_EXCHANGE, list);
-                    }
-                    list.add(exchange);
-                }
-            }
-
-            // and after adding process the single grouped exchange
-            if (grouped != null) {
-                processExchange(grouped);
+                processExchange(exchange);
             }
         }
     }

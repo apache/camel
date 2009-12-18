@@ -35,6 +35,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Aggregator;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -190,9 +191,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (strategy == null && strategyRef != null) {
             strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
         }
+        // pick a default strategy
         if (strategy == null) {
-            // fallback to use latest
-            strategy = new UseLatestAggregationStrategy();
+            if (groupExchanges != null && groupExchanges) {
+                // if grouped exchange is enabled then use special strategy for that
+                strategy = new GroupedExchangeAggregationStrategy();
+            } else {
+                // fallback to use latest
+                strategy = new UseLatestAggregationStrategy();
+            }
         }
         return strategy;
     }
