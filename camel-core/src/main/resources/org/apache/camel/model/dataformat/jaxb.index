@@ -25,6 +25,7 @@ HL7DataFormat
 JaxbDataFormat
 JsonDataFormat
 JsonLibrary
+ProtobufDataFormat
 RssDataFormat
 SerializationDataFormat
 StringDataFormat

@@ -31,6 +31,7 @@ import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
@@ -177,6 +178,17 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         JsonDataFormat json = new JsonDataFormat(type);
         json.setUnmarshalType(unmarshalType);
         return dataFormat(json);
+    }
+    
+    /**
+     * Uses the protobuf data format
+     */
+    public T protobuf() {
+        return dataFormat(new ProtobufDataFormat());
+    }
+    
+    public T protobuf(String instanceClassName) {
+        return dataFormat(new ProtobufDataFormat(instanceClassName));
     }
 
     /**
