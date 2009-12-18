@@ -255,6 +255,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return sendBody(endpoint, ExchangePattern.InOut, body);
     }
 
+    public Object requestBodyAndHeader(Object body, String header, Object headerValue) {
+        return sendBodyAndHeader(getMandatoryDefaultEndpoint(), ExchangePattern.InOut, body, header, headerValue);
+    }
+
     public Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) {
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
     }
@@ -277,6 +281,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public Object requestBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
         return sendBodyAndHeaders(endpoint, ExchangePattern.InOut, body, headers);
+    }
+
+    public Object requestBodyAndHeaders(final Object body, final Map<String, Object> headers) {
+        return sendBodyAndHeaders(getDefaultEndpoint(), ExchangePattern.InOut, body, headers);
     }
 
     public <T> T requestBody(Object body, Class<T> type) {

@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -103,6 +104,33 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         headers = new HashMap<String, Object>();
         out = template.requestBodyAndHeaders(endpoint, "Hello", headers, Integer.class);
         assertEquals(new Integer(123), out);
+    }
+
+    public void testRequestUsingDefaultEndpoint() throws Exception {
+        ProducerTemplate producer = new DefaultProducerTemplate(context, context.getEndpoint("direct:out"));
+
+        Object out = producer.requestBody("Hello");
+        assertEquals("Bye Bye World", out);
+
+        out = producer.requestBodyAndHeader("Hello", "foo", 123);
+        assertEquals("Bye Bye World", out);
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        out = producer.requestBodyAndHeaders("Hello", headers);
+        assertEquals("Bye Bye World", out);
+    }
+
+    public void testSendUsingDefaultEndpoint() throws Exception {
+        ProducerTemplate producer = new DefaultProducerTemplate(context, context.getEndpoint("direct:in"));
+
+        getMockEndpoint("mock:result").expectedMessageCount(3);
+
+        producer.sendBody("Hello");
+        producer.sendBodyAndHeader("Hello", "foo", 123);
+        Map<String, Object> headers = new HashMap<String, Object>();
+        producer.sendBodyAndHeaders("Hello", headers);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override

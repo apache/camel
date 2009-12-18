@@ -63,7 +63,7 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         mock.expectedBodiesReceived("Hello World");
         mock.message(0).header("foo").isNull();
 
-        template.requestBodyAndHeader("direct:start", "Hello World", "foo", null);
+        template.requestBodyAndHeader("direct:start", "Hello World", "foo", (Object) null);
 
         assertMockEndpointsSatisfied();
     }

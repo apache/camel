@@ -543,6 +543,21 @@ public interface ProducerTemplate extends Service {
     <T> T requestBody(String endpointUri, Object body, Class<T> type);
 
     /**
+     * Sends the body to the default endpoint and returns the result content
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
+     * the caused exception wrapped.
+     *
+     * @param body        the payload
+     * @param header      the header name
+     * @param headerValue the header value
+     * @return the result (see class javadoc)
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    Object requestBodyAndHeader(Object body, String header, Object headerValue);
+
+    /**
      * Send the body to an endpoint returning any result output body.
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
@@ -653,6 +668,20 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     Object requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+
+    /**
+     * Sends the body to the default endpoint and returns the result content
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is thrown from this method as a {@link org.apache.camel.CamelExecutionException} with
+     * the caused exception wrapped.
+     *
+     * @param body the payload to send
+     * @param headers headers
+     * @return the result (see class javadoc)
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    Object requestBodyAndHeaders(Object body, Map<String, Object> headers);
 
     /**
      * Sends the body to an endpoint with the specified headers and header values.
