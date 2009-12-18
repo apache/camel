@@ -20,10 +20,12 @@ package org.apache.camel.dataformat.protobuf;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Message.Builder;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -34,6 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 public class ProtobufDataFormat implements DataFormat {
 
     private Message defaultInstance;
+    private String instanceClassName;
+    private AtomicBoolean setDefaultInstanceHasBeenCalled = new AtomicBoolean(false);
     
     /**
      * @param defaultInstance
@@ -51,11 +55,15 @@ public class ProtobufDataFormat implements DataFormat {
     
     public void setInstanceClass(String className) throws Exception {
         ObjectHelper.notNull(className, "ProtobufDataFormat instaceClass");
-        Class<?> instanceClass = ObjectHelper.loadClass(className);
+        instanceClassName = className;
+    }
+    
+    protected Message loadDefaultInstance(String className, CamelContext context) throws CamelException, ClassNotFoundException {
+        Class<?> instanceClass = context.getClassResolver().resolveMandatoryClass(className);
         if (Message.class.isAssignableFrom(instanceClass)) {
             try {
                 Method method = instanceClass.getMethod("getDefaultInstance", new Class[0]);
-                defaultInstance = (Message) method.invoke(null, new Object[0]);
+                return (Message) method.invoke(null, new Object[0]);
             } catch (Exception ex) {
                 throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with " 
                                          + className + ", caused by " + ex);
@@ -64,7 +72,6 @@ public class ProtobufDataFormat implements DataFormat {
             throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with " 
                   + className + ", as the class is not a subClass of com.google.protobuf.Message");
         }
-        
     }
 
     /*
@@ -82,8 +89,15 @@ public class ProtobufDataFormat implements DataFormat {
      * java.io.InputStream)
      */
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+               
         if (this.defaultInstance == null) {
-            throw new CamelException("There is not defaultInstance for protobuf unmarshaling");
+            if (instanceClassName == null) {
+                throw new CamelException("There is not defaultInstance for protobuf unmarshaling");
+            } else {
+                if (!setDefaultInstanceHasBeenCalled.getAndSet(true)) {
+                    defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
+                }
+            }
         }
         Builder builder = this.defaultInstance.newBuilderForType().mergeFrom(inputStream);
         if (!builder.isInitialized()) {
