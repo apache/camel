@@ -173,7 +173,12 @@ public final class IOConverter {
 
     @Converter
     public static byte[] toByteArray(File file) throws IOException {
-        return toBytes(toInputStream(file));
+        InputStream is = toInputStream(file);
+        try {
+            return toBytes(is);
+        } finally {
+            ObjectHelper.close(is, "file", LOG);
+        }
     }
     
     @Deprecated
