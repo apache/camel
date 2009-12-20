@@ -65,7 +65,9 @@ public class MulticastParallelFineGrainedErrorHandlingTest extends ContextTestSu
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:baz").expectedMessageCount(1);
+        // in some cases the parallel task has not send to baz and thus it will stop before sending to it
+        // so it can be 0 or 1 messages
+        getMockEndpoint("mock:baz").expectedMinimumMessageCount(0);
 
         try {
             template.sendBody("direct:start", "Hello World");
