@@ -36,6 +36,7 @@ InterceptFromDefinition
 InterceptSendToEndpointDefinition
 LoadBalanceDefinition
 LoadBalancerDefinition
+LogDefinition
 LoopDefinition
 MarshalDefinition
 MulticastDefinition

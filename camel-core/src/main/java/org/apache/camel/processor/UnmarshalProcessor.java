@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class UnmarshalProcessor implements Processor {
+public class UnmarshalProcessor implements Processor, Traceable {
     private final DataFormat dataFormat;
 
     public UnmarshalProcessor(DataFormat dataFormat) {
@@ -61,4 +61,7 @@ public class UnmarshalProcessor implements Processor {
         return "Unmarshal[" + dataFormat + "]";
     }
 
+    public String getTraceLabel() {
+        return "unmarshal[" + dataFormat + "]";
+    }
 }

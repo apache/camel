@@ -54,7 +54,7 @@ public class ExpressionDefinition implements Expression, Predicate {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
-    @XmlValue
+    @XmlValue()
     private String expression;
     @XmlTransient
     private Predicate predicate;

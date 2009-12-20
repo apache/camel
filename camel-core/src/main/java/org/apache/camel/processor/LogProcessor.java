@@ -16,50 +16,36 @@
  */
 package org.apache.camel.processor;
 
-import java.io.ByteArrayOutputStream;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * Marshals the body of the incoming message using the given
- * <a href="http://camel.apache.org/data-format.html">data format</a>
+ * A processor which evaluates an Expression and logs it.
  *
  * @version $Revision$
  */
-public class MarshalProcessor implements Processor, Traceable {
-    private final DataFormat dataFormat;
+public class LogProcessor implements Processor, Traceable {
 
-    public MarshalProcessor(DataFormat dataFormat) {
-        this.dataFormat = dataFormat;
+    private final Expression expression;
+    private final Logger logger;
+
+    public LogProcessor(Expression expression, Logger logger) {
+        this.expression = expression;
+        this.logger = logger;
     }
 
     public void process(Exchange exchange) throws Exception {
-        ObjectHelper.notNull(dataFormat, "dataFormat");
-
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        Message in = exchange.getIn();
-        Object body = in.getBody();
-
-        // lets setup the out message before we invoke the dataFormat
-        // so that it can mutate it if necessary
-        Message out = exchange.getOut();
-        out.copyFrom(in);
-
-        dataFormat.marshal(exchange, body, buffer);
-        byte[] data = buffer.toByteArray();
-        out.setBody(data);
+        String msg = expression.evaluate(exchange, String.class);
+        logger.log(msg);
     }
 
     @Override
     public String toString() {
-        return "Marshal[" + dataFormat + "]";
+        return "Log[" + expression + "]";
     }
 
     public String getTraceLabel() {
-        return "marshal[" + dataFormat + "]";
+        return "log[" + expression + "]";
     }
 }

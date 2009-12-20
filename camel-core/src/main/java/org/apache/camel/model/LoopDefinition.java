@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoopDefinition extends ExpressionNode implements Block {
+public class LoopDefinition extends ExpressionNode {
 
     public LoopDefinition() {
     }

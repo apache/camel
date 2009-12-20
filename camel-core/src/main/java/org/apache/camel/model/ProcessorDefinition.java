@@ -34,6 +34,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -43,6 +44,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
@@ -1044,6 +1046,51 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         LoadBalanceDefinition answer = new LoadBalanceDefinition();
         addOutput(answer);
         return answer.loadBalance(loadBalancer);
+    }
+
+    /**
+     * Creates a log message to be logged at INFO level.
+     *
+     * @param message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type log(String message) {
+        LogDefinition answer = new LogDefinition(message);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Creates a log message to be logged at the given level.
+     *
+     * @param loggingLevel the logging level to use
+     * @param message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type log(LoggingLevel loggingLevel, String message) {
+        LogDefinition answer = new LogDefinition(message);
+        answer.setLoggingLevel(loggingLevel);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Creates a log message to be logged at the given level and name.
+     *
+     * @param loggingLevel the logging level to use
+     * @param logName the log name to use
+     * @param message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type log(LoggingLevel loggingLevel, String logName, String message) {
+        LogDefinition answer = new LogDefinition(message);
+        answer.setLoggingLevel(loggingLevel);
+        answer.setLogName(logName);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
