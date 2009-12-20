@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Default shutdowns strategy which supports graceful shutdown.
+ * Default {@link org.apache.camel.spi.ShutdownStrategy} which uses graceful shutdown.
  * <p/>
  * Graceful shutdown ensures that any inflight and pending messages will be taken into account
  * and it will wait until these exchanges has been completed.
@@ -101,44 +101,47 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         LOG.info("Graceful shutdown of routes completed in " + seconds + " seconds");
     }
 
-    /**
-     * Set an timeout to wait for the shutdown to complete.
-     * <p/>
-     * Setting a value of 0 or negative will disable timeout and wait until complete
-     * (potential blocking forever)
-     *
-     * @param timeout timeout in millis
-     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
-    /**
-     * Set the time unit to use
-     *
-     * @param timeUnit the unit to use
-     */
+    public long getTimeout() {
+        return timeout;
+    }
+
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
 
-    /**
-     * Sets whether to force shutdown of all consumers when a timeout occurred and thus
-     * not all consumers was shutdown within that period.
-     *
-     * @param shutdownNowOnTimeout <tt>true</tt> to force shutdown, <tt>false</tt> to leave them running
-     */
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
     public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
         this.shutdownNowOnTimeout = shutdownNowOnTimeout;
     }
 
+    public boolean isShutdownNowOnTimeout() {
+        return shutdownNowOnTimeout;
+    }
+
+    /**
+     * Shutdown all the consumers immediately.
+     *
+     * @param consumers the consumers to shutdown
+     */
     protected void shutdownNow(List<Consumer> consumers) {
         for (Consumer consumer : consumers) {
-            shutdownConsumer(consumer);
+            shutdownNow(consumer);
         }
     }
 
-    protected void shutdownConsumer(Consumer consumer) {
+    /**
+     * Shutdown the consumer immediately.
+     *
+     * @param consumer the consumer to shutdown
+     */
+    protected void shutdownNow(Consumer consumer) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Shutting down: " + consumer);
         }
@@ -176,6 +179,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         executor = null;
     }
 
+    /**
+     * Shutdown task which shutdown all the routes in a graceful manner.
+     */
     class ShutdownTask implements Runnable {
 
         private final CamelContext context;
@@ -204,7 +210,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
 
                 if (shutdown) {
-                    shutdownConsumer(consumer);
+                    shutdownNow(consumer);
                 } else {
                     // we will stop it later, but for now it must run to be able to help all inflight messages
                     // be safely completed
@@ -221,7 +227,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     // include any additional pending exchanges on some consumers which may have internal
                     // memory queues such as seda
                     if (consumer instanceof ShutdownAware) {
-                        size += ((ShutdownAware) consumer).getPendingExchanges();
+                        size += ((ShutdownAware) consumer).getPendingExchangesSize();
                     }
                 }
                 if (size > 0) {

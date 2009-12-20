@@ -26,11 +26,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
@@ -85,7 +85,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         return false;
     }
 
-    public int getPendingExchanges() {
+    public int getPendingExchangesSize() {
         // number of pending messages on the queue
         return endpoint.getQueue().size();
     }

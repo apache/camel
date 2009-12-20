@@ -17,9 +17,11 @@
 package org.apache.camel.spi;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Service;
 
 /**
  * Pluggable shutdown strategy executed during shutdown of routes.
@@ -37,7 +39,7 @@ import org.apache.camel.Consumer;
  * @version $Revision$
  * @see org.apache.camel.spi.ShutdownAware
  */
-public interface ShutdownStrategy {
+public interface ShutdownStrategy extends Service {
 
     /**
      * Shutdown the routes
@@ -48,4 +50,51 @@ public interface ShutdownStrategy {
      */
     void shutdown(CamelContext context, List<Consumer> consumers) throws Exception;
 
+    /**
+     * Set an timeout to wait for the shutdown to complete.
+     * <p/>
+     * Setting a value of 0 or negative will disable timeout and wait until complete
+     * (potential blocking forever)
+     *
+     * @param timeout timeout in millis
+     */
+    void setTimeout(long timeout);
+
+    /**
+     * Gets the timeout.
+     * <p/>
+     * Use 0 or a negative value to disable timeout
+     *
+     * @return the timeout
+     */
+    long getTimeout();
+
+    /**
+     * Set the time unit to use
+     *
+     * @param timeUnit the unit to use
+     */
+    void setTimeUnit(TimeUnit timeUnit);
+
+    /**
+     * Gets the time unit used
+     *
+     * @return the time unit
+     */
+    TimeUnit getTimeUnit();
+
+    /**
+     * Sets whether to force shutdown of all consumers when a timeout occurred and thus
+     * not all consumers was shutdown within that period.
+     *
+     * @param shutdownNowOnTimeout <tt>true</tt> to force shutdown, <tt>false</tt> to leave them running
+     */
+    void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout);
+
+    /**
+     * whether to force shutdown of all consumers when a timeout occurred.
+     *
+     * @return force shutdown or not
+     */
+    boolean isShutdownNowOnTimeout();
 }

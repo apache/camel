@@ -17,6 +17,7 @@
 package org.apache.camel.management.mbean;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -89,6 +90,36 @@ public class ManagedCamelContext {
     @ManagedAttribute(description = "Current number of inflight Exchanges")
     public Integer getInflightExchanges() {
         return context.getInflightRepository().size();
+    }
+
+    @ManagedAttribute(description = "Shutdown timeout")
+    public void setTimeout(long timeout) {
+        context.getShutdownStrategy().setTimeout(timeout);
+    }
+
+    @ManagedAttribute(description = "Shutdown timeout")
+    public long getTimeout() {
+        return context.getShutdownStrategy().getTimeout();
+    }
+
+    @ManagedAttribute(description = "Shutdown timeout time unit")
+    public void setTimeUnit(TimeUnit timeUnit) {
+        context.getShutdownStrategy().setTimeUnit(timeUnit);
+    }
+
+    @ManagedAttribute(description = "Shutdown timeout time unit")
+    public TimeUnit getTimeUnit() {
+        return context.getShutdownStrategy().getTimeUnit();
+    }
+
+    @ManagedAttribute(description = "Whether to force shutdown now when a timeout occurred")
+    public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
+        context.getShutdownStrategy().setShutdownNowOnTimeout(shutdownNowOnTimeout);
+    }
+
+    @ManagedAttribute(description = "Whether to force shutdown now when a timeout occurred")
+    public boolean isShutdownNowOnTimeout() {
+        return context.getShutdownStrategy().isShutdownNowOnTimeout();
     }
 
     @ManagedOperation(description = "Start Camel")

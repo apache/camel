@@ -653,10 +653,10 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      *
      * @return the strategy
      */
-    public ShutdownStrategy getShutdownStrategy();
+    ShutdownStrategy getShutdownStrategy();
 
     /**
-     * Sets a custom shtudown strategy
+     * Sets a custom shutdown strategy
      *
      * @param shutdownStrategy the custom strategy
      */

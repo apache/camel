@@ -39,11 +39,14 @@ public interface ShutdownAware {
     boolean deferShutdown();
 
     /**
-     * Some consumers have internal queues with {@link org.apache.camel.Exchange} which are pending.
+     * Gets the number of pending exchanges.
+     * <p/>
+     * Some consumers has internal queues with {@link org.apache.camel.Exchange} which are pending.
+     * For example the {@link org.apache.camel.component.seda.SedaConsumer}.
      * <p/>
      * Return <tt>zero</tt> to indicate no pending exchanges and therefore ready to shutdown.
      *
      * @return number of pending exchanges
      */
-    int getPendingExchanges();
+    int getPendingExchangesSize();
 }
