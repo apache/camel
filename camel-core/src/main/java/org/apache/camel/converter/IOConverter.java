@@ -202,7 +202,12 @@ public final class IOConverter {
 
     @Converter
     public static String toString(URL url, Exchange exchange) throws IOException {
-        return toString(toInputStream(url), exchange);
+        InputStream is = toInputStream(url);
+        try {
+            return toString(is, exchange);
+        } finally {
+            ObjectHelper.close(is, "url", LOG);
+        }
     }
 
     @Converter
