@@ -38,7 +38,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     private final ConcurrentHashMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();
 
     public void add(Exchange exchange) {
-        totalCount.incrementAndGet();
+        int count = totalCount.incrementAndGet();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Total " + count + " inflight exchanges. Last added: " + exchange.getExchangeId());
+        }
 
         if (exchange.getFromEndpoint() == null) {
             return;
@@ -52,7 +55,10 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     public void remove(Exchange exchange) {
-        totalCount.decrementAndGet();
+        int count = totalCount.decrementAndGet();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Total " + count + " inflight exchanges. Last removed: " + exchange.getExchangeId());
+        }
 
         if (exchange.getFromEndpoint() == null) {
             return;

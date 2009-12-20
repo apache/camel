@@ -26,6 +26,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -39,6 +40,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
@@ -486,6 +488,20 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     DataFormatDefinition resolveDataFormatDefinition(String name);
 
     /**
+     * Gets the current data format resolver
+     *
+     * @return the resolver
+     */
+    DataFormatResolver getDataFormatResolver();
+
+    /**
+     * Sets a custom data format resolver
+     *
+     * @param dataFormatResolver  the resolver
+     */
+    void setDataFormatResolver(DataFormatResolver dataFormatResolver);
+
+    /**
      * Sets the properties that can be referenced in the camel context
      *
      * @param properties properties
@@ -631,4 +647,19 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      * @param classLoader the class loader
      */
     void setApplicationContextClassLoader(ClassLoader classLoader);
+
+    /**
+     * Gets the current shutdown strategy
+     *
+     * @return the strategy
+     */
+    public ShutdownStrategy getShutdownStrategy();
+
+    /**
+     * Sets a custom shtudown strategy
+     *
+     * @param shutdownStrategy the custom strategy
+     */
+    void setShutdownStrategy(ShutdownStrategy shutdownStrategy);
+
 }

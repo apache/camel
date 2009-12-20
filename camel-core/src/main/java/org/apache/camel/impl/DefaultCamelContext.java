@@ -80,6 +80,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;
@@ -147,6 +148,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private final List<Consumer> routeStartupOrder = new ArrayList<Consumer>();
     private int defaultRouteStartupOrder = 1000;
+    private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy();
 
     public DefaultCamelContext() {
         super();
@@ -1069,6 +1071,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         forceLazyInitialization();
         startServices(components.values());
         addService(inflightRepository);
+        addService(shutdownStrategy);
 
         // To avoid initiating the routeDefinitions after stopping the camel context
         if (!routeDefinitionInitiated) {
@@ -1084,23 +1087,24 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         EventHelper.notifyCamelContextStopping(this);
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
-        stopServices(getRouteStartupOrder(), false);
+        shutdownStrategy.shutdown(this, getRouteStartupOrder());
         getRouteStartupOrder().clear();
-
-        // the stop order is important
-        stopServices(endpoints.values());
-        endpoints.clear();
 
         stopServices(routeServices.values());
         // do not clear route services as we can start Camel again and get the route back as before
-        stopServices(producerServicePool);
 
-        stopServices(components.values());
-        components.clear();
+        // the stop order is important
 
         stopServices(servicesToClose);
         servicesToClose.clear();
 
+        stopServices(endpoints.values());
+        endpoints.clear();
+
+        stopServices(components.values());
+        components.clear();
+
+        stopServices(producerServicePool);
         stopServices(inflightRepository);
 
         try {
@@ -1409,6 +1413,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
         return dataFormatResolver.resolveDataFormatDefinition(name, this);
+    }
+
+    public ShutdownStrategy getShutdownStrategy() {
+        return shutdownStrategy;
+    }
+
+    public void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
+        this.shutdownStrategy = shutdownStrategy;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.MulticastProcessor;
@@ -40,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
+public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware {
     private static final transient Log LOG = LogFactory.getLog(SedaConsumer.class);
 
     private SedaEndpoint endpoint;
@@ -76,6 +77,17 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
 
     public Processor getProcessor() {
         return processor;
+    }
+
+    public boolean deferShutdown() {
+        // deny stopping on shutdown as we want seda consumers to run in case some other queues
+        // depend on this consumer to run, so it can complete its exchanges
+        return false;
+    }
+
+    public int getPendingExchanges() {
+        // number of pending messages on the queue
+        return endpoint.getQueue().size();
     }
 
     public void run() {

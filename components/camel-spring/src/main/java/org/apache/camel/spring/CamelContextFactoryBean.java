@@ -67,6 +67,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -250,6 +251,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (eventNotifier != null) {
             LOG.info("Using custom EventNotifier: " + eventNotifier);
             getContext().getManagementStrategy().setEventNotifier(eventNotifier);
+        }
+
+        ShutdownStrategy shutdownStrategy = getBeanForType(ShutdownStrategy.class);
+        if (shutdownStrategy != null) {
+            LOG.info("Using custom ShutdownStrategy: " + shutdownStrategy);
+            getContext().setShutdownStrategy(shutdownStrategy);
         }
 
         // add global interceptors

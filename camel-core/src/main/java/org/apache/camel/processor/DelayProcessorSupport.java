@@ -85,7 +85,7 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
                 try {
                     sleep(delay);
                 } catch (InterruptedException e) {
-                    handleSleepInteruptedException(e);
+                    handleSleepInterruptedException(e);
                 }
             }
         }
@@ -106,10 +106,10 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
     }
 
     /**
-     * Called when a sleep is interupted; allows derived classes to handle this
+     * Called when a sleep is interrupted; allows derived classes to handle this
      * case differently
      */
-    protected void handleSleepInteruptedException(InterruptedException e) {
+    protected void handleSleepInterruptedException(InterruptedException e) {
         if (log.isDebugEnabled()) {
             log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
         }

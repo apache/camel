@@ -214,8 +214,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return errorHandler;
     }
 
-
-
     /**
      * Adds the given list of interceptors to the channel.
      *
