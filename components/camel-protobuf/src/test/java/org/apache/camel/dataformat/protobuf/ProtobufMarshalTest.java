@@ -17,7 +17,10 @@
 
 package org.apache.camel.dataformat.protobuf;
 
+import org.apache.camel.CamelException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
@@ -31,14 +34,39 @@ public class ProtobufMarshalTest extends CamelTestSupport {
      * @throws Exception
      */
     @Test
-    public void testMarshalAndUnmarshalWithDSL() throws Exception {
+    public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
         marshalAndUnmarshal("direct:in", "direct:back");
     }
     
     @Test
-    public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
-        marshalAndUnmarshal("direct:marshal", "direct:unmarshal");
+    public void testMarshalAndUnmarshalWithDSL1() throws Exception {
+        marshalAndUnmarshal("direct:marshal", "direct:unmarshalA");
     }
+    
+    @Test
+    public void testMarshalAndUnmarshalWithDSL2() throws Exception {
+        marshalAndUnmarshal("direct:marshal", "direct:unmarshalB");
+    }
+    
+    @Test
+    public void testMarshalAndUnmashalWithDSL3() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+    
+                @Override
+                public void configure() throws Exception {
+                    from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance"))
+                        .to("mock:reverse");
+    
+                }
+            });
+            fail("Expect the exception here");
+        } catch (Exception ex) {
+            assertTrue("Expect FailedToCreateRouteException", ex instanceof FailedToCreateRouteException);
+            assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
+        }
+    }
+    
     
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
         org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person input = AddressBookProtos.Person
@@ -72,7 +100,10 @@ public class ProtobufMarshalTest extends CamelTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
                 
                 from("direct:marshal").marshal().protobuf();
-                from("direct:unmarshal").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
+                
+                from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
+                
 
             }
         };
