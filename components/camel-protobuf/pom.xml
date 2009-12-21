@@ -10,8 +10,12 @@
 
 	<groupId>org.apache.camel</groupId>
 	<artifactId>camel-protobuf</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>camel-protobuf</name>
+	
+	<properties>
+    	<camel.osgi.export.pkg>org.apache.camel.dataformat.protobuf.*</camel.osgi.export.pkg>
+  	</properties>
 
 	<dependencies>	
 		<dependency>

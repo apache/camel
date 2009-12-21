@@ -37,7 +37,7 @@ public class ProtobufDataFormat implements DataFormat {
 
     private Message defaultInstance;
     private String instanceClassName;
-    private AtomicBoolean setDefaultInstanceHasBeenCalled = new AtomicBoolean(false);
+    
     
     /**
      * @param defaultInstance
@@ -98,12 +98,12 @@ public class ProtobufDataFormat implements DataFormat {
      */
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
                
-        if (this.defaultInstance == null) {
+        if (defaultInstance == null) {
             if (instanceClassName == null) {
                 throw new CamelException("There is not defaultInstance for protobuf unmarshaling");
             } else {
                 synchronized (this) {
-                    if (!setDefaultInstanceHasBeenCalled.getAndSet(true)) {
+                    if (defaultInstance == null) {
                         defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
                     }
                 }
