@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.smpp;
 
+import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.DeliverSm;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import org.jsmpp.bean.AlertNotification;
-import org.jsmpp.bean.DeliverSm;
-import org.junit.Test;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppMessage</code>

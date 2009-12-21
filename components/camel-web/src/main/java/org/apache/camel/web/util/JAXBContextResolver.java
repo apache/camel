@@ -16,13 +16,9 @@
  */
 package org.apache.camel.web.util;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
-
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A resolver of the JAXB context primed for the Camel XML languages
