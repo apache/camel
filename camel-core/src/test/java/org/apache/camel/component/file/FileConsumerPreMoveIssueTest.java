@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class FileConsumerPreMoveTest extends ContextTestSupport {
+public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -44,24 +44,12 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testPreMoveSameFileTwice() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Hello Again World");
-
-        template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        // give time for consumer to process this file before we drop the next file
-        Thread.sleep(2000);
-        template.sendBodyAndHeader("file://target/premove", "Hello Again World", Exchange.FILE_NAME, "hello.txt");
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/premove?preMove=work/work-${file:name}")
+                from("file://target/premove?preMove=before/${file:name.noext}-moved.${file:ext}")
                     .process(new MyPreMoveCheckerProcessor())
                     .to("mock:result");
             }
@@ -71,7 +59,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
     public static class MyPreMoveCheckerProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            File pre = new File("target/premove/work/work-hello.txt").getAbsoluteFile();
+            File pre = new File("target/premove/before/hello-moved.txt").getAbsoluteFile();
             assertTrue("Pre move file should exist", pre.exists());
         }
     }
