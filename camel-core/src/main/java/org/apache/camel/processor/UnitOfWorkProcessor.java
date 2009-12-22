@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.RouteContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -29,6 +31,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public final class UnitOfWorkProcessor extends DelegateProcessor {
 
+    private static final transient Log LOG = LogFactory.getLog(UnitOfWorkProcessor.class);
     private final RouteContext routeContext;
 
     public UnitOfWorkProcessor(Processor processor) {
@@ -63,21 +66,27 @@ public final class UnitOfWorkProcessor extends DelegateProcessor {
                 processor.process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
+            } finally {
+                // must always done unit of work
+                done(uow, exchange);
             }
-
-            // unit of work is done
-            exchange.getUnitOfWork().done(exchange);
-            try {
-                uow.stop();
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
-            }
-            exchange.setUnitOfWork(null);
         } else {
             // There was an existing UoW, so we should just pass through..
             // so that the guy the initiated the UoW can terminate it.
             processor.process(exchange);
         }
+    }
+
+    private void done(DefaultUnitOfWork uow, Exchange exchange) {
+        // unit of work is done
+        exchange.getUnitOfWork().done(exchange);
+        try {
+            uow.stop();
+        } catch (Exception e) {
+            LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
+                + ". This exception will be ignored.");
+        }
+        exchange.setUnitOfWork(null);
     }
 
 }
