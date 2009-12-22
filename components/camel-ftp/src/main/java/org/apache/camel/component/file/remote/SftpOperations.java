@@ -132,6 +132,13 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());
+
+        if (isNotEmpty(sftpConfig.getStrictHostKeyChecking())) {
+            LOG.debug("Using StrickHostKeyChecking: " + sftpConfig.getStrictHostKeyChecking());
+            session.setConfig("StrictHostKeyChecking", sftpConfig.getStrictHostKeyChecking());
+        }
+
+        // set user information
         session.setUserInfo(new UserInfo() {
             public String getPassphrase() {
                 return null;
@@ -150,12 +157,13 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
 
             public boolean promptYesNo(String s) {
-                LOG.error(s);
+                LOG.warn("Server asks for confirmation (yes|no): " + s + ". Camel will answer no.");
                 // Return 'false' indicating modification of the hosts file is disabled.
                 return false;
             }
 
             public void showMessage(String s) {
+                LOG.trace("Message received from Server: " + s);
             }
         });
         return session;

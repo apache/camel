@@ -27,6 +27,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String knownHostsFile;
     private String privateKeyFile;
     private String privateKeyFilePassphrase;
+    private String strictHostKeyChecking = "no";
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -63,5 +64,13 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyFilePassphrase = privateKeyFilePassphrase;
+    }
+
+    public String getStrictHostKeyChecking() {
+        return strictHostKeyChecking;
+    }
+
+    public void setStrictHostKeyChecking(String strictHostKeyChecking) {
+        this.strictHostKeyChecking = strictHostKeyChecking;
     }
 }
