@@ -82,6 +82,9 @@ public abstract class CamelTestSupport extends TestSupport {
         context = createCamelContext();
         assertValidContext(context);
 
+        // reduce default shutdown timeout to avoid waiting for 300 seconds
+        context.getShutdownStrategy().setTimeout(10);
+
         template = context.createProducerTemplate();
         template.start();
         consumer = context.createConsumerTemplate();
