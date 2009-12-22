@@ -41,7 +41,7 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     }
 
     protected void poll() throws Exception {
-        while (true) {
+        while (isPollAllowed()) {
             Exchange exchange = pollingConsumer.receiveNoWait();
             if (exchange == null) {
                 break;

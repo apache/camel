@@ -89,7 +89,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             try {
                 // eager assume we are done
                 done = true;
-                if (isRunAllowed() && !isSuspended()) {
+                if (isPollAllowed()) {
 
                     if (retryCounter == -1) {
                         if (LOG.isTraceEnabled()) {
@@ -125,6 +125,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     // Properties
     // -------------------------------------------------------------------------
+
+    protected boolean isPollAllowed() {
+        return isRunAllowed() && !isSuspended();
+    }
+
     public long getInitialDelay() {
         return initialDelay;
     }

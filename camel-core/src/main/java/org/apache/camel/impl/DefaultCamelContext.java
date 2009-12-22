@@ -142,7 +142,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we have 6 x 100 producers in total
-    private ServicePool<Endpoint, Producer> producerServicePool = new DefaultProducerServicePool(100);
+    private ServicePool<Endpoint, Producer> producerServicePool = new SharedProducerServicePool(100);
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private Tracer defaultTracer;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
@@ -1104,7 +1104,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         stopServices(components.values());
         components.clear();
 
-        stopServices(producerServicePool);
+        // special shutdown of a shared producer service pool as it should only be shutdown by camel context
+        if (producerServicePool instanceof SharedProducerServicePool) {
+            ((SharedProducerServicePool) producerServicePool).shutdown(this);
+        } else {
+            stopServices(producerServicePool);
+        }
         stopServices(inflightRepository);
 
         try {

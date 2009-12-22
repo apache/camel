@@ -26,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.util.EventHelper;
@@ -160,6 +161,30 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
     }
 
+    /**
+     * Suspends the consumer immediately.
+     *
+     * @param service the suspendable consumer
+     * @param consumer the consumer to suspend
+     */
+    protected void suspendNow(SuspendableService service, Consumer consumer) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Suspending: " + consumer);
+        }
+
+        try {
+            service.suspend();
+        } catch (Exception e) {
+            LOG.warn("Error occurred while suspending route: " + consumer + ". This exception will be ignored.");
+            // fire event
+            EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Suspend complete for: " + consumer);
+        }
+    }
+
     private ExecutorService getExecutorService() {
         if (executor == null) {
             executor = ExecutorServiceHelper.newSingleThreadExecutor("ShutdownTask", true);
@@ -204,12 +229,22 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             for (Consumer consumer : consumers) {
 
                 // some consumers do not support shutting down so let them decide
+                // if a consumer is suspendable then prefer to use that and then shutdown later
                 boolean shutdown = true;
+                boolean suspend = false;
                 if (consumer instanceof ShutdownAware) {
                     shutdown = ((ShutdownAware) consumer).deferShutdown();
+                } else if (consumer instanceof SuspendableService) {
+                    shutdown = false;
+                    suspend = true;
                 }
 
-                if (shutdown) {
+                if (suspend) {
+                    // only suspend it and then later shutdown it
+                    suspendNow((SuspendableService) consumer, consumer);
+                    // add it to the deferred list so the route will be shutdown later
+                    deferredConsumers.add(consumer);
+                } else if (shutdown) {
                     shutdownNow(consumer);
                 } else {
                     // we will stop it later, but for now it must run to be able to help all inflight messages
