@@ -39,6 +39,9 @@ public class ManagedShutdownStrategyTest extends ContextTestSupport {
     }
 
     public void testManagedShutdownStrategy() throws Exception {
+        // set timeout to 300 
+        context.getShutdownStrategy().setTimeout(300);
+
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
