@@ -1132,6 +1132,7 @@ public final class ObjectHelper {
         }
 
         String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+
         Scanner scanner = null;
         if (value instanceof Readable) {
             scanner = new Scanner((Readable)value);

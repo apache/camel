@@ -64,11 +64,33 @@ public class DefaultMessage extends MessageSupport {
         return getHeaders().get(name);
     }
 
+    public Object getHeader(String name, Object defaultValue) {
+        Object answer = getHeaders().get(name);
+        return answer != null ? answer : defaultValue;
+    }
+
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
         if (value == null) {
             return null;
         }
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+
+        Exchange e = getExchange();
+        if (e != null) {
+            return e.getContext().getTypeConverter().convertTo(type, e, value);
+        } else {
+            return type.cast(value);
+        }
+    }
+
+    public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
+        Object value = getHeader(name, defaultValue);
 
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type

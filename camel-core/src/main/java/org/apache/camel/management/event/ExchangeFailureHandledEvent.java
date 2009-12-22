@@ -37,7 +37,7 @@ public class ExchangeFailureHandledEvent extends EventObject {
         this.exchange = source;
         this.failureHandler = failureHandler;
         this.deadLetterChannel = deadLetterChannel;
-        this.handled = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.class);
+        this.handled = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED, false, Boolean.class);
     }
 
     public Exchange getExchange() {

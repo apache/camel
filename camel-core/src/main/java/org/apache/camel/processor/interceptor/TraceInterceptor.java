@@ -96,7 +96,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
         // interceptor will also trace routes supposed only for TraceEvents so we need to skip
         // logging TraceEvents to avoid infinite looping
-        if (exchange.getProperty(Exchange.TRACE_EVENT, Boolean.class) != null) {
+        if (exchange.getProperty(Exchange.TRACE_EVENT, false, Boolean.class)) {
             // but we must still process to allow routing of TraceEvents to eg a JPA endpoint
             super.process(exchange);
             return;
@@ -294,7 +294,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
             // marker property to indicate its a tracing event being routed in case
             // new Exchange instances is created during trace routing so we can check
-            // for this marker when interceptor also kickins in during routing of trace events
+            // for this marker when interceptor also kick in during routing of trace events
             event.setProperty(Exchange.TRACE_EVENT, Boolean.TRUE);
             try {
                 // process the trace route

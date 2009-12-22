@@ -23,7 +23,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.util.UuidGenerator;
 
 /**
- * A base class for implementation inheritence providing the core
+ * A base class for implementation inheritance providing the core
  * {@link Message} body handling features but letting the derived class deal
  * with headers.
  *

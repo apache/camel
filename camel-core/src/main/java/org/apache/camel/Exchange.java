@@ -134,10 +134,20 @@ public interface Exchange {
      * Returns a property associated with this exchange by name
      *
      * @param name the name of the property
-     * @return the value of the given header or null if there is no property for
+     * @return the value of the given property or <tt>null</tt> if there is no property for
      *         the given name
      */
     Object getProperty(String name);
+
+    /**
+     * Returns a property associated with this exchange by name
+     *
+     * @param name the name of the property
+     * @param defaultValue the default value to return if property was absent
+     * @return the value of the given property or <tt>defaultValue</tt> if there is no
+     *         property for the given name
+     */
+    Object getProperty(String name, Object defaultValue);
 
     /**
      * Returns a property associated with this exchange by name and specifying
@@ -145,11 +155,22 @@ public interface Exchange {
      *
      * @param name the name of the property
      * @param type the type of the property
-     * @return the value of the given header or null if there is no property for
-     *         the given name or null if it cannot be converted to the given
-     *         type
+     * @return the value of the given property or <tt>null</tt> if there is no property for
+     *         the given name or <tt>null</tt> if it cannot be converted to the given type
      */
     <T> T getProperty(String name, Class<T> type);
+
+    /**
+     * Returns a property associated with this exchange by name and specifying
+     * the type required
+     *
+     * @param name the name of the property
+     * @param defaultValue the default value to return if property was absent
+     * @param type the type of the property
+     * @return the value of the given property or <tt>defaultValue</tt> if there is no property for
+     *         the given name or <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getProperty(String name, Object defaultValue, Class<T> type);
 
     /**
      * Sets a property on the exchange

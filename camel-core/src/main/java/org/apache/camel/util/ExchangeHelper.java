@@ -416,8 +416,7 @@ public final class ExchangeHelper {
     }
 
     public static boolean isFailureHandled(Exchange exchange) {
-        Boolean handled = exchange.getProperty(Exchange.FAILURE_HANDLED, Boolean.class);
-        return handled != null && handled;
+        return exchange.getProperty(Exchange.FAILURE_HANDLED, false, Boolean.class);
     }
 
     public static void setFailureHandled(Exchange exchange) {
@@ -427,8 +426,7 @@ public final class ExchangeHelper {
     }
 
     public static boolean isRedelieryExhausted(Exchange exchange) {
-        Boolean exhausted = exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.class);
-        return exhausted != null && exhausted;
+        return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
     }
 
     /**

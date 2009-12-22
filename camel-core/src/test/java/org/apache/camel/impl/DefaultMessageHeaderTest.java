@@ -128,4 +128,24 @@ public class DefaultMessageHeaderTest extends TestCase {
         assertTrue(msg.getHeaders().isEmpty());
     }
 
+    public void testWithDefaults() {
+        DefaultMessage msg = new DefaultMessage();
+        // must have exchange so to leverage the type converters
+        msg.setExchange(new DefaultExchange(new DefaultCamelContext()));
+
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("foo", "cheese");
+
+        assertEquals("cheese", msg.getHeader("foo"));
+        assertEquals("cheese", msg.getHeader("foo", "foo"));
+        assertEquals("cheese", msg.getHeader("foo", "foo", String.class));
+
+        assertEquals(null, msg.getHeader("beer"));
+        assertEquals("foo", msg.getHeader("beer", "foo"));
+        assertEquals(Integer.valueOf(123), msg.getHeader("beer", "123", Integer.class));
+
+    }
+
+
 }

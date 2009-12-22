@@ -115,8 +115,28 @@ public final class DefaultExchange implements Exchange {
         return null;
     }
 
+    public Object getProperty(String name, Object defaultValue) {
+        Object answer = null;
+        if (properties != null) {
+            answer = properties.get(name);
+        }
+        return answer != null ? answer : defaultValue;
+    }
+
     public <T> T getProperty(String name, Class<T> type) {
         Object value = getProperty(name);
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+
+        return ExchangeHelper.convertToType(this, type, value);
+    }
+
+    public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
+        Object value = getProperty(name, defaultValue);
 
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type

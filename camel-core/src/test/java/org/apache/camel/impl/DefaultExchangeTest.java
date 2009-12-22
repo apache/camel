@@ -81,6 +81,30 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals(123, exchange.getIn().getHeader("bar"));
         assertEquals(new Integer(123), exchange.getIn().getHeader("bar", Integer.class));
         assertEquals("123", exchange.getIn().getHeader("bar", String.class));
+        assertEquals(123, exchange.getIn().getHeader("bar", 234));
+
+        assertEquals(123, exchange.getIn().getHeader("bar", 234));
+        assertEquals(new Integer(123), exchange.getIn().getHeader("bar", 234, Integer.class));
+        assertEquals("123", exchange.getIn().getHeader("bar", "234", String.class));
+
+        assertEquals(234, exchange.getIn().getHeader("cheese", 234));
+        assertEquals("234", exchange.getIn().getHeader("cheese", 234, String.class));
+    }
+
+    public void testProperty() throws Exception {
+        assertFalse(exchange.hasProperties());
+
+        exchange.setProperty("fruit", "apple");
+        assertTrue(exchange.hasProperties());
+
+        assertEquals("apple", exchange.getProperty("fruit"));
+        assertEquals(null, exchange.getProperty("beer"));
+        assertEquals(null, exchange.getProperty("beer", String.class));
+
+        assertEquals("apple", exchange.getProperty("fruit", String.class));
+        assertEquals("apple", exchange.getProperty("fruit", "banana", String.class));
+        assertEquals("banana", exchange.getProperty("beer", "banana"));
+        assertEquals("banana", exchange.getProperty("beer", "banana", String.class));
     }
 
     public void testInType() throws Exception {

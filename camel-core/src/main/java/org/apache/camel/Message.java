@@ -26,8 +26,8 @@ import javax.activation.DataHandler;
  * href="http://camel.apache.org/message.html">Message</a> pattern and
  * represents an inbound or outbound message as part of an {@link Exchange}
  * <p/>
- * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers is represented in Camel using a
- * {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
+ * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
+ * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  *
  * @version $Revision$
  */
@@ -72,9 +72,20 @@ public interface Message {
      * Accesses a specific header
      *
      * @param name  name of header
-     * @return object header associated with the name
+     * @return the value of the given header or <tt>null</tt> if there is no
+     *         header for the given name
      */
     Object getHeader(String name);
+
+    /**
+     * Accesses a specific header
+     *
+     * @param name  name of header
+     * @param defaultValue the default value to return if header was absent
+     * @return the value of the given header or <tt>defaultValue</tt> if there is no
+     *         header for the given name
+     */
+    Object getHeader(String name, Object defaultValue);
 
     /**
      * Returns a header associated with this message by name and specifying the
@@ -82,10 +93,22 @@ public interface Message {
      *
      * @param name the name of the header
      * @param type the type of the header
-     * @return the value of the given header or null if there is no property for
-     *         the given name or it cannot be converted to the given type
+     * @return the value of the given header or <tt>null</tt> if there is no header for
+     *         the given name or <tt>null</tt> if it cannot be converted to the given type
      */
     <T> T getHeader(String name, Class<T> type);
+
+    /**
+     * Returns a header associated with this message by name and specifying the
+     * type required
+     *
+     * @param name the name of the header
+     * @param defaultValue the default value to return if header was absent
+     * @param type the type of the header
+     * @return the value of the given header or <tt>defaultValue</tt> if there is no header for
+     *         the given name or <tt>null</tt> if it cannot be converted to the given type
+     */
+    <T> T getHeader(String name, Object defaultValue, Class<T> type);
 
     /**
      * Sets a header on the message
@@ -191,22 +214,22 @@ public interface Message {
     /**
      * Returns the attachment specified by the id
      *
-     * @param id        the id under which the attachment is stored
-     * @return          the data handler for this attachment or null
+     * @param id the id under which the attachment is stored
+     * @return the data handler for this attachment or <tt>null</tt>
      */
     DataHandler getAttachment(String id);
 
     /**
      * Returns a set of attachment names of the message
      *
-     * @return  a set of attachment names
+     * @return a set of attachment names
      */
     Set<String> getAttachmentNames();
 
     /**
      * Removes the attachment specified by the id
      *
-     * @param id        the id of the attachment to remove
+     * @param id   the id of the attachment to remove
      */
     void removeAttachment(String id);
 
@@ -221,14 +244,14 @@ public interface Message {
     /**
      * Returns all attachments of the message
      *
-     * @return  the attachments in a map or null
+     * @return the attachments in a map or <tt>null</tt>
      */
     Map<String, DataHandler> getAttachments();
 
     /**
      * Set all the attachments associated with this message
      *
-     * @param attachments attachements
+     * @param attachments the attachments
      */
     void setAttachments(Map<String, DataHandler> attachments);
 
@@ -240,7 +263,8 @@ public interface Message {
     boolean hasAttachments();
 
     /**
-     * Returns the unique ID for a message exchange if this message is capable of creating one or null if not
+     * Returns the unique ID for a message exchange if this message is capable
+     * of creating one or <tt>null</tt> if not
      *
      * @return the created exchange id, or <tt>null</tt> if not capable of creating
      */

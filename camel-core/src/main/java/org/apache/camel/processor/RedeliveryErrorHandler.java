@@ -417,8 +417,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     private boolean shouldRedeliver(Exchange exchange, RedeliveryData data) {
         // if marked as rollback only then do not redeliver
-        Boolean rollback = exchange.getProperty(Exchange.ROLLBACK_ONLY, Boolean.class);
-        if (rollback != null && rollback) {
+        boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
+        if (rollbackOnly) {
             if (log.isTraceEnabled()) {
                 log.trace("This exchange is marked as rollback only, should not be redelivered: " + exchange);
             }
