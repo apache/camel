@@ -1274,6 +1274,19 @@
       </build>
     </profile>
     <profile>
+      <id>spring-3.0</id>
+      <properties>
+         <spring-version>3.0.0.RELEASE</spring-version>
+         <junit-version>4.6</junit-version> 
+      </properties>
+      <!--repositories>
+         <repository>
+           <id>SpringSource Enterprise Bundle Repositorys</id>
+           <url>http://repository.springsource.com/maven/bundles/release</url>
+         </repository>
+      </repositories-->
+    </profile>
+    <profile>
       <id>on-sunjdk</id>
       <activation>
         <property>
