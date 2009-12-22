@@ -39,6 +39,9 @@ public class JmsDiscoveryTest extends CamelTestSupport {
     public void testDiscovery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+        mock.setResultWaitTime(5000);
+        // force shutdown after 5 seconds as otherwise the bean will keep generating a new input
+        context.getShutdownStrategy().setTimeout(5);
 
         assertMockEndpointsSatisfied();
 
