@@ -16,11 +16,12 @@
  */
 package org.apache.camel.spring.file;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.FileConsumerPreMoveTest;
 import org.apache.camel.spring.SpringCamelContext;
+
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
