@@ -30,16 +30,12 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Header;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Trailer;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairNullMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4SpringContextTests {
 
     @Produce(uri = "direct:start")
@@ -94,19 +90,12 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
         return models;
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").marshal(kvpBindyDataFormat).to("mock:result");
-                }
-            };
+        public void configure() {
+            from("direct:start").marshal(kvpBindyDataFormat).to("mock:result");
         }
+
     }
 }

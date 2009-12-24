@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,15 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.onetomany.Author;
 import org.apache.camel.dataformat.bindy.model.simple.onetomany.Book;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvOneToManyMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringContextTests {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
@@ -111,20 +106,13 @@ public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringCon
         return models;
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.onetomany");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").marshal(camelDataFormat).to("mock:result");
-                }
-            };
+        public void configure() {
+            from("direct:start").marshal(camelDataFormat).to("mock:result");
         }
+
     }
 
 }

@@ -27,15 +27,11 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.tab.Header;
 import org.apache.camel.dataformat.bindy.model.fix.tab.Order;
 import org.apache.camel.dataformat.bindy.model.fix.tab.Trailer;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairTabUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleKeyValuePairTabUnmarshallTest extends CommonBindyTest {
 
     @Test
@@ -82,19 +78,12 @@ public class BindySimpleKeyValuePairTabUnmarshallTest extends CommonBindyTest {
         return models;
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.tab");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from(URI_FILE_FIX_TAB).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
-                }
-            };
+        public void configure() {
+            from(URI_FILE_FIX_TAB).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }
+
     }
 }

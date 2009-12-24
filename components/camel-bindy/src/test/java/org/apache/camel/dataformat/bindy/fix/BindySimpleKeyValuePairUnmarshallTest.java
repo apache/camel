@@ -17,9 +17,7 @@
 package org.apache.camel.dataformat.bindy.fix;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,17 +27,11 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Header;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Trailer;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.commons.collections.CollectionUtils;
-import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
 
     @Test
@@ -85,20 +77,12 @@ public class BindySimpleKeyValuePairUnmarshallTest extends CommonBindyTest {
         models.add(model);
         return models;
     }
-
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    
+    public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
-                }
-            };
+        public void configure() {
+            from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }
     }
 

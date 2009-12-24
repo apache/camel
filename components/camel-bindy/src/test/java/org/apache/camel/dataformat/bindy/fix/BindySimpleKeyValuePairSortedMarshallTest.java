@@ -21,28 +21,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.trailer.Trailer;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairSortedMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
     private static final transient Log LOG = LogFactory.getLog(BindySimpleKeyValuePairSortedMarshallTest.class);
@@ -98,20 +89,12 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
         return models;
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
 
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.sorted");
-
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from(URI_DIRECT_START).marshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
-                }
-            };
+       
+        public void configure() {
+            from(URI_DIRECT_START).marshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }
     }
 }

@@ -28,15 +28,11 @@ import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Security;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindyComplexOneToManyKeyValuePairUnMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindyTest {
 
     @Test
@@ -110,19 +106,12 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
         return models;
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.complex.onetomany");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from(URI_DIRECT_START).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
-                }
-            };
+        public void configure() {
+            from(URI_DIRECT_START).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }
+
     }
 }

@@ -27,15 +27,11 @@ import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.header.Header;
 import org.apache.camel.dataformat.bindy.model.fix.sorted.trailer.Trailer;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.fix.BindySimpleKeyValuePairSortedUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleKeyValuePairSortedUnmarshallTest extends CommonBindyTest {
 
     @Test
@@ -83,20 +79,13 @@ public class BindySimpleKeyValuePairSortedUnmarshallTest extends CommonBindyTest
         return models;
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.sorted");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
-                }
-            };
+        public void configure() {
+            from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }
+          
     }
 
 }

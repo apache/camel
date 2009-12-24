@@ -22,16 +22,14 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
 import static org.junit.Assert.assertEquals;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindyCsvBigFileUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+
+@ContextConfiguration
 public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject(uri = "mock:result")
@@ -52,20 +50,13 @@ public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTe
         assertEquals(10000, models.size());
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
-
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("file://src/test/data/big?noop=true").unmarshal(camelDataFormat).to("mock:result");
-                }
-            };
+    public static class ContextConfig extends RouteBuilder {
+        public void configure() {
+            BindyCsvDataFormat camelDataFormat = 
+                new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+            from("file://src/test/data/big?noop=true").unmarshal(camelDataFormat).to("mock:result");
         }
+
     }
 
 }

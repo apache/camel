@@ -21,15 +21,11 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvSkipFirstLineUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleCsvSkipFirstLineUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
     @Produce(uri = "direct:start")
@@ -53,21 +49,14 @@ public class BindySimpleCsvSkipFirstLineUnmarshallTest extends AbstractJUnit4Spr
         resultEndpoint.assertIsSatisfied();
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassandskipfirstline");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    // from("file://src/test/data2")
-                    from("direct:start").unmarshal(camelDataFormat).to("mock:result");
-                }
-            };
+        public void configure() {
+            // from("file://src/test/data2")
+            from("direct:start").unmarshal(camelDataFormat).to("mock:result");
         }
+
     }
 
 }

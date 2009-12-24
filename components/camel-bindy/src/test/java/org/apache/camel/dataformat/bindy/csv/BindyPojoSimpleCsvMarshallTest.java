@@ -28,16 +28,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 import org.apache.camel.processor.interceptor.Tracer;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvMarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindyPojoSimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests {
 
     private static final String URI_MOCK_RESULT = "mock:result";
@@ -89,32 +85,25 @@ public class BindyPojoSimpleCsvMarshallTest extends AbstractJUnit4SpringContextT
         return order;
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+    public static class ContextConfig extends RouteBuilder {
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
+        public void configure() {
+            BindyCsvDataFormat camelDataFormat = 
+                new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+            Tracer tracer = new Tracer();
+            tracer.setLogLevel(LoggingLevel.FATAL);
+            tracer.setLogName("org.apache.camel.bindy");
 
-                    Tracer tracer = new Tracer();
-                    tracer.setLogLevel(LoggingLevel.FATAL);
-                    tracer.setLogName("org.apache.camel.bindy");
+            getContext().addInterceptStrategy(tracer);
 
-                    getContext().addInterceptStrategy(tracer);
+            // default should errors go to mock:error
+            errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
 
-                    // default should errors go to mock:error
-                    errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliverDelay(0));
+            onException(Exception.class).maximumRedeliveries(0).handled(true);
 
-                    onException(Exception.class).maximumRedeliveries(0).handled(true);
-
-                    from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
-                }
-            };
+            from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
         }
+
     }
 
 }

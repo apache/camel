@@ -22,13 +22,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -36,7 +32,7 @@ import org.springframework.util.Assert;
 
 import static org.junit.Assert.fail;
 
-@ContextConfiguration(locations = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvMandatoryFieldsUnmarshallTest$ContextConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration
 public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
     private static final transient Log LOG = LogFactory.getLog(BindySimpleCsvMandatoryFieldsUnmarshallTest.class);
@@ -171,21 +167,14 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
         }
     }
 
-    @Configuration
-    public static class ContextConfig extends SingleRouteCamelConfiguration {
+    public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat formatOptional = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
         BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory");
 
-        @Override
-        @Bean
-        public RouteBuilder route() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start1").unmarshal(formatOptional).to("mock:result1");
-                    from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
-                }
-            };
+        public void configure() {
+            from("direct:start1").unmarshal(formatOptional).to("mock:result1");
+            from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
         }
+         
     }
 }
