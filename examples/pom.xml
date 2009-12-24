@@ -65,13 +65,25 @@
     <module>camel-example-reportincident</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-spring</module>
-    <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-xquery</module>
     <module>camel-example-tracer</module>
   </modules>
 
   <profiles>
+    <profile>
+      <id>spring-2.x</id>
+      <activation>
+        <property>
+          <name>spring-version</name>
+          <value>2.5.6</value>
+        </property>
+      </activation>
+      <modules>
+        <!-- current this module just work for spring 2.x -->
+        <module>camel-example-spring-javaconfig</module>
+      </modules>
+    </profile>
     <!-- 
       This profile allows you to add a repository to the repo list so that 
       you can test the examples out against a staged version of the camel distribution 

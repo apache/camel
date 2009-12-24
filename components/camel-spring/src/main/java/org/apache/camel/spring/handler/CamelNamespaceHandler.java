@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.handler;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -418,7 +419,14 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         if (ObjectHelper.isNotEmpty(id)) {
             BeanDefinition definition = endpointParser.parse(childElement, parserContext);
             definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
-            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+            // Need to add this dependency of CamelContext for Spring 3.0
+            try {
+                Method method = definition.getClass().getMethod("setDependsOn", String[].class);
+                method.invoke(definition, (Object)new String[]{contextId});
+            } catch (Exception e) {
+                // Do nothing here
+            }
+            parserContext.registerBeanComponent(new BeanComponentDefinition(definition, id));
         }
     }
     

@@ -16,11 +16,13 @@
  */
 package org.apache.camel.spring.management;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,6 +43,7 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
 
     @SuppressWarnings("unchecked")
     public void testDualCamelContextManaged() throws Exception {
+        
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -58,7 +61,7 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
 
         for (ObjectName on : set) {
             String name = on.getCanonicalName();
-
+            
             if (name.contains("mock://mock1")) {
                 String id = (String) mbeanServer.getAttribute(on, "CamelId");
                 assertEquals("camel1", id);

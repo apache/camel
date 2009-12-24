@@ -37,9 +37,8 @@ public class MisspelledRouteRefTest extends TestCase {
         } catch (Exception e) {
             //expected but want to see what it looks like...
             LOG.debug("Exception message : " + e.getMessage());
-            assertEquals("Error creating bean with name 'camel': Invocation of init method failed;"
-                         + " nested exception is org.apache.camel.CamelException: "
-                         + "Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]", e.getMessage());
+            assertTrue("Get a wrong exception name", e.getMessage().indexOf("nested exception is org.apache.camel.CamelException: "
+                         + "Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]") > 0);
         }
     }
 }

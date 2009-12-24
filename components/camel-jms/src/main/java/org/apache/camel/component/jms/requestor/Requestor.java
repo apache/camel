@@ -203,6 +203,8 @@ public class Requestor extends ServiceSupport implements MessageListener {
     protected void doStart() throws Exception {
         AbstractMessageListenerContainer container = getListenerContainer();
         container.afterPropertiesSet();
+        // Need to call the container start in Spring 3.x
+        container.start();
     }
 
     @Override

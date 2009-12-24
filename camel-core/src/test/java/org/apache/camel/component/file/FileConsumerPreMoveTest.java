@@ -37,6 +37,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
 
     public void testPreMove() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -52,7 +53,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         // give time for consumer to process this file before we drop the next file
         Thread.sleep(2000);
         template.sendBodyAndHeader("file://target/premove", "Hello Again World", Exchange.FILE_NAME, "hello.txt");
-
+        // give time for consumer to process this file before we drop the next file
         assertMockEndpointsSatisfied();
     }
 

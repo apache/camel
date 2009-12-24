@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -39,12 +40,15 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware {
+    @XmlAttribute    
+    private Boolean singleton = Boolean.FALSE;
     @XmlAttribute
     private String uri;
     @XmlTransient
     private CamelContext context;
     @XmlTransient
     private Endpoint endpoint;
+   
 
     public Object getObject() throws Exception {
         if (endpoint == null) {
@@ -56,17 +60,19 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
     public Class getObjectType() {
         return Endpoint.class;
     }
-
+    
     public boolean isSingleton() {
-        if (endpoint == null) {
-            this.endpoint = createEndpoint();
-        }
-        return endpoint.isSingleton();
+        return singleton;
+    }
+    
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
     }
 
     public CamelContext getCamelContext() {
         return context;
     }
+    
 
     /**
      * Sets the context to use to resolve endpoints
@@ -93,6 +99,7 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
     protected Endpoint createEndpoint() {
         notNull(context, "context");
         notNull(uri, "uri");
+        
         Endpoint endpoint = context.getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
