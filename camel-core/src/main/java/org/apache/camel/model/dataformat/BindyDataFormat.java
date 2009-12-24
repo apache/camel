@@ -52,7 +52,7 @@ public class BindyDataFormat extends DataFormatDefinition {
         if (type == BindyType.Csv) {
             setDataFormatName("bindy-csv");
         } else {
-            setDataFormatName("bindy-kv");
+            setDataFormatName("bindy-kvp");
         }
         return super.createDataFormat(routeContext);
     }
