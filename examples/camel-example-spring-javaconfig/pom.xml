@@ -34,7 +34,12 @@
 
   <properties>
     <camel.osgi.export>org.apache.camel.example.spring.*</camel.osgi.export>
-    <camel.osgi.import>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import>
+    <camel.osgi.import>
+       !org.apache.camel.example.spring.*,
+       org.springframework.osgi.*;version="[1.2,2)",
+       org.springframework.*;version="[3,4)",
+       org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
+    </camel.osgi.import>
     <!-- avoid to import the bunch of spring related package -->
     <camel.osgi.dynamic>*</camel.osgi.dynamic>
   </properties>
