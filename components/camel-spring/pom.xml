@@ -38,6 +38,7 @@
         !org.apache.camel.component.validator,
         !org.apache.camel.component.xslt,
         org.apache.camel.*;${camel.osgi.import.strict.version},
+        org.springframework.*;version="[2.5,4)",
         *
       </camel.osgi.import>
       <camel.osgi.export>

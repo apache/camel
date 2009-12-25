@@ -33,6 +33,13 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
+    <camel.osgi.import>
+        !org.apache.camel.spring.javaconfig.*,
+        org.apache.camel.*;${camel.osgi.import.camel.version},
+        org.springframework.*;version="[3,4)",
+        *
+      </camel.osgi.import>
+
   </properties>
   
   <repositories>

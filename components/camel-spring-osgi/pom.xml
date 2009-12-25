@@ -20,7 +20,11 @@
         !org.apache.camel.component.event,
         !org.apache.camel.component.validator,
         !org.apache.camel.component.xslt,
+        !org.aapche.camel.osgi.*,
         org.apache.camel.*;${camel.osgi.import.strict.version},
+        org.osgi.framework;version="[1.3,2)",
+        org.springframework.osgi.*;version="[1.2,2)",
+        org.springframework.*;version="[2.5,4)",
         *
       </camel.osgi.import>
       <camel.osgi.export>
