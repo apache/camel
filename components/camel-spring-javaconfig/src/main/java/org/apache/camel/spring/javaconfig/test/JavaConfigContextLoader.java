@@ -1,0 +1,145 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.spring.javaconfig.test;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigUtils;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.test.context.ContextLoader;
+
+/**
+ * Implementation of the {@link ContextLoader} strategy for creating a
+ * {@link JavaConfigApplicationContext} for a test's
+ * {@link org.springframework.test.context.ContextConfiguration &#064;ContextConfiguration}
+ * <p/>
+ *
+ * Example usage: <p/>
+ * <pre class="code">
+ * &#064;RunWith(SpringJUnit4ClassRunner.class)
+ * &#064;ContextConfiguration(locations = {"com.myco.TestDatabaseConfiguration", "com.myco.config"},
+ *                       loader = JavaConfigContextLoader.class)
+ * public MyTests { ... }
+ * </pre>
+ * <p/>
+ *
+ * Implementation note: At this time, due to restrictions in Java annotations and Spring's
+ * TestContext framework, locations of classes / packages must be specified as strings to
+ * the ContextConfiguration annotation.  It is understood that this has a detrimental effect
+ * on type safety, discoverability and refactoring, and for these reasons may change in
+ * future revisions, possibly with a customized version of the ContextConfiguration annotation
+ * that accepts an array of class literals to load.
+ *
+ * @author Jim Moore
+ * @author Chris Beams
+ * @see org.springframework.test.context.ContextConfiguration
+ */
+public class JavaConfigContextLoader implements ContextLoader {
+
+    protected final Log logger = LogFactory.getLog(getClass());
+
+    /**
+     * Simply returns the supplied <var>locations</var> unchanged.
+     * <p/>
+     *
+     * @param clazz the class with which the locations are associated: used to determine how to
+     *            process the supplied locations.
+     * @param locations the unmodified locations to use for loading the application context; can be
+     *            {@code null} or empty.
+     * @return an array of application context resource locations
+     * @see org.springframework.test.context.ContextLoader#processLocations(Class, String[])
+     */
+    public String[] processLocations(Class<?> clazz, String... locations) {
+        return locations;
+    }
+
+    /**
+     * Loads a new {@link ApplicationContext context} based on the supplied {@code locations},
+     * configures the context, and finally returns the context in fully <em>refreshed</em> state.
+     * <p/>
+     *
+     * Configuration locations are either fully-qualified class names or base package names. These
+     * locations will be given to a {@link JavaConfigApplicationContext} for configuration via the
+     * {@link JavaConfigApplicationContext#addConfigClass(Class)} and
+     * {@link JavaConfigApplicationContext#addBasePackage(String)} methods.
+     *
+     * @param locations the locations to use to load the application context
+     * @return a new application context
+     * @throws IllegalArgumentException if any of <var>locations</var> are not valid fully-qualified
+     * Class or Package names
+     */
+    public ApplicationContext loadContext(String... locations) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Creating a JavaConfigApplicationContext for " + Arrays.asList(locations));
+        }
+
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+
+        ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
+        ArrayList<String> basePackages = new ArrayList<String>();
+        for (String location : locations) {
+            // if the location refers to a class, use it. Otherwise assume it's a base package name
+            try {
+                final Class<?> aClass = this.getClass().getClassLoader().loadClass(location);
+                configClasses.add(aClass);
+            } catch (ClassNotFoundException e) {
+                if (Package.getPackage(location) == null) {
+                    throw new IllegalArgumentException(
+                            String.format("A non-existent class or package name was specified: [%s]", location));
+                }
+                basePackages.add(location);
+            }
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Setting config classes to " + configClasses);
+            logger.debug("Setting base packages to " + basePackages);
+        }
+
+        for (Class<?> configClass : configClasses) {
+            context.register(configClass);
+        }
+        
+        for (String basePackage : basePackages) {
+            context.scan(basePackage);
+        }
+        
+        context.refresh();
+
+        // Have to create a child context that implements BeanDefinitionRegistry
+        // to pass to registerAnnotationConfigProcessors, since
+        // JavaConfigApplicationContext does not
+        final GenericApplicationContext gac = new GenericApplicationContext(context);
+        AnnotationConfigUtils.registerAnnotationConfigProcessors(gac);
+        // copy BeanPostProcessors to the child context
+        for (String bppName : context.getBeanFactory().getBeanNamesForType(BeanPostProcessor.class)) {
+            gac.registerBeanDefinition(bppName, context.getBeanFactory().getBeanDefinition(bppName));
+        }
+        gac.refresh();
+        gac.registerShutdownHook();
+
+        return gac;
+    }
+
+}
