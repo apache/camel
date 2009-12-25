@@ -17,8 +17,8 @@
 package org.apache.camel.spring.javaconfig;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ContextConfig extends SingleRouteCamelConfiguration {

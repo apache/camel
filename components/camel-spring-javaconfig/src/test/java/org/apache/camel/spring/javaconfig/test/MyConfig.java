@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spring.javaconfig.test;
 
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @version $Revision$

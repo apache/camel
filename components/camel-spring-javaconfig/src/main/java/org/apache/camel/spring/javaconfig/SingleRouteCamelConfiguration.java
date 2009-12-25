@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.config.java.annotation.Bean;
+import org.springframework.context.annotation.Bean;
 
 /**
  * A useful base class for writing

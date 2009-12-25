@@ -20,10 +20,13 @@ package org.apache.camel.spring.javaconfig;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
 /**
@@ -89,24 +92,24 @@ public class Main extends org.apache.camel.spring.Main {
         
     protected AbstractApplicationContext createDefaultApplicationContext() {
         ApplicationContext parentContext = getParentApplicationContext();
-        JavaConfigApplicationContext jcApplicationContext = new JavaConfigApplicationContext();
+        AnnotationConfigApplicationContext acApplicationContext = new AnnotationConfigApplicationContext();
         if (parentContext != null) {
-            jcApplicationContext.setParent(parentContext);
+            acApplicationContext.setParent(parentContext);
         }
         if (getConfigClassesString() != null) {
             Class<?>[] configClasses = getConfigClasses(getConfigClassesString());
             for (Class<?> cls : configClasses) {
-                jcApplicationContext.addConfigClass(cls);
+                acApplicationContext.register(cls);
             }
         }
         if (getBasedPackages() != null) {
             String[] basePackages = getBasedPackages().split(";");
             for (String basePackage : basePackages) {
-                jcApplicationContext.addBasePackage(basePackage);
+                acApplicationContext.scan(basePackage);
             }
         }
-        jcApplicationContext.refresh();
-        return jcApplicationContext;
+        acApplicationContext.refresh();
+        return acApplicationContext;
         
     }
 

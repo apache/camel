@@ -23,9 +23,20 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.support.ConfigurationSupport;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+
 
 /**
  * A useful base class for writing
@@ -35,7 +46,85 @@ import org.springframework.config.java.support.ConfigurationSupport;
  * @version $Revision$
  */
 @Configuration
-public abstract class CamelConfiguration extends ConfigurationSupport {
+public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
+    
+    private BeanFactory beanFactory;
+
+    private AutowireCapableBeanFactory autowireCapableBeanFactory;
+
+    private ApplicationContext applicationContext;
+
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+        if (beanFactory instanceof AutowireCapableBeanFactory) {
+            autowireCapableBeanFactory = (AutowireCapableBeanFactory) beanFactory;
+        }
+    }
+
+    protected BeanFactory getBeanFactory() {
+        return this.beanFactory;
+    }
+
+    public void setApplicationContext(ApplicationContext ac) {
+        this.applicationContext = ac;
+    }
+
+    protected ApplicationContext getApplicationContext() {
+        return this.applicationContext;
+    }
+
+    public Object getBean(String beanName) {
+        return beanFactory.getBean(beanName);
+    }
+
+    public <T> T getBean(Class<T> type) {
+        return beanFactory.getBean(type);
+    }
+
+    public <T> T getBean(String beanName, Class<T> type) {
+        return beanFactory.getBean(beanName, type);
+    }
+   
+
+    /**
+     * Invoke callbacks on the object, as though it were configured in the factory. If appropriate,
+     * the object may be wrapped before being returned. For this reason, it is recommended to always
+     * respect the return value when using this method.
+     *
+     * @param   object  object to configure
+     *
+     * @return  either the original object or a wrapped one after callbacks called on it.
+     */
+    protected <T> T getConfigured(T object) {
+        if (this.autowireCapableBeanFactory == null) {
+            throw new UnsupportedOperationException(
+                "Cannot configure object - not running in an AutowireCapableBeanFactory");
+        }
+
+        @SuppressWarnings("unchecked") // See SPR-4955
+        T configuredObject = (T) autowireCapableBeanFactory.initializeBean(object, null);
+
+        // this block copied from ApplicationContextAwareProcessor.  See SJC-149.
+        if (this.applicationContext != null) {
+            if (configuredObject instanceof ResourceLoaderAware) {
+                ((ResourceLoaderAware) configuredObject).setResourceLoader(this.applicationContext);
+            }
+
+            if (configuredObject instanceof ApplicationEventPublisherAware) {
+                ((ApplicationEventPublisherAware) configuredObject).setApplicationEventPublisher(this.applicationContext);
+            }
+
+            if (configuredObject instanceof MessageSourceAware) {
+                ((MessageSourceAware) configuredObject).setMessageSource(this.applicationContext);
+            }
+
+            if (configuredObject instanceof ApplicationContextAware) {
+                ((ApplicationContextAware) configuredObject).setApplicationContext(this.applicationContext);
+            }
+        }
+
+        return configuredObject;
+    }
 
     @Bean
     public CamelBeanPostProcessor camelBeanPostProcessor() throws Exception {

@@ -17,10 +17,8 @@
 package org.apache.camel.spring.javaconfig.test;
 
 import org.junit.Test;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.plugin.context.AnnotationDrivenConfig;
-import org.springframework.config.java.test.JavaConfigContextLoader;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -31,7 +29,7 @@ import static org.junit.Assert.assertEquals;
  * @version $Revision$
  */
 @ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.test.JavaConfigWithNestedConfigClassTest$ContextConfig", loader = JavaConfigContextLoader.class)
-@AnnotationDrivenConfig
+
 @Component
 public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit4SpringContextTests implements Cheese {
     private boolean doCheeseCalled;
