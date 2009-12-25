@@ -11,7 +11,7 @@
 	<groupId>org.apache.camel</groupId>
 	<artifactId>camel-protobuf</artifactId>
 	<packaging>bundle</packaging>
-	<name>camel::protobuf</name>
+	<name>Camel :: Protobuf</name>
 	
 	<properties>
     	<camel.osgi.export.pkg>org.apache.camel.dataformat.protobuf.*</camel.osgi.export.pkg>
