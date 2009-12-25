@@ -15,19 +15,21 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
+<!-- START SNIPPET: ex -->
 <!-- Configures the Camel Context-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-  
-  <!-- START SNIPPET: ex -->  
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    
   <!-- first, define your individual @Configuration classes as beans -->
   <bean class="org.apache.camel.example.spring.javaconfig.MyRouteConfig"/>
  
-  <!-- be sure to include the JavaConfig bean post-processor -->
-  <bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>
+  <!-- be sure the configure class to be processed -->
+  <context:annotation-config/>
 
   <!-- END SNIPPET: ex -->
 

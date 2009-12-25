@@ -33,7 +33,7 @@ public class IntegrationTest extends Assert {
     @Test
     public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
         // let's boot up the Spring application context for 2 seconds to check that it works OK
-        Main.main("-duration", "2s", "-bp", "org.apache.camel.example.spring.javaconfig");
+        Main.main("-duration", "2s", "-cc", "org.apache.camel.example.spring.javaconfig.MyRouteConfig");
     }
     
     @Test

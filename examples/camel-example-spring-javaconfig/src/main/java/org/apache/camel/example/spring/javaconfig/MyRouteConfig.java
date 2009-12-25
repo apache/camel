@@ -30,8 +30,8 @@ import org.apache.camel.spring.javaconfig.Main;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.osgi.context.BundleContextAware;
 
 //START SNIPPET: RouteConfig
