@@ -80,7 +80,7 @@
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <httpunit-version>1.6.2</httpunit-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
-    <groovy-version>1.6.7</groovy-version>
+    <groovy-version>1.7.0</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
     <junit-version>4.4</junit-version>
