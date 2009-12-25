@@ -34,6 +34,7 @@
 
   <properties>
     <compiler.fork>false</compiler.fork>
+    <spring-3.x>true</spring-3.x>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.3.0</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
@@ -56,7 +57,7 @@
     <slf4j-version>1.5.8</slf4j-version>
     <openjpa-version>1.2.1</openjpa-version>
     <jruby-version>1.2.0</jruby-version>
-    <spring-version>2.5.6</spring-version>
+    <spring-version>3.0.0.RELEASE</spring-version>
     <spring-osgi-version>1.2.0</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
     <javax-mail-version>1.4.1_2</javax-mail-version>
@@ -82,8 +83,7 @@
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <groovy-version>1.7.0</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
-    <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
-    <junit-version>4.4</junit-version>
+    <junit-version>4.6</junit-version>
     <ognl-version>2.7.3_1</ognl-version>
     <pax-exam-version>1.2.0</pax-exam-version>
     <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
@@ -116,6 +116,7 @@
     <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
     <camel.osgi.import.defaults>
+      org.springframework.*;version="[2.5,4)",
       org.apache.commons.logging.*;version="[1.1,2)",
       org.apache.cxf.*;version="[2.2.5,3)",
       org.apache.qpid.*;version="[0.5,0.6)",
@@ -133,10 +134,12 @@
       freemarker.*;version="[2.3.15,3)",
       javax.persistence.*;version="[1.1,2)",
     </camel.osgi.import.defaults>
+    <camel.osgi.import.before.defaults />
     <camel.osgi.import.additional />
     <camel.osgi.import.pkg>
-      !${camel.osgi.export.pkg},
+      !${camel.osgi.export.pkg},     
       org.apache.camel.*;${camel.osgi.import.camel.version},
+      ${camel.osgi.import.before.defaults},
       ${camel.osgi.import.defaults},
       ${camel.osgi.import.additional},
       *
@@ -1274,10 +1277,12 @@
       </build>
     </profile>
     <profile>
-      <id>spring-3.0</id>
+      <id>spring-2.x</id>
       <properties>
-         <spring-version>3.0.0.RELEASE</spring-version>
-         <junit-version>4.6</junit-version> 
+         <spring-version>2.5.6</spring-version>
+         <spring-3.x>false</spring-3.x>
+         <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
+         <junit-version>4.4</junit-version> 
       </properties>
       <!--repositories>
          <repository>

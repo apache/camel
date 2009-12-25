@@ -72,17 +72,17 @@
 
   <profiles>
     <profile>
-      <id>spring-2.x</id>
+      <id>spring-3.x</id>
       <activation>
-        <property>
-          <name>spring-version</name>
-          <value>2.5.6</value>
-        </property>
+         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
-        <!-- current this module just work for spring 2.x -->
+        <!-- current this module just work for spring 3.x -->
         <module>camel-example-spring-javaconfig</module>
       </modules>
+    </profile>
+    <profile>
+      <id>spring-2.x</id>
     </profile>
     <!-- 
       This profile allows you to add a repository to the repo list so that 
