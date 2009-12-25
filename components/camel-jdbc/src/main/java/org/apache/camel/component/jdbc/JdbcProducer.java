@@ -69,6 +69,10 @@ public class JdbcProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Executing JDBC statement: " + sql);
             }
+
+            // preserve headers, but allow overwriting
+            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+
             if (stmt.execute(sql)) {
                 rs = stmt.getResultSet();
                 setResultSet(exchange, rs);
