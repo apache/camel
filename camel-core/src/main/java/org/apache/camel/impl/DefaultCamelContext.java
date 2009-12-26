@@ -47,6 +47,8 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
@@ -79,6 +81,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -146,9 +149,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private NodeIdFactory nodeIdFactory = new DefaultNodeIdFactory();
     private Tracer defaultTracer;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
-    private final List<Consumer> routeStartupOrder = new ArrayList<Consumer>();
+    private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     private int defaultRouteStartupOrder = 1000;
     private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy();
+    private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
+    private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
 
     public DefaultCamelContext() {
         super();
@@ -499,7 +504,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      *
      * @return a list ordered by the starting order of the route inputs
      */
-    public List<Consumer> getRouteStartupOrder() {
+    public List<RouteStartupOrder> getRouteStartupOrder() {
         return routeStartupOrder;
     }
 
@@ -892,7 +897,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         synchronized (this) {
             // list of inputs to start when all the routes have been prepared for starting
             // we use a tree map so the routes will be ordered according to startup order defined on the route
-            Map<Integer, StartupRouteHolder> inputs = new TreeMap<Integer, StartupRouteHolder>();
+            Map<Integer, DefaultRouteStartupOrder> inputs = new TreeMap<Integer, DefaultRouteStartupOrder>();
 
             // figure out the order in which the routes should be started
             for (RouteService routeService : routeServices.values()) {
@@ -915,17 +920,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         }
 
                         // create holder object that contains information about this route to be started
-                        StartupRouteHolder holder = null;
+                        DefaultRouteStartupOrder holder = null;
                         for (Map.Entry<Route, Consumer> entry : routeService.getInputs().entrySet()) {
                             if (holder == null) {
-                                holder = new StartupRouteHolder(startupOrder, entry.getKey());
+                                holder = new DefaultRouteStartupOrder(startupOrder, entry.getKey());
                             }
                             // add the input consumer to the holder
                             holder.addInput(entry.getValue());
                         }
 
                         // check for clash by startupOrder id
-                        StartupRouteHolder other = inputs.get(startupOrder);
+                        DefaultRouteStartupOrder other = inputs.get(startupOrder);
                         if (other != null) {
                             String otherId = other.getRoute().getId();
                             throw new FailedToStartRouteException(holder.getRoute().getId(), "starupOrder clash. Route " + otherId + " already has startupOrder "
@@ -970,13 +975,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
             // now start the inputs for all the route services as we have prepared Camel
             // yeah open the floods so messages can start flow into Camel
-            for (Map.Entry<Integer, StartupRouteHolder> entry : inputs.entrySet()) {
+            for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
                 Integer order = entry.getKey();
                 Route route = entry.getValue().getRoute();
                 List<Consumer> consumers = entry.getValue().getInputs();
                 for (Consumer consumer : consumers) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Starting consumer (order: " + order + ") on route: " + route.getId());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Starting consumer (order: " + order + ") on route: " + route.getId());
                     }
                     for (LifecycleStrategy strategy : lifecycleStrategies) {
                         strategy.onServiceAdd(this, consumer, route);
@@ -984,7 +989,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                     ServiceHelper.startService(consumer);
 
                     // add to the order which they was started, so we know how to stop them in reverse order
-                    routeStartupOrder.add(consumer);
+                    routeStartupOrder.add(entry.getValue());
                 }
             }
         }
@@ -995,6 +1000,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
             LOG.debug("... Routes started");
         }
+
+        LOG.info("Started " + getRoutes().size() + " routes");
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
         EventHelper.notifyCamelContextStarted(this);
@@ -1426,6 +1433,22 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
         this.shutdownStrategy = shutdownStrategy;
+    }
+
+    public ShutdownRoute getShutdownRoute() {
+        return shutdownRoute;
+    }
+
+    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
+        this.shutdownRoute = shutdownRoute;
+    }
+
+    public ShutdownRunningTask getShutdownRunningTask() {
+        return shutdownRunningTask;
+    }
+
+    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+        this.shutdownRunningTask = shutdownRunningTask;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

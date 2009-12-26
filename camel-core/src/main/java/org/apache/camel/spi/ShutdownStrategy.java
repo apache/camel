@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Consumer;
 import org.apache.camel.Service;
 
 /**
@@ -44,11 +43,11 @@ public interface ShutdownStrategy extends Service {
     /**
      * Shutdown the routes
      *
-     * @param context the camel context
-     * @param consumers the consumers for the routes, ordered by the order they was started
+     * @param context   the camel context
+     * @param routes the routes, ordered by the order they was started
      * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
      */
-    void shutdown(CamelContext context, List<Consumer> consumers) throws Exception;
+    void shutdown(CamelContext context, List<RouteStartupOrder> routes) throws Exception;
 
     /**
      * Set an timeout to wait for the shutdown to complete.
@@ -86,6 +85,9 @@ public interface ShutdownStrategy extends Service {
     /**
      * Sets whether to force shutdown of all consumers when a timeout occurred and thus
      * not all consumers was shutdown within that period.
+     * <p/>
+     * You should have good reasons to set this option to <tt>false</tt> as it means that the routes
+     * keep running and is halted abruptly when {@link CamelContext} has been shutdown.
      *
      * @param shutdownNowOnTimeout <tt>true</tt> to force shutdown, <tt>false</tt> to leave them running
      */

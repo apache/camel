@@ -26,7 +26,11 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Route;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.util.EventHelper;
@@ -46,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
  * for a long time, and hence why a timeout value can be set. When the timeout triggers you can also
  * specify whether the remainder consumers should be shutdown now or ignore.
  * <p/>
- * Will by default use a timeout of 5 minutes by which it will shutdown now the remaining consumers.
+ * Will by default use a timeout of 300 seconds (5 minutes) by which it will shutdown now the remaining consumers.
  * This ensures that when shutting down Camel it at some point eventually will shutdown.
  * This behavior can of course be configured using the {@link #setTimeout(long)} and
  * {@link #setShutdownNowOnTimeout(boolean)} methods.
@@ -61,7 +65,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private boolean shutdownNowOnTimeout = true;
 
-    public void shutdown(CamelContext context, List<Consumer> consumers) throws Exception {
+    public void shutdown(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
 
         long start = System.currentTimeMillis();
 
@@ -72,7 +76,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         // use another thread to perform the shutdowns so we can support timeout
-        Future future = getExecutorService().submit(new ShutdownTask(context, consumers));
+        Future future = getExecutorService().submit(new ShutdownTask(context, routes));
         try {
             if (timeout > 0) {
                 future.get(timeout, timeUnit);
@@ -85,8 +89,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             if (shutdownNowOnTimeout) {
                 LOG.warn("Timeout occurred. Now forcing all routes to be shutdown now.");
-                // force the consumers to shutdown now
-                shutdownNow(consumers);
+                // force the routes to shutdown now
+                shutdownRoutesNow(routes);
             } else {
                 LOG.warn("Timeout occurred. Will ignore shutting down the remainder route input consumers.");
             }
@@ -124,6 +128,29 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     public boolean isShutdownNowOnTimeout() {
         return shutdownNowOnTimeout;
+    }
+
+    /**
+     * Shutdown all the consumers immediately.
+     *
+     * @param routes the routes to shutdown
+     */
+    protected void shutdownRoutesNow(List<RouteStartupOrder> routes) {
+        for (RouteStartupOrder order : routes) {
+
+            // set the route to shutdown as fast as possible by stopping after
+            // it has completed its current task
+            ShutdownRunningTask current = order.getRoute().getRouteContext().getShutdownRunningTask();
+            if (current != ShutdownRunningTask.CompleteCurrentTaskOnly) {
+                LOG.info("Changing shutdownRunningTask from " + current + " to " +  ShutdownRunningTask.CompleteCurrentTaskOnly
+                    + " on route " + order.getRoute().getId() + " to shutdown faster");
+                order.getRoute().getRouteContext().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
+            }
+
+            for (Consumer consumer : order.getInputs()) {
+                shutdownNow(consumer);
+            }
+        }
     }
 
     /**
@@ -204,70 +231,125 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         executor = null;
     }
 
+    class ShutdownDeferredConsumer {
+        private final Route route;
+        private final Consumer consumer;
+
+        ShutdownDeferredConsumer(Route route, Consumer consumer) {
+            this.route = route;
+            this.consumer = consumer;
+        }
+
+        Route getRoute() {
+            return route;
+        }
+
+        Consumer getConsumer() {
+            return consumer;
+        }
+    }
+
     /**
      * Shutdown task which shutdown all the routes in a graceful manner.
      */
     class ShutdownTask implements Runnable {
 
         private final CamelContext context;
-        private final List<Consumer> consumers;
+        private final List<RouteStartupOrder> routes;
 
-        public ShutdownTask(CamelContext context, List<Consumer> consumers) {
+        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes) {
             this.context = context;
-            this.consumers = consumers;
+            this.routes = routes;
         }
 
         public void run() {
+            // the strategy in this run method is to
+            // 1) go over the routes and shutdown those routes which can be shutdown asap
+            //    some routes will be deferred to shutdown at the end, as they are needed
+            //    by other routes so they can complete their tasks
+            // 2) wait until all inflight and pending exchanges has been completed
+            // 3) shutdown the deferred routes
+
             if (LOG.isDebugEnabled()) {
-                LOG.debug("There are " + consumers.size() + " routes to shutdown");
+                LOG.debug("There are " + routes.size() + " routes to shutdown");
             }
 
             // list of deferred consumers to shutdown when all exchanges has been completed routed
             // and thus there are no more inflight exchanges so they can be safely shutdown at that time
-            List<Consumer> deferredConsumers = new ArrayList<Consumer>();
+            List<ShutdownDeferredConsumer> deferredConsumers = new ArrayList<ShutdownDeferredConsumer>();
 
-            for (Consumer consumer : consumers) {
+            for (RouteStartupOrder order : routes) {
 
-                // some consumers do not support shutting down so let them decide
-                // if a consumer is suspendable then prefer to use that and then shutdown later
-                boolean shutdown = true;
-                boolean suspend = false;
-                if (consumer instanceof ShutdownAware) {
-                    shutdown = ((ShutdownAware) consumer).deferShutdown();
-                } else if (consumer instanceof SuspendableService) {
-                    shutdown = false;
-                    suspend = true;
+                ShutdownRoute shutdownRoute = order.getRoute().getRouteContext().getShutdownRoute();
+                ShutdownRunningTask shutdownRunningTask = order.getRoute().getRouteContext().getShutdownRunningTask();
+
+                // TODO: shutdownRunningTask should be implemented in various consumers
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Shutting down route: " + order.getRoute().getId() + " with options [" + shutdownRoute + "," + shutdownRunningTask + "]");
                 }
 
-                if (suspend) {
-                    // only suspend it and then later shutdown it
-                    suspendNow((SuspendableService) consumer, consumer);
-                    // add it to the deferred list so the route will be shutdown later
-                    deferredConsumers.add(consumer);
-                } else if (shutdown) {
-                    shutdownNow(consumer);
-                } else {
-                    // we will stop it later, but for now it must run to be able to help all inflight messages
-                    // be safely completed
-                    deferredConsumers.add(consumer);
+                for (Consumer consumer : order.getInputs()) {
+
+                    boolean suspend = false;
+
+                    // assume we should shutdown if we are not deferred
+                    boolean shutdown = shutdownRoute != ShutdownRoute.Defer;
+
+                    if (shutdown) {
+                        // if we are to shutdown then check whether we can suspend instead as its a more
+                        // gentle wat to graceful shutdown
+
+                        // some consumers do not support shutting down so let them decide
+                        // if a consumer is suspendable then prefer to use that and then shutdown later
+                        if (consumer instanceof ShutdownAware) {
+                            shutdown = ((ShutdownAware) consumer).deferShutdown();
+                        } else if (consumer instanceof SuspendableService) {
+                            suspend = true;
+                        }
+                    }
+
+                    if (suspend) {
+                        // only suspend it and then later shutdown it
+                        suspendNow((SuspendableService) consumer, consumer);
+                        // add it to the deferred list so the route will be shutdown later
+                        deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
+                        LOG.info("Route: " + order.getRoute().getId() + " suspended and shutdown deferred.");
+                    } else if (shutdown) {
+                        shutdownNow(consumer);
+                        LOG.info("Route: " + order.getRoute().getId() + " shutdown complete.");
+                    } else {
+                        // we will stop it later, but for now it must run to be able to help all inflight messages
+                        // be safely completed
+                        deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
+                        LOG.info("Route: " + order.getRoute().getId() + " shutdown deferred.");
+                    }
                 }
             }
 
-            // wait till there are no more pending inflight messages
+            // wait till there are no more pending and inflight messages
             boolean done = false;
             while (!done) {
                 int size = 0;
-                for (Consumer consumer : consumers) {
-                    size += context.getInflightRepository().size(consumer.getEndpoint());
-                    // include any additional pending exchanges on some consumers which may have internal
-                    // memory queues such as seda
-                    if (consumer instanceof ShutdownAware) {
-                        size += ((ShutdownAware) consumer).getPendingExchangesSize();
+                for (RouteStartupOrder order : routes) {
+                    for (Consumer consumer : order.getInputs()) {
+                        int inflight = context.getInflightRepository().size(consumer.getEndpoint());
+                        // include any additional pending exchanges on some consumers which may have internal
+                        // memory queues such as seda
+                        if (consumer instanceof ShutdownAware) {
+                            inflight += ((ShutdownAware) consumer).getPendingExchangesSize();
+                        }
+                        if (inflight > 0) {
+                            size += inflight;
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug(inflight + " inflight and pending exchanges for consumer: " + consumer);
+                            }
+                        }
                     }
                 }
                 if (size > 0) {
                     try {
-                        LOG.info("Waiting as there are still " + size + " inflight exchanges to complete before we can shutdown");
+                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete before we can shutdown");
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         LOG.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
@@ -280,7 +362,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             }
 
             // now all messages has been completed then stop the deferred consumers
-            shutdownNow(deferredConsumers);
+            for (ShutdownDeferredConsumer deferred : deferredConsumers) {
+                shutdownNow(deferred.getConsumer());
+                LOG.info("Route: " + deferred.getRoute().getId() + " shutdown complete.");
+            }
         }
 
     }

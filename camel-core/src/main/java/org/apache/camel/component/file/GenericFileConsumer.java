@@ -161,7 +161,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     protected void processExchange(final Exchange exchange) {
         GenericFile<T> file = getExchangeFileProperty(exchange);
         if (log.isTraceEnabled()) {
-            log.trace("Processing remote file: " + file);
+            log.trace("Processing file: " + file);
         }
 
         try {
@@ -185,7 +185,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             // retrieve the file using the stream
             if (log.isTraceEnabled()) {
-                log.trace("Retreiving file: " + name + " from: " + endpoint);
+                log.trace("Retrieving file: " + name + " from: " + endpoint);
             }
 
             operations.retrieveFile(name, exchange);
@@ -198,7 +198,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 log.debug("About to process file: " + target + " using exchange: " + exchange);
             }
 
-            // register on completion callback that does the completiom stategies
+            // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
             String originalFileName = file.getFileName();
             exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target, originalFileName));
@@ -216,7 +216,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * not
      *
      * @param file        the remote file
-     * @param isDirectory wether the file is a directory or a file
+     * @param isDirectory whether the file is a directory or a file
      * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
     @SuppressWarnings("unchecked")
@@ -249,7 +249,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * And then <tt>true</tt> for directories.
      *
      * @param file        the file
-     * @param isDirectory wether the file is a directory or a file
+     * @param isDirectory whether the file is a directory or a file
      * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(GenericFile<T> file, boolean isDirectory) {
@@ -290,7 +290,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
         // use file expression for a simple dynamic file filter
         if (endpoint.getFileName() != null) {
-            evaluteFileExpression();
+            evaluateFileExpression();
             if (fileExpressionResult != null) {
                 if (!name.equals(fileExpressionResult)) {
                     return false;
@@ -312,7 +312,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         return !endpoint.getInProgressRepository().add(key);
     }
 
-    private void evaluteFileExpression() {
+    private void evaluateFileExpression() {
         if (fileExpressionResult == null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
             Exchange dummy = new DefaultExchange(endpoint.getCamelContext());

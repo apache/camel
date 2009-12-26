@@ -34,6 +34,8 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,6 +69,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     private Integer startupOrder;
     private RoutePolicy routePolicy;
     private String routePolicyRef;
+    private ShutdownRoute shutdownRoute;
+    private ShutdownRunningTask shutdownRunningTask;
 
     public RouteDefinition() {
     }
@@ -396,6 +400,26 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
+    /**
+     * Configures a shutdown route option.
+     *
+     * @param shutdownRoute the option to use when shutting down this route
+     */
+    public RouteDefinition shutdownRoute(ShutdownRoute shutdownRoute) {
+        setShutdownRoute(shutdownRoute);
+        return this;
+    }
+
+    /**
+     * Configures a shutdown running task option.
+     *
+     * @param shutdownRunningTask the option to use when shutting down and how to act upon running tasks.
+     */
+    public RouteDefinition shutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+        setShutdownRunningTask(shutdownRunningTask);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -543,6 +567,24 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return routePolicy;
     }
 
+    public ShutdownRoute getShutdownRoute() {
+        return shutdownRoute;
+    }
+
+    @XmlAttribute
+    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
+        this.shutdownRoute = shutdownRoute;
+    }
+
+    public ShutdownRunningTask getShutdownRunningTask() {
+        return shutdownRunningTask;
+    }
+
+    @XmlAttribute
+    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+        this.shutdownRunningTask = shutdownRunningTask;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(Collection<Route> routes, FromDefinition fromType) throws Exception {
@@ -622,6 +664,14 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         // configure auto startup
         if (autoStartup != null) {
             routeContext.setAutoStartup(isAutoStartup());
+        }
+
+        // configure shutdown
+        if (shutdownRoute != null) {
+            routeContext.setShutdownRoute(getShutdownRoute());
+        }
+        if (shutdownRunningTask != null) {
+            routeContext.setShutdownRunningTask(getShutdownRunningTask());
         }
 
         // should inherit the intercept strategies we have defined

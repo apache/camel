@@ -17,3 +17,5 @@
 ExchangePattern
 LoggingLevel
 ManagementStatisticsLevel
+ShutdownRoute
+ShutdownRunningTask

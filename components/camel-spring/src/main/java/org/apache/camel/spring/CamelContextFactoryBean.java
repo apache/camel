@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.DefaultManagementAgent;
@@ -109,6 +111,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private String errorHandlerRef;
     @XmlAttribute(required = false)
     private Boolean autoStartup = Boolean.TRUE;
+    @XmlAttribute(required = false)
+    private ShutdownRoute shutdownRoute;
+    @XmlAttribute(required = false)
+    private ShutdownRunningTask shutdownRunningTask;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
     @XmlElement(name = "package", required = false)
@@ -787,6 +793,22 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.autoStartup = autoStartup;
     }
 
+    public ShutdownRoute getShutdownRoute() {
+        return shutdownRoute;
+    }
+
+    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
+        this.shutdownRoute = shutdownRoute;
+    }
+
+    public ShutdownRunningTask getShutdownRunningTask() {
+        return shutdownRunningTask;
+    }
+
+    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+        this.shutdownRunningTask = shutdownRunningTask;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -797,22 +819,28 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         SpringCamelContext ctx = new SpringCamelContext(getApplicationContext());
         ctx.setName(getId());
         if (streamCache != null) {
-            ctx.setStreamCaching(streamCache);
+            ctx.setStreamCaching(getStreamCache());
         }
         if (trace != null) {
-            ctx.setTracing(trace);
+            ctx.setTracing(getTrace());
         }
         if (delayer != null) {
-            ctx.setDelayer(delayer);
+            ctx.setDelayer(getDelayer());
         }
         if (handleFault != null) {
-            ctx.setHandleFault(handleFault);
+            ctx.setHandleFault(getHandleFault());
         }
         if (errorHandlerRef != null) {
-            ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(errorHandlerRef));
+            ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
         }
         if (autoStartup != null) {
-            ctx.setAutoStartup(autoStartup);
+            ctx.setAutoStartup(isAutoStartup());
+        }
+        if (shutdownRoute != null) {
+            ctx.setShutdownRoute(getShutdownRoute());
+        }
+        if (shutdownRunningTask != null) {
+            ctx.setShutdownRunningTask(getShutdownRunningTask());
         }
         return ctx;
     }

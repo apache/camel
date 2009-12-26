@@ -374,7 +374,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         try {
             LocateRegistry.createRegistry(registryPort);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Created JMXConnector RMI regisry on port " + registryPort);
+                LOG.debug("Created JMXConnector RMI registry on port " + registryPort);
             }
         } catch (RemoteException ex) {
             // The registry may had been created, we could get the registry instead

@@ -18,11 +18,11 @@ package org.apache.camel.processor;
 
 import java.util.List;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.RouteStartupOrder;
 
 /**
  * @version $Revision$
@@ -39,15 +39,15 @@ public class RouteStartupOrderWithDefaultTest extends ContextTestSupport {
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<Consumer> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(5, order.size());
-        assertEquals("seda://foo", order.get(0).getEndpoint().getEndpointUri());
-        assertEquals("direct://start", order.get(1).getEndpoint().getEndpointUri());
-        assertEquals("seda://bar", order.get(2).getEndpoint().getEndpointUri());
-        assertEquals("direct://bar", order.get(3).getEndpoint().getEndpointUri());
+        assertEquals("seda://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());
+        assertEquals("direct://start", order.get(1).getRoute().getEndpoint().getEndpointUri());
+        assertEquals("seda://bar", order.get(2).getRoute().getEndpoint().getEndpointUri());
+        assertEquals("direct://bar", order.get(3).getRoute().getEndpoint().getEndpointUri());
         // the one with no startup order should be last
-        assertEquals("direct://default", order.get(4).getEndpoint().getEndpointUri());
+        assertEquals("direct://default", order.get(4).getRoute().getEndpoint().getEndpointUri());
     }
 
     @Override

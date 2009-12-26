@@ -23,6 +23,7 @@ import javax.naming.Context;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ShutdownRoute;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -75,7 +76,11 @@ public class JmsDiscoveryTest extends CamelTestSupport {
                 // lets setup the heartbeats
                 from("bean:service1?method=status").to("activemq:topic:registry.heartbeats");
 
-                from("activemq:topic:registry.heartbeats").to("bean:registry?method=onEvent", "mock:result");
+                // defer shutting this route down as the first route depends upon it to
+                // be running so it can complete its current exchanges
+                from("activemq:topic:registry.heartbeats")
+                    .shutdownRoute(ShutdownRoute.Defer)
+                    .to("bean:registry?method=onEvent", "mock:result");
             }
         };
     }

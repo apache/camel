@@ -28,6 +28,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.ShutdownRoute;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -62,6 +64,8 @@ public class DefaultRouteContext implements RouteContext {
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
     private RoutePolicy routePolicy;
+    private ShutdownRoute shutdownRoute;
+    private ShutdownRunningTask shutdownRunningTask;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -280,6 +284,32 @@ public class DefaultRouteContext implements RouteContext {
         }
         // default to true
         return true;
+    }
+
+    public void setShutdownRoute(ShutdownRoute shutdownRoute) {
+        this.shutdownRoute = shutdownRoute;
+    }
+
+    public ShutdownRoute getShutdownRoute() {
+        if (shutdownRoute != null) {
+            return shutdownRoute;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().getShutdownRoute();
+        }
+    }
+
+    public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
+        this.shutdownRunningTask = shutdownRunningTask;
+    }
+
+    public ShutdownRunningTask getShutdownRunningTask() {
+        if (shutdownRunningTask != null) {
+            return shutdownRunningTask;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().getShutdownRunningTask();
+        }
     }
 
     public RoutePolicy getRoutePolicy() {

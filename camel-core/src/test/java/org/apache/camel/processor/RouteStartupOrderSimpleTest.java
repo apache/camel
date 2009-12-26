@@ -18,11 +18,11 @@ package org.apache.camel.processor;
 
 import java.util.List;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.RouteStartupOrder;
 
 /**
  * @version $Revision$
@@ -39,11 +39,11 @@ public class RouteStartupOrderSimpleTest extends ContextTestSupport {
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<Consumer> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(2, order.size());
-        assertEquals("direct://start", order.get(0).getEndpoint().getEndpointUri());
-        assertEquals("seda://foo", order.get(1).getEndpoint().getEndpointUri());
+        assertEquals("direct://start", order.get(0).getRoute().getEndpoint().getEndpointUri());
+        assertEquals("seda://foo", order.get(1).getRoute().getEndpoint().getEndpointUri());
     }
 
     @Override

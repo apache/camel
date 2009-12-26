@@ -14,49 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.spi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
 
 /**
- * Information about a route to be started where we want to control the order
- * in which they are started by {@link org.apache.camel.impl.DefaultCamelContext}
+ * A holder to link a {@link Route} to
  *
  * @version $Revision$
  */
-class StartupRouteHolder {
+public interface RouteStartupOrder {
 
-    private final int startupOrder;
-    private final Route route;
-    private final List<Consumer> inputs = new ArrayList<Consumer>();
+    Route getRoute();
 
-    StartupRouteHolder(int startupOrder, Route route) {
-        this.startupOrder = startupOrder;
-        this.route = route;
-    }
+    List<Consumer> getInputs();
 
-    void addInput(Consumer input) {
-        inputs.add(input);
-    }
+    int getStartupOrder();
 
-    public int getStartupOrder() {
-        return startupOrder;
-    }
-
-    public Route getRoute() {
-        return route;
-    }
-
-    public List<Consumer> getInputs() {
-        return inputs;
-    }
-
-    @Override
-    public String toString() {
-        return "Route " + route.getId() + " starts in order " + startupOrder;
-    }
 }

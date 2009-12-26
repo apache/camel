@@ -107,4 +107,36 @@ public interface RuntimeConfiguration {
      */
     boolean isAutoStartup();
 
+    /**
+     * Sets the option to use when shutting down routes.
+     *
+     * @param shutdownRoute the option to use.
+     */
+    void setShutdownRoute(ShutdownRoute shutdownRoute);
+
+    /**
+     * Gets the option to use when shutting down route.
+     *
+     * @return the option
+     */
+    ShutdownRoute getShutdownRoute();
+
+    /**
+     * Sets the option to use when shutting down a route and how to act when it has running tasks.
+     * <p/>
+     * A running task is for example a {@link org.apache.camel.BatchConsumer} which has a group
+     * of messages to process. With this option you can control whether it should complete the entire
+     * group or stop after the current message has been processed.
+     *
+     * @param shutdownRunningTask the option to use.
+     */
+    void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask);
+
+    /**
+     * Gets the option to use when shutting down a route and how to act when it has running tasks.
+     *
+     * @return the option
+     */
+    ShutdownRunningTask getShutdownRunningTask();
+
 }
