@@ -22,16 +22,35 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Route;
 
 /**
- * A holder to link a {@link Route} to
+ * Information about a route to be started where we want to control the order
+ * in which they are started by {@link org.apache.camel.CamelContext}.
  *
  * @version $Revision$
  */
 public interface RouteStartupOrder {
 
+    /**
+     * Get the order this route should be started.
+     * <p/>
+     * See more at <a href="http://camel.apache.org/configuring-route-startup-ordering-and-autostartup.html">
+     * configuring route startup ordering</a>.
+     *
+     * @return the order
+     */
+    int getStartupOrder();
+
+    /**
+     * Gets the route
+     *
+     * @return the route
+     */
     Route getRoute();
 
+    /**
+     * Gets the input to this route (often only one consumer)
+     *
+     * @return the input consumers.
+     */
     List<Consumer> getInputs();
-
-    int getStartupOrder();
 
 }

@@ -25,7 +25,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -96,7 +98,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @see org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy
  */
-public class IBatisPollingConsumer extends ScheduledPollConsumer implements BatchConsumer {
+public class IBatisPollingConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
 
     private static final Log LOG = LogFactory.getLog(IBatisPollingConsumer.class);
 
@@ -123,6 +125,8 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
     private boolean routeEmptyResultSet;
 
     private int maxMessagesPerPoll;
+    protected volatile ShutdownRunningTask shutdownRunningTask;
+    protected volatile int pendingExchanges;
 
     public IBatisPollingConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
@@ -137,6 +141,10 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
      */
     @Override
     protected void poll() throws Exception {
+
+        // must reset for each poll
+        shutdownRunningTask = null;
+        pendingExchanges = 0;
 
         // poll data from the database
         IBatisEndpoint endpoint = getEndpoint();
@@ -184,7 +192,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
             total = maxMessagesPerPoll;
         }
 
-        for (int index = 0; index < total && isRunAllowed(); index++) {
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
             Exchange exchange = holder.exchange;
@@ -194,6 +202,9 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
             exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+
+            // update pending number of exchanges
+            pendingExchanges = total - index - 1;
 
             // process the current exchange
             if (LOG.isDebugEnabled()) {
@@ -209,6 +220,38 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
                 handleException(e);
             }
         }
+    }
+
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // store a reference what to do in case when shutting down and we have pending messages
+        this.shutdownRunningTask = shutdownRunningTask;
+        // do not defer shutdown
+        return false;
+    }
+
+    public int getPendingExchangesSize() {
+        // only return the real pending size in case we are configured to complete all tasks
+        if (ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask) {
+            return pendingExchanges;
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean isBatchAllowed() {
+        // stop if we are not running
+        boolean answer = isRunAllowed();
+        if (!answer) {
+            return false;
+        }
+
+        if (shutdownRunningTask == null) {
+            // we are not shutting down so continue to run
+            return true;
+        }
+
+        // we are shutting down so only continue if we are configured to complete all tasks
+        return ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask;
     }
 
     private Exchange createExchange(Object data) {

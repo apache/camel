@@ -25,8 +25,10 @@ import java.util.Queue;
 import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -35,13 +37,15 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Base class for remote file consumers.
  */
-public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer implements BatchConsumer {
+public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     protected boolean loggedIn;
     protected String fileExpressionResult;
     protected int maxMessagesPerPoll;
+    protected volatile ShutdownRunningTask shutdownRunningTask;
+    protected volatile int pendingExchanges;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
@@ -55,6 +59,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     protected void poll() throws Exception {
         // must reset for each poll
         fileExpressionResult = null;
+        shutdownRunningTask = null;
+        pendingExchanges = 0;
 
         // before we poll is there anything we need to check ? Such as are we
         // connected to the FTP Server Still ?
@@ -113,7 +119,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             total = maxMessagesPerPoll;
         }
 
-        for (int index = 0; index < total && isRunAllowed(); index++) {
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             // use poll to remove the head so it does not consume memory even after we have processed it
             Exchange exchange = (Exchange) exchanges.poll();
@@ -121,6 +127,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
             exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+
+            // update pending number of exchanges
+            pendingExchanges = total - index - 1;
 
             // process the current exchange
             processExchange(exchange);
@@ -133,6 +142,38 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             String key = file.getFileName();
             endpoint.getInProgressRepository().remove(key);
         }
+    }
+
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // store a reference what to do in case when shutting down and we have pending messages
+        this.shutdownRunningTask = shutdownRunningTask;
+        // do not defer shutdown
+        return false;
+    }
+
+    public int getPendingExchangesSize() {
+        // only return the real pending size in case we are configured to complete all tasks
+        if (ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask) {
+            return pendingExchanges;
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean isBatchAllowed() {
+        // stop if we are not running
+        boolean answer = isRunAllowed();
+        if (!answer) {
+            return false;
+        }
+
+        if (shutdownRunningTask == null) {
+            // we are not shutting down so continue to run
+            return true;
+        }
+
+        // we are shutting down so only continue if we are configured to complete all tasks
+        return ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask;
     }
 
     /**

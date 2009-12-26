@@ -24,8 +24,7 @@ import org.apache.camel.Route;
 import org.apache.camel.spi.RouteStartupOrder;
 
 /**
- * Information about a route to be started where we want to control the order
- * in which they are started by {@link org.apache.camel.impl.DefaultCamelContext}
+ * Default implementation of {@link org.apache.camel.spi.RouteStartupOrder}.
  *
  * @version $Revision$
  */

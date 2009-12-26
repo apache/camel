@@ -49,4 +49,15 @@ public interface BatchConsumer extends Consumer {
      * @throws Exception if an internal processing error has occurred.
      */
     void processBatch(Queue<Object> exchanges) throws Exception;
+
+    /**
+     * Whether processing the batch is still allowed.
+     * <p/>
+     * This is used during shutdown to help indicate whether to complete the pending
+     * exchanges or stop after current exchange has been processed.
+     *
+     * @return <tt>true</tt> to continue processing from the batch, or <tt>false</tt> to stop.
+     * @see org.apache.camel.ShutdownRunningTask
+     */
+    boolean isBatchAllowed();
 }

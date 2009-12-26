@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.ShutdownRunningTask;
+
 /**
  * Allows {@link org.apache.camel.Consumer} to fine grained control on shutdown which mostly
  * have to cater for in-memory based components. These components need to be able to have an extra
@@ -34,9 +36,10 @@ public interface ShutdownAware {
      * <p/>
      * This is needed by {@link org.apache.camel.component.seda.SedaConsumer}.
      *
+     * @param shutdownRunningTask the configured option for how to act when shutting down running tasks.
      * @return <tt>true</tt> to defer shutdown to very last.
      */
-    boolean deferShutdown();
+    boolean deferShutdown(ShutdownRunningTask shutdownRunningTask);
 
     /**
      * Gets the number of pending exchanges.

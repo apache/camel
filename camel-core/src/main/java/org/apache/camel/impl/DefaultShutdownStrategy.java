@@ -303,8 +303,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         // some consumers do not support shutting down so let them decide
                         // if a consumer is suspendable then prefer to use that and then shutdown later
                         if (consumer instanceof ShutdownAware) {
-                            shutdown = ((ShutdownAware) consumer).deferShutdown();
-                        } else if (consumer instanceof SuspendableService) {
+                            shutdown = !((ShutdownAware) consumer).deferShutdown(shutdownRunningTask);
+                        }
+                        if (shutdown && consumer instanceof SuspendableService) {
+                            // we prefer to suspend over shutdown
                             suspend = true;
                         }
                     }

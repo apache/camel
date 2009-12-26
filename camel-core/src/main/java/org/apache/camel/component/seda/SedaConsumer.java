@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.MulticastProcessor;
@@ -79,10 +80,10 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         return processor;
     }
 
-    public boolean deferShutdown() {
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         // deny stopping on shutdown as we want seda consumers to run in case some other queues
         // depend on this consumer to run, so it can complete its exchanges
-        return false;
+        return true;
     }
 
     public int getPendingExchangesSize() {

@@ -30,7 +30,9 @@ import javax.persistence.Query;
 import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -40,7 +42,7 @@ import org.springframework.orm.jpa.JpaCallback;
 /**
  * @version $Revision$
  */
-public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer {
+public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
 
     private static final transient Log LOG = LogFactory.getLog(JpaConsumer.class);
     private final JpaEndpoint endpoint;
@@ -51,6 +53,8 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
     private String namedQuery;
     private String nativeQuery;
     private int maxMessagesPerPoll;
+    private volatile ShutdownRunningTask shutdownRunningTask;
+    private volatile int pendingExchanges;
 
     private final class DataHolder {
         private Exchange exchange;
@@ -68,6 +72,10 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
 
     @Override
     protected void poll() throws Exception {
+        // must reset for each poll
+        shutdownRunningTask = null;
+        pendingExchanges = 0;
+
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 Queue<DataHolder> answer = new LinkedList<DataHolder>();
@@ -112,7 +120,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
             total = maxMessagesPerPoll;
         }
 
-        for (int index = 0; index < total && isRunAllowed(); index++) {
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
             EntityManager entityManager = holder.manager;
@@ -123,6 +131,9 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
             exchange.setProperty(Exchange.BATCH_INDEX, index);
             exchange.setProperty(Exchange.BATCH_SIZE, total);
             exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+
+            // update pending number of exchanges
+            pendingExchanges = total - index - 1;
 
             if (lockEntity(result, entityManager)) {
 
@@ -141,6 +152,37 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer 
         }
     }
 
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // store a reference what to do in case when shutting down and we have pending messages
+        this.shutdownRunningTask = shutdownRunningTask;
+        // do not defer shutdown
+        return false;
+    }
+
+    public int getPendingExchangesSize() {
+        // only return the real pending size in case we are configured to complete all tasks
+        if (ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask) {
+            return pendingExchanges;
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean isBatchAllowed() {
+        // stop if we are not running
+        boolean answer = isRunAllowed();
+        if (!answer) {
+            return false;
+        }
+
+        if (shutdownRunningTask == null) {
+            // we are not shutting down so continue to run
+            return true;
+        }
+
+        // we are shutting down so only continue if we are configured to complete all tasks
+        return ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask;
+    }
 
     // Properties
     // -------------------------------------------------------------------------
