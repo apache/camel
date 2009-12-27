@@ -41,9 +41,11 @@ public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
     public void testBusInjectedBySpring() throws Exception {
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         CxfEndpoint endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:routerEndpoint");
-        
+
         // verify the interceptor that is added by the logging feature
-        assertTrue(endpoint.getBus().getInInterceptors().size() == 1);
+        // Spring 3.0.0 has an issue of SPR-6589 which will call the BusApplicationListener twice for the same event,
+        // so we will get more one InInterceptors here
+        assertTrue(endpoint.getBus().getInInterceptors().size() >= 1);
         assertEquals(LoggingInInterceptor.class, endpoint.getBus().getInInterceptors().get(0).getClass());
     }
 
