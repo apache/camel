@@ -108,6 +108,9 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         private DataHolder() {
         }
     }
+    
+    protected volatile ShutdownRunningTask shutdownRunningTask;
+    protected volatile int pendingExchanges;
 
     /**
      * Statement to run after data has been processed in the route
@@ -125,8 +128,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
     private boolean routeEmptyResultSet;
 
     private int maxMessagesPerPoll;
-    protected volatile ShutdownRunningTask shutdownRunningTask;
-    protected volatile int pendingExchanges;
+    
 
     public IBatisPollingConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);

@@ -108,7 +108,7 @@ public class IBatisShutdownCurrentTaskOnlyTest extends IBatisTestSupport {
                      .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
                      .delay(1000).to("seda:foo");
 
-                 from("seda:foo").routeId("route2").to("mock:bar");
+                from("seda:foo").routeId("route2").to("mock:bar");
             }
         };
     }

@@ -108,7 +108,7 @@ public class IBatisShutdownAllTasksTest extends IBatisTestSupport {
                      .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                      .delay(1000).to("seda:foo");
 
-                 from("seda:foo").routeId("route2").to("mock:bar");
+                from("seda:foo").routeId("route2").to("mock:bar");
             }
         };
     }
