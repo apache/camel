@@ -88,6 +88,7 @@
     <module>camel-snmp</module>
     <module>camel-spring</module>
     <module>camel-spring-integration</module>
+    <module>camel-spring-javaconfig</module>
     <module>camel-spring-osgi</module>
     <module>camel-sql</module>
     <module>camel-stringtemplate</module>
@@ -102,19 +103,4 @@
     <module>camel-web</module>
     <module>camel-web-standalone</module>
   </modules>
-  <profiles>
-    <profile>
-      <id>spring-3.x</id>
-      <activation>
-         <activeByDefault>true</activeByDefault>  
-      </activation>
-      <modules>
-        <!-- current camel-spring only work with Spring 3.x-->
-        <module>camel-spring-javaconfig</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>spring-2.x</id>
-    </profile>
-  </profiles> 
 </project>

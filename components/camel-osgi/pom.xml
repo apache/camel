@@ -77,7 +77,6 @@
           <groupId>org.springframework</groupId>
           <artifactId>org.springframework.core</artifactId>
         </exclusion>
-        
       </exclusions>
     </dependency>
     <dependency>

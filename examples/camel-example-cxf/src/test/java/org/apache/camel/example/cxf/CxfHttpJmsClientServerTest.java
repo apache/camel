@@ -22,7 +22,7 @@ import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
-import org.junit.Ignore;
+
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -32,8 +32,8 @@ public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
     
     
     @Test
-    @Ignore("Dure to the Spring 3.0.0 doesn't call the JMS listener container's start method by default"
-            + "This test will be fix in the next released CXF")
+    //@Ignore("Due to the Spring 3.0.0 doesn't call the JMS listener container's start method by default"
+    //        + "This test will be fix in the next released CXF")
     public void testClientInvocation() throws MalformedURLException {
         Client client = new Client(ROUTER_ADDRESS + "?wsdl");
         Greeter proxy = client.getProxy();

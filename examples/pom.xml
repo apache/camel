@@ -71,19 +71,6 @@
   </modules>
 
   <profiles>
-    <profile>
-      <id>spring-3.x</id>
-      <activation>
-         <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <!-- current this module just work for spring 3.x -->
-        <module>camel-example-spring-javaconfig</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>spring-2.x</id>
-    </profile>
     <!-- 
       This profile allows you to add a repository to the repo list so that 
       you can test the examples out against a staged version of the camel distribution 
