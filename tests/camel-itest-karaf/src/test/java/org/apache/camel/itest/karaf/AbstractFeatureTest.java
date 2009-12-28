@@ -158,7 +158,7 @@ public abstract class AbstractFeatureTest {
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
 
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("features").versionAsInProject().type("xml/features"),
+                         artifactId("apache-camel").versionAsInProject().type("xml/features"),
                           "camel-osgi", "camel-" + feature),
                           //cleanCaches(),
 

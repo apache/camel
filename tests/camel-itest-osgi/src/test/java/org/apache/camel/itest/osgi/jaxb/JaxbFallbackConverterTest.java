@@ -74,7 +74,7 @@ public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
             
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
-                         artifactId("features").versionAsInProject().type("xml/features"),                         
+                         artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
                           "camel-core", "camel-spring-osgi", "camel-test", "camel-jaxb"),
             
             equinox().version("3.5.1"));

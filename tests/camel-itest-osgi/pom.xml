@@ -79,7 +79,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
-      <artifactId>features</artifactId>
+      <artifactId>apache-camel</artifactId>
       <version>${version}</version>
       <type>pom</type>
       <scope>test</scope>
@@ -97,6 +97,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jpa</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-protobuf</artifactId>
       <scope>test</scope>
     </dependency>
 	<dependency>
@@ -137,22 +142,36 @@
 
   </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Test.*</include>
-					</includes>
-					<excludes>
-						<exclude>**/XXXTest.*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-  </build>
+  <build>
+    <plugins>
+      <!-- generate dependencies versions -->
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>depends-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-depends-file</id>
+            <goals>
+              <goal>generate-depends-file</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
+      <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+              <includes>
+                  <include>**/*Test.*</include>
+              </includes>
+              <excludes>
+                  <exclude>**/XXXTest.*</exclude>
+              </excludes>               
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
+   
   <profiles>
 	<profile>
         <id>ci-build-profile</id>
