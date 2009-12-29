@@ -83,7 +83,6 @@ public class OsgiClassResolver extends DefaultClassResolver {
             try {
                 answer = loader.loadClass(name);
             } catch (ClassNotFoundException e) {
-                LOG.info("Cannot load class: " + name + " using classloader: " + loader, e);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot load class: " + name + " using classloader: " + loader, e);
                 }
