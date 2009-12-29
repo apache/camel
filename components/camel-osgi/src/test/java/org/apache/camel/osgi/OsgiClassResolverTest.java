@@ -16,18 +16,26 @@
  */
 package org.apache.camel.osgi;
 
-import org.apache.camel.osgi.test.MockTypeConverterRegistry;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.apache.camel.spi.ClassResolver;
 import org.junit.Test;
 
-public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport {
+public class OsgiClassResolverTest extends CamelOsgiTestSupport {
     
     @Test
-    public void testLoad() throws Exception {               
-        OsgiAnnotationTypeConverterLoader loader = new OsgiAnnotationTypeConverterLoader(getPackageScanClassResolver());
-        MockTypeConverterRegistry registry = new MockTypeConverterRegistry();
-        loader.load(registry);
-        assertTrue("There should have at lest one fallback converter", registry.getFallbackTypeConverters().size() >= 1);        
-        assertTrue("There should have at lest one converter", registry.getTypeConverters().size() >= 1);
+    public void testResolveClass() {
+        ClassResolver classResolver = getClassResolver();
+        Class routeBuilder = classResolver.resolveClass("org.apache.camel.osgi.test.MyRouteBuilder");
+        assertNotNull("The class of routeBuilder should not be null.", routeBuilder);
+    }
+    
+    @Test
+    public void testResolverResource() {
+        ClassResolver classResolver = getClassResolver();
+        InputStream is = classResolver.loadResourceAsStream("/META-INF/services/org/apache/camel/TypeConverter");
+        assertNotNull("The InputStream should not be null.");
     }
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.osgi;
 
+import org.apache.camel.spi.ClassResolver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +27,8 @@ import org.springframework.osgi.mock.MockBundleContext;
 public class CamelOsgiTestSupport extends Assert {
     private Activator testActivator;
     private MockBundleContext bundleContext = new CamelMockBundleContext();
-    private OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(bundleContext);
+    private OsgiPackageScanClassResolver packageScanClassResolver = new OsgiPackageScanClassResolver(bundleContext);
+    private ClassResolver classResolver = new OsgiClassResolver(bundleContext);
     private MockBundle bundle = new CamelMockBundle();
     
     @Before
@@ -49,7 +51,11 @@ public class CamelOsgiTestSupport extends Assert {
         return bundleContext;
     }
 
-    public OsgiPackageScanClassResolver getResolver() {
-        return resolver;
+    public OsgiPackageScanClassResolver getPackageScanClassResolver() {
+        return packageScanClassResolver;
+    }
+    
+    public ClassResolver getClassResolver() {
+        return classResolver;
     }
 }

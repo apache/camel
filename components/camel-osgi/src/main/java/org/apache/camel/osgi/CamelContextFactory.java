@@ -60,6 +60,8 @@ public class CamelContextFactory implements BundleContextAware {
                 LOG.debug("Using OSGI resolvers");
             }
             updateRegistry(context);
+            LOG.debug("Using the OsgiClassResolver");
+            context.setClassResolver(new OsgiClassResolver(bundleContext));
             LOG.debug("Using OsgiFactoryFinderResolver");
             context.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
             LOG.debug("Using OsgiPackageScanClassResolver");
