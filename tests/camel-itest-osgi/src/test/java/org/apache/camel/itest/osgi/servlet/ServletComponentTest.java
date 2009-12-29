@@ -17,32 +17,20 @@
 
 package org.apache.camel.itest.osgi.servlet;
 
+
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
-import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.camel.itest.osgi.servlet.support.ServletActivator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.options.SystemPropertyOption;
-import org.ops4j.pax.swissbox.tinybundles.core.metadata.BndBuilder;
-import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
-import org.osgi.service.http.HttpService;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
-
 
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.provision;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 @RunWith(JUnit4TestRunner.class)
 public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
