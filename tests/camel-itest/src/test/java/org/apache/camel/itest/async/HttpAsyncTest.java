@@ -27,7 +27,8 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class HttpAsyncTest extends CamelTestSupport {
-
+ 
+    @SuppressWarnings("unchecked")
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         // START SNIPPET: e2
@@ -52,13 +53,13 @@ public class HttpAsyncTest extends CamelTestSupport {
         // (waiting if needed) and then return a string body response.
         // This allows us to do this in a single code line instead of using the
         // JDK Future API to get hold of it, but you can also use that if you want
-        String response = template.extractFutureBody(future, String.class);
+        String response = (String)template.extractFutureBody(future, String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();
         // END SNIPPET: e2
     }
-
+ 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

@@ -16,46 +16,26 @@
  */
 package org.apache.camel.itest.osgi.protobuf;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.Message.RecipientType;
-
 
 import org.apache.camel.CamelException;
-import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.dataformat.protobuf.ProtobufDataFormat;
-
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.itest.osgi.protobuf.generated.AddressBookProtos;
 import org.apache.camel.itest.osgi.protobuf.generated.AddressBookProtos.Person;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.jvnet.mock_javamail.Mailbox;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.provision;
-import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 
 @RunWith(JUnit4TestRunner.class)
@@ -147,14 +127,6 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
                           "camel-core", "camel-spring-osgi", "camel-test", "camel-protobuf"),
-            // create a bundle that has the protobuf class
-            /*provision(newBundle().add(AddressBookProtos.class)
-                   .add(AddressBookProtos.AddressBook.class)
-                   .add(AddressBookProtos.Person.class)
-                   .set(Constants.BUNDLE_SYMBOLICNAME, "CamelProtoBufTinyBundle")
-                   .set(Constants.EXPORT_PACKAGE, "org.apache.camel.itest.osgi.protobuf.generated")
-                   .build()),*/
-            
             
             felix());
         
