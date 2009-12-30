@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz;
 
 import java.net.URI;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -63,6 +64,7 @@ public class QuartzComponent extends DefaultComponent {
         String path = ObjectHelper.after(u.getPath(), "/");
         String host = u.getHost();
         String cron = getAndRemoveParameter(parameters, "cron", String.class);
+        Boolean fireNow = getAndRemoveParameter(parameters, "fireNow", Boolean.class, Boolean.FALSE);
 
         // group can be optional, if so set it to Camel
         String name;
@@ -75,21 +77,28 @@ public class QuartzComponent extends DefaultComponent {
             name = host;
         }
 
+        Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
+        Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
+        
         // create the trigger either cron or simple
         Trigger trigger;
         if (ObjectHelper.isNotEmpty(cron)) {
             trigger = createCronTrigger(cron);
         } else {
             trigger = new SimpleTrigger();
+            if (fireNow) {
+                String intervalString = (String) triggerParameters.get("repeatInterval");
+                if (intervalString != null) {
+                    long interval = Long.valueOf(intervalString);
+                    trigger.setStartTime(new Date(System.currentTimeMillis() - interval));
+                }
+            }
         }
         answer.setTrigger(trigger);
 
         trigger.setName(name);
         trigger.setGroup(group);
-
-        Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
-        Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
-
+        
         setProperties(trigger, triggerParameters);
         setProperties(answer.getJobDetail(), jobParameters);
 
