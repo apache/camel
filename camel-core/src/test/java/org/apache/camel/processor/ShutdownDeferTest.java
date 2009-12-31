@@ -32,7 +32,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
-        bar.setResultWaitTime(1000);
+        bar.setResultWaitTime(3500);
 
         template.sendBody("seda:foo", "A");
         template.sendBody("seda:foo", "B");
