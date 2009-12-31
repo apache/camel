@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -89,7 +88,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private final boolean streaming;
     private final boolean stopOnException;
     private ExecutorService executorService;
-    private Channel channel;
 
     public MulticastProcessor(Collection<Processor> processors) {
         this(processors, null);
@@ -124,14 +122,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
     public String getTraceLabel() {
         return "multicast";
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 
     public void process(Exchange exchange) throws Exception {
