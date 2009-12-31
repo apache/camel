@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 
 /**
  * Strategy for acquiring exclusive read locks for files to be consumed. After
- * granting the read lock it is realeased, we just want to make sure that when
+ * granting the read lock it is released, we just want to make sure that when
  * we start consuming the file its not currently in progress of being written by
  * third party.
  * <p/>
@@ -29,9 +29,19 @@ import org.apache.camel.Exchange;
  *   <li>FileRenameExclusiveReadLockStrategy waiting until its possible to rename the file.</li>
  *   <li>FileLockExclusiveReadLockStrategy acquiring a RW file lock for the duration of the processing.</li>
  *   <li>MarkerFileExclusiveReadLockStrategy using a marker file for acquiring read lock.</li>
+ *   <li>FileChangedExclusiveReadLockStrategy using a file changed detection for acquiring read lock.</li>
  * </ul>
  */
 public interface GenericFileExclusiveReadLockStrategy<T> {
+
+    /**
+     * Allows custom logic to be run on startup preparing the strategy, such as removing old lock files etc.
+     *
+     * @param operations generic file operations
+     * @param endpoint the endpoint
+     * @throws Exception can be thrown in case of errors
+     */
+    void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception;
 
     /**
      * Acquires exclusive read lock to the file.
@@ -58,7 +68,7 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
     /**
      * Sets an optional timeout period.
      * <p/>
-     * If the readlock could not be granted within the timeperiod then the wait is stopped and the
+     * If the readlock could not be granted within the time period then the wait is stopped and the
      * <tt>acquireExclusiveReadLock</tt> method returns <tt>false</tt>.
      *
      * @param timeout period in millis

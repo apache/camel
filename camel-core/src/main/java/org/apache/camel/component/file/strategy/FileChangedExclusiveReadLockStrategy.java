@@ -21,17 +21,23 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Acquires exclusive read lock to the given file by checking whether the file is being
- * changed by scanning the files at different intervals.
+ * changed by scanning the file at different intervals (to detec changes).
  */
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final transient Log LOG = LogFactory.getLog(FileChangedExclusiveReadLockStrategy.class);
     private long timeout;
+
+    @Override
+    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
+        // noop
+    }
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         File target = new File(file.getAbsoluteFilePath());
@@ -122,14 +128,6 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         return timeout;
     }
 
-    /**
-     * Sets an optional timeout period.
-     * <p/>
-     * If the readlock could not be granted within the timeperiod then the wait is stopped and the
-     * acquireReadLock returns <tt>false</tt>.
-     *
-     * @param timeout period in millis
-     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

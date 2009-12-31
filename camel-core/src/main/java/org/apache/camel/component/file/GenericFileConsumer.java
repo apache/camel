@@ -365,4 +365,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     private GenericFile<T> getExchangeFileProperty(Exchange exchange) {
         return (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        
+        // prepare on startup
+        endpoint.getGenericFileProcessStrategy().prepareOnStartup(operations, endpoint);
+    }
 }

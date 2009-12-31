@@ -25,6 +25,7 @@ import java.nio.channels.FileLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.ExchangeHelper;
@@ -40,6 +41,10 @@ import org.apache.commons.logging.LogFactory;
 public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Log LOG = LogFactory.getLog(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
+
+    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
+        // noop
+    }
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         File target = new File(file.getAbsoluteFilePath());

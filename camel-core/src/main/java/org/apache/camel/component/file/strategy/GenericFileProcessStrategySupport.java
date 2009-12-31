@@ -32,6 +32,12 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
     protected final transient Log log = LogFactory.getLog(getClass());
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
 
+    public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception {
+        if (exclusiveReadLockStrategy != null) {
+            exclusiveReadLockStrategy.prepareOnStartup(operations, endpoint);
+        }
+    }
+
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // if we use exclusive read then acquire the exclusive read (waiting until we got it)
         if (exclusiveReadLockStrategy != null) {

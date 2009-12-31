@@ -18,6 +18,7 @@ package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.commons.logging.Log;
@@ -31,6 +32,10 @@ import org.apache.commons.logging.LogFactory;
 public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFileExclusiveReadLockStrategy<T> {
     private static final transient Log LOG = LogFactory.getLog(GenericFileRenameExclusiveReadLockStrategy.class);
     private long timeout;
+
+    public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception {
+        // noop
+    }
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
                                             Exchange exchange) throws Exception {
@@ -101,14 +106,6 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         return timeout;
     }
 
-    /**
-     * Sets an optional timeout period.
-     * <p/>
-     * If the readlock could not be granted within the timeperiod then the wait is stopped and the
-     * <tt>acquireExclusiveReadLock</tt> returns <tt>false</tt>.
-     *
-     * @param timeout period in millis
-     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

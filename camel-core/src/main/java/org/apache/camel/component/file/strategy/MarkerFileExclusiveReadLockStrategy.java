@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.ExchangeHelper;
@@ -35,8 +36,19 @@ import org.apache.commons.logging.LogFactory;
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Log LOG = LogFactory.getLog(MarkerFileExclusiveReadLockStrategy.class);
 
+    public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
+        String dir = endpoint.getConfiguration().getDirectory();
+        File file = new File(dir);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Prepare on startup by deleting orphaned lock files from: " + dir);
+        }
+
+        deleteLockFiles(file, endpoint.isRecursive());
+    }
+
     @SuppressWarnings("unchecked")
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
 
         String lockFileName = file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
@@ -73,6 +85,25 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     public void setTimeout(long timeout) {
         // noop
+    }
+
+    private static void deleteLockFiles(File dir, boolean recursive) {
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            return;
+        }
+
+        for (File file : files) {
+            if (file.getName().startsWith(".")) {
+                // files starting with dot should be skipped
+                continue;
+            } else if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
+                LOG.warn("Deleting orphaned lock file: " + file);
+                FileUtil.deleteFile(file);
+            } else if (recursive && file.isDirectory()) {
+                deleteLockFiles(file, true);
+            }
+        }
     }
 
 }
