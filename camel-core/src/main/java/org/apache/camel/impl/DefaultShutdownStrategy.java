@@ -283,8 +283,6 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 ShutdownRoute shutdownRoute = order.getRoute().getRouteContext().getShutdownRoute();
                 ShutdownRunningTask shutdownRunningTask = order.getRoute().getRouteContext().getShutdownRunningTask();
 
-                // TODO: shutdownRunningTask should be implemented in various consumers
-
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Shutting down route: " + order.getRoute().getId() + " with options [" + shutdownRoute + "," + shutdownRunningTask + "]");
                 }
