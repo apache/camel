@@ -144,6 +144,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T jaxb() {
         return dataFormat(new JaxbDataFormat());
     }
+    
+    /**
+     * Uses the JAXB data format with context path
+     */
+    public T jaxb(String contextPath) {
+        JaxbDataFormat dataFormat = new JaxbDataFormat();
+        dataFormat.setContextPath(contextPath);
+        return dataFormat(dataFormat);
+    }
 
     /**
      * Uses the JAXB data format turning pretty printing on or off

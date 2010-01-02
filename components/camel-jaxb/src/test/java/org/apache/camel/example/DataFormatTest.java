@@ -86,7 +86,7 @@ public class DataFormatTest extends ContextTestSupport {
                         to("direct:marshalled");
 
                 from("direct:marshalled").
-                        unmarshal(example).
+                        unmarshal().jaxb("org.apache.camel.example").
                         to("mock:result");
                 
                 from("direct:prettyPrint").
