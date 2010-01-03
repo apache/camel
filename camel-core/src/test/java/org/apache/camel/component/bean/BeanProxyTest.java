@@ -124,6 +124,22 @@ public class BeanProxyTest extends ContextTestSupport {
         }
     }
 
+    public void testBeanProxyCallAnotherBean() throws Exception {
+        Endpoint endpoint = context.getEndpoint("direct:bean");
+        OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
+
+        String reply = service.submitOrderStringReturnString("World");
+        assertEquals("Hello World", reply);
+    }
+
+    public void testBeanProxyCallAnotherBeanWithNoArgs() throws Exception {
+        Endpoint endpoint = context.getEndpoint("direct:bean");
+        OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
+
+        String reply = service.doAbsolutelyNothing();
+        assertEquals("Hi nobody", reply);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -140,7 +156,21 @@ public class BeanProxyTest extends ContextTestSupport {
 
                 from("direct:other").transform(constant("<order>FAIL</order>"));
                 // END SNIPPET: e1
+
+                from("direct:bean")
+                    .bean(MyFooBean.class, "hello");
             }
         };
+    }
+
+    public static class MyFooBean {
+
+        public String hello(String name) {
+            if (name != null) {
+                return "Hello " + name;
+            } else {
+                return "Hi nobody";
+            }
+        }
     }
 }

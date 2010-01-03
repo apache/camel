@@ -40,9 +40,8 @@ public final class BeanConverter {
 
             BeanInvocation bi = (BeanInvocation) value;
             if (bi.getArgs() == null || bi.getArgs().length != 1) {
-                // not possible to convert as we try to convert the data passed in at first argument
-                return null;
-
+                // not possible to convert at this time as we try to convert the data passed in at first argument
+                return Void.TYPE;
             }
 
             Class from = bi.getArgs()[0].getClass();

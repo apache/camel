@@ -14,29 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.spring.issues;
 
-import org.w3c.dom.Document;
+import org.apache.camel.Produce;
 
 /**
  * @version $Revision$
  */
-// START SNIPPET: e1
-public interface OrderService {
+public class CoolService {
 
-    String submitOrderStringReturnString(String order);
+    @Produce(uri = "direct:start")
+    private MyCoolStuff stuff;
 
-    Document submitOrderStringReturnDocument(String order);
+    public String stuff(String s) {
+        return stuff.cool(s);
+    }
 
-    String submitOrderDocumentReturnString(Document order);
-
-    Document submitOrderDocumentReturnDocument(Document order);
-
-    void doNothing(String s);
-
-    Integer invalidReturnType(String s);
-
-    String doAbsolutelyNothing();
-
+    public String[] split(String s) {
+        return s.split(",");
+    }
 }
-// END SNIPPET: e1

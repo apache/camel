@@ -27,11 +27,14 @@ import java.util.Arrays;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Invocation of beans that can handle being serialized.
  */
 public class BeanInvocation implements Externalizable {
+    private static final transient Log LOG = LogFactory.getLog(BeanInvocation.class);
     private Object[] args;
     private MethodBean methodBean;
     private transient Method method;
@@ -77,7 +80,13 @@ public class BeanInvocation implements Externalizable {
      */
     public void invoke(Object pojo, Exchange exchange) {
         try {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Invoking method: " + getMethod() + " with args: " + getArgs());
+            }
             Object response = getMethod().invoke(pojo, getArgs());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Got response: " + response);
+            }
             exchange.getOut().setBody(response);
         } catch (InvocationTargetException e) {
             exchange.setException(ObjectHelper.wrapRuntimeCamelException(e.getCause()));

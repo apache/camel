@@ -41,17 +41,20 @@ public class ProxyReturnNullIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:echo").bean(new Echo() {
-                    public String echo(String text) {
-                        return text;
-                    }
-                });
+                from("direct:echo").bean(new MyEchoBean());
             }
         };
     }
 
     public static interface Echo {
         String echo(String text);
+    }
+
+    public static class MyEchoBean implements Echo {
+
+        public String echo(String text) {
+            return text;
+        }
     }
 
 }

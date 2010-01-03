@@ -86,14 +86,32 @@ public class BeanProcessor extends ServiceSupport implements Processor {
 
         Message in = exchange.getIn();
 
-        if (in.getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) == null) {
-            in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
-        }
-
+        // Now it gets a bit complicated as ProxyHelper can proxy beans which we later
+        // intend to invoke (for example to proxy and invoke using spring remoting).
+        // and therefore the message body contains a BeanInvocation object.
+        // However this can causes problem if we in a Camel route invokes another bean,
+        // so we must test whether BeanHolder and BeanInvocation is the same bean or not
         BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
         if (beanInvoke != null) {
-            beanInvoke.invoke(bean, exchange);
-            return;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Exchange IN body is a BeanInvocation instance: " + beanInvoke);
+            }
+            Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
+            boolean sameBean = clazz.isInstance(bean);
+            if (LOG.isTraceEnabled()) {
+                LOG.debug("BeanHolder bean: " + bean.getClass() + " and beanInvocation bean: " + clazz + " is same instance: " + sameBean);
+            }
+            if (sameBean) {
+                beanInvoke.invoke(bean, exchange);
+                // propagate headers
+                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                return;
+            }
+        }
+
+        // set temporary header which is a hint for the bean info that introspect the bean
+        if (in.getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) == null) {
+            in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
         }
 
         String prevMethod = null;
@@ -110,8 +128,20 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         }
         if (invocation == null) {
             throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
-        } 
-   
+        }
+
+        // remove temporary header
+        in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+
+        // if there was bean invocation as body and we are invoking the same bean
+        // then invoke it
+        if (beanInvoke != null && beanInvoke.getMethod() == invocation.getMethod()) {
+            beanInvoke.invoke(bean, exchange);
+            // propagate headers
+            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+            return;
+        }
+
         Object value = null;
         try {
             value = invocation.proceed();

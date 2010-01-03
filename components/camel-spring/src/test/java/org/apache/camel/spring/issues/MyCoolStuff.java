@@ -14,29 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
-
-import org.w3c.dom.Document;
+package org.apache.camel.spring.issues;
 
 /**
  * @version $Revision$
  */
-// START SNIPPET: e1
-public interface OrderService {
+public interface MyCoolStuff {
 
-    String submitOrderStringReturnString(String order);
-
-    Document submitOrderStringReturnDocument(String order);
-
-    String submitOrderDocumentReturnString(Document order);
-
-    Document submitOrderDocumentReturnDocument(Document order);
-
-    void doNothing(String s);
-
-    Integer invalidReturnType(String s);
-
-    String doAbsolutelyNothing();
-
+    String cool(String s);
 }
-// END SNIPPET: e1

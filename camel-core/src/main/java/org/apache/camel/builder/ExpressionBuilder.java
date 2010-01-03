@@ -32,6 +32,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Producer;
+import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.spi.Language;
@@ -450,8 +451,16 @@ public final class ExpressionBuilder {
     public static <T> Expression mandatoryBodyExpression(final Class<T> type, final boolean nullBodyAllowed) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                if (nullBodyAllowed && exchange.getIn().getBody() == null) {
-                    return null;
+                if (nullBodyAllowed) {
+                    if (exchange.getIn().getBody() == null) {
+                        return null;
+                    }
+
+                    // if its a bean invocation then if it has no arguments then it should be threaded as null body allowed
+                    BeanInvocation bi = exchange.getIn().getBody(BeanInvocation.class);
+                    if (bi != null && (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null)) {
+                        return null;
+                    }
                 }
 
                 try {

@@ -43,6 +43,7 @@ public interface Exchange {
     String BATCH_COMPLETE = "CamelBatchComplete";
 
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
+    @Deprecated
     String BEAN_HOLDER                = "CamelBeanHolder";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
 
