@@ -27,8 +27,12 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * A Spring {@link FactoryBean} for creating a new {@link org.apache.camel.ProducerTemplate}
@@ -38,15 +42,22 @@ import org.springframework.beans.factory.InitializingBean;
  */
 @XmlRootElement(name = "template")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelProducerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware {
+public class CamelProducerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware, ApplicationContextAware {
     @XmlAttribute(required = false)
     private String defaultEndpoint;
+    @XmlAttribute
+    private String camelContextId;
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private ApplicationContext applicationContext;
 
     public void afterPropertiesSet() throws Exception {
+        if (camelContext == null && camelContextId != null) {
+            camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+        }
         if (camelContext == null) {
-            throw new IllegalArgumentException("A CamelContext must be injected!");
+            throw new IllegalArgumentException("A CamelContext or a CamelContextId must be injected!");
         }
     }
 
@@ -87,4 +98,13 @@ public class CamelProducerTemplateFactoryBean extends IdentifiedType implements 
     public void setDefaultEndpoint(String defaultEndpoint) {
         this.defaultEndpoint = defaultEndpoint;
     }
+
+    public void setCamelContextId(String camelContextId) {
+        this.camelContextId = camelContextId;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+    
 }

@@ -21,15 +21,21 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.ProxyHelper;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.remoting.support.UrlBasedRemoteAccessor;
 
 /**
  * A {@link FactoryBean} to create a Proxy to a a Camel Pojo Endpoint.
  */
-public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements FactoryBean, CamelContextAware, DisposableBean {
+public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements FactoryBean, CamelContextAware, DisposableBean, ApplicationContextAware {
     private CamelContext camelContext;
+    private String camelContextId;
+    private ApplicationContext applicationContext;
     private Endpoint endpoint;
     private Object serviceProxy;
     private Producer producer;
@@ -40,10 +46,14 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         super.afterPropertiesSet();
         try {
             if (endpoint == null) {
+                if (camelContext == null && camelContextId != null) {
+                    camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+                }
+                
                 if (getServiceUrl() == null || camelContext == null) {
                     throw new IllegalArgumentException("If endpoint is not specified, the serviceUrl and camelContext must be specified.");
                 }
-
+                
                 endpoint = camelContext.getEndpoint(getServiceUrl());
                 if (endpoint == null) {
                     throw new IllegalArgumentException("Could not resolve endpoint: " + getServiceUrl());
@@ -98,6 +108,11 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+        
     }
 
 }

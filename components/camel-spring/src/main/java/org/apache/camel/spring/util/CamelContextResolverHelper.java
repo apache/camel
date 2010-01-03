@@ -14,27 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.util;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.camel.CamelContext;
+import org.springframework.context.ApplicationContext;
 
-import org.apache.camel.model.IdentifiedType;
-
-/**
- * The &lt;export&gt; tag element.
- *
- * @version $Revision$
-*/
-@XmlRootElement(name = "export")
-public class CamelServiceExporterDefinition extends IdentifiedType {
-    @XmlAttribute
-    private String uri;
-    @XmlAttribute
-    private String serviceRef;
-    @XmlAttribute
-    private Class serviceInterface;
-    @XmlAttribute
-    private String camelContextId;
+public final class CamelContextResolverHelper {
+    private CamelContextResolverHelper() {
+        // The helper class
+    }
     
+    public static CamelContext getCamelContextWithId(ApplicationContext context, String contextId) {
+        CamelContext answer;
+        try {
+            answer = (CamelContext) context.getBean(contextId);
+            return answer;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Can't find the CamelContext with id " + contextId + ", the cause : ", e);
+        }
+    }
+
 }

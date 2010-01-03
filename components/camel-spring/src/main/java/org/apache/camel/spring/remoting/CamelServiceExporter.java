@@ -21,6 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -38,6 +39,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class CamelServiceExporter extends RemoteExporter implements InitializingBean, DisposableBean, ApplicationContextAware, CamelContextAware {
     private String uri;
     private CamelContext camelContext;
+    private String camelContextId;
     private Consumer consumer;
     private String serviceRef;
     private ApplicationContext applicationContext;
@@ -56,6 +58,10 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+    
+    public void setCamelContextId(String camelContextId) {
+        this.camelContextId = camelContextId;
     }
 
     public String getServiceRef() {
@@ -77,6 +83,9 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
     public void afterPropertiesSet() throws Exception {
         // lets bind the URI to a pojo
         notNull(uri, "uri");
+        if (camelContext == null && camelContextId != null) {
+            camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+        }
         notNull(camelContext, "camelContext");
         if (serviceRef != null && getService() == null && applicationContext != null) {
             setService(applicationContext.getBean(serviceRef));

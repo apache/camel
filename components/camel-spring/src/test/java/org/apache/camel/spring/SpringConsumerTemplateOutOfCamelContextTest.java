@@ -16,25 +16,9 @@
  */
 package org.apache.camel.spring;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.test.context.ContextConfiguration;
 
-import org.apache.camel.model.IdentifiedType;
+@ContextConfiguration(inheritLocations = false)
+public class SpringConsumerTemplateOutOfCamelContextTest extends SpringConsumerTemplateTest {
 
-/**
- * The &lt;export&gt; tag element.
- *
- * @version $Revision$
-*/
-@XmlRootElement(name = "export")
-public class CamelServiceExporterDefinition extends IdentifiedType {
-    @XmlAttribute
-    private String uri;
-    @XmlAttribute
-    private String serviceRef;
-    @XmlAttribute
-    private Class serviceInterface;
-    @XmlAttribute
-    private String camelContextId;
-    
 }

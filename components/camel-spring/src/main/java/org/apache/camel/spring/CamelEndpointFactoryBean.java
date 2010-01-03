@@ -28,7 +28,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -39,15 +43,19 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware {
+public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
     @XmlAttribute    
     private Boolean singleton = Boolean.FALSE;
     @XmlAttribute
     private String uri;
+    @XmlAttribute
+    private String camelContextId;
     @XmlTransient
-    private CamelContext context;
+    private CamelContext context;    
     @XmlTransient
     private Endpoint endpoint;
+    @XmlTransient
+    private ApplicationContext applicationContext;
    
 
     public Object getObject() throws Exception {
@@ -97,6 +105,9 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
     }
 
     protected Endpoint createEndpoint() {
+        if (context == null && camelContextId != null) {
+            context = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+        }
         notNull(context, "context");
         notNull(uri, "uri");
         
@@ -106,4 +117,13 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
         }
         return endpoint;
     }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    public void setCamelContextId(String camelContextId) {
+        this.camelContextId = camelContextId;
+    }
+   
 }

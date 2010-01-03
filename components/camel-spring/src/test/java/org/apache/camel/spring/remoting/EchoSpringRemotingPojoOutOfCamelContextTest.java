@@ -14,27 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.remoting;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import org.apache.camel.model.IdentifiedType;
+public class EchoSpringRemotingPojoOutOfCamelContextTest extends EchoSpringRemotingPojoTest {
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/echo-pojo-out-of-camelContext.xml");
+    }
 
-/**
- * The &lt;export&gt; tag element.
- *
- * @version $Revision$
-*/
-@XmlRootElement(name = "export")
-public class CamelServiceExporterDefinition extends IdentifiedType {
-    @XmlAttribute
-    private String uri;
-    @XmlAttribute
-    private String serviceRef;
-    @XmlAttribute
-    private Class serviceInterface;
-    @XmlAttribute
-    private String camelContextId;
-    
 }

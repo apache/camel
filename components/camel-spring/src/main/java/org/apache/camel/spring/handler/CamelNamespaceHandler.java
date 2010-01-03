@@ -86,18 +86,17 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     public void init() {
-        // These elements parser should be used inside the camel context
-        addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, false);
-        addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, false);
-        addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, false);
-        addBeanDefinitionParser("export", CamelServiceExporter.class, false);
+        
+        addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true);
+        addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true);
+        addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true);
+        addBeanDefinitionParser("export", CamelServiceExporter.class, true);
        
         // jmx agent cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
 
         // endpoint
-        // This element cannot be used out side of camel context
-        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, false);
+        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, true);
 
         // camel context
         boolean osgi = false;

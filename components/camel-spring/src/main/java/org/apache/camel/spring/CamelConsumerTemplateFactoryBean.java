@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -25,8 +26,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * A Spring {@link org.springframework.beans.factory.FactoryBean} for creating a new {@link org.apache.camel.ConsumerTemplate}
@@ -36,13 +41,20 @@ import org.springframework.beans.factory.InitializingBean;
  */
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware {
+public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware, ApplicationContextAware {
+    @XmlAttribute
+    private String camelContextId;
     @XmlTransient
-    private CamelContext camelContext;
+    private CamelContext camelContext;    
+    @XmlTransient
+    private ApplicationContext applicationContext;
 
     public void afterPropertiesSet() throws Exception {
+        if (camelContext == null && camelContextId != null) {
+            camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+        }
         if (camelContext == null) {
-            throw new IllegalArgumentException("A CamelContext must be injected!");
+            throw new IllegalArgumentException("A CamelContext or a CamelContextId must be injected!");
         }
     }
 
@@ -66,6 +78,14 @@ public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements 
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    public void setCamelContextId(String camelContextId) {
+        this.camelContextId = camelContextId;
     }
 
 }
