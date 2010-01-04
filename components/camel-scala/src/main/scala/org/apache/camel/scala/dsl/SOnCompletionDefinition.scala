@@ -24,8 +24,8 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder;
  */
 case class SOnCompletionDefinition(override val target : OnCompletionDefinition)(implicit val builder : RouteBuilder) extends SAbstractDefinition[OnCompletionDefinition] {
 
-  override def when(predicate : Exchange => Boolean) : SOnCompletionDefinition = 
-    wrap(target.setOnWhen(new WhenDefinition(new ScalaPredicate(predicate))))
+  override def when(predicate : Exchange => Any) : SOnCompletionDefinition =
+    wrap(target.setOnWhen(new WhenDefinition(predicate)))
 
   def onFailureOnly = wrap(target.onFailureOnly)
   def onCompleteOnly = wrap(target.onCompleteOnly)

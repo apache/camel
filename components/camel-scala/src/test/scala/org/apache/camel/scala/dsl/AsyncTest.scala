@@ -14,21 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.ChoiceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import builder.{RouteBuilderSupport, RouteBuilder}
+import org.apache.camel.processor.async.AsyncRouteTest
+import org.apache.camel.processor.async.AsyncRouteTest.MyProcessor
 
-case class SChoiceDefinition(override val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ChoiceDefinition] {
-  
-  override def otherwise = {
-    target.otherwise
-    this
+/**
+ * Scala DSL equivalent for org.apache.camel.processor.async.AsyncRouteTest 
+ */
+class SAsyncRouteTest extends AsyncRouteTest with RouteBuilderSupport {
+
+  override def createRouteBuilder = new RouteBuilder {
+    "direct:start" ==> {
+      transform(_.in[String] + " World")
+      threads {
+        to("mock:foo")
+        delay(500 ms)
+        process(new MyProcessor)
+        to("mock:result")
+      }
+    }
   }
-  
-  override def when(filter: Exchange => Any) = {
-    target.when(filter)
-    this
-  }
-
 }
+  

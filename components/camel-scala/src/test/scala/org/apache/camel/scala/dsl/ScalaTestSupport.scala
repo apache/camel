@@ -38,15 +38,11 @@ abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupp
     mock
   }
 
-  def in(message: Any) : Exchange = {
-    val exchange = createExchangeWithBody(message)
-    println(exchange)
-    exchange
-  }
+  def in(message: Any) : Exchange =  createExchangeWithBody(message)
   
   val builder : RouteBuilder
   
-  override protected def createRouteBuilder = builder.print
+  override protected def createRouteBuilder = builder
   
   override def setUp = {
     super.setUp
@@ -57,4 +53,17 @@ abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupp
     block
     endpoints.foreach(_.assertIsSatisfied)
   }
+
+  override def createJndiContext = {
+    jndi match {
+      case Some(map) => {
+        val context = super.createJndiContext
+        map.foreach({case (key, value) => context.bind(key, value) })
+        context
+      }
+      case None => super.createJndiContext
+    }
+  }
+
+  def jndi : Option[Map[String, Any]] = None
 }

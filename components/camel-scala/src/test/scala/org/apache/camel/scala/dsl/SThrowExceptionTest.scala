@@ -15,31 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl;
- 
-import scala.dsl.builder.RouteBuilder
+
+import builder.{RouteBuilder, RouteBuilderSupport}
+import org.apache.camel.processor.ThrowExceptionTest
 
 /**
- * Test for an interceptor
+ * Scala DSL equivalent for org.apache.camel.processor.ThrowExceptionTest  
  */
-class InterceptorTest extends ScalaTestSupport {
+class SThrowExceptionTest extends ThrowExceptionTest with RouteBuilderSupport {
 
-  def testSimple() = {
-    // TODO: Does not work after change to default error handler
-    // "mock:a" expect { _.count = 1}
-    // "mock:intercepted" expect { _.count = 1}
-    // test {
-    //    "seda:a" ! ("NightHawk", "SongBird")
-    // }
+  override def createRouteBuilder = new RouteBuilder {
+    "direct:start" ==> {
+       to("mock:start")
+       throwException(new IllegalArgumentException("Forced"))
+       to("mock:result");
+    }
   }
-
-  val builder = new RouteBuilder {
-     //START SNIPPET: simple
-     interceptFrom(_.in(classOf[String]) == "Nighthawk") {
-		to ("mock:intercepted")     	
-     } stop
-     
-     "seda:a" --> "mock:a"
-     //END SNIPPET: simple
-   }
-
 }

@@ -14,21 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.ChoiceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import builder.{RouteBuilder, RouteBuilderSupport}
+import org.apache.camel.processor.FilterTest
 
-case class SChoiceDefinition(override val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ChoiceDefinition] {
-  
-  override def otherwise = {
-    target.otherwise
-    this
+/**
+ * Scala DSL equivalent for org.apache.camel.processor.FilterTest (using the simple, one-line DSL)
+ */
+class SFilterSimpleTest extends FilterTest with RouteBuilderSupport {
+
+  override def createRouteBuilder = new RouteBuilder {
+    from("direct:start") filter(_.in("foo") == "bar") to("mock:result")
   }
   
-  override def when(filter: Exchange => Any) = {
-    target.when(filter)
-    this
-  }
+}
 
+/**
+ * Scala DSL equivalent for org.apache.camel.processor.FilterTest (using the block-based DSL)
+ */
+class SFilterBlockTest extends FilterTest with RouteBuilderSupport {
+
+  override def createRouteBuilder = new RouteBuilder {
+    "direct:start" ==> {
+      filter(_.in("foo") == "bar") {
+        to("mock:result")  
+      }
+    }
+  }
 }

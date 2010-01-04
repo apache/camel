@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl;
- 
+
+import builder.RouteBuilder
 import org.w3c.dom.Document
 import scala.dsl.builder.RouteBuilder
 

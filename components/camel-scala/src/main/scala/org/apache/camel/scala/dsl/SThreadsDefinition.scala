@@ -14,28 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.LoadBalanceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
-import org.apache.camel.Exchange
+import builder.RouteBuilder
+import org.apache.camel.model.ThreadsDefinition
+import java.util.concurrent.ExecutorService
+import org.apache.camel.WaitForTaskToComplete;
 
 /**
- * Scala enrichment for Camel's LoadBalanceDefinition
+ * Scala enrichment for Camel's ThreadsDefinition
  */
-case class SLoadBalanceDefinition(override val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoadBalanceDefinition] {
+case class SThreadsDefinition(override val target: ThreadsDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ThreadsDefinition] {
 
-  def failover(classes: Class[_]*) = wrap(target.failover(classes: _*))
+  def executorService(service: ExecutorService) = wrap(target.executorService(service))
+  def executorService(ref: String) = wrap(target.executorServiceRef(ref))
 
-  def failover = wrap(target.failover)
+  def poolSize(size: Int) = wrap(target.poolSize(size))
 
-  def roundrobin = wrap(target.roundRobin)
+  def waitForTaskToComplete(wait: WaitForTaskToComplete) = wrap(target.waitForTaskToComplete(wait))
 
-  def random = wrap(target.random)
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SThreadsDefinition]
 
-  def sticky(expression: Exchange => Any) = wrap(target.sticky(expression))
-
-  def topic = wrap(target.topic)
-
-  override def wrap(block: => Unit) : SLoadBalanceDefinition = super.wrap(block).asInstanceOf[SLoadBalanceDefinition] 
 }
+  

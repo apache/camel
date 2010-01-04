@@ -14,28 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.LoadBalanceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
-import org.apache.camel.Exchange
+import builder.{RouteBuilder, RouteBuilderSupport}
+import org.apache.camel.processor.routingslip.RoutingSlipTest
 
 /**
- * Scala enrichment for Camel's LoadBalanceDefinition
+ * Scala DSL equivalent for the org.apache.camel.processor.routingslip.RoutingSlipTest
  */
-case class SLoadBalanceDefinition(override val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoadBalanceDefinition] {
+class SRoutingSlipTest extends RoutingSlipTest with RouteBuilderSupport {
 
-  def failover(classes: Class[_]*) = wrap(target.failover(classes: _*))
+  override def createRouteBuilder = new RouteBuilder {
+    "direct:a" routingSlip("myHeader") to "mock:end"
 
-  def failover = wrap(target.failover)
+    "direct:b" ==> {
+      routingSlip("aRoutingSlipHeader")
+    }
 
-  def roundrobin = wrap(target.roundRobin)
+    "direct:c" routingSlip("aRoutingSlipHeader", "#")
+  }
 
-  def random = wrap(target.random)
-
-  def sticky(expression: Exchange => Any) = wrap(target.sticky(expression))
-
-  def topic = wrap(target.topic)
-
-  override def wrap(block: => Unit) : SLoadBalanceDefinition = super.wrap(block).asInstanceOf[SLoadBalanceDefinition] 
 }

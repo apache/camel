@@ -16,7 +16,8 @@
  */
 package org.apache.camel.scala.dsl 
 
-import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.DataFormatDefinition
+import reflect.Manifest;
 import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.spi.Policy
@@ -27,12 +28,15 @@ import org.apache.camel.spi.Policy
 trait DSL {
   
   def aggregate(expression: Exchange => Any) : SAggregateDefinition
+  def aop : SAOPDefinition
   def as[Target](toType: Class[Target]) : DSL
   def attempt : STryDefinition
   def bean(bean: Any) : DSL
   def choice : SChoiceDefinition
   def delay(delay: Period) : SDelayDefinition
   def enrich(uri:String, strategy: AggregationStrategy) : DSL
+  def filter(predicate: Exchange => Any) : SFilterDefinition
+  def handle[E](block: => Unit)(implicit manifest: Manifest[E]) : SOnExceptionDefinition
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
   def inOnly(): DSL with Block
   def inOut(): DSL with Block
@@ -44,19 +48,39 @@ trait DSL {
   def onCompletion : SOnCompletionDefinition
   def onCompletion(predicate: Exchange => Boolean) : SOnCompletionDefinition
   def onCompletion(config: Config[SOnCompletionDefinition]) : SOnCompletionDefinition
+  def pipeline : SPipelineDefinition
   def policy(policy: Policy) : DSL
   def process(function: Exchange => Unit) : DSL
   def process(processor: Processor) : DSL
   def recipients(expression: Exchange => Any) : DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
+
+  def routingSlip(header: String) : DSL
+  def routingSlip(header: String, separator: String) : DSL
+
   def setbody(expression: Exchange => Any) : DSL
+  def setfaultbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
+
   def split(expression: Exchange => Any) : SSplitDefinition
+
+  def stop : DSL
+
+  def threads : SThreadsDefinition
+
   def throttle(frequency: Frequency) : SThrottleDefinition
+  def throwException(exception: Exception) : DSL
+
   def to(uris: String*) : DSL
+
+  def transacted : DSL
+  def transacted(ref: String) : DSL
+
+  def transform(expression: Exchange => Any) : DSL
+
   def unmarshal(format: DataFormatDefinition) : DSL
-  def when(filter: Exchange => Boolean) : DSL with Block
+  def when(filter: Exchange => Any) : DSL with Block
   
   def wiretap(uri: String) : DSL
   def wiretap(uri: String, expression: Exchange => Any) : DSL

@@ -18,8 +18,9 @@ package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.AggregateDefinition
 import org.apache.camel.processor.aggregate.AggregationStrategy
-import org.apache.camel.model.config.BatchResequencerConfig
 import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.Exchange
+import org.apache.camel.scala.Period
 
 /**
  * Scala wrapper for Camel AggregateDefinition
@@ -27,27 +28,25 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 case class SAggregateDefinition(override val target: AggregateDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[AggregateDefinition] {
   
   def strategy(function: (Exchange, Exchange) => Exchange) = {
-    println("testing")
     target.setAggregationStrategy(
       new AggregationStrategy() {
-        def aggregate(oldExchange: Exchange, newExchange: Exchange) ={
-          println(oldExchange + " + " + newExchange)
-          try {
-            val result = function(oldExchange, newExchange)
-            println(" -> " + result)
-            result
-          } catch {
-            case e:Exception => println(e); e.printStackTrace()
-          }
-          null
-        }
+        def aggregate(oldExchange: Exchange, newExchange: Exchange) = function(oldExchange, newExchange)
       }
     )
     this
   }
 
-  def batch(count: Int) = {
-    target.batchSize(count)
-    this
-  }
+  def strategy(strategy: AggregationStrategy) = wrap(target.setAggregationStrategy(strategy))
+  def strategy(ref: String) = wrap(target.setStrategyRef(ref));
+
+  def batchTimout(period: Period) = wrap(target.setBatchTimeout(period.milliseconds))
+  def completion(predicate: Exchange => Any) = wrap(target.completionPredicate(predicate))
+
+  def batchSize(count: Int) = wrap(target.batchSize(count))
+  def outBatchSize(count: Int) = wrap(target.outBatchSize(count))
+
+  def groupExchanges = wrap(target.groupExchanges)
+  def batchSizeFromConsumer = wrap(target.batchSizeFromConsumer)
+
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SAggregateDefinition]
 }

@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.ChoiceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
+import org.apache.camel.model.InterceptDefinition;
 
-case class SChoiceDefinition(override val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ChoiceDefinition] {
-  
-  override def otherwise = {
-    target.otherwise
-    this
-  }
-  
-  override def when(filter: Exchange => Any) = {
-    target.when(filter)
+/**
+ * Scala enrichment for Camel's InterceptFromDefinition
+ */
+case class SInterceptDefinition(override val target: InterceptDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[InterceptDefinition] {
+
+  override def apply(block: => Unit) : SInterceptDefinition = {
+    builder.build(this, block)
     this
   }
 

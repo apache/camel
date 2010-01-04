@@ -14,28 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.model.LoadBalanceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
-import org.apache.camel.Exchange
+import builder.RouteBuilder
+import org.apache.camel.model.AOPDefinition;
 
 /**
- * Scala enrichment for Camel's LoadBalanceDefinition
+ * Scala enrichment for Camel's AOPDefinition
  */
-case class SLoadBalanceDefinition(override val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoadBalanceDefinition] {
+case class SAOPDefinition(override val target: AOPDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[AOPDefinition] {
 
-  def failover(classes: Class[_]*) = wrap(target.failover(classes: _*))
+  def before(before: String) = configure(target.before(before))
+  def after(after: String) = configure(target.after(after))
+  def afterFinally(after: String) = configure(target.afterFinally(after));
+  def around(before: String, after: String) = configure(target.around(before, after))
 
-  def failover = wrap(target.failover)
 
-  def roundrobin = wrap(target.roundRobin)
+  def configure(block: => Unit) = {
+    block
+    this
+  }
 
-  def random = wrap(target.random)
-
-  def sticky(expression: Exchange => Any) = wrap(target.sticky(expression))
-
-  def topic = wrap(target.topic)
-
-  override def wrap(block: => Unit) : SLoadBalanceDefinition = super.wrap(block).asInstanceOf[SLoadBalanceDefinition] 
 }

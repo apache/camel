@@ -16,26 +16,29 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.LoadBalanceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
-import org.apache.camel.Exchange
+import builder.{RouteBuilder, RouteBuilderSupport}
+import org.apache.camel.processor.TransformProcessorTest
 
 /**
- * Scala enrichment for Camel's LoadBalanceDefinition
+ * Scala DSL equivalent for the TransformProcessorTest, using simple one-line Scala DSL syntax
  */
-case class SLoadBalanceDefinition(override val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoadBalanceDefinition] {
+class STransformProcessorSimpleTest extends TransformProcessorTest with RouteBuilderSupport {
 
-  def failover(classes: Class[_]*) = wrap(target.failover(classes: _*))
+  override def createRouteBuilder = new RouteBuilder {
+    "direct:start" transform(_.in[String] + " World!") to ("mock:result")
+  }
+}
 
-  def failover = wrap(target.failover)
+/**
+ * Scala DSL equivalent for the TransformProcessorTest, using the Scala DSL block syntax
+ */
+class STransformProcessorBlockTest extends TransformProcessorTest with RouteBuilderSupport {
 
-  def roundrobin = wrap(target.roundRobin)
+  override def createRouteBuilder = new RouteBuilder {
 
-  def random = wrap(target.random)
-
-  def sticky(expression: Exchange => Any) = wrap(target.sticky(expression))
-
-  def topic = wrap(target.topic)
-
-  override def wrap(block: => Unit) : SLoadBalanceDefinition = super.wrap(block).asInstanceOf[SLoadBalanceDefinition] 
+    "direct:start" ==> {
+      transform(_.in[String] + " World!")
+      to("mock:result")
+    }
+  }
 }

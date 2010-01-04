@@ -18,7 +18,26 @@ package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.MulticastDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.Exchange
+import org.apache.camel.processor.aggregate.AggregationStrategy
 
 case class SMulticastDefinition(override val target: MulticastDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[MulticastDefinition] {
+
+  def strategy(function: (Exchange, Exchange) => Exchange) = {
+    target.setAggregationStrategy(
+      new AggregationStrategy() {
+        def aggregate(oldExchange: Exchange, newExchange: Exchange) = function(oldExchange, newExchange)
+      }
+    )
+    this
+  }
+
+  def strategy(strategy: AggregationStrategy) = wrap(target.setAggregationStrategy(strategy))
+
+  def parallel = wrap(target.parallelProcessing)
+
+  def streaming = wrap(target.streaming)
+
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SMulticastDefinition]
   
 }

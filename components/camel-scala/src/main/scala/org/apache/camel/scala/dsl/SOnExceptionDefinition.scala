@@ -18,10 +18,28 @@ package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.OnExceptionDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.Exchange
 
 /**
  * Scala enrichment for Camel's OnExceptionDefinition
  */
 case class SOnExceptionDefinition(override val target: OnExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[OnExceptionDefinition] {
+
+  override def apply(block: => Unit) = super.apply(block).asInstanceOf[SOnExceptionDefinition]
+
+  def handled = wrap(target.handled(true))
+  def handled(predicate: Exchange => Any) = wrap(target.handled(predicateBuilder(predicate)))
+
+  def maximumRedeliveries(count: Int) = wrap(target.maximumRedeliveries(count))
+
+  def onRedelivery(processor: Exchange => Unit) = wrap(target.onRedelivery(new ScalaProcessor(processor)))
+
+  def onWhen(when: Exchange => Any) = wrap(target.onWhen(predicateBuilder(when)))
+
+  def retryUntil(until: Exchange => Any) = wrap(target.retryUntil(predicateBuilder(until)))
+
+  def useOriginalMessage = wrap(target.useOriginalBody)
+
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnExceptionDefinition]
   
 }

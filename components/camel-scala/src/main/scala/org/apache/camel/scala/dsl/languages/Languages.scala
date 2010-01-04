@@ -16,6 +16,8 @@
  */
 package org.apache.camel.scala.dsl.languages
 
+import org.apache.camel.builder.Builder
+
 /**
  * Trait to support the different expression languages available in Camel 
  */
@@ -25,6 +27,7 @@ trait Languages {
    * Implicitly make a method for every language available on the Camel Exchange
    */
   implicit def addLanguageMethodsToExchange(exchange: Exchange) = new {
+    def bean(ref: String) =          Builder.bean(ref).evaluate(exchange, classOf[Any])
     def el(expression: String) =     Languages.this.el(expression)(exchange)
     def groovy(expression: String) = Languages.this.groovy(expression)(exchange)
     def jxpath(expression: String) = Languages.this.jxpath(expression)(exchange)
@@ -49,7 +52,7 @@ trait Languages {
   def php(expression: String)(exchange: Exchange) =        Languages.evaluate(expression)(exchange)("php")
   def python(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("python")
   def ruby(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("ruby")
-  def simple(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("simply")
+  def simple(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("simple")
   def sql(expression: String)(exchange: Exchange) =        Languages.evaluate(expression)(exchange)("sql")
   def xpath(expression: String)(exchange: Exchange) =      Languages.evaluate(expression)(exchange)("xpath")
   def xquery(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("xquery")

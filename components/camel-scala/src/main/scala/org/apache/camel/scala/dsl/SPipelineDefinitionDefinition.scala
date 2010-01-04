@@ -14,32 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
- 
-import scala.dsl.builder.RouteBuilder
+package org.apache.camel.scala.dsl
 
-class ExplicitMulticastTest extends ScalaTestSupport {
+import builder.RouteBuilder
+import org.apache.camel.model.PipelineDefinition
 
-  def testExplicitMulticast = {
-    "mock:a" expect { _.count = 3 }
-    "mock:b" expect { _.count = 3 }
-    "mock:c" expect { _.count = 3 }
-    "direct:a" ! ("<hello/>", "<hallo/>", "<bonjour/>")
-    "mock:a" assert()
-    "mock:b" assert()
-    "mock:c" assert()
-  }
+/**
+ * Scala enrichment for Camel's PipelineDefinition
+ */
+case class SPipelineDefinition(override val target: PipelineDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[PipelineDefinition] {
 
-  val builder = new RouteBuilder {
-    // START SNIPPET: multicast
-    "direct:a" ==> {
-      multicast {
-        to ("mock:a")
-        to ("mock:b")
-        to ("mock:c")
-      }
-    }
-    // END SNIPPET: multicast
-  }
+  override def to(uris: String*) = wrap(uris.foreach(target.to(_)))
+
+  override def apply(block: => Unit) = wrap(super.apply(block))
+
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SPipelineDefinition]
 
 }

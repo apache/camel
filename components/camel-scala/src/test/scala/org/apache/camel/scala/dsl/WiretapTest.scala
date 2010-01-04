@@ -50,14 +50,14 @@ class WiretapTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" wiretap("direct:tap") setbody("Calling " + _.in(classOf[Adult]).name) to ("mock:a")
+       "direct:a" wiretap("direct:tap") setbody("Calling " + _.in[Adult].name) to ("mock:a")
        "direct:c" wiretap("direct:tap-with-body", "Tapped!") to ("mock:c")
        //END SNIPPET: simple
        
        //START SNIPPET: block
        "direct:b" ==> {
          wiretap("direct:tap")
-         setbody("Calling " + _.in(classOf[Adult]).name)
+         setbody("Calling " + _.in[Adult].name)
          to ("mock:b")
        }
        "direct:d" ==> {

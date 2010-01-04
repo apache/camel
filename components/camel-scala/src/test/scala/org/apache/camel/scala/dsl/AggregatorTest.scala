@@ -47,12 +47,12 @@ class AggregatorTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" aggregate (_.in(classOf[String]).substring(0, 7)) to "mock:a"
+       "direct:a" aggregate (_.in[String].substring(0, 7)) to "mock:a"
        //END SNIPPET: simple
        
        //START SNIPPET: block
        "direct:b" ==> {
-         aggregate(_.in(classOf[String]).substring(0,7)) {
+         aggregate(_.in[String].substring(0,7)) {
            to ("mock:b")
          }
        }

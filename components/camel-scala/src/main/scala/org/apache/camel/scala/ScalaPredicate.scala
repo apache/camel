@@ -17,11 +17,12 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.Predicate
+import org.apache.camel.util.ObjectHelper.evaluateValuePredicate
 
-class ScalaPredicate(function: Exchange => Boolean) extends Predicate[Exchange]{
+class ScalaPredicate(function: Exchange => Any) extends Predicate[Exchange]{
 
   override def matches(exchange: Exchange) = {
-    function(exchange)
+    evaluateValuePredicate(function(exchange))
   }
 
 }

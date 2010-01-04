@@ -43,7 +43,7 @@ class RecipientListRouteTest extends ScalaTestSupport {
    
   val builder = new RouteBuilder {
     //START SNIPPET: simple
-    "direct:a" recipients(_.in(classOf[String]).substring(21))
+    "direct:a" recipients(_.in[String].substring(21))
     //END SNIPPET: simple
       
     //START SNIPPET: pattern 

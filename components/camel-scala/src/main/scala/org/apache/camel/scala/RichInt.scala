@@ -20,7 +20,9 @@ package org.apache.camel.scala
  * Rich wrapper for Int, providing a convenient syntax for specifying Period and Frequency
  */
 class RichInt(val int: Int) {
-  
+
+  def ms = new Period(int)
+
   def seconds = new Period(int).seconds
   
   def per(period: Int) = new Frequency(int, new Period(period))

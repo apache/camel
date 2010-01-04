@@ -16,7 +16,10 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.DataFormatDefinition
+import org.apache.camel.builder.PredicateBuilder.toPredicate
+import org.apache.camel.{Predicate, Exchange}
+
 import org.apache.camel.model._
 import org.apache.camel.spi.Policy
 
@@ -24,6 +27,7 @@ import org.apache.camel.spi.Policy
 import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.scala.dsl.builder.RouteBuilder
+import reflect.Manifest
 
 abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
 
@@ -31,7 +35,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   val unwrap = target
   implicit val builder: RouteBuilder
   implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
-  implicit def predicateBuilder(predicate: Exchange => Boolean) = new ScalaPredicate(predicate)
+  implicit def predicateBuilder(predicate: Exchange => Any) = new ScalaPredicate(predicate)
   
   def -->(uris: String*) = to(uris:_*)
   def to(uris: String*) = {
@@ -45,9 +49,11 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     this
   }
   
-  def when(filter: Exchange => Boolean) : DSL with Block = SChoiceDefinition(target.choice).when(filter)
+  def when(filter: Exchange => Any) : DSL with Block = SChoiceDefinition(target.choice).when(filter)
     
   def as[Target](toType: Class[Target]) = wrap(target.convertBodyTo(toType))
+
+  def aop = SAOPDefinition(target.aop)
   
   def attempt : STryDefinition = STryDefinition(target.doTry)
   
@@ -67,9 +73,13 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def choice = SChoiceDefinition(target.choice)
   
   def enrich(uri: String, strategy: AggregationStrategy) = wrap(target.enrich(uri, strategy))
+
+  def filter(predicate: Exchange => Any) = SFilterDefinition(target.filter(predicateBuilder(predicate)))
     
   def otherwise : SChoiceDefinition = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
+
+  def handle[E](block: => Unit)(implicit manifest: Manifest[E]) = SOnExceptionDefinition(target.onException(manifest.erasure)).apply(block)
   
   def idempotentconsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
   
@@ -103,6 +113,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     config.configure(completion)
     completion
   }
+
+  def pipeline = SPipelineDefinition(target.pipeline)
   
   def policy(policy: Policy) = wrap(target.policy(policy))
 
@@ -111,10 +123,26 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def resequence(expression: Exchange => Any) = SResequenceDefinition(target.resequence(expression))
   
   def rollback = wrap(target.rollback)
+
+  def routingSlip(header: String) = wrap(target.routingSlip(header))
+  def routingSlip(header: String, separator: String) = wrap(target.routingSlip(header, separator))
   
   def setbody(expression: Exchange => Any) = wrap(target.setBody(expression))
+
+  def setfaultbody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))
   
   def setheader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
+
+  def stop = wrap(target.stop)
+
+  def threads = SThreadsDefinition(target.threads)
+
+  def throwException(exception: Exception) = wrap(target.throwException(exception))
+
+  def transacted = wrap(target.transacted)
+  def transacted(ref: String) = wrap(target.transacted(ref))
+
+  def transform(expression: Exchange => Any) = wrap(target.transform(expression))
   
   def unmarshal(format: DataFormatDefinition) = wrap(target.unmarshal(format))
   

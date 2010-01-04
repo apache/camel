@@ -19,6 +19,7 @@ package org.apache.camel.scala.dsl;
 import org.apache.camel.model.IdempotentConsumerDefinition
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
 import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.spi.IdempotentRepository
 
 /**
  * Scala enrichment for Camel's IdempotentConsumerDefinition
@@ -29,5 +30,11 @@ case class SIdempotentConsumerDefinition(override val target: IdempotentConsumer
     target.setMessageIdRepository(MemoryIdempotentRepository.memoryIdempotentRepository(size))
     this
   }
+
+  def repository(repo: IdempotentRepository[_]) = wrap(target.setMessageIdRepository(repo))
+
+  def eager(eager: Boolean) = wrap(target.eager(eager))
+
+  override def wrap(block: => Unit) : SIdempotentConsumerDefinition = super.wrap(block).asInstanceOf[SIdempotentConsumerDefinition]
    
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.scala
 
 import org.apache.camel.Exchange
+import reflect.Manifest
 
 /**
  * Rich wrapper for Camel's Exchange implementations
@@ -29,7 +30,7 @@ class RichExchange(val exchange : Exchange) {
 
   def in(header:String) : Any = exchange.getIn().getHeader(header)
 
-  def in[T](target:Class[T]) : T = exchange.getIn().getBody(target)
+  def in[T](implicit manifest: Manifest[T]) : T = exchange.getIn().getBody(manifest.erasure).asInstanceOf[T]
 
   def out : Any = exchange.getOut().getBody()
 
