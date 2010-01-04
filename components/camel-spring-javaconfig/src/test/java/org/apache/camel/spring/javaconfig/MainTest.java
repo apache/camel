@@ -21,22 +21,26 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
 public class MainTest extends Assert {
     @Test
     public void  testOptions() throws Exception {
-        
-        CamelContext context = createCamelContext(new String[] {"-cc", "org.apache.camel.spring.javaconfig.ContextConfig"});
+        CamelContext context = createCamelContext(new String[] {"-cc", "org.apache.camel.spring.javaconfig.config.ContextConfig"});
+        context.start();
+        runTests(context);
+        context.stop();
+    }
+    
+    @Test
+    public void testOptionBP() throws Exception {
+        CamelContext context = createCamelContext(new String[]{"-bp", "org.apache.camel.spring.javaconfig.config"});
         context.start();
         runTests(context);
         context.stop();
         
-        context = createCamelContext(new String[]{"-bp", "org.apache.camel.spring.javaconfig"});
-        context.start();
-        runTests(context);
-        context.stop();
     }
         
     private CamelContext createCamelContext(String[] options) throws Exception {

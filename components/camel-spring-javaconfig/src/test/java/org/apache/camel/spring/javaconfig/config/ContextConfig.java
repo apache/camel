@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.javaconfig;
+package org.apache.camel.spring.javaconfig.config;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
