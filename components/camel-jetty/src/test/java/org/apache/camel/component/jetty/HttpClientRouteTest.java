@@ -33,13 +33,22 @@ import org.junit.Test;
 public class HttpClientRouteTest extends CamelTestSupport {
 
     @Test
-    public void testHttpClient() throws Exception {
+    public void testHttpRouteWithMessageHeader() throws Exception {
+        testHttpClient("direct:start");
+    }
+    
+    @Test
+    public void testHttpRouteWithOption() throws Exception {
+        testHttpClient("direct:start2");
+    }
+    
+    private void testHttpClient(String uri) throws Exception {
         System.getProperties().put("HTTPClient.dontChunkRequests", "yes");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
-        template.requestBodyAndHeader("direct:start", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
+        template.requestBodyAndHeader(uri, new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
         
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -50,10 +59,13 @@ public class HttpClientRouteTest extends CamelTestSupport {
         assertNotNull("in", in);
 
         Map<String, Object> headers = in.getHeaders();
-
+        
         log.info("Headers: " + headers);
-
+        
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        
+        // should get the Content-Length
+        assertNotNull("Should get the content-lenghth ", headers.get("Content-Length"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -68,14 +80,17 @@ public class HttpClientRouteTest extends CamelTestSupport {
                 };
                 
                 from("direct:start").to("http://localhost:9080/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
-               
+                from("direct:start2").to("http://localhost:9081/hello").to("mock:a");
+                
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());                        
                         exchange.getOut().setBody(bis);
                     }
                 };
-                from("jetty:http://localhost:9080/hello").process(proc);
+                from("jetty:http://localhost:9080/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED).constant(false);
+                
+                from("jetty:http://localhost:9081/hello?chunked=false").process(proc);
             }
         };
     }    

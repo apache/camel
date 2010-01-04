@@ -48,6 +48,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean throwExceptionOnFailure = true;
     private boolean bridgeEndpoint;
     private boolean matchOnUriPrefix;
+    private boolean chunked = true;
 
     public HttpEndpoint() {
     }
@@ -233,5 +234,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     
     public void setMatchOnUriPrefix(boolean match) {
         this.matchOnUriPrefix = match;
+    }
+    
+    public boolean isChunked() {
+        return this.chunked;
+    }
+    
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
     }
 }

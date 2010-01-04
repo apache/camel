@@ -25,6 +25,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -173,7 +174,10 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        InputStream is = message.getBody(InputStream.class);
+        InputStream is = null;
+        if (checkChucked(message, exchange)) {
+            is = message.getBody(InputStream.class);
+        }
         if (is != null) {
             ServletOutputStream os = response.getOutputStream();
             try {
@@ -201,6 +205,20 @@ public class DefaultHttpBinding implements HttpBinding {
                 response.getWriter().flush();
             }
         }
+    }
+
+    protected boolean checkChucked(Message message, Exchange exchange) {
+        boolean answer = true;
+        if (message.getHeader(Exchange.HTTP_CHUNKED) == null) {
+            // check the endpoint option
+            Endpoint endpoint = exchange.getFromEndpoint();
+            if (endpoint instanceof HttpEndpoint) {
+                answer = ((HttpEndpoint)endpoint).isChunked();
+            }
+        } else {
+            answer = message.getHeader(Exchange.HTTP_CHUNKED, boolean.class);
+        }
+        return answer;
     }
 
     protected void doWriteGZIPResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
