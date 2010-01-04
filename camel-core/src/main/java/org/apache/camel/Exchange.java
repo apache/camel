@@ -78,6 +78,7 @@ public interface Exchange {
     String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
+    String HTTP_CHUNKED            = "CamelHttpChunked";
 
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String TO_ENDPOINT          = "CamelToEndpoint";
