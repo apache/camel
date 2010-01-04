@@ -133,15 +133,6 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         // remove temporary header
         in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
 
-        // if there was bean invocation as body and we are invoking the same bean
-        // then invoke it
-        if (beanInvoke != null && beanInvoke.getMethod() == invocation.getMethod()) {
-            beanInvoke.invoke(bean, exchange);
-            // propagate headers
-            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            return;
-        }
-
         Object value = null;
         try {
             value = invocation.proceed();
