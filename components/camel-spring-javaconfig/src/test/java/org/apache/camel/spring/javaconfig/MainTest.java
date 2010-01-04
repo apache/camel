@@ -27,11 +27,16 @@ import org.springframework.context.ApplicationContext;
 public class MainTest extends Assert {
     @Test
     public void  testOptions() throws Exception {
-        CamelContext context = createCamelContext(new String[]{"-bp", "org.apache.camel.spring.javaconfig"});
-        runTests(context);
         
-        context = createCamelContext(new String[] {"-cc", "org.apache.camel.spring.javaconfig.ContextConfig"});
+        CamelContext context = createCamelContext(new String[] {"-cc", "org.apache.camel.spring.javaconfig.ContextConfig"});
+        context.start();
         runTests(context);
+        context.stop();
+        
+        context = createCamelContext(new String[]{"-bp", "org.apache.camel.spring.javaconfig"});
+        context.start();
+        runTests(context);
+        context.stop();
     }
         
     private CamelContext createCamelContext(String[] options) throws Exception {
