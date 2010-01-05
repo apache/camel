@@ -171,7 +171,7 @@ public final class ServiceHelper {
      * operation is <b>only</b> invoked if the service is <b>not</b> suspended.
      * <p/>
      * If the service is a {@link org.apache.camel.impl.ServiceSupport} then the <tt>stop</tt>
-     * operation is <b>only</b> invoked if the service is stoptable.
+     * operation is <b>only</b> invoked if the service is stopable.
      * <p/>
      * Otherwise the service is stopped.
      *
