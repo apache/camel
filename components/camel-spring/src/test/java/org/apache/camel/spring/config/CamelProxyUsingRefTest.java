@@ -14,27 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.config;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.camel.model.IdentifiedType;
+import junit.framework.TestCase;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * The &lt;proxy&gt; tag element.
- *
  * @version $Revision$
-*/ // to fudge the XSD generation
-@XmlRootElement(name = "proxy")
-public class CamelProxyFactoryDefinition extends IdentifiedType {
-    @XmlAttribute
-    private String serviceUrl;
-    @XmlAttribute
-    private String serviceRef;
-    @XmlAttribute
-    private Class serviceInterface;
-    @XmlAttribute
-    private String camelContextId;
+ */
+public class CamelProxyUsingRefTest extends TestCase {
+
+    public void testCamelProxyUsingRef() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyUsingRefTest.xml");
+
+        MyProxySender sender = (MyProxySender) ac.getBean("myProxySender");
+        String reply = sender.hello("World");
+
+        assertEquals("Hello World", reply);
+    }
 
 }

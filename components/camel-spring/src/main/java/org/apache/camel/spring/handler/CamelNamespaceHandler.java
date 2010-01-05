@@ -110,9 +110,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
 
         if (osgi) {
-            LOG.info("camel-osgi.jar detected in classpath");
+            LOG.info("camel-osgi.jar/camel-spring-osgi.jar detected in classpath");
         } else {
-            LOG.info("camel-osgi.jar not detected in classpath");
+            LOG.info("camel-osgi.jar/camel-spring-osgi.jar not detected in classpath");
         }
 
         if (LOG.isDebugEnabled()) {

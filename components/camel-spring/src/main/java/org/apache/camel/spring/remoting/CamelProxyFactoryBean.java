@@ -19,6 +19,7 @@ package org.apache.camel.spring.remoting;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
@@ -33,6 +34,7 @@ import org.springframework.remoting.support.UrlBasedRemoteAccessor;
  * A {@link FactoryBean} to create a Proxy to a a Camel Pojo Endpoint.
  */
 public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements FactoryBean, CamelContextAware, DisposableBean, ApplicationContextAware {
+    private String serviceRef;
     private CamelContext camelContext;
     private String camelContextId;
     private ApplicationContext applicationContext;
@@ -43,28 +45,37 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     @Override
     @SuppressWarnings("unchecked")
     public void afterPropertiesSet() {
-        super.afterPropertiesSet();
-        try {
-            if (endpoint == null) {
-                if (camelContext == null && camelContextId != null) {
-                    camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
-                }
-                
-                if (getServiceUrl() == null || camelContext == null) {
-                    throw new IllegalArgumentException("If endpoint is not specified, the serviceUrl and camelContext must be specified.");
-                }
-                
-                endpoint = camelContext.getEndpoint(getServiceUrl());
-                if (endpoint == null) {
-                    throw new IllegalArgumentException("Could not resolve endpoint: " + getServiceUrl());
-                }
+        if (endpoint == null) {
+            if (camelContext == null && camelContextId != null) {
+                camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
             }
 
+            if (camelContext == null) {
+                throw new IllegalArgumentException("camelContext or camelContextId must be specified");
+            }
+
+            if (getServiceUrl() == null && getServiceRef() == null) {
+                throw new IllegalArgumentException("serviceUrl or serviceRef must be specified.");
+            }
+
+            // lookup endpoint or we have the url for it
+            if (getServiceRef() != null) {
+                endpoint = camelContext.getRegistry().lookup(getServiceRef(), Endpoint.class);
+            } else {
+                endpoint = camelContext.getEndpoint(getServiceUrl());
+            }
+
+            if (endpoint == null) {
+                throw new IllegalArgumentException("Could not resolve endpoint: " + getServiceUrl());
+            }
+        }
+
+        try {
             this.producer = endpoint.createProducer();
             this.producer.start();
             this.serviceProxy = ProxyHelper.createProxy(endpoint, producer, getServiceInterface());
         } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+            throw new FailedToCreateProducerException(endpoint, e);
         }
     }
 
@@ -92,6 +103,14 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
 
     public boolean isSingleton() {
         return true;
+    }
+
+    public String getServiceRef() {
+        return serviceRef;
+    }
+
+    public void setServiceRef(String serviceRef) {
+        this.serviceRef = serviceRef;
     }
 
     public Endpoint getEndpoint() {
