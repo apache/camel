@@ -64,6 +64,7 @@
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-jxpath</include>
+        <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-msv</include>
