@@ -114,7 +114,8 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:baz").expectedMessageCount(1);
+        // can be 0 or 1 depending whether the task was executed or not (we run parallel)
+        getMockEndpoint("mock:baz").expectedMinimumMessageCount(0);
 
         try {
             template.sendBody("direct:start", "Hello World");

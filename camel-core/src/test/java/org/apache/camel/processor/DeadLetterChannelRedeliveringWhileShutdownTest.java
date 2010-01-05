@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for shutting down whil DLC is sleeping in a redelivery.
+ * Unit test for shutting down while DLC is sleeping in a redelivery.
  */
 public class DeadLetterChannelRedeliveringWhileShutdownTest extends ContextTestSupport {
 
@@ -34,13 +34,14 @@ public class DeadLetterChannelRedeliveringWhileShutdownTest extends ContextTestS
         mock.expectedBodiesReceived("Hello World");
 
         // send a message that causes redeliveries
-        template.sendBody("seda:damm", "Damm World");
+        template.sendBody("seda:damm", "Damn World");
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should be faster than: " + delta, delta < 2500);
+        // cater for slow servers 
+        assertTrue("Should be faster than: " + delta, delta < 4000);
     }
 
     @Override
@@ -48,13 +49,13 @@ public class DeadLetterChannelRedeliveringWhileShutdownTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(5000));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliverDelay(3000));
 
                 from("direct:start").delay(500).to("mock:result");
 
                 from("seda:damm").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        throw new IllegalArgumentException("Damm");
+                        throw new IllegalArgumentException("Damn");
                     }
                 });
             }
