@@ -86,6 +86,11 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> 
         }
     }
 
+    @Override
+    public boolean isAbstract() {
+        return true;
+    }
+
     public String getRef() {
         return ref;
     }

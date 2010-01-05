@@ -66,6 +66,11 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
     }
 
     @Override
+    public boolean isAbstract() {
+        return true;
+    }
+
+    @Override
     public Processor createProcessor(final RouteContext routeContext) throws Exception {
         // create the output processor
         output = createOutputsProcessor(routeContext);

@@ -103,6 +103,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         return "OnException[" + getExceptionClasses() + (onWhen != null ? " " + onWhen : "") + " -> " + getOutputs() + "]";
     }
     
+    @Override
+    public boolean isAbstract() {
+        return true;
+    }
+
     /**
      * Allows an exception handler to create a new redelivery policy for this exception type
      * @param context the camel context

@@ -305,16 +305,23 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
         // using route builders. So we have here a little custom code to fix the JAXB gaps
         for (RouteDefinition route : routes) {
-            // interceptors should be first
+
+            // move all abstracts into their own list so we can deal with them separately
+            List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
+            initAbstracts(route, abstracts);
+
+            // toAsync should fix up itself at first
+            initToAsync(route);
+
+            // interceptors should be first for the cross cutting concerns
             initInterceptors(route);
             // then on completion
-            initOnCompletions(route);
+            initOnCompletions(route, abstracts);
             // then polices
-            initPolicies(route);
+            initPolicies(route, abstracts);
             // then on exception
-            initOnExceptions(route);
-            // and then for toAsync
-            initToAsync(route);
+            initOnExceptions(route, abstracts);
+
             // configure parents
             initParent(route);
         }
@@ -382,34 +389,38 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         route.getOutputs().addAll(outputs);
     }
 
-    private void initOnExceptions(RouteDefinition route) {
-        List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
-        List<ProcessorDefinition> exceptionHandlers = new ArrayList<ProcessorDefinition>();
+    private void initOnExceptions(RouteDefinition route, List<ProcessorDefinition> abstracts) {
 
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
-            // on exceptions must be added at top, so the route flow is correct as
-            // on exceptions should be the first outputs
-            route.getOutputs().addAll(0, onExceptions);
+            abstracts.addAll(onExceptions);
         }
 
-        for (ProcessorDefinition output : route.getOutputs()) {
-            // split into on exception and regular outputs
+        // now add onExceptions to the route
+        for (ProcessorDefinition output : abstracts) {
             if (output instanceof OnExceptionDefinition) {
-                exceptionHandlers.add(output);
+                // on exceptions must be added at top, so the route flow is correct as
+                // on exceptions should be the first outputs
+                route.getOutputs().add(0, output);
+            }
+        }
+    }
+
+    private void initAbstracts(RouteDefinition route, List<ProcessorDefinition> abstracts) {
+        List<ProcessorDefinition> retains = new ArrayList<ProcessorDefinition>();
+
+        for (ProcessorDefinition output : route.getOutputs()) {
+            if (output.isAbstract()) {
+                abstracts.add(output);
             } else {
-                outputs.add(output);
+                retains.add(output);
             }
         }
 
-        // clearing the outputs
         route.clearOutput();
-
-        // add exception handlers as top children
-        route.getOutputs().addAll(exceptionHandlers);
-
-        // and the remaining outputs
-        route.getOutputs().addAll(outputs);
+        for (ProcessorDefinition retain : retains) {
+            route.addOutput(retain);
+        }
     }
 
     private void initInterceptors(RouteDefinition route) {
@@ -455,61 +466,65 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     }
 
-    private void initOnCompletions(RouteDefinition route) {
-        // only add global onCompletion if there are no route already
-        boolean hasRouteScope = false;
-        for (ProcessorDefinition out : route.getOutputs()) {
+    private void initOnCompletions(RouteDefinition route, List<ProcessorDefinition> abstracts) {
+        List<OnCompletionDefinition> completions = new ArrayList<OnCompletionDefinition>();
+
+        // find the route scoped onCompletions
+        for (ProcessorDefinition out : abstracts) {
             if (out instanceof OnCompletionDefinition) {
-                hasRouteScope = true;
+                completions.add((OnCompletionDefinition) out);
+            }
+        }
+
+        // only add global onCompletion if there are no route already
+        if (completions.isEmpty()) {
+            completions = getOnCompletions();
+        }
+
+        // are there any completions to init at all?
+        if (completions.isEmpty()) {
+            return;
+        }
+
+        // add onCompletion *after* intercept, as its important intercept is first
+        int index = 0;
+        for (int i = 0; i < route.getOutputs().size(); i++) {
+            index = i;
+            ProcessorDefinition out = route.getOutputs().get(i);
+            if (out instanceof InterceptDefinition || out instanceof InterceptSendToEndpointDefinition) {
+                continue;
+            } else {
+                // we found the spot
                 break;
             }
         }
-        // only add global onCompletion if we do *not* have any route onCompletion defined in the route
-        // add onCompletion *after* intercept, as its important intercept is first 
-        if (!hasRouteScope) {
-            int index = 0;
-            for (int i = 0; i < route.getOutputs().size(); i++) {
-                index = i;
-                ProcessorDefinition out = route.getOutputs().get(i);
-                if (out instanceof InterceptDefinition || out instanceof InterceptSendToEndpointDefinition) {
-                    continue;
-                } else {
-                    // we found the spot
-                    break;
-                }
-            }
-            route.getOutputs().addAll(index, getOnCompletions());
-        }
+        route.getOutputs().addAll(index, completions);
     }
 
-    private void initPolicies(RouteDefinition route) {
-        // setup the policies as JAXB yet again have not created a correct model for us
-        List<ProcessorDefinition> types = route.getOutputs();
-
+    private void initPolicies(RouteDefinition route, List<ProcessorDefinition> abstracts) {
         // we need two types as transacted cannot extend policy due JAXB limitations
         PolicyDefinition policy = null;
         TransactedDefinition transacted = null;
 
         // add to correct type
-        for (ProcessorDefinition type : types) {
+        for (ProcessorDefinition type : abstracts) {
             if (type instanceof PolicyDefinition) {
                 policy = (PolicyDefinition) type;
             } else if (type instanceof TransactedDefinition) {
                 transacted = (TransactedDefinition) type;
-            } else if (policy != null) {
-                // the outputs should be moved to the policy
-                policy.addOutput(type);
-            } else if (transacted != null) {
-                // the outputs should be moved to the transacted policy
-                transacted.addOutput(type);
             }
         }
 
-        // did we find a policy if so replace it as the only output on the route
         if (policy != null) {
+            // the outputs should be moved to the policy
+            policy.getOutputs().addAll(route.getOutputs());
+            // and add it as the single output
             route.clearOutput();
             route.addOutput(policy);
         } else if (transacted != null) {
+            // the outputs should be moved to the transacted policy
+            transacted.getOutputs().addAll(route.getOutputs());
+            // and add it as the single output
             route.clearOutput();
             route.addOutput(transacted);
         }

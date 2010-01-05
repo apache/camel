@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:mem:."/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation" value="ibatis-config.xml"/>
+        <property name="useTransactionAwareDataSource" value="true"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="sqlMap" class="org.springframework.orm.ibatis.SqlMapClientTemplate">
+        <property name="sqlMapClient" ref="sqlMapClient"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="table" class="org.apache.camel.itest.ibatis.DummyTableImpl">
+        <property name="sqlMapClient" ref="sqlMapClient"/>
+    </bean>
+</beans>

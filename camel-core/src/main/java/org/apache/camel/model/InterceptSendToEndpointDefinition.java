@@ -75,6 +75,11 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
     }
 
     @Override
+    public boolean isAbstract() {
+        return true;
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // create the detour
         final Processor detour = routeContext.createProcessor(this);

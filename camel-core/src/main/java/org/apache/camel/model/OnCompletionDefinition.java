@@ -70,6 +70,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     }
 
     @Override
+    public boolean isAbstract() {
+        return true;
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = createOutputsProcessor(routeContext);
 

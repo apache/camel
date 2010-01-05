@@ -87,6 +87,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition> getOutputs();
 
+    /**
+     * Whether this model is abstract or not.
+     * <p/>
+     * An abstract model is something that is used for configuring cross cutting concerns such as
+     * error handling, transaction policies, interceptors etc.
+     * <p/>
+     * Regular definitions is what is part of the route, such as ToDefinition, WireTapDefinition and the likes.
+     * <p/>
+     * Will by default return <tt>false</tt> to indicate regular definition, so all the abstract definitions
+     * must override this method and return <tt>true</tt> instead.
+     * <p/>
+     * This information is used in camel-spring to let Camel work a bit on the model provided by JAXB from the
+     * Spring XML file. This is needed to handle those cross cutting concerns properly. The Java DSL does not
+     * have this issue as it can work this out directly using the fluent builder methods.
+     *
+     * @return <tt>true</tt> for abstract, otherwise <tt>false</tt> for regular.
+     */
+    public boolean isAbstract() {
+        return false;
+    }
+
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         throw new UnsupportedOperationException("Not implemented yet for class: " + getClass().getName());
     }

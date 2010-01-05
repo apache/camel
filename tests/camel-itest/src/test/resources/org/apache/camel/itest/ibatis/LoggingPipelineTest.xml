@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+	">
+
+    <import resource="hsqldb-context.xml"/>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+
+            <onException>
+                <exception>java.lang.Exception</exception>
+                <handled>
+                    <constant>false</constant>
+                </handled>
+                <to uri="mock:error"/>
+            </onException>
+
+            <to uri="mock:end"/>
+        </route>
+    </camelContext>
+
+</beans>
