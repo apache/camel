@@ -155,6 +155,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
                 + "Check the uri and remove the duplicate & marker.");
         }
+
+        // if we have a trailing & then that is invalid as well
+        if (uri.endsWith("&")) {
+            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Trailing & marker found. "
+                + "Check the uri and remove the trailing & marker.");
+        }
     }
 
     public CamelContext getCamelContext() {

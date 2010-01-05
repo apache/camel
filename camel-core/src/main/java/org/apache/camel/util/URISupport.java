@@ -27,6 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.ResolveEndpointFailedException;
+
 /**
  * URI utilities.
  *
@@ -42,6 +44,12 @@ public final class URISupport {
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {
+        // must check for trailing & as the uri.split("&") will ignore those
+        if (uri != null && uri.endsWith("&")) {
+            throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
+                + "Check the uri and remove the trailing & marker.");
+        }
+
         try {
             // use a linked map so the parameters is in the same order
             Map<String, Object> rc = new LinkedHashMap<String, Object>();

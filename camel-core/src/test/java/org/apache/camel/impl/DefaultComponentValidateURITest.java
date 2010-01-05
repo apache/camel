@@ -57,6 +57,15 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         }
     }
     
+    public void testTrailingAmpersand() throws Exception {
+        try {
+            context.getEndpoint("timer://foo?delay=250&period=500&");
+            fail("Should have thrown ResolveEndpointFailedException");
+        } catch (ResolveEndpointFailedException e) {
+            // ok
+        }
+    }
+
     public void testScheduledPollConsumerOptions() throws Exception {
         // test that we support both notations of scheduled polling consumer options
 
