@@ -57,7 +57,7 @@ public class StreamResequencerTest extends ContextTestSupport {
     }
 
     public void testMultithreaded() throws Exception {
-        int numMessages = 500;
+        int numMessages = 200;
 
         ExecutorService service = Executors.newFixedThreadPool(2);
         service.execute(new Sender(context.createProducerTemplate(), 0, numMessages, 2));

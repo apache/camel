@@ -37,7 +37,6 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
 
     public void testPreMove() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");

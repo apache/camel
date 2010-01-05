@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,24 +45,28 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     private final String uri = "direct:start";
 
     public void testAggregateConcurrency() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-
         int total = 0;
         ExecutorService service = Executors.newFixedThreadPool(20);
+        List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
         for (int i = 0; i < size; i++) {
             final int count = i;
             total += i;
-            service.submit(new Callable<Object>() {
+            tasks.add(new Callable<Object>() {
                 public Object call() throws Exception {
                     template.sendBodyAndHeader(uri, "Hello World", "index", count);
                     return null;
                 }
             });
         }
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(total);
         mock.expectedHeaderReceived("total", total);
         mock.expectedPropertyReceived(Exchange.AGGREGATED_SIZE, size);
+
+        // submit all tasks
+        service.invokeAll(tasks);
 
         assertMockEndpointsSatisfied();
 

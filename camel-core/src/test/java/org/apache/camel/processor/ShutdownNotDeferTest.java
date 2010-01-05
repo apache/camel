@@ -27,9 +27,13 @@ import static org.apache.camel.ShutdownRoute.Default;
  */
 public class ShutdownNotDeferTest extends ContextTestSupport {
 
-    public void testShutdownNotDeferred() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/deferred");
+        super.setUp();
+    }
 
+    public void testShutdownNotDeferred() throws Exception {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
         bar.setResultWaitTime(3000);
@@ -47,7 +51,7 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
 
         context.stop();
 
-        // should route all 8
+        // should not route all 8
         assertTrue("Should NOT complete all 8 messages, was " + bar.getReceivedCounter(), bar.getReceivedCounter() < 8);
     }
 

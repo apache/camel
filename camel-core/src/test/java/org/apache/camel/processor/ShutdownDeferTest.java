@@ -27,12 +27,16 @@ import static org.apache.camel.ShutdownRoute.Defer;
  */
 public class ShutdownDeferTest extends ContextTestSupport {
 
-    public void testShutdownDeferred() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/deferred");
+        super.setUp();
+    }
 
+    public void testShutdownDeferred() throws Exception {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
-        bar.setResultWaitTime(3500);
+        bar.setResultWaitTime(3000);
 
         template.sendBody("seda:foo", "A");
         template.sendBody("seda:foo", "B");
@@ -59,7 +63,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo")
                     .startupOrder(1)
-                    .delay(500).to("file://target/deferred");
+                    .delay(1000).to("file://target/deferred");
 
                 // use file component to transfer files from route 1 -> route 2 as it
                 // will normally suspend, but by deferring this we can let route 1
