@@ -116,14 +116,15 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         if (parentTypeConverter != null) {
-            InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
-            if (inputStream != null) {
-                Object unmarshalled = unmarshal(unmarshaller, inputStream);
-                return type.cast(unmarshalled);
-            }
+            // Prefer to use the Reader which can skip the control characters
             Reader reader = parentTypeConverter.convertTo(Reader.class, value);
             if (reader != null) {
                 Object unmarshalled = unmarshal(unmarshaller, reader);
+                return type.cast(unmarshalled);
+            }
+            InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
+            if (inputStream != null) {
+                Object unmarshalled = unmarshal(unmarshaller, inputStream);
                 return type.cast(unmarshalled);
             }
             Source source = parentTypeConverter.convertTo(Source.class, value);
@@ -180,7 +181,13 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             if (value instanceof InputStream) {
                 return unmarshaller.unmarshal((InputStream) value);
             } else if (value instanceof Reader) {
-                return unmarshaller.unmarshal((Reader) value);
+                JaxbFilterReader filterReader;
+                if (value instanceof JaxbFilterReader) {
+                    filterReader = (JaxbFilterReader) value;
+                } else {
+                    filterReader = new JaxbFilterReader((Reader)value);
+                }
+                return unmarshaller.unmarshal(filterReader);
             } else if (value instanceof Source) {
                 return unmarshaller.unmarshal((Source) value);
             }

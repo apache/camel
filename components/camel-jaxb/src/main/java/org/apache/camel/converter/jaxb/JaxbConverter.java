@@ -41,7 +41,7 @@ public final class JaxbConverter {
     private XmlConverter xmlConverter = new XmlConverter();
     private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
 
-    @Converter
+    //@Converter
     public JAXBSource toSource(Object value) throws JAXBException {
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
@@ -55,7 +55,7 @@ public final class JaxbConverter {
         }
     }
 
-    @Converter
+    //@Converter
     public Document toDocument(Object value) throws JAXBException, ParserConfigurationException {
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");

@@ -16,14 +16,19 @@
  */
 package org.apache.camel.jaxb;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import javax.xml.bind.JAXBElement;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
+import org.apache.camel.impl.DefaultExchange;
 
 
 public class CamelJaxbTest extends ContextTestSupport {
@@ -32,6 +37,18 @@ public class CamelJaxbTest extends ContextTestSupport {
         TypeConverter converter = context.getTypeConverter();
         PersonType person = converter.convertTo(PersonType.class, 
             "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+        assertNotNull("Person should not be null ", person);
+        assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
+        assertEquals("Get the wrong second name ", person.getLastName(), "BAR");
+    }
+    
+    public void testFilteringUnmarshal() throws Exception {
+        final byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
+        InputStream is = new ByteArrayInputStream(buffers);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+        TypeConverter converter = context.getTypeConverter();
+        PersonType person = converter.convertTo(PersonType.class, exchange, is);
         assertNotNull("Person should not be null ", person);
         assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
         assertEquals("Get the wrong second name ", person.getLastName(), "BAR");
