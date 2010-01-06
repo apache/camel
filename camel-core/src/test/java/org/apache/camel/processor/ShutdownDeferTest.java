@@ -36,23 +36,19 @@ public class ShutdownDeferTest extends ContextTestSupport {
     public void testShutdownDeferred() throws Exception {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
-        bar.setResultWaitTime(3000);
 
         template.sendBody("seda:foo", "A");
         template.sendBody("seda:foo", "B");
         template.sendBody("seda:foo", "C");
         template.sendBody("seda:foo", "D");
         template.sendBody("seda:foo", "E");
-        template.sendBody("seda:foo", "F");
-        template.sendBody("seda:foo", "G");
-        template.sendBody("seda:foo", "H");
 
         assertMockEndpointsSatisfied();
 
         context.stop();
 
-        // should route all 8
-        assertEquals("Should complete all 8 messages", 8, bar.getReceivedCounter());
+        // should route all 5
+        assertEquals("Should complete all 8 messages", 5, bar.getReceivedCounter());
     }
 
     @Override
