@@ -25,15 +25,18 @@ import javax.xml.transform.Source;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.example.PurchaseOrder;
+import org.apache.camel.test.junit4.ExchangeTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JaxbConverterTest  extends ExchangeTestSupport {
     private JaxbConverter jaxbConverter;
     private PurchaseOrder order;
         
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         jaxbConverter = new JaxbConverter();
         order = new PurchaseOrder();
@@ -42,6 +45,7 @@ public class JaxbConverterTest  extends ExchangeTestSupport {
         order.setPrice(2.4);
     }
     
+    @Test
     public void testToSourceUsingExplicitJaxbConverter() throws JAXBException {        
         JAXBSource source = jaxbConverter.toSource(order);
         assertNotNull("The result should be not be null", source);
@@ -49,6 +53,7 @@ public class JaxbConverterTest  extends ExchangeTestSupport {
         assertNull("The result should be null", source);
     }
     
+    @Test
     public void testToSourceUsingTypeConverter() {
         // this time the fall back converter will be use
         exchange.getIn().setBody(order);
@@ -59,6 +64,7 @@ public class JaxbConverterTest  extends ExchangeTestSupport {
         assertNull("The result should be null", source);
     }
 
+    @Test
     public void testToDocumentUsingExplicitJaxbConverter() throws JAXBException, ParserConfigurationException {
         Document document = jaxbConverter.toDocument(order);
         assertNotNull("The result should be not be null", document);
@@ -66,6 +72,7 @@ public class JaxbConverterTest  extends ExchangeTestSupport {
         assertNull("The result should be null", document);
     }
     
+    @Test
     public void testToDocumentUsingTypeConverter() {
         // this time the fall back converter will be use
         exchange.getIn().setBody(order);

@@ -18,51 +18,56 @@ package org.apache.camel.example;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
 import javax.xml.bind.UnmarshalException;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class JAXBConvertTest extends TestCase {
+public class JAXBConvertTest extends Assert {
     protected CamelContext context = new DefaultCamelContext();
     protected TypeConverter converter = context.getTypeConverter();
 
+    @Test
     public void testConverter() throws Exception {
         PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class, 
             "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
         assertNotNull("Purchase order should not be null!", purchaseOrder);
         assertEquals("name", "foo", purchaseOrder.getName());
-        assertEquals("amount", 123.45, purchaseOrder.getAmount());
-        assertEquals("price", 2.22, purchaseOrder.getPrice());
+        assertEquals("amount", 123.45, purchaseOrder.getAmount(), 0);
+        assertEquals("price", 2.22, purchaseOrder.getPrice(), 0);
     }
 
+    @Test
     public void testConverterTwice() throws Exception {
         PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class,
             "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
         assertNotNull("Purchase order should not be null!", purchaseOrder);
         assertEquals("name", "foo", purchaseOrder.getName());
-        assertEquals("amount", 123.45, purchaseOrder.getAmount());
-        assertEquals("price", 2.22, purchaseOrder.getPrice());
+        assertEquals("amount", 123.45, purchaseOrder.getAmount(), 0);
+        assertEquals("price", 2.22, purchaseOrder.getPrice(), 0);
 
         PurchaseOrder purchaseOrder2 = converter.convertTo(PurchaseOrder.class,
             "<purchaseOrder name='bar' amount='5.12' price='3.33'/>");
 
         assertNotNull("Purchase order should not be null!", purchaseOrder2);
         assertEquals("name", "bar", purchaseOrder2.getName());
-        assertEquals("amount", 5.12, purchaseOrder2.getAmount());
-        assertEquals("amount", 3.33, purchaseOrder2.getPrice());
+        assertEquals("amount", 5.12, purchaseOrder2.getAmount(), 0);
+        assertEquals("amount", 3.33, purchaseOrder2.getPrice(), 0);
     }
 
+    @Test
     public void testStreamShouldBeClosed() throws Exception {
         String data = "<purchaseOrder name='foo' amount='123.45' price='2.22'/>";
         InputStream is = new ByteArrayInputStream(data.getBytes());
@@ -72,6 +77,7 @@ public class JAXBConvertTest extends TestCase {
         assertEquals(-1, is.read());
     }
 
+    @Test
     public void testStreamShouldBeClosedEvenForException() throws Exception {
         String data = "<errorOrder name='foo' amount='123.45' price='2.22'/>";
         InputStream is = new ByteArrayInputStream(data.getBytes());
@@ -84,6 +90,7 @@ public class JAXBConvertTest extends TestCase {
         assertEquals(-1, is.read());
     }
     
+    @Test
     public void testNoConversionForStreamCache() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         try {

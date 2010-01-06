@@ -18,14 +18,16 @@ package org.apache.camel.example;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class SpringDataFormatWithEncodingTest extends SpringTestSupport {
+public class SpringDataFormatWithEncodingTest extends CamelSpringTestSupport {
 
+    @Test
     public void testMarshalWithEncoding() throws Exception {
         PurchaseOrder bean = new PurchaseOrder();
         bean.setName("Beer");
@@ -41,6 +43,7 @@ public class SpringDataFormatWithEncodingTest extends SpringTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testMarshalWithEncodingPropertyInExchange() throws Exception {
         PurchaseOrder bean = new PurchaseOrder();
         bean.setName("Beer");

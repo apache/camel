@@ -18,17 +18,19 @@ package org.apache.camel.example;
 
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.SimpleDataSet;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class DataFormatDataSetTest extends ContextTestSupport {
+public class DataFormatDataSetTest extends CamelTestSupport {
 
+    @Test
     public void testConcurrentMarshall() throws Exception {
         assertMockEndpointsSatisfied();
     }

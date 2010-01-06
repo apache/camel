@@ -18,16 +18,19 @@ package org.apache.camel.jaxb;
 
 import java.io.File;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.MessageDefinition;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class DumpToXmlTest extends ContextTestSupport {
+public class DumpToXmlTest extends CamelTestSupport {
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // Delete the dump directory
         File file = new File("target/camel/dump");
         file = file.getAbsoluteFile();
@@ -37,6 +40,7 @@ public class DumpToXmlTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testDumplFilesToJaxb() throws Exception {
         // sleep to let the file and jaxb do its works
         Thread.sleep(5000);

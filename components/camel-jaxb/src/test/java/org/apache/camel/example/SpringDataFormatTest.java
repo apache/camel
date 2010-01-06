@@ -17,14 +17,17 @@
 package org.apache.camel.example;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
  */
-public class SpringDataFormatTest extends SpringTestSupport {
+public class SpringDataFormatTest extends CamelSpringTestSupport {
+    @Test
     public void testMarshalThenUnmarshalBean() throws Exception {
         PurchaseOrder bean = new PurchaseOrder();
         bean.setName("Beer");

@@ -16,17 +16,19 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class RouteWithErrorHandlerTest extends ContextTestSupport {
+public class RouteWithErrorHandlerTest extends CamelTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         order.setName("Wine");
@@ -41,6 +43,7 @@ public class RouteWithErrorHandlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUnmarshalError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("<foo/>");
@@ -52,6 +55,7 @@ public class RouteWithErrorHandlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotWine() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         order.setName("Beer");

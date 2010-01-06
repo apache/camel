@@ -17,18 +17,31 @@
 package org.apache.camel.jaxb;
 
 import org.apache.camel.CamelContext;
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.Service;
+import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 
 public class CamelJaxbSpringTest extends CamelJaxbTest {
     
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/jaxb/CamelJaxbTest.xml");
+        setUseRouteBuilder(false);
+        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/jaxb/CamelJaxbTest.xml");
+        setCamelContextService(new Service() {
+            public void start() throws Exception {
+                applicationContext.start();
+            }
+
+            public void stop() throws Exception {
+                applicationContext.stop();
+            }
+        });
+
+        return SpringCamelContext.springCamelContext(applicationContext);
+        
     }
     
-    @Override
-    protected void setUp() throws Exception {
-        setUseRouteBuilder(false);
-        super.setUp();
-    }
+   
 
 }

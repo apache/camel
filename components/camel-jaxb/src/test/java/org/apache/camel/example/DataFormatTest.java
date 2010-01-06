@@ -16,26 +16,30 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
-public class DataFormatTest extends ContextTestSupport {
+public class DataFormatTest extends CamelTestSupport {
     
     private MockEndpoint resultEndpoint;
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
 
+    @Test
     public void testMarshalThenUnmarshalBean() throws Exception {
         
         PurchaseOrder bean = new PurchaseOrder();
@@ -50,6 +54,7 @@ public class DataFormatTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
     
+    @Test
     public void testMarshalPrettyPrint() throws Exception {
         PersonType person = new PersonType();
         person.setFirstName("Willem");

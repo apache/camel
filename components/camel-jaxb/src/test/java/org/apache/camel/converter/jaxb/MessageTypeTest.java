@@ -21,7 +21,10 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.test.junit4.ExchangeTestSupport;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * @version $Revision$
@@ -29,6 +32,7 @@ import org.apache.camel.ExchangeTestSupport;
 public class MessageTypeTest extends ExchangeTestSupport {
     protected JAXBContext jaxbContext;
 
+    @Test
     public void testCamelToJaxbUsingExplicitJaxbConverter() throws Exception {
         MessageDefinition messageType = JaxbConverter.toMessageType(exchange);
 
@@ -41,7 +45,8 @@ public class MessageTypeTest extends ExchangeTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         jaxbContext = JAXBContext.newInstance("org.apache.camel.converter.jaxb");
     }

@@ -16,20 +16,21 @@
  */
 package org.apache.camel.example;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxb.MessageDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for JABX conversion of MessageType
  */
-public class JAXBConverterMessageTypeTest extends TestCase {
+public class JAXBConverterMessageTypeTest extends Assert {
     protected CamelContext context = new DefaultCamelContext();
     protected TypeConverter converter = context.getTypeConverter();
 
+    @Test
     public void testConverter() throws Exception {
         MessageDefinition message = converter.convertTo(MessageDefinition.class, "<message><hello>bar</hello></message>");
         assertNotNull("Message should not be null!", message);

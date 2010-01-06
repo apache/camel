@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 import javax.xml.bind.JAXBElement;
 
-import org.apache.camel.ContextTestSupport;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,10 +29,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 
-public class CamelJaxbTest extends ContextTestSupport {
+public class CamelJaxbTest extends CamelTestSupport {
     
+    @Test
     public void testConvertor() throws Exception {
         TypeConverter converter = context.getTypeConverter();
         PersonType person = converter.convertTo(PersonType.class, 
@@ -42,6 +45,7 @@ public class CamelJaxbTest extends ContextTestSupport {
         assertEquals("Get the wrong second name ", person.getLastName(), "BAR");
     }
     
+    @Test
     public void testFilteringUnmarshal() throws Exception {
         final byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
         InputStream is = new ByteArrayInputStream(buffers);
@@ -54,6 +58,7 @@ public class CamelJaxbTest extends ContextTestSupport {
         assertEquals("Get the wrong second name ", person.getLastName(), "BAR");
     }
 
+    @Test
     public void testUnmarshal() throws Exception {
         final String xml = "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>";
         PersonType expected = new PersonType();
