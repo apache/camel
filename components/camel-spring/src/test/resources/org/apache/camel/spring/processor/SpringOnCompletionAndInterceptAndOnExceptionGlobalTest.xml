@@ -28,6 +28,8 @@
 
         <onException>
             <exception>java.lang.Exception</exception>
+            <to uri="mock:foo"/>
+            <to uri="mock:bar"/>
             <to uri="mock:exception"/>
         </onException>
 

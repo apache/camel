@@ -306,21 +306,33 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // using route builders. So we have here a little custom code to fix the JAXB gaps
         for (RouteDefinition route : routes) {
 
-            // move all abstracts into their own list so we can deal with them separately
+            // abstracts is the cross cutting concerns
             List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
-            initAbstracts(route, abstracts);
+
+            // upper is the cross cutting concerns such as interceptors, error handlers etc
+            List<ProcessorDefinition> upper = new ArrayList<ProcessorDefinition>();
+
+            // lower is the regular route
+            List<ProcessorDefinition> lower = new ArrayList<ProcessorDefinition>();
+
+            prepareRouteForInit(route, abstracts, lower);
 
             // toAsync should fix up itself at first
-            initToAsync(route);
+            initToAsync(lower);
 
             // interceptors should be first for the cross cutting concerns
-            initInterceptors(route);
+            initInterceptors(route, upper);
             // then on completion
-            initOnCompletions(route, abstracts);
+            initOnCompletions(abstracts, upper);
             // then polices
-            initPolicies(route, abstracts);
+            initPolicies(abstracts, lower);
             // then on exception
-            initOnExceptions(route, abstracts);
+            initOnExceptions(abstracts, upper);
+
+            // rebuild route as upper + lower
+            route.clearOutput();
+            route.getOutputs().addAll(upper);
+            route.getOutputs().addAll(lower);
 
             // configure parents
             initParent(route);
@@ -338,6 +350,18 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         findRouteBuilders();
         installRoutes();
+    }
+
+    private void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition> abstracts,
+                                     List<ProcessorDefinition> lower) {
+        // filter the route into abstracts and lower
+        for (ProcessorDefinition output : route.getOutputs()) {
+            if (output.isAbstract()) {
+                abstracts.add(output);
+            } else {
+                lower.add(output);
+            }
+        }
     }
 
     private void initParent(RouteDefinition route) {
@@ -362,11 +386,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
     }
 
-    private void initToAsync(RouteDefinition route) {
+    private void initToAsync(List<ProcessorDefinition> lower) {
         List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
         ToDefinition toAsync = null;
 
-        for (ProcessorDefinition output : route.getOutputs()) {
+        for (ProcessorDefinition output : lower) {
             if (toAsync != null) {
                 // add this output on toAsync
                 toAsync.getOutputs().add(output);
@@ -385,11 +409,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // rebuild outputs
-        route.clearOutput();
-        route.getOutputs().addAll(outputs);
+        lower.clear();
+        lower.addAll(outputs);
     }
 
-    private void initOnExceptions(RouteDefinition route, List<ProcessorDefinition> abstracts) {
+    private void initOnExceptions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
 
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
@@ -401,36 +425,19 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             if (output instanceof OnExceptionDefinition) {
                 // on exceptions must be added at top, so the route flow is correct as
                 // on exceptions should be the first outputs
-                route.getOutputs().add(0, output);
+                upper.add(0, output);
             }
         }
     }
 
-    private void initAbstracts(RouteDefinition route, List<ProcessorDefinition> abstracts) {
-        List<ProcessorDefinition> retains = new ArrayList<ProcessorDefinition>();
-
-        for (ProcessorDefinition output : route.getOutputs()) {
-            if (output.isAbstract()) {
-                abstracts.add(output);
-            } else {
-                retains.add(output);
-            }
-        }
-
-        route.clearOutput();
-        for (ProcessorDefinition retain : retains) {
-            route.addOutput(retain);
-        }
-    }
-
-    private void initInterceptors(RouteDefinition route) {
+    private void initInterceptors(RouteDefinition route, List<ProcessorDefinition> upper) {
 
         // configure intercept
         for (InterceptDefinition intercept : getIntercepts()) {
             intercept.afterPropertiesSet();
             // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
-            route.getOutputs().add(0, intercept);
+            upper.add(0, intercept);
         }
 
         // configure intercept from
@@ -452,7 +459,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 intercept.afterPropertiesSet();
                 // add as first output so intercept is handled before the actual route and that gives
                 // us the needed head start to init and be able to intercept all the remaining processing steps
-                route.getOutputs().add(0, intercept);
+                upper.add(0, intercept);
             }
         }
 
@@ -461,12 +468,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             intercept.afterPropertiesSet();
             // add as first output so intercept is handled before the actual route and that gives
             // us the needed head start to init and be able to intercept all the remaining processing steps
-            route.getOutputs().add(0, intercept);
+            upper.add(0, intercept);
         }
 
     }
 
-    private void initOnCompletions(RouteDefinition route, List<ProcessorDefinition> abstracts) {
+    private void initOnCompletions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
+
         List<OnCompletionDefinition> completions = new ArrayList<OnCompletionDefinition>();
 
         // find the route scoped onCompletions
@@ -486,7 +494,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             return;
         }
 
-        // add onCompletion *after* intercept, as its important intercept is first
+        upper.addAll(completions);
+
+/*        // add onCompletion *after* intercept, as its important intercept is first
         int index = 0;
         for (int i = 0; i < route.getOutputs().size(); i++) {
             index = i;
@@ -498,10 +508,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 break;
             }
         }
-        route.getOutputs().addAll(index, completions);
+        route.getOutputs().addAll(index, completions);*/
     }
 
-    private void initPolicies(RouteDefinition route, List<ProcessorDefinition> abstracts) {
+    private void initPolicies(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> lower) {
+
         // we need two types as transacted cannot extend policy due JAXB limitations
         PolicyDefinition policy = null;
         TransactedDefinition transacted = null;
@@ -517,16 +528,16 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         if (policy != null) {
             // the outputs should be moved to the policy
-            policy.getOutputs().addAll(route.getOutputs());
+            policy.getOutputs().addAll(lower);
             // and add it as the single output
-            route.clearOutput();
-            route.addOutput(policy);
+            lower.clear();
+            lower.add(policy);
         } else if (transacted != null) {
             // the outputs should be moved to the transacted policy
-            transacted.getOutputs().addAll(route.getOutputs());
+            transacted.getOutputs().addAll(lower);
             // and add it as the single output
-            route.clearOutput();
-            route.addOutput(transacted);
+            lower.clear();
+            lower.add(transacted);
         }
     }
 

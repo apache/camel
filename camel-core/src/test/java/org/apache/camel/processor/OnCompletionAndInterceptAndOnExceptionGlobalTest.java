@@ -66,13 +66,15 @@ public class OnCompletionAndInterceptAndOnExceptionGlobalTest extends ContextTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                //context.setTracing(true);
+
                 intercept().to("mock:intercept");
 
-                // define a global on completion that is invoked when the exchage is complete
+                // define a global on completion that is invoked when the exchange is complete
                 onCompletion().to("log:global").to("mock:sync");
 
-                // define an on excpetion
-                onException(Exception.class).to("mock:exception");
+                // define an on exception
+                onException(Exception.class).to("mock:foo", "mock:bar", "mock:exception");
 
                 from("direct:start")
                     .process(new MyProcessor())
