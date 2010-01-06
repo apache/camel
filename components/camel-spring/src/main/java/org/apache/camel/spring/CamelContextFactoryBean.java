@@ -474,7 +474,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initOnCompletions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper) {
-
         List<OnCompletionDefinition> completions = new ArrayList<OnCompletionDefinition>();
 
         // find the route scoped onCompletions
@@ -495,20 +494,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         upper.addAll(completions);
-
-/*        // add onCompletion *after* intercept, as its important intercept is first
-        int index = 0;
-        for (int i = 0; i < route.getOutputs().size(); i++) {
-            index = i;
-            ProcessorDefinition out = route.getOutputs().get(i);
-            if (out instanceof InterceptDefinition || out instanceof InterceptSendToEndpointDefinition) {
-                continue;
-            } else {
-                // we found the spot
-                break;
-            }
-        }
-        route.getOutputs().addAll(index, completions);*/
     }
 
     private void initPolicies(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> lower) {
@@ -681,10 +666,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.properties = properties;
     }
 
-    /**
-     * @deprecated replaced by {@link #getPackageScan()}
-     */
-    @Deprecated
     public String[] getPackages() {
         return packages;
     }
@@ -694,11 +675,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * extend {@link RouteBuilder} to be auto-wired up to the
      * {@link SpringCamelContext} as a route. Note that classes are excluded if
      * they are specifically configured in the spring.xml
+     * <p/>
+     * A more advanced configuration can be done using {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
      * 
-     * @deprecated replaced by {@link #setPackageScan(org.apache.camel.model.PackageScanDefinition)}
      * @param packages the package names which are recursively searched
+     * @see #setPackageScan(org.apache.camel.model.PackageScanDefinition)
      */
-    @Deprecated
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
@@ -939,7 +921,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         PackageScanDefinition packageScanDef = getPackageScan();
 
         if (getPackages() != null && getPackages().length > 0) {
-            LOG.warn("Using a packages element to specify packages to search has been deprecated. Please use a packageScan element instead.");
             if (packageScanDef == null) {
                 packageScanDef = new PackageScanDefinition();
                 setPackageScan(packageScanDef);
