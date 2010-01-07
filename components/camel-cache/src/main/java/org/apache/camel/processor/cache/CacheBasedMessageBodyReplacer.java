@@ -31,7 +31,6 @@ public class CacheBasedMessageBodyReplacer extends CacheValidate implements Proc
     Ehcache cache;
     private String cacheName;
     private String key;
-    
 
     public CacheBasedMessageBodyReplacer(String cacheName, String key) {
         super();

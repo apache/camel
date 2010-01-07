@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cache;
 
 import net.sf.ehcache.Cache;
@@ -44,16 +43,14 @@ public class CacheConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        // TODO Auto-generated method stub
         super.doStart();
         createConsumerCacheConnection();
     }
 
     @Override
     protected void doStop() throws Exception {
-        // TODO Auto-generated method stub
-        super.doStop();
         removeConsumerCacheConnection();
+        super.doStop();
     }
 
     @Override
@@ -61,7 +58,7 @@ public class CacheConsumer extends DefaultConsumer {
         return endpoint;
     }
     
-    private void createConsumerCacheConnection() {
+    protected void createConsumerCacheConnection() {
         cacheManager = new CacheManagerFactory().instantiateCacheManager();
         CacheEventListener cacheEventListener = new CacheEventListenerFactory().createCacheEventListener(null);
         cacheEventListener.setCacheConsumer(this);
@@ -83,11 +80,12 @@ public class CacheConsumer extends DefaultConsumer {
                     null);
             cache.getCacheEventNotificationService().registerListener(cacheEventListener);
             cacheManager.addCache(cache);
-            LOG.debug("Added a new cache: " + cache.getName());  
+
+            LOG.info("Added a new cache: " + cache.getName());
         }
     }
     
-    private void removeConsumerCacheConnection() {
+    protected void removeConsumerCacheConnection() {
         cacheManager.removeCache(config.getCacheName());
         if (cacheManager.getCacheNames().length == 0) {
             cacheManager.shutdown();

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cache;
 
 import java.net.URI;
@@ -39,8 +38,7 @@ public class CacheConfiguration {
     private long timeToIdleSeconds = 300;
     private boolean diskPersistent;
     private long diskExpiryThreadIntervalSeconds;
-    private Map cacheSettings;
-    
+
     public CacheConfiguration() {
     }
 
@@ -58,7 +56,7 @@ public class CacheConfiguration {
         
         setCacheName(uri.getHost());
         
-        cacheSettings = URISupport.parseParameters(uri);
+        Map cacheSettings = URISupport.parseParameters(uri);
         if (cacheSettings.containsKey("maxElementsInMemory")) {
             setMaxElementsInMemory(Integer.valueOf((String) cacheSettings.get("maxElementsInMemory")).intValue());
         }
@@ -163,8 +161,7 @@ public class CacheConfiguration {
         return diskExpiryThreadIntervalSeconds;
     }
 
-    public void setDiskExpiryThreadIntervalSeconds(
-            long diskExpiryThreadIntervalSeconds) {
+    public void setDiskExpiryThreadIntervalSeconds(long diskExpiryThreadIntervalSeconds) {
         this.diskExpiryThreadIntervalSeconds = diskExpiryThreadIntervalSeconds;
     }
    

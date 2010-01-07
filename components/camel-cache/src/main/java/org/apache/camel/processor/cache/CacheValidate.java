@@ -26,31 +26,33 @@ public class CacheValidate {
     private static final transient Log LOG = LogFactory.getLog(CacheValidate.class);
 
     public boolean isValid(CacheManager cacheManager, String cacheName, String key) {
-        LOG.debug("Cache Name: " + cacheName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Cache Name: " + cacheName);
+        }
+
         if (!cacheManager.cacheExists(cacheName)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("No existing Cache found with name: "
-                      + cacheName
-                      + ". Please ensure a cache is first instantiated using a Cache Consumer or Cache Producer");
-                LOG.debug("Replacement will not be performed since the cache " + cacheName
-                     + "does not presently exist");
+                LOG.debug("No existing Cache found with name: " + cacheName
+                        + ". Please ensure a cache is first instantiated using a Cache Consumer or Cache Producer."
+                        + " Replacement will not be performed since the cache " + cacheName + "does not presently exist");
             }
             return false;
         }
 
         LOG.debug("Found an existing cache: " + cacheName);
-        LOG.debug("Cache " + cacheName + " currently contains " + cacheManager.getCache(cacheName).getSize()
-                 + " elements");
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Cache " + cacheName + " currently contains " + cacheManager.getCache(cacheName).getSize() + " elements");
+        }
         Ehcache cache = cacheManager.getCache(cacheName);
+
         if (!cache.isKeyInCache(key)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("No Key with name: "
-                      + key
-                      + "presently exists in the cache. It is also possible that the key may have expired in the cache");
-                LOG.debug("Replacement will not be performed until an appropriate key/value pair is added to (or) found in the cache.");
+                LOG.debug("No Key with name: " + key
+                        + "presently exists in the cache. It is also possible that the key may have expired in the cache."
+                        + " Replacement will not be performed until an appropriate key/value pair is added to (or) found in the cache.");
             }
             return false;
-
         }
 
         return true;

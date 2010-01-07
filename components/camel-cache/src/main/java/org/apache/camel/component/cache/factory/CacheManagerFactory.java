@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cache.factory;
 
 import net.sf.ehcache.CacheManager;
 
 public class CacheManagerFactory {
-    public CacheManager cacheManager;
 
-    public CacheManager instantiateCacheManager() {        
+    private CacheManager cacheManager;
+
+    public synchronized CacheManager instantiateCacheManager() {
         if (cacheManager == null) {
             cacheManager = CacheManager.getInstance();
         }
         
         return cacheManager;
     }
+
 }

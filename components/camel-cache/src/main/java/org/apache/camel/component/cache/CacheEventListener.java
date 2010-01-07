@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cache;
 
 import net.sf.ehcache.CacheException;
@@ -31,7 +30,6 @@ public class CacheEventListener implements net.sf.ehcache.event.CacheEventListen
     private static final transient Log LOG = LogFactory.getLog(CacheEventListener.class);
     CacheConsumer cacheConsumer;
 
-    
     public CacheEventListener() {
         super();
     }
@@ -100,7 +98,7 @@ public class CacheEventListener implements net.sf.ehcache.event.CacheEventListen
         try {
             cacheConsumer.getProcessor().process(exchange);
         } catch (Exception e) {
-            throw new CacheException("Error in consumer while dispatching exchange containing Key " + (String) element.getObjectKey() + " for further processing  ", e);
+            throw new CacheException("Error in consumer while dispatching exchange containing Key " + element.getObjectKey() + " for further processing", e);
         }
     }
     
@@ -113,7 +111,7 @@ public class CacheEventListener implements net.sf.ehcache.event.CacheEventListen
     }
 
     public void dispose() {
-        
+        // noop
     }
 
     public Object clone() throws CloneNotSupportedException {

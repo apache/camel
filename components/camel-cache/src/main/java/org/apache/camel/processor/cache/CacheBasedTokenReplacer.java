@@ -53,6 +53,7 @@ public class CacheBasedTokenReplacer extends CacheValidate implements Processor 
 
         if (isValid(cacheManager, cacheName, key)) {
             cache = cacheManager.getCache(cacheName);
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Replacing Token " + replacementToken + "in Message with value stored against key "
                          + key + " in CacheName " + cacheName);
@@ -65,12 +66,13 @@ public class CacheBasedTokenReplacer extends CacheValidate implements Processor 
             is.close();
 
             // Note: The value in the cache must be a String
-            String cacheValue = exchange.getContext().getTypeConverter().convertTo(
-                                                                                   String.class,
-                                                                                   cache.get(key)
-                                                                                       .getObjectValue());
+            String cacheValue = exchange.getContext().getTypeConverter()
+                    .convertTo(String.class, cache.get(key).getObjectValue());
             String replacedTokenString = new String(buffer).replaceAll(replacementToken, cacheValue);
-            LOG.debug("replacedTokenString = " + replacedTokenString);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("replacedTokenString = " + replacedTokenString);
+            }
             exchange.getIn().setBody(replacedTokenString.getBytes());
         }
     }

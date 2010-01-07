@@ -38,7 +38,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class CacheBasedXPathReplacer extends CacheValidate implements Processor {
     private static final transient Log LOG = LogFactory.getLog(CacheBasedXPathReplacer.class);
     private String cacheName;
@@ -67,6 +66,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
 
         if (isValid(cacheManager, cacheName, key)) {
             cache = cacheManager.getCache(cacheName);
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Replacing XPath value " + xpath + "in Message with value stored against key " + key
                         + " in CacheName " + cacheName);
@@ -89,7 +89,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
 
                 // Create/setup the Transformer
                 XmlConverter xmlConverter = new XmlConverter();
-                String xslString = IOConverter.toString(new File("./src/main/resources/xpathreplacer.xsl"));
+                String xslString = IOConverter.toString(new File("./src/main/resources/xpathreplacer.xsl"), exchange);
                 xslString = xslString.replace("##match_token##", xpath);
                 Source xslSource = xmlConverter.toStreamSource(new StringReader(xslString));
                 TransformerFactory transformerFactory = xmlConverter.createTransformerFactory();
@@ -104,7 +104,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
             }
         }
 
-        // DOMSource can be coverted to byte[] by camel type converter mechanism
+        // DOMSource can be converted to byte[] by camel type converter mechanism
         DOMSource dom = new DOMSource(result.getNode());
         exchange.getIn().setBody(dom, byte[].class);
     }

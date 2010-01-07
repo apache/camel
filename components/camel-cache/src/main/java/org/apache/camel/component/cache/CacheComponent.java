@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cache;
 
 import java.net.URI;
@@ -37,8 +36,8 @@ public class CacheComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining,
-            Map parameters) throws Exception {
+    @SuppressWarnings("unchecked")
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         config.parseURI(new URI(uri));
         
         CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config);
@@ -46,5 +45,4 @@ public class CacheComponent extends DefaultComponent {
         return cacheEndpoint;
     }
 
-    
 }
