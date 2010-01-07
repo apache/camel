@@ -127,9 +127,6 @@
 	<profiles>
 		<profile>
 			<id>hibernate</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<properties>
 				<camel.osgi.import.additional>
 					org.hsqldb,
@@ -161,6 +158,9 @@
 		</profile>
 		<profile>
 			<id>openjpa</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
 			<build>
 				<resources>
 					<resource>
