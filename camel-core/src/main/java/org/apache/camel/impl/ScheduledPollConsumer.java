@@ -119,6 +119,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 } catch (Exception re) {
                     throw ObjectHelper.wrapRuntimeCamelException(re);
                 }
+            } catch (Error e) {
+                // log the fatal error as the JDK itself may not log it for us
+                log.fatal("Consumer " + this +  " could not poll endpoint: " + getEndpoint().getEndpointUri() + " caused by: " + e.getMessage(), e);
+                throw e;
             }
         }
     }
