@@ -68,7 +68,7 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
+                from(getFtpUrl()).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

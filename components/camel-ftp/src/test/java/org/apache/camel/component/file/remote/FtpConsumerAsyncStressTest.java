@@ -48,6 +48,8 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
     @Test
     public void testFTPConsumerAsyncStress() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        // give some time to run on slower boxes
+        mock.setResultWaitTime(30000);
         mock.expectedMinimumMessageCount(50);
 
         assertMockEndpointsSatisfied();
