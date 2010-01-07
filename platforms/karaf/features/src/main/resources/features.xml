@@ -93,7 +93,6 @@
     <bundle>mvn:org.apache.camel/camel-castor/${pom.version}</bundle>
   </feature>
   <feature name='camel-http' version='${pom.version}'>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/${commons-codec-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
