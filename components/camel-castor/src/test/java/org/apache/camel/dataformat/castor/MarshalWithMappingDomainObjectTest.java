@@ -28,6 +28,11 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
 
     @Test
     public void testMarshalDomainObject() throws Exception {
+        // some platform cannot test using Castor as it uses a SUN dependent Xerces
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
 
@@ -41,6 +46,11 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
 
     @Test
     public void testUnmarshalDomainObject() throws Exception {
+        // some platform cannot test using Castor as it uses a SUN dependent Xerces
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
 
