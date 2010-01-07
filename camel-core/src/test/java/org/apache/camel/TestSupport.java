@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import junit.framework.TestCase;
 import org.apache.camel.builder.Builder;
@@ -442,6 +443,19 @@ public abstract class TestSupport extends TestCase {
         } else {
             assertEquals(expectedPath, actualPath);
         }
+    }
+
+    /**
+     * Is this OS the given platform.
+     * <p/>
+     * Uses <tt>os.name</tt> from the system properties to determine the OS.
+     *
+     * @param platform such as Windows
+     * @return <tt>true</tt> if its that platform.
+     */
+    public static boolean isPlatform(String platform) {
+        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        return osName.indexOf(platform.toLowerCase()) > -1;
     }
 
 }

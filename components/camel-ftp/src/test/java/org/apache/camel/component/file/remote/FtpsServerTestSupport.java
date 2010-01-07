@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
@@ -36,7 +37,19 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
     protected static final File FTPSERVER_KEYSTORE = new File("./src/test/resources/server.jks");
     protected static final String FTPSERVER_KEYSTORE_PASSWORD = "password";
 
+    @Override
     protected FtpServerFactory createFtpServerFactory() throws Exception {
+        try {
+            return doCreateFtpServerFactory();
+        } catch (NoSuchAlgorithmException e) {
+            String name = System.getProperty("os.name");
+            System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    protected FtpServerFactory doCreateFtpServerFactory() throws Exception {
         assertTrue(FTPSERVER_KEYSTORE.exists());
         
         FtpServerFactory serverFactory = super.createFtpServerFactory();
@@ -46,7 +59,7 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
         listenerFactory.setSslConfiguration(createSslConfiguration().createSslConfiguration());
         
         serverFactory.addListener(DEFAULT_LISTENER, listenerFactory.createListener());
-        
+
         return serverFactory;
     }
     

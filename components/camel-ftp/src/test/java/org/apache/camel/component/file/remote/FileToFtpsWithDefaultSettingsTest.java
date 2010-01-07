@@ -34,6 +34,11 @@ public class FileToFtpsWithDefaultSettingsTest extends FtpsServerExplicitTLSWith
     
     @Test
     public void testFromFileToFtp() throws Exception {
+        // some platforms cannot test SSL
+        if (!canTest) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 

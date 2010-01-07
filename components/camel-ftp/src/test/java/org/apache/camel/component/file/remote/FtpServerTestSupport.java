@@ -47,6 +47,7 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
     protected static int port;
     
     protected FtpServer ftpServer;
+    protected boolean canTest;
 
     @BeforeClass
     public static void initPort() throws Exception {
@@ -78,8 +79,12 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
 
+        canTest = false;
         ftpServer = createFtpServerFactory().createServer();
-        ftpServer.start();
+        if (ftpServer != null) {
+            ftpServer.start();
+            canTest = true;
+        }
         
         super.setUp();
     }
@@ -88,20 +93,26 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        
-        try {            
-            ftpServer.stop();
-            ftpServer = null;
-        } catch (Exception e) {
-            // ignore while shutting down as we could be polling during shutdown
-            // and get errors when the ftp server is stopping. This is only an issue
-            // since we host the ftp server embedded in the same jvm for unit testing
+
+        if (ftpServer != null) {
+            try {
+                ftpServer.stop();
+                ftpServer = null;
+            } catch (Exception e) {
+                // ignore while shutting down as we could be polling during shutdown
+                // and get errors when the ftp server is stopping. This is only an issue
+                // since we host the ftp server embedded in the same jvm for unit testing
+            }
         }
     }
     
     @AfterClass
     public static void resetPort() throws Exception {
         port = 0;
+    }
+
+    protected boolean canTest() {
+        return canTest;
     }
 
     protected FtpServerFactory createFtpServerFactory() throws Exception {
