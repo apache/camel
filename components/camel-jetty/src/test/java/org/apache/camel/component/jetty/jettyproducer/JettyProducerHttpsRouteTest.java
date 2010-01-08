@@ -21,7 +21,6 @@ import org.apache.camel.component.jetty.HttpsRouteTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class JettyProducerHttpsRouteTest extends HttpsRouteTest {
 
     public String getHttpProducerScheme() {
@@ -30,6 +29,11 @@ public class JettyProducerHttpsRouteTest extends HttpsRouteTest {
 
     @Test
     public void testEndpointWithoutHttps() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         // give Jetty time to startup properly
         Thread.sleep(1000);
 

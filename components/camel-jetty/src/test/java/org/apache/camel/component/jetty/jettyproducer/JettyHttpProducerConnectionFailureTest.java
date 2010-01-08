@@ -34,6 +34,11 @@ public class JettyHttpProducerConnectionFailureTest extends CamelTestSupport {
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 

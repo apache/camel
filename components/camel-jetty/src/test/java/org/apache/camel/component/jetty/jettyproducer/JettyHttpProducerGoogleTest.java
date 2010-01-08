@@ -27,6 +27,11 @@ public class JettyHttpProducerGoogleTest extends CamelTestSupport {
 
     @Test
     public void testGoogleFrontPage() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         String reply = template.requestBody("direct:start", null, String.class);
         assertNotNull(reply);
     }

@@ -38,6 +38,11 @@ public class JettyHttpProducerConcurrentTest extends CamelTestSupport {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         // give Jetty time to startup properly
         Thread.sleep(2000);
 
@@ -46,6 +51,11 @@ public class JettyHttpProducerConcurrentTest extends CamelTestSupport {
 
     @Test
     public void testConcurrentProducers() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         // give Jetty time to startup properly
         Thread.sleep(2000);
 

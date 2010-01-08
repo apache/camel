@@ -28,6 +28,11 @@ public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
 
     @Test
     public void testGoogleFrontPageAsync() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("google");

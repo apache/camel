@@ -35,6 +35,11 @@ public class JettyHttpProducerGetWithParamTest extends CamelTestSupport {
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
         mock.expectedHeaderReceived("one", "eins");
@@ -50,6 +55,11 @@ public class JettyHttpProducerGetWithParamTest extends CamelTestSupport {
 
     @Test
     public void testHttpGetWithParamsViaHeader() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
         mock.expectedHeaderReceived("one", "eins");

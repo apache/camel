@@ -34,6 +34,11 @@ public class JettyHttpProducerSlowResponseTest extends CamelTestSupport {
 
     @Test
     public void testSlowReply() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         // give Jetty time to startup properly
         Thread.sleep(1000);
 
