@@ -145,7 +145,9 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            }
             total = maxMessagesPerPoll;
         }
 
@@ -259,7 +261,12 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
      * Strategy when processing the exchange failed.
      */
     protected void processRollback(Exchange exchange) throws MessagingException {
-        LOG.warn("Exchange failed, so rolling back message status: " + exchange);
+        Exception cause = exchange.getException();
+        if (cause != null) {
+            LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
+        } else {
+            LOG.warn("Exchange failed, so rolling back message status: " + exchange);
+        }
     }
 
     private void ensureIsConnected() throws MessagingException {
