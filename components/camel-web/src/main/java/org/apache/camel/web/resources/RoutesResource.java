@@ -69,7 +69,7 @@ public class RoutesResource extends CamelChildResourceSupport {
      * Returns the routes currently active within this context
      */
     @GET
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/json"})
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public RoutesDefinition getRouteDefinitions() {
         RoutesDefinition answer = new RoutesDefinition();
         CamelContext camelContext = getCamelContext();

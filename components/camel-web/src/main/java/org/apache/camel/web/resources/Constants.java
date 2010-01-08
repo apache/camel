@@ -23,7 +23,7 @@ public final class Constants {
 
     public static final String HTML_MIME_TYPES = "text/html;qs=5";
 
-    public static final String DATA_MIME_TYPES = "text/xml,application/xml,application/json,text/json";
+    public static final String DATA_MIME_TYPES = "text/xml,application/xml,application/json";
 
     public static final String DOT_MIMETYPE = "text/vnd.graphviz";
     public static final String JAXB_PACKAGES = org.apache.camel.model.Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.web.model";

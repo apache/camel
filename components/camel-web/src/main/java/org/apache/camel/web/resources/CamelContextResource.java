@@ -95,7 +95,7 @@ public class CamelContextResource {
     @GET
     // TODO we can replace this long expression with a static constant
     // when Jersey supports JAX-RS 1.1
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/json"})
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Camel getCamel() {
         return new Camel(camelContext, getVersion());
     }
