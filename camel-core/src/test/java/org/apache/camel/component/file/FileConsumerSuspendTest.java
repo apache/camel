@@ -56,7 +56,7 @@ public class FileConsumerSuspendTest extends ContextTestSupport {
                 MyPolicy myPolicy = new MyPolicy();
                 from("file://target/suspended?maxMessagesPerPoll=1&sortBy=file:name")
                     .routePolicy(myPolicy).id("myRoute")
-                    .to("mock:result");
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

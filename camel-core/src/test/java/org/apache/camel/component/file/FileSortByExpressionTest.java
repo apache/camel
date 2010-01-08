@@ -73,7 +73,7 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "b/?sortBy=reverse:file:ext").to("mock:reverse");
+                from(fileUrl + "b/?sortBy=reverse:file:ext").convertBodyTo(String.class).to("mock:reverse");
             }
         });
         context.start();

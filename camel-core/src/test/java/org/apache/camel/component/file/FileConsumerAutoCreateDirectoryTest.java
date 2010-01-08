@@ -50,7 +50,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
     public void testCreateAbsoluteDirectory() throws Exception {
         deleteDirectory("target/file/foo");
-        // use current dir as base as aboslute path
+        // use current dir as base as absolute path
         String base = new File("").getAbsolutePath() + "/target/file/foo";
 
         Endpoint endpoint = context.getEndpoint("file://" + base);

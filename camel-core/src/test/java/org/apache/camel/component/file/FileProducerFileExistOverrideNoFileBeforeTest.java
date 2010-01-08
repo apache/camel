@@ -28,8 +28,8 @@ public class FileProducerFileExistOverrideNoFileBeforeTest extends ContextTestSu
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/file");
+        super.setUp();
     }
 
     public void testOverride() throws Exception {
@@ -47,7 +47,7 @@ public class FileProducerFileExistOverrideNoFileBeforeTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&delay=1000").to("mock:result");
+                from("file://target/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

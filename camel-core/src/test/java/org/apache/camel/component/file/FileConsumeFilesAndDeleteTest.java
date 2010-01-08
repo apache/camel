@@ -54,7 +54,7 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/files/?fileName=report.txt&delete=true").to("mock:result");
+                from("file://target/files/?fileName=report.txt&delete=true").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

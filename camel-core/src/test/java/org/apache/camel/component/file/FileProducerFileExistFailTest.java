@@ -29,8 +29,8 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/file");
+        super.setUp();
         template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
@@ -54,7 +54,7 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&delay=1000").to("mock:result");
+                from("file://target/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

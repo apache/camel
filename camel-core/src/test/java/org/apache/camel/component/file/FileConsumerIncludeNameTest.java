@@ -48,7 +48,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("file://target/include/?include=^report.*txt$")
-                    .to("mock:result");
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

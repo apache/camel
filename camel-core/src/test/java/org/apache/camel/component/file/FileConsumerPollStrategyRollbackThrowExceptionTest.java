@@ -53,7 +53,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        // let it run for a little while since we rethrow the excpetion the consumer
+        // let it run for a little while since we rethrow the exception the consumer
         // will stop scheduling and not poll anymore
         Thread.sleep(2000);
 
@@ -65,7 +65,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).to("mock:result");
+                from(fileUrl).convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -73,7 +73,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public void begin(Consumer consumer, Endpoint endpoint) {
-            // start consumer as we simualte the fail in begin
+            // start consumer as we simulate the fail in begin
             // and thus before camel lazy start it itself
             try {
                 consumer.start();

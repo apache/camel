@@ -72,7 +72,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file://target/suspended?maxMessagesPerPoll=1&sortBy=file:name")
                     .routePolicy(myPolicy).id("myRoute")
-                    .to("mock:result");
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

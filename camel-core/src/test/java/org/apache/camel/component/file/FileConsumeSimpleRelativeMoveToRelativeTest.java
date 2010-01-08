@@ -52,7 +52,8 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/move?recursive=true&move=.done").to("mock:result");
+                from("file://target/move?recursive=true&move=.done")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -26,9 +26,13 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileToFileNioLowBufferTest extends ContextTestSupport {
 
-    public void testFileToFileNioLowBuffer() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/nio");
+        super.setUp();
+    }
 
+    public void testFileToFileNioLowBuffer() throws Exception {
         String body = "1234567890123456789012345678901234567890";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -44,7 +48,7 @@ public class FileToFileNioLowBufferTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/nio/in").to("file://target/nio/out?bufferSize=4").to("mock:result");
+                from("file://target/nio/in").convertBodyTo(String.class).to("file://target/nio/out?bufferSize=4").to("mock:result");
             }
         };
     }

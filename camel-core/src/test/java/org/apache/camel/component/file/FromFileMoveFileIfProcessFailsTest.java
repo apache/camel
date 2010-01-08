@@ -46,7 +46,8 @@ public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/movefile?moveFailed=error").to("mock:foo").process(new Processor() {
+                from("file://target/movefile?moveFailed=error")
+                        .convertBodyTo(String.class).to("mock:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

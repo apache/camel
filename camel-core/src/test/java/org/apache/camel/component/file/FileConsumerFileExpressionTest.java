@@ -77,7 +77,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file://target/filelanguage/date/"
-                      + "?fileName=myfile-${date:now:yyyyMMdd}.txt").to("mock:result");
+                      + "?fileName=myfile-${date:now:yyyyMMdd}.txt").convertBodyTo(String.class).to("mock:result");
                 // END SNIPPET: e1
             }
         });

@@ -65,7 +65,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).to("mock:result");
+                from(fileUrl).convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -73,7 +73,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public void begin(Consumer consumer, Endpoint endpoint) {
-            // start consumer as we simualte the fail in begin
+            // start consumer as we simulate the fail in begin
             // and thus before camel lazy start it itself
             try {
                 consumer.start();

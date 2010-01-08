@@ -53,7 +53,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/filelanguage/?exclude=.*bak"
-                        + "&move=${id}.bak").to("mock:result");
+                        + "&move=${id}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
         context.start();
@@ -78,7 +78,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/filelanguage/?exclude=.*bak"
-                     + "&move=backup-${id}-${file:name.noext}.bak").to("mock:result");
+                     + "&move=backup-${id}-${file:name.noext}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
         context.start();
@@ -103,7 +103,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/filelanguage/?exclude=.*bak"
-                      + "&move=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
+                      + "&move=backup/${bean:myguidgenerator.guid}.txt").convertBodyTo(String.class).to("mock:result");
             }
         });
         context.start();

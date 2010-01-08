@@ -34,7 +34,7 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
     protected void setUp() throws Exception {
         deleteDirectory("target/reports");
         deleteDirectory("target/done");
-        // use current dir as base as aboslute path
+        // use current dir as base as absolute path
         base = new File("").getAbsolutePath() + "/target/reports";
         super.setUp();
     }
@@ -51,7 +51,7 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://" + base + "?move=../done/${file:name}").to("mock:report");
+                from("file://" + base + "?move=../done/${file:name}").convertBodyTo(String.class).to("mock:report");
             }
         };
     }

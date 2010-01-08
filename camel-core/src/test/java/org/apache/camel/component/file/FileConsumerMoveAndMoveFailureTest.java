@@ -59,7 +59,7 @@ public class FileConsumerMoveAndMoveFailureTest extends ContextTestSupport {
                                 throw new IllegalArgumentException("Forced");
                             }
                         }
-                    }).to("mock:result");
+                    }).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

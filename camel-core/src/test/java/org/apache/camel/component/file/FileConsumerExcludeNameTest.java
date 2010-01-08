@@ -48,7 +48,7 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("file://target/exclude/?exclude=^secret.*|.*xml$")
-                    .to("mock:result");
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -50,7 +50,7 @@ public class FileConsumerAbsolutePathTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://" + base + "?delete=true").to("mock:report");
+                from("file://" + base + "?delete=true").convertBodyTo(String.class).to("mock:report");
             }
         };
     }

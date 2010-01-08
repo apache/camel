@@ -62,7 +62,7 @@ public class FileSorterRefTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl).to("mock:result");
+                from(fileUrl).convertBodyTo(String.class).to("mock:result");
             }
         });
         context.start();

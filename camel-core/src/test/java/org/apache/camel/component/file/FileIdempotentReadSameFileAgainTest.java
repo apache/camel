@@ -57,7 +57,7 @@ public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(uri).to("mock:result");
+                from(uri).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

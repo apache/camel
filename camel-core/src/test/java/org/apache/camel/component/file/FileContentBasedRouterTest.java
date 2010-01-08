@@ -67,9 +67,6 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         mock.message(0).body().isInstanceOf(GenericFile.class);
 
         assertMockEndpointsSatisfied();
-
-        // okay get the payload to compare
-        assertEquals("Hello Copenhagen", mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
     }
 
     @Override

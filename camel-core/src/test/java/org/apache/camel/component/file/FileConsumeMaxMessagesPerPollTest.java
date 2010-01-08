@@ -55,7 +55,7 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).to("mock:result");
+                from(fileUrl).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

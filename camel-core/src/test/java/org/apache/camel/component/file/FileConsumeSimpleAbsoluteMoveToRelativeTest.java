@@ -34,7 +34,7 @@ public class FileConsumeSimpleAbsoluteMoveToRelativeTest extends ContextTestSupp
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("./target/move");
-        // use current dir as base as aboslute path
+        // use current dir as base as absolute path
         base = new File("").getAbsolutePath() + "/target/move";
         super.setUp();
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
@@ -57,7 +57,8 @@ public class FileConsumeSimpleAbsoluteMoveToRelativeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://" + base + "?recursive=true&move=.done").to("mock:result");
+                from("file://" + base + "?recursive=true&move=.done")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
