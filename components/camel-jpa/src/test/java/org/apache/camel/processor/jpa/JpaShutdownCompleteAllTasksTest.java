@@ -57,9 +57,6 @@ public class JpaShutdownCompleteAllTasksTest extends CamelTestSupport {
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("c@beer.org"));
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("d@beer.org"));
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("e@beer.org"));
-        template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("f@beer.org"));
-        template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("g@beer.org"));
-        template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("h@beer.org"));
     }
 
     @Test
@@ -86,8 +83,8 @@ public class JpaShutdownCompleteAllTasksTest extends CamelTestSupport {
         // shutdown during processing
         context.stop();
 
-        // should route all 8
-        assertEquals("Should complete all messages", 8, bar.getReceivedCounter());
+        // should route all 5
+        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
     }
 
     @Override
