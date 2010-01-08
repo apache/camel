@@ -29,6 +29,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
@@ -233,6 +234,27 @@ public class EndpointMessageListener implements MessageListener {
     // Implementation methods
     //-------------------------------------------------------------------------
 
+    /**
+     * Strategy to determine which correlation id to use among <tt>JMSMessageID</tt> and <tt>JMSCorrelationID</tt>.
+     *
+     * @param message the JMS message
+     * @return the correlation id to use
+     * @throws JMSException can be thrown
+     */
+    protected String determineCorrelationId(final Message message) throws JMSException {
+        final String messageId = message.getJMSMessageID();
+        final String correlationId = message.getJMSCorrelationID();
+
+        if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
+            return messageId;
+        } else if (ObjectHelper.isEmpty(correlationId)) {
+            // correlation id is empty so fallback to message id
+            return messageId;
+        } else {
+            return correlationId;
+        }
+    }
+
     protected void sendReply(Destination replyDestination, final Message message, final Exchange exchange,
                              final JmsMessage out, final Exception cause) {
         if (replyDestination == null) {
@@ -244,19 +266,11 @@ public class EndpointMessageListener implements MessageListener {
         getTemplate().send(replyDestination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
-
-                if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
-                    String messageID = exchange.getIn().getHeader("JMSMessageID", String.class);
-                    reply.setJMSCorrelationID(messageID);
-                } else {
-                    String correlationID = message.getJMSCorrelationID();
-                    if (correlationID != null) {
-                        reply.setJMSCorrelationID(correlationID);
-                    }
-                }
+                final String correlationID = determineCorrelationId(message);
+                reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " sending reply JMS message: " + reply);
+                    LOG.debug(endpoint + " sending reply JMS message [correlationId:" + correlationID + "]: " + reply);
                 }
                 return reply;
             }

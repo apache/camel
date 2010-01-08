@@ -36,7 +36,7 @@ public class JmsSimpleInOnlyNoMutateTest extends CamelTestSupport {
     protected String componentName = "activemq";
 
     @Test
-    public void testRequetReplyNoMutate() throws Exception {
+    public void testRequestReplyNoMutate() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
         result.expectedBodiesReceived("Hello World");

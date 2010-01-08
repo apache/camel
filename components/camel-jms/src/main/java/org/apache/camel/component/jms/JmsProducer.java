@@ -255,7 +255,7 @@ public class JmsProducer extends DefaultProducer {
                     exchange.setOut(response);
                 }
 
-                // correlation
+                // restore correlation id in case the remote server messed with it
                 if (correlationId != null) {
                     message.setJMSCorrelationID(correlationId);
                     exchange.getOut().setHeader("JMSCorrelationID", correlationId);
