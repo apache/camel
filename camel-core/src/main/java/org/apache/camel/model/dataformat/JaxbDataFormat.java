@@ -40,6 +40,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private Boolean ignoreJAXBElement;
     @XmlAttribute(required = false)
+    private Boolean filterNonXmlChars;
+    @XmlAttribute(required = false)
     private String encoding;
 
     public JaxbDataFormat() {
@@ -75,6 +77,14 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.ignoreJAXBElement = ignoreJAXBElement;
     }
     
+    public Boolean getFilterNonXmlChars() {
+        return filterNonXmlChars;
+    }
+    
+    public void setFilterNonXmlChars(Boolean filterNonXmlChars) {
+        this.filterNonXmlChars = filterNonXmlChars;
+    }
+    
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -89,6 +99,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
         } else { // the default value is true
             setProperty(dataFormat, "ignoreJAXBElement", Boolean.TRUE);
         }
+        answer = ObjectHelper.toBoolean(getFilterNonXmlChars());
+        if (answer != null && answer) {
+            setProperty(dataFormat, "filterNonXmlChars", Boolean.TRUE);
+        } else { // the default value is false
+            setProperty(dataFormat, "filterNonXmlChars", Boolean.FALSE);
+        }        
         if (encoding != null) {
             setProperty(dataFormat, "encoding", encoding);
         }

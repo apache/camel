@@ -60,6 +60,8 @@ public interface Exchange {
     String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
+    
+    String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
 
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";

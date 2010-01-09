@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 import javax.xml.bind.JAXBElement;
 
-
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
@@ -46,7 +46,7 @@ public class CamelJaxbTest extends CamelTestSupport {
     }
     
     @Test
-    public void testFilteringUnmarshal() throws Exception {
+    public void testFilteringConvertorUnmarshal() throws Exception {
         final byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
         InputStream is = new ByteArrayInputStream(buffers);
         Exchange exchange = new DefaultExchange(context);
@@ -55,7 +55,58 @@ public class CamelJaxbTest extends CamelTestSupport {
         PersonType person = converter.convertTo(PersonType.class, exchange, is);
         assertNotNull("Person should not be null ", person);
         assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
-        assertEquals("Get the wrong second name ", person.getLastName(), "BAR");
+        assertEquals("Get the wrong second name ", person.getLastName(), "BAR ");
+    }
+
+    @Test
+    public void testUnmarshalBadCharsWithFiltering() throws Exception {
+        String xml = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>";
+
+        PersonType expected = new PersonType();
+        expected.setFirstName("FOO");
+        expected.setLastName("BAR ");
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceived(expected);
+
+        template.sendBody("direct:unmarshalFilteringEnabled", xml);
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test(expected = CamelExecutionException.class)
+    public void testUnmarshalBadCharsNoFiltering() throws Exception {
+        String xml = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>";
+        template.sendBody("direct:getJAXBElementValue", xml);
+    }
+
+    @Test
+    public void testMarshalBadCharsWithFiltering() throws Exception {
+        PersonType person = new PersonType();
+        person.setFirstName("foo\u0004");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:marshalFilteringEnabled", person);
+        resultEndpoint.assertIsSatisfied();
+
+        String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertFalse("Non-xml character wasn't replaced", body.contains("\u0004"));
+    }
+
+    @Test
+    public void testMarshalBadCharsNoFiltering() throws Exception {
+        PersonType person = new PersonType();
+        person.setFirstName("foo\u0004");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:marshal", person);
+        resultEndpoint.assertIsSatisfied();
+
+        String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue("Non-xml character unexpectedly did not get into marshalled contents", body
+                .contains("\u0004"));
     }
 
     @Test
@@ -84,13 +135,30 @@ public class CamelJaxbTest extends CamelTestSupport {
             public void configure() throws Exception {
                 JaxbDataFormat dataFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
                 dataFormat.setIgnoreJAXBElement(false);
+
+                JaxbDataFormat filterEnabledFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
+                filterEnabledFormat.setFilterNonXmlChars(true);
+
                 from("direct:getJAXBElementValue")
                     .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))                        
                         .to("mock:result");
                 
                 from("direct:getJAXBElement")
                     .unmarshal(dataFormat)
-                        .to("mock:result");
+                    .to("mock:result");
+
+                from("direct:unmarshalFilteringEnabled")
+                    .unmarshal(filterEnabledFormat)
+                    .to("mock:result");
+
+                from("direct:marshal")
+                    .marshal(dataFormat)
+                    .to("mock:result");
+
+                from("direct:marshalFilteringEnabled")
+                    .marshal(filterEnabledFormat)
+                    .to("mock:result");
+
             }
         };
     }

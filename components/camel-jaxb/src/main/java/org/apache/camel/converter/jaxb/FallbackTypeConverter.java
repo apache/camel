@@ -181,11 +181,11 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             if (value instanceof InputStream) {
                 return unmarshaller.unmarshal((InputStream) value);
             } else if (value instanceof Reader) {
-                JaxbFilterReader filterReader;
-                if (value instanceof JaxbFilterReader) {
-                    filterReader = (JaxbFilterReader) value;
+                NonXmlFilterReader filterReader;
+                if (value instanceof NonXmlFilterReader) {
+                    filterReader = (NonXmlFilterReader) value;
                 } else {
-                    filterReader = new JaxbFilterReader((Reader)value);
+                    filterReader = new NonXmlFilterReader((Reader)value);
                 }
                 return unmarshaller.unmarshal(filterReader);
             } else if (value instanceof Source) {

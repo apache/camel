@@ -327,7 +327,7 @@ public final class IOConverter {
         return new ByteArrayInputStream(os.toByteArray());
     }
 
-    private static String getCharsetName(Exchange exchange) {
+    public static String getCharsetName(Exchange exchange) {
         if (exchange != null) {
             String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charsetName != null) {
@@ -337,7 +337,7 @@ public final class IOConverter {
         return getDefaultCharsetName();
     }
     
-    private static String getDefaultCharsetName() {
+    public static String getDefaultCharsetName() {
         return Charset.defaultCharset().toString();
     }
     

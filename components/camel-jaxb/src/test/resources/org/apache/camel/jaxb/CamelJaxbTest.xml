@@ -39,6 +39,27 @@
       </unmarshal>          
       <to uri="mock:result"/>
     </route>
+    <route>
+      <from uri="direct:marshal"/>
+      <marshal>
+        <jaxb contextPath="org.apache.camel.foo.bar"/>
+      </marshal>          
+      <to uri="mock:result"/>
+    </route>
+    <route>
+      <from uri="direct:unmarshalFilteringEnabled"/>
+      <unmarshal>
+        <jaxb filterNonXmlChars="true" contextPath="org.apache.camel.foo.bar"/>
+      </unmarshal>          
+      <to uri="mock:result"/>
+    </route>
+    <route>
+      <from uri="direct:marshalFilteringEnabled"/>
+      <marshal>
+        <jaxb filterNonXmlChars="true"  contextPath="org.apache.camel.foo.bar"/>
+      </marshal>          
+      <to uri="mock:result"/>
+    </route>
   </camelContext>
   <!-- END SNIPPET: example -->
 

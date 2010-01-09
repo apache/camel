@@ -73,7 +73,7 @@
     <commons-pool-version>1.4</commons-pool-version>
     <commons-dbcp-version>1.2.2</commons-dbcp-version>
     <derby-version>10.4.2.0</derby-version>
-    <easymock-version>2.4</easymock-version>
+    <easymock-version>2.5.2</easymock-version>
     <flatpack-version>3.1.1</flatpack-version>
     <freemarker-version>2.3.15</freemarker-version>
     <hamcrest-version>1.2-dev1</hamcrest-version>

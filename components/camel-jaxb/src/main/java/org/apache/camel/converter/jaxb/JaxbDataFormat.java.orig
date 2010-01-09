@@ -18,19 +18,13 @@ package org.apache.camel.converter.jaxb;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 
@@ -38,15 +32,13 @@ import org.apache.camel.util.IOHelper;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
  *
- * @version $Revision$
+ * @version $Revision: 834590 $
  */
 public class JaxbDataFormat implements DataFormat {
-
     private JAXBContext context;
     private String contextPath;
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
-    private boolean filterNonXmlChars;
     private String encoding;
 
     public JaxbDataFormat() {
@@ -67,7 +59,7 @@ public class JaxbDataFormat implements DataFormat {
             if (isPrettyPrint()) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             } 
-            // exchange take precedence over encoding option
+            // exchange take precedense over encoding option
             String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charset == null) {
                 charset = encoding;
@@ -76,37 +68,17 @@ public class JaxbDataFormat implements DataFormat {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
             }
 
-            marshal(exchange, graph, stream, marshaller);
+            marshaller.marshal(graph, stream);
 
         } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
-        } catch (XMLStreamException e) {
-            throw IOHelper.createIOException(e);
         }
     }
 
-    void marshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller)
-        throws XMLStreamException, JAXBException {
-        if (needFiltering(exchange)) {
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(stream);
-            FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
-            marshaller.marshal(graph, filteringWriter);
-        } else {
-            marshaller.marshal(graph, stream);
-        }
-    }
-    
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
         try {
             // must create a new instance of unmarshaller as its not thread safe
-            Object answer;
-            Unmarshaller unmarshaller = getContext().createUnmarshaller();
-            if (needFiltering(exchange)) {
-                answer = unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader(stream)));
-            } else  {
-                answer = unmarshaller.unmarshal(stream);
-            }
-
+            Object answer = getContext().createUnmarshaller().unmarshal(stream);
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
                 answer = ((JAXBElement<?>)answer).getValue();
             }
@@ -114,12 +86,7 @@ public class JaxbDataFormat implements DataFormat {
         } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
         }
-    }
-    
-    protected boolean needFiltering(Exchange exchange) {
-        // exchange property takes precedence over data format property
-        return exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, filterNonXmlChars, Boolean.class);
-    }
+    }    
 
     // Properties
     // -------------------------------------------------------------------------
@@ -156,14 +123,6 @@ public class JaxbDataFormat implements DataFormat {
 
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
-    }
-
-    public boolean isFilterNonXmlChars() {
-        return filterNonXmlChars;
-    }
-
-    public void setFilterNonXmlChars(boolean filterNonXmlChars) {
-        this.filterNonXmlChars = filterNonXmlChars;
     }
 
     public String getEncoding() {

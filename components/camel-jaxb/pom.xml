@@ -93,6 +93,16 @@
             <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+	        <groupId>org.codehaus.woodstox</groupId>
+	        <artifactId>wstx-asl</artifactId>
+	        <version>3.2.9</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymockclassextension</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
