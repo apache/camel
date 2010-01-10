@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.InterceptStrategy;
@@ -193,6 +194,15 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
             if (tracer == null) {
                 // fallback to use the default tracer
                 tracer = camelContext.getDefaultTracer();
+
+                // configure and use any trace formatter if any exists
+                Map<String, TraceFormatter> formatters = camelContext.getRegistry().lookupByType(TraceFormatter.class);
+                if (formatters.size() == 1) {
+                    TraceFormatter formatter = formatters.values().iterator().next();
+                    if (tracer instanceof Tracer) {
+                        ((Tracer) tracer).setFormatter(formatter);
+                    }
+                }
             }
         }
 
