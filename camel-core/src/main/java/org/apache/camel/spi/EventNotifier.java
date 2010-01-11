@@ -44,4 +44,31 @@ public interface EventNotifier {
      */
     boolean isEnabled(EventObject event);
 
+    boolean isIgnoreCamelContextEvents();
+
+    void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents);
+
+    boolean isIgnoreRouteEvents();
+
+    void setIgnoreRouteEvents(boolean ignoreRouteEvents);
+
+    boolean isIgnoreServiceEvents();
+
+    void setIgnoreServiceEvents(boolean ignoreServiceEvents);
+
+    boolean isIgnoreExchangeEvents();
+
+    void setIgnoreExchangeEvents(boolean ignoreExchangeEvents);
+
+    boolean isIgnoreExchangeCreatedEvent();
+
+    void setIgnoreExchangeCreatedEvent(boolean ignoreExchangeCreatedEvent);
+
+    boolean isIgnoreExchangeCompletedEvent();
+
+    void setIgnoreExchangeCompletedEvent(boolean ignoreExchangeCompletedEvent);
+
+    boolean isIgnoreExchangeFailureEvents();
+
+    void setIgnoreExchangeFailureEvents(boolean ignoreExchangeFailureEvents);
 }

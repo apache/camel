@@ -59,9 +59,9 @@ public class ExchangeFailureHandledEvent extends EventObject {
     @Override
     public String toString() {
         if (isDeadLetterChannel()) {
-            return "Exchange failed: " + exchange + " but was handled by dead letter channel: " + failureHandler;
+            return exchange.getExchangeId() + " exchange failed: " + exchange + " but was handled by dead letter channel: " + failureHandler;
         } else {
-            return "Exchange failed: " + exchange + " but was processed by: " + failureHandler;
+            return exchange.getExchangeId() + " exchange failed: " + exchange + " but was processed by: " + failureHandler;
         }
     }
 }

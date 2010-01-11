@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Helper for easily sending event notifcations in a single line of code
+ * Helper for easily sending event notifications in a single line of code
  *
  * @version $Revision$
  */
@@ -41,7 +41,7 @@ public final class EventHelper {
 
     public static void notifyCamelContextStarting(CamelContext context) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreCamelContextEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -57,7 +57,7 @@ public final class EventHelper {
 
     public static void notifyCamelContextStarted(CamelContext context) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreCamelContextEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -73,7 +73,7 @@ public final class EventHelper {
 
     public static void notifyCamelContextStartupFailed(CamelContext context, Exception cause) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreCamelContextEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -89,7 +89,7 @@ public final class EventHelper {
 
     public static void notifyCamelContextStopping(CamelContext context) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreCamelContextEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -105,7 +105,7 @@ public final class EventHelper {
 
     public static void notifyCamelContextStopped(CamelContext context) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreCamelContextEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -121,7 +121,7 @@ public final class EventHelper {
 
     public static void notifyCamelContextStopFailed(CamelContext context, Exception cause) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreCamelContextEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -137,7 +137,7 @@ public final class EventHelper {
 
     public static void notifyServiceStopFailure(CamelContext context, Object service, Exception cause) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreServiceEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -153,7 +153,7 @@ public final class EventHelper {
 
     public static void notifyServiceStartupFailure(CamelContext context, Object service, Exception cause) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreServiceEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -169,7 +169,7 @@ public final class EventHelper {
 
     public static void notifyRouteStarted(CamelContext context, Route route) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreRouteEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -185,7 +185,7 @@ public final class EventHelper {
 
     public static void notifyRouteStopped(CamelContext context, Route route) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreRouteEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -201,7 +201,7 @@ public final class EventHelper {
 
     public static void notifyExchangeCreated(CamelContext context, Exchange exchange) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCreatedEvent()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -217,7 +217,7 @@ public final class EventHelper {
 
     public static void notifyExchangeDone(CamelContext context, Exchange exchange) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCompletedEvent()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -233,7 +233,7 @@ public final class EventHelper {
 
     public static void notifyExchangeFailed(CamelContext context, Exchange exchange) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailureEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();
@@ -250,7 +250,7 @@ public final class EventHelper {
     public static void notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
                                                     boolean deadLetterChannel) {
         EventNotifier notifier = context.getManagementStrategy().getEventNotifier();
-        if (notifier == null) {
+        if (notifier == null || notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailureEvents()) {
             return;
         }
         EventFactory factory = context.getManagementStrategy().getEventFactory();

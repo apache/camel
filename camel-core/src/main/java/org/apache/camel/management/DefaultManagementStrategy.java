@@ -25,6 +25,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ServiceHelper;
 import org.fusesource.commons.management.Statistic;
 
 /**
@@ -42,7 +43,7 @@ import org.fusesource.commons.management.Statistic;
  */
 public class DefaultManagementStrategy implements ManagementStrategy {
 
-    private EventNotifier eventNotifier = new DefaultEventNotifier();
+    private EventNotifier eventNotifier;
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private boolean onlyManageProcessorWithCustomId;
@@ -142,6 +143,9 @@ public class DefaultManagementStrategy implements ManagementStrategy {
     }
 
     public void start() throws Exception {
+        if (eventNotifier != null) {
+            ServiceHelper.startService(eventNotifier);
+        }
         if (managementAgent != null) {
             managementAgent.start();
             // set the naming strategy using the domain name from the agent
@@ -155,5 +159,9 @@ public class DefaultManagementStrategy implements ManagementStrategy {
         if (managementAgent != null) {
             managementAgent.stop();
         }
+        if (eventNotifier != null) {
+            ServiceHelper.stopService(eventNotifier);
+        }
     }
+
 }

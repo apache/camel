@@ -18,26 +18,47 @@ package org.apache.camel.management;
 
 import java.util.EventObject;
 
-import org.apache.camel.spi.EventNotifier;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Default event notifier that only notifies if <tt>TRACE</tt> log level has
+ * Logging event notifier that only notifies if <tt>INFO</tt> log level has
  * been configured for its logger.
  *
  * @version $Revision$
  */
-public class DefaultEventNotifier implements EventNotifier {
+public class LoggingEventNotifier extends EventNotifierSupport {
 
-    private static final Log LOG = LogFactory.getLog(DefaultEventNotifier.class);
+    private Log log = LogFactory.getLog(LoggingEventNotifier.class);
+    private String logName;
 
     public void notify(EventObject event) throws Exception {
-        LOG.trace("Event: " + event);
+        log.info("Event: " + event);
     }
 
     public boolean isEnabled(EventObject event) {
-        return LOG.isTraceEnabled();
+        return log.isInfoEnabled();
     }
 
+    public String getLogName() {
+        return logName;
+    }
+
+    /**
+     * Sets the log name to use.
+     *
+     * @param logName a custom log name to use
+     */
+    public void setLogName(String logName) {
+        this.logName = logName;
+    }
+
+    protected void doStart() throws Exception {
+        if (logName != null) {
+            log = LogFactory.getLog(logName);
+        }
+    }
+
+    protected void doStop() throws Exception {
+    }
 }

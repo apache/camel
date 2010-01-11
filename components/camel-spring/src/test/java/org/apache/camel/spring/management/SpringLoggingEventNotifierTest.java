@@ -14,36 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management.event;
+package org.apache.camel.spring.management;
 
-import java.util.EventObject;
+import org.apache.camel.CamelContext;
+import org.apache.camel.management.LoggingEventNotifierTest;
 
-import org.apache.camel.Exchange;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  * @version $Revision$
  */
-public class ExchangeFailureEvent extends EventObject {
-    private static final long serialVersionUID = -8484326904627268101L;
+public class SpringLoggingEventNotifierTest extends LoggingEventNotifierTest {
 
-    private final Exchange exchange;
-
-    public ExchangeFailureEvent(Exchange source) {
-        super(source);
-        this.exchange = source;
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringLoggingEventNotifierTest.xml");
     }
 
-    public Exchange getExchange() {
-        return exchange;
-    }
-
-    @Override
-    public String toString() {
-        Exception cause = exchange.getException();
-        if (cause != null) {
-            return exchange.getExchangeId() + " exchange failure: " + exchange + " cause " + cause;
-        } else {
-            return exchange.getExchangeId() + " exchange failure: " + exchange;
-        }
-    }
 }

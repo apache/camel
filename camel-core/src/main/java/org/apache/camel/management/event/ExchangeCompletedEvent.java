@@ -39,6 +39,6 @@ public class ExchangeCompletedEvent extends EventObject {
 
     @Override
     public String toString() {
-        return "Exchange completed: " + exchange;
+        return exchange.getExchangeId() + " exchange completed: " + exchange;
     }
 }

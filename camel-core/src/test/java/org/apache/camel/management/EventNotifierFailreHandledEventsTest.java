@@ -31,7 +31,6 @@ import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.spi.EventNotifier;
 
 /**
  * @version $Revision$
@@ -54,13 +53,21 @@ public class EventNotifierFailreHandledEventsTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
-        context.getManagementStrategy().setEventNotifier(new EventNotifier() {
+        context.getManagementStrategy().setEventNotifier(new EventNotifierSupport() {
             public void notify(EventObject event) throws Exception {
                 events.add(event);
             }
 
             public boolean isEnabled(EventObject event) {
                 return true;
+            }
+
+            @Override
+            protected void doStart() throws Exception {
+            }
+
+            @Override
+            protected void doStop() throws Exception {
             }
         });
         return context;

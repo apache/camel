@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.management.EventNotifierSupport;
 
 /**
  * @version $Revision$
  */
-public class MyEventNotifier implements EventNotifier {
+public class MyEventNotifier extends EventNotifierSupport {
 
     private List<EventObject> events = new ArrayList<EventObject>();
 
@@ -39,5 +39,13 @@ public class MyEventNotifier implements EventNotifier {
 
     public List<EventObject> getEvents() {
         return events;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+    }
+
+    @Override
+    protected void doStop() throws Exception {
     }
 }

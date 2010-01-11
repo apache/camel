@@ -28,7 +28,6 @@ import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ServiceStopFailureEvent;
-import org.apache.camel.spi.EventNotifier;
 
 /**
  * @version $Revision$
@@ -51,13 +50,21 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         context.addService(new MyService("B", true));
         context.addService(new MyService("C", false));
 
-        context.getManagementStrategy().setEventNotifier(new EventNotifier() {
+        context.getManagementStrategy().setEventNotifier(new EventNotifierSupport() {
             public void notify(EventObject event) throws Exception {
                 events.add(event);
             }
 
             public boolean isEnabled(EventObject event) {
                 return true;
+            }
+
+            @Override
+            protected void doStart() throws Exception {
+            }
+
+            @Override
+            protected void doStop() throws Exception {
             }
         });
         return context;
