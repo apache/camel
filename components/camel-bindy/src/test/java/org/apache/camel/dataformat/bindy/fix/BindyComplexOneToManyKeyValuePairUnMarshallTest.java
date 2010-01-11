@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.bindy.fix;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,8 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
     public List<Map<String, Object>> generateModel() {
 
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-        Map<String, Object> model = new HashMap<String, Object>();
+        // must use linked to preserve order
+        Map<String, Object> model = new LinkedHashMap<String, Object>();
         List<Security> securities = new ArrayList<Security>();
 
         Header header = new Header();
