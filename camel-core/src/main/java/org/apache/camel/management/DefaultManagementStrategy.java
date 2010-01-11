@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.util.EventObject;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;

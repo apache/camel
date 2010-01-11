@@ -25,13 +25,13 @@ import org.apache.camel.spi.EventNotifier;
  * @version $Revision$
  */
 public abstract class EventNotifierSupport extends ServiceSupport implements EventNotifier {
-    boolean ignoreCamelContextEvents;
-    boolean ignoreRouteEvents;
-    boolean ignoreServiceEvents;
-    boolean ignoreExchangeEvents;
-    boolean ignoreExchangeCreatedEvent;
-    boolean ignoreExchangeCompletedEvent;
-    boolean ignoreExchangeFailureEvents;
+    private boolean ignoreCamelContextEvents;
+    private boolean ignoreRouteEvents;
+    private boolean ignoreServiceEvents;
+    private boolean ignoreExchangeEvents;
+    private boolean ignoreExchangeCreatedEvent;
+    private boolean ignoreExchangeCompletedEvent;
+    private boolean ignoreExchangeFailureEvents;
 
     public boolean isIgnoreCamelContextEvents() {
         return ignoreCamelContextEvents;
