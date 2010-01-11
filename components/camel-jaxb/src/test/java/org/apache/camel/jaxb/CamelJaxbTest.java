@@ -34,29 +34,6 @@ import org.junit.Test;
 
 
 public class CamelJaxbTest extends CamelTestSupport {
-    
-    @Test
-    public void testConvertor() throws Exception {
-        TypeConverter converter = context.getTypeConverter();
-        PersonType person = converter.convertTo(PersonType.class, 
-            "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
-        assertNotNull("Person should not be null ", person);
-        assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
-        assertEquals("Get the wrong second name ", person.getLastName(), "BAR");
-    }
-    
-    @Test
-    public void testFilteringConvertorUnmarshal() throws Exception {
-        final byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
-        InputStream is = new ByteArrayInputStream(buffers);
-        Exchange exchange = new DefaultExchange(context);
-        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
-        TypeConverter converter = context.getTypeConverter();
-        PersonType person = converter.convertTo(PersonType.class, exchange, is);
-        assertNotNull("Person should not be null ", person);
-        assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
-        assertEquals("Get the wrong second name ", person.getLastName(), "BAR ");
-    }
 
     @Test
     public void testUnmarshalBadCharsWithFiltering() throws Exception {
