@@ -18,29 +18,19 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.After;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision$
+ * Unit test for Camel loadbalancer failover with JMS
  */
-public class JmsRouteUsingSpringTest extends JmsRouteTest {
-    private ClassPathXmlApplicationContext applicationContext;
-    
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = createApplicationContext();
-        return SpringCamelContext.springCamelContext(applicationContext);
-    }
-    
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpring.xml");
-    }
+public class JmsSpringLoadBalanceFailoverTest extends JmsLoadBalanceFailoverTest {
 
     @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        applicationContext.close();
+    public boolean isUseRouteBuilder() {
+        return false;
     }
+
+    protected CamelContext createCamelContext() throws Exception {
+        return SpringCamelContext.springCamelContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml");
+    }
+
 }
