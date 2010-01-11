@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.ssl.SslConfigurationFactory;
@@ -41,9 +42,16 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
     protected FtpServerFactory createFtpServerFactory() throws Exception {
         try {
             return doCreateFtpServerFactory();
-        } catch (NoSuchAlgorithmException e) {
-            String name = System.getProperty("os.name");
-            System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + e.getMessage());
+        } catch (Exception e) {
+            // ignore if algorithm is not on the OS
+            NoSuchAlgorithmException nsae = ObjectHelper.getException(NoSuchAlgorithmException.class, e);
+            if (nsae != null) {
+                String name = System.getProperty("os.name");
+                System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + nsae.getMessage());
+            } else {
+                // some other error then throw it so the test can fail
+                throw e;
+            }
         }
 
         return null;

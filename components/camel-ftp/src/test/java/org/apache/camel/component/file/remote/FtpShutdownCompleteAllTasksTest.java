@@ -47,9 +47,6 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(ftpUrl, "C", Exchange.FILE_NAME, "c.txt");
         template.sendBodyAndHeader(ftpUrl, "D", Exchange.FILE_NAME, "d.txt");
         template.sendBodyAndHeader(ftpUrl, "E", Exchange.FILE_NAME, "e.txt");
-        template.sendBodyAndHeader(ftpUrl, "F", Exchange.FILE_NAME, "f.txt");
-        template.sendBodyAndHeader(ftpUrl, "G", Exchange.FILE_NAME, "g.txt");
-        template.sendBodyAndHeader(ftpUrl, "H", Exchange.FILE_NAME, "h.txt");
     }
 
     @Test
@@ -63,8 +60,8 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
         // shutdown during processing
         context.stop();
 
-        // should route all 8
-        assertEquals("Should complete all messages", 8, bar.getReceivedCounter());
+        // should route all 5
+        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
     }
 
     @Override

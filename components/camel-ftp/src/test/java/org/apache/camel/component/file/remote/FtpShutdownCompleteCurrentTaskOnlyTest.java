@@ -47,9 +47,6 @@ public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport
         template.sendBodyAndHeader(ftpUrl, "C", Exchange.FILE_NAME, "c.txt");
         template.sendBodyAndHeader(ftpUrl, "D", Exchange.FILE_NAME, "d.txt");
         template.sendBodyAndHeader(ftpUrl, "E", Exchange.FILE_NAME, "e.txt");
-        template.sendBodyAndHeader(ftpUrl, "F", Exchange.FILE_NAME, "f.txt");
-        template.sendBodyAndHeader(ftpUrl, "G", Exchange.FILE_NAME, "g.txt");
-        template.sendBodyAndHeader(ftpUrl, "H", Exchange.FILE_NAME, "h.txt");
     }
 
     @Test
@@ -63,8 +60,8 @@ public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport
         // shutdown during processing
         context.stop();
 
-        // should NOT route all 8
-        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 8);
+        // should NOT route all 5
+        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 5);
     }
 
     @Override
