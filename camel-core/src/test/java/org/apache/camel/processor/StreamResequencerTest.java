@@ -69,6 +69,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         }
 
         resultEndpoint.expectedBodiesReceived(bodies);
+        resultEndpoint.setResultWaitTime(20000);
         resultEndpoint.assertIsSatisfied();
 
         service.shutdown();
@@ -77,6 +78,7 @@ public class StreamResequencerTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        disableJMX();
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
@@ -138,7 +140,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         public void run() {
             for (long i = start; i < end; i += increment) {
                 try {
-                    Thread.sleep(2);
+                    Thread.sleep(4);
                 } catch (InterruptedException e) {
                     // ignore
                 }

@@ -51,6 +51,9 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
 
     @Test
     public void testShutdownCompleteAllTasks() throws Exception {
+        // give it 20 seconds to shutdown
+        context.getShutdownStrategy().setTimeout(20);
+
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
         bar.setResultWaitTime(3000);

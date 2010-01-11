@@ -53,9 +53,9 @@ public class ManagedTimerTest extends ContextTestSupport {
         String camelId = (String) mbeanServer.getAttribute(name, "CamelId");
         assertEquals("camel-1", camelId);
 
-        // change period
-        mbeanServer.setAttribute(name, new Attribute("Period", 1000));
-        mbeanServer.setAttribute(name, new Attribute("Delay", 0));
+        // change period and delay
+        mbeanServer.setAttribute(name, new Attribute("Period", 500));
+        mbeanServer.setAttribute(name, new Attribute("Delay", 250));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
@@ -70,8 +70,7 @@ public class ManagedTimerTest extends ContextTestSupport {
         // Take the time to check the service is started to help avoid
         // sporadic failure on slower machines.
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", 
-            org.apache.camel.ServiceStatus.Started.name(), state);
+        assertEquals("Should be started", org.apache.camel.ServiceStatus.Started.name(), state);
         
         // start and we should be done in at most 3 second
         mock.expectedMinimumMessageCount(3);

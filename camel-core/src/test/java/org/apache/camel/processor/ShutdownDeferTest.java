@@ -34,6 +34,9 @@ public class ShutdownDeferTest extends ContextTestSupport {
     }
 
     public void testShutdownDeferred() throws Exception {
+        // give it 20 seconds to shutdown
+        context.getShutdownStrategy().setTimeout(20);
+        
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
@@ -48,7 +51,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
         context.stop();
 
         // should route all 5
-        assertEquals("Should complete all 8 messages", 5, bar.getReceivedCounter());
+        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
     }
 
     @Override

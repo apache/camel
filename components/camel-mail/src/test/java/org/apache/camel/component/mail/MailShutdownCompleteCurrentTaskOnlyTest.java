@@ -42,6 +42,9 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
 
     @Test
     public void testShutdownCompleteCurrentTaskOnly() throws Exception {
+        // give it 20 seconds to shutdown
+        context.getShutdownStrategy().setTimeout(20);
+
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
         bar.setResultWaitTime(3000);
@@ -51,8 +54,8 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
         // shutdown during processing
         context.stop();
 
-        // should NOT route all 8
-        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 8);
+        // should NOT route all 5
+        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 5);
     }
 
     private void prepareMailbox() throws Exception {
@@ -66,8 +69,8 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
         folder.expunge();
 
         // inserts 8 new messages
-        Message[] messages = new Message[8];
-        for (int i = 0; i < 8; i++) {
+        Message[] messages = new Message[5];
+        for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
             messages[i].setText("Message " + i);
         }
