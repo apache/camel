@@ -80,10 +80,14 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
         deleteDirectory(FTP_ROOT_DIR);
 
         canTest = false;
-        ftpServer = createFtpServerFactory().createServer();
-        if (ftpServer != null) {
-            ftpServer.start();
-            canTest = true;
+
+        FtpServerFactory factory = createFtpServerFactory();
+        if (factory != null) {
+            ftpServer = factory.createServer();
+            if (ftpServer != null) {
+                ftpServer.start();
+                canTest = true;
+            }
         }
         
         super.setUp();
