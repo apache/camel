@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.URISupport;
 
 /**
  * @version $Revision:520964 $
