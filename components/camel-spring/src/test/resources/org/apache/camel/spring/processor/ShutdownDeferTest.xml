@@ -22,6 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="shutdownStrategy" class="org.apache.camel.impl.DefaultShutdownStrategy">
+        <!-- use 20 sec to give this unit test some time -->
+        <property name="timeout" value="20"/>
+    </bean>
+
     <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1">
