@@ -75,6 +75,21 @@ public class CacheProducerTest extends CamelTestSupport {
         });
     }    
 
+    private void sendSerializedData() throws Exception {
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Poetry p = new Poetry();
+                p.setPoet("Ralph Waldo Emerson");
+                p.setPoem("Brahma");
+                
+                // Set the property of the charset encoding
+                exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+                Message in = exchange.getIn();
+                in.setBody(p);
+            }            
+        });
+    }
+    
     @Test
     public void testAddingDataToCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -89,7 +104,21 @@ public class CacheProducerTest extends CamelTestSupport {
         LOG.debug("------------Beginning CacheProducer Add Test---------------");
         sendFile();
     }
-    
+
+    @Test
+    public void testAddingSerializableDataToCache() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:b").
+                    setHeader("CACHE_OPERATION", constant("ADD")).
+                    setHeader("CACHE_KEY", constant("Ralph_Waldo_Emerson")).
+                    to("cache://TestCache1");
+            }
+        });
+        context.start();
+        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        sendFile();
+    }
     @Test
     public void testUpdatingDataInCache() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -102,7 +131,7 @@ public class CacheProducerTest extends CamelTestSupport {
         });
         context.start();
         LOG.debug("------------Beginning CacheProducer Update Test---------------");
-        sendUpdatedFile();
+        sendSerializedData();
     }
     
     @Test

@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cache.factory.CacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,11 +60,15 @@ public class CacheBasedTokenReplacer extends CacheValidate implements Processor 
                          + key + " in CacheName " + cacheName);
             }
             exchange.getIn().setHeader("CACHE_KEY", key);
+
             Object body = exchange.getIn().getBody();
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
-
-            byte[] buffer = IOConverter.toBytes(is);
-            is.close();
+            byte[] buffer;
+            try {
+                buffer = IOConverter.toBytes(is);
+            } finally {
+                ObjectHelper.close(is, "is", LOG);
+            }
 
             // Note: The value in the cache must be a String
             String cacheValue = exchange.getContext().getTypeConverter()

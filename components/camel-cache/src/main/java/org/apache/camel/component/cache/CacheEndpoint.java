@@ -19,6 +19,7 @@ package org.apache.camel.component.cache;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -57,8 +58,8 @@ public class CacheEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createCacheExchange(String operation, String key, Object value) {
-        DefaultExchange exchange = new DefaultExchange(this.getCamelContext(), getExchangePattern());
-        DefaultMessage message = new DefaultMessage();
+        Exchange exchange = new DefaultExchange(this.getCamelContext(), getExchangePattern());
+        Message message = new DefaultMessage();
         message.setHeader("CACHE_OPERATION", operation);
         message.setHeader("CACHE_KEY", key);
         message.setBody(value);

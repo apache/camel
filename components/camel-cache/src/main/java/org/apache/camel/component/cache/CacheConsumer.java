@@ -81,7 +81,9 @@ public class CacheConsumer extends DefaultConsumer {
             cache.getCacheEventNotificationService().registerListener(cacheEventListener);
             cacheManager.addCache(cache);
 
-            LOG.info("Added a new cache: " + cache.getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Added a new cache: " + cache.getName());
+            }
         }
     }
     

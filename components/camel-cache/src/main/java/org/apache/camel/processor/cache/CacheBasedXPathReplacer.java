@@ -35,6 +35,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cache.factory.CacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -77,7 +78,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
             try {
                 document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
             } finally {
-                is.close();
+                ObjectHelper.close(is, "is", LOG);
             }
 
             InputStream cis = exchange.getContext().getTypeConverter()
@@ -100,7 +101,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
                 transformer.setParameter("cacheValue", cacheValueDocument);
                 transformer.transform(source, result);
             } finally {
-                cis.close();
+                ObjectHelper.close(cis, "cis", LOG);
             }
         }
 

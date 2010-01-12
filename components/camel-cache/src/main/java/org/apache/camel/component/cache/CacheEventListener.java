@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class CacheEventListener implements net.sf.ehcache.event.CacheEventListener {
 
     private static final transient Log LOG = LogFactory.getLog(CacheEventListener.class);
@@ -98,7 +97,8 @@ public class CacheEventListener implements net.sf.ehcache.event.CacheEventListen
         try {
             cacheConsumer.getProcessor().process(exchange);
         } catch (Exception e) {
-            throw new CacheException("Error in consumer while dispatching exchange containing Key " + element.getObjectKey() + " for further processing", e);
+            throw new CacheException("Error in consumer while dispatching exchange containing key "
+                + (element != null ? element.getObjectKey() : null) + " for further processing", e);
         }
     }
     

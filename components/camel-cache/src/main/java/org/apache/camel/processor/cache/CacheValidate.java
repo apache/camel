@@ -39,7 +39,9 @@ public class CacheValidate {
             return false;
         }
 
-        LOG.debug("Found an existing cache: " + cacheName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found an existing cache: " + cacheName);
+        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Cache " + cacheName + " currently contains " + cacheManager.getCache(cacheName).getSize() + " elements");
@@ -57,4 +59,5 @@ public class CacheValidate {
 
         return true;
     }
+
 }

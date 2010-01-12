@@ -67,6 +67,36 @@ public class CacheConsumerTest extends CamelTestSupport {
         LOG.debug("Completed Test ---> testReceivingFileFromCache()");
     }
 
+    @Test
+    public void testReceivingSerializedObjectFromCache() throws Exception {
+        LOG.debug("Beginning Test ---> testReceivingSerializedObjectFromCache()");
+
+        resultEndpoint.expectedMessageCount(3);
+
+        List<String> operations = new ArrayList<String>();
+        operations.add("ADD");
+        operations.add("UPDATE");
+        operations.add("DELETE");
+        for (final String operation : operations) {
+            producerTemplate.send(new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    Poetry p = new Poetry();
+                    p.setPoet("Ralph Waldo Emerson");
+                    p.setPoem("Brahma");
+                    
+                    exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+                    Message in = exchange.getIn();
+                    in.setHeader("CACHE_OPERATION", operation);
+                    in.setHeader("CACHE_KEY", "poetry");
+                    in.setBody(p);
+                }
+            });
+        }
+
+        resultEndpoint.assertIsSatisfied();
+        LOG.debug("Completed Test ---> testReceivingFileFromCache()");
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

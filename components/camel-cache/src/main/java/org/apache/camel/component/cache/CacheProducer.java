@@ -18,6 +18,7 @@
 package org.apache.camel.component.cache;
 
 import java.io.InputStream;
+import java.io.Serializable;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
@@ -45,35 +46,17 @@ public class CacheProducer extends DefaultProducer {
         this.config = config;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
     public void process(Exchange exchange) throws Exception {
-        Object body = exchange.getIn().getBody();
-        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
-        
-        // Read InputStream into a byte[] buffer
-        byte[] buffer = new byte[is.available()];
-        int n = is.available();
-        for (int j = 0; j < n; j++) {
-            buffer[j] = (byte)is.read();
-        }        
-        
-        // Cache the buffer to the specified Cache against the specified key 
+         
         cacheManager = new CacheManagerFactory().instantiateCacheManager();
         
-        LOG.debug("Cache Name: " + config.getCacheName());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Cache Name: " + config.getCacheName());
+        }
         if (cacheManager.cacheExists(config.getCacheName())) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Found an existing cache: " + config.getCacheName());
-                LOG.debug("Cache " + config.getCacheName() + " currently contains " + cacheManager.getCache(config.getCacheName()).getSize() + " elements");
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found an existing cache: " + config.getCacheName());
+                LOG.trace("Cache " + config.getCacheName() + " currently contains " + cacheManager.getCache(config.getCacheName()).getSize() + " elements");
             }
             cache = cacheManager.getCache(config.getCacheName());
         } else {
@@ -89,7 +72,9 @@ public class CacheProducer extends DefaultProducer {
                     config.getDiskExpiryThreadIntervalSeconds(), 
                     null);
             cacheManager.addCache(cache);
-            LOG.debug("Added a new cache: " + cache.getName());            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Added a new cache: " + cache.getName());
+            }
         }
        
         
@@ -103,22 +88,49 @@ public class CacheProducer extends DefaultProducer {
             throw new CacheException("Cache Key is not specified in exchange either header or URL. Unable to add objects to the cache without a Key");
         }
         
-        performCacheOperation(operation, key, buffer);
+        performCacheOperation(exchange, operation, key);
     }
+    
+    private void performCacheOperation(Exchange exchange, String operation, String key) throws Exception {
+        Object element;
 
-    private void performCacheOperation(String operation, String key, byte[] buffer) {
-        if (operation.equalsIgnoreCase("DELETEALL")) {
-            LOG.debug("Deleting All elements from the Cache");
-            cache.removeAll();
-        } else if (operation.equalsIgnoreCase("ADD")) {
-            LOG.debug("Adding an element with key " + key + " into the Cache");
-            cache.put(new Element(key, buffer), true);
+        Object body = exchange.getIn().getBody();
+        if (body instanceof Serializable) {
+            element = body;
+        } else {
+            InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+
+            // Read InputStream into a byte[] buffer
+            byte[] buffer = new byte[is.available()];
+            int n = is.available();
+            for (int j = 0; j < n; j++) {
+                buffer[j] = (byte)is.read();
+            }
+
+            element = buffer;
+        }
+
+        if (operation.equalsIgnoreCase("ADD")) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding an element with key " + key + " into the Cache");
+            }
+            cache.put(new Element(key, element), true);
         } else if (operation.equalsIgnoreCase("UPDATE")) {
-            LOG.debug("Updating an element with key " + key + " into the Cache");
-            cache.put(new Element(key, buffer), true);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Updating an element with key " + key + " into the Cache");
+            }
+            cache.put(new Element(key, element), true);
+        } else if (operation.equalsIgnoreCase("DELETEALL")) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Deleting All elements from the Cache");
+            }
+            cache.removeAll();
         } else if (operation.equalsIgnoreCase("DELETE")) {
-            LOG.debug("Deleting an element with key " + key + " into the Cache");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Deleting an element with key " + key + " into the Cache");
+            }
             cache.remove(key, true);
         }
     }
+
 }
