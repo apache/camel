@@ -31,6 +31,7 @@ import org.apache.camel.impl.DefaultExchange;
 public class JdbcEndpoint extends DefaultEndpoint<DefaultExchange> {
     private int readSize;
     private DataSource dataSource;
+    private boolean useJDBC4ColumnNameAndLabelSemantics = true;
 
     public JdbcEndpoint(String endpointUri, Component component, DataSource dataSource) {
         super(endpointUri, component);
@@ -51,6 +52,25 @@ public class JdbcEndpoint extends DefaultEndpoint<DefaultExchange> {
 
     public void setReadSize(int readSize) {
         this.readSize = readSize;
+    }
+
+    public boolean isUseJDBC4ColumnNameAndLabelSemantics() {
+        return useJDBC4ColumnNameAndLabelSemantics;
+    }
+
+    /**
+     * Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name.
+     * <p/>
+     * JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel.
+     * Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your
+     * JDBC driver if you get problem using this component
+     * <p/>
+     * This option is default <tt>true</tt>.
+     *
+     * @param useJDBC4ColumnNameAndLabelSemantics  <tt>true</tt> to use JDBC 4.0 semantics, <tt>false</tt> to use JDBC 3.0.
+     */
+    public void setUseJDBC4ColumnNameAndLabelSemantics(boolean useJDBC4ColumnNameAndLabelSemantics) {
+        this.useJDBC4ColumnNameAndLabelSemantics = useJDBC4ColumnNameAndLabelSemantics;
     }
 
 }

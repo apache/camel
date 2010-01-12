@@ -24,7 +24,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
@@ -46,6 +45,11 @@ public class JdbcProducer extends DefaultProducer<DefaultExchange> {
         super(endpoint);
         this.dataSource = dataSource;
         this.readSize = readSize;
+    }
+
+    @Override
+    public JdbcEndpoint getEndpoint() {
+        return (JdbcEndpoint) super.getEndpoint();
     }
 
     /**
@@ -96,6 +100,9 @@ public class JdbcProducer extends DefaultProducer<DefaultExchange> {
         IntrospectionSupport.getProperties(meta, props, "jdbc.");
         exchange.getOut().setHeaders(props);
 
+        // should we use jdbc4 or jdbc3 semantics
+        boolean jdbc4 = getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics();
+
         int count = meta.getColumnCount();
         List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
         int rowNumber = 0;
@@ -103,8 +110,21 @@ public class JdbcProducer extends DefaultProducer<DefaultExchange> {
             HashMap<String, Object> row = new HashMap<String, Object>();
             for (int i = 0; i < count; i++) {
                 int columnNumber = i + 1;
-                String columnName = meta.getColumnName(columnNumber);
-                row.put(columnName, rs.getObject(columnName));
+                // use column label to get the name as it also handled SQL SELECT aliases
+                String columnName;
+                if (jdbc4) {
+                    // jdbc 4 should use label to get the name
+                    columnName = meta.getColumnLabel(columnNumber);
+                } else {
+                    // jdbc 3 uses the label or name to get the name
+                    try {
+                        columnName = meta.getColumnLabel(columnNumber);
+                    } catch (SQLException e) {
+                        columnName = meta.getColumnName(columnNumber);
+                    }
+                }
+                // use index based which should be faster
+                row.put(columnName, rs.getObject(columnNumber));
             }
             data.add(row);
             rowNumber++;
