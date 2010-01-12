@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.commons.logging.Log;
@@ -265,6 +266,18 @@ public final class EventHelper {
     }
 
     private static void doNotifyEvent(EventNotifier notifier, EventObject event) {
+        // only notify if notifier is started
+        boolean started = true;
+        if (notifier instanceof ServiceSupport) {
+            started = ((ServiceSupport) notifier).isStarted();
+        }
+        if (!started) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Ignoring notifying event " + event + ". The EventNotifier has not been started yet: " + notifier);
+            }
+            return;
+        }
+
         if (!notifier.isEnabled(event)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Notification of event is disabled: " + event);

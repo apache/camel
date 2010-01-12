@@ -1012,7 +1012,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     protected synchronized void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
-        EventHelper.notifyCamelContextStarting(this);
 
         try {
             doStartCamel();
@@ -1075,6 +1074,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             }
         }
 
+        // must let some bootstrap service be started before we can notify the starting event
+        EventHelper.notifyCamelContextStarting(this);
+
         forceLazyInitialization();
         startServices(components.values());
         addService(inflightRepository);
@@ -1127,11 +1129,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             LOG.warn("Cannot stop lifecycle strategies: " + e.getMessage());
         }
 
+        // must notify that we are stopped before stopping the management strategy
+        EventHelper.notifyCamelContextStopped(this);
 
         // stop management as the last one
         stopServices(getManagementStrategy());
 
-        EventHelper.notifyCamelContextStopped(this);
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }
 
