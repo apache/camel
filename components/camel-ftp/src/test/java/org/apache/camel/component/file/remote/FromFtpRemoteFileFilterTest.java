@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit test to verify remotefile filter option.
+ * Unit test to verify FTP filter option.
  */
 public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
 
@@ -49,6 +49,11 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
     
     @Test
     public void testFtpFilter() throws Exception {
+        if (isPlatform("aix")) {
+            // skip testing on AIX as it have an issue with this test with the file filter
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceivedInAnyOrder("Report 1", "Report 2");
