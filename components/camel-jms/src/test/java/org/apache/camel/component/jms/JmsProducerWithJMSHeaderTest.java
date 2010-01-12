@@ -16,20 +16,157 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
 public class JmsProducerWithJMSHeaderTest extends ContextTestSupport {
+
+    public void testInOnlyJMSPrioritory() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSPriority").isEqualTo(2);
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "2");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testInOnlyJMSPrioritoryZero() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSPriority").isEqualTo(0);
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "0");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testInOnlyJMSPrioritoryNine() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSPriority").isEqualTo(9);
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSPriority", "9");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testInOnlyJMSExpiration() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        long ttl = System.currentTimeMillis() + 5000;
+        template.sendBodyAndHeader("activemq:queue:bar?preserveMessageQos=true", "Hello World", "JMSExpiration", ttl);
+
+        // sleep just a little
+        Thread.sleep(2000);
+
+        PollingConsumer consumer = context.getEndpoint("activemq:queue:bar").createPollingConsumer();
+        consumer.start();
+
+        // use timeout in case running on slow box
+        Exchange bar = consumer.receive(10000);
+        assertNotNull("Should be a message on queue", bar);
+
+        consumer.stop();
+
+        template.send("activemq:queue:foo", bar);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testInOnlyJMSExpirationNoMessage() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        long ttl = System.currentTimeMillis() + 2000;
+        template.sendBodyAndHeader("activemq:queue:bar?preserveMessageQos=true", "Hello World", "JMSExpiration", ttl);
+
+        // sleep more so the message is expired
+        Thread.sleep(5000);
+
+        PollingConsumer consumer = context.getEndpoint("activemq:queue:bar").createPollingConsumer();
+        consumer.start();
+
+        Exchange bar = consumer.receiveNoWait();
+        assertNull("Should NOT be a message on queue", bar);
+
+        consumer.stop();
+
+        template.sendBody("activemq:queue:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testInOnlyMultipleJMSHeadersAndExpiration() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSPriority").isEqualTo(3);
+
+        long ttl = System.currentTimeMillis() + 2000;
+        Map headers = new HashMap();
+        headers.put("JMSPriority", 3);
+        headers.put("JMSExpiration", ttl);
+        template.sendBodyAndHeaders("activemq:queue:bar?preserveMessageQos=true", "Hello World", headers);
+
+        // sleep just a little
+        Thread.sleep(50);
+
+        PollingConsumer consumer = context.getEndpoint("activemq:queue:bar").createPollingConsumer();
+        consumer.start();
+
+        Exchange bar = consumer.receive(5000);
+        assertNotNull("Should be a message on queue", bar);
+
+        consumer.stop();
+
+        template.send("activemq:queue:foo?preserveMessageQos=true", bar);
+
+        Thread.sleep(1000);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testInOnlyMultipleJMSHeadersAndExpirationNoMessage() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        long ttl = System.currentTimeMillis() + 2000;
+        Map headers = new HashMap();
+        headers.put("JMSPriority", 3);
+        headers.put("JMSExpiration", ttl);
+        template.sendBodyAndHeaders("activemq:queue:bar?preserveMessageQos=true", "Hello World", headers);
+
+        // sleep more so the message is expired
+        Thread.sleep(5000);
+
+        PollingConsumer consumer = context.getEndpoint("activemq:queue:bar").createPollingConsumer();
+        consumer.start();
+
+        Exchange bar = consumer.receiveNoWait();
+        assertNull("Should NOT be a message on queue", bar);
+
+        consumer.stop();
+
+        template.sendBody("activemq:queue:foo", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
 
     public void testInOnlyJMSDestinationName() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

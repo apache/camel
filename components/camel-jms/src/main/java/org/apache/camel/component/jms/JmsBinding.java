@@ -248,6 +248,10 @@ public class JmsBinding {
                 jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
+            } else if (headerName.equals("JMSPriority")) {
+                jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
+            } else if (headerName.equals("JMSExpiration")) {
+                jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
             } else if (LOG.isDebugEnabled()) {
                 // The following properties are set by the MessageProducer
                 // JMSDeliveryMode, JMSDestination, JMSExpiration,
