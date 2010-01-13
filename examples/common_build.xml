@@ -117,6 +117,7 @@
     <fileset dir="${camel.lib}">
       <include name="**/camel-core-*.jar"/>
       <include name="**/commons-logging-*.jar"/>
+      <include name="**/commons-management-*.jar"/>
       <include name="**/jaxb-api-*.jar"/>
       <include name="**/spring-*.jar"/>
       <exclude name="**/*-tests.jar"/>
