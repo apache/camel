@@ -102,7 +102,7 @@ public class JaxbDataFormat implements DataFormat {
             Object answer;
             Unmarshaller unmarshaller = getContext().createUnmarshaller();
             if (needFiltering(exchange)) {
-                answer = unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader(stream)));
+                answer = unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader(stream, IOConverter.getCharsetName(exchange))));
             } else  {
                 answer = unmarshaller.unmarshal(stream);
             }
@@ -118,7 +118,7 @@ public class JaxbDataFormat implements DataFormat {
     
     protected boolean needFiltering(Exchange exchange) {
         // exchange property takes precedence over data format property
-        return exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, filterNonXmlChars, Boolean.class);
+        return exchange == null ? filterNonXmlChars : exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, filterNonXmlChars, Boolean.class);
     }
 
     // Properties

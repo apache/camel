@@ -18,29 +18,32 @@ package org.apache.camel.converter.jaxb;
 
 import java.io.Closeable;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.util.JAXBSource;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -87,7 +90,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             }
             return null;
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw ObjectHelper.wrapCamelExecutionException(exchange, e);
         }
         
     }
@@ -112,7 +115,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     /**
      * Lets try parse via JAXB
      */
-    protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value) throws JAXBException {
+    protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value) throws Exception {
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
         }
@@ -122,20 +125,19 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         if (parentTypeConverter != null) {
-            // Prefer to use the Reader which can skip the control characters and other non-xml characters
-            Reader reader = parentTypeConverter.convertTo(Reader.class, value);
-            if (reader != null) {
-                Object unmarshalled = unmarshal(unmarshaller, reader);
-                return type.cast(unmarshalled);
-            }
             InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
             if (inputStream != null) {
-                Object unmarshalled = unmarshal(unmarshaller, inputStream);
+                Object unmarshalled = unmarshal(unmarshaller, exchange, inputStream);
+                return type.cast(unmarshalled);
+            }
+            Reader reader = parentTypeConverter.convertTo(Reader.class, value);
+            if (reader != null) {
+                Object unmarshalled = unmarshal(unmarshaller, exchange, reader);
                 return type.cast(unmarshalled);
             }
             Source source = parentTypeConverter.convertTo(Source.class, value);
             if (source != null) {
-                Object unmarshalled = unmarshal(unmarshaller, source);
+                Object unmarshalled = unmarshal(unmarshaller, exchange, source);
                 return type.cast(unmarshalled);
             }
         }
@@ -144,7 +146,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             value = new StringReader((String) value);
         }
         if (value instanceof InputStream || value instanceof Reader) {
-            Object unmarshalled = unmarshal(unmarshaller, value);
+            Object unmarshalled = unmarshal(unmarshaller, exchange, value);
             return type.cast(unmarshalled);
         }
 
@@ -164,17 +166,14 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             }
-            if (answer == null) {
-                if (exchange != null
-                    && exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, Boolean.FALSE, Boolean.class)) {
-                    XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
-                    FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
-                    marshaller.marshal(value, filteringWriter);
-                } else {
-                    marshaller.marshal(value, buffer);
-                }
-                answer = parentTypeConverter.convertTo(type, buffer.toString());
+            if (needFiltering(exchange)) {
+                XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(buffer);
+                FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
+                marshaller.marshal(value, filteringWriter);
+            } else {
+                marshaller.marshal(value, buffer);
             }
+            answer = parentTypeConverter.convertTo(type, buffer.toString());
         }
 
         return answer;
@@ -184,32 +183,42 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
      * Unmarshals the given value with the unmarshaller
      *
      * @param unmarshaller  the unmarshaller
+     * @param exchange the exchange 
      * @param value  the stream to unmarshal (will close it after use, also if exception is thrown)
      * @return  the value
      * @throws JAXBException is thrown if an exception occur while unmarshalling
+     * @throws UnsupportedEncodingException 
      */
-    protected Object unmarshal(Unmarshaller unmarshaller, Object value) throws JAXBException {
+    protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value)
+        throws JAXBException, UnsupportedEncodingException {
         try {
             if (value instanceof InputStream) {
-                return unmarshaller.unmarshal((InputStream) value);
-            } else if (value instanceof Reader) {
-                // using the FilterReader by default
-                NonXmlFilterReader filterReader;
-                if (value instanceof NonXmlFilterReader) {
-                    filterReader = (NonXmlFilterReader) value;
-                } else {
-                    filterReader = new NonXmlFilterReader((Reader)value);
+                if (needFiltering(exchange)) {
+                    return unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOConverter.getCharsetName(exchange))));
                 }
-                return unmarshaller.unmarshal(filterReader);
+                return unmarshaller.unmarshal((InputStream)value);
+            } else if (value instanceof Reader) {
+                Reader reader = (Reader)value;
+                if (needFiltering(exchange)) {
+                    if (!(value instanceof NonXmlFilterReader)) {
+                        reader = new NonXmlFilterReader((Reader)value);
+                    }
+                }
+                return unmarshaller.unmarshal(reader);
             } else if (value instanceof Source) {
-                return unmarshaller.unmarshal((Source) value);
+                return unmarshaller.unmarshal((Source)value);
             }
         } finally {
             if (value instanceof Closeable) {
-                ObjectHelper.close((Closeable) value, "Unmarshalling", LOG);
+                ObjectHelper.close((Closeable)value, "Unmarshalling", LOG);
             }
         }
         return null;
+    }
+    
+    protected boolean needFiltering(Exchange exchange) {
+        // exchange property takes precedence over data format property
+        return exchange != null && exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, Boolean.FALSE, Boolean.class);
     }
 
     protected synchronized <T> JAXBContext createContext(Class<T> type) throws JAXBException {

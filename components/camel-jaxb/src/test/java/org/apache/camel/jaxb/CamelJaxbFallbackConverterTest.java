@@ -40,12 +40,21 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
        
         String value = converter.convertTo(String.class, exchange, person);
-        assertTrue("Didn't filter the non-xml chars", value.indexOf("<lastName>BAR</lastName>") > 0);
+        assertTrue("Should get a right marshalled string", value.indexOf("<lastName>BAR</lastName>") > 0);
+        
+        try {
+            byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
+            InputStream is = new ByteArrayInputStream(buffers);
+            person = converter.convertTo(PersonType.class, exchange, is);
+            fail("expect the exception here");
+        } catch (Exception ex) {
+            assertTrue("The exception should be CamelExecutionException", ex instanceof org.apache.camel.CamelExecutionException);
+        }
     }
     
     @Test
     public void testFilteringConvertor() throws Exception {
-        final byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
+        byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
         InputStream is = new ByteArrayInputStream(buffers);
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
@@ -56,13 +65,16 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
         assertEquals("Get the wrong second name ", person.getLastName(), "BAR ");
         
+        
         person.setLastName("BAR\u0008\uD8FF");
         String value = converter.convertTo(String.class, exchange, person);
         assertTrue("Didn't filter the non-xml chars", value.indexOf("<lastName>BAR  </lastName>") > 0);
         
         exchange.setProperty(Exchange.FILTER_NON_XML_CHARS, false);
+        
         value = converter.convertTo(String.class, exchange, person);
-        assertTrue("Didn't filter the non-xml chars", value.indexOf("<lastName>BAR\uD8FF</lastName>") > 0);
+        assertTrue("Should not filter the non-xml chars", value.indexOf("<lastName>BAR\uD8FF</lastName>") > 0);
+    
     }
 
 }

@@ -58,7 +58,7 @@ public class JaxbConverterTest  extends ExchangeTestSupport {
         // this time the fall back converter will be use
         exchange.getIn().setBody(order);
         Source source = exchange.getIn().getBody(Source.class);
-        assertTrue("The result source should not be JAXBSource", source instanceof Source);
+        assertTrue("The result source should be Source instance", source instanceof Source);
         exchange.getIn().setBody(new CamelException("Test"));
         source = exchange.getIn().getBody(Source.class);
         assertNull("The result should be null", source);
