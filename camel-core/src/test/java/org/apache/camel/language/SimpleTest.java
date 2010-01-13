@@ -74,6 +74,15 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testDateAndTimeExpressions() throws Exception {
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(1974, Calendar.APRIL, 20, 8,55, 47);
+        cal.set(Calendar.MILLISECOND, 123);
+        exchange.getIn().setHeader("birthday", cal.getTime());
+
+        assertExpression("date:header.birthday:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
+    }
+
     public void testLanguagesInContext() throws Exception {
         // evaluate so we know there is 1 language in the context
         assertExpression("id", exchange.getIn().getMessageId());

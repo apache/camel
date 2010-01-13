@@ -137,11 +137,11 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         remainder = ifStartsWithReturnRemainder("date:", expression);
         if (remainder != null) {
             String[] parts = remainder.split(":");
-            if (parts.length != 2) {
+            if (parts.length < 2) {
                 throw new ExpressionIllegalSyntaxException("Valid syntax: ${date:command:pattern} was: " + expression);
             }
-            String command = parts[0];
-            String pattern = parts[1];
+            String command = ObjectHelper.before(remainder, ":");
+            String pattern = ObjectHelper.after(remainder, ":");
             return ExpressionBuilder.dateExpression(command, pattern);
         }
 
