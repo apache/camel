@@ -289,7 +289,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             }
         }
 
-        // register bean if by force or not exsists
+        // register bean if by force or not exists
         ObjectInstance instance = null;
         if (forceRegistration || !exists) {
             if (LOG.isTraceEnabled()) {
@@ -312,8 +312,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         String hostName;
         boolean canAccessSystemProps = true;
         try {
-            // we'll do it this way mostly to determine if we should lookup the
-            // hostName
+            // we'll do it this way mostly to determine if we should lookup the hostName
             SecurityManager sm = System.getSecurityManager();
             if (sm != null) {
                 sm.checkPropertiesAccess();

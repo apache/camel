@@ -16,9 +16,10 @@
  */
 package org.apache.camel.management;
 
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.List;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
@@ -44,19 +45,23 @@ import org.fusesource.commons.management.Statistic;
  */
 public class DefaultManagementStrategy implements ManagementStrategy {
 
-    private EventNotifier eventNotifier;
+    private List<EventNotifier> eventNotifiers = new ArrayList<EventNotifier>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
 
-    public EventNotifier getEventNotifier() {
-        return eventNotifier;
+    public List<EventNotifier> getEventNotifiers() {
+        return eventNotifiers;
     }
 
-    public void setEventNotifier(EventNotifier eventNotifier) {
-        this.eventNotifier = eventNotifier;
+    public void addEventNotifier(EventNotifier eventNotifier) {
+        this.eventNotifiers.add(eventNotifier);
+    }
+
+    public void setEventNotifiers(List<EventNotifier> eventNotifiers) {
+        this.eventNotifiers = eventNotifiers;
     }
 
     public EventFactory getEventFactory() {
@@ -125,8 +130,12 @@ public class DefaultManagementStrategy implements ManagementStrategy {
     }
 
     public void notify(EventObject event) throws Exception {
-        if (eventNotifier != null && eventNotifier.isEnabled(event)) {
-            eventNotifier.notify(event);
+        if (eventNotifiers != null && !eventNotifiers.isEmpty()) {
+            for (EventNotifier notifier : eventNotifiers) {
+                if (notifier.isEnabled(event)) {
+                    notifier.notify(event);
+                }
+            }
         }
     }
 
@@ -135,7 +144,7 @@ public class DefaultManagementStrategy implements ManagementStrategy {
         return null;
     }
 
-    public void setSatisticsLevel(ManagementStatisticsLevel level) {
+    public void setStatisticsLevel(ManagementStatisticsLevel level) {
         this.statisticsLevel = level;
     }
 
@@ -144,8 +153,8 @@ public class DefaultManagementStrategy implements ManagementStrategy {
     }
 
     public void start() throws Exception {
-        if (eventNotifier != null) {
-            ServiceHelper.startService(eventNotifier);
+        if (eventNotifiers != null) {
+            ServiceHelper.startServices(eventNotifiers);
         }
         if (managementAgent != null) {
             managementAgent.start();
@@ -160,8 +169,8 @@ public class DefaultManagementStrategy implements ManagementStrategy {
         if (managementAgent != null) {
             managementAgent.stop();
         }
-        if (eventNotifier != null) {
-            ServiceHelper.stopService(eventNotifier);
+        if (eventNotifiers != null) {
+            ServiceHelper.stopServices(eventNotifiers);
         }
     }
 

@@ -39,7 +39,7 @@ public class ManagedStatisticsLevelOffTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
 
         // disable it by default
-        context.getManagementStrategy().setSatisticsLevel(ManagementStatisticsLevel.Off);
+        context.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.Off);
         return context;
     }
 

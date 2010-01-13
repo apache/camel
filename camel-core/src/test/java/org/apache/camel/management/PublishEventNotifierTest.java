@@ -34,7 +34,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
         notifier.setCamelContext(context);
         notifier.setEndpointUri("mock:event");
 
-        context.getManagementStrategy().setEventNotifier(notifier);
+        context.getManagementStrategy().addEventNotifier(notifier);
 
         return context;
     }

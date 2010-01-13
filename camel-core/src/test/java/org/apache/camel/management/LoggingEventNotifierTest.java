@@ -35,7 +35,7 @@ public class LoggingEventNotifierTest extends ContextTestSupport {
         notifier.setIgnoreServiceEvents(true);
 
         CamelContext context = new DefaultCamelContext(createRegistry());
-        context.getManagementStrategy().setEventNotifier(notifier);
+        context.getManagementStrategy().addEventNotifier(notifier);
 
         return context;
     }

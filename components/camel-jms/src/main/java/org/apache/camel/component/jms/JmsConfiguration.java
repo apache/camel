@@ -285,7 +285,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * @deprecated will be removed in Camel 2.2
+     * @deprecated will be removed in the future
      */
     @Deprecated
     public static class CamelJmsTemplate102 extends JmsTemplate102 {
@@ -381,7 +381,7 @@ public class JmsConfiguration implements Cloneable {
 
                 int priority = message.getJMSPriority();
                 if (priority <= 0) {
-                    // use prioriry from endpoint if not provided on message
+                    // use priority from endpoint if not provided on message
                     priority = this.getPriority();
                 }
 
@@ -392,7 +392,7 @@ public class JmsConfiguration implements Cloneable {
                 int deliveryMode;
                 if (JmsMessageHelper.hasProperty(message, JmsConstants.JMS_DELIVERY_MODE)) {
                     deliveryMode = message.getIntProperty(JmsConstants.JMS_DELIVERY_MODE);
-                    // remove the temporary propery
+                    // remove the temporary property
                     JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
                 } else {
                     deliveryMode = this.getDeliveryMode();
@@ -571,7 +571,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * @deprecated will be removed in Camel 2.2
+     * @deprecated will be removed in the future
      */
     @Deprecated
     public boolean isUseVersion102() {
@@ -579,7 +579,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * @deprecated will be removed in Camel 2.2
+     * @deprecated will be removed in the future
      */
     @Deprecated
     public void setUseVersion102(boolean useVersion102) {
@@ -1271,8 +1271,8 @@ public class JmsConfiguration implements Cloneable {
     public void setReplyToDestinationSelectorName(String replyToDestinationSelectorName) {
         this.replyToDestinationSelectorName = replyToDestinationSelectorName;
         // in case of consumer -> producer and a named replyTo correlation selector
-        // message passthough is impossible as we need to set the value of selector into
-        // outgoing message, which would be read-only if passthough were to remain enabled
+        // message pass through is impossible as we need to set the value of selector into
+        // outgoing message, which would be read-only if pass through were to remain enabled
         if (replyToDestinationSelectorName != null) {
             setAlwaysCopyMessage(true);
         }

@@ -53,7 +53,7 @@ public class EventNotifierFailreHandledEventsTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
-        context.getManagementStrategy().setEventNotifier(new EventNotifierSupport() {
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(EventObject event) throws Exception {
                 events.add(event);
             }

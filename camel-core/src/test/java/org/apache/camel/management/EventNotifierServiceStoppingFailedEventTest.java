@@ -50,7 +50,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         context.addService(new MyService("B", true));
         context.addService(new MyService("C", false));
 
-        context.getManagementStrategy().setEventNotifier(new EventNotifierSupport() {
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(EventObject event) throws Exception {
                 events.add(event);
             }

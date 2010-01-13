@@ -38,7 +38,7 @@ public class ManagedStatisticsLevelRoutesOnlyTest extends ContextTestSupport {
         naming.setDomainName("org.apache.camel");
 
         // only routes
-        context.getManagementStrategy().setSatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
+        context.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
         return context;
     }
 

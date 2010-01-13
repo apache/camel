@@ -253,10 +253,17 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().getManagementStrategy().setEventFactory(eventFactory);
         }
 
-        EventNotifier eventNotifier = getBeanForType(EventNotifier.class);
-        if (eventNotifier != null) {
-            LOG.info("Using custom EventNotifier: " + eventNotifier);
-            getContext().getManagementStrategy().setEventNotifier(eventNotifier);
+        // set the event notifier strategies if defined
+        Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().lookupByType(EventNotifier.class);
+        if (eventNotifiers != null && !eventNotifiers.isEmpty()) {
+            for (String id : eventNotifiers.keySet()) {
+                EventNotifier notifier = eventNotifiers.get(id);
+                // do not add if already added, for instance a tracer that is also an InterceptStrategy class
+                if (!getContext().getManagementStrategy().getEventNotifiers().contains(notifier)) {
+                    LOG.info("Using custom EventNotifier with id: " + id + " and implementation: " + notifier);
+                    getContext().getManagementStrategy().addEventNotifier(notifier);
+                }
+            }
         }
 
         ShutdownStrategy shutdownStrategy = getBeanForType(ShutdownStrategy.class);
@@ -272,7 +279,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 InterceptStrategy strategy = interceptStrategies.get(id);
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (!getContext().getInterceptStrategies().contains(strategy)) {
-                    LOG.info("Using custom intercept strategy with id: " + id + " and implementation: " + strategy);
+                    LOG.info("Using custom InterceptStrategy with id: " + id + " and implementation: " + strategy);
                     getContext().addInterceptStrategy(strategy);
                 }
             }
@@ -285,7 +292,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 LifecycleStrategy strategy = lifecycleStrategies.get(id);
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (!getContext().getLifecycleStrategies().contains(strategy)) {
-                    LOG.info("Using custom lifecycle strategy with id: " + id + " and implementation: " + strategy);
+                    LOG.info("Using custom LifecycleStrategy with id: " + id + " and implementation: " + strategy);
                     getContext().addLifecycleStrategy(strategy);
                 }
             }
@@ -553,7 +560,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
             // set additional configuration from camelJMXAgent
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
-            getContext().getManagementStrategy().setSatisticsLevel(camelJMXAgent.getStatisticsLevel());
+            getContext().getManagementStrategy().setStatisticsLevel(camelJMXAgent.getStatisticsLevel());
         }
     }
 

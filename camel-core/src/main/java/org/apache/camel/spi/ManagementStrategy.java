@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
+
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
@@ -34,18 +36,25 @@ import org.apache.camel.model.ProcessorDefinition;
 public interface ManagementStrategy extends org.fusesource.commons.management.ManagementStrategy, Service {
 
     /**
-     * Gets the event notifier.
+     * Gets the event notifiers.
      *
-     * @return event notifier
+     * @return event notifiers
      */
-    EventNotifier getEventNotifier();
+    List<EventNotifier> getEventNotifiers();
 
     /**
-     * Sets the event notifier to use.
+     * Sets the list of event notifier to use.
+     *
+     * @param eventNotifier list of event notifiers
+     */
+    void setEventNotifiers(List<EventNotifier> eventNotifier);
+
+    /**
+     * Adds the event notifier to use.
      *
      * @param eventNotifier event notifier
      */
-    void setEventNotifier(EventNotifier eventNotifier);
+    void addEventNotifier(EventNotifier eventNotifier);
 
     /**
      * Gets the event factory
@@ -122,7 +131,7 @@ public interface ManagementStrategy extends org.fusesource.commons.management.Ma
      *
      * @param level the new level
      */
-    void setSatisticsLevel(ManagementStatisticsLevel level);
+    void setStatisticsLevel(ManagementStatisticsLevel level);
 
     /**
      * Gets the statistics level
