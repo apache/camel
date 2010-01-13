@@ -87,7 +87,7 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>excact match, returns true</li>
+     *   <li>exact match, returns true</li>
      *   <li>wildcard match (pattern ends with a * and the uri starts with the pattern), returns true</li>
      *   <li>regular expression match, returns true</li>
      *   <li>otherwise returns false</li>
