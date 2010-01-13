@@ -966,7 +966,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
                     if (!multipleConsumersSupported && routeInputs.contains(endpoint)) {
                         throw new FailedToStartRouteException(routeService.getId(),
-                            "Multiple consumers for the same endpoint is now allowed: " + endpoint);
+                            "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                     } else {
                         routeInputs.add(endpoint);
                     }
