@@ -150,21 +150,27 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a client factory bean object.  Notice that the serviceClass <b>must</b> be
      * an interface.
      */
-    protected ClientProxyFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {               
+    protected ClientProxyFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {
         if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
-            return new JaxWsProxyFactoryBean(new JaxWsClientFactoryBean() {
+            ClientFactoryBean cfb = new JaxWsClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
                     return new CamelCxfClientImpl(getBus(), ep);
                 }
-            });
+            };
+            // set the client bus with cxfEndpoint Bus
+            cfb.setBus(getBus());
+            return new JaxWsProxyFactoryBean(cfb);
         } else {
-            return new ClientProxyFactoryBean(new ClientFactoryBean() {
+            ClientFactoryBean cfb = new ClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
                     return new CamelCxfClientImpl(getBus(), ep);
                 }
-            });
+            };
+            // set the client bus with cxfEndpoint Bus
+            cfb.setBus(getBus());
+            return new ClientProxyFactoryBean(cfb);
         }
     }
     
@@ -173,7 +179,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a client factory bean object without serviceClass interface.
      */
     protected ClientFactoryBean createClientFactoryBean() {
-        return new ClientFactoryBean(new WSDLServiceFactoryBean()) {
+        ClientFactoryBean cfb = new ClientFactoryBean(new WSDLServiceFactoryBean()) {
                         
             @Override
             protected Client createClient(Endpoint ep) {
@@ -186,6 +192,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
             
         };
+        // set the client bus with cxfEndpoint Bus
+        cfb.setBus(getBus());
+        return cfb;
     }
 
     protected Bus doGetBus() {
