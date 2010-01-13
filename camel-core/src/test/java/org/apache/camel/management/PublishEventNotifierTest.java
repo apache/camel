@@ -41,7 +41,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
 
     public void testExchangeDone() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:event").expectedMessageCount(5);
+        getMockEndpoint("mock:event").expectedMessageCount(6);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -49,7 +49,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
     }
 
     public void testExchangeFailed() throws Exception {
-        getMockEndpoint("mock:event").expectedMessageCount(5);
+        getMockEndpoint("mock:event").expectedMessageCount(6);
 
         try {
             template.sendBody("direct:fail", "Hello World");
