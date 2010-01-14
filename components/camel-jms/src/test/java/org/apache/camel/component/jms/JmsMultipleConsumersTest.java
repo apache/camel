@@ -69,7 +69,7 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
             context.start();
             fail("Should have thrown an exception");
         } catch (FailedToStartRouteException e) {
-            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is now allowed: Endpoint[jms://queue:foo]"));
+            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: Endpoint[jms://queue:foo]"));
         }
     }
 

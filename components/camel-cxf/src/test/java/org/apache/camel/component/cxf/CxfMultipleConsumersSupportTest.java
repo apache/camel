@@ -50,7 +50,7 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
             context.start();
             fail("Should have thrown an exception");
         } catch (FailedToStartRouteException e) {
-            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is now allowed: Endpoint[http://localhost:28080/test]"));
+            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: Endpoint[http://localhost:28080/test]"));
         }
     }
 
