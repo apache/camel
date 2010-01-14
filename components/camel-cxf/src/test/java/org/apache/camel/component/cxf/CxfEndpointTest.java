@@ -17,7 +17,12 @@
 
 package org.apache.camel.component.cxf;
 
+import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.CXFBusImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,6 +34,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class CxfEndpointTest extends Assert {
+    
+    private String routerEndpointURI = "cxf://http://localhost:9000/router"
+        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+        + "&dataFormat=POJO";
+    private String wsdlEndpointURI = "cxf://http://localhost:9002/helloworld"
+        + "?wsdlURL=classpath:person.wsdl"
+        + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
+        + "&portName={http://camel.apache.org/wsdl-first}soap"
+        + "&dataFormat=PAYLOAD";
 
     @Test
     public void testSpringCxfEndpoint() throws Exception {
@@ -43,6 +57,26 @@ public class CxfEndpointTest extends Assert {
         assertEquals("Got the wrong endpont service class",
             svf.getServiceClass().getCanonicalName(),
             "org.apache.camel.component.cxf.HelloService");
+    }
+    
+    @Test
+    public void testSettingClientBus() throws Exception {
+        CXFBusImpl bus = (CXFBusImpl) BusFactory.newInstance().createBus();
+        bus.setId("oldCXF");
+        BusFactory.setThreadDefaultBus(bus);
+        
+        CXFBusImpl newBus = (CXFBusImpl) BusFactory.newInstance().createBus();
+        newBus.setId("newCXF");
+        CxfComponent cxfComponent = new CxfComponent(new DefaultCamelContext());
+        CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI);
+        endpoint.setBus(newBus);
+        CamelCxfClientImpl client = (CamelCxfClientImpl)endpoint.createClient();
+        assertEquals("CamelCxfClientImpl should has the same bus with CxfEndpoint", newBus, client.getBus());
+        
+        endpoint = (CxfEndpoint)cxfComponent.createEndpoint(wsdlEndpointURI);
+        endpoint.setBus(newBus);
+        client = (CamelCxfClientImpl)endpoint.createClient();
+        assertEquals("CamelCxfClientImpl should has the same bus with CxfEndpoint", newBus, client.getBus());
     }
 
 }

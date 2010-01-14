@@ -152,25 +152,20 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      */
     protected ClientProxyFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {
         if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
-            ClientFactoryBean cfb = new JaxWsClientFactoryBean() {
+            return new JaxWsProxyFactoryBean(new JaxWsClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
                     return new CamelCxfClientImpl(getBus(), ep);
                 }
-            };
-            // set the client bus with cxfEndpoint Bus
-            cfb.setBus(getBus());
-            return new JaxWsProxyFactoryBean(cfb);
+            });
+            
         } else {
-            ClientFactoryBean cfb = new ClientFactoryBean() {
+            return new ClientProxyFactoryBean(new ClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
                     return new CamelCxfClientImpl(getBus(), ep);
                 }
-            };
-            // set the client bus with cxfEndpoint Bus
-            cfb.setBus(getBus());
-            return new ClientProxyFactoryBean(cfb);
+            });
         }
     }
     
@@ -179,7 +174,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a client factory bean object without serviceClass interface.
      */
     protected ClientFactoryBean createClientFactoryBean() {
-        ClientFactoryBean cfb = new ClientFactoryBean(new WSDLServiceFactoryBean()) {
+        return new ClientFactoryBean(new WSDLServiceFactoryBean()) {
                         
             @Override
             protected Client createClient(Endpoint ep) {
@@ -192,9 +187,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
             
         };
-        // set the client bus with cxfEndpoint Bus
-        cfb.setBus(getBus());
-        return cfb;
     }
 
     protected Bus doGetBus() {
@@ -464,10 +456,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD}
      * mode.
      */
-    private class CamelCxfClientImpl extends ClientImpl {
-
+    class CamelCxfClientImpl extends ClientImpl {
+       
         public CamelCxfClientImpl(Bus bus, Endpoint ep) {
             super(bus, ep);
+        }
+        
+        public Bus getBus() {
+            return bus;
         }
         
         @SuppressWarnings("unchecked")
