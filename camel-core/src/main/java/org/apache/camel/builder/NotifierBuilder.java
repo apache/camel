@@ -48,15 +48,15 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class ExchangeNotifierBuilder {
+public class NotifierBuilder {
 
     // notifier to hook into Camel to listen for events
-    private final EventNotifier notifier = new ExchangeNotifier();
+    private final EventNotifier eventNotifier = new ExchangeNotifier();
 
     // the predicates build with this builder
     private final List<EventPredicateHolder> predicates = new ArrayList<EventPredicateHolder>();
 
-    // latch to be used if waiting for condition
+    // latch to be used to signal predicates matches
     private final CountDownLatch latch = new CountDownLatch(1);
 
     // the current state while building an event predicate where we use a stack and the operation
@@ -71,13 +71,13 @@ public class ExchangeNotifierBuilder {
      *
      * @param context the Camel context
      */
-    public ExchangeNotifierBuilder(CamelContext context) {
+    public NotifierBuilder(CamelContext context) {
         try {
-            ServiceHelper.startService(notifier);
+            ServiceHelper.startService(eventNotifier);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
-        context.getManagementStrategy().addEventNotifier(notifier);
+        context.getManagementStrategy().addEventNotifier(eventNotifier);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ExchangeNotifierBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
-    public ExchangeNotifierBuilder from(final String endpointUri) {
+    public NotifierBuilder from(final String endpointUri) {
         stack.push(new EventPredicateSupport() {
 
             @Override
@@ -127,7 +127,7 @@ public class ExchangeNotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenReceived(final int number) {
+    public NotifierBuilder whenReceived(final int number) {
         stack.push(new EventPredicateSupport() {
             private int current;
 
@@ -161,7 +161,7 @@ public class ExchangeNotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenDone(final int number) {
+    public NotifierBuilder whenDone(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -201,7 +201,7 @@ public class ExchangeNotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenCompleted(final int number) {
+    public NotifierBuilder whenCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -232,7 +232,7 @@ public class ExchangeNotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenFailed(final int number) {
+    public NotifierBuilder whenFailed(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -262,7 +262,7 @@ public class ExchangeNotifierBuilder {
      * @param number exactly number of messages
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenExactlyDone(final int number) {
+    public NotifierBuilder whenExactlyDone(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -299,7 +299,7 @@ public class ExchangeNotifierBuilder {
      * @param number exactly number of messages
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenExactlyCompleted(final int number) {
+    public NotifierBuilder whenExactlyCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -327,7 +327,7 @@ public class ExchangeNotifierBuilder {
      * @param number exactly number of messages
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenExactlyFailed(final int number) {
+    public NotifierBuilder whenExactlyFailed(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -355,7 +355,7 @@ public class ExchangeNotifierBuilder {
      * @param predicate the predicate
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenAnyReceivedMatches(final Predicate predicate) {
+    public NotifierBuilder whenAnyReceivedMatches(final Predicate predicate) {
         stack.push(new EventPredicateSupport() {
             private boolean matches;
 
@@ -373,7 +373,7 @@ public class ExchangeNotifierBuilder {
 
             @Override
             public String toString() {
-                return "whenAntReceivedMatches(" + predicate + ")";
+                return "whenAnyReceivedMatches(" + predicate + ")";
             }
         });
         return this;
@@ -385,7 +385,7 @@ public class ExchangeNotifierBuilder {
      * @param predicate the predicate
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenAllReceivedMatches(final Predicate predicate) {
+    public NotifierBuilder whenAllReceivedMatches(final Predicate predicate) {
         stack.push(new EventPredicateSupport() {
             private boolean matches = true;
 
@@ -421,7 +421,7 @@ public class ExchangeNotifierBuilder {
      * @param mock the mock
      * @return the builder
      */
-    public ExchangeNotifierBuilder whenSatisfied(final MockEndpoint mock) {
+    public NotifierBuilder whenSatisfied(final MockEndpoint mock) {
         stack.push(new EventPredicateSupport() {
 
             private Producer producer;
@@ -459,7 +459,7 @@ public class ExchangeNotifierBuilder {
 
             @Override
             public String toString() {
-                return "whenMock(" + mock + ")";
+                return "whenSatisfied(" + mock + ")";
             }
         });
         return this;
@@ -471,7 +471,7 @@ public class ExchangeNotifierBuilder {
      *
      * @return the builder
      */
-    public ExchangeNotifierBuilder and() {
+    public NotifierBuilder and() {
         doCreate(EventOperation.and);
         return this;
     }
@@ -481,7 +481,7 @@ public class ExchangeNotifierBuilder {
      *
      * @return the builder
      */
-    public ExchangeNotifierBuilder or() {
+    public NotifierBuilder or() {
         doCreate(EventOperation.or);
         return this;
     }
@@ -491,7 +491,7 @@ public class ExchangeNotifierBuilder {
      *
      * @return the builder
      */
-    public ExchangeNotifierBuilder not() {
+    public NotifierBuilder not() {
         doCreate(EventOperation.not);
         return this;
     }
@@ -503,7 +503,7 @@ public class ExchangeNotifierBuilder {
      *
      * @return the created builder ready for matching
      */
-    public ExchangeNotifierBuilder create() {
+    public NotifierBuilder create() {
         doCreate(EventOperation.and);
         return this;
     }

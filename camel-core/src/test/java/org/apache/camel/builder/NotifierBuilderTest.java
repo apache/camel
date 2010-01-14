@@ -24,16 +24,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class ExchangeNotifierBuilderTest extends ContextTestSupport {
+public class NotifierBuilderTest extends ContextTestSupport {
 
     public void testWhenExchangeDone() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .from("direct:foo").whenDone(5)
                 .create();
 
-        assertEquals("from(direct:foo).whenDone(5)", builder.toString());
+        assertEquals("from(direct:foo).whenDone(5)", notifier .toString());
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
@@ -42,26 +42,26 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         template.sendBody("direct:bar", "D");
         template.sendBody("direct:bar", "E");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "F");
         template.sendBody("direct:bar", "G");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "H");
         template.sendBody("direct:bar", "I");
 
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     public void testWhenExchangeDoneAnd() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier = new NotifierBuilder(context)
                 .from("direct:foo").whenDone(5)
                 .and().from("direct:bar").whenDone(7)
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
@@ -70,34 +70,34 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         template.sendBody("direct:bar", "D");
         template.sendBody("direct:bar", "E");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "F");
         template.sendBody("direct:bar", "G");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "H");
         template.sendBody("direct:bar", "I");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "J");
         template.sendBody("direct:bar", "K");
         template.sendBody("direct:bar", "L");
 
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     public void testWhenExchangeDoneOr() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .from("direct:foo").whenDone(5)
                 .or().from("direct:bar").whenDone(7)
                 .create();
 
-        assertEquals("from(direct:foo).whenDone(5).or().from(direct:bar).whenDone(7)", builder.toString());
+        assertEquals("from(direct:foo).whenDone(5).or().from(direct:bar).whenDone(7)", notifier .toString());
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
@@ -106,64 +106,64 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         template.sendBody("direct:bar", "D");
         template.sendBody("direct:bar", "E");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "G");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "I");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "J");
         template.sendBody("direct:bar", "K");
         template.sendBody("direct:bar", "L");
 
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     public void testWhenExchangeDoneNot() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .from("direct:foo").whenDone(5)
                 .not().from("direct:bar").whenDone(1)
                 .create();
 
-        assertEquals("from(direct:foo).whenDone(5).not().from(direct:bar).whenDone(1)", builder.toString());
+        assertEquals("from(direct:foo).whenDone(5).not().from(direct:bar).whenDone(1)", notifier .toString());
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
         template.sendBody("direct:foo", "C");
         template.sendBody("direct:foo", "D");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
         template.sendBody("direct:foo", "E");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         template.sendBody("direct:foo", "F");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         template.sendBody("direct:bar", "G");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
     }
 
     public void testWhenExchangeDoneOrFailure() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenDone(5)
                 .or().whenFailed(1)
                 .create();
 
-        assertEquals("whenDone(5).or().whenFailed(1)", builder.toString());
+        assertEquals("whenDone(5).or().whenFailed(1)", notifier .toString());
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
         template.sendBody("direct:foo", "D");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         try {
             template.sendBody("direct:fail", "E");
@@ -171,16 +171,16 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
             // ignore
         }
 
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     public void testWhenExchangeDoneNotFailure() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenDone(5)
                 .not().whenFailed(1)
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
@@ -188,7 +188,7 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         template.sendBody("direct:bar", "E");
         template.sendBody("direct:bar", "F");
 
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         try {
             template.sendBody("direct:fail", "G");
@@ -196,15 +196,15 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
             // ignore
         }
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
     }
 
     public void testWhenExchangeCompleted() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenCompleted(5)
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
@@ -223,18 +223,18 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         }
 
         // should NOT be completed as it only counts successful exchanges
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "F");
         template.sendBody("direct:foo", "G");
         template.sendBody("direct:bar", "H");
 
         // now it should match
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     public void testWhenExchangeReceivedWithDelay() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenReceived(1)
                 .create();
 
@@ -243,17 +243,17 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         long end = System.currentTimeMillis();
         assertTrue("Should be faster than: " + (end-start), (end-start) < 1500);
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         // should be quick as its when received and NOT when done
-        assertEquals(true, builder.matches(5, TimeUnit.SECONDS));
+        assertEquals(true, notifier .matches(5, TimeUnit.SECONDS));
         long end2 = System.currentTimeMillis();
 
         assertTrue("Should be faster than: " + (end2-start), (end2-start) < 1500);
     }
 
     public void testWhenExchangeDoneWithDelay() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenDone(1)
                 .create();
 
@@ -262,79 +262,79 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         long end = System.currentTimeMillis();
         assertTrue("Should be faster than: " + (end-start), (end-start) < 1500);
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         // should NOT be quick as its when DONE
-        assertEquals(true, builder.matches(5, TimeUnit.SECONDS));
+        assertEquals(true, notifier .matches(5, TimeUnit.SECONDS));
         long end2 = System.currentTimeMillis();
 
         assertTrue("Should be slower than: " + (end2-start), (end2-start) > 2900);
     }
 
     public void testWhenExchangeDoneAndTimeoutWithDelay() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenDone(1)
                 .create();
 
         template.sendBody("seda:cheese", "Hello Cheese");
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         // should timeout
-        assertEquals(false, builder.matches(1, TimeUnit.SECONDS));
+        assertEquals(false, notifier .matches(1, TimeUnit.SECONDS));
 
         // should NOT timeout
-        assertEquals(true, builder.matches(5, TimeUnit.SECONDS));
+        assertEquals(true, notifier .matches(5, TimeUnit.SECONDS));
     }
 
     public void testWhenExchangeExactlyDone() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenExactlyDone(5)
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
         template.sendBody("direct:foo", "C");
 
         template.sendBody("direct:bar", "D");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "E");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         template.sendBody("direct:foo", "F");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
     }
 
     public void testWhenExchangeExactlyComplete() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenExactlyCompleted(5)
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
         template.sendBody("direct:foo", "C");
 
         template.sendBody("direct:bar", "D");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "E");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         template.sendBody("direct:foo", "F");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
     }
 
     public void testWhenExchangeExactlyFailed() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenExactlyFailed(2)
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "A");
         template.sendBody("direct:foo", "B");
@@ -347,58 +347,58 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         }
 
         template.sendBody("direct:bar", "E");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         try {
             template.sendBody("direct:fail", "F");
         } catch (Exception e) {
             // ignore
         }
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         template.sendBody("direct:bar", "G");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         try {
             template.sendBody("direct:fail", "H");
         } catch (Exception e) {
             // ignore
         }
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
     }
 
     public void testWhenAnyReceivedMatches() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenAnyReceivedMatches(body().contains("Camel"))
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Hello World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Bye World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "Hello Camel");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     public void testWhenAllReceivedMatches() throws Exception {
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .whenAllReceivedMatches(body().contains("Camel"))
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Hello Camel");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         template.sendBody("direct:foo", "Bye Camel");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
 
         template.sendBody("direct:bar", "Hello World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
     }
 
     public void testWhenSatisfied() throws Exception {
@@ -407,57 +407,57 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:assert");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
 
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .from("direct:foo").whenSatisfied(mock)
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Bye World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Hello World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
-        // the builder is based on direct:foo so sending to bar should not trigger match
+        // the notifier  is based on direct:foo so sending to bar should not trigger match
         template.sendBody("direct:bar", "Hi World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Hi World");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     public void testComplexOrCamel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:assert");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
 
-        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+        NotifierBuilder notifier  = new NotifierBuilder(context)
                 .from("direct:foo").whenSatisfied(mock)
                 .and().from("direct:bar").whenExactlyDone(5).whenAnyReceivedMatches(body().contains("Camel"))
                 .create();
 
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Bye World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Hello World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
-        // the builder is based on direct:foo so sending to bar should not trigger match
+        // the notifier  is based on direct:foo so sending to bar should not trigger match
         template.sendBody("direct:bar", "Hi World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:foo", "Hi World");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "Hi Camel");
-        assertEquals(false, builder.matches());
+        assertEquals(false, notifier .matches());
 
         template.sendBody("direct:bar", "A");
         template.sendBody("direct:bar", "B");
         template.sendBody("direct:bar", "C");
-        assertEquals(true, builder.matches());
+        assertEquals(true, notifier .matches());
     }
 
     @Override
