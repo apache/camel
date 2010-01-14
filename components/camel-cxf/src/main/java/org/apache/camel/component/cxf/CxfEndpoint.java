@@ -280,15 +280,21 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // setup client factory bean
             setupClientFactoryBean(factoryBean, cls);
             return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
-        } else {
-            ObjectHelper.notNull(portName, "Please provide endpoint/port name");
-            ObjectHelper.notNull(serviceName, "Please provide service name");
+        } else {            
+            checkName(portName, "endpoint/port name");
+            checkName(serviceName, "service name");
             ClientFactoryBean factoryBean = createClientFactoryBean();
             // setup client factory bean
             setupClientFactoryBean(factoryBean);
             return factoryBean.create();
         }
         
+    }
+    
+    void checkName(String value, String name) {
+        if (ObjectHelper.isEmpty(value)) {
+            LOG.warn("The " + name + "is empty, cxf will try to load the first one in wsdl for you");
+        }
     }
 
     /**
@@ -322,7 +328,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         setupServerFactoryBean(answer, cls);
         return answer;
     }
-    
+        
     // Properties
     // -------------------------------------------------------------------------
 
