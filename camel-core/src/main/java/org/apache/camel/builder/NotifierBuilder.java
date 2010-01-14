@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EventObject;
 import java.util.Iterator;
 import java.util.List;
@@ -350,18 +351,48 @@ public class NotifierBuilder {
     }
 
     /**
-     * Sets a condition that <b>any</b> received {@link Exchange} should match the {@link Predicate}
+     * Sets a condition that <b>any received</b> {@link Exchange} should match the {@link Predicate}
      *
      * @param predicate the predicate
      * @return the builder
      */
     public NotifierBuilder whenAnyReceivedMatches(final Predicate predicate) {
+        return doWhenAnyMatches(predicate, true);
+    }
+
+    /**
+     * Sets a condition that <b>any done</b> {@link Exchange} should match the {@link Predicate}
+     *
+     * @param predicate the predicate
+     * @return the builder
+     */
+    public NotifierBuilder whenAnyDoneMatches(final Predicate predicate) {
+        return doWhenAnyMatches(predicate, false);
+    }
+
+    private NotifierBuilder doWhenAnyMatches(final Predicate predicate, final boolean received) {
         stack.push(new EventPredicateSupport() {
             private boolean matches;
 
             @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                if (!received && !matches) {
+                    matches = predicate.matches(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeFailure(Exchange exchange) {
+                if (!received && !matches) {
+                    matches = predicate.matches(exchange);
+                }
+                return true;
+            }
+
+            @Override
             public boolean onExchangeCreated(Exchange exchange) {
-                if (!matches) {
+                if (received && !matches) {
                     matches = predicate.matches(exchange);
                 }
                 return true;
@@ -373,25 +404,59 @@ public class NotifierBuilder {
 
             @Override
             public String toString() {
-                return "whenAnyReceivedMatches(" + predicate + ")";
+                if (received) {
+                    return "whenAnyReceivedMatches(" + predicate + ")";
+                } else {
+                    return "whenAnyDoneMatches(" + predicate + ")";
+                }
             }
         });
         return this;
     }
 
     /**
-     * Sets a condition that <b>all</b> received {@link Exchange} should match the {@link Predicate}
+     * Sets a condition that <b>all received</b> {@link Exchange} should match the {@link Predicate}
      *
      * @param predicate the predicate
      * @return the builder
      */
     public NotifierBuilder whenAllReceivedMatches(final Predicate predicate) {
+        return doWhenAllMatches(predicate, true);
+    }
+
+    /**
+     * Sets a condition that <b>all done</b> {@link Exchange} should match the {@link Predicate}
+     *
+     * @param predicate the predicate
+     * @return the builder
+     */
+    public NotifierBuilder whenAllDoneMatches(final Predicate predicate) {
+        return doWhenAllMatches(predicate, false);
+    }
+
+    private NotifierBuilder doWhenAllMatches(final Predicate predicate, final boolean received) {
         stack.push(new EventPredicateSupport() {
             private boolean matches = true;
 
             @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                if (!received && matches) {
+                    matches = predicate.matches(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeFailure(Exchange exchange) {
+                if (!received && matches) {
+                    matches = predicate.matches(exchange);
+                }
+                return true;
+            }
+
+            @Override
             public boolean onExchangeCreated(Exchange exchange) {
-                if (matches) {
+                if (received && matches) {
                     matches = predicate.matches(exchange);
                 }
                 return true;
@@ -403,7 +468,11 @@ public class NotifierBuilder {
 
             @Override
             public String toString() {
-                return "whenAllReceivedMatches(" + predicate + ")";
+                if (received) {
+                    return "whenAllReceivedMatches(" + predicate + ")";
+                } else {
+                    return "whenAllDoneMatches(" + predicate + ")";
+                }
             }
         });
         return this;
@@ -593,6 +662,130 @@ public class NotifierBuilder {
                     return "whenReceivedNotSatisfied(" + mock + ")";
                 } else {
                     return "whenDoneNotSatisfied(" + mock + ")";
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Sets a condition that the bodies is expected to be <b>received</b> in the order as well.
+     * <p/>
+     * This condition will discard any additional messages. If you need a more strict condition
+     * then use {@link #whenExactBodiesReceived(Object...)}
+     *
+     * @param bodies the expected bodies
+     * @return the builder
+     * @see #whenExactBodiesReceived(Object...)
+     */
+    public NotifierBuilder whenBodiesReceived(Object... bodies) {
+        List<Object> bodyList = new ArrayList<Object>();
+        bodyList.addAll(Arrays.asList(bodies));
+        return doWhenBodies(bodyList, true, false);
+    }
+
+    /**
+     * Sets a condition that the bodies is expected to be <b>done</b> in the order as well.
+     * <p/>
+     * This condition will discard any additional messages. If you need a more strict condition
+     * then use {@link #whenExactBodiesDone(Object...)}
+     *
+     * @param bodies the expected bodies
+     * @return the builder
+     * @see #whenExactBodiesDone(Object...)
+     */
+    public NotifierBuilder whenBodiesDone(Object... bodies) {
+        List<Object> bodyList = new ArrayList<Object>();
+        bodyList.addAll(Arrays.asList(bodies));
+        return doWhenBodies(bodyList, false, false);
+    }
+
+    /**
+     * Sets a condition that the bodies is expected to be <b>received</b> in the order as well.
+     * <p/>
+     * This condition is strict which means that it only expect that exact number of bodies
+     *
+     * @param bodies the expected bodies
+     * @return the builder
+     * @see #whenBodiesReceived(Object...)
+     */
+    public NotifierBuilder whenExactBodiesReceived(Object... bodies) {
+        List<Object> bodyList = new ArrayList<Object>();
+        bodyList.addAll(Arrays.asList(bodies));
+        return doWhenBodies(bodyList, true, true);
+    }
+
+    /**
+     * Sets a condition that the bodies is expected to be <b>done</b> in the order as well.
+     * <p/>
+     * This condition is strict which means that it only expect that exact number of bodies
+     *
+     * @param bodies the expected bodies
+     * @return the builder
+     * @see #whenExactBodiesDone(Object...)
+     */
+    public NotifierBuilder whenExactBodiesDone(Object... bodies) {
+        List<Object> bodyList = new ArrayList<Object>();
+        bodyList.addAll(Arrays.asList(bodies));
+        return doWhenBodies(bodyList, false, true);
+    }
+
+    private NotifierBuilder doWhenBodies(final List bodies, final boolean received, final boolean exact) {
+        stack.push(new EventPredicateSupport() {
+            private boolean matches;
+            private int current;
+
+            @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (received) {
+                    matchBody(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeFailure(Exchange exchange) {
+                if (!received) {
+                    matchBody(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                if (!received) {
+                    matchBody(exchange);
+                }
+                return true;
+            }
+
+            private void matchBody(Exchange exchange) {
+                current++;
+
+                if (current > bodies.size()) {
+                    // out of bounds
+                    return;
+                }
+
+                Object actual = exchange.getIn().getBody();
+                Object expected = bodies.get(current - 1);
+                matches = ObjectHelper.equal(expected, actual);
+            }
+
+            public boolean matches() {
+                if (exact) {
+                    return matches && current == bodies.size();
+                } else {
+                    return matches && current >= bodies.size();
+                }
+            }
+
+            @Override
+            public String toString() {
+                if (received) {
+                    return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
+                } else {
+                    return "" + (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
                 }
             }
         });

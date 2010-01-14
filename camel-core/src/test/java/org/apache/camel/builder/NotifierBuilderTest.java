@@ -401,6 +401,118 @@ public class NotifierBuilderTest extends ContextTestSupport {
         assertEquals(false, notifier.matches());
     }
 
+    public void testWhenAnyDoneMatches() throws Exception {
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenAnyDoneMatches(body().contains("Bye"))
+                .create();
+
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:cake", "Camel");
+        assertEquals(true, notifier.matches());
+
+        template.sendBody("direct:foo", "Damn World");
+        assertEquals(true, notifier.matches());
+    }
+
+    public void testWhenAllDoneMatches() throws Exception {
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenAllDoneMatches(body().contains("Bye"))
+                .create();
+
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:cake", "Camel");
+        assertEquals(true, notifier.matches());
+
+        template.sendBody("direct:cake", "World");
+        assertEquals(true, notifier.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(false, notifier.matches());
+    }
+
+    public void testWhenBodiesReceived() throws Exception {
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenBodiesReceived("Hi World", "Hello World")
+                .create();
+
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(true, notifier.matches());
+
+        // should keep being true
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(true, notifier.matches());
+
+        template.sendBody("direct:foo", "Damn World");
+        assertEquals(true, notifier.matches());
+    }
+
+    public void testWhenBodiesDone() throws Exception {
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenBodiesDone("Bye World", "Bye Camel")
+                .create();
+
+        assertEquals(false, notifier.matches());
+
+        template.requestBody("direct:cake", "World");
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:cake", "Camel");
+        assertEquals(true, notifier.matches());
+
+        // should keep being true
+        template.sendBody("direct:foo", "Damn World");
+        assertEquals(true, notifier.matches());
+    }
+
+    public void testWhenExactBodiesReceived() throws Exception {
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenExactBodiesReceived("Hi World", "Hello World")
+                .create();
+
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(true, notifier.matches());
+
+        // should not keep being true
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Damn World");
+        assertEquals(false, notifier.matches());
+    }
+
+    public void testWhenExactBodiesDone() throws Exception {
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenExactBodiesDone("Bye World", "Bye Camel")
+                .create();
+
+        assertEquals(false, notifier.matches());
+
+        template.requestBody("direct:cake", "World");
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:cake", "Camel");
+        assertEquals(true, notifier.matches());
+
+        // should NOT keep being true
+        template.sendBody("direct:foo", "Damn World");
+        assertEquals(false, notifier.matches());
+    }
+
     public void testWhenReceivedSatisfied() throws Exception {
         // lets use a mock to set the expressions as it got many great assertions for that
         // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
@@ -562,7 +674,7 @@ public class NotifierBuilderTest extends ContextTestSupport {
 
                 from("seda:cheese").delay(3000).to("mock:cheese");
 
-                from("direct:cake").transform(body().prepend("Bye "));
+                from("direct:cake").transform(body().prepend("Bye ")).to("log:cake");
             }
         };
     }
