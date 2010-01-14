@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 
 /**
@@ -196,6 +198,174 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
         assertEquals(false, builder.matches());
     }
 
+    public void testWhenExchangeCompleted() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenCompleted(5)
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "A");
+        template.sendBody("direct:foo", "B");
+        template.sendBody("direct:bar", "C");
+
+        try {
+            template.sendBody("direct:fail", "D");
+        } catch (Exception e) {
+            // ignore
+        }
+
+        try {
+            template.sendBody("direct:fail", "E");
+        } catch (Exception e) {
+            // ignore
+        }
+
+        // should NOT be completed as it only counts successful exchanges
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:bar", "F");
+        template.sendBody("direct:foo", "G");
+        template.sendBody("direct:bar", "H");
+
+        // now it should match
+        assertEquals(true, builder.matches());
+    }
+
+    public void testWhenExchangeReceivedWithDelay() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenReceived(1)
+                .create();
+
+        long start = System.currentTimeMillis();
+        template.sendBody("seda:cheese", "Hello Cheese");
+        long end = System.currentTimeMillis();
+        assertTrue("Should be faster than: " + (end-start), (end-start) < 1500);
+
+        assertEquals(false, builder.matches());
+
+        // should be quick as its when received and NOT when done
+        assertEquals(true, builder.matches(5, TimeUnit.SECONDS));
+        long end2 = System.currentTimeMillis();
+
+        assertTrue("Should be faster than: " + (end2-start), (end2-start) < 1500);
+    }
+
+    public void testWhenExchangeDoneWithDelay() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenDone(1)
+                .create();
+
+        long start = System.currentTimeMillis();
+        template.sendBody("seda:cheese", "Hello Cheese");
+        long end = System.currentTimeMillis();
+        assertTrue("Should be faster than: " + (end-start), (end-start) < 1500);
+
+        assertEquals(false, builder.matches());
+
+        // should NOT be quick as its when DONE
+        assertEquals(true, builder.matches(5, TimeUnit.SECONDS));
+        long end2 = System.currentTimeMillis();
+
+        assertTrue("Should be slower than: " + (end2-start), (end2-start) > 2900);
+    }
+
+    public void testWhenExchangeDoneAndTimeoutWithDelay() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenDone(1)
+                .create();
+
+        template.sendBody("seda:cheese", "Hello Cheese");
+
+        assertEquals(false, builder.matches());
+
+        // should timeout
+        assertEquals(false, builder.matches(1, TimeUnit.SECONDS));
+
+        // should NOT timeout
+        assertEquals(true, builder.matches(5, TimeUnit.SECONDS));
+    }
+
+    public void testWhenExchangeExactlyDone() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenExactlyDone(5)
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "A");
+        template.sendBody("direct:foo", "B");
+        template.sendBody("direct:foo", "C");
+
+        template.sendBody("direct:bar", "D");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:bar", "E");
+        assertEquals(true, builder.matches());
+
+        template.sendBody("direct:foo", "F");
+        assertEquals(false, builder.matches());
+    }
+
+    public void testWhenExchangeExactlyComplete() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenExactlyCompleted(5)
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "A");
+        template.sendBody("direct:foo", "B");
+        template.sendBody("direct:foo", "C");
+
+        template.sendBody("direct:bar", "D");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:bar", "E");
+        assertEquals(true, builder.matches());
+
+        template.sendBody("direct:foo", "F");
+        assertEquals(false, builder.matches());
+    }
+
+    public void testWhenExchangeExactlyFailed() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenExactlyFailed(2)
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "A");
+        template.sendBody("direct:foo", "B");
+        template.sendBody("direct:foo", "C");
+
+        try {
+            template.sendBody("direct:fail", "D");
+        } catch (Exception e) {
+            // ignore
+        }
+
+        template.sendBody("direct:bar", "E");
+        assertEquals(false, builder.matches());
+
+        try {
+            template.sendBody("direct:fail", "F");
+        } catch (Exception e) {
+            // ignore
+        }
+        assertEquals(true, builder.matches());
+
+        template.sendBody("direct:bar", "G");
+        assertEquals(true, builder.matches());
+
+        try {
+            template.sendBody("direct:fail", "H");
+        } catch (Exception e) {
+            // ignore
+        }
+        assertEquals(false, builder.matches());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -206,6 +376,8 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
                 from("direct:bar").to("mock:bar");
 
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));
+
+                from("seda:cheese").delay(3000).to("mock:cheese");
             }
         };
     }

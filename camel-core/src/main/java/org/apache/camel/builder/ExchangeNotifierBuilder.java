@@ -36,24 +36,55 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
+ * A builder to build an expression based on {@link org.apache.camel.spi.EventNotifier} notifications
+ * about {@link Exchange} being routed.
+ * <p/>
+ * This builder can be used for testing purposes where you want to know when a test is supposed to be done.
+ * The idea is that you can build an expression that explains when the test is done. For example when Camel
+ * have finished routing 5 messages. You can then in your test await for this condition to occur.
+ *
  * @version $Revision$
  */
 public class ExchangeNotifierBuilder {
 
-    // TODO work in progress
-
-    private final List<EventPredicateHolder> predicates = new ArrayList<EventPredicateHolder>();
+    // notifier to hook into Camel to listen for events
     private final EventNotifier notifier = new ExchangeNotifier();
+
+    // the predicates build with this builder
+    private final List<EventPredicateHolder> predicates = new ArrayList<EventPredicateHolder>();
+
+    // latch to be used if waiting for condition
     private final CountDownLatch latch = new CountDownLatch(1);
+
+    // the current state while building an event predicate where we use a stack and the operation
     private final Stack<EventPredicate> stack = new Stack<EventPredicate>();
-    private boolean matches;
     private EventOperation operation;
 
-    public ExchangeNotifierBuilder(CamelContext context) throws Exception {
-        ServiceHelper.startService(notifier);
+    // computed value whether all the predicates matched
+    private boolean matches;
+
+    /**
+     * Creates a new builder.
+     *
+     * @param context the Camel context
+     */
+    public ExchangeNotifierBuilder(CamelContext context) {
+        try {
+            ServiceHelper.startService(notifier);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         context.getManagementStrategy().addEventNotifier(notifier);
     }
 
+    /**
+     * Optionally a <tt>from</tt> endpoint which means that this expression should only be based
+     * on {@link Exchange} which is originated from the particular endpoint(s).
+     *
+     * @param endpointUri uri of endpoint or pattern (see the EndpointHelper javadoc)
+     * @return the builder
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     */
     public ExchangeNotifierBuilder from(final String endpointUri) {
         stack.push(new EventPredicateSupport() {
 
@@ -84,6 +115,15 @@ public class ExchangeNotifierBuilder {
         return this;
     }
 
+    /**
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has been received.
+     * <p/>
+     * The number matching is <i>at least</i> based which means that if more messages received
+     * it will match also.
+     *
+     * @param number at least number of messages
+     * @return the builder
+     */
     public ExchangeNotifierBuilder whenReceived(final int number) {
         stack.push(new EventPredicateSupport() {
             private int current;
@@ -106,6 +146,18 @@ public class ExchangeNotifierBuilder {
         return this;
     }
 
+    /**
+     * Sets a condition when <tt>number</tt> of {@link Exchange} is done being processed.
+     * <p/>
+     * The number matching is <i>at least</i> based which means that if more messages received
+     * it will match also.
+     * <p/>
+     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
+     * messages, where as completed is only successful processed messages.
+     *
+     * @param number at least number of messages
+     * @return the builder
+     */
     public ExchangeNotifierBuilder whenDone(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
@@ -134,6 +186,18 @@ public class ExchangeNotifierBuilder {
         return this;
     }
 
+    /**
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has been completed.
+     * <p/>
+     * The number matching is <i>at least</i> based which means that if more messages received
+     * it will match also.
+     * <p/>
+     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
+     * messages, where as completed is only successful processed messages.
+     *
+     * @param number at least number of messages
+     * @return the builder
+     */
     public ExchangeNotifierBuilder whenCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
@@ -156,6 +220,15 @@ public class ExchangeNotifierBuilder {
         return this;
     }
 
+    /**
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has failed.
+     * <p/>
+     * The number matching is <i>at least</i> based which means that if more messages received
+     * it will match also.
+     *
+     * @param number at least number of messages
+     * @return the builder
+     */
     public ExchangeNotifierBuilder whenFailed(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
@@ -178,47 +251,170 @@ public class ExchangeNotifierBuilder {
         return this;
     }
 
+    /**
+     * Sets a condition when <tt>number</tt> of {@link Exchange} is done being processed.
+     * <p/>
+     * messages, where as completed is only successful processed messages.
+     *
+     * @param number exactly number of messages
+     * @return the builder
+     */
+    public ExchangeNotifierBuilder whenExactlyDone(final int number) {
+        stack.add(new EventPredicateSupport() {
+            private int current;
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                current++;
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeFailure(Exchange exchange) {
+                current++;
+                return true;
+            }
+
+            public boolean matches() {
+                return current == number;
+            }
+
+            @Override
+            public String toString() {
+                return "whenExactlyDone(" + number + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has been completed.
+     * <p/>
+     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
+     * messages, where as completed is only successful processed messages.
+     *
+     * @param number exactly number of messages
+     * @return the builder
+     */
+    public ExchangeNotifierBuilder whenExactlyCompleted(final int number) {
+        stack.add(new EventPredicateSupport() {
+            private int current;
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                current++;
+                return true;
+            }
+
+            public boolean matches() {
+                return current == number;
+            }
+
+            @Override
+            public String toString() {
+                return "whenExactlyCompleted(" + number + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Sets a condition when <tt>number</tt> of {@link Exchange} has failed.
+     *
+     * @param number exactly number of messages
+     * @return the builder
+     */
+    public ExchangeNotifierBuilder whenExactlyFailed(final int number) {
+        stack.add(new EventPredicateSupport() {
+            private int current;
+
+            @Override
+            public boolean onExchangeFailure(Exchange exchange) {
+                current++;
+                return true;
+            }
+
+            public boolean matches() {
+                return current == number;
+            }
+
+            @Override
+            public String toString() {
+                return "whenExactlyFailed(" + number + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Prepares to append an additional expression using the <i>and</i> operator.
+     *
+     * @return the builder
+     */
     public ExchangeNotifierBuilder and() {
         doCreate(EventOperation.and);
         return this;
     }
 
+    /**
+     * Prepares to append an additional expression using the <i>or</i> operator.
+     *
+     * @return the builder
+     */
     public ExchangeNotifierBuilder or() {
         doCreate(EventOperation.or);
         return this;
     }
 
+    /**
+     * Prepares to append an additional expression using the <i>not</i> operator.
+     *
+     * @return the builder
+     */
     public ExchangeNotifierBuilder not() {
         doCreate(EventOperation.not);
         return this;
     }
 
+    /**
+     * Creates the expression this builder should use for matching.
+     * <p/>
+     * You must call this method when you are finished building the expressions.
+     *
+     * @return the created builder ready for matching
+     */
     public ExchangeNotifierBuilder create() {
         doCreate(EventOperation.and);
         return this;
     }
 
-    private void doCreate(EventOperation newOperation) {
-        // init operation depending on the newOperation
-        if (operation == null) {
-            operation = newOperation == EventOperation.or ? EventOperation.or : EventOperation.and;
-        }
-
-        if (!stack.isEmpty()) {
-            CompoundEventPredicate compound = new CompoundEventPredicate(stack);
-            stack.clear();
-            predicates.add(new EventPredicateHolder(operation, compound));
-        }
-
-        operation = newOperation;
-    }
-
+    /**
+     * Does all the expression match?
+     * <p/>
+     * This operation will return immediately which means it can be used for testing at this very moment.
+     *
+     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise
+     */
     public boolean matches() {
         return matches;
     }
 
-    public boolean matches(long timeout, TimeUnit timeUnit) throws InterruptedException {
-        latch.await(timeout, timeUnit);
+    /**
+     * Does all the expression match?
+     * <p/>
+     * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur
+     * which means <tt>false</tt> will be returned.
+     *
+     * @param timeout  the timeout value
+     * @param timeUnit the time unit
+     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
+     */
+    public boolean matches(long timeout, TimeUnit timeUnit) {
+        try {
+            latch.await(timeout, timeUnit);
+        } catch (InterruptedException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return matches();
     }
 
@@ -231,10 +427,31 @@ public class ExchangeNotifierBuilder {
             }
             sb.append(it.next().toString());
         }
-        // a crud way of skipping the first invisible operation
+        // a crude way of skipping the first invisible operation
         return ObjectHelper.after(sb.toString(), "().");
     }
 
+    private void doCreate(EventOperation newOperation) {
+        // init operation depending on the newOperation
+        if (operation == null) {
+            // if the first new operation is an or then this operation must be an or as well
+            // otherwise it should be and based
+            operation = newOperation == EventOperation.or ? EventOperation.or : EventOperation.and;
+        }
+
+        // we have some
+        if (!stack.isEmpty()) {
+            CompoundEventPredicate compound = new CompoundEventPredicate(stack);
+            stack.clear();
+            predicates.add(new EventPredicateHolder(operation, compound));
+        }
+
+        operation = newOperation;
+    }
+
+    /**
+     * Notifier which hooks into Camel to listen for {@link Exchange} relevant events for this builder
+     */
     private class ExchangeNotifier extends EventNotifierSupport {
 
         public void notify(EventObject event) throws Exception {
@@ -246,6 +463,7 @@ public class ExchangeNotifierBuilder {
                 onExchangeFailure((ExchangeFailureEvent) event);
             }
 
+            // now compute whether we matched
             computeMatches();
         }
 
@@ -272,6 +490,7 @@ public class ExchangeNotifierBuilder {
         }
 
         private synchronized void computeMatches() {
+            // use a temporary answer until we have computed the value to assign
             Boolean answer = null;
 
             for (EventPredicateHolder holder : predicates) {
@@ -299,8 +518,13 @@ public class ExchangeNotifierBuilder {
                 }
             }
 
+            // if we did compute a value then assign that
             if (answer != null) {
                 matches = answer;
+                if (matches) {
+                    // signal completion
+                    latch.countDown();
+                }
             }
         }
 
@@ -317,7 +541,11 @@ public class ExchangeNotifierBuilder {
         }
     }
 
-    public interface EventPredicate {
+    private enum EventOperation {
+        and, or, not;
+    }
+
+    private interface EventPredicate {
 
         boolean matches();
 
@@ -343,10 +571,9 @@ public class ExchangeNotifierBuilder {
         }
     }
 
-    private enum EventOperation {
-        and, or, not;
-    }
-
+    /**
+     * To hold an operation and predicate
+     */
     private class EventPredicateHolder {
         private final EventOperation operation;
         private final EventPredicate predicate;
@@ -370,9 +597,12 @@ public class ExchangeNotifierBuilder {
         }
     }
 
+    /**
+     * To hold multiple predicates which are part of same expression
+     */
     private class CompoundEventPredicate implements EventPredicate {
 
-        private Stack<EventPredicate> predicates = new Stack<EventPredicate>();
+        private List<EventPredicate> predicates = new ArrayList<EventPredicate>();
 
         private CompoundEventPredicate(Stack<EventPredicate> predicates) {
             this.predicates.addAll(predicates);
