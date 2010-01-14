@@ -541,7 +541,7 @@ public class NotifierBuilder {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Iterator<EventPredicateHolder> it = predicates.iterator(); it.hasNext(); ) {
+        for (Iterator<EventPredicateHolder> it = predicates.iterator(); it.hasNext();) {
             if (sb.length() > 0) {
                 sb.append(".");
             }
@@ -572,7 +572,7 @@ public class NotifierBuilder {
     /**
      * Notifier which hooks into Camel to listen for {@link Exchange} relevant events for this builder
      */
-    private class ExchangeNotifier extends EventNotifierSupport {
+    private final class ExchangeNotifier extends EventNotifierSupport {
 
         public void notify(EventObject event) throws Exception {
             if (event instanceof ExchangeCreatedEvent) {
@@ -721,7 +721,7 @@ public class NotifierBuilder {
     /**
      * To hold an operation and predicate
      */
-    private class EventPredicateHolder {
+    private final class EventPredicateHolder {
         private final EventOperation operation;
         private final EventPredicate predicate;
 
@@ -747,7 +747,7 @@ public class NotifierBuilder {
     /**
      * To hold multiple predicates which are part of same expression
      */
-    private class CompoundEventPredicate implements EventPredicate {
+    private final class CompoundEventPredicate implements EventPredicate {
 
         private List<EventPredicate> predicates = new ArrayList<EventPredicate>();
 
@@ -794,7 +794,7 @@ public class NotifierBuilder {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            for (Iterator<EventPredicate> it = predicates.iterator(); it.hasNext(); ) {
+            for (Iterator<EventPredicate> it = predicates.iterator(); it.hasNext();) {
                 if (sb.length() > 0) {
                     sb.append(".");
                 }

@@ -76,7 +76,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testDateAndTimeExpressions() throws Exception {
         Calendar cal = GregorianCalendar.getInstance();
-        cal.set(1974, Calendar.APRIL, 20, 8,55, 47);
+        cal.set(1974, Calendar.APRIL, 20, 8, 55, 47);
         cal.set(Calendar.MILLISECOND, 123);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
