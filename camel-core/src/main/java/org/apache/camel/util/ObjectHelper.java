@@ -598,7 +598,7 @@ public final class ObjectHelper {
     public static Class<?> loadClass(String name) {
         return loadClass(name, ObjectHelper.class.getClassLoader());
     }
-
+    
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the given class loader
@@ -609,6 +609,20 @@ public final class ObjectHelper {
      * @return the class or null if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
+        return loadClass(name, loader, true);
+    }
+
+    /**
+     * Attempts to load the given class name using the thread context class
+     * loader or the given class loader
+     *
+     * @param name the name of the class to load
+     * @param loader the class loader to use after the thread context class
+     *                loader
+     * @param needToWarn if it is true will use log a warning message for not loading the class               
+     * @return the class or null if it could not be loaded
+     */
+    public static Class<?> loadClass(String name, ClassLoader loader, boolean needToWarn) {
         // must clean the name so its pure java name, eg remoing \n or whatever people can do in the Spring XML
         name = normalizeClassName(name);
 
@@ -631,7 +645,9 @@ public final class ObjectHelper {
         }
 
         if (clazz == null) {
-            LOG.warn("Cannot find class: " + name);
+            if (needToWarn) {
+                LOG.warn("Cannot find class: " + name);
+            }
         }
 
         return clazz;

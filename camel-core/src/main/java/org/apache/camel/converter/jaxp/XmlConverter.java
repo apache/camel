@@ -78,7 +78,8 @@ public class XmlConverter {
     static {
         Class<?> cl = null;
         try {
-            cl = ObjectHelper.loadClass("org.apache.xalan.xsltc.trax.DOM2SAX");
+            // will not warn the user if the class could not be found
+            cl = ObjectHelper.loadClass("org.apache.xalan.xsltc.trax.DOM2SAX", XmlConverter.class.getClassLoader(), false);
         } catch (Exception e) {
             // ignore
         }
