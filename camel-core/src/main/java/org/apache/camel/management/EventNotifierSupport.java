@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class EventNotifierSupport extends ServiceSupport implements EventNotifier {
-
+    protected Log log = LogFactory.getLog(getClass());
     private boolean ignoreCamelContextEvents;
     private boolean ignoreRouteEvents;
     private boolean ignoreServiceEvents;
@@ -35,8 +35,6 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
     private boolean ignoreExchangeCreatedEvent;
     private boolean ignoreExchangeCompletedEvent;
     private boolean ignoreExchangeFailureEvents;
-
-    protected Log log = LogFactory.getLog(getClass());
 
     public boolean isIgnoreCamelContextEvents() {
         return ignoreCamelContextEvents;
