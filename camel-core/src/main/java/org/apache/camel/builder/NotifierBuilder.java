@@ -465,6 +465,62 @@ public class NotifierBuilder {
         return this;
     }
 
+    /**
+     * Sets a condition when the provided mock is <b>not</b> satisfied.
+     * <p/>
+     * The idea is that you can use Mock for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param mock the mock
+     * @return the builder
+     */
+    public NotifierBuilder whenNotSatisfied(final MockEndpoint mock) {
+        stack.push(new EventPredicateSupport() {
+
+            private Producer producer;
+
+            @Override
+            public boolean onExchangeFailure(Exchange exchange) {
+                return sendToMock(exchange);
+            }
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                return sendToMock(exchange);
+            }
+
+            private boolean sendToMock(Exchange exchange) {
+                // send the exchange when its completed to the mock
+                try {
+                    if (producer == null) {
+                        producer = mock.createProducer();
+                    }
+                    producer.process(exchange);
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                try {
+                    return !mock.await(0, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "whenNotSatisfied(" + mock + ")";
+            }
+        });
+        return this;
+    }
+
 
     /**
      * Prepares to append an additional expression using the <i>and</i> operator.

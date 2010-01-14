@@ -427,6 +427,47 @@ public class NotifierBuilderTest extends ContextTestSupport {
         assertEquals(true, notifier.matches());
     }
 
+    public void testWhenNotSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedMessageCount(2);
+        mock.message(1).body().contains("Camel");
+
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .from("direct:foo").whenNotSatisfied(mock)
+                .create();
+
+        // is always false to start with
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(true, notifier.matches());
+
+        template.sendBody("direct:foo", "Hello Camel");
+        assertEquals(false, notifier.matches());
+    }
+
+    public void testWhenNotSatisfiedUsingSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedMessageCount(2);
+        mock.message(1).body().contains("Camel");
+
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .from("direct:foo").whenSatisfied(mock)
+                .create();
+
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notifier.matches());
+
+        template.sendBody("direct:foo", "Hello Camel");
+        assertEquals(true, notifier.matches());
+    }
+
     public void testComplexOrCamel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:assert");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
