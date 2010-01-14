@@ -401,14 +401,14 @@ public class NotifierBuilderTest extends ContextTestSupport {
         assertEquals(false, notifier.matches());
     }
 
-    public void testWhenSatisfied() throws Exception {
+    public void testWhenReceivedSatisfied() throws Exception {
         // lets use a mock to set the expressions as it got many great assertions for that
         // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
         MockEndpoint mock = getMockEndpoint("mock:assert");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
 
         NotifierBuilder notifier = new NotifierBuilder(context)
-                .from("direct:foo").whenSatisfied(mock)
+                .from("direct:foo").whenDoneSatisfied(mock)
                 .create();
 
         assertEquals(false, notifier.matches());
@@ -427,7 +427,7 @@ public class NotifierBuilderTest extends ContextTestSupport {
         assertEquals(true, notifier.matches());
     }
 
-    public void testWhenNotSatisfied() throws Exception {
+    public void testWhenReceivedNotSatisfied() throws Exception {
         // lets use a mock to set the expressions as it got many great assertions for that
         // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
         MockEndpoint mock = getMockEndpoint("mock:assert");
@@ -435,7 +435,7 @@ public class NotifierBuilderTest extends ContextTestSupport {
         mock.message(1).body().contains("Camel");
 
         NotifierBuilder notifier = new NotifierBuilder(context)
-                .from("direct:foo").whenNotSatisfied(mock)
+                .from("direct:foo").whenReceivedNotSatisfied(mock)
                 .create();
 
         // is always false to start with
@@ -456,7 +456,7 @@ public class NotifierBuilderTest extends ContextTestSupport {
         mock.message(1).body().contains("Camel");
 
         NotifierBuilder notifier = new NotifierBuilder(context)
-                .from("direct:foo").whenSatisfied(mock)
+                .from("direct:foo").whenReceivedSatisfied(mock)
                 .create();
 
         assertEquals(false, notifier.matches());
@@ -473,7 +473,7 @@ public class NotifierBuilderTest extends ContextTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
 
         NotifierBuilder notifier = new NotifierBuilder(context)
-                .from("direct:foo").whenSatisfied(mock)
+                .from("direct:foo").whenReceivedSatisfied(mock)
                 .and().from("direct:bar").whenExactlyDone(5).whenAnyReceivedMatches(body().contains("Camel"))
                 .create();
 
@@ -501,6 +501,54 @@ public class NotifierBuilderTest extends ContextTestSupport {
         assertEquals(true, notifier.matches());
     }
 
+    public void testWhenDoneSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceived("Bye World", "Bye Camel");
+
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenDoneSatisfied(mock)
+                .create();
+
+        // is always false to start with
+        assertEquals(false, notifier.matches());
+
+        template.requestBody("direct:cake", "World");
+        assertEquals(false, notifier.matches());
+
+        template.requestBody("direct:cake", "Camel");
+        assertEquals(true, notifier.matches());
+
+        template.requestBody("direct:cake", "Damn");
+        // will still be true as the mock has been completed
+        assertEquals(true, notifier.matches());
+    }
+
+    public void testWhenDoneNotSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceived("Bye World", "Bye Camel");
+
+        NotifierBuilder notifier = new NotifierBuilder(context)
+                .whenDoneNotSatisfied(mock)
+                .create();
+
+        // is always false to start with
+        assertEquals(false, notifier.matches());
+
+        template.requestBody("direct:cake", "World");
+        assertEquals(true, notifier.matches());
+
+        template.requestBody("direct:cake", "Camel");
+        assertEquals(false, notifier.matches());
+
+        template.requestBody("direct:cake", "Damn");
+        // will still be false as the mock has been completed
+        assertEquals(false, notifier.matches());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -513,6 +561,8 @@ public class NotifierBuilderTest extends ContextTestSupport {
                 from("direct:fail").throwException(new IllegalArgumentException("Damn"));
 
                 from("seda:cheese").delay(3000).to("mock:cheese");
+
+                from("direct:cake").transform(body().prepend("Bye "));
             }
         };
     }

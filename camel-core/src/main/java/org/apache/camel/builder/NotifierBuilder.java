@@ -410,7 +410,8 @@ public class NotifierBuilder {
     }
 
     /**
-     * Sets a condition when the provided mock is satisfied.
+     * Sets a condition when the provided mock is satisfied based on {@link Exchange}
+     * being sent to it when they are <b>done</b>.
      * <p/>
      * The idea is that you can use Mock for setting fine grained expectations
      * and then use that together with this builder. The mock provided does <b>NOT</b>
@@ -421,22 +422,57 @@ public class NotifierBuilder {
      * @param mock the mock
      * @return the builder
      */
-    public NotifierBuilder whenSatisfied(final MockEndpoint mock) {
+    public NotifierBuilder whenDoneSatisfied(final MockEndpoint mock) {
+        return doWhenSatisfied(mock, false);
+    }
+
+    /**
+     * Sets a condition when the provided mock is satisfied based on {@link Exchange}
+     * being sent to it when they are <b>received</b>.
+     * <p/>
+     * The idea is that you can use Mock for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param mock the mock
+     * @return the builder
+     */
+    public NotifierBuilder whenReceivedSatisfied(final MockEndpoint mock) {
+        return doWhenSatisfied(mock, true);
+    }
+
+    private NotifierBuilder doWhenSatisfied(final MockEndpoint mock, final boolean received) {
         stack.push(new EventPredicateSupport() {
 
             private Producer producer;
 
             @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (received) {
+                    sendToMock(exchange);
+                }
+                return true;
+            }
+
+            @Override
             public boolean onExchangeFailure(Exchange exchange) {
-                return sendToMock(exchange);
+                if (!received) {
+                    sendToMock(exchange);
+                }
+                return true;
             }
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
-                return sendToMock(exchange);
+                if (!received) {
+                    sendToMock(exchange);
+                }
+                return true;
             }
 
-            private boolean sendToMock(Exchange exchange) {
+            private void sendToMock(Exchange exchange) {
                 // send the exchange when its completed to the mock
                 try {
                     if (producer == null) {
@@ -446,7 +482,6 @@ public class NotifierBuilder {
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
-                return true;
             }
 
             public boolean matches() {
@@ -459,14 +494,19 @@ public class NotifierBuilder {
 
             @Override
             public String toString() {
-                return "whenSatisfied(" + mock + ")";
+                if (received) {
+                    return "whenReceivedSatisfied(" + mock + ")";
+                } else {
+                    return "whenDoneSatisfied(" + mock + ")";
+                }
             }
         });
         return this;
     }
 
     /**
-     * Sets a condition when the provided mock is <b>not</b> satisfied.
+     * Sets a condition when the provided mock is <b>not</b> satisfied based on {@link Exchange}
+     * being sent to it when they are <b>received</b>.
      * <p/>
      * The idea is that you can use Mock for setting fine grained expectations
      * and then use that together with this builder. The mock provided does <b>NOT</b>
@@ -477,22 +517,57 @@ public class NotifierBuilder {
      * @param mock the mock
      * @return the builder
      */
-    public NotifierBuilder whenNotSatisfied(final MockEndpoint mock) {
+    public NotifierBuilder whenReceivedNotSatisfied(final MockEndpoint mock) {
+        return doWhenNotSatisfied(mock, true);
+    }
+
+    /**
+     * Sets a condition when the provided mock is <b>not</b> satisfied based on {@link Exchange}
+     * being sent to it when they are <b>done</b>.
+     * <p/>
+     * The idea is that you can use Mock for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param mock the mock
+     * @return the builder
+     */
+    public NotifierBuilder whenDoneNotSatisfied(final MockEndpoint mock) {
+        return doWhenNotSatisfied(mock, false);
+    }
+
+    private NotifierBuilder doWhenNotSatisfied(final MockEndpoint mock, final boolean received) {
         stack.push(new EventPredicateSupport() {
 
             private Producer producer;
 
             @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (received) {
+                    sendToMock(exchange);
+                }
+                return true;
+            }
+
+            @Override
             public boolean onExchangeFailure(Exchange exchange) {
-                return sendToMock(exchange);
+                if (!received) {
+                    sendToMock(exchange);
+                }
+                return true;
             }
 
             @Override
             public boolean onExchangeCompleted(Exchange exchange) {
-                return sendToMock(exchange);
+                if (!received) {
+                    sendToMock(exchange);
+                }
+                return true;
             }
 
-            private boolean sendToMock(Exchange exchange) {
+            private void sendToMock(Exchange exchange) {
                 // send the exchange when its completed to the mock
                 try {
                     if (producer == null) {
@@ -502,7 +577,6 @@ public class NotifierBuilder {
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
-                return true;
             }
 
             public boolean matches() {
@@ -515,7 +589,11 @@ public class NotifierBuilder {
 
             @Override
             public String toString() {
-                return "whenNotSatisfied(" + mock + ")";
+                if (received) {
+                    return "whenReceivedNotSatisfied(" + mock + ")";
+                } else {
+                    return "whenDoneNotSatisfied(" + mock + ")";
+                }
             }
         });
         return this;
