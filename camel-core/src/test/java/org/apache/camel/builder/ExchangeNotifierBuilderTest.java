@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
@@ -364,6 +365,99 @@ public class ExchangeNotifierBuilderTest extends ContextTestSupport {
             // ignore
         }
         assertEquals(false, builder.matches());
+    }
+
+    public void testWhenAnyReceivedMatches() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenAnyReceivedMatches(body().contains("Camel"))
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:bar", "Hello Camel");
+        assertEquals(true, builder.matches());
+    }
+
+    public void testWhenAllReceivedMatches() throws Exception {
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .whenAllReceivedMatches(body().contains("Camel"))
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Hello Camel");
+        assertEquals(true, builder.matches());
+
+        template.sendBody("direct:foo", "Bye Camel");
+        assertEquals(true, builder.matches());
+
+        template.sendBody("direct:bar", "Hello World");
+        assertEquals(false, builder.matches());
+    }
+
+    public void testWhenSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
+
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .from("direct:foo").whenSatisfied(mock)
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, builder.matches());
+
+        // the builder is based on direct:foo so sending to bar should not trigger match
+        template.sendBody("direct:bar", "Hi World");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(true, builder.matches());
+    }
+
+    public void testComplexOrCamel() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
+
+        ExchangeNotifierBuilder builder = new ExchangeNotifierBuilder(context)
+                .from("direct:foo").whenSatisfied(mock)
+                .and().from("direct:bar").whenExactlyDone(5).whenAnyReceivedMatches(body().contains("Camel"))
+                .create();
+
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, builder.matches());
+
+        // the builder is based on direct:foo so sending to bar should not trigger match
+        template.sendBody("direct:bar", "Hi World");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:bar", "Hi Camel");
+        assertEquals(false, builder.matches());
+
+        template.sendBody("direct:bar", "A");
+        template.sendBody("direct:bar", "B");
+        template.sendBody("direct:bar", "C");
+        assertEquals(true, builder.matches());
     }
 
     @Override

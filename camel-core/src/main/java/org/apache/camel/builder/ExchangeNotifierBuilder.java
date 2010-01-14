@@ -26,6 +26,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
+import org.apache.camel.Producer;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
@@ -347,6 +350,123 @@ public class ExchangeNotifierBuilder {
     }
 
     /**
+     * Sets a condition that <b>any</b> received {@link Exchange} should match the {@link Predicate}
+     *
+     * @param predicate the predicate
+     * @return the builder
+     */
+    public ExchangeNotifierBuilder whenAnyReceivedMatches(final Predicate predicate) {
+        stack.push(new EventPredicateSupport() {
+            private boolean matches;
+
+            @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (!matches) {
+                    matches = predicate.matches(exchange);
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                return matches;
+            }
+
+            @Override
+            public String toString() {
+                return "whenAntReceivedMatches(" + predicate + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Sets a condition that <b>all</b> received {@link Exchange} should match the {@link Predicate}
+     *
+     * @param predicate the predicate
+     * @return the builder
+     */
+    public ExchangeNotifierBuilder whenAllReceivedMatches(final Predicate predicate) {
+        stack.push(new EventPredicateSupport() {
+            private boolean matches = true;
+
+            @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (matches) {
+                    matches = predicate.matches(exchange);
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                return matches;
+            }
+
+            @Override
+            public String toString() {
+                return "whenAllReceivedMatches(" + predicate + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Sets a condition when the provided mock is satisfied.
+     * <p/>
+     * The idea is that you can use Mock for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param mock the mock
+     * @return the builder
+     */
+    public ExchangeNotifierBuilder whenSatisfied(final MockEndpoint mock) {
+        stack.push(new EventPredicateSupport() {
+
+            private Producer producer;
+
+            @Override
+            public boolean onExchangeFailure(Exchange exchange) {
+                return sendToMock(exchange);
+            }
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                return sendToMock(exchange);
+            }
+
+            private boolean sendToMock(Exchange exchange) {
+                // send the exchange when its completed to the mock
+                try {
+                    if (producer == null) {
+                        producer = mock.createProducer();
+                    }
+                    producer.process(exchange);
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                try {
+                    return mock.await(0, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "whenMock(" + mock + ")";
+            }
+        });
+        return this;
+    }
+
+
+    /**
      * Prepares to append an additional expression using the <i>and</i> operator.
      *
      * @return the builder
@@ -547,26 +667,53 @@ public class ExchangeNotifierBuilder {
 
     private interface EventPredicate {
 
+        /**
+         * Evaluates whether the predicate matched or not.
+         *
+         * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+         */
         boolean matches();
 
+        /**
+         * Callback for {@link Exchange} lifecycle
+         *
+         * @param exchange the exchange
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         */
         boolean onExchangeCreated(Exchange exchange);
 
+        /**
+         * Callback for {@link Exchange} lifecycle
+         *
+         * @param exchange the exchange
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         */
         boolean onExchangeCompleted(Exchange exchange);
 
+        /**
+         * Callback for {@link Exchange} lifecycle
+         *
+         * @param exchange the exchange
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         */
         boolean onExchangeFailure(Exchange exchange);
     }
 
     private abstract class EventPredicateSupport implements EventPredicate {
 
         public boolean onExchangeCreated(Exchange exchange) {
-            return true;
+            return onExchange(exchange);
         }
 
         public boolean onExchangeCompleted(Exchange exchange) {
-            return true;
+            return onExchange(exchange);
         }
 
         public boolean onExchangeFailure(Exchange exchange) {
+            return onExchange(exchange);
+        }
+
+        public boolean onExchange(Exchange exchange) {
             return true;
         }
     }
