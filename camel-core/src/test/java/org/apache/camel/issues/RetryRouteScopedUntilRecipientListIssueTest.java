@@ -35,7 +35,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 
-    private static int invoked;
+    protected static int invoked;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -154,10 +154,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        // TODO: CAMEL-2360
-        // This test fails as the error handler after direct:foo will be changed to the default error handler
-        // and not the one having the retryUntil bean
-        // assertEquals(3, invoked);
+        assertEquals(3, invoked);
     }
 
     public void testRetryUntilRecipientNotFail() throws Exception {
@@ -218,6 +215,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
                     .to("mock:result");
 
                 from("direct:foo").to("log:foo").to("mock:foo");
+
+                from("direct:fail").to("log:fail", "mock:fail").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }
@@ -227,7 +226,6 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         // using bean binding we can bind the information from the exchange to the types we have in our method signature
         public boolean retryUntil(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
-            System.out.println("retry");
             invoked++;
 
             // we can of course do what ever we want to determine the result but this is a unit test so we end after 3 attempts

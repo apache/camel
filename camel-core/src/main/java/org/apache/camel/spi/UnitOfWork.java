@@ -118,16 +118,26 @@ public interface UnitOfWork {
      * {@link org.apache.camel.spi.RouteContext} can change over time.
      *
      * @return the route context
+     * @see #pushRouteContext(RouteContext)
+     * @see #popRouteContext()
      */
     RouteContext getRouteContext();
 
     /**
-     * Gets the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
+     * Pushes the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
      * <p/>
      * Notice that an {@link Exchange} can be routed through multiple routes and thus the
      * {@link org.apache.camel.spi.RouteContext} can change over time.
      *
      * @param routeContext the route context
      */
-    void setRouteContext(RouteContext routeContext);
+    void pushRouteContext(RouteContext routeContext);
+
+    /**
+     * When finished being routed under the current {@link org.apache.camel.spi.RouteContext}
+     * it should be removed.
+     *
+     * @return the route context or <tt>null</tt> if none existed
+     */
+    RouteContext popRouteContext();
 }

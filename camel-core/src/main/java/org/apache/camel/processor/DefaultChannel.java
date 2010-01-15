@@ -217,14 +217,21 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
     }
 
     public void process(Exchange exchange) throws Exception {
+        // push the current route context
         if (exchange.getUnitOfWork() != null) {
-            // keep route context up to date
-            exchange.getUnitOfWork().setRouteContext(routeContext);
+            exchange.getUnitOfWork().pushRouteContext(routeContext);
         }
 
         Processor processor = getOutput();
-        if (processor != null && continueProcessing(exchange)) {
-            processor.process(exchange);
+        try {
+            if (processor != null && continueProcessing(exchange)) {
+                processor.process(exchange);
+            }
+        } finally {
+            // pop the route context we just used
+            if (exchange.getUnitOfWork() != null) {
+                exchange.getUnitOfWork().popRouteContext();
+            }
         }
     }
 

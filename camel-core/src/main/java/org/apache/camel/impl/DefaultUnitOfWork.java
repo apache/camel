@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -46,7 +47,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Message originalInMessage;
     private final TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
-    private RouteContext routeContext;
+    private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
 
     public DefaultUnitOfWork(Exchange exchange) {
         tracedRouteNodes = new DefaultTracedRouteNodes();
@@ -87,7 +88,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             transactedBy.clear();
         }
         originalInMessage = null;
-        routeContext = null;
+
+        if (!routeContextStack.isEmpty()) {
+            routeContextStack.clear();
+        }
     }
 
     public synchronized void addSynchronization(Synchronization synchronization) {
@@ -181,11 +185,21 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public RouteContext getRouteContext() {
-        return routeContext;
+        if (routeContextStack.isEmpty()) {
+            return null;
+        }
+        return routeContextStack.peek();
     }
 
-    public void setRouteContext(RouteContext routeContext) {
-        this.routeContext = routeContext;
+    public void pushRouteContext(RouteContext routeContext) {
+        routeContextStack.add(routeContext);
+    }
+
+    public RouteContext popRouteContext() {
+        if (routeContextStack.isEmpty()) {
+            return null;
+        }
+        return routeContextStack.pop();
     }
 
     private Set<Object> getTransactedBy() {
