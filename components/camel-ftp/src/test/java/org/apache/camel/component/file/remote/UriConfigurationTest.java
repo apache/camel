@@ -185,21 +185,16 @@ public class UriConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInvalidStartingDirectory() throws Exception {
+    public void testStartingDirectoryWithDot() throws Exception {
         Endpoint endpoint = context.getEndpoint("ftp://user@hostname?password=secret");
         FtpEndpoint ftpEndpoint = assertIsInstanceOf(FtpEndpoint.class, endpoint);
         FtpConfiguration config = (FtpConfiguration) ftpEndpoint.getConfiguration();
         config.setHost("somewhere");
-        config.setDirectory("some/file.txt");
-        try {
-            ftpEndpoint.createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    // do nothing
-                }
-            });
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Only directory is supported. Endpoint must be configured with a valid directory: some/file.txt", e.getMessage());
-        }
+        config.setDirectory("temp.dir");
+        ftpEndpoint.createConsumer(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // do nothing
+            }
+        });
     }
 }
