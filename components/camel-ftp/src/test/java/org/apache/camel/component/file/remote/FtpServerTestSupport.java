@@ -18,11 +18,13 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.ftpserver.ConnectionConfigFactory;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -89,8 +91,21 @@ public abstract class FtpServerTestSupport extends CamelTestSupport {
                 canTest = true;
             }
         }
-        
-        super.setUp();
+
+        try {
+            super.setUp();
+        } catch (Exception e) {
+            // ignore if algorithm is not on the OS
+            NoSuchAlgorithmException nsae = ObjectHelper.getException(NoSuchAlgorithmException.class, e);
+            if (nsae != null) {
+                canTest = false;
+                String name = System.getProperty("os.name");
+                System.out.println("SunX509 is not avail on this platform [" + name + "] Testing is skipped! Real cause: " + nsae.getMessage());
+            } else {
+                // some other error then throw it so the test can fail
+                throw e;
+            }
+        }
     }
 
     @Override
