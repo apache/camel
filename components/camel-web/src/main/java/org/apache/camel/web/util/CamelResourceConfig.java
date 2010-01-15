@@ -44,11 +44,11 @@ public class CamelResourceConfig extends PackagesResourceConfig {
 
         WadlGeneratorConfig config = WadlGeneratorConfig
                 .generator(WadlGeneratorApplicationDoc.class)
-                .prop("applicationDocsFile", "classpath:/application-doc.xml")
+                .prop("applicationDocsFile", "application-doc.xml")
                 .generator(WadlGeneratorGrammarsSupport.class)
-                .prop("grammarsFile", "classpath:/application-grammars.xml")
+                .prop("grammarsFile", "application-grammars.xml")
                 .generator(WadlGeneratorResourceDocSupport.class)
-                .prop("resourceDocFile", "classpath:/resourcedoc.xml")
+                .prop("resourceDocFile", "resourcedoc.xml")
                 .build();
 
         properties.put(ResourceConfig.PROPERTY_WADL_GENERATOR_CONFIG, config);

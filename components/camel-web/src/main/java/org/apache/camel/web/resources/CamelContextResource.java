@@ -42,7 +42,7 @@ import org.apache.camel.web.model.Camel;
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 @Singleton
 public class CamelContextResource {
-
+    
     private CamelContext camelContext;
     private ProducerTemplate template;
 
