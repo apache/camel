@@ -63,7 +63,7 @@ public final class SnmpConverters {
             sb.append(b.getOid().toString());
             sb.append(OID_TAG_CLOSE);
             sb.append(VALUE_TAG_OPEN);
-            sb.append(b.getVariable().toString());
+            sb.append(getXmlSafeString(b.getVariable().toString()));
             sb.append(VALUE_TAG_CLOSE);
             sb.append(ENTRY_TAG_CLOSE);
         }
@@ -72,5 +72,9 @@ public final class SnmpConverters {
         sb.append(SNMP_TAG_CLOSE);
         
         return sb.toString();
+    }
+    
+    private static String getXmlSafeString(String string) {
+        return string.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
     }
 }
