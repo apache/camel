@@ -128,7 +128,7 @@ public class GenericFile<T> implements Serializable {
                 message.setHeader("CamelFileLength", getFileLength());
             }
             if (getLastModified() > 0) {
-                message.setHeader("CamelFileLastModified", new Date(getLastModified()));
+                message.setHeader(Exchange.FILE_LAST_MODIFIED, new Date(getLastModified()));
             }
         }
     }

@@ -69,6 +69,7 @@ public interface Exchange {
     String FILE_NAME_PRODUCED   = "CamelFileNameProduced";
     String FILE_PATH            = "CamelFilePath";
     String FILE_PARENT          = "CamelFileParent";
+    String FILE_LAST_MODIFIED   = "CamelFileLastModified";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     

@@ -186,7 +186,7 @@ public final class FileExpressionBuilder {
     public static Expression fileLastModifiedExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+                return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
             }
 
             @Override
@@ -201,7 +201,7 @@ public final class FileExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 if ("file".equals(command)) {
-                    Date date = exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+                    Date date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
                     if (date != null) {
                         SimpleDateFormat df = new SimpleDateFormat(pattern);
                         return df.format(date);

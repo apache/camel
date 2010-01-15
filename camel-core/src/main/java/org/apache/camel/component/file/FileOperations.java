@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -181,6 +182,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 if (local != null && local.exists()) {
                     boolean renamed = writeFileByLocalWorkPath(local, file);
                     if (renamed) {
+                        // try to keep last modified timestamp if configured to do so
+                        keepLastModified(exchange, file);
                         // clear header as we have renamed the file
                         exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, null);
                         // return as the operation is complete, we just renamed the local work file
@@ -190,6 +193,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 } else if (source.exists()) {
                     // no there is no local work file so use file to file copy if the source exists
                     writeFileByFile(source, file);
+                    // try to keep last modified timestamp if configured to do so
+                    keepLastModified(exchange, file);
                     return true;
                 }
             }
@@ -197,11 +202,32 @@ public class FileOperations implements GenericFileOperations<File> {
             // fallback and use stream based
             InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
             writeFileByStream(in, file);
+            // try to keep last modified timestamp if configured to do so
+            keepLastModified(exchange, file);
             return true;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
+        }
+    }
+
+    private void keepLastModified(Exchange exchange, File file) {
+        if (endpoint.isKeepLastModified()) {
+            Long last;
+            Date date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
+            if (date != null) {
+                last = date.getTime();
+            } else {
+                // fallback and try a long
+                last = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
+            }
+            if (last != null) {
+                boolean result = file.setLastModified(last);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Keeping last modified timestamp: " + last + " on file: " + file + " with result: " + result);
+                }
+            }
         }
     }
 

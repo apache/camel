@@ -79,6 +79,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected String readLock = "none";
     protected long readLockTimeout = 10000;
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
+    protected boolean keepLastModified;
 
     public GenericFileEndpoint() {
     }
@@ -437,6 +438,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setInProgressRepository(IdempotentRepository<String> inProgressRepository) {
         this.inProgressRepository = inProgressRepository;
+    }
+
+    public boolean isKeepLastModified() {
+        return keepLastModified;
+    }
+
+    public void setKeepLastModified(boolean keepLastModified) {
+        this.keepLastModified = keepLastModified;
     }
 
     /**

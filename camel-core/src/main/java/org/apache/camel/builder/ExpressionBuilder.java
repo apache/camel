@@ -871,9 +871,9 @@ public final class ExpressionBuilder {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }
                 } else if ("file".equals(command)) {
-                    date = exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+                    date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
                     if (date == null) {
-                        throw new IllegalArgumentException("Cannot find CamelFileLastModified header at command: " + command);
+                        throw new IllegalArgumentException("Cannot find " + Exchange.FILE_LAST_MODIFIED + " header at command: " + command);
                     }
                 } else {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
@@ -1117,7 +1117,7 @@ public final class ExpressionBuilder {
     public static Expression fileLastModifiedExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+                return exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
             }
 
             @Override
