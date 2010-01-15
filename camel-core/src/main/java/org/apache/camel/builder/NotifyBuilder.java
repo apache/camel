@@ -49,7 +49,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class NotifierBuilder {
+public class NotifyBuilder {
 
     // notifier to hook into Camel to listen for events
     private final EventNotifier eventNotifier = new ExchangeNotifier();
@@ -72,7 +72,7 @@ public class NotifierBuilder {
      *
      * @param context the Camel context
      */
-    public NotifierBuilder(CamelContext context) {
+    public NotifyBuilder(CamelContext context) {
         try {
             ServiceHelper.startService(eventNotifier);
         } catch (Exception e) {
@@ -89,7 +89,7 @@ public class NotifierBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
-    public NotifierBuilder from(final String endpointUri) {
+    public NotifyBuilder from(final String endpointUri) {
         stack.push(new EventPredicateSupport() {
 
             @Override
@@ -128,7 +128,7 @@ public class NotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public NotifierBuilder whenReceived(final int number) {
+    public NotifyBuilder whenReceived(final int number) {
         stack.push(new EventPredicateSupport() {
             private int current;
 
@@ -162,7 +162,7 @@ public class NotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public NotifierBuilder whenDone(final int number) {
+    public NotifyBuilder whenDone(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -202,7 +202,7 @@ public class NotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public NotifierBuilder whenCompleted(final int number) {
+    public NotifyBuilder whenCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -233,7 +233,7 @@ public class NotifierBuilder {
      * @param number at least number of messages
      * @return the builder
      */
-    public NotifierBuilder whenFailed(final int number) {
+    public NotifyBuilder whenFailed(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -263,7 +263,7 @@ public class NotifierBuilder {
      * @param number exactly number of messages
      * @return the builder
      */
-    public NotifierBuilder whenExactlyDone(final int number) {
+    public NotifyBuilder whenExactlyDone(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -300,7 +300,7 @@ public class NotifierBuilder {
      * @param number exactly number of messages
      * @return the builder
      */
-    public NotifierBuilder whenExactlyCompleted(final int number) {
+    public NotifyBuilder whenExactlyCompleted(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -328,7 +328,7 @@ public class NotifierBuilder {
      * @param number exactly number of messages
      * @return the builder
      */
-    public NotifierBuilder whenExactlyFailed(final int number) {
+    public NotifyBuilder whenExactlyFailed(final int number) {
         stack.add(new EventPredicateSupport() {
             private int current;
 
@@ -356,7 +356,7 @@ public class NotifierBuilder {
      * @param predicate the predicate
      * @return the builder
      */
-    public NotifierBuilder whenAnyReceivedMatches(final Predicate predicate) {
+    public NotifyBuilder whenAnyReceivedMatches(final Predicate predicate) {
         return doWhenAnyMatches(predicate, true);
     }
 
@@ -366,11 +366,11 @@ public class NotifierBuilder {
      * @param predicate the predicate
      * @return the builder
      */
-    public NotifierBuilder whenAnyDoneMatches(final Predicate predicate) {
+    public NotifyBuilder whenAnyDoneMatches(final Predicate predicate) {
         return doWhenAnyMatches(predicate, false);
     }
 
-    private NotifierBuilder doWhenAnyMatches(final Predicate predicate, final boolean received) {
+    private NotifyBuilder doWhenAnyMatches(final Predicate predicate, final boolean received) {
         stack.push(new EventPredicateSupport() {
             private boolean matches;
 
@@ -420,7 +420,7 @@ public class NotifierBuilder {
      * @param predicate the predicate
      * @return the builder
      */
-    public NotifierBuilder whenAllReceivedMatches(final Predicate predicate) {
+    public NotifyBuilder whenAllReceivedMatches(final Predicate predicate) {
         return doWhenAllMatches(predicate, true);
     }
 
@@ -430,11 +430,11 @@ public class NotifierBuilder {
      * @param predicate the predicate
      * @return the builder
      */
-    public NotifierBuilder whenAllDoneMatches(final Predicate predicate) {
+    public NotifyBuilder whenAllDoneMatches(final Predicate predicate) {
         return doWhenAllMatches(predicate, false);
     }
 
-    private NotifierBuilder doWhenAllMatches(final Predicate predicate, final boolean received) {
+    private NotifyBuilder doWhenAllMatches(final Predicate predicate, final boolean received) {
         stack.push(new EventPredicateSupport() {
             private boolean matches = true;
 
@@ -491,7 +491,7 @@ public class NotifierBuilder {
      * @param mock the mock
      * @return the builder
      */
-    public NotifierBuilder whenDoneSatisfied(final MockEndpoint mock) {
+    public NotifyBuilder whenDoneSatisfied(final MockEndpoint mock) {
         return doWhenSatisfied(mock, false);
     }
 
@@ -508,11 +508,11 @@ public class NotifierBuilder {
      * @param mock the mock
      * @return the builder
      */
-    public NotifierBuilder whenReceivedSatisfied(final MockEndpoint mock) {
+    public NotifyBuilder whenReceivedSatisfied(final MockEndpoint mock) {
         return doWhenSatisfied(mock, true);
     }
 
-    private NotifierBuilder doWhenSatisfied(final MockEndpoint mock, final boolean received) {
+    private NotifyBuilder doWhenSatisfied(final MockEndpoint mock, final boolean received) {
         stack.push(new EventPredicateSupport() {
 
             private Producer producer;
@@ -586,7 +586,7 @@ public class NotifierBuilder {
      * @param mock the mock
      * @return the builder
      */
-    public NotifierBuilder whenReceivedNotSatisfied(final MockEndpoint mock) {
+    public NotifyBuilder whenReceivedNotSatisfied(final MockEndpoint mock) {
         return doWhenNotSatisfied(mock, true);
     }
 
@@ -603,11 +603,11 @@ public class NotifierBuilder {
      * @param mock the mock
      * @return the builder
      */
-    public NotifierBuilder whenDoneNotSatisfied(final MockEndpoint mock) {
+    public NotifyBuilder whenDoneNotSatisfied(final MockEndpoint mock) {
         return doWhenNotSatisfied(mock, false);
     }
 
-    private NotifierBuilder doWhenNotSatisfied(final MockEndpoint mock, final boolean received) {
+    private NotifyBuilder doWhenNotSatisfied(final MockEndpoint mock, final boolean received) {
         stack.push(new EventPredicateSupport() {
 
             private Producer producer;
@@ -678,7 +678,7 @@ public class NotifierBuilder {
      * @return the builder
      * @see #whenExactBodiesReceived(Object...)
      */
-    public NotifierBuilder whenBodiesReceived(Object... bodies) {
+    public NotifyBuilder whenBodiesReceived(Object... bodies) {
         List<Object> bodyList = new ArrayList<Object>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, false);
@@ -694,7 +694,7 @@ public class NotifierBuilder {
      * @return the builder
      * @see #whenExactBodiesDone(Object...)
      */
-    public NotifierBuilder whenBodiesDone(Object... bodies) {
+    public NotifyBuilder whenBodiesDone(Object... bodies) {
         List<Object> bodyList = new ArrayList<Object>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, false);
@@ -709,7 +709,7 @@ public class NotifierBuilder {
      * @return the builder
      * @see #whenBodiesReceived(Object...)
      */
-    public NotifierBuilder whenExactBodiesReceived(Object... bodies) {
+    public NotifyBuilder whenExactBodiesReceived(Object... bodies) {
         List<Object> bodyList = new ArrayList<Object>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, true);
@@ -724,13 +724,13 @@ public class NotifierBuilder {
      * @return the builder
      * @see #whenExactBodiesDone(Object...)
      */
-    public NotifierBuilder whenExactBodiesDone(Object... bodies) {
+    public NotifyBuilder whenExactBodiesDone(Object... bodies) {
         List<Object> bodyList = new ArrayList<Object>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, true);
     }
 
-    private NotifierBuilder doWhenBodies(final List bodies, final boolean received, final boolean exact) {
+    private NotifyBuilder doWhenBodies(final List bodies, final boolean received, final boolean exact) {
         stack.push(new EventPredicateSupport() {
             private boolean matches;
             private int current;
@@ -798,7 +798,7 @@ public class NotifierBuilder {
      *
      * @return the builder
      */
-    public NotifierBuilder and() {
+    public NotifyBuilder and() {
         doCreate(EventOperation.and);
         return this;
     }
@@ -808,7 +808,7 @@ public class NotifierBuilder {
      *
      * @return the builder
      */
-    public NotifierBuilder or() {
+    public NotifyBuilder or() {
         doCreate(EventOperation.or);
         return this;
     }
@@ -818,7 +818,7 @@ public class NotifierBuilder {
      *
      * @return the builder
      */
-    public NotifierBuilder not() {
+    public NotifyBuilder not() {
         doCreate(EventOperation.not);
         return this;
     }
@@ -830,7 +830,7 @@ public class NotifierBuilder {
      *
      * @return the created builder ready for matching
      */
-    public NotifierBuilder create() {
+    public NotifyBuilder create() {
         doCreate(EventOperation.and);
         return this;
     }
