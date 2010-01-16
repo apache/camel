@@ -44,6 +44,8 @@ public class MethodCallExpression extends ExpressionDefinition {
     @XmlTransient
     // we don't need to support the beanType class in Spring
     private Class<?> beanType;
+    @XmlTransient
+    private Object instance;
     
 
     public MethodCallExpression() {
@@ -58,6 +60,17 @@ public class MethodCallExpression extends ExpressionDefinition {
         this.method = method;
     }
     
+    public MethodCallExpression(Object instance) {
+        super(instance.getClass().getName());
+        this.instance = instance;
+    }
+
+    public MethodCallExpression(Object instance, String method) {
+        super(instance.getClass().getName());
+        this.instance = instance;
+        this.method = method;
+    }
+
     public MethodCallExpression(Class<?> type) {
         super(type.toString());
         this.beanType = type;        
@@ -86,8 +99,10 @@ public class MethodCallExpression extends ExpressionDefinition {
     public Expression createExpression(RouteContext routeContext) {
         if (beanType != null) {            
             return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
+        } else if (instance != null) {
+            return new BeanExpression(instance, getMethod());
         } else {
-            return new BeanExpression(beanName(), getMethod());   
+            return new BeanExpression(beanName(), getMethod());
         }
     }
 
@@ -96,6 +111,8 @@ public class MethodCallExpression extends ExpressionDefinition {
     public Predicate createPredicate(RouteContext routeContext) {
         if (beanType != null) {
             return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
+        } else if (instance != null) {
+            return new BeanExpression(instance, getMethod());
         } else {
             return new BeanExpression(beanName(), getMethod());
         }
@@ -104,6 +121,8 @@ public class MethodCallExpression extends ExpressionDefinition {
     protected String beanName() {
         if (bean != null) {
             return bean;
+        } else if (instance != null) {
+            return ObjectHelper.className(instance);
         }
         return getExpression();
     }

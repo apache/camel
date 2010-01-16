@@ -36,26 +36,34 @@ public final class Builder {
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder
+     * value builder.
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
      *
-     * @param beanRef  reference to bean to lookup in the Registry
+     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
      * @return the builder
      */
-    public static ValueBuilder bean(String beanRef) {
-        Expression expression = ExpressionBuilder.beanExpression(beanRef);
-        return new ValueBuilder(expression);
+    public static ValueBuilder bean(final Object beanOrBeanRef) {
+        return bean(beanOrBeanRef, null);
     }
 
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
-     * value builder
+     * value builder.
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
      *
-     * @param beanRef  reference to bean to lookup in the Registry
-     * @param method   name of method to invoke
+     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
+     * @param method the method name
      * @return the builder
      */
-    public static ValueBuilder bean(String beanRef, String method) {
-        Expression expression = ExpressionBuilder.beanExpression(beanRef, method);
+    public static ValueBuilder bean(Object beanOrBeanRef, String method) {
+        Expression expression;
+        if (beanOrBeanRef instanceof String) {
+            expression = ExpressionBuilder.beanExpression((String) beanOrBeanRef, method);
+        } else {
+            expression = ExpressionBuilder.beanExpression(beanOrBeanRef, method);
+        }
         return new ValueBuilder(expression);
     }
     

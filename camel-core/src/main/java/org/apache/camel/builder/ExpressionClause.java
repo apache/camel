@@ -179,6 +179,21 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * href="http://camel.apache.org/bean-language.html>bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
+     *
+     * @param instance the instance of the bean
+     * @return the builder to continue processing the DSL
+     */
+    public T method(Object instance) {
+        MethodCallExpression expression = new MethodCallExpression(instance);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates an expression using the <a
+     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression
+     * value.
      * 
      * @param beanType the Class of the bean which we want to invoke
      * @return the builder to continue processing the DSL
@@ -205,6 +220,22 @@ public class ExpressionClause<T> extends ExpressionDefinition {
         return result;
     }
     
+    /**
+     * Evaluates an expression using the <a
+     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression
+     * value.
+     *
+     * @param instance the instance of the bean
+     * @param method the name of the method to invoke on the bean
+     * @return the builder to continue processing the DSL
+     */
+    public T method(Object instance, String method) {
+        MethodCallExpression expression = new MethodCallExpression(instance, method);
+        setExpressionType(expression);
+        return result;
+    }
+
     /**
      * Evaluates an expression using the <a
      * href="http://camel.apache.org/bean-language.html>bean language</a>

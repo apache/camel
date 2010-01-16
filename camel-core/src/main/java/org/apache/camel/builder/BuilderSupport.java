@@ -131,24 +131,28 @@ public abstract class BuilderSupport {
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
      *
-     * @param beanRef  reference to bean to lookup in the Registry
+     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
      * @return the builder
      */
-    public ValueBuilder bean(String beanRef) {
-        return Builder.bean(beanRef, null);
+    public ValueBuilder bean(Object beanOrBeanRef) {
+        return bean(beanOrBeanRef, null);
     }
     
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
+     * <p/>
+     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
      *
-     * @param beanRef  reference to bean to lookup in the Registry
+     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
      * @param method   name of method to invoke
      * @return the builder
      */
-    public ValueBuilder bean(String beanRef, String method) {
-        return Builder.bean(beanRef, method);
+    public ValueBuilder bean(Object beanOrBeanRef, String method) {
+        return Builder.bean(beanOrBeanRef, method);
     }
 
     /**
