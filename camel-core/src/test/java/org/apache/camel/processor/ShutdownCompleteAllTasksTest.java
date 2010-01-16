@@ -39,9 +39,6 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "C", Exchange.FILE_NAME, "c.txt");
         template.sendBodyAndHeader(url, "D", Exchange.FILE_NAME, "d.txt");
         template.sendBodyAndHeader(url, "E", Exchange.FILE_NAME, "e.txt");
-        template.sendBodyAndHeader(url, "F", Exchange.FILE_NAME, "f.txt");
-        template.sendBodyAndHeader(url, "G", Exchange.FILE_NAME, "g.txt");
-        template.sendBodyAndHeader(url, "H", Exchange.FILE_NAME, "h.txt");
     }
 
     public void testShutdownCompleteAllTasks() throws Exception {
@@ -54,8 +51,8 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         // shutdown during processing
         context.stop();
 
-        // should route all 8
-        assertEquals("Should complete all messages", 8, bar.getReceivedCounter());
+        // should route all 5
+        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
     }
 
     @Override
