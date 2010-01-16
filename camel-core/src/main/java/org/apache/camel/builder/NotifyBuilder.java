@@ -93,17 +93,8 @@ public class NotifyBuilder {
         stack.push(new EventPredicateSupport() {
 
             @Override
-            public boolean onExchangeCreated(Exchange exchange) {
-                return EndpointHelper.matchEndpoint(exchange.getFromEndpoint().getEndpointUri(), endpointUri);
-            }
-
-            @Override
-            public boolean onExchangeCompleted(Exchange exchange) {
-                return EndpointHelper.matchEndpoint(exchange.getFromEndpoint().getEndpointUri(), endpointUri);
-            }
-
-            @Override
-            public boolean onExchangeFailure(Exchange exchange) {
+            public boolean onExchange(Exchange exchange) {
+                // filter non matching exchanges
                 return EndpointHelper.matchEndpoint(exchange.getFromEndpoint().getEndpointUri(), endpointUri);
             }
 
@@ -114,6 +105,33 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 return "from(" + endpointUri + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Optionally a filter to only allow matching {@link Exchange} to be used for matching.
+     *
+     * @param predicate the predicate to use for the filter
+     * @return the builder
+     */
+    public NotifyBuilder filter(final Predicate predicate) {
+        stack.push(new EventPredicateSupport() {
+
+            @Override
+            public boolean onExchange(Exchange exchange) {
+                // filter non matching exchanges
+                return predicate.matches(exchange);
+            }
+
+            public boolean matches() {
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "filter(" + predicate + ")";
             }
         });
         return this;

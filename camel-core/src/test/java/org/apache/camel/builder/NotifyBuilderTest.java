@@ -199,6 +199,69 @@ public class NotifyBuilderTest extends ContextTestSupport {
         assertEquals(false, notify.matches());
     }
 
+    public void testFilterWhenExchangeDone() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .filter(body().contains("World")).whenDone(3)
+                .create();
+
+        assertEquals("filter(body contains World).whenDone(3)", notify.toString());
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        template.sendBody("direct:foo", "Hi World");
+        template.sendBody("direct:foo", "A");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "B");
+        template.sendBody("direct:bar", "C");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "Bye World");
+
+        assertEquals(true, notify.matches());
+
+        template.sendBody("direct:foo", "D");
+        template.sendBody("direct:bar", "Hey World");
+
+        assertEquals(true, notify.matches());
+    }
+
+    public void testFromFilterWhenExchangeDone() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("direct:foo").filter(body().contains("World")).whenDone(3)
+                .create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        template.sendBody("direct:foo", "Hi World");
+        template.sendBody("direct:foo", "A");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "B");
+        template.sendBody("direct:foo", "C");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "Bye World");
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "D");
+        template.sendBody("direct:foo", "Hey World");
+
+        assertEquals(true, notify.matches());
+
+        template.sendBody("direct:bar", "E");
+        template.sendBody("direct:foo", "Hi Again World");
+
+        assertEquals(true, notify.matches());
+    }
+
     public void testWhenExchangeCompleted() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
                 .whenCompleted(5)
