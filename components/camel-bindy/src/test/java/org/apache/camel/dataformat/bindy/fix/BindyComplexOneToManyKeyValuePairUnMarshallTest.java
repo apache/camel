@@ -16,19 +16,10 @@
  */
 package org.apache.camel.dataformat.bindy.fix;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
-import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
-import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
-import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Security;
-import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -43,69 +34,18 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
         String message = "8=FIX 4.19=2034=135=049=INVMGR56=BRKR" + "1=BE.CHM.00111=CHM0001-0158=this is a camel - bindy test" + "22=448=BE000124567854=1"
                          + "22=548=BE000987654354=2" + "22=648=BE000999999954=3" + "10=220";
 
-        result.expectedBodiesReceived(generateModel().toString());
+        result.expectedMessageCount(1);
         template.sendBody(message);
 
         result.assertIsSatisfied();
-    }
 
-    public List<Map<String, Object>> generateModel() {
-
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-        // must use linked to preserve order
-        Map<String, Object> model = new LinkedHashMap<String, Object>();
-        List<Security> securities = new ArrayList<Security>();
-
-        Header header = new Header();
-        header.setBeginString("FIX 4.1");
-        header.setBodyLength(20);
-        header.setMsgSeqNum(1);
-        header.setMsgType("0");
-        header.setSendCompId("INVMGR");
-        header.setTargetCompId("BRKR");
-
-        Trailer trailer = new Trailer();
-        trailer.setCheckSum(220);
-
-        Order order = new Order();
-        order.setAccount("BE.CHM.001");
-        order.setClOrdId("CHM0001-01");
-        order.setText("this is a camel - bindy test");
-
-        // 1st security
-        Security security = new Security();
-        security.setIdSource("4");
-        security.setSecurityCode("BE0001245678");
-        security.setSide("1");
-
-        securities.add(security);
-
-        // 2nd security
-        security = new Security();
-        security.setIdSource("5");
-        security.setSecurityCode("BE0009876543");
-        security.setSide("2");
-
-        securities.add(security);
-
-        // 3rd security
-        security = new Security();
-        security.setIdSource("6");
-        security.setSecurityCode("BE0009999999");
-        security.setSide("3");
-
-        securities.add(security);
-
-        order.setSecurities(securities);
-        order.setHeader(header);
-        order.setTrailer(trailer);
-
-        model.put(order.getClass().getName(), order);
-        model.put(header.getClass().getName(), header);
-        model.put(trailer.getClass().getName(), trailer);
-
-        models.add(model);
-        return models;
+        String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        Assert.assertTrue(body.contains("BE.CHM.001, 11: CHM0001-01, 58: this is a camel - bindy test"));
+        Assert.assertTrue(body.contains("22: 4, 48: BE0001245678, 54: 1"));
+        Assert.assertTrue(body.contains("22: 5, 48: BE0009876543, 54: 2"));
+        Assert.assertTrue(body.contains("22: 6, 48: BE0009999999, 54: 3"));
+        Assert.assertTrue(body.contains("FIX 4.1, 9: 20, 34: 1 , 35: 0, 49: INVMGR, 56: BRKR"));
+        Assert.assertTrue(body.contains("10: 220"));
     }
 
     public static class ContextConfig extends RouteBuilder {
