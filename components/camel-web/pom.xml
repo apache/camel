@@ -622,7 +622,7 @@
 				    org.apache.camel.spring;version="[2.1, 2.5)",
 				    org.apache.camel.osgi;version="[2.1, 2.5)",
 				    org.apache.camel.util;version="[2.1, 2.5)",
-				    org.apache.camel.web.resources;version="[2.1, 2.5)",
+				    org.apache.camel.web.resources;resolution:=optional,
 				    org.apache.commons.logging;resolution:=optional,
 				    org.osgi.service.http;version="[1.0.0,2.0.0)",
 				    org.ops4j.pax.web.service;resolution:=optional,

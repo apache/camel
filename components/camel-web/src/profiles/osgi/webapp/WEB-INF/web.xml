@@ -54,25 +54,8 @@
     <init-param>
       <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
       <!-- com.sun.jersey.api.core.PackagesResourceConfig does not work with OSGI -->
-      <param-value>com.sun.jersey.api.core.ClassNamesResourceConfig</param-value>
+      <param-value>org.apache.camel.web.util.CamelOSGIResourceConfig</param-value>
     </init-param>
-    <init-param>
-      <param-name>com.sun.jersey.config.property.classnames</param-name>
-	  <param-value>
-				org.apache.camel.web.resources.CamelContextResource;
-				org.apache.camel.web.resources.ComponentResource;
-				org.apache.camel.web.resources.ComponentsResource;
-				org.apache.camel.web.resources.ConvertersFromResource;
-				org.apache.camel.web.resources.EndpointResource;
-				org.apache.camel.web.resources.EndpointsResource;
-				org.apache.camel.web.resources.ExchangeResource;
-				org.apache.camel.web.resources.LanguageResource;
-				org.apache.camel.web.resources.LanguagesResource;
-				org.apache.camel.web.resources.RouteResource;
-				org.apache.camel.web.resources.RoutesResource;
-				org.apache.camel.web.resources.RouteStatusResource
-	  </param-value>
-	</init-param>
     <init-param>
       <param-name>com.sun.jersey.config.feature.Redirect</param-name>
       <param-value>true</param-value>
@@ -81,12 +64,10 @@
       <param-name>com.sun.jersey.config.feature.ImplicitViewables</param-name>
       <param-value>true</param-value>
     </init-param>
-    <!-- NOT REQUIRED WHEN USING ClassNamesResourceConfig
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>org.apache.camel.web.resources</param-value>
+      <param-value>org.apache.camel.web</param-value>
     </init-param>
-    -->
     <init-param>
       <param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
       <param-value>/(images|css|js)/.*</param-value>
