@@ -21,9 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * For XPath expressions and predicates
@@ -56,16 +56,16 @@ public class XPathExpression extends NamespaceAwareExpression {
     }
 
     @Override
-    protected void configureExpression(RouteContext routeContext, Expression expression) {
-        super.configureExpression(routeContext, expression);
+    protected void configureExpression(CamelContext camelContext, Expression expression) {
+        super.configureExpression(camelContext, expression);
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
     }
 
     @Override
-    protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
-        super.configurePredicate(routeContext, predicate);
+    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        super.configurePredicate(camelContext, predicate);
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }

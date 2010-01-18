@@ -262,6 +262,26 @@ public class NotifyBuilderTest extends ContextTestSupport {
         assertEquals(true, notify.matches());
     }
 
+    public void testFromFilterBuilderWhenExchangeDone() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .filter().xpath("/person[@name='James']").whenDone(1)
+                .create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "<person name='Claus'/>");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "<person name='Jonathan'/>");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "<person name='James'/>");
+        assertEquals(true, notify.matches());
+
+        template.sendBody("direct:foo", "<person name='Hadrian'/>");
+        assertEquals(true, notify.matches());
+    }
+
     public void testWhenExchangeCompleted() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
                 .whenCompleted(5)

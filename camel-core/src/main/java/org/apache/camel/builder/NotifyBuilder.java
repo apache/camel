@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Producer;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -135,6 +136,34 @@ public class NotifyBuilder {
             }
         });
         return this;
+    }
+
+    /**
+     * Optionally a filter to only allow matching {@link Exchange} to be used for matching.
+     *
+     * @return the builder
+     */
+    public ExpressionClauseSupport<NotifyBuilder> filter() {
+        final ExpressionClauseSupport<NotifyBuilder> clause = new ExpressionClauseSupport<NotifyBuilder>(this);
+        stack.push(new EventPredicateSupport() {
+
+            @Override
+            public boolean onExchange(Exchange exchange) {
+                // filter non matching exchanges
+                Expression exp = clause.createExpression(exchange.getContext());
+                return exp.evaluate(exchange, Boolean.class);
+            }
+
+            public boolean matches() {
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "filter(" + clause + ")";
+            }
+        });
+        return clause;
     }
 
     /**

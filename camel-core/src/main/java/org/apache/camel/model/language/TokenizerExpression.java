@@ -21,12 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
-import org.apache.camel.spi.RouteContext;
 
 /**
- * For expressions and predicates using a body or header tokenzier
+ * For expressions and predicates using a body or header tokenizer
  *
  * @version $Revision$
  */
@@ -73,7 +73,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     @Override
-    public Expression createExpression(RouteContext routeContext) {
+    public Expression createExpression(CamelContext camelContext) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(token);
         language.setHeaderName(headerName);

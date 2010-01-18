@@ -113,8 +113,7 @@ public class ExpressionDefinition implements Expression, Predicate {
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         if (expressionValue == null) {
-            RouteContext routeContext = new DefaultRouteContext(exchange.getContext());
-            expressionValue = createExpression(routeContext);
+            expressionValue = createExpression(exchange.getContext());
         }
         ObjectHelper.notNull(expressionValue, "expressionValue");
         return expressionValue.evaluate(exchange, type);
@@ -128,8 +127,7 @@ public class ExpressionDefinition implements Expression, Predicate {
 
     public boolean matches(Exchange exchange) {
         if (predicate == null) {
-            RouteContext routeContext = new DefaultRouteContext(exchange.getContext());
-            predicate = createPredicate(routeContext);
+            predicate = createPredicate(exchange.getContext());
         }
         ObjectHelper.notNull(predicate, "predicate");
         return predicate.matches(exchange);
@@ -139,36 +137,42 @@ public class ExpressionDefinition implements Expression, Predicate {
         return "";
     }
 
-    public Predicate createPredicate(RouteContext routeContext) {
+    public final Predicate createPredicate(RouteContext routeContext) {
+        return createPredicate(routeContext.getCamelContext());
+    }
+
+    public Predicate createPredicate(CamelContext camelContext) {
         if (predicate == null) {
-            if (expressionType != null) {
-                predicate = expressionType.createPredicate(routeContext);
-            } else if (expressionValue != null) {
-                predicate = PredicateBuilder.toPredicate(expressionValue);
+            if (getExpressionType() != null) {
+                predicate = getExpressionType().createPredicate(camelContext);
+            } else if (getExpressionValue() != null) {
+                predicate = PredicateBuilder.toPredicate(getExpressionValue());
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
-                CamelContext camelContext = routeContext.getCamelContext();
                 Language language = camelContext.resolveLanguage(getLanguage());
                 predicate = language.createPredicate(getExpression());
-                configurePredicate(routeContext, predicate);
+                configurePredicate(camelContext, predicate);
             }
         }
         return predicate;
     }
 
-    public Expression createExpression(RouteContext routeContext) {
-        if (expressionValue == null) {
-            if (expressionType != null) {
-                expressionValue = expressionType.createExpression(routeContext);
+    public final Expression createExpression(RouteContext routeContext) {
+        return createExpression(routeContext.getCamelContext());
+    }
+
+    public Expression createExpression(CamelContext camelContext) {
+        if (getExpressionValue() == null) {
+            if (getExpressionType() != null) {
+                setExpressionValue(getExpressionType().createExpression(camelContext));
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
-                CamelContext camelContext = routeContext.getCamelContext();
                 Language language = camelContext.resolveLanguage(getLanguage());
-                expressionValue = language.createExpression(getExpression());
-                configureExpression(routeContext, expressionValue);
+                setExpressionValue(language.createExpression(getExpression()));
+                configureExpression(camelContext, getExpressionValue());
             }
         }
-        return expressionValue;
+        return getExpressionValue();
     }
 
     public String getExpression() {
@@ -237,10 +241,10 @@ public class ExpressionDefinition implements Expression, Predicate {
         this.expressionType = expressionType;
     }
 
-    protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
+    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
     }
 
-    protected void configureExpression(RouteContext routeContext, Expression expression) {
+    protected void configureExpression(CamelContext camelContext, Expression expression) {
     }
 
     /**

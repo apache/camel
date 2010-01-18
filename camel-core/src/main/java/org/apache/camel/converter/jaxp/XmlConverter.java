@@ -47,6 +47,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -125,6 +126,14 @@ public class XmlConverter {
         }
         transformer.setOutputProperties(outputProperties);
         transformer.transform(source, result);
+    }
+
+    /**
+     * Converts the given NodeList to a boolean
+     */
+    @Converter
+    public Boolean toBoolean(NodeList list) {
+        return list.getLength() > 0;
     }
 
     /**

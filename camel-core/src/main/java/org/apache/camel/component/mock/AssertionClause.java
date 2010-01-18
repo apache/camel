@@ -23,18 +23,28 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.ExpressionClauseSupport;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.util.PredicateAssertHelper;
-import static org.apache.camel.builder.ExpressionBuilder.*;
+
+import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+import static org.apache.camel.builder.ExpressionBuilder.outBodyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.propertyExpression;
 
 /**
  * A builder of assertions on message exchanges
  *
  * @version $Revision$
  */
-public abstract class AssertionClause implements Runnable {
+public abstract class AssertionClause<T> extends ExpressionClauseSupport implements Runnable {
 
     private List<Predicate> predicates = new ArrayList<Predicate>();
+
+    @SuppressWarnings("unchecked")
+    public AssertionClause(Object result) {
+        super(result);
+    }
 
     // Builder methods
     // -------------------------------------------------------------------------
@@ -116,7 +126,6 @@ public abstract class AssertionClause implements Runnable {
     protected void addPredicate(Predicate predicate) {
         predicates.add(predicate);
     }
-
 
     /**
      * Public class needed for fluent builders

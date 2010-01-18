@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * For XQuery expressions and predicates
@@ -70,18 +70,18 @@ public class XQueryExpression extends NamespaceAwareExpression {
     }
 
     @Override
-    protected void configureExpression(RouteContext routeContext, Expression expression) {
-        super.configureExpression(routeContext, expression);
-        updateResultType(routeContext.getCamelContext().getClassResolver());
+    protected void configureExpression(CamelContext camelContext, Expression expression) {
+        super.configureExpression(camelContext, expression);
+        updateResultType(camelContext.getClassResolver());
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
     }
 
     @Override
-    protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
-        super.configurePredicate(routeContext, predicate);
-        updateResultType(routeContext.getCamelContext().getClassResolver());
+    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        super.configurePredicate(camelContext, predicate);
+        updateResultType(camelContext.getClassResolver());
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }

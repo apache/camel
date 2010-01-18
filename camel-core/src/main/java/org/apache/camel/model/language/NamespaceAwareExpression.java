@@ -22,10 +22,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * A useful base class for any expression which may be namespace or XML content aware
@@ -60,12 +60,12 @@ public abstract class NamespaceAwareExpression extends ExpressionDefinition impl
     }
 
     @Override
-    protected void configureExpression(RouteContext routeContext, Expression expression) {
+    protected void configureExpression(CamelContext camelContext, Expression expression) {
         configureNamespaceAware(expression);
     }
 
     @Override
-    protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
+    protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         configureNamespaceAware(predicate);
     }
 

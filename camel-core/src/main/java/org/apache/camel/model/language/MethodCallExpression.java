@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.bean.BeanExpression;
@@ -96,7 +97,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Expression createExpression(RouteContext routeContext) {
+    public Expression createExpression(CamelContext camelContext) {
         if (beanType != null) {            
             return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
         } else if (instance != null) {
@@ -108,7 +109,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Predicate createPredicate(RouteContext routeContext) {
+    public Predicate createPredicate(CamelContext camelContext) {
         if (beanType != null) {
             return new BeanExpression(ObjectHelper.newInstance(beanType), getMethod());
         } else if (instance != null) {
