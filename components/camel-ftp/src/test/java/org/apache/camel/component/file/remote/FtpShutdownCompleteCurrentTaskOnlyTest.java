@@ -29,7 +29,7 @@ import org.junit.Test;
 public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/pending?password=admin";
+        return "ftp://admin@localhost:" + getPort() + "/pending?password=admin&initialDelay=5000";
     }
 
     @Override
@@ -56,7 +56,6 @@ public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
-        bar.setResultWaitTime(3000);
 
         assertMockEndpointsSatisfied();
 
