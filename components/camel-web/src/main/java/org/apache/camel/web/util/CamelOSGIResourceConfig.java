@@ -63,7 +63,7 @@ public class CamelOSGIResourceConfig extends ClassNamesResourceConfig {
                RouteResource.class.getName(),
                RoutesResource.class.getName(),
                RouteStatusResource.class.getName(),
-               JAXBContextResolver.class.getName(),
+               JAXBContextResolverOSGI.class.getName(),
                JAXBMarshallerResolver.class.getName()
         };
 

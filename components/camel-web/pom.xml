@@ -587,7 +587,7 @@
 					com.sun.jersey.spi.container;resolution:=optional,
 					com.sun.jersey.spi.inject;resolution:=optional,
 				    com.sun.jersey.spi.resource;resolution:=optional,
-					com.sun.jersey.spi.spring.container.servlet;resolution:=optional
+					com.sun.jersey.spi.spring.container.servlet;resolution:=optional,
 					com.sun.org.apache.xerces.internal.jaxp;resolution:=optional,
 				    com.sun.research.ws.wadl;resolution:=optional,
 				    com.sun.xml.bind.v2.ContextFactory;resolution:=optional,
@@ -651,6 +651,7 @@
 					WEB-INF/lib/jersey-core-1.1.5-ea-SNAPSHOT.jar,
 					WEB-INF/lib/jersey-server-1.1.5-ea-SNAPSHOT.jar,
 					WEB-INF/lib/jersey-spring-1.1.5-ea-SNAPSHOT.jar,
+					WEB-INF/lib/jersey-json-1.1.5-ea-SNAPSHOT.jar,
 					WEB-INF/tags/api
 		        </osgi.classpath>
 				<osgi.private.pkg></osgi.private.pkg>
@@ -739,6 +740,52 @@
 					</exclusions>
 				</dependency>
 				<dependency>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-core</artifactId>
+					<version>${jersey-version}</version>
+					<exclusions>
+						<exclusion>
+						    <groupId>org.apache.servicemix.specs</groupId>
+						    <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+						</exclusion>
+						<exclusion>
+						    <groupId>org.apache.servicemix.specs</groupId>
+						    <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>						
+						</exclusion>
+						<exclusion>
+						    <groupId>org.apache.servicemix.specs</groupId>
+						    <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>						
+						</exclusion>
+						<exclusion>
+						    <groupId>org.apache.servicemix.bundles</groupId>
+						    <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>							
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-server</artifactId>
+					<version>${jersey-version}</version>
+					<exclusions>
+						<exclusion>
+						    <groupId>org.apache.servicemix.specs</groupId>
+						    <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+						</exclusion>
+						<exclusion>
+						    <groupId>org.apache.servicemix.specs</groupId>
+						    <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>						
+						</exclusion>
+						<exclusion>
+						    <groupId>org.apache.servicemix.specs</groupId>
+						    <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>						
+						</exclusion>
+						<exclusion>
+						    <groupId>org.apache.servicemix.bundles</groupId>
+						    <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>							
+						</exclusion>
+					</exclusions>
+				</dependency>
+    			<dependency>
 					<groupId>com.sun.jersey</groupId>
 					<artifactId>jersey-json</artifactId>
 					<version>${jersey-version}</version>
