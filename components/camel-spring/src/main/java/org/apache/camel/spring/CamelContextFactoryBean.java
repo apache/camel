@@ -883,7 +883,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                         throw new CamelException("Cannot find any routes with this RouteBuilder reference: " + builderRef);
                     }
                 }
-                
             }
         }
 

@@ -933,7 +933,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         DefaultRouteStartupOrder other = inputs.get(startupOrder);
                         if (other != null) {
                             String otherId = other.getRoute().getId();
-                            throw new FailedToStartRouteException(holder.getRoute().getId(), "starupOrder clash. Route " + otherId + " already has startupOrder "
+                            throw new FailedToStartRouteException(holder.getRoute().getId(), "startupOrder clash. Route " + otherId + " already has startupOrder "
                                 + startupOrder + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
                         } else {
                             // no clash then add the holder to the existing inputs of routes to be started

@@ -60,6 +60,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/file/splitprop?move=done")
+                    .convertBodyTo(String.class)
                     .split(new MyCustomExpression())
                     .recipientList(header("myCustomDestination"));
             }

@@ -29,6 +29,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -98,6 +99,13 @@ public final class EndpointHelper {
      * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
     public static boolean matchEndpoint(String uri, String pattern) {
+        // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
+        try {
+            uri = URISupport.normalizeUri(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+
         // we need to test with and without scheme separators (//)
         if (uri.indexOf("://") != -1) {
             // try without :// also
@@ -122,7 +130,7 @@ public final class EndpointHelper {
 
     private static boolean doMatchEndpoint(String uri, String pattern) {
         if (uri.equals(pattern)) {
-            // excact match
+            // exact match
             return true;
         }
 
