@@ -12,9 +12,8 @@ http://camel.apache.org/schema/spring/camel-spring.xsd">
         <camel:routeBuilder ref="tutorialRouteBuilder"/>
     </camel:camelContext>
     
-    <bean id="tutorialRouteBuilder"
+    <bean id="tutorialRouteBuilder" 
         class="org.apache.camel.example.gae.TutorialRouteBuilder">
-        <property name="sender" value="replaceme@gmail.com" />
     </bean>
     
 </beans>

@@ -16,32 +16,43 @@
  */
 package org.apache.camel.example.gae;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.gae.mail.GMailBinding;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class TutorialRouteBuilder extends RouteBuilder {
 
-    private String sender;
-    
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-    
     @Override
     public void configure() throws Exception {
         from("ghttp:///weather")
+            .process(new RequestProcessor())
+            .marshal().serialization()
             .to("gtask://default")
-            .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
-            .transform(constant("Weather report will be sent to ").append(header("mailto")));
+            .unmarshal().serialization()
+            .process(new ResponseProcessor());
       
         from("gtask://default")
-            .setHeader(Exchange.HTTP_QUERY, constant("weather=").append(header("city")))
-            .to("ghttp://www.google.com/ig/api")
-            .process(new WeatherProcessor())        
+            .unmarshal().serialization()
+            .setHeader(Exchange.HTTP_QUERY, constant("weather=").append(ReportData.city()))
+            .enrich("ghttp://www.google.com/ig/api", reportDataAggregator())
             .setHeader(GMailBinding.GMAIL_SUBJECT, constant("Weather report"))
-            .setHeader(GMailBinding.GMAIL_TO, header("mailto"))
-            .to("gmail://" + sender);
+            .setHeader(GMailBinding.GMAIL_SENDER, ReportData.requestor())
+            .setHeader(GMailBinding.GMAIL_TO, ReportData.recipient())
+            .process(new ReportGenerator())        
+            .to("gmail://default");
     }
 
+    private static AggregationStrategy reportDataAggregator() {
+        return new AggregationStrategy() {
+            public Exchange aggregate(Exchange reportExchange, Exchange weatherExchange) {
+                ReportData reportData = reportExchange.getIn().getBody(ReportData.class);
+                reportData.setWeather(weatherExchange.getIn().getBody(Document.class));
+                return reportExchange;
+            }
+        };
+    }
+    
 }

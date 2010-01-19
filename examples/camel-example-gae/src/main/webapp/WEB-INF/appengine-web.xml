@@ -3,7 +3,10 @@
 	<application>replaceme</application>
 	<version>1</version>
 	
-	<!-- Configure java.util.logging -->
+    <static-files>
+        <exclude path="/index.html" />
+    </static-files>
+
 	<system-properties>
 		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
 	</system-properties>
