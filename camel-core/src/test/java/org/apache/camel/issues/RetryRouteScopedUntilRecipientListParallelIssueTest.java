@@ -23,21 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RetryRouteScopedUntilRecipientListParallelIssueTest extends RetryRouteScopedUntilRecipientListIssueTest {
 
-    public void testRetryUntilRecipientListOkAndFail() throws Exception {
-        invoked = 0;
-
-        getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-
-        template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "direct:foo,fail");
-
-        assertMockEndpointsSatisfied();
-
-        context.stop();
-
-        assertEquals(3, invoked);
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
