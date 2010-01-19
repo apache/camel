@@ -43,11 +43,11 @@ public class GMailBindingTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         binding = new GMailBinding();
-        endpoint = createEndpoint("gmail:user1@gmail.com" +
-        		"?to=user2@gmail.com" +
-                "&cc=user4@gmail.com" +
-                "&bcc=user5@gmail.com" +
-        		"&subject=test");
+        endpoint = createEndpoint("gmail:user1@gmail.com"
+            + "?to=user2@gmail.com"
+            + "&cc=user4@gmail.com"
+            + "&bcc=user5@gmail.com"
+            + "&subject=test");
     }
     
     @Before
