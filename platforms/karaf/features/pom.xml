@@ -72,7 +72,7 @@
       <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <jcr-bundle-version>1.0_2</jcr-bundle-version>
       <jdom-bundle-version>1.1_2</jdom-bundle-version>
-      <jettison-bundle-version>1.1</jettison-bundle-version>
+      <jettison-bundle-version>1.2</jettison-bundle-version>
       <jetty-bundle-version>6.1.19_2</jetty-bundle-version>
       <jetty-cometd-bundle-version>6.1.11_3</jetty-cometd-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
