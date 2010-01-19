@@ -19,98 +19,77 @@ package org.apache.camel.converter.jaxb;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.easymock.classextension.EasyMockSupport;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.same;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class FilteringXmlStreamWriterTest extends EasyMockSupport {
+@RunWith(MockitoJUnitRunner.class)
+public class FilteringXmlStreamWriterTest {
     private FilteringXmlStreamWriter filteringXmlStreamWriter;
+    @Mock
     private NonXmlCharFilterer nonXmlCharFiltererMock;
+    @Mock
     private XMLStreamWriter xmlStreamWriterMock;
 
     // only testing non-generated methods, those that do apply filtering
 
     @Before
     public void setUp() {
-        xmlStreamWriterMock = createStrictMock(XMLStreamWriter.class);
-        nonXmlCharFiltererMock = createStrictMock(NonXmlCharFilterer.class);
         filteringXmlStreamWriter = new FilteringXmlStreamWriter(xmlStreamWriterMock);
         filteringXmlStreamWriter.nonXmlCharFilterer = nonXmlCharFiltererMock;
+
+        when(nonXmlCharFiltererMock.filter("value")).thenReturn("filteredValue");
     }
 
     @Test
     public void testWriteAttribute2Args() throws XMLStreamException {
-        expect(nonXmlCharFiltererMock.filter("value")).andReturn("filteredValue");
-        xmlStreamWriterMock.writeAttribute("localName", "filteredValue");
-        replayAll();
-
         filteringXmlStreamWriter.writeAttribute("localName", "value");
-        verifyAll();
+        verify(xmlStreamWriterMock).writeAttribute("localName", "filteredValue");
     }
 
     @Test
     public void testWriteAttribute3Args() throws XMLStreamException {
-        expect(nonXmlCharFiltererMock.filter("value")).andReturn("filteredValue");
-        xmlStreamWriterMock.writeAttribute("namespaceURI", "localName", "filteredValue");
-        replayAll();
-
         filteringXmlStreamWriter.writeAttribute("namespaceURI", "localName", "value");
-        verifyAll();
+        verify(xmlStreamWriterMock).writeAttribute("namespaceURI", "localName", "filteredValue");
     }
 
     @Test
     public void testWriteAttribute4Args() throws XMLStreamException {
-        expect(nonXmlCharFiltererMock.filter("value")).andReturn("filteredValue");
-        xmlStreamWriterMock.writeAttribute("prefix", "namespaceURI", "localName", "filteredValue");
-        replayAll();
-
         filteringXmlStreamWriter.writeAttribute("prefix", "namespaceURI", "localName", "value");
-        verifyAll();
+        verify(xmlStreamWriterMock).writeAttribute("prefix", "namespaceURI", "localName", "filteredValue");
     }
 
     @Test
     public void testWriteCData() throws XMLStreamException {
-        expect(nonXmlCharFiltererMock.filter("value")).andReturn("filteredValue");
-        xmlStreamWriterMock.writeCData("filteredValue");
-        replayAll();
-
         filteringXmlStreamWriter.writeCData("value");
-        verifyAll();
+        verify(xmlStreamWriterMock).writeCData("filteredValue");
     }
 
     @Test
     public void testWriteCharacters1Arg() throws XMLStreamException {
-        expect(nonXmlCharFiltererMock.filter("value")).andReturn("filteredValue");
-        xmlStreamWriterMock.writeCharacters("filteredValue");
-        replayAll();
-
         filteringXmlStreamWriter.writeCharacters("value");
-        verifyAll();
+        verify(xmlStreamWriterMock).writeCharacters("filteredValue");
     }
 
     @Test
     public void testWriteComment() throws XMLStreamException {
-        expect(nonXmlCharFiltererMock.filter("value")).andReturn("filteredValue");
-        xmlStreamWriterMock.writeComment("filteredValue");
-        replayAll();
-
         filteringXmlStreamWriter.writeComment("value");
-        verifyAll();
+        verify(xmlStreamWriterMock).writeComment("filteredValue");
     }
 
     @Test
     public void testWriteCharacters3Args() throws XMLStreamException {
         char[] buffer = new char[] {'a', 'b', 'c'};
-        expect(nonXmlCharFiltererMock.filter(same(buffer), eq(2), eq(3))).andReturn(true);
-        xmlStreamWriterMock.writeCharacters(same(buffer), eq(2), eq(3));
-        replayAll();
-
         filteringXmlStreamWriter.writeCharacters(buffer, 2, 3);
-        verifyAll();
+        verify(nonXmlCharFiltererMock).filter(same(buffer), eq(2), eq(3));
+        verify(xmlStreamWriterMock).writeCharacters(same(buffer), eq(2), eq(3));
     }
 
 }

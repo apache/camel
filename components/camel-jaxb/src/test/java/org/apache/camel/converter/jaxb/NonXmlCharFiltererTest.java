@@ -17,24 +17,32 @@
 
 package org.apache.camel.converter.jaxb;
 
-import org.easymock.Capture;
-import org.easymock.IAnswer;
-import org.easymock.classextension.EasyMockSupport;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
-import static org.easymock.EasyMock.and;
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyChar;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class NonXmlCharFiltererTest extends EasyMockSupport {
+@RunWith(MockitoJUnitRunner.class)
+public class NonXmlCharFiltererTest {
     private NonXmlCharFilterer nonXmlCharFilterer;
+    @Mock
+    private NonXmlCharFilterer nonXmlCharFiltererMock;
 
     @Before
     public void setUp() {
@@ -71,65 +79,53 @@ public class NonXmlCharFiltererTest extends EasyMockSupport {
 
     @Test
     public void testFilter1ArgNonFiltered() {
-        NonXmlCharFilterer nonXmlCharFiltererMock = createMockBuilder(NonXmlCharFilterer.class)
-                .addMockedMethod("filter", char[].class, int.class, int.class).createStrictMock();
+        when(nonXmlCharFiltererMock.filter(anyString())).thenCallRealMethod();
+        when(nonXmlCharFiltererMock.filter(any(char[].class), anyInt(), anyInt())).thenReturn(false);
+
         String string = "abc";
-
-        expect(nonXmlCharFiltererMock.filter(aryEq(new char[] {'a', 'b', 'c'}), eq(0), eq(3)))
-                .andReturn(false);
-        replayAll();
-
         String result = nonXmlCharFiltererMock.filter(string);
-        verifyAll();
+
+        verify(nonXmlCharFiltererMock).filter(new char[] {'a', 'b', 'c'}, 0, 3);
 
         assertSame("Should have returned the same string if nothing was filtered", string, result);
     }
 
-    //@Test
-    //"This test can't be build with JDK 1.5"
-    /*
+    @Test
     public void testFilter1ArgFiltered() {
-        NonXmlCharFilterer nonXmlCharFiltererMock = createMockBuilder(NonXmlCharFilterer.class)
-            .addMockedMethod("filter", char[].class, int.class, int.class).createStrictMock();
-        final Capture<char[]> bufferCapture = new Capture<char[]>();
+        when(nonXmlCharFiltererMock.filter(anyString())).thenCallRealMethod();
+        when(nonXmlCharFiltererMock.filter(eq(new char[] {'a', 'b', 'c'}), anyInt(), anyInt())).thenAnswer(new Answer<Boolean>() {
 
-        expect(
-               nonXmlCharFiltererMock.filter(and(capture(bufferCapture), aryEq(new char[] {'a', 'b', 'c'})),
-                                             eq(0), eq(3))).andAnswer(new IAnswer<Boolean>() {
-            public Boolean answer() throws Throwable {
-                char[] buffer = bufferCapture.getValue();
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                char[] buffer = (char[]) invocation.getArguments()[0];
                 buffer[0] = 'i';
                 buffer[1] = 'o';
                 return true;
             }
         });
-        replayAll();
 
         String result = nonXmlCharFiltererMock.filter("abc");
-        verifyAll();
-
+        verify(nonXmlCharFiltererMock).filter(any(char[].class), eq(0), eq(3));
         assertEquals("Should have returned filtered string", "ioc", result);
-    }*/
+    }
 
     @Test
     public void testFilter1ArgNullArg() {
-        NonXmlCharFilterer nonXmlCharFiltererMock = createStrictMock(NonXmlCharFilterer.class);
+        when(nonXmlCharFiltererMock.filter(anyString())).thenCallRealMethod();
         nonXmlCharFiltererMock.filter(null);
+        verify(nonXmlCharFiltererMock, never()).filter(any(char[].class), anyInt(), anyInt());
     }
 
     @Test
     public void testFilter3Args() {
-        NonXmlCharFilterer nonXmlCharFiltererMock = createMockBuilder(NonXmlCharFilterer.class)
-                .addMockedMethod("isFiltered").createStrictMock();
+        when(nonXmlCharFiltererMock.filter(any(char[].class), anyInt(), anyInt())).thenCallRealMethod();
+        when(nonXmlCharFiltererMock.isFiltered(anyChar())).thenReturn(true, false, true);
+
         char[] buffer = new char[] {'1', '2', '3', '4', '5', '6'};
-
-        expect(nonXmlCharFiltererMock.isFiltered('3')).andReturn(true);
-        expect(nonXmlCharFiltererMock.isFiltered('4')).andReturn(false);
-        expect(nonXmlCharFiltererMock.isFiltered('5')).andReturn(true);
-        replayAll();
-
         nonXmlCharFiltererMock.filter(buffer, 2, 3);
-        verifyAll();
+
+        verify(nonXmlCharFiltererMock).isFiltered('3');
+        verify(nonXmlCharFiltererMock).isFiltered('4');
+        verify(nonXmlCharFiltererMock).isFiltered('5');
 
         assertArrayEquals("Unexpected buffer contents",
                 new char[] {'1', '2', ' ', '4', ' ', '6'}, buffer);
@@ -137,8 +133,7 @@ public class NonXmlCharFiltererTest extends EasyMockSupport {
 
     @Test
     public void testFilter3ArgsNullArg() {
-        NonXmlCharFilterer nonXmlCharFiltererMock = createStrictMock(NonXmlCharFilterer.class);
-        nonXmlCharFiltererMock.filter(null, 2, 3);
+        nonXmlCharFilterer.filter(null, 2, 3);
     }
 
     private void checkSingleValid(int charCode) {

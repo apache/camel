@@ -96,7 +96,7 @@ public class JaxbDataFormat implements DataFormat {
         }
     }
     
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         try {
             // must create a new instance of unmarshaller as its not thread safe
             Object answer;

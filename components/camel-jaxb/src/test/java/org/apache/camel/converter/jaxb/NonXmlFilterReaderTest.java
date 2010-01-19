@@ -19,27 +19,33 @@ package org.apache.camel.converter.jaxb;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.easymock.classextension.EasyMockSupport;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
-import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.notNull;
-import static org.easymock.EasyMock.same;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class NonXmlFilterReaderTest extends EasyMockSupport {
+@RunWith(MockitoJUnitRunner.class)
+public class NonXmlFilterReaderTest {
     private NonXmlFilterReader nonXmlFilterReader;
+    @Mock
     private NonXmlCharFilterer nonXmlCharFiltererMock;
+    @Mock
     private Reader readerMock;
 
     @Before
     public void setUp() {
-        readerMock = createStrictMock(Reader.class);
-        nonXmlCharFiltererMock = createStrictMock(NonXmlCharFilterer.class);
         nonXmlFilterReader = new NonXmlFilterReader(readerMock);
         nonXmlFilterReader.nonXmlCharFilterer = nonXmlCharFiltererMock;
     }
@@ -48,13 +54,19 @@ public class NonXmlFilterReaderTest extends EasyMockSupport {
     public void testRead() throws IOException {
         char[] buffer = new char[10];
 
-        expect(readerMock.read(same(buffer), eq(3), eq(5))).andDelegateTo(
-                new ConstantReader(new char[] {'a', 'b', 'c'}));
-        expect(nonXmlCharFiltererMock.filter(same(buffer), eq(3), eq(3))).andReturn(false);
+        when(readerMock.read(same(buffer), eq(3), eq(5))).thenAnswer(new Answer<Integer>() {
 
-        replayAll();
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                ConstantReader reader = new ConstantReader(new char[] {'a', 'b', 'c'});
+                Object[] args = invocation.getArguments();
+                return reader.read((char[]) args[0], (Integer) args[1], (Integer)args[2]);
+            }
+        });
+
         int result = nonXmlFilterReader.read(buffer, 3, 5);
-        verifyAll();
+
+        verify(readerMock).read(same(buffer), eq(3), eq(5));
+        verify(nonXmlCharFiltererMock).filter(same(buffer), eq(3), eq(3));
 
         assertEquals("Unexpected number of chars read", 3, result);
         assertArrayEquals("Wrong buffer contents", new char[] {0, 0, 0, 'a', 'b', 'c', 0, 0, 0, 0},
@@ -65,16 +77,13 @@ public class NonXmlFilterReaderTest extends EasyMockSupport {
     public void testReadEOS() throws IOException {
         char[] buffer = new char[10];
 
-        expect(readerMock.read((char[]) notNull(), anyInt(), anyInt())).andReturn(-1);
+        when(readerMock.read(any(char[].class), anyInt(), anyInt())).thenReturn(-1);
 
-        replayAll();
         int result = nonXmlFilterReader.read(buffer, 3, 5);
-        verifyAll();
 
         assertEquals("Unexpected number of chars read", -1, result);
         assertArrayEquals("Buffer should not have been affected",
                           new char[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buffer);
-
     }
 
     static class ConstantReader extends Reader {
