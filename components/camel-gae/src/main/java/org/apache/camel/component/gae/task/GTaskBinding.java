@@ -42,19 +42,19 @@ public class GTaskBinding implements
      * Camel header name corresponding to <code>X-AppEngine-QueueName</code>
      * header created by task queueing service.
      */
-    public static final String GTASK_QUEUE_NAME = "org.apache.camel.component.gae.task.QueueName";
+    public static final String GTASK_QUEUE_NAME = "CamelGtaskQueueName";
 
     /**
      * Camel header name corresponding to <code>X-AppEngine-TaskName</code>
      * header created by task queueing service.
      */
-    public static final String GTASK_TASK_NAME = "org.apache.camel.component.gae.task.TaskName";
+    public static final String GTASK_TASK_NAME = "CamelGtaskTaskName";
     
     /**
      * Camel header name corresponding to <code>X-AppEngine-TaskRetryCount</code>
      * header created by task queueing service.
      */
-    public static final String GTASK_RETRY_COUNT = "org.apache.camel.component.gae.task.RetryCount";
+    public static final String GTASK_RETRY_COUNT = "CamelGtaskRetryCount";
 
     static final String GAE_QUEUE_NAME = "X-AppEngine-QueueName";
     static final String GAE_TASK_NAME = "X-AppEngine-TaskName";

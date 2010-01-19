@@ -29,30 +29,30 @@ public class GMailBinding implements OutboundBinding<GMailEndpoint, Message, Voi
     /**
      * Camel header for setting the mail message sender.
      */
-    public static final String GMAIL_SENDER = "org.apache.camel.component.gae.mail.Sender";
+    public static final String GMAIL_SENDER = "CamelGmailSender";
     
     /**
      * Camel header for setting the mail message subject.
      */
-    public static final String GMAIL_SUBJECT = "org.apache.camel.component.gae.mail.Subject";
+    public static final String GMAIL_SUBJECT = "CamelGmailSubject";
 
     /**
      * Camel header for setting the mail message to-recipient (single recipient
      * or comma-separated list).
      */
-    public static final String GMAIL_TO = "org.apache.camel.component.gae.mail.To";
+    public static final String GMAIL_TO = "CamelGmailTo";
     
     /**
      * Camel header for setting the mail message cc-recipient (single recipient
      * or comma-separated list).
      */
-    public static final String GMAIL_CC = "org.apache.camel.component.gae.mail.Cc";
+    public static final String GMAIL_CC = "CamelGmailCc";
     
     /**
      * Camel header for setting the mail message bcc-recipient (single recipient
      * or comma-separated list).
      */
-    public static final String GMAIL_BCC = "org.apache.camel.component.gae.mail.Bcc";
+    public static final String GMAIL_BCC = "CamelGmailBcc";
     
     /**
      * Reads data from <code>exchange</code> and writes it to a newly created
