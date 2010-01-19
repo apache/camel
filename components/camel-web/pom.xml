@@ -31,7 +31,7 @@
 
 	<properties>
 		<camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
-		<jersey-version>1.1.5-ea-SNAPSHOT</jersey-version>
+		<jersey-version>1.1.5-ea-20100104</jersey-version>
 		<jetty-port>8080</jetty-port>
 		<webdriver-version>685</webdriver-version>
 	</properties>
@@ -293,12 +293,12 @@
 						<docletArtifact>
 							<groupId>com.sun.jersey.contribs</groupId>
 							<artifactId>maven-wadl-plugin</artifactId>
-							<version>${jersey-version}</version>
+							<version>1.1.4.1</version>
 						</docletArtifact>
 						<docletArtifact>
 							<groupId>com.sun.jersey.contribs</groupId>
 							<artifactId>wadl-resourcedoc-doclet</artifactId>
-							<version>${jersey-version}</version>
+							<version>1.1.4.1</version>
 						</docletArtifact>
 						<!--
 							Also specify jersey and xerces as doclet artifacts as the
@@ -358,7 +358,7 @@
 			<plugin>
 				<groupId>com.sun.jersey.contribs</groupId>
 				<artifactId>maven-wadl-plugin</artifactId>
-				<version>${jersey-version}</version>
+				<version>1.1.4.1</version>
 				<executions>
 					<execution>
 						<id>generate</id>
