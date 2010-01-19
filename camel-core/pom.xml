@@ -230,10 +230,9 @@
 
 
   <profiles>
-    <profile>
+    <!--profile>
       <id>jdk1.5-maven-2.2.x</id>
       <activation>
-        <!-- for maven 2.2.x syntax-->
         <jdk>[1.5,)</jdk>
       </activation>
       <dependencies>
@@ -246,7 +245,7 @@
           <artifactId>jaxb-impl</artifactId>
         </dependency>
       </dependencies>
-    </profile>
+    </profile-->
     <profile>
       <id>jdk1.5-maven-2.0.x</id>
       <activation>
