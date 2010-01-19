@@ -32,12 +32,16 @@ public class GMailEndpointTest {
         StringBuffer buffer = new StringBuffer("gmail:user1@gmail.com")
             .append("?").append("subject=test")
             .append(AMP).append("to=user2@gmail.com")
+            .append(AMP).append("cc=user3@gmail.com")
+            .append(AMP).append("bcc=user4@gmail.com")
             .append(AMP).append("mailServiceRef=#mockMailService")
             .append(AMP).append("outboundBindingRef=#customBinding");
         GMailEndpoint endpoint = createEndpoint(buffer.toString());
         assertEquals("test", endpoint.getSubject());
         assertEquals("user1@gmail.com", endpoint.getSender());
         assertEquals("user2@gmail.com", endpoint.getTo());
+        assertEquals("user3@gmail.com", endpoint.getCc());
+        assertEquals("user4@gmail.com", endpoint.getBcc());
         assertFalse(endpoint.getOutboundBinding().getClass().equals(GMailBinding.class));
         assertTrue(endpoint.getOutboundBinding() instanceof GMailBinding);
         assertTrue(endpoint.getMailService() instanceof MockMailService);

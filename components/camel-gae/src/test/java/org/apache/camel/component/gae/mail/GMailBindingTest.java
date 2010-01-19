@@ -28,6 +28,7 @@ import static org.apache.camel.component.gae.mail.GMailTestUtils.createEndpoint;
 import static org.apache.camel.component.gae.mail.GMailTestUtils.createMessage;
 import static org.apache.camel.component.gae.mail.GMailTestUtils.getCamelContext;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GMailBindingTest {
 
@@ -42,7 +43,11 @@ public class GMailBindingTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         binding = new GMailBinding();
-        endpoint = createEndpoint("gmail:user1@gmail.com?to=user2@gmail.com&subject=test");
+        endpoint = createEndpoint("gmail:user1@gmail.com" +
+        		"?to=user2@gmail.com" +
+                "&cc=user4@gmail.com" +
+                "&bcc=user5@gmail.com" +
+        		"&subject=test");
     }
     
     @Before
@@ -55,6 +60,9 @@ public class GMailBindingTest {
     public void testWriteFrom() {
         binding.writeFrom(endpoint, exchange, message);
         assertEquals("user1@gmail.com", message.getSender());
+        exchange.getIn().setHeader(GMailBinding.GMAIL_SENDER, "user3@gmail.com");
+        binding.writeFrom(endpoint, exchange, message);
+        assertEquals("user3@gmail.com", message.getSender());
     }
     
     @Test
@@ -64,6 +72,57 @@ public class GMailBindingTest {
         exchange.getIn().setHeader(GMailBinding.GMAIL_TO, "user3@gmail.com");
         binding.writeTo(endpoint, exchange, message);
         assertEquals("user3@gmail.com", message.getTo().iterator().next());
+    }
+    
+    @Test
+    public void testWriteCc() {
+        binding.writeCc(endpoint, exchange, message);
+        assertEquals("user4@gmail.com", message.getCc().iterator().next());
+        exchange.getIn().setHeader(GMailBinding.GMAIL_CC, "user3@gmail.com");
+        binding.writeCc(endpoint, exchange, message);
+        assertEquals("user3@gmail.com", message.getCc().iterator().next());
+    }
+    
+    @Test
+    public void testWriteBcc() {
+        binding.writeBcc(endpoint, exchange, message);
+        assertEquals("user5@gmail.com", message.getBcc().iterator().next());
+        exchange.getIn().setHeader(GMailBinding.GMAIL_BCC, "user3@gmail.com");
+        binding.writeBcc(endpoint, exchange, message);
+        assertEquals("user3@gmail.com", message.getBcc().iterator().next());
+    }
+    
+    @Test
+    public void testWriteToMultiple() {
+        binding.writeTo(endpoint, exchange, message);
+        assertEquals("user2@gmail.com", message.getTo().iterator().next());
+        exchange.getIn().setHeader(GMailBinding.GMAIL_TO, "user3@gmail.com,user4@gmail.com");
+        binding.writeTo(endpoint, exchange, message);
+        assertEquals(2, message.getTo().size());
+        assertTrue(message.getTo().contains("user3@gmail.com"));
+        assertTrue(message.getTo().contains("user4@gmail.com"));
+    }
+    
+    @Test
+    public void testWriteCcMultiple() {
+        binding.writeCc(endpoint, exchange, message);
+        assertEquals("user4@gmail.com", message.getCc().iterator().next());
+        exchange.getIn().setHeader(GMailBinding.GMAIL_CC, "user3@gmail.com,user4@gmail.com");
+        binding.writeCc(endpoint, exchange, message);
+        assertEquals(2, message.getCc().size());
+        assertTrue(message.getCc().contains("user3@gmail.com"));
+        assertTrue(message.getCc().contains("user4@gmail.com"));
+    }
+    
+    @Test
+    public void testWriteBccMultiple() {
+        binding.writeBcc(endpoint, exchange, message);
+        assertEquals("user5@gmail.com", message.getBcc().iterator().next());
+        exchange.getIn().setHeader(GMailBinding.GMAIL_BCC, "user3@gmail.com,user4@gmail.com");
+        binding.writeBcc(endpoint, exchange, message);
+        assertEquals(2, message.getBcc().size());
+        assertTrue(message.getBcc().contains("user3@gmail.com"));
+        assertTrue(message.getBcc().contains("user4@gmail.com"));
     }
     
     @Test

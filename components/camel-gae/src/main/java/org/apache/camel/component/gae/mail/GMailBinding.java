@@ -27,14 +27,32 @@ import org.apache.camel.component.gae.bind.OutboundBinding;
 public class GMailBinding implements OutboundBinding<GMailEndpoint, Message, Void> {
 
     /**
+     * Camel header for setting the mail message sender.
+     */
+    public static final String GMAIL_SENDER = "org.apache.camel.component.gae.mail.Sender";
+    
+    /**
      * Camel header for setting the mail message subject.
      */
     public static final String GMAIL_SUBJECT = "org.apache.camel.component.gae.mail.Subject";
-    
+
     /**
-     * Camel header for setting the mail message recipient (list).
+     * Camel header for setting the mail message to-recipient (single recipient
+     * or comma-separated list).
      */
     public static final String GMAIL_TO = "org.apache.camel.component.gae.mail.To";
+    
+    /**
+     * Camel header for setting the mail message cc-recipient (single recipient
+     * or comma-separated list).
+     */
+    public static final String GMAIL_CC = "org.apache.camel.component.gae.mail.Cc";
+    
+    /**
+     * Camel header for setting the mail message bcc-recipient (single recipient
+     * or comma-separated list).
+     */
+    public static final String GMAIL_BCC = "org.apache.camel.component.gae.mail.Bcc";
     
     /**
      * Reads data from <code>exchange</code> and writes it to a newly created
@@ -52,6 +70,8 @@ public class GMailBinding implements OutboundBinding<GMailEndpoint, Message, Voi
         Message message = new Message();
         writeFrom(endpoint, exchange, message);
         writeTo(endpoint, exchange, message);
+        writeCc(endpoint, exchange, message);
+        writeBcc(endpoint, exchange, message);
         writeSubject(endpoint, exchange, message);
         writeBody(endpoint, exchange, message);
         writeAttachments(endpoint, exchange, message);
@@ -66,16 +86,39 @@ public class GMailBinding implements OutboundBinding<GMailEndpoint, Message, Voi
     }
 
     protected void writeFrom(GMailEndpoint endpoint, Exchange exchange, Message request) {
-        request.setSender(endpoint.getSender());
+        String sender = (String)exchange.getIn().getHeader(GMAIL_SENDER);
+        if (sender == null) {
+            sender = endpoint.getSender();
+        }
+        request.setSender(sender);
     }
     
     protected void writeTo(GMailEndpoint endpoint, Exchange exchange, Message request) {
-        // TODO: support comma-separated list of receivers
         String to = (String)exchange.getIn().getHeader(GMAIL_TO);
         if (to == null) {
             to = endpoint.getTo();
         }
-        request.setTo(to);
+        request.setTo(to.split(","));
+    }
+    
+    protected void writeCc(GMailEndpoint endpoint, Exchange exchange, Message request) {
+        String cc = (String)exchange.getIn().getHeader(GMAIL_CC);
+        if (cc == null) {
+            cc = endpoint.getCc();
+        }
+        if (cc != null) {
+            request.setCc(cc.split(","));
+        }
+    }
+    
+    protected void writeBcc(GMailEndpoint endpoint, Exchange exchange, Message request) {
+        String bcc = (String)exchange.getIn().getHeader(GMAIL_BCC);
+        if (bcc == null) {
+            bcc = endpoint.getBcc();
+        }
+        if (bcc != null) {
+            request.setBcc(bcc.split(","));
+        }
     }
     
     protected void writeSubject(GMailEndpoint endpoint, Exchange exchange, Message request) {
