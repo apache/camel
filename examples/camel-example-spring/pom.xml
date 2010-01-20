@@ -36,13 +36,6 @@
     <camel.osgi.export.pkg>org.apache.camel.example.spring.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
   </properties>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>onejar-maven-plugin.googlecode.com</id>
-      <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-    </pluginRepository>
-  </pluginRepositories>
   
   <dependencies>
     <dependency>

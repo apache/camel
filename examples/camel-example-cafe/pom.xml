@@ -35,13 +35,6 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.example.cafe.*</camel.osgi.export.pkg>
   </properties>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>onejar-maven-plugin.googlecode.com</id>
-      <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
-    </pluginRepository>
-  </pluginRepositories>
   
   <dependencies>
     <dependency>
