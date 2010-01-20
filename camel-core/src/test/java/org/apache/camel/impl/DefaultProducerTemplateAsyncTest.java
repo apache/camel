@@ -42,7 +42,7 @@ import org.apache.camel.util.CastUtils;
  */
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
-    private static final AtomicInteger order = new AtomicInteger(0);
+    private static final AtomicInteger ORDER = new AtomicInteger(0);
 
     public void testRequestAsync() throws Exception {
         Exchange exchange = new DefaultExchange(context);
@@ -307,7 +307,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
     }
 
     public void testAsyncCallbackExchangeInOnly() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -319,22 +319,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallback("direct:start", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
                 latch.countDown();
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         latch.await(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
     }
 
     public void testAsyncCallbackExchangeInOut() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -345,21 +345,21 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
                 latch.countDown();
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         latch.await(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
     }
 
     public void testAsyncCallbackExchangeInOnlyGetResult() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -369,22 +369,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Exchange> future = template.asyncCallback("direct:start", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         Exchange reply = future.get(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
         assertNotNull(reply);
     }
 
     public void testAsyncCallbackExchangeInOutGetResult() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         Exchange exchange = context.getEndpoint("direct:start").createExchange();
         exchange.getIn().setBody("Hello");
@@ -393,22 +393,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Exchange> future = template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         Exchange reply = future.get(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
         assertNotNull(reply);
         assertEquals("HelloHello", reply.getOut().getBody());
     }
 
     public void testAsyncCallbackBodyInOnly() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -417,85 +417,85 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallbackSendBody("direct:start", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
                 latch.countDown();
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         latch.await(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
     }
 
     public void testAsyncCallbackBodyInOut() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         final CountDownLatch latch = new CountDownLatch(1);
 
         template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
                 latch.countDown();
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         latch.await(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
     }
 
     public void testAsyncCallbackBodyInOnlyGetResult() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         Future<Object> future = template.asyncCallbackSendBody("direct:start", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         Object reply = future.get(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
         // no reply when in only
         assertEquals(null, reply);
     }
 
     public void testAsyncCallbackBodyInOutGetResult() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         Future<Object> future = template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         Object reply = future.get(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
         assertEquals("HelloHello", reply);
     }
 
     public void testAsyncCallbackInOnlyProcessor() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -508,22 +508,22 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("Hello World", exchange.getIn().getBody());
                 latch.countDown();
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         latch.await(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
         assertMockEndpointsSatisfied();
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
     }
 
     public void testAsyncCallbackInOutProcessor() throws Exception {
-        order.set(0);
+        ORDER.set(0);
 
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -535,17 +535,17 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                order.addAndGet(2);
+                ORDER.addAndGet(2);
                 assertEquals("HelloHello", exchange.getOut().getBody());
                 latch.countDown();
             }
         });
 
-        order.addAndGet(1);
+        ORDER.addAndGet(1);
         latch.await(10, TimeUnit.SECONDS);
-        order.addAndGet(4);
+        ORDER.addAndGet(4);
 
-        assertEquals(7, order.get());
+        assertEquals(7, ORDER.get());
     }
 
     @Override

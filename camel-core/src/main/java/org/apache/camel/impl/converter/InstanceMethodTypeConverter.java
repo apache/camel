@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.TypeConverterAware;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -33,11 +35,13 @@ public class InstanceMethodTypeConverter implements TypeConverter {
     private final CachingInjector<?>injector;
     private final Method method;
     private final boolean useExchange;
+    private final TypeConverterRegistry registry;
 
-    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method) {
+    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterTypes().length == 2;
+        this.registry = registry;
     }
 
     @Override
@@ -54,6 +58,13 @@ public class InstanceMethodTypeConverter implements TypeConverter {
         Object instance = injector.newInstance();
         if (instance == null) {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getCanonicalName());
+        }
+        // inject parent type converter
+        if (instance instanceof TypeConverterAware) {
+            if (registry instanceof TypeConverter) {
+                TypeConverter parentTypeConverter = (TypeConverter) registry;
+                ((TypeConverterAware) instance).setTypeConverter(parentTypeConverter);
+            }
         }
         return useExchange
             ? (T)ObjectHelper.invokeMethod(method, instance, value, exchange) : (T)ObjectHelper

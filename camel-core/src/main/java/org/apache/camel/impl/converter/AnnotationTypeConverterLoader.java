@@ -177,7 +177,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                             injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
                         }
                         registerTypeConverter(registry, method, toType, fromType,
-                                new InstanceMethodTypeConverter(injector, method));
+                                new InstanceMethodTypeConverter(injector, method, registry));
                     }
                 }
             }

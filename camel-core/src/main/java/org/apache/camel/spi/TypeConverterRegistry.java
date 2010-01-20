@@ -46,7 +46,7 @@ public interface TypeConverterRegistry {
      *
      * @param toType        the type to convert to
      * @param fromType      the type to convert from
-     * @return the type converter or null if not found.
+     * @return the type converter or <tt>null</tt> if not found.
      */
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
