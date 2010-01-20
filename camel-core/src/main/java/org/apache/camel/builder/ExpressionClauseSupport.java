@@ -92,7 +92,7 @@ public class ExpressionClauseSupport<T> {
     /**
      * An expression of an inbound message body converted to the expected type
      */
-    public T body(Class<?> expectedType) {
+    public T body(Class expectedType) {
         return expression(ExpressionBuilder.bodyExpression(expectedType));
     }
 
