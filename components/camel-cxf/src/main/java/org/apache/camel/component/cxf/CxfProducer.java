@@ -111,13 +111,15 @@ public class CxfProducer extends DefaultProducer {
         
         // get binding operation info
         BindingOperationInfo boi = getBindingOperationInfo(camelExchange);
+        ObjectHelper.notNull(boi, "BindingOperationInfo");
+        
+        // store the original boi in the exchange
+        camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("BOI = " + boi);
+            LOG.trace("Set exchange property: BindingOperationInfo: " + boi);
         }
         
-        ObjectHelper.notNull(boi, "You should set '" + CxfConstants.OPERATION_NAME 
-                + "' in header.");
-        
+        // Unwrap boi before passing it to make a client call
         if (!endpoint.isWrapped() && boi != null) {
             if (boi.isUnwrappedCapable()) {
                 boi = boi.getUnwrappedOperation();
@@ -125,11 +127,6 @@ public class CxfProducer extends DefaultProducer {
                     LOG.trace("Unwrapped BOI " + boi);
                 }
             }
-        }
-        
-        camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Set exchange property: BindingOperationInfo: " + boi);
         }
         
         // bind the request CXF exchange
