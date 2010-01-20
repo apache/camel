@@ -28,8 +28,6 @@ public class TypeConverterAwareTest extends ContextTestSupport {
         PurchaseOrder order = context.getTypeConverter().convertTo(PurchaseOrder.class, data);
         assertNotNull(order);
 
-        System.out.println(order);
-
         assertEquals("AKC4433", order.getName());
         assertEquals("179", order.getPrice().toString());
         assertEquals(3, order.getAmount());
