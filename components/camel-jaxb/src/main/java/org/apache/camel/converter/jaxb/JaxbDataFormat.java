@@ -20,14 +20,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
@@ -48,6 +54,10 @@ public class JaxbDataFormat implements DataFormat {
     private boolean ignoreJAXBElement = true;
     private boolean filterNonXmlChars;
     private String encoding;
+    // partial support
+    private QName partNamespace;
+    private String partClass;
+    private Class partialClass;
 
     public JaxbDataFormat() {
     }
@@ -85,26 +95,52 @@ public class JaxbDataFormat implements DataFormat {
         }
     }
 
+    @SuppressWarnings("unchecked")
     void marshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller)
         throws XMLStreamException, JAXBException {
+
+        Object e = graph;
+        if (getPartClass() != null && getPartNamespace() != null) {
+            e = new JAXBElement(getPartNamespace(), getPartialClass(exchange), graph);
+        }
+
         if (needFiltering(exchange)) {
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(stream);
-            FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
-            marshaller.marshal(graph, filteringWriter);
+            marshaller.marshal(e, createFilteringWriter(stream));
         } else {
-            marshaller.marshal(graph, stream);
+            marshaller.marshal(e, stream);
         }
     }
-    
+
+    private FilteringXmlStreamWriter createFilteringWriter(OutputStream stream)
+        throws XMLStreamException, FactoryConfigurationError {
+        XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(stream);
+        FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
+        return filteringWriter;
+    }
+
+    @SuppressWarnings("unchecked")
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         try {
             // must create a new instance of unmarshaller as its not thread safe
             Object answer;
             Unmarshaller unmarshaller = getContext().createUnmarshaller();
-            if (needFiltering(exchange)) {
-                answer = unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader(stream, IOConverter.getCharsetName(exchange))));
-            } else  {
-                answer = unmarshaller.unmarshal(stream);
+
+            if (getPartClass() != null) {
+                // partial unmarshalling
+                Source source;
+                if (needFiltering(exchange)) {
+                    source = new StreamSource(createNonXmlFilterReader(exchange, stream));
+                } else {
+                    source = new StreamSource(stream);
+                }
+                answer = unmarshaller.unmarshal(source, getPartialClass(exchange));
+            } else {
+                if (needFiltering(exchange)) {
+                    NonXmlFilterReader reader = createNonXmlFilterReader(exchange, stream);
+                    answer = unmarshaller.unmarshal(reader);
+                } else  {
+                    answer = unmarshaller.unmarshal(stream);
+                }
             }
 
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
@@ -115,10 +151,21 @@ public class JaxbDataFormat implements DataFormat {
             throw IOHelper.createIOException(e);
         }
     }
-    
+
+    private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, InputStream stream) throws UnsupportedEncodingException {
+        return new NonXmlFilterReader(new InputStreamReader(stream, IOConverter.getCharsetName(exchange)));
+    }
+
     protected boolean needFiltering(Exchange exchange) {
         // exchange property takes precedence over data format property
         return exchange == null ? filterNonXmlChars : exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, filterNonXmlChars, Boolean.class);
+    }
+
+    private synchronized Class getPartialClass(Exchange exchange) {
+        if (partialClass == null) {
+            partialClass = exchange.getContext().getClassResolver().resolveClass(getPartClass());
+        }
+        return partialClass;
     }
 
     // Properties
@@ -172,6 +219,22 @@ public class JaxbDataFormat implements DataFormat {
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public final QName getPartNamespace() {
+        return partNamespace;
+    }
+
+    public final void setPartNamespace(QName partNamespace) {
+        this.partNamespace = partNamespace;
+    }
+
+    public final String getPartClass() {
+        return partClass;
+    }
+
+    public final void setPartClass(String partClass) {
+        this.partClass = partClass;
     }
 
     protected JAXBContext createContext() throws JAXBException {

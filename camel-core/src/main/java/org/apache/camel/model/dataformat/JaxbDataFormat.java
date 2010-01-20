@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
@@ -43,6 +44,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private Boolean filterNonXmlChars;
     @XmlAttribute(required = false)
     private String encoding;
+
+    // Partial encoding
+    @XmlAttribute(required = false)
+    private String partClass;
+    @XmlAttribute(required = false)
+    private String partNamespace;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -84,7 +91,19 @@ public class JaxbDataFormat extends DataFormatDefinition {
     public void setFilterNonXmlChars(Boolean filterNonXmlChars) {
         this.filterNonXmlChars = filterNonXmlChars;
     }
-    
+
+    public String getPartClass() {
+        return partClass;
+    }
+
+    public void setPartClass(String partClass) {
+        this.partClass = partClass;
+    }
+
+    public void setPartNamespace(String partNamespace) {
+        this.partNamespace = partNamespace;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -104,7 +123,13 @@ public class JaxbDataFormat extends DataFormatDefinition {
             setProperty(dataFormat, "filterNonXmlChars", Boolean.TRUE);
         } else { // the default value is false
             setProperty(dataFormat, "filterNonXmlChars", Boolean.FALSE);
-        }        
+        }
+        if (partClass != null) {
+            setProperty(dataFormat, "partClass", partClass);
+        }
+        if (partNamespace != null) {
+            setProperty(dataFormat, "partNamespace", QName.valueOf(partNamespace));
+        }
         if (encoding != null) {
             setProperty(dataFormat, "encoding", encoding);
         }
