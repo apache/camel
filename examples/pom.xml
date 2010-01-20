@@ -50,6 +50,7 @@
   <modules>
     <module>camel-example-axis</module>
     <module>camel-example-bam</module>
+    <module>camel-example-cafe</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-async</module>
     <module>camel-example-docs</module>

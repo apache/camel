@@ -528,7 +528,17 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-cafe</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-cxf</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-cxf-async</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -539,6 +549,21 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-etl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-gae</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-guice-jms</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-http-async</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -563,7 +588,27 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-pojo-messaging</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-reportincident</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-route-throttling</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-spring-javaconfig</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -571,7 +616,11 @@
         <artifactId>camel-example-spring-xquery</artifactId>
         <version>${project.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-tracer</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-manual</artifactId>
