@@ -79,8 +79,9 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         //we populate the http request parameters for GET and POST 
+        
         String method = request.getMethod();
-        if (method.equalsIgnoreCase("GET") || (method.equalsIgnoreCase("POST") && contentType.equalsIgnoreCase("application/x-www-form-urlencoded"))) {
+        if (method.equalsIgnoreCase("GET") || (method.equalsIgnoreCase("POST"))) {
             names = request.getParameterNames();
             while (names.hasMoreElements()) {
                 String name = (String)names.nextElement();
