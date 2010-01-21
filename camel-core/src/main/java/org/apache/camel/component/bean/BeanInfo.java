@@ -221,7 +221,7 @@ public class BeanInfo {
         MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
         if (existingMethodInfo != null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("This method is already overriden in a subclass, so the method from the sub class is preferred: " + existingMethodInfo);
+                LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: " + existingMethodInfo);
             }
 
             return existingMethodInfo;
