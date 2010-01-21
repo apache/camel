@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.nagios;
 
+import com.googlecode.jsendnsca.core.INagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -29,8 +31,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class NagiosEndpoint extends DefaultEndpoint {
 
+    private INagiosPassiveCheckSender sender;
     private NagiosConfiguration configuration;
-    private NagiosPassiveCheckSender sender;
+    private boolean sendSync = true;
 
     public NagiosEndpoint() {
     }
@@ -60,14 +63,27 @@ public class NagiosEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public NagiosPassiveCheckSender getSender() {
+    public boolean isSendSync() {
+        return sendSync;
+    }
+
+    public void setSendSync(boolean sendSync) {
+        this.sendSync = sendSync;
+    }
+
+    public synchronized INagiosPassiveCheckSender getSender() {
         if (sender == null) {
-            sender = new NagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
+            if (isSendSync()) {
+                sender = new NagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
+            } else {
+                // use a non blocking sender
+                sender = new NonBlockingNagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
+            }
         }
         return sender;
     }
 
-    public void setSender(NagiosPassiveCheckSender sender) {
+    public void setSender(INagiosPassiveCheckSender sender) {
         this.sender = sender;
     }
 }

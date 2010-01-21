@@ -19,7 +19,6 @@ package org.apache.camel.component.nagios;
 import java.net.URI;
 import java.util.Map;
 
-import com.googlecode.jsendnsca.core.NagiosSettings;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -30,7 +29,6 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class NagiosComponent extends DefaultComponent {
 
-    private NagiosSettings nagiosSettings;
     private NagiosConfiguration configuration;
 
     public NagiosComponent() {
@@ -57,14 +55,6 @@ public class NagiosComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         return endpoint;
-    }
-
-    public NagiosSettings getNagiosSettings() {
-        return nagiosSettings;
-    }
-
-    public void setNagiosSettings(NagiosSettings nagiosSettings) {
-        this.nagiosSettings = nagiosSettings;
     }
 
     public NagiosConfiguration getConfiguration() {

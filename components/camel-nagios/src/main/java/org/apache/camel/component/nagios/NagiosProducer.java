@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.nagios;
 
+import com.googlecode.jsendnsca.core.INagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.core.Level;
 import com.googlecode.jsendnsca.core.MessagePayload;
-import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 import static org.apache.camel.component.nagios.NagiosConstants.HOST_NAME;
 import static org.apache.camel.component.nagios.NagiosConstants.LEVEL;
@@ -31,9 +33,9 @@ import static org.apache.camel.component.nagios.NagiosConstants.SERIVCE_NAME;
  */
 public class NagiosProducer extends DefaultProducer {
 
-    private final NagiosPassiveCheckSender sender;
+    private final INagiosPassiveCheckSender sender;
 
-    public NagiosProducer(NagiosEndpoint endpoint, NagiosPassiveCheckSender sender) {
+    public NagiosProducer(NagiosEndpoint endpoint, INagiosPassiveCheckSender sender) {
         super(endpoint);
         this.sender = sender;
     }
@@ -59,5 +61,23 @@ public class NagiosProducer extends DefaultProducer {
             log.trace("Sending notification done");
         }
     }
-    
+
+    @Override
+    protected void doStart() throws Exception {
+        // if non blocking then set a executor service on it
+        if (sender instanceof NonBlockingNagiosPassiveCheckSender) {
+            NonBlockingNagiosPassiveCheckSender nonBlocking = (NonBlockingNagiosPassiveCheckSender) sender;
+            nonBlocking.setExecutor(ExecutorServiceHelper.newSingleThreadExecutor(getEndpoint().getEndpointUri(), true));
+        }
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // if non blocking then shutdown executor
+        if (sender instanceof NonBlockingNagiosPassiveCheckSender) {
+            ((NonBlockingNagiosPassiveCheckSender) sender).shutdown();
+        }
+    }
 }
