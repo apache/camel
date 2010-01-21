@@ -23,6 +23,12 @@ import com.googlecode.jsendnsca.core.MessagePayload;
 import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.core.NagiosSettings;
 import org.apache.camel.management.EventNotifierSupport;
+import org.apache.camel.management.event.CamelContextStartupFailureEvent;
+import org.apache.camel.management.event.CamelContextStopFailureEvent;
+import org.apache.camel.management.event.ExchangeFailureEvent;
+import org.apache.camel.management.event.ExchangeFailureHandledEvent;
+import org.apache.camel.management.event.ServiceStartupFailureEvent;
+import org.apache.camel.management.event.ServiceStopFailureEvent;
 
 /**
  * An {@link org.apache.camel.spi.EventNotifier} which sends alters to Nagios.
@@ -34,11 +40,14 @@ public class NagiosEventNotifier extends EventNotifierSupport {
     private NagiosSettings nagiosSettings;
     private NagiosConfiguration configuration;
     private NagiosPassiveCheckSender sender;
+    private String serviceName = "Camel";
+    private String hostName = "localhost";
 
     public void notify(EventObject eventObject) throws Exception {
         // create message payload to send
         String message = eventObject.toString();
-        MessagePayload payload = new MessagePayload("localhost", Level.CRITICAL.ordinal(), "Camel", message);
+        Level level = detemineLevel(eventObject);
+        MessagePayload payload = new MessagePayload(getHostName(), level.ordinal(), getServiceName(), message);
 
         if (log.isInfoEnabled()) {
             log.info("Sending notification to Nagios: " + payload.getMessage());
@@ -49,12 +58,27 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         }
     }
 
-    // TODO: level should be computed based on event message
-    // TODO: host and service name should be configurable
-    
-
     public boolean isEnabled(EventObject eventObject) {
         return true;
+    }
+
+    protected Level detemineLevel(EventObject eventObject) {
+        // failures is considered critical
+        if (eventObject instanceof ExchangeFailureEvent
+                || eventObject instanceof CamelContextStartupFailureEvent
+                || eventObject instanceof CamelContextStopFailureEvent
+                || eventObject instanceof ServiceStartupFailureEvent
+                || eventObject instanceof ServiceStopFailureEvent) {
+            return Level.CRITICAL;
+        }
+
+        // the failure was handled so its just a warning
+        if (eventObject instanceof ExchangeFailureHandledEvent) {
+            return Level.WARNING;
+        }
+
+        // default to OK
+        return Level.OK;
     }
 
     public NagiosConfiguration getConfiguration() {
@@ -74,6 +98,22 @@ public class NagiosEventNotifier extends EventNotifierSupport {
 
     public void setNagiosSettings(NagiosSettings nagiosSettings) {
         this.nagiosSettings = nagiosSettings;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
     @Override

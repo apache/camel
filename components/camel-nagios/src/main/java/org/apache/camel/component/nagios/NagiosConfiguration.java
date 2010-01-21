@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.nagios;
 
+import java.net.URI;
+
 import com.googlecode.jsendnsca.core.NagiosSettings;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
  */
-public class NagiosConfiguration {
+public class NagiosConfiguration implements Cloneable {
 
     private NagiosSettings nagiosSettings;
     private String host;
@@ -30,6 +33,30 @@ public class NagiosConfiguration {
     private int connectionTimeout = 5000;
     private int timeout = 5000;
     private String password;
+
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public NagiosConfiguration copy() {
+        try {
+            NagiosConfiguration copy = (NagiosConfiguration) clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    public void configure(URI uri) {
+        String value = uri.getHost();
+        if (value != null) {
+            setHost(value);
+        }
+        int port = uri.getPort();
+        if (port > 0) {
+            setPort(port);
+        }
+    }
 
     public synchronized NagiosSettings getNagiosSettings() {
         if (nagiosSettings == null) {
