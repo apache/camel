@@ -46,18 +46,15 @@
      <camel.osgi.failok>true</camel.osgi.failok>
   </properties>
 
-  <dependencies>
-  
+  <dependencies>  
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-    </dependency>
-       
+    </dependency>   
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
@@ -66,12 +63,6 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-        
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
     </dependency>
         
@@ -112,6 +103,13 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-jbi</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
