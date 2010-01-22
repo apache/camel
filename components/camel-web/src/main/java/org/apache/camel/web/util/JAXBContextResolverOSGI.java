@@ -16,20 +16,12 @@
  */
 package org.apache.camel.web.util;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.api.json.JSONJAXBContext;
-
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 
-import org.apache.camel.web.model.Camel;
-import org.apache.camel.web.model.EndpointLink;
-import org.apache.camel.web.model.Endpoints;
+import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.api.json.JSONJAXBContext;
 
 /**
  * A resolver of the JAXB context OSGI primed for the Camel XML languages
@@ -44,7 +36,7 @@ public final class JAXBContextResolverOSGI implements ContextResolver<JAXBContex
     
     public JAXBContextResolverOSGI() throws Exception {
         this.packages = org.apache.camel.web.resources.Constants.JAXB_PACKAGES;
-        this.context = new JSONJAXBContext( JSONConfiguration.natural().build(), this.packages );
+        this.context = new JSONJAXBContext(JSONConfiguration.natural().build(), this.packages);
         
     }
     
