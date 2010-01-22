@@ -52,12 +52,17 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cxf</artifactId>
-      <exclusions>
-        <exclusion>
-      	  <groupId>org.slf4j</groupId>
-      	  <artifactId>slf4j-jdk14</artifactId>
-      	</exclusion>
-      </exclusions>
+    </dependency>
+    <dependency>
+       <groupId>org.apache.cxf</groupId>
+       <artifactId>cxf-rt-transports-http-jetty</artifactId>
+       <version>${cxf-version}</version>
+       <exclusions>
+          <exclusion>
+             <groupId>org.slf4j</groupId>
+             <artifactId>slf4j-jdk14</artifactId>
+           </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
