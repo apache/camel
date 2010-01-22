@@ -22,6 +22,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.util.ServiceHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -43,6 +44,12 @@ public class JaxpTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(JaxpTest.class);
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
             new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ServiceHelper.startService(converter);
+    }
 
     public void testConvertToDocument() throws Exception {
         Document document = converter

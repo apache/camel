@@ -29,6 +29,7 @@ import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * @version $Revision$
@@ -37,6 +38,12 @@ public class StringSourceTest extends TestCase {
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
             new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
     protected String expectedBody = "<hello>world!</hello>";
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ServiceHelper.startService(converter);
+    }
 
     public void testSerialization() throws Exception {
         StringSource expected = new StringSource(expectedBody, "mySystemID", "utf-8");

@@ -40,6 +40,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -66,6 +67,7 @@ public class ConverterTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         PropertyEditorManager.registerEditor(Integer.class, IntegerPropertyEditor.class);
+        ServiceHelper.startService(converter);
     }
 
     public void testIntegerPropertyEditorConversion() throws Exception {

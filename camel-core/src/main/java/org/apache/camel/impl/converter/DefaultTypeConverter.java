@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -40,7 +40,6 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Default implementation of a type converter registry used for
@@ -48,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  *
  * @version $Revision$
  */
-public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistry {
+public class DefaultTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
     private static final transient Log LOG = LogFactory.getLog(DefaultTypeConverter.class);
     private final Map<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     private final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
@@ -56,13 +55,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     private final List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
     private Injector injector;
     private final FactoryFinder factoryFinder;
-    private AtomicBoolean loaded = new AtomicBoolean();
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-
-        typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
 
         // add to string first as it will then be last in the last as to string can nearly
         // always convert something to a string so we want it only as the last resort
@@ -156,9 +153,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             return Void.TYPE;
         }
 
-        // make sure we have loaded the converters
-        checkLoaded();
-
         // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
@@ -250,9 +244,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     public Set<Class<?>> getFromClassMappings() {
-        // make sure we have loaded the converters
-        checkLoaded();
-
         Set<Class<?>> answer = new HashSet<Class<?>>();
         synchronized (typeMappings) {
             for (TypeMapping mapping : typeMappings.keySet()) {
@@ -276,9 +267,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     public Map<TypeMapping, TypeConverter> getTypeMappings() {
-        // make sure we have loaded the converters
-        checkLoaded();
-
         return typeMappings;
     }
 
@@ -302,9 +290,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
-        // make sure we have loaded the converters
-        checkLoaded();
-
         return doLookup(toType, fromType, false);
     }
 
@@ -368,31 +353,22 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     /**
      * Checks if the registry is loaded and if not lazily load it
      */
-    protected synchronized void checkLoaded() {
-        // must be synchronized to let other threads wait for it to initialize
-        // also use a atomic boolean so its state is visible for the other threads
-        // this ensure that at most one thread is loading all the type converters
-        if (loaded.compareAndSet(false, true)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Loading type converters ...");
-            }
-            try {
-                for (TypeConverterLoader typeConverterLoader : typeConverterLoaders) {
-                    typeConverterLoader.load(this);
-                }
+    protected void loadTypeConverters() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Loading type converters ...");
+        }
+        for (TypeConverterLoader typeConverterLoader : typeConverterLoaders) {
+            typeConverterLoader.load(this);
+        }
 
-                // lets try load any other fallback converters
-                try {
-                    loadFallbackTypeConverters();
-                } catch (NoFactoryAvailableException e) {
-                    // ignore its fine to have none
-                }
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
-            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Loading type converters done");
-            }
+        // lets try load any other fallback converters
+        try {
+            loadFallbackTypeConverters();
+        } catch (NoFactoryAvailableException e) {
+            // ignore its fine to have none
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Loading type converters done");
         }
     }
 
@@ -401,6 +377,15 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         for (TypeConverter converter : converters) {
             addFallbackTypeConverter(converter);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        loadTypeConverters();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
     }
 
     /**

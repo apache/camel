@@ -33,7 +33,7 @@
         <!-- this template is used to send the messages from the client -->
         <template id="camelTemplate"/>
 
-        <!-- this is a mock endpoint which we can use to test that the messages is routed as expectd -->
+        <!-- this is a mock endpoint which we can use to test that the messages is routed as expected -->
         <endpoint id="result" uri="mock:result"/>
 
         <route>
