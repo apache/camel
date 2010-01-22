@@ -33,6 +33,12 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         this.setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public RemoteFileEndpoint<T> getEndpoint() {
+        return (RemoteFileEndpoint<T>) super.getEndpoint();
+    }
+
     protected RemoteFileOperations getOperations() {
         return (RemoteFileOperations) operations;
     }
@@ -45,6 +51,16 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected void postPollCheck() {
+        if (getEndpoint().isDisconnect()) {
+            if (log.isTraceEnabled()) {
+                log.trace("postPollCheck disconnect from: " + getEndpoint());
+            }
+            disconnect();
+        }
     }
 
     @Override

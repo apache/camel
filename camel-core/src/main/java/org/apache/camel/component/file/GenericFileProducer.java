@@ -143,6 +143,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
         } catch (Exception e) {
             handleFailedWrite(exchange, e);
         }
+
+        postWriteCheck();
     }
 
     /**
@@ -157,6 +159,13 @@ public class GenericFileProducer<T> extends DefaultProducer {
      * Perform any actions that need to occur before we write such as connecting to an FTP server etc.
      */
     protected void preWriteCheck() throws Exception {
+        // nothing needed to check
+    }
+
+    /**
+     * Perform any actions that need to occur after we are done such as disconnecting.
+     */
+    protected void postWriteCheck() {
         // nothing needed to check
     }
 

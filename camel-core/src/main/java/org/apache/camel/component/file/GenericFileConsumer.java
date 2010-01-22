@@ -101,6 +101,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
         Queue<Exchange> q = exchanges;
         processBatch(CastUtils.cast(q));
+
+        postPollCheck();
     }
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
@@ -184,6 +186,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      */
     protected boolean prePollCheck() throws Exception {
         return true;
+    }
+
+    /**
+     * Override if required. Perform some checks (and perhaps actions) after we
+     * have polled.
+     */
+    protected void postPollCheck() {
+        // noop
     }
 
     /**

@@ -32,6 +32,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     private int maximumReconnectAttempts = 3;
     private long reconnectDelay = 1000;
+    private boolean disconnect;
 
     public RemoteFileEndpoint() {
         // no args constructor for spring bean endpoint configuration
@@ -142,5 +143,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
+    }
+
+    public boolean isDisconnect() {
+        return disconnect;
+    }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
     }
 }

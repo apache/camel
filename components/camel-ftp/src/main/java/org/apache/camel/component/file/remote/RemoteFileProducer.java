@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -57,6 +55,12 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         return (RemoteFileOperations) operations;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public RemoteFileEndpoint<T> getEndpoint() {
+        return (RemoteFileEndpoint<T>) super.getEndpoint();
+    }
+
     /**
      * The file could not be written. We need to disconnect from the remote server.
      */
@@ -78,7 +82,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         }
     }
 
-    public void disconnect() throws IOException {
+    public void disconnect() throws GenericFileOperationFailedException {
         loggedIn = false;
         if (getOperations().isConnected()) {
             if (log.isDebugEnabled()) {
@@ -120,8 +124,23 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         connectIfNecessary();
         if (!loggedIn) {
             // must be logged in to be able to upload the file
-            String message = "Cannot connect/login to: " + ((RemoteFileEndpoint) getEndpoint()).remoteServerInformation();
+            String message = "Cannot connect/login to: " + getEndpoint().remoteServerInformation();
             throw new GenericFileOperationFailedException(message);
+        }
+    }
+
+    @Override
+    protected void postWriteCheck() {
+        try {
+            if (getEndpoint().isDisconnect()) {
+                if (log.isTraceEnabled()) {
+                    log.trace("postWriteCheck disconnect from: " + getEndpoint());
+                }
+                disconnect();
+            }
+        } catch (GenericFileOperationFailedException e) {
+            // ignore just log a warning
+            log.warn("Exception occurred during disconnecting from: " + getEndpoint() + " " + e.getMessage());
         }
     }
 
@@ -143,14 +162,13 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         super.doStop();
     }
 
-    protected void connectIfNecessary() throws IOException {
+    protected void connectIfNecessary() throws GenericFileOperationFailedException {
         if (!loggedIn) {
             if (log.isDebugEnabled()) {
                 log.debug("Not already connected/logged in. Connecting to: " + getEndpoint());
             }
-            RemoteFileEndpoint rfe = (RemoteFileEndpoint) getEndpoint();
-            RemoteFileConfiguration conf = (RemoteFileConfiguration) rfe.getConfiguration();
-            loggedIn = getOperations().connect(conf);
+            RemoteFileConfiguration config = (RemoteFileConfiguration) getEndpoint().getConfiguration();
+            loggedIn = getOperations().connect(config);
             if (!loggedIn) {
                 return;
             }
@@ -162,4 +180,5 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         // this producer is stateful because the remote file operations is not thread safe
         return false;
     }
+
 }
