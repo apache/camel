@@ -22,6 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="shutdown" class="org.apache.camel.impl.DefaultShutdownStrategy">
+        <!-- give it 20 sec to shutdown -->
+        <property name="timeout" value="20"/>
+    </bean>
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1" shutdownRunningTask="CompleteCurrentTaskOnly">
             <from uri="file:target/pending"/>

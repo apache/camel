@@ -22,6 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="shutdown" class="org.apache.camel.impl.DefaultShutdownStrategy">
+        <!-- give it 20 sec to shutdown -->
+        <property name="timeout" value="20"/>
+    </bean>
+
     <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <!-- let this route complete all its pending messages when asked to shutdown -->

@@ -39,23 +39,22 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "C", Exchange.FILE_NAME, "c.txt");
         template.sendBodyAndHeader(url, "D", Exchange.FILE_NAME, "d.txt");
         template.sendBodyAndHeader(url, "E", Exchange.FILE_NAME, "e.txt");
-        template.sendBodyAndHeader(url, "F", Exchange.FILE_NAME, "f.txt");
-        template.sendBodyAndHeader(url, "G", Exchange.FILE_NAME, "g.txt");
-        template.sendBodyAndHeader(url, "H", Exchange.FILE_NAME, "h.txt");
     }
 
     public void testShutdownCompleteCurrentTaskOnly() throws Exception {
+        // give it 20 seconds to shutdown
+        context.getShutdownStrategy().setTimeout(20);
+
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
-        bar.setResultWaitTime(3000);
 
         assertMockEndpointsSatisfied();
 
         // shutdown during processing
         context.stop();
 
-        // should NOT route all 8
-        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 8);
+        // should NOT route all 5
+        assertTrue("Should NOT complete all messages, was: " + bar.getReceivedCounter(), bar.getReceivedCounter() < 5);
     }
 
     @Override
