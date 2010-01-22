@@ -106,6 +106,17 @@ public class HttpRouteTest extends ContextTestSupport {
         String out = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("Get a wrong output " , "OK", out);
     }
+    
+    public void testPostParameterInURI() throws Exception {
+        HttpClient client = new HttpClient();
+        PostMethod post = new PostMethod("http://localhost:9080/post?request=PostParameter&others=bloggs");
+        StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
+        post.setRequestEntity(entity);
+        client.executeMethod(post);
+        InputStream response = post.getResponseBodyAsStream();
+        String out = context.getTypeConverter().convertTo(String.class, response);
+        assertEquals("Get a wrong output " , "PostParameter", out);
+    }
 
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
