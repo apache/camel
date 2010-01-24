@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultFactoryFinderResolver
 import org.apache.camel.impl.DefaultPackageScanClassResolver
 import org.apache.camel.impl.converter.DefaultTypeConverter
 import org.apache.camel.util.ReflectionInjector
+import org.apache.camel.util.ServiceHelper
 
 import org.w3c.dom.Document
 
@@ -36,6 +37,7 @@ class ScalaTypeConverterTest extends TestCase {
       new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()))
   
   def testDocumentConverter = {
+    ServiceHelper.startService(converter)
     val result = converter.convertTo(classOf[Document], <persons/>)
     assertNotNull(result)
     assertNotNull(result.getElementsByTagName("persons"))
