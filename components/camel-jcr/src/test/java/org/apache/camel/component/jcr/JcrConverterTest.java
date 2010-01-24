@@ -26,11 +26,13 @@ import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.jackrabbit.value.BinaryValue;
 import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -38,8 +40,14 @@ import org.junit.Test;
  */
 public class JcrConverterTest extends Assert {
 
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
+    protected TypeConverter converter;
+
+    @Before
+    public void init() throws Exception {
+        converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
+                new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
+        ServiceHelper.startService(converter);
+    }
 
     @Test
     public void testBooleanValueConverter() throws Exception {
