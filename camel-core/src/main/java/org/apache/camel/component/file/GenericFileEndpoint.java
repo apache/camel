@@ -215,7 +215,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setMoveFailed(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
-        this.moveFailed = createFileLangugeExpression(expression);
+        this.moveFailed = createFileLanguageExpression(expression);
     }
 
     public Expression getMoveFailed() {
@@ -232,7 +232,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
-        this.move = createFileLangugeExpression(expression);
+        this.move = createFileLanguageExpression(expression);
     }
 
     public Expression getPreMove() {
@@ -249,7 +249,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setPreMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
-        this.preMove = createFileLangugeExpression(expression);
+        this.preMove = createFileLanguageExpression(expression);
     }
 
     public Expression getFileName() {
@@ -265,7 +265,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
     public void setFileName(String fileLanguageExpression) {
-        this.fileName = createFileLangugeExpression(fileLanguageExpression);
+        this.fileName = createFileLanguageExpression(fileLanguageExpression);
     }
 
     public Boolean isIdempotent() {
@@ -343,7 +343,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
 
     public void setTempFileName(String tempFileNameExpression) {
-        this.tempFileName = createFileLangugeExpression(tempFileNameExpression);
+        this.tempFileName = createFileLanguageExpression(tempFileNameExpression);
     }
 
     public GenericFileConfiguration getConfiguration() {
@@ -535,8 +535,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         return params;
     }
 
-    private Expression createFileLangugeExpression(String expression) {
-        Language language = getCamelContext().resolveLanguage("file");
+    private Expression createFileLanguageExpression(String expression) {
+        Language language;
+        // only use file language if the name is complex (eg. using $)
+        if (expression.contains("$")) {
+            language = getCamelContext().resolveLanguage("file");
+        } else {
+            language = getCamelContext().resolveLanguage("constant");
+        }
         return language.createExpression(expression);
     }
 }
