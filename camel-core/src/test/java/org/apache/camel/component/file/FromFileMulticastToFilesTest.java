@@ -33,6 +33,66 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
     }
 
     public void testFromFileMulticastToFiles() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file://target/multicast")
+                    .multicast()
+                        .pipeline()
+                            .transform(body().prepend("HEADER:"))
+                            .to("file://target/multicast/out/?fileName=header.txt")
+                            .to("mock:header")
+                        .end()
+                        .pipeline()
+                            .transform(body().prepend("FOOTER:"))
+                            .to("file://target/multicast/out/?fileName=footer.txt")
+                            .to("mock:footer")
+                        .end()
+                    .end()
+                    .to("mock:end");
+            }
+        });
+        context.start();
+
+        MockEndpoint header = getMockEndpoint("mock:header");
+        header.expectedBodiesReceived("HEADER:foo");
+        header.expectedFileExists("./target/multicast/out/header.txt");
+
+        MockEndpoint footer = getMockEndpoint("mock:footer");
+        footer.expectedBodiesReceived("FOOTER:foo");
+        footer.expectedFileExists("./target/multicast/out/footer.txt");
+
+        MockEndpoint end = getMockEndpoint("mock:end");
+        end.expectedMessageCount(1);
+        end.expectedFileExists("./target/multicast/.camel/foo.txt");
+
+        template.sendBodyAndHeader("file://target/multicast", "foo", Exchange.FILE_NAME, "foo.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFromFileMulticastParallelToFiles() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file://target/multicast")
+                    .multicast().parallelProcessing()
+                        .pipeline()
+                            .transform(body().prepend("HEADER:"))
+                            .to("file://target/multicast/out/?fileName=header.txt")
+                            .to("mock:header")
+                        .end()
+                        .pipeline()
+                            .transform(body().prepend("FOOTER:"))
+                            .to("file://target/multicast/out/?fileName=footer.txt")
+                            .to("mock:footer")
+                        .end()
+                    .end()
+                    .to("mock:end");
+            }
+        });
+        context.start();
+
         MockEndpoint header = getMockEndpoint("mock:header");
         header.expectedBodiesReceived("HEADER:foo");
         header.expectedFileExists("./target/multicast/out/header.txt");
@@ -51,25 +111,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("file://target/multicast")
-                    .multicast()
-                        .pipeline()
-                            .transform(body().prepend("HEADER:"))
-                            .to("file://target/multicast/out/?fileName=header.txt")
-                            .to("mock:header")
-                        .end()
-                        .pipeline()
-                            .transform(body().prepend("FOOTER:"))
-                            .to("file://target/multicast/out/?fileName=footer.txt")
-                            .to("mock:footer")
-                        .end()
-                    .end()
-                    .to("mock:end");
-            }
-        };
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 }
