@@ -50,6 +50,7 @@ public class CxfProducerTest extends TestCase {
     protected static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
     protected static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
     protected static final String WRONG_SERVER_ADDRESS = "http://localhost:9999/test";
+    protected static final String FILE_NAME = "CamelFileName";
 
     private static final transient Log LOG = LogFactory.getLog(CxfProducerTest.class);
 
@@ -99,6 +100,10 @@ public class CxfProducerTest extends TestCase {
         assertNotNull(responseContext);
         assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
         assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, result);
+        
+        // check the other camel header copying
+        String fileName = out.getHeader(FILE_NAME, String.class);
+        assertEquals("Should get the file name from out message header", "testFile", fileName);
 
     }
 
@@ -123,6 +128,10 @@ public class CxfProducerTest extends TestCase {
         assertNotNull(responseContext);
         assertEquals("Get the wrong wsdl opertion name", "{http://apache.org/hello_world_soap_http}greetMe", responseContext.get("javax.xml.ws.wsdl.operation").toString());
         assertEquals("reply body on Camel", "Hello " + TEST_MESSAGE, result);
+        
+        // check the other camel header copying
+        String fileName = out.getHeader(FILE_NAME, String.class);
+        assertEquals("Should get the file name from out message header", "testFile", fileName);
     }
 
     protected String getSimpleEndpointUri() {
@@ -149,6 +158,7 @@ public class CxfProducerTest extends TestCase {
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
+                exchange.getIn().setHeader(FILE_NAME, "testFile");
             }
         });
         return exchange;
@@ -161,6 +171,7 @@ public class CxfProducerTest extends TestCase {
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
+                exchange.getIn().setHeader(FILE_NAME, "testFile");
             }
         });
         return exchange;

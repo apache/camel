@@ -148,6 +148,8 @@ public final class CxfBinding {
             Message response) {
         org.apache.camel.Message out = exchange.getOut();
         if (response != null) {
+            // copy the InMessage header to OutMessage header
+            out.getHeaders().putAll(exchange.getIn().getHeaders());
             CxfHeaderHelper.propagateCxfToCamel(strategy, response, out.getHeaders());
             if (out instanceof CxfMessage) {
                 ((CxfMessage)out).setMessage(response);
