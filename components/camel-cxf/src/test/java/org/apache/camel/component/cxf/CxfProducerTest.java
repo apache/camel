@@ -80,6 +80,10 @@ public class CxfProducerTest extends Assert {
         assertNotNull(responseContext);
         assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
         assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, result);
+        
+        // check the other camel header copying
+        String fileName = out.getHeader(Exchange.FILE_NAME, String.class);
+        assertEquals("Should get the file name from out message header", "testFile", fileName);
 
     }
 
@@ -104,6 +108,10 @@ public class CxfProducerTest extends Assert {
         assertNotNull(responseContext);
         assertEquals("Get the wrong wsdl opertion name", "{http://apache.org/hello_world_soap_http}greetMe", responseContext.get("javax.xml.ws.wsdl.operation").toString());
         assertEquals("reply body on Camel", "Hello " + TEST_MESSAGE, result);
+        
+        // check the other camel header copying
+        String fileName = out.getHeader(Exchange.FILE_NAME, String.class);
+        assertEquals("Should get the file name from out message header", "testFile", fileName);
     }
 
     protected String getSimpleEndpointUri() {
@@ -130,6 +138,7 @@ public class CxfProducerTest extends Assert {
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
+                exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
             }
         });
         return exchange;
@@ -142,6 +151,7 @@ public class CxfProducerTest extends Assert {
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
+                exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
             }
         });
         return exchange;

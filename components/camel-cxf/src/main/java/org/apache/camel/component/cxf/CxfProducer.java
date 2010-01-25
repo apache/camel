@@ -148,6 +148,8 @@ public class CxfProducer extends DefaultProducer {
         
         // bind the CXF response to Camel exchange
         if (!boi.getOperationInfo().isOneWay()) {
+            // copy the InMessage header to OutMessage header
+            camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
             binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                     responseContext);
         }

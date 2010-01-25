@@ -73,6 +73,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
+                exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
                 exchange.getProperties().put(TEST_KEY, TEST_VALUE);
             }
         });
@@ -91,6 +92,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
+                exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
             }
         });
         return exchange;
