@@ -42,6 +42,7 @@
     <module>camel-castor</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
+    <module>camel-dozer</module>
     <module>camel-flatpack</module>
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
