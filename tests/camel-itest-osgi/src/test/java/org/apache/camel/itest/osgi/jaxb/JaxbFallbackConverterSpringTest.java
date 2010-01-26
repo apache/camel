@@ -17,37 +17,29 @@
 
 package org.apache.camel.itest.osgi.jaxb;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
-public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(JaxbFallbackConverterTest.class);
-    
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start").convertBodyTo(PersonType.class).to("mock:bar");
-            }
-        };
-    }
+public class JaxbFallbackConverterSpringTest extends OSGiIntegrationSpringTestSupport {
 
+    @Override
+    protected OsgiBundleXmlApplicationContext createApplicationContext() {
+        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/jaxb/CamelContext.xml"});
+    }
+    
     @Test
     public void testSendMessage() throws Exception {
         MockEndpoint mock =  getMandatoryEndpoint("mock:bar", MockEndpoint.class);
@@ -60,7 +52,7 @@ public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
         mock.expectedHeaderReceived("foo", "bar");
         template.sendBodyAndHeader("direct:start", "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>",
                                    "foo", "bar");
-        assertMockEndpointsSatisfied();        
+        assertMockEndpointsSatisfied();      
     }    
     
     @Configuration
@@ -75,7 +67,7 @@ public class JaxbFallbackConverterTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-spring-osgi", "camel-test", "camel-jaxb"),
+                          "camel-core", "camel-spring-osgi", "camel-test", "camel-jaxb"), 
             
             felix().version("2.0.1"));
         
