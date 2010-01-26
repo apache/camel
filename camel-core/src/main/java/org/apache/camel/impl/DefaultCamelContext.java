@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
@@ -1218,7 +1219,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      */
     protected TypeConverter createTypeConverter() {
         DefaultTypeConverter answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
-        typeConverterRegistry = answer;
+        setTypeConverterRegistry(answer);
         return answer;
     }
 

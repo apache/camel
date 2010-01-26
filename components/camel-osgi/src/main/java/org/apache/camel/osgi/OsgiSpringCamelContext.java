@@ -18,42 +18,24 @@ package org.apache.camel.osgi;
 
 import java.util.List;
 
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.camel.spring.SpringCamelContext;
 import org.osgi.framework.BundleContext;
-import org.springframework.osgi.context.BundleContextAware;
+import org.springframework.context.ApplicationContext;
 
-/**
- * This factory just create a DefaultContext in OSGi without 
- * any spring application context involved.
- */
-public class CamelContextFactory implements BundleContextAware {
-    private static final transient Log LOG = LogFactory.getLog(CamelContextFactory.class);
-    private BundleContext bundleContext;
-
-    public BundleContext getBundleContext() {
-        return bundleContext;
-    }
-
-    public void setBundleContext(BundleContext bundleContext) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using BundleContext: " + bundleContext);
-        }
-        this.bundleContext = bundleContext;
+public class OsgiSpringCamelContext extends SpringCamelContext {
+    
+    public OsgiSpringCamelContext(ApplicationContext applicationContext, BundleContext bundleContext) {
+        super(applicationContext);
+        OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
     }
     
-    protected DefaultCamelContext newCamelContext() {
-        return new OsgiDefaultCamelContext(bundleContext);
+    @Override    
+    protected TypeConverter createTypeConverter() {
+        return OsgiCamelContextHelper.createTypeConverter(this);
     }
-    
-    public DefaultCamelContext createContext() {
-        LOG.debug("Creating DefaultCamelContext");
-        return newCamelContext();        
-    }
-    
+
 }

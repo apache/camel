@@ -47,7 +47,7 @@ public class ServiceRegistryTest extends CamelOsgiTestSupport {
         factoryBean.setBundleContext(getBundleContext());
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/osgi/camelContext.xml");
         factoryBean.setApplicationContext(applicationContext);
-        DefaultCamelContext context = factoryBean.createContext();
+        DefaultCamelContext context = factoryBean.getContext();
         context.start();
         MyService myService = context.getRegistry().lookup(MyService.class.getName(), MyService.class);
         assertNotNull("MyService should not be null", myService);

@@ -53,64 +53,8 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
         this.bundleContext = bundleContext;
     }
     
-    protected SpringCamelContext createContext() {
-        SpringCamelContext context = super.createContext();
-        if (bundleContext != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using OSGi resolvers");
-            }
-            updateRegistry(context);
-            LOG.debug("Using the OsgiClassResolver");
-            context.setClassResolver(new OsgiClassResolver(bundleContext));
-            LOG.debug("Using OsgiFactoryFinderResolver");
-            context.setFactoryFinderResolver(new OsgiFactoryFinderResolver());
-            LOG.debug("Using OsgiPackageScanClassResolver");
-            context.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
-            LOG.debug("Using OsgiComponentResolver");
-            context.setComponentResolver(new OsgiComponentResolver());
-            LOG.debug("Using OsgiLanguageResolver");
-            context.setLanguageResolver(new OsgiLanguageResolver());
-            addOsgiAnnotationTypeConverterLoader(context);
-        } else {
-            // TODO: should we not thrown an exception to not allow it to startup
-            LOG.warn("BundleContext not set, cannot run in OSGI container");
-        }
-        
-        return context;
-    }    
-    
-    protected void updateRegistry(DefaultCamelContext context) {
-        ObjectHelper.notNull(bundleContext, "BundleContext");
-        LOG.debug("Setting the OSGi ServiceRegistry");
-        OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
-        // Need to clean up the OSGi service when camel context is closed.
-        context.addLifecycleStrategy(osgiServiceRegistry);
-        CompositeRegistry compositeRegistry = new CompositeRegistry();
-        compositeRegistry.addRegistry(osgiServiceRegistry);
-        compositeRegistry.addRegistry(context.getRegistry());
-        context.setRegistry(compositeRegistry);        
+    protected SpringCamelContext newCamelContext() {
+        return new OsgiSpringCamelContext(getApplicationContext(), getBundleContext());
     }
-
-    protected void addOsgiAnnotationTypeConverterLoader(SpringCamelContext context) {
-        LOG.debug("Using OsgiAnnotationTypeConverterLoader");
-
-        DefaultTypeConverter typeConverter = (DefaultTypeConverter) context.getTypeConverter();
-        List<TypeConverterLoader> typeConverterLoaders = typeConverter.getTypeConverterLoaders();
-
-        // Remove the AnnotationTypeConverterLoader
-        TypeConverterLoader atLoader = null; 
-        for (TypeConverterLoader loader : typeConverterLoaders) {
-            if (loader instanceof AnnotationTypeConverterLoader) {
-                atLoader = loader;
-                break;
-            }
-        }
-        if (atLoader != null) {
-            typeConverterLoaders.remove(atLoader);
-        }
-
-        // add our osgi annotation loader
-        typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(context.getPackageScanClassResolver()));
-    }
-    
+     
 }

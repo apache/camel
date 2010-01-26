@@ -831,7 +831,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Create the context
      */
     protected SpringCamelContext createContext() {
-        SpringCamelContext ctx = new SpringCamelContext(getApplicationContext());
+        SpringCamelContext ctx = newCamelContext();
         ctx.setName(getId());
         if (streamCache != null) {
             ctx.setStreamCaching(getStreamCache());
@@ -858,6 +858,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             ctx.setShutdownRunningTask(getShutdownRunningTask());
         }
         return ctx;
+    }
+    
+    protected SpringCamelContext newCamelContext() {
+        return new SpringCamelContext(getApplicationContext());
     }
 
     /**
