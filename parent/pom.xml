@@ -1203,12 +1203,12 @@
           <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.1.5-dev</version>
+            <version>2.1.12</version>
           </dependency>
           <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-xjc</artifactId>
-            <version>2.1.5-dev</version>
+            <version>2.1.12</version>
           </dependency>
           <dependency>
             <groupId>ant-contrib</groupId>
