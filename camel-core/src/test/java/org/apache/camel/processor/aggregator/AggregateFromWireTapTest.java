@@ -62,7 +62,7 @@ public class AggregateFromWireTapTest extends ContextTestSupport {
         };
     }
 
-    private static class MyAggregationStrategy implements AggregationStrategy {
+    public static class MyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
