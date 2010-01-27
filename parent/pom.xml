@@ -51,6 +51,7 @@
     <easymock-version>2.5.2</easymock-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
     <flatpack-version>3.1.1</flatpack-version>
+    <ftpserver-version>1.0.3</ftpserver-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
     <freemarker-version>2.3.15</freemarker-version>
     <geronimo-el-spec-version>1.0.1</geronimo-el-spec-version>
@@ -1152,6 +1153,17 @@
         <version>${xerces-version}</version>
       </dependency>
 
+      <!-- optional ftpserver -->
+      <dependency>
+        <groupId>org.apache.ftpserver</groupId>
+        <artifactId>ftpserver-core</artifactId>
+        <version>${ftpserver-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.ftpserver</groupId>
+        <artifactId>ftplet-api</artifactId>
+        <version>${ftpserver-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
