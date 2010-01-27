@@ -38,6 +38,7 @@ import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 
@@ -88,7 +89,7 @@ public class HttpRouteTest extends ContextTestSupport {
         NameValuePair[] data = {new NameValuePair("request", "PostParameter"),
                                 new NameValuePair("others", "bloggs")};
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9080/post");
+        PostMethod post = new PostMethod("http://localhost:9080/parameter");
         post.setRequestBody(data);
         client.executeMethod(post);
         InputStream response = post.getResponseBodyAsStream();
@@ -109,13 +110,24 @@ public class HttpRouteTest extends ContextTestSupport {
     
     public void testPostParameterInURI() throws Exception {
         HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:9080/post?request=PostParameter&others=bloggs");
+        PostMethod post = new PostMethod("http://localhost:9080/parameter?request=PostParameter&others=bloggs");
         StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
         post.setRequestEntity(entity);
         client.executeMethod(post);
         InputStream response = post.getResponseBodyAsStream();
         String out = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("Get a wrong output " , "PostParameter", out);
+    }
+    
+    public void testPutParameterInURI() throws Exception {
+        HttpClient client = new HttpClient();
+        PutMethod put = new PutMethod("http://localhost:9080/parameter?request=PutParameter&others=bloggs");
+        StringRequestEntity entity = new StringRequestEntity(POST_MESSAGE, "application/xml", "UTF-8");
+        put.setRequestEntity(entity);
+        client.executeMethod(put);
+        InputStream response = put.getResponseBodyAsStream();
+        String out = context.getTypeConverter().convertTo(String.class, response);
+        assertEquals("Get a wrong output " , "PutParameter", out);
     }
 
     protected void invokeHttpEndpoint() throws IOException {
@@ -143,7 +155,7 @@ public class HttpRouteTest extends ContextTestSupport {
                 };
                 from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);
                 
-                Processor procPostParameters = new Processor() {
+                Processor procParameters = new Processor() {
                     public void process(Exchange exchange) throws Exception {                        
                         HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
                         String value = req.getParameter("request");
@@ -157,7 +169,7 @@ public class HttpRouteTest extends ContextTestSupport {
                     }
                 };
                 
-                from("jetty:http://localhost:9080/post").process(procPostParameters);
+                from("jetty:http://localhost:9080/parameter").process(procParameters);
                 
                 from("jetty:http://localhost:9080/postxml").process(new Processor() {
 
