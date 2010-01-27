@@ -75,9 +75,9 @@
     <javax-mail-version>1.4.1_2</javax-mail-version>
     <jaxb-version>2.1.12</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
-    <jetty-version>6.1.19</jetty-version>
+    <jetty-version>6.1.22</jetty-version>
     <jettison-version>1.2</jettison-version>
-    <jruby-version>1.2.0</jruby-version>
+    <jruby-version>1.4.0</jruby-version>
     <juel-version>2.1.2</juel-version>
     <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
     <junit-version>4.4</junit-version>
@@ -95,7 +95,7 @@
     <saxon-version>9.1.0.1</saxon-version>
     <scala-version>2.7.7</scala-version>
     <scala-plugin-version>2.9.1</scala-plugin-version>
-    <slf4j-version>1.5.8</slf4j-version>
+    <slf4j-version>1.5.10</slf4j-version>
     <smack-version>3.0.4</smack-version>
     <snmp4j-version>1.8.1_1</snmp4j-version>
     <spring-ehcache-version>1.6.2</spring-ehcache-version>
