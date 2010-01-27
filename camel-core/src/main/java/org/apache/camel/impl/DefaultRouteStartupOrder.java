@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
@@ -33,14 +34,12 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     private final int startupOrder;
     private final Route route;
     private final List<Consumer> inputs = new ArrayList<Consumer>();
+    private final RouteService routeService;
 
-    public DefaultRouteStartupOrder(int startupOrder, Route route) {
+    public DefaultRouteStartupOrder(int startupOrder, Route route, RouteService routeService) {
         this.startupOrder = startupOrder;
         this.route = route;
-    }
-
-    void addInput(Consumer input) {
-        inputs.add(input);
+        this.routeService = routeService;
     }
 
     public int getStartupOrder() {
@@ -52,7 +51,16 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     }
 
     public List<Consumer> getInputs() {
-        return inputs;
+        List<Consumer> answer = new ArrayList<Consumer>();
+        Map<Route, Consumer> inputs = routeService.getInputs();
+        for (Consumer consumer : inputs.values()) {
+            answer.add(consumer);
+        }
+        return answer;
+    }
+
+    public RouteService getRouteService() {
+        return routeService;
     }
 
     @Override

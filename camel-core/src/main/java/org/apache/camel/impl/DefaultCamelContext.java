@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -141,7 +142,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
-    private final Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
+    private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
     private ClassResolver classResolver = new DefaultClassResolver();
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
@@ -909,14 +910,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             for (RouteService routeService : routeServices.values()) {
                 Boolean autoStart = routeService.getRouteDefinition().isAutoStartup();
                 if (autoStart == null || autoStart) {
-                    // defer starting inputs till later as we want to prepare the routes by starting
-                    // all their processors and child services etc.
-                    // then later we open the floods to Camel by starting the inputs
-                    // what this does is to ensure Camel is more robust on starting routes as all routes
-                    // will then be prepared in time before we start inputs which will consume messages to be routed
-                    routeService.startInputs(false);
                     try {
-                        routeService.start();
                         // add the inputs from this route service to the list to start afterwards
                         // should be ordered according to the startup number
                         Integer startupOrder = routeService.getRouteDefinition().getStartupOrder();
@@ -926,14 +920,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         }
 
                         // create holder object that contains information about this route to be started
-                        DefaultRouteStartupOrder holder = null;
-                        for (Map.Entry<Route, Consumer> entry : routeService.getInputs().entrySet()) {
-                            if (holder == null) {
-                                holder = new DefaultRouteStartupOrder(startupOrder, entry.getKey());
-                            }
-                            // add the input consumer to the holder
-                            holder.addInput(entry.getValue());
-                        }
+                        Route route = routeService.getRoutes().iterator().next();
+                        DefaultRouteStartupOrder holder = new DefaultRouteStartupOrder(startupOrder, route, routeService);
 
                         // check for clash by startupOrder id
                         DefaultRouteStartupOrder other = inputs.get(startupOrder);
@@ -949,8 +937,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         throw e;
                     } catch (Exception e) {
                         throw new FailedToStartRouteException(e);
-                    } finally {
-                        routeService.startInputs(true);
                     }
                 } else {
                     // should not start on startup
@@ -958,9 +944,28 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                 }
             }
 
+            // now prepare the routes by starting its services before we start the input
+            for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
+                // defer starting inputs till later as we want to prepare the routes by starting
+                // all their processors and child services etc.
+                // then later we open the floods to Camel by starting the inputs
+                // what this does is to ensure Camel is more robust on starting routes as all routes
+                // will then be prepared in time before we start inputs which will consume messages to be routed
+                RouteService routeService = entry.getValue().getRouteService();
+                routeService.startInputs(false);
+                try {
+                    routeService.start();
+                } finally {
+                    routeService.startInputs(true);
+                }
+            }
+
             // check for clash with multiple consumers of the same endpoints which is not allowed
             List<Endpoint> routeInputs = new ArrayList<Endpoint>();
-            for (RouteService routeService : routeServices.values()) {
+            for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
+                Integer order = entry.getKey();
+                Route route = entry.getValue().getRoute();
+                RouteService routeService = entry.getValue().getRouteService();
                 for (Consumer consumer : routeService.getInputs().values()) {
                     Endpoint endpoint = consumer.getEndpoint();
 
@@ -974,28 +979,20 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
                         throw new FailedToStartRouteException(routeService.getId(),
                             "Multiple consumers for the same endpoint is not allowed: " + endpoint);
                     } else {
+                        // start the
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Starting consumer (order: " + order + ") on route: " + route.getId());
+                        }
+                        for (LifecycleStrategy strategy : lifecycleStrategies) {
+                            strategy.onServiceAdd(this, consumer, route);
+                        }
+                        ServiceHelper.startService(consumer);
+
                         routeInputs.add(endpoint);
-                    }
-                }
-            }
 
-            // now start the inputs for all the route services as we have prepared Camel
-            // yeah open the floods so messages can start flow into Camel
-            for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
-                Integer order = entry.getKey();
-                Route route = entry.getValue().getRoute();
-                List<Consumer> consumers = entry.getValue().getInputs();
-                for (Consumer consumer : consumers) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Starting consumer (order: " + order + ") on route: " + route.getId());
+                        // add to the order which they was started, so we know how to stop them in reverse order
+                        routeStartupOrder.add(entry.getValue());
                     }
-                    for (LifecycleStrategy strategy : lifecycleStrategies) {
-                        strategy.onServiceAdd(this, consumer, route);
-                    }
-                    ServiceHelper.startService(consumer);
-
-                    // add to the order which they was started, so we know how to stop them in reverse order
-                    routeStartupOrder.add(entry.getValue());
                 }
             }
         }
