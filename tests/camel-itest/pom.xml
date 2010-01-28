@@ -158,7 +158,6 @@
         <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
-            <version>1.5.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
