@@ -26,7 +26,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 import static org.apache.camel.component.nagios.NagiosConstants.HOST_NAME;
 import static org.apache.camel.component.nagios.NagiosConstants.LEVEL;
-import static org.apache.camel.component.nagios.NagiosConstants.SERIVCE_NAME;
+import static org.apache.camel.component.nagios.NagiosConstants.SERVICE_NAME;
 
 /**
  * @version $Revision$
@@ -48,7 +48,7 @@ public class NagiosProducer extends DefaultProducer {
             String name = exchange.getIn().getHeader(LEVEL, Level.OK.name(), String.class);
             level = Level.valueOf(name);
         }
-        String serviceName = exchange.getIn().getHeader(SERIVCE_NAME, exchange.getContext().getName(), String.class);
+        String serviceName = exchange.getIn().getHeader(SERVICE_NAME, exchange.getContext().getName(), String.class);
         String hostName = exchange.getIn().getHeader(HOST_NAME, "localhost", String.class);
 
         MessagePayload payload = new MessagePayload(hostName, level.ordinal(), serviceName, message);

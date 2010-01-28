@@ -23,7 +23,7 @@ public final class NagiosConstants {
 
     public static final String HOST_NAME = "CamelNagiosHostName";
     public static final String LEVEL = "CamelNagiosLevel";
-    public static final String SERIVCE_NAME = "CamelNagiosServiceName";
+    public static final String SERVICE_NAME = "CamelNagiosServiceName";
 
     private NagiosConstants() {
     }

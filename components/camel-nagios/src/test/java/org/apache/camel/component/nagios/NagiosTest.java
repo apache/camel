@@ -153,7 +153,7 @@ public class NagiosTest extends CamelTestSupport {
         Map headers = new HashMap();
         headers.put(NagiosConstants.LEVEL, "CRITICAL");
         headers.put(NagiosConstants.HOST_NAME, "myHost");
-        headers.put(NagiosConstants.SERIVCE_NAME, "myService");
+        headers.put(NagiosConstants.SERVICE_NAME, "myService");
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
 
         assertMockEndpointsSatisfied();
