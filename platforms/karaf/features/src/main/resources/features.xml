@@ -57,7 +57,8 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/${xmlbeans-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlsec/${xmlsec-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.woodstox/${woodstox-bundle-version}</bundle>
+    <bundle>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-core-bundle-version}</bundle>
+    <bundle>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
     <bundle>mvn:org.apache.ws.commons.schema/XmlSchema/${xmlschema-version}</bundle>
     <bundle>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
@@ -203,7 +204,7 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
-    <bundle>mvn:org.codehaus.groovy/groovy-all/1.6.7</bundle>
+    <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-groovy/${pom.version}</bundle>
   </feature>
   <feature name='camel-hl7' version='${pom.version}'>
@@ -367,7 +368,7 @@
     <bundle>mvn:org.apache.camel/camel-saxon/${pom.version}</bundle>
   </feature>
   <feature name='camel-scala' version='${pom.version}'>
-    <bundle>mvn:http://www.scala-tools.com/repo-releases!org.scala-lang-osgi/scala-library/${scala-version}</bundle>
+    <bundle>mvn:http://scala-tools.org/repo-releases!org.scala-lang-osgi/scala-library/${scala-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${pom.version}</bundle>
   </feature>
@@ -391,14 +392,15 @@
     <feature version='${pom.version}'>camel-spring-osgi</feature>
     <bundle>mvn:org.apache.camel/camel-spring-integration/${pom.version}</bundle>
   </feature>
-  <feature name='camel-spring-javaconfig' version='${pom.version}'>
+  <!-- current camel-spring-javaconfig need to use spring 3.0.0.RELEASE, so we comment it out
+    feature name='camel-spring-javaconfig' version='${pom.version}'>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-version}</bundle>
     <bundle>mvn:http://repository.springsource.com/maven/bundles/release!org.springframework/org.springframework.test/${spring-version}</bundle>
     <bundle>mvn:http://svn.apache.org/repos/asf/camel/m2-repo!org.springframework.javaconfig/org.springframework.config.java/${spring-javaconfig-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-version}</bundle>
     <feature version='${pom.version}'>camel-spring-osgi</feature>
     <bundle>mvn:org.apache.camel/camel-spring-javaconfig/${pom.version}</bundle>
-  </feature>
+  </feature-->
   <feature name='camel-sql' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
