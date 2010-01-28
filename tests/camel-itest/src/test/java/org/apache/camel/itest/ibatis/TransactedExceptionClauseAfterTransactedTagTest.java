@@ -16,6 +16,9 @@
  */
 package org.apache.camel.itest.ibatis;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -29,9 +32,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 
 /**
  * @version $Revision$
