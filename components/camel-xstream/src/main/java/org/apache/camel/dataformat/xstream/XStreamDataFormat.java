@@ -76,12 +76,12 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     }    
 
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
-        XMLStreamWriter xmlWriter = getStaxConverter().createXMLStreamWriter(stream);
+        XMLStreamWriter xmlWriter = getStaxConverter().createXMLStreamWriter(stream, exchange);
         return new StaxWriter(new QNameMap(), xmlWriter);
     }
 
     protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
-        XMLStreamReader xmlReader = getStaxConverter().createXMLStreamReader(stream);
+        XMLStreamReader xmlReader = getStaxConverter().createXMLStreamReader(stream, exchange);
         return new StaxReader(new QNameMap(), xmlReader);
     }
 }

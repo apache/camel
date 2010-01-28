@@ -42,6 +42,8 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.Charset;
+
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
@@ -275,5 +277,19 @@ public final class IOConverter {
             read = stream.read(data);
         }
         os.flush();
+    }
+    
+    public static String getCharsetName(Exchange exchange) {
+        if (exchange != null) {
+            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charsetName != null) {
+                return charsetName;
+            }
+        }
+        return getDefaultCharsetName();
+    }
+    
+    public static String getDefaultCharsetName() {
+        return Charset.defaultCharset().toString();
     }
 }

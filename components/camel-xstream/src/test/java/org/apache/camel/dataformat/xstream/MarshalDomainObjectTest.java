@@ -83,7 +83,7 @@ public class MarshalDomainObjectTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:in").marshal().xstream().to("mock:result");
 
-                // just used for helping to marhsal
+                // just used for helping to marshal
                 from("direct:marshal").marshal().xstream();
 
                 from("direct:reverse").unmarshal().xstream().to("mock:reverse");
