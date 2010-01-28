@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -35,13 +36,13 @@ public class MarshalListTest extends CamelTestSupport {
     public void testMarshalList() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("<?xml version='1.0' encoding='UTF-8'?>"
+        mock.expectedBodiesReceived("<?xml version='1.0' encoding='ISO-8859-1'?>"
             + "<list><string>Hello World</string></list>");
 
         List<String> body = new ArrayList<String>();
         body.add("Hello World");
 
-        template.sendBody("direct:in", body);
+        template.sendBodyAndProperty("direct:in", body, Exchange.CHARSET_NAME, "ISO-8859-1");
 
         mock.assertIsSatisfied();
     }
@@ -52,14 +53,14 @@ public class MarshalListTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived(
             "<?xml version='1.0' encoding='UTF-8'?><list><map><entry><string>city</string>"
-                + "<string>London</string></entry></map></list>");
+                + "<string>London\u0E08</string></entry></map></list>");
 
         List<Map<Object, String>> body = new ArrayList<Map<Object, String>>();
         Map<Object, String> row = new HashMap<Object, String>();
-        row.put("city", "London");
+        row.put("city", "London\u0E08");
         body.add(row);
 
-        template.sendBody("direct:in", body);
+        template.sendBodyAndProperty("direct:in", body, Exchange.CHARSET_NAME, "UTF-8");
 
         mock.assertIsSatisfied();
     }

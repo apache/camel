@@ -32,6 +32,8 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
 
 /**
  * A converter of StAX objects
@@ -43,6 +45,11 @@ public class StaxConverter {
     private XMLInputFactory inputFactory;
     private XMLOutputFactory outputFactory;
 
+    @Converter
+    public XMLEventWriter createXMLEventWriter(OutputStream out, Exchange exchange) throws XMLStreamException {
+        return getOutputFactory().createXMLEventWriter(out, IOConverter.getCharsetName(exchange));
+    }
+    
     @Converter
     public XMLEventWriter createXMLEventWriter(OutputStream out) throws XMLStreamException {
         return getOutputFactory().createXMLEventWriter(out);
@@ -57,10 +64,15 @@ public class StaxConverter {
     public XMLEventWriter createXMLEventWriter(Result result) throws XMLStreamException {
         return getOutputFactory().createXMLEventWriter(result);
     }
-
+    
     @Converter
     public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream) throws XMLStreamException {
         return getOutputFactory().createXMLStreamWriter(outputStream);
+    }
+
+    @Converter
+    public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream, Exchange exchange) throws XMLStreamException {
+        return getOutputFactory().createXMLStreamWriter(outputStream, IOConverter.getCharsetName(exchange));
     }
 
     @Converter
@@ -77,6 +89,11 @@ public class StaxConverter {
     public XMLStreamReader createXMLStreamReader(InputStream in) throws XMLStreamException {
         return getInputFactory().createXMLStreamReader(in);
     }
+    
+    @Converter
+    public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
+        return getInputFactory().createXMLStreamReader(in, IOConverter.getCharsetName(exchange));
+    }
 
     @Converter
     public XMLStreamReader createXMLStreamReader(Reader in) throws XMLStreamException {
@@ -87,10 +104,15 @@ public class StaxConverter {
     public XMLStreamReader createXMLStreamReader(Source in) throws XMLStreamException {
         return getInputFactory().createXMLStreamReader(in);
     }
-
+    
     @Converter
     public XMLEventReader createXMLEventReader(InputStream in) throws XMLStreamException {
         return getInputFactory().createXMLEventReader(in);
+    }
+
+    @Converter
+    public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
+        return getInputFactory().createXMLEventReader(in, IOConverter.getCharsetName(exchange));
     }
 
     @Converter
