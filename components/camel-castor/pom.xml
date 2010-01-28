@@ -32,6 +32,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.dataformat.castor.*</camel.osgi.export.pkg>
+    <castor-version>1.3.1</castor-version>
   </properties>
 
   <dependencies>
@@ -43,12 +44,12 @@
 	<dependency>
       <groupId>org.codehaus.castor</groupId>
       <artifactId>castor-xml</artifactId>
-	  <version>1.3</version>
+	  <version>${castor-version}</version>
     </dependency>
 	<dependency>
       <groupId>org.codehaus.castor</groupId>
       <artifactId>castor-core</artifactId>
-	  <version>1.3</version>
+	  <version>${castor-version}</version>
     </dependency>
     
     <!-- testing -->
