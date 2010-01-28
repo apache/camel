@@ -415,13 +415,13 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     found = true;
                     break;
                 } catch (ClassNotFoundException e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Cannot find class '" + fqn + "' in classloader: " + classLoader
+                    if (log.isTraceEnabled()) {
+                        log.trace("Cannot find class '" + fqn + "' in classloader: " + classLoader
                                 + ". Reason: " + e, e);
                     }
                 } catch (NoClassDefFoundError e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
+                    if (log.isTraceEnabled()) {
+                        log.trace("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
                             + ". Reason: " + e, e);
                     }
                 }
