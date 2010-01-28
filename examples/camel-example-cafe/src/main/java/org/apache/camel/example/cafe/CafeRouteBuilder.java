@@ -70,14 +70,15 @@ public class CafeRouteBuilder extends RouteBuilder {
         camelContext.stop();
         
     }
-    
+    //START SNIPPET: RouteConfig
     public void configure() {
+        
         from("direct:cafe")
             .split().method("orderSplitter").to("direct:drink");
         
         from("direct:drink").recipientList().method("drinkRouter");
         
-        from("seda:coldDrinks?concurrentConsumers=2").to("bean:barista?method=prepareColdDrink").to("direct:deliveries");
+        from("seda:coldDrinks?concurrentConsumers=2").to("bean: ?method=prepareColdDrink").to("direct:deliveries");
         from("seda:hotDrinks?concurrentConsumers=3").to("bean:barista?method=prepareHotDrink").to("direct:deliveries");
         
         from("direct:deliveries")
@@ -87,5 +88,6 @@ public class CafeRouteBuilder extends RouteBuilder {
             .to("bean:waiter?method=deliverCafes");
         
     }
+    //END SNIPPET: RouteConfig
 
 }
