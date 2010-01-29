@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.freemarker;
 
-import freemarker.cache.URLTemplateLoader;
-import freemarker.template.Configuration;
-
 import java.net.URL;
 import java.util.Map;
+
+import freemarker.cache.URLTemplateLoader;
+import freemarker.template.Configuration;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
