@@ -33,7 +33,7 @@
 		<camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
 		<jersey-version>1.1.5</jersey-version>
 		<jetty-port>8080</jetty-port>
-		<sitemesh-version>2.4.2</sitemesh-version>
+		<sitemesh-version>2.3</sitemesh-version>
 		<webdriver-version>0.6.1039</webdriver-version>
 	</properties>
 
