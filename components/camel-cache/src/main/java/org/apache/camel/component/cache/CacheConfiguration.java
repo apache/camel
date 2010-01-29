@@ -62,9 +62,9 @@ public class CacheConfiguration {
         }
         if (cacheSettings.containsKey("overflowToDisk")) {
             setOverflowToDisk(Boolean.valueOf((String) cacheSettings.get("overflowToDisk")));
-            if (cacheSettings.containsKey("diskStorePath")) {
-                setDiskStorePath((String)cacheSettings.get("diskStorePath"));
-            }
+        }
+        if (cacheSettings.containsKey("diskStorePath")) {
+            setDiskStorePath((String)cacheSettings.get("diskStorePath"));
         }
         if (cacheSettings.containsKey("eternal")) {
             setEternal(Boolean.valueOf((String) cacheSettings.get("eternal")));
