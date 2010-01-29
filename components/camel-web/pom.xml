@@ -31,7 +31,7 @@
 
 	<properties>
 		<camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
-		<jersey-version>1.1.5-ea-20100104</jersey-version>
+		<jersey-version>1.1.5</jersey-version>
 		<jetty-port>8080</jetty-port>
 		<webdriver-version>685</webdriver-version>
 	</properties>
@@ -653,10 +653,10 @@
 					WEB-INF/lib/standard-1.1.2.jar,
 					WEB-INF/lib/rome-0.9.jar,
 					WEB-INF/lib/sitemesh-2.3.jar,
-					WEB-INF/lib/jersey-core-1.1.5-ea-SNAPSHOT.jar,
-					WEB-INF/lib/jersey-server-1.1.5-ea-SNAPSHOT.jar,
-					WEB-INF/lib/jersey-spring-1.1.5-ea-SNAPSHOT.jar,
-					WEB-INF/lib/jersey-json-1.1.5-ea-SNAPSHOT.jar,
+					WEB-INF/lib/jersey-core-${jersey-version}.jar,
+					WEB-INF/lib/jersey-server-${jersey-version}.jar,
+					WEB-INF/lib/jersey-spring-${jersey-version}.jar,
+					WEB-INF/lib/jersey-json-${jersey-version}.jar,
 					WEB-INF/tags/api
 		        </osgi.classpath>
 				<osgi.private.pkg></osgi.private.pkg>
