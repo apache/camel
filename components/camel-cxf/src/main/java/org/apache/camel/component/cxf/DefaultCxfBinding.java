@@ -122,10 +122,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate response context
         if (responseContext != null && responseContext.size() > 0) {
-            camelExchange.getOut().setHeader(Client.RESPONSE_CONTEXT, responseContext);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Set header = " + Client.RESPONSE_CONTEXT + " value = " 
-                        + responseContext);
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(Client.RESPONSE_CONTEXT, 
+                                                                   responseContext, camelExchange)) {        
+                camelExchange.getOut().setHeader(Client.RESPONSE_CONTEXT, responseContext);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Set header = " + Client.RESPONSE_CONTEXT + " value = " 
+                              + responseContext);
+                }
             }
         }
         
