@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.freemarker;
 
+import freemarker.cache.URLTemplateLoader;
+import freemarker.template.Configuration;
+
 import java.net.URL;
 import java.util.Map;
 
@@ -23,9 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.BeanClassLoaderAware;
-
-import freemarker.cache.URLTemplateLoader;
-import freemarker.template.Configuration;
 
 /**
  * Freemarker component.
@@ -72,10 +72,10 @@ public class FreemarkerComponent extends DefaultComponent implements BeanClassLo
                 @Override
                 protected URL getURL(String name) {
                     ClassLoader[] loaders = {
-                            beanClassLoader, 
-                            Thread.currentThread().getContextClassLoader(), 
-                            this.getClass().getClassLoader()
-                            };
+                        beanClassLoader, 
+                        Thread.currentThread().getContextClassLoader(), 
+                        this.getClass().getClassLoader()
+                    };
                     for (ClassLoader classLoader : loaders) {
                         if (classLoader != null) {
                             URL resource = classLoader.getResource(name);
