@@ -50,7 +50,7 @@ public class StaxConverter {
         return getOutputFactory().createXMLEventWriter(out, IOConverter.getCharsetName(exchange));
     }
     
-    @Converter
+    @Deprecated
     public XMLEventWriter createXMLEventWriter(OutputStream out) throws XMLStreamException {
         return getOutputFactory().createXMLEventWriter(out);
     }
@@ -65,7 +65,7 @@ public class StaxConverter {
         return getOutputFactory().createXMLEventWriter(result);
     }
     
-    @Converter
+    @Deprecated
     public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream) throws XMLStreamException {
         return getOutputFactory().createXMLStreamWriter(outputStream);
     }
@@ -84,8 +84,8 @@ public class StaxConverter {
     public XMLStreamWriter createXMLStreamWriter(Result result) throws XMLStreamException {
         return getOutputFactory().createXMLStreamWriter(result);
     }
-
-    @Converter
+    
+    @Deprecated
     public XMLStreamReader createXMLStreamReader(InputStream in) throws XMLStreamException {
         return getInputFactory().createXMLStreamReader(in);
     }
@@ -105,7 +105,7 @@ public class StaxConverter {
         return getInputFactory().createXMLStreamReader(in);
     }
     
-    @Converter
+    @Deprecated
     public XMLEventReader createXMLEventReader(InputStream in) throws XMLStreamException {
         return getInputFactory().createXMLEventReader(in);
     }
