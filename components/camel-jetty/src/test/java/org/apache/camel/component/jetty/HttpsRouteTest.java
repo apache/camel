@@ -51,7 +51,7 @@ public class HttpsRouteTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();        
+        super.setUp();
         // ensure jsse clients can validate the self signed dummy localhost cert, 
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
@@ -83,6 +83,11 @@ public class HttpsRouteTest extends CamelTestSupport {
 
     @Test
     public void testEndpoint() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint mockEndpointA = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         mockEndpointA.expectedBodiesReceived(expectedBody);
         MockEndpoint mockEndpointB = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
@@ -108,7 +113,12 @@ public class HttpsRouteTest extends CamelTestSupport {
     
     @Test
     public void testEndpointWithoutHttps() throws Exception {
-        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);    
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
+        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         try {
             template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
@@ -119,6 +129,10 @@ public class HttpsRouteTest extends CamelTestSupport {
 
     @Test
     public void testHelloEndpoint() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         InputStream is = new URL("https://localhost:9080/hello").openStream();
@@ -129,18 +143,20 @@ public class HttpsRouteTest extends CamelTestSupport {
 
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);
-        
     }
     
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
         try {
             new URL("http://localhost:9080/hello").openStream();
             fail("expected SocketException on use ot http");
         } catch (SocketException expected) {
         }
-        
-        
     }
     
     protected void invokeHttpEndpoint() throws IOException {
