@@ -16,21 +16,32 @@
  */
 package org.apache.camel.component.freemarker;
 
+import java.net.URL;
 import java.util.Map;
 
-import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 
 /**
  * Freemarker component.
  */
-public class FreemarkerComponent extends DefaultComponent {
+public class FreemarkerComponent extends DefaultComponent implements BeanClassLoaderAware {
 
-    private Configuration configuraiton;
+    private Configuration configuration;
     private Configuration noCacheConfiguration;
+    private ClassLoader beanClassLoader;
+
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.beanClassLoader = classLoader;
+    }
+
+    public ClassLoader getBeanClassLoader() {
+        return beanClassLoader;
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         FreemarkerEndpoint endpoint = new FreemarkerEndpoint(uri, this, remaining, parameters);
@@ -49,16 +60,33 @@ public class FreemarkerComponent extends DefaultComponent {
     }
 
     public synchronized Configuration getConfiguraiton() {
-        if (configuraiton == null) {
-            configuraiton = new Configuration();
-            // use class template loader using Spring Resource class and / as root in classpath
-            configuraiton.setTemplateLoader(new ClassTemplateLoader(Resource.class, "/"));
+        if (configuration == null) {
+            configuration = new Configuration();
+            configuration.setTemplateLoader(new URLTemplateLoader() {
+                @Override
+                protected URL getURL(String name) {
+                    ClassLoader[] loaders = {
+                        beanClassLoader, 
+                        Thread.currentThread().getContextClassLoader(), 
+                        this.getClass().getClassLoader()
+                    };
+                    for (ClassLoader classLoader : loaders) {
+                        if (classLoader != null) {
+                            URL resource = classLoader.getResource(name);
+                            if (resource != null) {
+                                return resource;
+                            }
+                        }
+                    }
+                    return null;
+                }
+            });
         }
-        return (Configuration) configuraiton.clone();
+        return (Configuration) configuration.clone();
     }
 
     public void setConfiguraiton(Configuration configuraiton) {
-        this.configuraiton = configuraiton;
+        this.configuration = configuraiton;
     }
 
     private synchronized Configuration getNoCacheConfiguration() {
