@@ -20,8 +20,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the XStream XML {@link org.apache.camel.spi.DataFormat}
@@ -31,18 +34,31 @@ import org.apache.camel.model.DataFormatDefinition;
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XStreamDataFormat extends DataFormatDefinition {
-    @XmlAttribute(required = false)
-    private Boolean prettyPrint;
+    @XmlAttribute
+    private String encoding;
 
     public XStreamDataFormat() {
         super("xstream");
     }
-
-    public Boolean getPrettyPrint() {
-        return prettyPrint;
+    
+    public XStreamDataFormat(String encoding) {
+        this();
+        setEncoding(encoding);
+    }
+    
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
-    public void setPrettyPrint(Boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
+    public String getEncoding() {
+        return encoding;
     }
+    
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        if (encoding != null) {
+            setProperty(dataFormat, "encoding", encoding);
+        }
+    }
+        
 }

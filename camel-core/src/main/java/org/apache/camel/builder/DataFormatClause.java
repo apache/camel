@@ -260,6 +260,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
     
     /**
+     * Uses the xstream by setting the encoding
+     */
+    public T xstream(String encoding) {
+        return dataFormat(new XStreamDataFormat(encoding));
+    }
+    
+    /**
      * Uses the XML Security data format
      */
     public T secureXML() {

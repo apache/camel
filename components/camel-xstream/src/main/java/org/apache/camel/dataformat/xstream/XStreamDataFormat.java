@@ -40,12 +40,21 @@ import org.apache.camel.spi.DataFormat;
  * @version $Revision$
  */
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
+    String encoding;
     
     public XStreamDataFormat() {
     }
 
     public XStreamDataFormat(XStream xstream) {
         super(xstream);
+    }
+    
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+    
+    public String getEncoding() {
+        return encoding;
     }
 
     /**
@@ -70,14 +79,23 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
             xstream.processAnnotations(type);
         }
         return answer;
-    }    
+    }
+    
+    // just make sure the exchange property can override the xmlstream encoding setting
+    protected void updateCharactorEncodingInfo(Exchange exchange) {
+        if (exchange.getProperty(Exchange.CHARSET_NAME) == null && encoding != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, encoding);
+        }
+    }
 
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
+        updateCharactorEncodingInfo(exchange);
         XMLStreamWriter xmlWriter = getStaxConverter().createXMLStreamWriter(stream, exchange);
         return new StaxWriter(new QNameMap(), xmlWriter);
     }
 
     protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
+        updateCharactorEncodingInfo(exchange);
         XMLStreamReader xmlReader = getStaxConverter().createXMLStreamReader(stream, exchange);
         return new StaxReader(new QNameMap(), xmlReader);
     }

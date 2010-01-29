@@ -64,11 +64,30 @@ public class MarshalListTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
+    
+    @Test
+    public void testSetEncodingOnXstream() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(
+            "<?xml version='1.0' encoding='UTF-8'?><list><map><entry><string>city</string>"
+                + "<string>London\u0E08</string></entry></map></list>");
+
+        List<Map<Object, String>> body = new ArrayList<Map<Object, String>>();
+        Map<Object, String> row = new HashMap<Object, String>();
+        row.put("city", "London\u0E08");
+        body.add(row);
+
+        template.sendBody("direct:in-UTF-8", body);
+
+        mock.assertIsSatisfied();
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in").marshal().xstream().to("mock:result");
+                from("direct:in-UTF-8").marshal().xstream("UTF-8").to("mock:result");
             }
         };
     }
