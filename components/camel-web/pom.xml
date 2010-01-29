@@ -34,7 +34,7 @@
 		<jersey-version>1.1.5</jersey-version>
 		<jetty-port>8080</jetty-port>
 		<sitemesh-version>2.4.2</sitemesh-version>
-		<webdriver-version>685</webdriver-version>
+		<webdriver-version>0.6.1039</webdriver-version>
 	</properties>
 
 	<repositories>
@@ -135,13 +135,13 @@
 		<dependency>
 			<groupId>org.openqa.selenium.webdriver</groupId>
 			<artifactId>webdriver-htmlunit</artifactId>
-			<version>0.6.685</version>
+			<version>${webdriver-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.openqa.selenium.webdriver</groupId>
 			<artifactId>webdriver-support</artifactId>
-			<version>0.6.685</version>
+			<version>${webdriver-version}</version>
 			<scope>test</scope>
 		</dependency>
 
