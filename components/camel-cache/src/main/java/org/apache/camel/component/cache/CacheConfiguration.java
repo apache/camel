@@ -73,13 +73,13 @@ public class CacheConfiguration {
             setTimeToLiveSeconds(Long.valueOf((String) cacheSettings.get("timeToLiveSeconds")).longValue());
         }
         if (cacheSettings.containsKey("timeToIdleSeconds")) {
-            setTimeToLiveSeconds(Long.valueOf((String) cacheSettings.get("timeToIdleSeconds")).longValue());
+            setTimeToIdleSeconds(Long.valueOf((String) cacheSettings.get("timeToIdleSeconds")).longValue());
         }
         if (cacheSettings.containsKey("diskPersistent")) {
-            setEternal(Boolean.valueOf((String) cacheSettings.get("diskPersistent")));
+            setDiskPersistent(Boolean.valueOf((String) cacheSettings.get("diskPersistent")));
         }
         if (cacheSettings.containsKey("diskExpiryThreadIntervalSeconds")) {
-            setTimeToLiveSeconds(Long.valueOf((String) cacheSettings.get("diskExpiryThreadIntervalSeconds")).longValue());
+            setDiskExpiryThreadIntervalSeconds(Long.valueOf((String) cacheSettings.get("diskExpiryThreadIntervalSeconds")).longValue());
         }
         
     }
