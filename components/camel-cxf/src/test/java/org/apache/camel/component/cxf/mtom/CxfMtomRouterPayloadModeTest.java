@@ -73,7 +73,7 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
         
-        if (Boolean.getBoolean("java.awt.headless") || System.getProperty("os.name").startsWith("Mac OS")) {
+        if (Boolean.getBoolean("java.awt.headless")) {
             System.out.println("Running headless. Skipping test as Images may not work.");
             return;
         }        
@@ -93,7 +93,7 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
         if (image.value instanceof BufferedImage) {
             Assert.assertEquals(560, ((BufferedImage)image.value).getWidth());
             Assert.assertEquals(300, ((BufferedImage)image.value).getHeight());            
-        }  
+        }
         
     }
     
