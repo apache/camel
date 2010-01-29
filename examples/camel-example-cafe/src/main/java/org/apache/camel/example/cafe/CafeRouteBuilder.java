@@ -78,7 +78,7 @@ public class CafeRouteBuilder extends RouteBuilder {
         
         from("direct:drink").recipientList().method("drinkRouter");
         
-        from("seda:coldDrinks?concurrentConsumers=2").to("bean: ?method=prepareColdDrink").to("direct:deliveries");
+        from("seda:coldDrinks?concurrentConsumers=2").to("bean:barista?method=prepareColdDrink").to("direct:deliveries");
         from("seda:hotDrinks?concurrentConsumers=3").to("bean:barista?method=prepareHotDrink").to("direct:deliveries");
         
         from("direct:deliveries")
