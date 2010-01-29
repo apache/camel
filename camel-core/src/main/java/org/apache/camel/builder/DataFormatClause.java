@@ -181,7 +181,14 @@ public class DataFormatClause<T extends ProcessorType> {
     }
     
     /**
-     * Uses the JSON data format
+     * Uses the xstream by setting the encoding
+     */
+    public T xstream(String encoding) {
+        return dataFormat(new XStreamDataFormat(encoding));
+    }
+    
+    /**
+     * Uses the JSON data format 
      */
     public T json() {
         return dataFormat(new JsonDataFormat());

@@ -31,18 +31,31 @@ import org.apache.camel.spi.DataFormat;
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XStreamDataFormat extends DataFormatType {
-    @XmlAttribute(required = false)
-    private Boolean prettyPrint;
+    @XmlAttribute
+    private String encoding;
 
     public XStreamDataFormat() {
         super("org.apache.camel.dataformat.xstream.XStreamDataFormat");
     }
-
-    public Boolean getPrettyPrint() {
-        return prettyPrint;
+    
+    public XStreamDataFormat(String encoding) {
+        this();
+        setEncoding(encoding);
+    }
+    
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
-    public void setPrettyPrint(Boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
+    public String getEncoding() {
+        return encoding;
     }
+    
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        if (encoding != null) {
+            setProperty(dataFormat, "encoding", encoding);
+        }
+    }
+        
 }

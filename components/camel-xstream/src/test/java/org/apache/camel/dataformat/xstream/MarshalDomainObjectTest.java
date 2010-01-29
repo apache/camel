@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Marhsal tests with domain objects.
+ * Marshal tests with domain objects.
  */
 public class MarshalDomainObjectTest extends ContextTestSupport {
 
@@ -84,9 +84,9 @@ public class MarshalDomainObjectTest extends ContextTestSupport {
                 from("direct:in").marshal().xstream().to("mock:result");
 
                 // just used for helping to marshal
-                from("direct:marshal").marshal().xstream();
+                from("direct:marshal").marshal().xstream("UTF-8");
 
-                from("direct:reverse").unmarshal().xstream().to("mock:reverse");
+                from("direct:reverse").unmarshal().xstream("UTF-8").to("mock:reverse");
             }
         };
     }
