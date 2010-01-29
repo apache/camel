@@ -59,6 +59,7 @@ import static org.apache.camel.util.ExchangeHelper.convertToType;
  */
 public class BeanInfo {
     private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);
+    private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private final CamelContext camelContext;
     private final Class<?> type;
@@ -87,8 +88,6 @@ public class BeanInfo {
                 EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
                 // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
                 EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
-
-                // TODO: AOP proxies have additional methods - well known methods should be added to EXCLUDE_METHODS
             }
         }
 
@@ -179,6 +178,9 @@ public class BeanInfo {
      * @param clazz the class
      */
     protected void introspect(Class<?> clazz) {
+        // get the target clazz as it could potentially have been enhanced by CGLIB etc.
+        clazz = getTargetClass(clazz);
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Introspecting class: " + clazz);
         }
@@ -660,6 +662,13 @@ public class BeanInfo {
                 it.remove();
             }
         }
+    }
+
+    private static Class<?> getTargetClass(Class<?> clazz) {
+        if (clazz.getName().indexOf(CGLIB_CLASS_SEPARATOR) != -1) {
+            return clazz.getSuperclass();
+        };
+        return clazz;
     }
 
 }
