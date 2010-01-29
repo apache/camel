@@ -33,6 +33,7 @@
 		<camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
 		<jersey-version>1.1.5</jersey-version>
 		<jetty-port>8080</jetty-port>
+		<sitemesh-version>2.4.2</sitemesh-version>
 		<webdriver-version>685</webdriver-version>
 	</properties>
 
@@ -108,7 +109,7 @@
 		<dependency>
 			<groupId>opensymphony</groupId>
 			<artifactId>sitemesh</artifactId>
-			<version>2.3</version>
+			<version>${sitemesh-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
@@ -652,7 +653,7 @@
 					WEB-INF/lib/jstl-1.1.2.jar,
 					WEB-INF/lib/standard-1.1.2.jar,
 					WEB-INF/lib/rome-0.9.jar,
-					WEB-INF/lib/sitemesh-2.3.jar,
+					WEB-INF/lib/sitemesh-${sitemesh-version}.jar,
 					WEB-INF/lib/jersey-core-${jersey-version}.jar,
 					WEB-INF/lib/jersey-server-${jersey-version}.jar,
 					WEB-INF/lib/jersey-spring-${jersey-version}.jar,
@@ -845,7 +846,7 @@
 				<dependency>
 					<groupId>opensymphony</groupId>
 					<artifactId>sitemesh</artifactId>
-					<version>2.3</version>
+					<version>${sitemesh-version}</version>
 				</dependency>
 				<dependency>
 					<groupId>jline</groupId>
