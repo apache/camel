@@ -66,7 +66,13 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // Since CXF can take the content-type from the protocol header
         // we need to filter this header of this name.
         getOutFilter().add("content-type");
-                                
+        
+        // Filter out Content-Length since it can fool Jetty (HttpGenerator) to 
+        // close response output stream prematurely.  (It occurs when the
+        // message size (e.g. with attachment) is large and response content length 
+        // is bigger than request content length.)
+        getOutFilter().add("Content-Length");
+
         // initialize message header filter map with default SOAP filter
         messageHeaderFiltersMap = new HashMap<String, MessageHeaderFilter>();
         addToMessageHeaderFilterMap(new SoapMessageHeaderFilter());
