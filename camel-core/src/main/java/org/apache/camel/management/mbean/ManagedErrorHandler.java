@@ -308,6 +308,26 @@ public class ManagedErrorHandler {
         redelivery.getRedeliveryPolicy().setLogStackTrace(log);
     }
 
+    @ManagedAttribute(description = "RedeliveryPolicy for logging redelivery stack traces")
+    public Boolean getLogRetryStackTrace() {
+        if (!isSupportRedelivery()) {
+            return null;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.getRedeliveryPolicy().isLogRetryStackTrace();
+    }
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging redelivery stack traces")
+    public void setLogRetryStackTrace(Boolean log) {
+        if (!isSupportRedelivery()) {
+            throw new IllegalArgumentException("This error handler does not support redelivery");
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        redelivery.getRedeliveryPolicy().setLogRetryStackTrace(log);
+    }
+
     @ManagedAttribute(description = "RedeliveryPolicy for using collision avoidance")
     public Boolean getUseCollisionAvoidance() {
         if (!isSupportRedelivery()) {

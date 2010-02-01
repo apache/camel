@@ -98,7 +98,10 @@ public class ManagedErrorHandlerRedeliveryTest extends ContextTestSupport {
         assertEquals(LoggingLevel.DEBUG.name(), rll);
 
         Boolean lst = (Boolean) mbeanServer.getAttribute(on, "LogStackTrace");
-        assertEquals(false, lst.booleanValue());
+        assertEquals(true, lst.booleanValue());
+
+        Boolean lrst = (Boolean) mbeanServer.getAttribute(on, "LogRetryStackTrace");
+        assertEquals(false, lrst.booleanValue());
 
         Boolean uca = (Boolean) mbeanServer.getAttribute(on, "UseCollisionAvoidance");
         assertEquals(false, uca.booleanValue());
