@@ -1084,7 +1084,7 @@ public final class ObjectHelper {
     public static String normalizeClassName(String name) {
         StringBuffer sb = new StringBuffer(name.length());
         for (char ch : name.toCharArray()) {
-            if (ch == '.' || ch == '[' || ch == ']' || Character.isJavaIdentifierPart(ch)) {
+            if (ch == '.' || ch == '[' || ch == ']' || ch == '-' || Character.isJavaIdentifierPart(ch)) {
                 sb.append(ch);
             }
         }
