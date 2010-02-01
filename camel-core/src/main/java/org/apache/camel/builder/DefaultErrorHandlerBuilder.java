@@ -126,6 +126,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DefaultErrorHandlerBuilder logRetryStackTrace(boolean logRetryStackTrace) {
+        getRedeliveryPolicy().setLogRetryStackTrace(logRetryStackTrace);
+        return this;
+    }
+
     /**
      * Sets whether the exchange should be marked as handled or not.
      *

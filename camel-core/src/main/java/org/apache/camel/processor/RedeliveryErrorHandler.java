@@ -391,11 +391,18 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         LoggingLevel newLogLevel;
+        boolean logStrackTrace;
         if (shouldRedeliver) {
             newLogLevel = data.currentRedeliveryPolicy.getRetryAttemptedLogLevel();
+            logStrackTrace = data.currentRedeliveryPolicy.isLogRetryStackTrace();
         } else {
             newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
+            logStrackTrace = data.currentRedeliveryPolicy.isLogStackTrace();
         }
+        if (e == null) {
+            e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        }
+
         if (exchange.isRollbackOnly()) {
             String msg = "Rollback exchange";
             if (exchange.getException() != null) {
@@ -408,7 +415,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // otherwise use the desired logging level
                 logger.log(msg, newLogLevel);
             }
-        } else if (data.currentRedeliveryPolicy.isLogStackTrace() && e != null) {
+        } else if (e != null && logStrackTrace) {
             logger.log(message, e, newLogLevel);
         } else {
             logger.log(message, newLogLevel);

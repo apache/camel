@@ -45,7 +45,8 @@ import org.apache.commons.logging.LogFactory;
  *   <li>useCollisionAvoidance = false</li>
  *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
  *   <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
- *   <li>logStrackTrace = false</li>
+ *   <li>logRetryStackTrace = false</li>
+ *   <li>logStackTrace = true</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -85,7 +86,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean useCollisionAvoidance;
     protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.DEBUG;
-    protected boolean logStackTrace;
+    protected boolean logStackTrace = true;
+    protected boolean logRetryStackTrace;
     protected String delayPattern;
 
     public RedeliveryPolicy() {
@@ -98,7 +100,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
-            + ", logTraceStace=" + logStackTrace
+            + ", logStackTrace=" + logStackTrace
+            + ", logRetryStackTrace=" + logRetryStackTrace
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
@@ -296,10 +299,18 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }    
     
     /**
-     * Sets the logging level to use for log messages when retries are attempted.
+     * Sets whether to log stacktraces for failed messages.
      */
     public RedeliveryPolicy logStackTrace(boolean logStackTrace) {
         setLogStackTrace(logStackTrace);
+        return this;
+    }
+
+    /**
+     * Sets whether to log stacktrace for failed redelivery attempts
+     */
+    public RedeliveryPolicy logRetryStackTrace(boolean logRetryStackTrace) {
+        setLogRetryStackTrace(logRetryStackTrace);
         return this;
     }
 
@@ -471,4 +482,16 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     public void setLogStackTrace(boolean logStackTrace) {
         this.logStackTrace = logStackTrace;
     }
+
+    public boolean isLogRetryStackTrace() {
+        return logRetryStackTrace;
+    }
+
+    /**
+     * Sets whether stack traces should be logged or not
+     */
+    public void setLogRetryStackTrace(boolean logRetryStackTrace) {
+        this.logRetryStackTrace = logRetryStackTrace;
+    }
+
 }
