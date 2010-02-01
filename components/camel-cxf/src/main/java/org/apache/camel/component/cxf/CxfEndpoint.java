@@ -35,11 +35,13 @@ import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.endpoint.Client;
@@ -55,6 +57,7 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>.
@@ -190,7 +193,17 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     protected Bus doGetBus() {
-        return BusFactory.newInstance().createBus();
+        BusFactory busFactory = BusFactory.newInstance();
+        // need to check if the camelContext is SpringCamelContext and
+        // update the bus configuration with the applicationContext
+        // which SpringCamelContext holds
+        if (getCamelContext() instanceof SpringCamelContext) {
+            SpringCamelContext springCamelContext = (SpringCamelContext)getCamelContext();
+            ApplicationContext applicationContext = springCamelContext.getApplicationContext();
+            busFactory = new org.apache.cxf.bus.spring.SpringBusFactory(applicationContext);
+        }
+        return busFactory.createBus();
+        
     }
     
     /**
@@ -423,7 +436,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 LOG.debug("Using DefaultBus " + bus);
             }
         }
-        
+
         if (!getBusHasBeenCalled.getAndSet(true) && isSetDefaultBus) {
             BusFactory.setDefaultBus(bus);
             if (LOG.isDebugEnabled()) {
