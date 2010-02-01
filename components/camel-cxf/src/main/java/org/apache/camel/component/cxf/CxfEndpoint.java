@@ -117,6 +117,10 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         return new CxfExchange(getCamelContext(), getExchangePattern(), inMessage);
     }
     
+    public void setBus(Bus bus) {
+        this.bus = bus;
+    }
+    
     public Bus getBus() {
         if (bus == null) {
             bus = doGetBus();

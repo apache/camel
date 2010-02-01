@@ -23,6 +23,7 @@ import org.w3c.dom.Element;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
@@ -110,7 +111,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         
         public void setApplicationContext(ApplicationContext ctx) throws BeansException {
             if (getBus() == null) {
-                Bus bus = BusFactory.getDefaultBus();                
+                SpringBusFactory busFactory = new SpringBusFactory(ctx);
+                Bus bus = busFactory.createBus();
                 setBus(bus);
             }
             BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx);          
