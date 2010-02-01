@@ -34,6 +34,10 @@ public class RubyTest extends CamelTestSupport {
 
     @Test
     public void testSendMatchingMessage() throws Exception {
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedBodiesReceived(expected);
 
@@ -44,6 +48,10 @@ public class RubyTest extends CamelTestSupport {
 
     @Test
     public void testSendNotMatchingMessage() throws Exception {
+        if (isPlatform("windows")) {
+            return;
+        }
+
         MockEndpoint resultEndpoint = getMockEndpoint("mock:results");
         resultEndpoint.expectedMessageCount(0);
         
@@ -52,9 +60,12 @@ public class RubyTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        // appears to cause issue on some windows with loading jruby
+        if (isPlatform("windows")) {
+            return super.createCamelContext();
+        }
         CamelContext answer = super.createCamelContext();
         RubyCamel.setCamelContext(answer);
 
