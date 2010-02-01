@@ -35,10 +35,10 @@
     <!-- let Spring do its IoC stuff in this package -->
     <context:component-scan base-package="org.apache.camel.example.server"/>
     
-    <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61616 -->
+    <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61610 -->
     <broker:broker useJmx="false" persistent="false" brokerName="localhost">
         <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
+            <broker:transportConnector name="tcp" uri="tcp://localhost:61610"/>
         </broker:transportConnectors>
     </broker:broker>
     
@@ -46,8 +46,7 @@
     <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-                <!-- use the vm protocol as the JMS broker is running in the same jvm as Camel -->
-                <property name="brokerURL" value="vm://localhost"/>
+                <property name="brokerURL" value="tcp://localhost:61610"/>
             </bean>
         </property>
     </bean>

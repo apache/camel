@@ -46,10 +46,10 @@
     <!-- END SNIPPET: e3 -->
 
     <!-- START SNIPPET: e4 -->
-    <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61616 -->
+    <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61610 -->
     <broker:broker useJmx="false" persistent="false" brokerName="localhost">
         <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
+            <broker:transportConnector name="tcp" uri="tcp://localhost:61610"/>
         </broker:transportConnectors>
     </broker:broker>
     <!-- END SNIPPET: e4 -->
@@ -57,7 +57,7 @@
     <!-- START SNIPPET: e5 -->
     <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared above -->
     <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="tcp://localhost:61610"/>
     </bean>
     <!-- END SNIPPET: e5 -->
 
