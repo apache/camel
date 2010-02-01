@@ -32,7 +32,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.commons.logging.Log;
@@ -49,87 +48,6 @@ public final class IntrospectionSupport {
      * Utility classes should not have a public constructor.
      */
     private IntrospectionSupport() {
-    }
-    
-    /**
-     * Sets the reference properties on the given bean
-     * <p/>
-     * This is convention over configuration, setting all reference parameters (using {@link #isReferenceParameter(String)}
-     * by looking it up in registry and setting it on the bean if possible.
-     *
-     * @param context the camel context
-     * @param bean the bean
-     * @param parameters parameters
-     * @throws Exception is thrown if setting property fails
-     */
-    public static void setReferenceProperties(CamelContext context, Object bean, Map<String, Object> parameters) throws Exception {
-        Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Object> entry = it.next();
-            String name = entry.getKey();
-            Object v = entry.getValue();
-            String value = v != null ? v.toString() : null;
-            if (value != null && isReferenceParameter(value)) {
-                // For backwards-compatibility reasons, no mandatory lookup is done here
-                Object ref = resolveReferenceParameter(context, value, Object.class, false);
-                if (ref != null) {
-                    boolean hit = setProperty(context.getTypeConverter(), bean, name, ref);
-                    if (hit) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Configured property: " + name + " on bean: " + bean + " with value: " + ref);
-                        }
-                        // must remove as its a valid option and we could configure it
-                        it.remove();
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Resolves a reference parameter by making a lookup in the registry.
-     * 
-     * @param <T> type of object to lookup.
-     * @param context Camel context to use for lookup.
-     * @param value reference parameter value.
-     * @param type type of object to lookup.
-     * @return lookup result. 
-     * @throws IllegalArgumentException if referenced object was not found in 
-     *         registry.
-     */
-    public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type) {
-        return resolveReferenceParameter(context, value, type, true);
-    }
-
-    /**
-     * Resolves a reference parameter by making a lookup in the registry.
-     * 
-     * @param <T> type of object to lookup.
-     * @param context Camel context to use for lookup.
-     * @param value reference parameter value.
-     * @param type type of object to lookup.
-     * @return lookup result (or <code>null</code> only if 
-     *         <code>mandatory</code> is <code>false</code>). 
-     * @throws IllegalArgumentException if object was not found in registry and 
-     *         <code>mandatory</code> is <code>true</code>.
-     */
-    public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        String valueNoHash = value.replaceAll("#", "");
-        if (mandatory) {
-            return CamelContextHelper.mandatoryLookup(context, valueNoHash, type);
-        } else {
-            return CamelContextHelper.lookup(context, valueNoHash, type);
-        }
-    }
-    
-    /**
-     * Is the given parameter a reference parameter (starting with a # char)
-     *
-     * @param parameter the parameter
-     * @return <tt>true</tt> if its a reference parameter
-     */
-    public static boolean isReferenceParameter(String parameter) {
-        return parameter != null && parameter.trim().startsWith("#");
     }
 
     public static boolean getProperties(Object target, Map props, String optionPrefix) {

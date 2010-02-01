@@ -186,8 +186,6 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
      * Sets the bean properties on the given bean
      */
     protected void setProperties(Object bean, Map parameters) throws Exception {
-        // set reference properties first as they use # syntax that fools the regular properties setter
-        IntrospectionSupport.setReferenceProperties(getCamelContext(), bean, parameters);
         IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);
     }
 

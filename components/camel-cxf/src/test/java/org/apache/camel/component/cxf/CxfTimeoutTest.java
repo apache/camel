@@ -61,12 +61,6 @@ public class CxfTimeoutTest extends CxfRouterTestSupport {
         Greeter implementor = new GreeterImplWithSleep();
         Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor); 
     }
-
-    
-    public void testInvokingJaxWsServerWithBusUriParams() throws Exception {
-        sendTimeOutMessage("cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter&bus=#cxf");
-    }
-    
     
     public void testInvokingJaxWsServerWithoutBusUriParams() throws Exception {
         sendTimeOutMessage("cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter");
