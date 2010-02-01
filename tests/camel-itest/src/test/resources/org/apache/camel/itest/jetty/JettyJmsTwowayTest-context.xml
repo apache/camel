@@ -23,30 +23,23 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
- <import resource="classpath:activemq.xml" />
+    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+    </bean>
 
-  <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-  	<property name="connectionFactory">
-  		<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-  			<property name="brokerURL"
-  				value="vm://localhost?broker.persistent=false" />
-  		</bean>
-  	</property>
-  </bean>
+    <bean id="setResponseProcessor" class="org.apache.camel.itest.jetty.SetResponseProcessor"/>
 
-  <bean id="setResponseProcessor" class="org.apache.camel.itest.jetty.SetResponseProcessor"/>
-
-  <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
-    <route>
-        <from uri="jetty:http://localhost:9000/test"/>
-        <to uri="jms:responseQueue"/>
-    </route>
-    <route>
-        <from uri="jms:responseQueue"/>
-        <process ref="setResponseProcessor"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- START SNIPPET: example -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
+        <route>
+            <from uri="jetty:http://localhost:9000/test"/>
+            <to uri="jms:responseQueue"/>
+        </route>
+        <route>
+            <from uri="jms:responseQueue"/>
+            <process ref="setResponseProcessor"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 </beans>

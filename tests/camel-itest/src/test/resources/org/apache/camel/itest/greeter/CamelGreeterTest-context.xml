@@ -25,7 +25,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
- <import resource="classpath:activemq.xml" />
  <import resource="classpath:META-INF/cxf/cxf.xml"/>
  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
@@ -44,14 +43,9 @@
   <bean id="prepareRequest" class="org.apache.camel.itest.greeter.PrepareRequest"/>
   <bean id="prepareResponse" class="org.apache.camel.itest.greeter.PrepareResponse"/>
 
-  <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-  	<property name="connectionFactory">
-  		<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-  			<property name="brokerURL"
-  				value="vm://localhost?broker.persistent=false" />
-  		</bean>
-  	</property>
-  </bean>
+    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+    </bean>
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">

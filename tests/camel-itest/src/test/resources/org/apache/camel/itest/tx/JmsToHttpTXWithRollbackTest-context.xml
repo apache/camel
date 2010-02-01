@@ -17,22 +17,13 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:broker="http://activemq.apache.org/schema/core"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://activemq.apache.org/schema/core http://activemq.org/config/1.0/1.0.xsd">
-
-    <!-- ActiveMQ broker -->
-    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
-        <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="tcp://localhost:61616"/>
-        </broker:transportConnectors>
-    </broker:broker>
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <!-- ActiveMQ connection factory -->
     <bean id="jmsFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
     </bean>
 
     <!-- Spring JMX TX manager -->
