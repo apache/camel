@@ -16,54 +16,15 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import javax.sql.DataSource;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
  */
-public class TransactionalClientDataSourceTest extends SpringTestSupport {
-
-    protected JdbcTemplate jdbc;
-    protected boolean useTransactionErrorHandler = true;
-
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/transactionalClientDataSource.xml");
-    }
-
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        this.disableJMX();
-        super.setUp();
-
-        // START SNIPPET: e5
-        // create database and insert dummy data
-        final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
-        jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table books (title varchar(50))");
-        jdbc.update("insert into books (title) values (?)", new Object[] {"Camel in Action"});
-        // END SNIPPET: e5
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        jdbc.execute("drop table books");
-        this.enableJMX();
-    }
+public class TransactionalClientDataSourceTest extends TransactionClientDataSourceSupport {
 
     // START SNIPPET: e3
     public void testTransactionSuccess() throws Exception {
@@ -102,7 +63,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
 
                 // use this error handler instead of DeadLetterChannel that is the default
                 // Notice: transactionErrorHandler is in SpringRouteBuilder
-                if (useTransactionErrorHandler) {
+                if (isUseTransactionErrorHandler()) {
                     // useTransactionErrorHandler is only used for unit testing to reuse code
                     // for doing a 2nd test without this transaction error handler, so ignore
                     // this. For spring based transaction, end users are encouraged to use the

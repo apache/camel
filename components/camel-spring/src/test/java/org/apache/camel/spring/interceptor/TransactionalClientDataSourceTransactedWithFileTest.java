@@ -23,7 +23,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 /**
  * @version $Revision$
  */
-public class TransactionalClientDataSourceTransactedWithFileTest extends TransactionalClientDataSourceTransactedTest {
+public class TransactionalClientDataSourceTransactedWithFileTest extends TransactionClientDataSourceSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -32,7 +32,6 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
     }
 
     public void testTransactionSuccess() throws Exception {
-        deleteDirectory("target/transacted");
         template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
 
         // wait for route to complete
@@ -43,7 +42,6 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
     }
 
     public void testTransactionRollback() throws Exception {
-        deleteDirectory("target/transacted");
         template.sendBodyAndHeader("file://target/transacted/fail", "Hello World", Exchange.FILE_NAME, "fail.txt");
 
         // wait for route to complete
