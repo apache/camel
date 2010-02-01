@@ -141,4 +141,10 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    
+    public void testNormalizeClassName() {
+        assertEquals("Should get the right class name", "my.package-info", ObjectHelper.normalizeClassName("my.package-info"));
+        assertEquals("Should get the right class name", "Integer[]", ObjectHelper.normalizeClassName("Integer[] \r"));
+        assertEquals("Should get the right class name", "Hello_World", ObjectHelper.normalizeClassName("Hello_World"));
+    }
 }
