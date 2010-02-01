@@ -331,10 +331,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                     assertTrue("There is no type conversion possible from " + actualHeader.getClass().getName() 
                             + " to " + headerValue.getClass().getName(), actualValue != null);
                 }
-                assertEquals("Header of message", headerValue, actualValue);
+                assertEquals("Header with name " + headerName, headerValue, actualValue);
             }
-
-
         });
     }
 
@@ -354,7 +352,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                 assertTrue("No property with name " + propertyName + " found.", actualProperty != null);
 
                 Object actualValue = getCamelContext().getTypeConverter().convertTo(actualProperty.getClass(), propertyValue);
-                assertEquals("Property of message", actualValue, actualProperty);
+                assertEquals("Property with name " + propertyName, actualValue, actualProperty);
             }
         });
     }
@@ -457,7 +455,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
-     * Adds an expection that a file exists with the given name
+     * Adds an expectation that a file exists with the given name
      *
      * @param name name of file, will cater for / and \ on different OS platforms
      */
@@ -466,7 +464,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
-     * Adds an expection that a file exists with the given name
+     * Adds an expectation that a file exists with the given name
      * <p/>
      * Will wait at most 5 seconds while checking for the existence of the file.
      *

@@ -417,8 +417,70 @@ public class MockEndpointTest extends ContextTestSupport {
         } catch (Exception e) {
             // not possible
         }
-        
+
         assertEquals(0, mock.getFailures().size());
+    }
+
+    public void testHeaderMissing() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", "cheese");
+        
+        template.sendBodyAndHeader("direct:a", "Hello World", "foo", 123);
+
+        try {
+            assertMockEndpointsSatisfied();
+            fail("Should have thrown exception");
+        } catch (AssertionError e) {
+            assertEquals("mock://result No header with name bar found.", e.getMessage());
+        }
+    }
+
+    public void testHeaderInvalidValue() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("bar", "cheese");
+
+        template.sendBodyAndHeader("direct:a", "Hello World", "bar", "beer");
+
+        try {
+            assertMockEndpointsSatisfied();
+            fail("Should have thrown exception");
+        } catch (AssertionError e) {
+            assertEquals("mock://result Header with name bar. Expected: <cheese> but was: <beer>", e.getMessage());
+        }
+    }
+    
+    public void testPropertyMissing() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedPropertyReceived("foo", 123);
+        mock.expectedPropertyReceived("bar", "cheese");
+
+        template.sendBodyAndProperty("direct:a", "Hello World", "foo", 123);
+
+        try {
+            assertMockEndpointsSatisfied();
+            fail("Should have thrown exception");
+        } catch (AssertionError e) {
+            assertEquals("mock://result No property with name bar found.", e.getMessage());
+        }
+    }
+
+    public void testPropertyInvalidValue() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedPropertyReceived("bar", "cheese");
+
+        template.sendBodyAndProperty("direct:a", "Hello World", "bar", "beer");
+
+        try {
+            assertMockEndpointsSatisfied();
+            fail("Should have thrown exception");
+        } catch (AssertionError e) {
+            assertEquals("mock://result Property with name bar. Expected: <cheese> but was: <beer>", e.getMessage());
+        }
     }
 
     protected void sendMessages(int... counters) {
