@@ -93,7 +93,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
             applicationContext = ctx;
             if (getBus() == null) {
                 // Don't relate on the DefaultBus
-                BusFactory factory = new SpringBusFactory();
+                BusFactory factory = new SpringBusFactory(ctx);
                 Bus bus = factory.createBus();               
                 setBus(bus);
             }
