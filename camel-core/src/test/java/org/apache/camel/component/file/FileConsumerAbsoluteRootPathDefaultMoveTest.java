@@ -35,6 +35,10 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
         super.setUp();
     }
 
+    public void testDummy() {
+	    // noop
+    }
+
     // TODO: Enable to test locally
     public void xxxTestConsumeFromAbsolutePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
