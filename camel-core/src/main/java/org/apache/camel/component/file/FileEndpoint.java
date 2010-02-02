@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -59,7 +60,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
                 if (log.isDebugEnabled()) {
                     log.debug("Creating non existing starting directory: " + file);
                 }
-                boolean absolute = file.isAbsolute();
+                boolean absolute = FileUtil.isAbsolute(file);
                 operations.buildDirectory(file.getPath(), absolute);
             }
         }
@@ -136,8 +137,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @Override
     public boolean isAbsolute(String name) {
         // relative or absolute path?
-        File file = new File(name);
-        return file.isAbsolute();
+        return FileUtil.isAbsolute(new File(name));
     }
 
 }

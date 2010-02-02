@@ -30,6 +30,7 @@ import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.util.FileUtil;
 
 /**
  * Unit test for File Language.
@@ -66,7 +67,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:onlyname.noext}", "hello");
         assertExpression("${file:parent}", file.getParent());
         assertExpression("${file:path}", file.getPath());
-        assertExpression("${file:absolute}", file.isAbsolute());
+        assertExpression("${file:absolute}", FileUtil.isAbsolute(file));
         assertExpression("${file:absolute.path}", file.getAbsolutePath());
         assertExpression("${file:length}", file.length());
 

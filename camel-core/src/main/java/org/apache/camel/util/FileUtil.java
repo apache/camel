@@ -329,5 +329,24 @@ public final class FileUtil {
         return deleted;
     }
 
+    /**
+     * Is the given file an absolute file.
+     * <p/>
+     * Will also work around issue on Windows to consider files on Windows starting with a \
+     * as absolute files. This makes the logic consistent across all OS platforms.
+     *
+     * @param file  the file
+     * @return <tt>true</ff> if its an absolute path, <tt>false</tt> otherwise.
+     */
+    public static boolean isAbsolute(File file) {
+        if (isWindows()) {
+            // special for windows
+            String path = file.getPath();
+            if (path.startsWith(File.separator)) {
+                return true;
+            }
+        }
+        return file.isAbsolute();
+    }
 
 }

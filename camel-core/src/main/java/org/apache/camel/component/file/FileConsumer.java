@@ -84,7 +84,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
     /**
      * Creates a new GenericFile<File> based on the given file.
      *
-     * @param endpointPath the starting directory the endpoint was configued with
+     * @param endpointPath the starting directory the endpoint was configured with
      * @param file the source file
      * @return wrapped as a GenericFile
      */
@@ -98,10 +98,15 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setFileName(file.getName());
         answer.setFileNameOnly(file.getName());
         answer.setFileLength(file.length());
-        answer.setAbsolute(file.isAbsolute());
+        // must use FileUtil.isAbsolute to have consistent check for whether the file is
+        // absolute or not. As windows do not consider \ paths as absolute where as all
+        // other OS platforms will consider \ as absolute. The logic in Camel mandates
+        // that we align this for all OS. That is why we must use FileUtil.isAbsolute
+        // to return a consistent answer for all OS platforms.
+        answer.setAbsolute(FileUtil.isAbsolute(file));
         answer.setAbsoluteFilePath(file.getAbsolutePath());
         answer.setLastModified(file.lastModified());
-        if (file.isAbsolute()) {
+        if (answer.isAbsolute()) {
             // use absolute path as relative
             answer.setRelativeFilePath(file.getAbsolutePath());
         } else {

@@ -134,8 +134,7 @@ public class GenericFile<T> implements Serializable {
     }
     
     protected boolean isAbsolute(String name) {
-        File file = new File(name);
-        return file.isAbsolute();        
+        return FileUtil.isAbsolute(new File(name));
     }
     
     protected String normalizePath(String name) {

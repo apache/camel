@@ -177,7 +177,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 // use java.io.File to compute the file path
                 File file = new File(fileName);
                 String directory = file.getParent();
-                boolean absolute = file.isAbsolute();
+                boolean absolute = FileUtil.isAbsolute(file);
                 if (directory != null) {
                     if (!operations.buildDirectory(directory, absolute)) {
                         if (log.isDebugEnabled()) {
