@@ -70,7 +70,6 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
 
         Object bean = beanHolder.getBean();
-        exchange.setProperty(Exchange.BEAN_HOLDER, beanHolder);
         BeanInfo beanInfo = beanHolder.getBeanInfo();
 
         // do we have a custom adapter for this POJO to a Processor
@@ -151,8 +150,9 @@ public class BeanProcessor extends ServiceSupport implements Processor {
                 in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
             }
         }
-        
-        if (value != null) {
+
+        // if the method returns something then set the value returned on the Exchange
+        if (!invocation.getMethod().getReturnType().equals(Void.TYPE) && value != Void.TYPE) {
             if (exchange.getPattern().isOutCapable()) {
                 // force out creating if not already created (as its lazy)
                 if (LOG.isDebugEnabled()) {

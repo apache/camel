@@ -50,10 +50,6 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
 
         assertEquals("Should not fail", false, out.isFailed());
 
-        BeanHolder holder = out.getProperty(Exchange.BEAN_HOLDER, BeanHolder.class);
-        assertNotNull("BeanHolder is missing", holder);
-        assertEquals(myBean, holder.getBean());
-
         Map foo = myBean.foo;
         Map bar = myBean.bar;
         assertNotNull("myBean.foo", foo);

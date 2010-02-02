@@ -134,7 +134,8 @@ public class MethodInfo {
                 if (recipientList != null) {
                     recipientList.sendToRecipientList(exchange, result);
                     // we don't want to return the list of endpoints
-                    return null;
+                    // return Void to indicate to BeanProcessor that there is no reply
+                    return Void.TYPE;
                 }
                 return result;
             }
