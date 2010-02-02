@@ -21,29 +21,17 @@ import java.util.Map;
 
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.beans.factory.BeanClassLoaderAware;
 
 /**
  * Freemarker component.
  */
-public class FreemarkerComponent extends DefaultComponent implements BeanClassLoaderAware {
+public class FreemarkerComponent extends ResourceBasedComponent {
 
     private Configuration configuration;
     private Configuration noCacheConfiguration;
-
-    private ClassLoader beanClassLoader; 
-
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        this.beanClassLoader = classLoader;
-    }
-
-    public ClassLoader getBeanClassLoader() {
-        return beanClassLoader;
-    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FreemarkerEndpoint endpoint = new FreemarkerEndpoint(uri, this, remaining);
@@ -56,7 +44,7 @@ public class FreemarkerComponent extends DefaultComponent implements BeanClassLo
         }
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
         if (cache) {
-            config = getConfiguraiton();
+            config = getConfiguration();
         } else {
             config = getNoCacheConfiguration();
         }
@@ -65,40 +53,27 @@ public class FreemarkerComponent extends DefaultComponent implements BeanClassLo
         return endpoint;
     }
 
-    public synchronized Configuration getConfiguraiton() {
+    public synchronized Configuration getConfiguration() {
         if (configuration == null) {
             configuration = new Configuration();
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override
                 protected URL getURL(String name) {
-                    ClassLoader[] loaders = {
-                        beanClassLoader, 
-                        Thread.currentThread().getContextClassLoader(), 
-                        this.getClass().getClassLoader()
-                    };
-                    for (ClassLoader classLoader : loaders) {
-                        if (classLoader != null) {
-                            URL resource = classLoader.getResource(name);
-                            if (resource != null) {
-                                return resource;
-                            }
-                        }
-                    }
-                    return null;
+                    return getResourceLoader().getClassLoader().getResource(name);
                 }
             });
         }
         return (Configuration) configuration.clone();
     }
 
-    public void setConfiguraiton(Configuration configuration) {
+    public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
 
     private synchronized Configuration getNoCacheConfiguration() {
         if (noCacheConfiguration == null) {
             // create a clone of the regular configuration
-            noCacheConfiguration = (Configuration) getConfiguraiton().clone();
+            noCacheConfiguration = (Configuration) getConfiguration().clone();
             // set this one to not use cache
             noCacheConfiguration.setCacheStorage(new NoCacheStorage());
         }
