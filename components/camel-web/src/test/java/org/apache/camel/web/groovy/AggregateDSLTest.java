@@ -59,7 +59,7 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
     public void testAggregateAndOnException() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock:error\"));" + "onException(CamelException.class).maximumRedeliveries(2);"
                      + "from(\"direct:start\").aggregate(header(\"id\")).to(\"mock:result\")";
-        String expected = "errorHandler(deadLetterChannel(\"mock://error\"));" + "onException(CamelException.class).maximumRedeliveries(2);"
+        String expected = "errorHandler(deadLetterChannel(\"mock://error\").logStackTrace(true));" + "onException(CamelException.class).maximumRedeliveries(2);"
                           + "from(\"direct:start\").aggregate().header(\"id\").to(\"mock:result\")";
         assertEquals(expected, render(dsl));
     }

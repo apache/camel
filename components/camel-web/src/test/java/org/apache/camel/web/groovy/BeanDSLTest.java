@@ -45,6 +45,8 @@ public class BeanDSLTest extends GroovyRendererTestSupport {
     @Test
     public void testBeanWithException() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock://error\"));onException(Exception.class).to(\"mock:invalid\");from(\"direct:start\").beanRef(\"myBean\").to(\"mock:valid\")";
-        assertEquals(dsl, render(dsl));
+        String expect = "errorHandler(deadLetterChannel(\"mock://error\").logStackTrace(true));onException(Exception.class).to(\"mock:invalid\");"
+            + "from(\"direct:start\").beanRef(\"myBean\").to(\"mock:valid\")";
+        assertEquals(expect, render(dsl));
     }
 }

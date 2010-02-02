@@ -26,20 +26,21 @@ public class DeadLetterDSLTest extends GroovyRendererTestSupport {
 
     @Test
     public void testDeadLetterWithDefaultRedeliverDelay() throws Exception {
-        String dsl = "errorHandler(deadLetterChannel(\"mock://failed\").handled(false));from(\"direct:start\").to(\"mock:result\")";
+        String dsl = "errorHandler(deadLetterChannel(\"mock://failed\").logStackTrace(true).handled(false));from(\"direct:start\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
     @Test
     public void testDeadLetterWithDefaultHandled() throws Exception {
-        String dsl = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000));from(\"direct:start\").to(\"mock:result\")";
+        String dsl = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000).logStackTrace(true));from(\"direct:start\").to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
     @Test
     public void testDeadLetterDSL() throws Exception {
         String dsl = "errorHandler(deadLetterChannel(\"mock:failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from(\"direct:start\").to(\"mock:result\")";
-        String expected = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000).handled(false));from(\"direct:start\").to(\"mock:result\")";
+        String expected = "errorHandler(deadLetterChannel(\"mock://failed\").maximumRedeliveries(3).redeliverDelay(5000).logStackTrace(true).handled(false));"
+            + "from(\"direct:start\").to(\"mock:result\")";
 
         assertEquals(expected, render(dsl));
     }
