@@ -16,13 +16,15 @@
  */
 package org.apache.camel.scala
 
-import org.apache.camel.Exchange
 import reflect.Manifest
+import org.apache.camel.spi.{UnitOfWork, Synchronization}
+import org.apache.camel.{ExchangePattern, Message, Endpoint, Exchange}
+import java.lang.{Exception, String, Class}
 
 /**
  * Rich wrapper for Camel's Exchange implementations
  */
-class RichExchange(val exchange : Exchange) {
+class RichExchange(val exchange : Exchange) extends Exchange {
 
   def in : Any = exchange.getIn().getBody()
   
@@ -38,4 +40,71 @@ class RichExchange(val exchange : Exchange) {
 
   def out_=(message:Any) = exchange.getOut().setBody(message)
 
+
+  // Delegation methods
+  //-------------------------------------------------------------------------
+
+  def setUnitOfWork(unitOfWork: UnitOfWork) = exchange.setUnitOfWork(unitOfWork)
+
+  def setProperty(name: String, value: Any) = exchange.setProperty(name, value)
+
+  def setPattern(pattern: ExchangePattern) = exchange.setPattern(pattern)
+
+  def setOut(out: Message) = exchange.setOut(out)
+
+  def setIn(in: Message) = exchange.setIn(in)
+
+  def setFromEndpoint(fromEndpoint: Endpoint) = exchange.setFromEndpoint(fromEndpoint)
+
+  def setExchangeId(id: String) = exchange.setExchangeId(id)
+
+  def setException(e: Exception) = exchange.setException(e)
+
+  def removeProperty(name: String) = exchange.removeProperty(name)
+
+  def isTransacted = exchange.isTransacted
+
+  def isRollbackOnly = exchange.isRollbackOnly
+
+  def isFailed = exchange.isFailed
+
+  def hasProperties = exchange.hasProperties
+
+  def hasOut = exchange.hasOut
+
+  def getUnitOfWork = exchange.getUnitOfWork
+
+  def getProperty[T](name: String, propertyType : Class[T]) = exchange.getProperty(name, propertyType)
+
+  def getProperty[T](name: String, defaultValue: Any, propertyType : Class[T]) = exchange.getProperty(name, defaultValue, propertyType)
+
+  def getProperty(name: String, defaultValue: Any) = exchange.getProperty(name, defaultValue)
+
+  def getProperty(name: String) = exchange.getProperty(name)
+
+  def getProperties = exchange.getProperties
+
+  def getPattern = exchange.getPattern
+
+  def getOut[T](outType : Class[T]) = exchange.getOut(outType)
+
+  def getOut = exchange.getOut
+
+  def getIn[T](inType : Class[T]) = exchange.getIn(inType)
+
+  def getIn = exchange.getIn
+
+  def getFromEndpoint = exchange.getFromEndpoint
+
+  def getExchangeId = exchange.getExchangeId
+
+  def getException[T](exceptionType : Class[T]) = exchange.getException(exceptionType)
+
+  def getException = exchange.getException
+
+  def getContext = exchange.getContext
+
+  def copy = new RichExchange(exchange.copy)
+
+  def addOnCompletion(onCompletion: Synchronization) = exchange.addOnCompletion(onCompletion)
 }
