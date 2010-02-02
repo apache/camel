@@ -87,7 +87,7 @@
     <mina-version>1.1.7</mina-version>
     <mockito-version>1.8.2</mockito-version>
     <ognl-version>2.7.3_1</ognl-version>
-    <openjpa-version>1.2.1</openjpa-version>
+    <openjpa-version>1.2.2</openjpa-version>
     <pax-exam-version>1.2.0</pax-exam-version>
     <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
     <qpid-version>0.5.0</qpid-version>

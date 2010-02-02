@@ -61,6 +61,9 @@ public class JpaShutdownCompleteAllTasksTest extends CamelTestSupport {
 
     @Test
     public void testCompleteAllTasks() throws Exception {
+        // give it 20 seconds to shutdown
+        context.getShutdownStrategy().setTimeout(20);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -76,7 +79,6 @@ public class JpaShutdownCompleteAllTasksTest extends CamelTestSupport {
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
-        bar.setResultWaitTime(3000);
 
         assertMockEndpointsSatisfied();
 
