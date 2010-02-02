@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * On completion strategy that performs the nessasary work after the {@link Exchange} has been processed.
+ * On completion strategy that performs the required work after the {@link Exchange} has been processed.
  * <p/>
  * The work is for example to move the processed file into a backup folder, delete the file or
  * in case of processing failure do a rollback. 
@@ -48,12 +48,10 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         this.originalFileName = originalFileName;
     }
 
-    @SuppressWarnings("unchecked")
     public void onComplete(Exchange exchange) {
         onCompletion(exchange);
     }
 
-    @SuppressWarnings("unchecked")
     public void onFailure(Exchange exchange) {
         onCompletion(exchange);
     }
@@ -109,7 +107,6 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      * @param exchange        the exchange
      * @param file            the file processed
      */
-    @SuppressWarnings("unchecked")
     protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
                                          Exchange exchange, GenericFile<T> file) {
         if (endpoint.isIdempotent()) {
