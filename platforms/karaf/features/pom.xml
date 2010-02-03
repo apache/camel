@@ -41,6 +41,7 @@
       <asm-bundle-version>2.2.3_3</asm-bundle-version>
       <bcel-bundle-version>5.2_2</bcel-bundle-version>
       <dom4j-bundle-version>1.6.1_2</dom4j-bundle-version>
+      <dozer-bundle-version>5.2.0_1</dozer-bundle-version>
       <cglib-version>2.1_3_4</cglib-version>
       <commons-beanutils-bundle-version>1.7.0_3</commons-beanutils-bundle-version>
       <commons-dbcp-bundle-version>1.2.2_5</commons-dbcp-bundle-version>

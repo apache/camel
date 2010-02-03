@@ -23,6 +23,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>camel-dozer</artifactId>
+  <packaging>bundle</packaging>
  
   <name>Camel :: Dozer</name>
   <description>Camel Support for the Dozer type conversion framework</description>
