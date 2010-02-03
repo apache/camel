@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty.jettyproducer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -27,6 +28,7 @@ import org.junit.Test;
 public class JettyHttpProducerGoogleAsynchronousTest extends CamelTestSupport {
 
     @Test
+    @Ignore("ignore online tests, will be improved in Camel 2.3")
     public void testGoogleFrontPageAsync() throws Exception {
         // these tests does not run well on Windows
         if (isPlatform("windows")) {
