@@ -196,6 +196,9 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
      */
     protected void processExchange(Exchange exchange) throws Exception {
         processor.process(exchange);
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing Exchange: " + exchange, exchange.getException());
+        }
     }
 
     protected void doStart() throws Exception {
