@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -30,6 +31,7 @@ public class HttpQueryGoogleTest extends CamelTestSupport {
     }
 
     @Test
+    @Ignore("ignore online tests, will be improved in Camel 2.3")
     public void testQueryGoogle() throws Exception {
         Object out = template.requestBody("http://www.google.com/search?q=Camel", "");
         assertNotNull(out);
