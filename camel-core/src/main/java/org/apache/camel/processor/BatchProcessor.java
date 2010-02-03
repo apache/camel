@@ -149,6 +149,9 @@ public class BatchProcessor extends ServiceSupport implements Processor {
      */
     protected void processExchange(Exchange exchange) throws Exception {
         processor.process(exchange);
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException(exchange.getException());
+        }
     }
 
     protected void doStart() throws Exception {
