@@ -831,7 +831,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.streamCache = cache;
     }
 
-    public boolean isStreamCaching() {
+    public Boolean isStreamCaching() {
         return streamCache;
     }
 
@@ -839,11 +839,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.trace = tracing;
     }
 
-    public boolean isTracing() {
+    public Boolean isTracing() {
         return trace;
     }
 
-    public boolean isHandleFault() {
+    public Boolean isHandleFault() {
         return handleFault;
     }
 
@@ -855,7 +855,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return delay;
     }
 
-    public void setDelayer(long delay) {
+    public void setDelayer(Long delay) {
         this.delay = delay;
     }
 
@@ -1405,7 +1405,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         this.autoStartup = autoStartup;
     }
 
-    public boolean isAutoStartup() {
+    public Boolean isAutoStartup() {
         return autoStartup != null && autoStartup;
     }
 

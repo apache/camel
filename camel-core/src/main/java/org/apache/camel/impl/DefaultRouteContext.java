@@ -226,7 +226,7 @@ public class DefaultRouteContext implements RouteContext {
         this.trace = tracing;
     }
 
-    public boolean isTracing() {
+    public Boolean isTracing() {
         if (trace != null) {
             return trace;
         } else {
@@ -239,7 +239,7 @@ public class DefaultRouteContext implements RouteContext {
         this.stramCache = cache;
     }
 
-    public boolean isStreamCaching() {
+    public Boolean isStreamCaching() {
         if (stramCache != null) {
             return stramCache;
         } else {
@@ -252,7 +252,7 @@ public class DefaultRouteContext implements RouteContext {
         this.handleFault = handleFault;
     }
 
-    public boolean isHandleFault() {
+    public Boolean isHandleFault() {
         if (handleFault != null) {
             return handleFault;
         } else {
@@ -261,7 +261,7 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
-    public void setDelayer(long delay) {
+    public void setDelayer(Long delay) {
         this.delay = delay;
     }
 
@@ -278,7 +278,7 @@ public class DefaultRouteContext implements RouteContext {
         this.autoStartup = autoStartup;
     }
 
-    public boolean isAutoStartup() {
+    public Boolean isAutoStartup() {
         if (autoStartup != null) {
             return autoStartup;
         }

@@ -37,7 +37,7 @@ public class CamelContextAutoStartupTest extends TestCase {
         SpringCamelContext camel = (SpringCamelContext) ac.getBean("myCamel");
         assertEquals("myCamel", camel.getName());
         assertEquals(false, camel.isStarted());
-        assertEquals(false, camel.isAutoStartup());
+        assertEquals(Boolean.FALSE, camel.isAutoStartup());
         assertEquals(0, camel.getRoutes().size());
 
         // now start Camel
@@ -47,7 +47,7 @@ public class CamelContextAutoStartupTest extends TestCase {
         // now its started
         assertEquals(true, camel.isStarted());
         // but auto startup is still fasle
-        assertEquals(false, camel.isAutoStartup());
+        assertEquals(Boolean.FALSE, camel.isAutoStartup());
         // but now we have one route
         assertEquals(1, camel.getRoutes().size());
 
@@ -66,7 +66,7 @@ public class CamelContextAutoStartupTest extends TestCase {
         SpringCamelContext camel = (SpringCamelContext) ac.getBean("myCamel");
         assertEquals("myCamel", camel.getName());
         assertEquals(true, camel.isStarted());
-        assertEquals(true, camel.isAutoStartup());
+        assertEquals(Boolean.TRUE, camel.isAutoStartup());
         assertEquals(1, camel.getRoutes().size());
 
         // send a message to the route and see that it works

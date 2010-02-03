@@ -38,7 +38,7 @@ public interface RuntimeConfiguration {
      *
      * @return true if stream cache is enabled
      */
-    boolean isStreamCaching();
+    Boolean isStreamCaching();
 
     /**
      * Sets whether tracing is enabled or not (default is disabled).
@@ -54,7 +54,7 @@ public interface RuntimeConfiguration {
      *
      * @return true if tracing is enabled
      */
-    boolean isTracing();
+    Boolean isTracing();
 
     /**
      * Sets whether handle fault is enabled or not (default is disabled).
@@ -70,7 +70,7 @@ public interface RuntimeConfiguration {
      *
      * @return true if tracing is enabled
      */
-    boolean isHandleFault();
+    Boolean isHandleFault();
 
     /**
      * Sets a delay value in millis that a message is delayed at every step it takes in the route path,
@@ -80,7 +80,7 @@ public interface RuntimeConfiguration {
      *
      * @param delay delay in millis
      */
-    void setDelayer(long delay);
+    void setDelayer(Long delay);
 
     /**
      * Gets the delay value
@@ -105,7 +105,7 @@ public interface RuntimeConfiguration {
      *
      * @return true if should auto start
      */
-    boolean isAutoStartup();
+    Boolean isAutoStartup();
 
     /**
      * Sets the option to use when shutting down routes.
