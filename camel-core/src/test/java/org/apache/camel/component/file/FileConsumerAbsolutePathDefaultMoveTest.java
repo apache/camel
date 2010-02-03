@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import java.io.File;
 
 /**
  * Unit test for consuming from an absolute path

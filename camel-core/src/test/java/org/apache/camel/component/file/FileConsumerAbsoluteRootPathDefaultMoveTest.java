@@ -36,7 +36,7 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
     }
 
     public void testDummy() {
-	    // noop
+        // noop
     }
 
     // TODO: Enable to test locally
