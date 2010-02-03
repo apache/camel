@@ -40,7 +40,7 @@
         !org.apache.camel.*,
   	org.apache.xalan.xsltc.trax;resolution:=optional,
         javax.activation;resolution:=optional,
-        javax.xml.bind.annotation.adapters:=optional,
+        javax.xml.bind.annotation.adapters;resolution:=optional,
         javax.xml.bind;resolution:=optional,
         javax.xml.bind.annotation;resolution:=optional,
         javax.xml.stream;resolution:=optional,
