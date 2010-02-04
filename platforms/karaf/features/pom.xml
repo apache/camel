@@ -90,7 +90,7 @@
       <oro-bundle-version>2.0.8_3</oro-bundle-version>
       <openjpa-bundle-version>1.2.1_2</openjpa-bundle-version>
       <oscache-bundle-version>2.4_3</oscache-bundle-version>
-      <protobuf-java-bundle-version>2.2.0_1-SNAPSHOT</protobuf-java-bundle-version>
+      <protobuf-java-bundle-version>2.2.0_1</protobuf-java-bundle-version>
       <quartz-bundle-version>1.6.6_1</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
       <saxon-bundle-version>9.1.0.1_3</saxon-bundle-version>
