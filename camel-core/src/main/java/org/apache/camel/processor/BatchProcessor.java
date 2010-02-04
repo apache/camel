@@ -27,6 +27,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -297,8 +298,12 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                         try {
                             try {
                                 sendExchanges();
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException(e);
+                            } catch (Throwable t) {
+                                if (t instanceof Exception) {
+                                    getExceptionHandler().handleException(t);
+                                } else {
+                                    getExceptionHandler().handleException(new CamelException(t));
+                                }
                             }
                         } finally {
                             queueLock.lock();
