@@ -27,27 +27,25 @@ import org.apache.camel.builder.ExpressionClauseSupport;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.util.PredicateAssertHelper;
 
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import static org.apache.camel.builder.ExpressionBuilder.outBodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.propertyExpression;
-
 /**
  * A builder of assertions on message exchanges
  *
  * @version $Revision$
  */
-public abstract class AssertionClause<T> extends ExpressionClauseSupport implements Runnable {
+public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuilder> implements Runnable {
 
     private List<Predicate> predicates = new ArrayList<Predicate>();
 
-    @SuppressWarnings("unchecked")
-    public AssertionClause(Object result) {
-        super(result);
+    public AssertionClause() {
+        super(null);
     }
 
     // Builder methods
     // -------------------------------------------------------------------------
+    public ValueBuilder expression(Expression expression) {
+        super.expression(expression);
+        return new PredicateValueBuilder(getExpressionValue());
+    }
 
     /**
      * Adds the given predicate to this assertion clause
@@ -61,57 +59,6 @@ public abstract class AssertionClause<T> extends ExpressionClauseSupport impleme
         ExpressionClause<AssertionClause> clause = new ExpressionClause<AssertionClause>(this);
         addPredicate(clause);
         return clause;
-    }
-
-    /**
-     * Returns a predicate and value builder for headers on an exchange
-     */
-    public ValueBuilder header(String name) {
-        Expression expression = headerExpression(name);
-        return new PredicateValueBuilder(expression);
-    }
-
-    /**
-     * Returns a predicate and value builder for property on an exchange
-     */
-    public ValueBuilder property(String name) {
-        Expression expression = propertyExpression(name);
-        return new PredicateValueBuilder(expression);
-    }
-
-    /**
-     * Returns a predicate and value builder for the inbound body on an exchange
-     */
-    public PredicateValueBuilder body() {
-        Expression expression = bodyExpression();
-        return new PredicateValueBuilder(expression);
-    }
-
-    /**
-     * Returns a predicate and value builder for the inbound message body as a
-     * specific type
-     */
-    public <T> PredicateValueBuilder body(Class<T> type) {
-        Expression expression = bodyExpression(type);
-        return new PredicateValueBuilder(expression);
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound body on an
-     * exchange
-     */
-    public PredicateValueBuilder outBody() {
-        Expression expression = outBodyExpression();
-        return new PredicateValueBuilder(expression);
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound message body as a
-     * specific type
-     */
-    public <T> PredicateValueBuilder outBody(Class<T> type) {
-        Expression expression = outBodyExpression(type);
-        return new PredicateValueBuilder(expression);
     }
 
     /**
@@ -130,7 +77,7 @@ public abstract class AssertionClause<T> extends ExpressionClauseSupport impleme
     /**
      * Public class needed for fluent builders
      */
-    public class PredicateValueBuilder extends ValueBuilder {
+    public final class PredicateValueBuilder extends ValueBuilder {
 
         public PredicateValueBuilder(Expression expression) {
             super(expression);

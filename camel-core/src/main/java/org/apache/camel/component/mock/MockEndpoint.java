@@ -650,8 +650,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @param messageIndex the number of the message
      * @return the assertion clause
      */
-    public AssertionClause<MockEndpoint> message(final int messageIndex) {
-        final AssertionClause<MockEndpoint> clause = new AssertionClause<MockEndpoint>(this) {
+    public AssertionClause message(final int messageIndex) {
+        final AssertionClause clause = new AssertionClause() {
             public void run() {
                 applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
             }
@@ -665,8 +665,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      *
      * @return the assertion clause
      */
-    public AssertionClause<MockEndpoint> allMessages() {
-        final AssertionClause<MockEndpoint> clause = new AssertionClause<MockEndpoint>(this) {
+    public AssertionClause allMessages() {
+        final AssertionClause clause = new AssertionClause() {
             public void run() {
                 List<Exchange> list = getReceivedExchanges();
                 int index = 0;
