@@ -80,9 +80,10 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:baz").expectedMessageCount(1);
+        // can be 0 or 1 depending whether the task was executed or not (we run parallel)
+        getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
+        getMockEndpoint("mock:bar").expectedMinimumMessageCount(0);
+        getMockEndpoint("mock:baz").expectedMinimumMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo,mock:bar,bean:fail,mock:baz");
 
