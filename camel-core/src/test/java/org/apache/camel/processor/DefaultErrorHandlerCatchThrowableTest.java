@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.aggregator;
+package org.apache.camel.processor;
 
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
-public class AggregatorExceptionTest extends ContextTestSupport {
+public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
 
-    public void testAggregateAndOnException() throws Exception {
-        // all goes to error
-        MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedMessageCount(2);
-
-        for (int c = 0; c <= 10; c++) {
-            template.sendBodyAndHeader("direct:start", "Hi!" + c, "id", 123);
+    public void testDefaultErrorHandlerCatchThrowable() throws Exception {
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+            assertEquals("Hello World", cause.getExchange().getIn().getBody());
+            assertIsInstanceOf(NoSuchMethodError.class, cause.getCause());
         }
-
-        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -42,14 +42,11 @@ public class AggregatorExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 final String exceptionString = "This is an Error not an Exception";
-                errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:start")
-                    .aggregate(header("id"))
-                    .batchSize(5)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            throw new java.lang.NoSuchMethodError(exceptionString);   
+                            throw new NoSuchMethodError(exceptionString);
                         }
                     });
             }

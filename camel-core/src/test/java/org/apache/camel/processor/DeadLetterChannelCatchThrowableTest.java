@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.aggregator;
+package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -22,16 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-public class AggregatorExceptionTest extends ContextTestSupport {
+public class DeadLetterChannelCatchThrowableTest extends ContextTestSupport {
 
-    public void testAggregateAndOnException() throws Exception {
-        // all goes to error
+    public void testDeadLetterChannelCatchThrowable() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(1);
 
-        for (int c = 0; c <= 10; c++) {
-            template.sendBodyAndHeader("direct:start", "Hi!" + c, "id", 123);
-        }
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -45,11 +42,9 @@ public class AggregatorExceptionTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:start")
-                    .aggregate(header("id"))
-                    .batchSize(5)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            throw new java.lang.NoSuchMethodError(exceptionString);   
+                            throw new NoSuchMethodError(exceptionString);
                         }
                     });
             }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
@@ -142,6 +143,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 processExchange(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
+            } catch (Throwable t) {
+                // let Camel error handle take care of all kind of exceptions now
+                exchange.setException(new CamelExchangeException("Error processing Exchange", exchange, t));
             }
 
             boolean done = isDone(exchange);
@@ -163,7 +167,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
-     * Strategy to process the given exchange to the destinated output.
+     * Strategy to process the given exchange to the designated output.
      * <p/>
      * This happens when the exchange is processed the first time and also for redeliveries
      * to the same destination.
