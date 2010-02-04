@@ -299,11 +299,8 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                             try {
                                 sendExchanges();
                             } catch (Throwable t) {
-                                if (t instanceof Exception) {
-                                    getExceptionHandler().handleException(t);
-                                } else {
-                                    getExceptionHandler().handleException(new CamelException(t));
-                                }
+                                // a fail safe to handle all exceptions being thrown
+                                getExceptionHandler().handleException(new CamelException(t));
                             }
                         } finally {
                             queueLock.lock();
@@ -361,7 +358,12 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
             while (iter.hasNext()) {
                 Exchange exchange = iter.next();
                 iter.remove();
-                processExchange(exchange);
+                try {
+                    processExchange(exchange);
+                } catch (Throwable t) {
+                    // must catch throwable to avoid growing memory
+                    getExceptionHandler().handleException("Error processing Exchange: " + exchange, t);
+                }
             }
         }
     }
