@@ -35,6 +35,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -59,7 +61,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         in = url.openStream();
         assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
         // END SNIPPET: clientInvocation
-
+        
     }
 
     @Test
@@ -72,6 +74,8 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         try {
             assertEquals(200, httpclient.executeMethod(put));
             assertEquals("", put.getResponseBodyAsString());
+         // need to check the content type
+            assertEquals("We should get content-type from the response", "text/xml", put.getResponseHeader("content-type").getValue());
         } finally {
             put.releaseConnection();
         }
@@ -89,6 +93,8 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             assertEquals(200, httpclient.executeMethod(post));
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
                     post.getResponseBodyAsString());
+            // need to check the content type
+            assertEquals("We should get content-type from the response", "text/xml", post.getResponseHeader("content-type").getValue());
         } finally {
             post.releaseConnection();
         }
@@ -107,6 +113,8 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             assertEquals(201, httpclient.executeMethod(post));
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
                     post.getResponseBodyAsString());
+         // need to check the content type
+            assertEquals("We should get content-type from the response", "text/xml", post.getResponseHeader("content-type").getValue());
         } finally {
             post.releaseConnection();
         }
@@ -133,6 +141,9 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
                 + "<personId>hello</personId><ssn>000-000-0000</ssn><name>Bonjour</name></GetPersonResponse></soap:Body></soap:Envelope>";
             
             assertEquals("Get a wrong response", correct, response);
+            System.out.println(post.getResponseHeader("content-type"));
+            // need to check the content type
+            assertEquals("We should get content-type from the response", "text/xml", post.getResponseHeader("content-type").getValue());
         } finally {
             post.releaseConnection();
         }
