@@ -236,8 +236,9 @@ public class BatchProcessor extends ServiceSupport implements Processor {
                         try {
                             try {
                                 sendExchanges();
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException(e);
+                            } catch (Throwable t) {
+                                // a fail safe to handle all exceptions being thrown
+                                getExceptionHandler().handleException(t);
                             }
                         } finally {
                             queueLock.lock();
@@ -288,7 +289,12 @@ public class BatchProcessor extends ServiceSupport implements Processor {
             while (iter.hasNext()) {
                 Exchange exchange = iter.next();
                 iter.remove();
-                processExchange(exchange);
+                try {
+                    processExchange(exchange);
+                } catch (Throwable t) {
+                    // must catch throwable to avoid growing memory
+                    getExceptionHandler().handleException(t);
+                }
             }
         }
     }
