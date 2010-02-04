@@ -85,7 +85,7 @@ public class LogFormatter implements ExchangeFormatter {
             // try exception on exchange first
             Exception exception = exchange.getException();
             boolean caught = false;
-            if (showCaughtException && exception == null) {
+            if ((showAll || showCaughtException) && exception == null) {
                 // fallback to caught exception
                 exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                 caught = true;
