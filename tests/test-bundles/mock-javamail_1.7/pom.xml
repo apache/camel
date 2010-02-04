@@ -40,12 +40,8 @@
         <pkgArtifactId>mock-javamail</pkgArtifactId>
         <pkgVersion>1.7</pkgVersion>
         <servicemix.legal.version>1.0</servicemix.legal.version>
-        <camel.osgi.export.pkg>
-            org.jvnet.mock_javamail
-        </camel.osgi.export.pkg>
-        <camel.osgi.import.pkg>
-              *
-        </camel.osgi.import.pkg>
+        <camel.osgi.export.pkg>org.jvnet.mock_javamail.provider</camel.osgi.export.pkg>
+        <camel.osgi.import.pkg>*</camel.osgi.import.pkg>
         <camel.osgi.private.pkg>
             META-INF;-split-package:=merge-first,
             META-INF.services;-split-package:=merge-first
