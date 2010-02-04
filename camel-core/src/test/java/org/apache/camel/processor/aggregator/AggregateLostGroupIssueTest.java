@@ -48,7 +48,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://foo?period=100").startupOrder(2)
+                from("timer://foo?period=100&delay=1000").startupOrder(2)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(messageIndex++);
