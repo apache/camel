@@ -44,6 +44,8 @@
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
     <felix-version>2.0.1</felix-version>
     <jetty-version>6.1.22</jetty-version>
+    <jaxb-version>2.1.12</jaxb-version>
+    <jaxb-api-version>2.1</jaxb-api-version>
   </properties>
 
   <mailingLists>
@@ -242,6 +244,23 @@
           <groupId>com.sun.tools.jxc.maven2</groupId>
           <artifactId>maven-jaxb-schemagen-plugin</artifactId>
           <version>1.3-dev</version>
+          <dependencies>
+             <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api-version}</version>
+             </dependency>
+             <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${jaxb-version}</version>
+             </dependency>
+             <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-xjc</artifactId>
+                <version>${jaxb-version}</version>
+             </dependency>
+          </dependencies>
         </plugin>
   
         <plugin>
@@ -519,17 +538,17 @@
               <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>2.1</version>
+                <version>${jaxb-api-version}</version>
               </dependency>
               <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>2.1.12</version>
+                <version>${jaxb-version}</version>
               </dependency>
               <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-xjc</artifactId>
-                <version>2.1.12</version>
+                <version>${jaxb-version}</version>
               </dependency>
               <dependency>
                 <groupId>ant-contrib</groupId>
