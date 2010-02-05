@@ -32,16 +32,23 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
 
     private class MyCustomRoutePolicy extends RoutePolicySupport {
 
+        private volatile boolean stopped = false;
+
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             if ("stop".equals(body)) {
                 try {
+                    stopped = true;
                     stopConsumer(route.getConsumer());
                 } catch (Exception e) {
                     handleException(e);
                 }
             }
+        }
+
+        public boolean isStopped() {
+            return stopped;
         }
     }
 
@@ -59,20 +66,9 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         // we send stop command so we should only get 1 message
         template.sendBody("seda:foo", "stop");
 
-        Thread.sleep(500);
-
-        template.sendBody("seda:foo", "Bye World");
-
         assertMockEndpointsSatisfied();
 
-        // we reset and prepare for the last message to arrive
-        mock.reset();
-        mock.expectedBodiesReceived("Bye World");
-
-        // start the route consumer again
-        context.getRoutes().get(0).getConsumer().start();
-
-        assertMockEndpointsSatisfied();
+        assertTrue("Should be stopped", policy.isStopped());
     }
 
     @Override
@@ -80,7 +76,7 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routePolicy(policy).to("mock:result");
+                from("seda:foo").routeId("foo").routePolicy(policy).to("mock:result");
             }
         };
     }
