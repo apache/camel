@@ -41,7 +41,7 @@
         <pkgVersion>1.7</pkgVersion>
         <servicemix.legal.version>1.0</servicemix.legal.version>
         <camel.osgi.export.pkg>
-            org.jvnet.mock_javamail
+            org.jvnet.mock_javamail*
         </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
               *
