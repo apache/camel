@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -35,7 +37,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 
-    protected static volatile int invoked;
+    protected static AtomicInteger invoked = new AtomicInteger();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -98,7 +100,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     }
 
     public void testRetryUntilRecipientListOkOnly() throws Exception {
-        invoked = 0;
+        invoked.set(0);
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -109,11 +111,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        assertEquals(0, invoked);
+        assertEquals(0, invoked.get());
     }
 
     public void testRetryUntilRecipientListFailOnly() throws Exception {
-        invoked = 0;
+        invoked.set(0);
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -124,11 +126,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        assertEquals(3, invoked);
+        assertEquals(3, invoked.get());
     }
 
     public void testRetryUntilRecipientListFailAndOk() throws Exception {
-        invoked = 0;
+        invoked.set(0);
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -139,11 +141,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        assertEquals(3, invoked);
+        assertEquals(3, invoked.get());
     }
 
     public void testRetryUntilRecipientListOkAndFail() throws Exception {
-        invoked = 0;
+        invoked.set(0);
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -154,11 +156,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        assertEquals(3, invoked);
+        assertEquals(3, invoked.get());
     }
 
     public void testRetryUntilRecipientNotFail() throws Exception {
-        invoked = 0;
+        invoked.set(0);
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -169,11 +171,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        assertEquals(0, invoked);
+        assertEquals(0, invoked.get());
     }
 
     public void testRetryUntilRecipientFailAndNotFail() throws Exception {
-        invoked = 0;
+        invoked.set(0);
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -184,11 +186,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        assertEquals(3, invoked);
+        assertEquals(3, invoked.get());
     }
 
     public void testRetryUntilRecipientNotFailAndFail() throws Exception {
-        invoked = 0;
+        invoked.set(0);
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -199,7 +201,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
 
         context.stop();
 
-        assertEquals(3, invoked);
+        assertEquals(3, invoked.get());
     }
 
 
@@ -226,7 +228,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         // using bean binding we can bind the information from the exchange to the types we have in our method signature
         public boolean retryUntil(@Header(Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
-            invoked++;
+            invoked.incrementAndGet();
 
             // we can of course do what ever we want to determine the result but this is a unit test so we end after 3 attempts
             return counter < 3;
