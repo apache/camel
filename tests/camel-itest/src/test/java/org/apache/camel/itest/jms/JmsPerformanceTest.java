@@ -18,9 +18,12 @@ package org.apache.camel.itest.jms;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
@@ -43,6 +46,11 @@ public class JmsPerformanceTest extends CamelTestSupport {
     protected ClassPathXmlApplicationContext applicationContext;
     protected boolean useLocalBroker = true;
     private int consumedMessageCount;
+
+    protected String getActiveMQFileName() {
+        // using different port number to avoid clash
+        return "activemq7.xml";
+    }
 
     @Test
     public void testSendingAndReceivingMessages() throws Exception {
@@ -89,7 +97,7 @@ public class JmsPerformanceTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         if (useLocalBroker) {
-            applicationContext = new ClassPathXmlApplicationContext("activemq.xml");
+            applicationContext = new ClassPathXmlApplicationContext(getActiveMQFileName());
             applicationContext.start();
         }
 
@@ -118,6 +126,11 @@ public class JmsPerformanceTest extends CamelTestSupport {
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("myBean", myBean);
+
+        // add ActiveMQ client
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61617");
+        answer.bind("activemq", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+
         return answer;
     }
 
