@@ -44,8 +44,7 @@ public class JdbcPreserveHeadersTest extends CamelTestSupport {
     public void testPreserveHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("ONE", 1);
-        mock.expectedHeaderReceived("TWO", 2);
+        mock.expectedHeaderReceived("foo", "bar");
         mock.assertIsSatisfied();
     }
 
@@ -61,8 +60,7 @@ public class JdbcPreserveHeadersTest extends CamelTestSupport {
                 from("timer://kickoff?period=10000").
                         process(new Processor() {
                             public void process(Exchange e) throws Exception {
-                                e.getIn().setHeader("ONE", 1);
-                                e.getIn().setHeader("TWO", 2);
+                                e.getIn().setHeader("foo", "bar");
                             }
                         }).
                         setBody(constant("select * from customer")).
