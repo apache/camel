@@ -103,34 +103,37 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         // Start scanning where we left
         in.position(state.current);
         LOG.debug("Start scanning buffer at position " + in.position());
-
         while (in.hasRemaining()) {
             byte b = in.get();
             // Check start byte
             if (b == config.getStartByte()) {
-                if (state.posStart > 0) {
+                if (state.posStart > 0 || state.waitingForEndByte2) {
                     LOG.warn("Ignoring message start at position " + in.position() + " before previous message has ended.");
                 } else {
                     state.posStart = in.position();
+                    state.waitingForEndByte2 = false;
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Message starts at position " + state.posStart);
                     }
                 }
             }
-            // Check end bytes
+            // Check end byte1 
             if (b == config.getEndByte1()) {
-                byte next = in.get();
-                if (next == config.getEndByte2()) {
-                    state.posEnd = in.position() - 2; // use -2 to skip these
-                                                      // last 2 end markers
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Message ends at position " + state.posEnd);
-                    }
-                    break;
+                if (!state.waitingForEndByte2 && state.posStart > 0) {
+                    state.waitingForEndByte2 = true;
                 } else {
-                    // we expected the 2nd end marker
-                    LOG.warn("The 2nd end byte " + config.getEndByte2() + " was not found, but was " + b);
+                    LOG.warn("Ignoring unexpected 1st end byte " + b + ". Expected 2nd endpoint  " + config.getEndByte2());
                 }
+            }
+            // Check end byte2 
+            if (b == config.getEndByte2() && state.waitingForEndByte2) {
+                state.posEnd = in.position() - 2; // use -2 to skip these
+                                                  // last 2 end markers
+                state.waitingForEndByte2 = false;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Message ends at position " + state.posEnd);
+                }
+                break;
             }
         }
         // Remember where we are
@@ -161,6 +164,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         int posStart;
         int posEnd;
         int current;
+        boolean waitingForEndByte2;
 
         int length() {
             return posEnd - posStart;
@@ -169,6 +173,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
         void reset() {
             posStart = 0;
             posEnd = 0;
+            waitingForEndByte2 = false;
         }
     }
 
