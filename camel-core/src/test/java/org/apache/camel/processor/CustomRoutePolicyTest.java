@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -32,14 +34,14 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
 
     private class MyCustomRoutePolicy extends RoutePolicySupport {
 
-        private volatile boolean stopped = false;
+        private volatile AtomicBoolean stopped = new AtomicBoolean();
 
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             if ("stop".equals(body)) {
                 try {
-                    stopped = true;
+                    stopped.set(true);
                     stopConsumer(route.getConsumer());
                 } catch (Exception e) {
                     handleException(e);
@@ -48,7 +50,7 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         }
 
         public boolean isStopped() {
-            return stopped;
+            return stopped.get();
         }
     }
 
@@ -67,6 +69,9 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         template.sendBody("seda:foo", "stop");
 
         assertMockEndpointsSatisfied();
+
+        // give time for slow boxes
+        Thread.sleep(500);
 
         assertTrue("Should be stopped", policy.isStopped());
     }
