@@ -14,13 +14,12 @@
 		the specific language governing permissions and limitations under the
 		License.
 	-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
 		<artifactId>components</artifactId>
 		<groupId>org.apache.camel</groupId>
-		<version>2.2-SNAPSHOT</version>
+		<version>2.2.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>camel-web</artifactId>
@@ -253,8 +252,7 @@
 
 				<configuration>
 					<!--
-						<connectors> <connector
-						implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+						<connectors> <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
 						<port>${jetty.port}</port> <maxIdleTime>60000</maxIdleTime>
 						</connector> </connectors>
 					-->
@@ -660,7 +658,7 @@
 					WEB-INF/lib/jersey-json-${jersey-version}.jar,
 					WEB-INF/tags/api
 		        </osgi.classpath>
-				<osgi.private.pkg></osgi.private.pkg>
+				<osgi.private.pkg />
 				<osgi.dynamic>*</osgi.dynamic>
 				<webApplicationContext>camelweb</webApplicationContext>
 			</properties>
