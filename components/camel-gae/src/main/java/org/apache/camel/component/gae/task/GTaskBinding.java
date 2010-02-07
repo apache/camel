@@ -85,7 +85,7 @@ public class GTaskBinding implements
     }
     
     /**
-     * @throws UnsupportedOperationException.
+     * @throws UnsupportedOperationException
      */
     public Exchange readResponse(GTaskEndpoint endpoint, Exchange exchange, Void response) {
         throw new UnsupportedOperationException("gtask responses not supported");
@@ -109,11 +109,8 @@ public class GTaskBinding implements
         return exchange;
     }
 
-    /**
-     * @throws UnsupportedOperationException.
-     */
     public HttpServletResponse writeResponse(GTaskEndpoint endpoint, Exchange exchange, HttpServletResponse response) {
-        throw new UnsupportedOperationException("gtask responses not supported");
+        return response;
     }
 
     // ----------------------------------------------------------------

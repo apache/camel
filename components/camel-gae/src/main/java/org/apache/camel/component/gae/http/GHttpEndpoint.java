@@ -45,7 +45,7 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
- * Represents a <a href="http://camel.apache.org/todo.html">Google App Engine
+ * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
  * HTTP endpoint</a>.
  */
 public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSupport<GHttpEndpoint, HTTPRequest, HTTPResponse> {

@@ -107,11 +107,8 @@ public class GHttpBinding implements
         return exchange;
     }
 
-    /**
-     * @throws UnsupportedOperationException.
-     */
     public HttpServletResponse writeResponse(GHttpEndpoint endpoint, Exchange exchange, HttpServletResponse response) {
-        throw new UnsupportedOperationException("gtask responses not supported");
+        return response;
     }
 
     // ----------------------------------------------------------------
@@ -146,7 +143,7 @@ public class GHttpBinding implements
         exchange.getIn().removeHeader("Accept-Encoding");
         exchange.getIn().removeHeader("Content-Encoding");
     }
-    
+
     protected void writeRequestHeaders(GHttpEndpoint endpoint, Exchange exchange, HTTPRequest request) {
         HeaderFilterStrategy strategy = endpoint.getHeaderFilterStrategy();
         for (String headerName : exchange.getIn().getHeaders().keySet()) {

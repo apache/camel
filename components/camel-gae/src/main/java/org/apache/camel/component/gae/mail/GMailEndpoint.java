@@ -27,7 +27,7 @@ import org.apache.camel.component.gae.bind.OutboundBindingSupport;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * Represents a <a href="http://camel.apache.org/todo.html">Google App Engine Mail endpoint</a>.
+ * Represents a <a href="http://camel.apache.org/gmail.html">Google App Engine Mail endpoint</a>.
  */
 public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSupport<GMailEndpoint, Message, Void> {
 

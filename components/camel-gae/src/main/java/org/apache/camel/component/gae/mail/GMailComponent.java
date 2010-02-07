@@ -26,7 +26,7 @@ import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * The <a href="http://camel.apache.org/todo.html">Google App Engine Mail
+ * The <a href="http://camel.apache.org/gmail.html">Google App Engine Mail
  * Component</a> supports outbound mail communication. It makes use of the mail
  * service provided by Google App Engine.
  */

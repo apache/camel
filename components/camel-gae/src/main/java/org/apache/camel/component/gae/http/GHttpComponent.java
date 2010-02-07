@@ -32,7 +32,7 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
- * The <a href="http://camel.apache.org/todo.html">Google App Engine HTTP
+ * The <a href="http://camel.apache.org/ghttp.html">Google App Engine HTTP
  * Component</a> supports HTTP-based inbound and outbound communication. Inbound
  * HTTP communication is realized in terms of the <a
  * href="http://camel.apache.org/servlet.html"> Servlet Component</a> component.

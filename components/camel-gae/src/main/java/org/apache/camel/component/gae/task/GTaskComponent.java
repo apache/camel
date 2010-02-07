@@ -32,11 +32,11 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
- * The <a href="http://camel.apache.org/todo.html">Google App Engine Task
+ * The <a href="http://camel.apache.org/gtask.html">Google App Engine Task
  * Queueing Component</a> supports asynchronous message processing. Outbound
  * communication uses the task queueing service of the Google App Engine.
  * Inbound communication is realized in terms of the <a
- * href="http://camel.apache.org/servlet.html"> Servlet Component</a> component
+ * href="http://camel.apache.org/servlet.html">Servlet Component</a> component
  * for installing a web hook.
  */
 public class GTaskComponent extends ServletComponent {

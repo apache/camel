@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpMessage;
 
@@ -46,9 +47,12 @@ public class HttpBindingInvocationHandler<E extends Endpoint, S, T> implements I
             HttpMessage message = (HttpMessage)args[1];
             // prepare exchange for further inbound binding operations
             message.getExchange().setIn(message);
-            // delegate further binding operations to inbound binding
+            // delegate further request binding operations to inbound binding
             inboundBinding.readRequest(endpoint, message.getExchange(), (S)args[0]);
-        } 
+        } else if (method.getName().equals("writeResponse") && (args.length == 2)) {
+            // delegate further response binding operations to inbound binding
+            inboundBinding.writeResponse(endpoint, (Exchange)args[0], (T)args[1]);
+        }
         return result;
     }
     
