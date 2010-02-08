@@ -59,7 +59,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         Matcher matcher = PATTERN.matcher(expression);
         if (matcher.matches()) {
             if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as simple expression wiht operator: " + expression);
+                log.debug("Expression is evaluated as simple expression with operator: " + expression);
             }
             return createOperatorExpression(matcher, expression);
         } else if (expression.indexOf("${") >= 0) {

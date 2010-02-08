@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -33,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.spi.Language;
@@ -1127,6 +1129,43 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "file:modified";
+            }
+        };
+    }
+
+    public static Expression propertiesComponentExpression(final String key, final String locations) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                try {
+                    if (locations != null) {
+                        // the properties component is optional as we got locations
+                        // getComponent will create a new component if none already exists
+                        Component component = exchange.getContext().getComponent("properties");
+                        PropertiesComponent pc = exchange.getContext().getTypeConverter()
+                                .mandatoryConvertTo(PropertiesComponent.class, component);
+                        // enclose key with #{ } to force parsing
+                        String[] paths = locations.split(",");
+                        return pc.parseUri("#{" + key + "}", paths);
+                    } else {
+                        // the properties component is mandatory if no locations provided
+                        Component component = exchange.getContext().hasComponent("properties");
+                        if (component == null) {
+                            throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
+                                    + " in CamelContext to support property placeholders in expressions");
+                        }
+                        PropertiesComponent pc = exchange.getContext().getTypeConverter()
+                                .mandatoryConvertTo(PropertiesComponent.class, component);
+                        // enclose key with #{ } to force parsing
+                        return pc.parseUri("#{" + key + "}");
+                    }
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "properties(" + key + ")";
             }
         };
     }

@@ -28,7 +28,6 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
@@ -53,6 +52,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
@@ -395,6 +395,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public Endpoint getEndpoint(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
+
+        // in case path has property placeholders then try to let property component resolve those
+        try {
+            uri = resolvePropertyPlaceholders(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
 
         // normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order
         try {
@@ -1500,6 +1507,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
 
         return answer;
+    }
+
+    protected String resolvePropertyPlaceholders(String uri) throws Exception {
+        // do not parse uris that are designated for the properties component as it will handle that itself
+        if (!uri.startsWith("properties:") && uri.contains("#{")) {
+            // the uri contains property placeholders so lookup mandatory properties component and let it parse it
+            Component component = hasComponent("properties");
+            if (component == null) {
+                throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
+                        + " in CamelContext to support property placeholders in endpoint URIs");
+            }
+            PropertiesComponent pc = getTypeConverter().mandatoryConvertTo(PropertiesComponent.class, component);
+            // the parser will throw exception if property key was not found
+            String answer = pc.parseUri(uri);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Resolved uri: " + uri + " --> " + answer);
+            }
+            return answer;
+        }
+        return uri;
     }
 
     @Override

@@ -41,7 +41,11 @@ import org.apache.camel.util.ObjectHelper;
  * </li>
  * <li>bean:&lt;bean expression&gt; to invoke a bean using the
  * {@link org.apache.camel.language.bean.BeanLanguage BeanLanguage}</li>
- * </ul>
+ * <li>properties:&lt;[locations]&gt;:&lt;key&gt; for using property placeholders using the
+ *     {@link org.apache.camel.component.properties.PropertiesComponent}.
+ *     The locations parameter is optional and you can enter multiple locations separated with comma.
+ * </li>
+* </ul>
  * <p/>
  * The simple language now also includes file language out of the box which means the following expression is also
  * supported:
@@ -149,6 +153,23 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         remainder = ifStartsWithReturnRemainder("bean:", expression);
         if (remainder != null) {
             return ExpressionBuilder.beanExpression(remainder);
+        }
+
+        // properties: prefix
+        remainder = ifStartsWithReturnRemainder("properties:", expression);
+        if (remainder != null) {
+            String[] parts = remainder.split(":");
+            if (parts.length > 2) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${properties:[locations]:key} was: " + expression);
+            }
+
+            String locations = null;
+            String key = remainder;
+            if (parts.length == 2) {
+                locations = ObjectHelper.before(remainder, ":");
+                key = ObjectHelper.after(remainder, ":");
+            }
+            return ExpressionBuilder.propertiesComponentExpression(key, locations);
         }
 
         if (strict) {

@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -40,6 +41,7 @@ import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
 import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
+import org.apache.camel.spring.CamelPropertiesComponentFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
@@ -91,7 +93,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true);
         addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true);
         addBeanDefinitionParser("export", CamelServiceExporter.class, true);
-       
+        addBeanDefinitionParser("propertyPlaceholder", CamelPropertiesComponentFactoryBean.class, true);
+
         // jmx agent cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
 
@@ -254,8 +257,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                                 }
                                 // set the templates with the camel context 
                                 if (localName.equals("template") || localName.equals("consumerTemplate")
-                                    || localName.equals("proxy") || localName.equals("export")) {
-                                    // set the camel context 
+                                    || localName.equals("proxy") || localName.equals("export")
+                                    || localName.equals("propertyPlaceholder")) {
+                                    // set the camel context
                                     definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
                                 }   
                             }
@@ -265,7 +269,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
            
 
-            // register as endpoint defined indirectly in the routes by from/to types having id explict set
+            // register as endpoint defined indirectly in the routes by from/to types having id explicit set
             registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
 
             // register templates if not already defined
@@ -274,7 +278,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element, binder);
             if (!createdBeanPostProcessor) {
-                // no bean processor element so lets create it by ourself
+                // no bean processor element so lets create it by our self
                 Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
                 element.appendChild(childElement);
                 createBeanPostProcessor(parserContext, contextId, childElement, builder);
@@ -387,7 +391,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // it is a bit cumbersome to work with the spring bean definition parser
         // as we kinda need to eagerly register the bean definition on the parser context
         // and then later we might find out that we should not have done that in case we have multiple camel contexts
-        // that would have a id clash by auto regsitering the same bean definition with the same id such as a producer template
+        // that would have a id clash by auto registering the same bean definition with the same id such as a producer template
 
         // see if we have already auto registered this id
         BeanDefinition existing = autoRegisterMap.get(id);
