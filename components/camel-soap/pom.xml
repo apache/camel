@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+        Licensed to the Apache Software Foundation (ASF) under one or
+        more contributor license agreements. See the NOTICE file
+        distributed with this work for additional information regarding
+        copyright ownership. The ASF licenses this file to You under the
+        Apache License, Version 2.0 (the "License"); you may not use
+        this file except in compliance with the License. You may obtain
+        a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+        applicable law or agreed to in writing, software distributed
+        under the License is distributed on an "AS IS" BASIS, WITHOUT
+        WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions
+        and limitations under the License.
+    -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>2.3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-soap</artifactId>
+    <packaging>bundle</packaging>
+    <name>Camel :: SOAP</name>
+    <description>Camel SOAP support</description>
+
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.converter.jaxb.*</camel.osgi.export.pkg>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+        </dependency>
+
+	<!-- JAXWS api jars -->
+	<dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jaxws_2.1_spec</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- for testing -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-common-utilities</artifactId>
+            <version>${cxf-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>wstx-asl</artifactId>
+            <version>3.2.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>pertest</forkMode>
+                    <excludes>
+                        <!-- TODO FIXME ASAP -->
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-common-xsd</artifactId>
+                <version>${cxf-version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <xsdOptions>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/soap.xsd</xsd>
+                                </xsdOption>
+                            </xsdOptions>
+                        </configuration>
+                        <goals>
+                            <goal>xsdtojava</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-xjc-dv</artifactId>
+                        <version>${cxf-version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-common-utilities</artifactId>
+                        <version>${cxf-version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>${cxf-version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources-wsdl</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/converter/soap/CustomerService.wsdl</wsdl>
+                                    <bindingFiles>
+                                        <bindingFile>${basedir}/src/test/resources/org/apache/camel/converter/soap/binding.xml</bindingFile>
+                                    </bindingFiles>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/converter/soap/CustomerService2.wsdl</wsdl>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-xjc-ts</artifactId>
+                        <version>${cxf-version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

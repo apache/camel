@@ -89,6 +89,7 @@
     <module>camel-servlet</module>
     <module>camel-smpp</module>
     <module>camel-snmp</module>
+    <module>camel-soap</module>
     <module>camel-spring</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-javaconfig</module>

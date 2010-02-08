@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Envelope xmlns:ns2="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://customerservice.example.com/">
+    <ns2:Body>
+        <ns2:Fault>
+            <faultcode xmlns:ns4="com.example.customerservice">ns4:NoSuchCustomerException</faultcode>
+            <faultstring>Customer not found</faultstring>
+            <detail>
+                <ns3:NoSuchCustomer>
+                    <customerId>none</customerId>
+                </ns3:NoSuchCustomer>
+            </detail>
+        </ns2:Fault>
+    </ns2:Body>
+</ns2:Envelope>
