@@ -27,7 +27,7 @@ public final class ScriptTestHelper {
     }
 
     public static boolean canRunTestOnThisPlatform() {
-        // we cannot run unit tests on Mac with JDK 1.5
+        // requires java 1.6
 
         String version = System.getProperty("java.version");
         String[] numbers = version.split("\\.");
@@ -36,9 +36,7 @@ public final class ScriptTestHelper {
             return true;
         }
 
-        // for JDK 1.5 or lower we can run on any platform except Apple/MacOSx
-        String os = System.getProperty("os.name");
-        return !os.startsWith("Mac");
+        return false;
     }
 
 }
