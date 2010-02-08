@@ -57,12 +57,6 @@
        <groupId>org.apache.cxf</groupId>
        <artifactId>cxf-rt-transports-http-jetty</artifactId>
        <version>${cxf-version}</version>
-       <exclusions>
-          <exclusion>
-             <groupId>org.slf4j</groupId>
-             <artifactId>slf4j-jdk14</artifactId>
-           </exclusion>
-        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -90,6 +84,10 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>    
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
