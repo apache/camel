@@ -28,7 +28,7 @@ import org.junit.Test;
 public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/poll/?password=admin&delay=3000&delete=true&sortBy=file:name&maxMessagesPerPoll=2";
+        return "ftp://admin@localhost:" + getPort() + "/poll/?password=admin&delay=6000&delete=true&sortBy=file:name&maxMessagesPerPoll=2";
     }
 
     @Override
@@ -40,9 +40,12 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
 
     @Test
     public void testMaxMessagesPerPoll() throws Exception {
+        // start route
+        context.startRoute("foo");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World", "Godday World");
-        mock.setResultWaitTime(2000);
+        mock.setResultWaitTime(4000);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
         assertMockEndpointsSatisfied();
@@ -63,7 +66,7 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
+                from(getFtpUrl()).noAutoStartup().routeId("foo").to("mock:result");
             }
         };
     }
