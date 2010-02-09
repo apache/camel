@@ -66,25 +66,4 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
         assertTrue("Should be same byte data", same);
     }
 
-    public void testFileUTF8ConvertDefaultCharset() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("file://target/utf8")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
-            }
-        });
-        context.start();
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-
-        assertMockEndpointsSatisfied();
-
-        byte[] data = mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
-        boolean same = ObjectHelper.equal(body, data);
-        assertTrue("Should NOT be same byte data", same);
-    }
-
 }

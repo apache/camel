@@ -167,8 +167,8 @@ public class DefaultCamelContextTest extends TestCase {
         assertNull(ctx.hasEndpoint("mock://bar"));
 
         try {
-            ctx.hasEndpoint(null);
-            fail("Should have thrown exception");
+            Endpoint endpoint = ctx.hasEndpoint(null);
+            assertNull("Should not have endpoint", endpoint);
         } catch (ResolveEndpointFailedException e) {
             // expected
         }
