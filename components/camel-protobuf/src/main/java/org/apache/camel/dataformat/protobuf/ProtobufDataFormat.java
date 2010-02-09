@@ -57,7 +57,7 @@ public class ProtobufDataFormat implements DataFormat {
         if (instance instanceof Message) {
             this.defaultInstance = (Message) instance;
         } else {
-            throw new IllegalArgumentException("The instance should be subClass of com.google.protobuf.Message");
+            throw new IllegalArgumentException("The argument for setDefaultInstance should be subClass of com.google.protobuf.Message");
         }
     }
     
