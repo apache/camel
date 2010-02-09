@@ -34,7 +34,6 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.converter.soap.name.ElementNameStrategy;
 import org.apache.camel.converter.soap.name.ExceptionNameStrategy;
 import org.apache.camel.converter.soap.name.TypeNameStrategy;
-import org.apache.camel.spi.ClassResolver;
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Detail;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
@@ -96,7 +95,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
 
         String soapAction = (String) exchange.getProperty(Exchange.SOAP_ACTION);
         Body body = new Body();
-        ClassResolver classResolver = exchange.getContext().getClassResolver();
 
         Throwable exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         if (exception == null) {
@@ -104,9 +102,9 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         }
         final JAXBElement<?> content;
         if (exception != null) {
-            content = createFaultFromException(exception, soapAction, classResolver);
+            content = createFaultFromException(exception, soapAction);
         } else {
-            content = createBodyContentFromObject(inputObject, soapAction, classResolver);
+            content = createBodyContentFromObject(inputObject, soapAction);
         }
         body.getAny().add(content);
         Envelope envelope = new Envelope();
@@ -128,8 +126,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * @return JAXBElement for the body content
      */
     @SuppressWarnings("unchecked")
-    private JAXBElement<?> createBodyContentFromObject(final Object inputObject, String soapAction,
-            ClassResolver classResolver) {
+    private JAXBElement<?> createBodyContentFromObject(final Object inputObject, String soapAction) {
         Object graph;
         if (inputObject instanceof BeanInvocation) {
             BeanInvocation bi = (BeanInvocation) inputObject;
@@ -141,7 +138,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         } else {
             graph = inputObject;
         }
-        QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, graph.getClass(), classResolver);
+        QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, graph.getClass());
         return new JAXBElement(name, graph.getClass(), graph);
     }
 
@@ -152,14 +149,11 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * 
      * @param exception
      * @param soapAction
-     * @param classResolver
      * @return SOAP fault from given Throwable
      */
     @SuppressWarnings("unchecked")
-    private JAXBElement<Fault> createFaultFromException(final Throwable exception, String soapAction,
-            ClassResolver classResolver) {
-        QName name = new ExceptionNameStrategy().findQNameForSoapActionOrType(soapAction, exception.getClass(),
-                classResolver);
+    private JAXBElement<Fault> createFaultFromException(final Throwable exception, String soapAction) {
+        QName name = new ExceptionNameStrategy().findQNameForSoapActionOrType(soapAction, exception.getClass());
         Object faultObject = null;
         try {
             Method method = exception.getClass().getMethod("getFaultInfo");

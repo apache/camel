@@ -19,8 +19,6 @@ package org.apache.camel.converter.soap.name;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebFault;
 
-import org.apache.camel.spi.ClassResolver;
-
 /**
  * Determine element name for an exception
  */
@@ -29,7 +27,7 @@ public class ExceptionNameStrategy implements ElementNameStrategy {
     /**
      * @return QName from exception class by evaluating the WebFault annotataion
      */
-    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type, ClassResolver classResolver) {
+    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
         WebFault webFault = type.getAnnotation(WebFault.class);
         if (webFault == null || webFault.targetNamespace() == null) {
             throw new RuntimeException("The type " + type.getName() + " needs to have an WebFault annotation with name and targetNamespace");

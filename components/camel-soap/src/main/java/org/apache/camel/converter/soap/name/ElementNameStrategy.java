@@ -18,8 +18,6 @@ package org.apache.camel.converter.soap.name;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.spi.ClassResolver;
-
 /**
  * Strategy interface for determining the element name for a SOAP body or fault
  */
@@ -30,8 +28,7 @@ public interface ElementNameStrategy {
      * 
      * @param soapAction
      * @param type
-     * @param classResolver
      * @return resolved element name
      */
-    QName findQNameForSoapActionOrType(String soapAction, Class<?> type, ClassResolver classResolver);
+    QName findQNameForSoapActionOrType(String soapAction, Class<?> type);
 }

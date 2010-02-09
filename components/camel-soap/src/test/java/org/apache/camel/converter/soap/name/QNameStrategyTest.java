@@ -22,8 +22,6 @@ import junit.framework.Assert;
 
 import com.example.customerservice.GetCustomersByName;
 
-import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.spi.ClassResolver;
 import org.junit.Test;
 
 /**
@@ -39,9 +37,8 @@ public class QNameStrategyTest {
     public void testQName() {
         QName elementName = new QName("http://my.name.org", "myElement");
         QNameStrategy strategy = new QNameStrategy(elementName);
-        ClassResolver resolver = new DefaultClassResolver();
         
-        QName actualElementName = strategy.findQNameForSoapActionOrType(null, GetCustomersByName.class, resolver);
+        QName actualElementName = strategy.findQNameForSoapActionOrType(null, GetCustomersByName.class);
         Assert.assertEquals(elementName, actualElementName);
     }
 }

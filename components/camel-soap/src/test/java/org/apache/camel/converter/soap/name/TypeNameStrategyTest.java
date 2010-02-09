@@ -22,8 +22,6 @@ import junit.framework.Assert;
 
 import com.example.customerservice.GetCustomersByName;
 
-import org.apache.camel.impl.DefaultClassResolver;
-import org.apache.camel.spi.ClassResolver;
 import org.junit.Test;
 
 public class TypeNameStrategyTest {
@@ -31,36 +29,31 @@ public class TypeNameStrategyTest {
     @Test
     public void testTypeNameStrategy() {
         TypeNameStrategy strategy = new TypeNameStrategy();
-        ClassResolver resolver = new DefaultClassResolver();
-        QName name = strategy.findQNameForSoapActionOrType("", GetCustomersByName.class, resolver);
+        QName name = strategy.findQNameForSoapActionOrType("", GetCustomersByName.class);
         Assert.assertEquals("http://customerservice.example.com/", name.getNamespaceURI());
         Assert.assertEquals("getCustomersByName", name.getLocalPart());
     }
-    
+
     @Test
     public void testNoAnnotation() {
         TypeNameStrategy strategy = new TypeNameStrategy();
-        ClassResolver resolver = new DefaultClassResolver();
         try {
-            strategy.findQNameForSoapActionOrType("", String.class, resolver);
+            strategy.findQNameForSoapActionOrType("", String.class);
             Assert.fail();
         } catch (RuntimeException e) {
             // Expected here
         }
     }
-    
+
     @Test
     public void testNoPackageInfo() {
         TypeNameStrategy strategy = new TypeNameStrategy();
-        ClassResolver resolver = new DefaultClassResolver();
-        try {
-            strategy.findQNameForSoapActionOrType("", AnnotatedClassWithoutNamespace.class, resolver);
-            Assert.fail();
-        } catch (RuntimeException e) {
-            // Expected here as there is no package info and no namespace on class
-        }
-        QName name = strategy.findQNameForSoapActionOrType("", AnnotatedClassWithNamespace.class, resolver);
+        QName name = strategy.findQNameForSoapActionOrType("", AnnotatedClassWithoutNamespace.class);
         Assert.assertEquals("test", name.getLocalPart());
-        Assert.assertEquals("http://mynamespace", name.getNamespaceURI());
+        Assert.assertEquals("##default", name.getNamespaceURI());
+
+        QName name2 = strategy.findQNameForSoapActionOrType("", AnnotatedClassWithNamespace.class);
+        Assert.assertEquals("test", name2.getLocalPart());
+        Assert.assertEquals("http://mynamespace", name2.getNamespaceURI());
     }
 }

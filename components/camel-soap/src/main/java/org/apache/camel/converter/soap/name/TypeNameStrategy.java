@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.apache.camel.spi.ClassResolver;
-
 /**
  * Strategy to determine the marshalled element name by looking at the annotations of the
  * class to be marshalled
@@ -32,19 +30,16 @@ public class TypeNameStrategy implements ElementNameStrategy {
      * @return determine element name by using the XmlType.name() of the type to be
      * marshalled and the XmlSchema.namespace() of the package-info
      */
-    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type, ClassResolver classResolver) {
+    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
         XmlType xmlType = type.getAnnotation(XmlType.class);
         if (xmlType == null || xmlType.name() == null) {
             throw new RuntimeException("The type " + type.getName() + " needs to have an XmlType annotation with name");
         }
         String nameSpace = xmlType.namespace();
         if ("##default".equals(nameSpace)) {
-            try {
-                Class<?> packageInfo = classResolver.resolveMandatoryClass(type.getPackage().getName() + ".package-info");
-                XmlSchema xmlSchema = packageInfo.getAnnotation(XmlSchema.class);
+            XmlSchema xmlSchema = type.getPackage().getAnnotation(XmlSchema.class);
+            if (xmlSchema != null) {
                 nameSpace = xmlSchema.namespace();
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("package info not found for package " + type.getPackage().getName(), e);
             }
         }
         return new QName(nameSpace, xmlType.name());

@@ -18,8 +18,6 @@ package org.apache.camel.converter.soap.name;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.spi.ClassResolver;
-
 /**
  * Simply ElementNameStrategy that returns one preset QName
  */
@@ -38,7 +36,7 @@ public class QNameStrategy implements ElementNameStrategy {
     /**
      * @return preset element name
      */
-    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type, ClassResolver classResolver) {
+    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
         return elementName;
     }
     

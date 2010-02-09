@@ -29,7 +29,6 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.ClassResolver;
 
 /**
  * Offers a finder for a webservice interface to determine the QName of a
@@ -128,7 +127,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
      * @return matching QName throws RuntimeException if no matching QName was
      *         found
      */
-    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type, ClassResolver classResolver) {
+    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
         MethodInfo info = soapActionToMethodInfo.get(soapAction);
         if (info != null) {
             if (isClient) {
@@ -145,7 +144,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         }
         if (qName == null) {
             try {
-                qName = fallBackStrategy.findQNameForSoapActionOrType(soapAction, type, classResolver);
+                qName = fallBackStrategy.findQNameForSoapActionOrType(soapAction, type);
             } catch (Exception e) {
                 String msg = "No method found that matches the given SoapAction " + soapAction + " or that has an "
                         + (isClient ? "input" : "output") + " of type " + type.getName();

@@ -25,7 +25,6 @@ import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -36,17 +35,16 @@ public class ServiceInterfaceStrategyTest {
     @Test
     public void testServiceInterfaceStrategyWithClient() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(CustomerService.class, true);
-        DefaultClassResolver resolver = new DefaultClassResolver();
-        QName elName = strategy.findQNameForSoapActionOrType("", GetCustomersByName.class, resolver);
+        QName elName = strategy.findQNameForSoapActionOrType("", GetCustomersByName.class);
         Assert.assertEquals("http://customerservice.example.com/", elName.getNamespaceURI());
         Assert.assertEquals("getCustomersByName", elName.getLocalPart());
         
-        QName elName2 = strategy.findQNameForSoapActionOrType("getCustomersByName", GetCustomersByName.class, resolver);
+        QName elName2 = strategy.findQNameForSoapActionOrType("getCustomersByName", GetCustomersByName.class);
         Assert.assertEquals("http://customerservice.example.com/", elName2.getNamespaceURI());
         Assert.assertEquals("getCustomersByName", elName2.getLocalPart());
         
         try {
-            elName = strategy.findQNameForSoapActionOrType("test", Class.class, resolver);
+            elName = strategy.findQNameForSoapActionOrType("test", Class.class);
             Assert.fail();
         } catch (RuntimeCamelException e) {
             LOG.debug("Caught expected message: " + e.getMessage());
@@ -56,17 +54,16 @@ public class ServiceInterfaceStrategyTest {
     @Test
     public void testServiceInterfaceStrategyWithServer() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(CustomerService.class, false);
-        DefaultClassResolver resolver = new DefaultClassResolver();
-        QName elName = strategy.findQNameForSoapActionOrType("", GetCustomersByNameResponse.class, resolver);
+        QName elName = strategy.findQNameForSoapActionOrType("", GetCustomersByNameResponse.class);
         Assert.assertEquals("http://customerservice.example.com/", elName.getNamespaceURI());
         Assert.assertEquals("getCustomersByNameResponse", elName.getLocalPart());
 
-        QName elName2 = strategy.findQNameForSoapActionOrType("getCustomersByName", GetCustomersByName.class, resolver);
+        QName elName2 = strategy.findQNameForSoapActionOrType("getCustomersByName", GetCustomersByName.class);
         Assert.assertEquals("http://customerservice.example.com/", elName2.getNamespaceURI());
         Assert.assertEquals("getCustomersByNameResponse", elName2.getLocalPart());
         
         try {
-            elName = strategy.findQNameForSoapActionOrType("test", Class.class, resolver);
+            elName = strategy.findQNameForSoapActionOrType("test", Class.class);
             Assert.fail();
         } catch (RuntimeCamelException e) {
             LOG.debug("Caught expected message: " + e.getMessage());
@@ -76,13 +73,12 @@ public class ServiceInterfaceStrategyTest {
     @Test
     public void testServiceInterfaceStrategyWithRequestWrapperAndClient() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(com.example.customerservice2.CustomerService.class, true);
-        DefaultClassResolver resolver = new DefaultClassResolver();
-        QName elName = strategy.findQNameForSoapActionOrType("", com.example.customerservice2.GetCustomersByName.class, resolver);
+        QName elName = strategy.findQNameForSoapActionOrType("", com.example.customerservice2.GetCustomersByName.class);
         Assert.assertEquals("http://customerservice2.example.com/", elName.getNamespaceURI());
         Assert.assertEquals("getCustomersByName", elName.getLocalPart());
         
         try {
-            elName = strategy.findQNameForSoapActionOrType("test", Class.class, resolver);
+            elName = strategy.findQNameForSoapActionOrType("test", Class.class);
             Assert.fail();
         } catch (RuntimeCamelException e) {
             LOG.debug("Caught expected message: " + e.getMessage());

@@ -22,7 +22,6 @@ import junit.framework.Assert;
 
 import com.example.customerservice.NoSuchCustomerException;
 
-import org.apache.camel.impl.DefaultClassResolver;
 import org.junit.Test;
 
 public class ExceptionNameStrategyTest {
@@ -30,15 +29,12 @@ public class ExceptionNameStrategyTest {
     @Test
     public void testServiceInterfaceStrategyWithServer() {
         ExceptionNameStrategy strategy = new ExceptionNameStrategy();
-        DefaultClassResolver resolver = new DefaultClassResolver();
-        QName elName = strategy.findQNameForSoapActionOrType("",
-                NoSuchCustomerException.class, resolver);
-        Assert.assertEquals("http://customerservice.example.com/", elName
-                .getNamespaceURI());
+        QName elName = strategy.findQNameForSoapActionOrType("", NoSuchCustomerException.class);
+        Assert.assertEquals("http://customerservice.example.com/", elName.getNamespaceURI());
         Assert.assertEquals("NoSuchCustomer", elName.getLocalPart());
-        
+
         try {
-            elName = strategy.findQNameForSoapActionOrType("", Class.class, resolver);
+            elName = strategy.findQNameForSoapActionOrType("", Class.class);
             Assert.fail();
         } catch (Exception e) {
             // expected here
