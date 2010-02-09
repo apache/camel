@@ -116,6 +116,21 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(0, invoked.get());
     }
 
+    public void testRetryUntilRecipientListOkNotFail() throws Exception {
+        invoked.set(0);
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+
+        template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "direct:foo,not-fail");
+
+        assertMockEndpointsSatisfied();
+
+        context.stop();
+
+        assertEquals(0, invoked.get());
+    }
+
     public void testRetryUntilRecipientListFailOnly() throws Exception {
         invoked.set(0);
 
@@ -129,7 +144,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
 
         // wait until its done before we stop and check that retry was invoked
-        notify.matches(5, TimeUnit.SECONDS);
+        boolean matches = notify.matches(10, TimeUnit.SECONDS);
+        assertTrue(matches);
 
         context.stop();
 
@@ -149,7 +165,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
 
         // wait until its done before we stop and check that retry was invoked
-        notify.matches(5, TimeUnit.SECONDS);
+        boolean matches = notify.matches(10, TimeUnit.SECONDS);
+        assertTrue(matches);
 
         context.stop();
 
@@ -159,17 +176,18 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientListOkAndFail() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).whenFailed(1).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
 
         template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "direct:foo,fail");
 
         assertMockEndpointsSatisfied();
 
         // wait until its done before we stop and check that retry was invoked
-        notify.matches(5, TimeUnit.SECONDS);
+        boolean matches = notify.matches(10, TimeUnit.SECONDS);
+        assertTrue(matches);
 
         context.stop();
 
@@ -204,7 +222,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
 
         // wait until its done before we stop and check that retry was invoked
-        notify.matches(5, TimeUnit.SECONDS);
+        boolean matches = notify.matches(10, TimeUnit.SECONDS);
+        assertTrue(matches);
 
         context.stop();
 
@@ -224,7 +243,8 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
 
         // wait until its done before we stop and check that retry was invoked
-        notify.matches(5, TimeUnit.SECONDS);
+        boolean matches = notify.matches(10, TimeUnit.SECONDS);
+        assertTrue(matches);
 
         context.stop();
 
@@ -237,15 +257,12 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 from("seda:start")
                     .onException(Exception.class).retryUntil(bean("myRetryBean")).end()
                     .recipientList(header("recipientListHeader"))
                     .to("mock:result");
 
                 from("direct:foo").to("log:foo").to("mock:foo");
-
-                from("direct:fail").to("log:fail", "mock:fail").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

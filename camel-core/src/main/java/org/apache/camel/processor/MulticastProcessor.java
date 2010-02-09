@@ -42,6 +42,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.AtomicExchange;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
@@ -68,15 +69,30 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
      */
     static class ProcessorExchangePair {
         private final Processor processor;
+        private final Processor prepared;
         private final Exchange exchange;
 
-        public ProcessorExchangePair(Processor processor, Exchange exchange) {
+        /**
+         * Private constructor as you must use the static creator
+         * {@link org.apache.camel.processor.MulticastProcessor#createProcessorExchangePair(org.apache.camel.Processor,
+         *        org.apache.camel.Exchange)} which prepares the processor before its ready to be used.
+         *
+         * @param processor  the original processor
+         * @param prepared   the prepared processor
+         * @param exchange   the exchange
+         */
+        private ProcessorExchangePair(Processor processor, Processor prepared, Exchange exchange) {
             this.processor = processor;
+            this.prepared = prepared;
             this.exchange = exchange;
         }
 
         public Processor getProcessor() {
             return processor;
+        }
+
+        public Processor getPrepared() {
+            return prepared;
         }
 
         public Exchange getExchange() {
@@ -166,7 +182,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         final AtomicInteger total =  new AtomicInteger(0);
 
         for (ProcessorExchangePair pair : pairs) {
-            final Processor producer = pair.getProcessor();
+            final Processor processor = pair.getProcessor();
+            final Processor prepared = pair.getPrepared();
             final Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.intValue(), pairs);
 
@@ -177,7 +194,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                         return subExchange;
                     }
 
-                    doProcess(producer, subExchange);
+                    doProcess(processor, prepared, subExchange);
 
                     // should we stop in case of an exception occurred during processing?
                     if (stopOnException && subExchange.getException() != null) {
@@ -213,11 +230,12 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         int total = 0;
 
         for (ProcessorExchangePair pair : pairs) {
-            Processor producer = pair.getProcessor();
+            Processor processor = pair.getProcessor();
+            Processor prepared = pair.getPrepared();
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total, pairs);
 
-            doProcess(producer, subExchange);
+            doProcess(processor, prepared, subExchange);
 
             // should we stop in case of an exception occurred during processing?
             if (stopOnException && subExchange.getException() != null) {
@@ -239,12 +257,12 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    private void doProcess(Processor producer, Exchange exchange) {
+    private void doProcess(Processor processor, Processor prepared, Exchange exchange) {
         TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
 
         // compute time taken if sending to another endpoint
         long start = 0;
-        if (producer instanceof Producer) {
+        if (processor instanceof Producer) {
             start = System.currentTimeMillis();
         }
 
@@ -254,26 +272,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                 traced.pushBlock();
             }
 
-            // set property which endpoint we send to
-            setToEndpoint(exchange, producer);
-
-            // wrap error handler
-            Processor wrapped = producer;
-            if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
-                // wrap the producer in error handler so we have fine grained error handling on
-                // the output side instead of the input side
-                // this is needed to support redelivery on that output alone and not doing redelivery
-                // for the entire multicast block again which will start from scratch again
-                RouteContext routeContext = exchange.getUnitOfWork().getRouteContext();
-                ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
-
-                // create error handler (create error handler directly to keep it light weight,
-                // instead of using ProcessorDefinition.wrapInErrorHandler)
-                wrapped = builder.createErrorHandler(routeContext, wrapped);
-            }
-
-            // let the producer process it
-            wrapped.process(exchange);
+            // let the prepared process it
+            prepared.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
@@ -281,9 +281,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             if (traced != null) {
                 traced.popBlock();
             }
-            if (producer instanceof Producer) {
+            if (processor instanceof Producer) {
                 long timeTaken = System.currentTimeMillis() - start;
-                Endpoint endpoint = ((Producer) producer).getEndpoint();
+                Endpoint endpoint = ((Producer) processor).getEndpoint();
                 // emit event that the exchange was sent to the endpoint
                 EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
             }
@@ -309,14 +309,51 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         exchange.setProperty(Exchange.MULTICAST_INDEX, index);
     }
 
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
 
         for (Processor processor : processors) {
             Exchange copy = exchange.copy();
-            result.add(new ProcessorExchangePair(processor, copy));
+            result.add(createProcessorExchangePair(processor, copy));
         }
+
         return result;
+    }
+
+    /**
+     * Creates the {@link ProcessorExchangePair} which holds the processor and exchange to be send out.
+     * <p/>
+     * You <b>must</b> use this method to create the instances of {@link ProcessorExchangePair} as they
+     * need to be specially prepared before use.
+     *
+     * @param processor  the processor
+     * @param exchange   the exchange
+     * @return prepared for use
+     */
+    protected static ProcessorExchangePair createProcessorExchangePair(Processor processor, Exchange exchange) {
+        Processor prepared = processor;
+
+        // set property which endpoint we send to
+        setToEndpoint(exchange, prepared);
+
+        // rework error handling to support fine grained error handling
+        if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
+            // wrap the producer in error handler so we have fine grained error handling on
+            // the output side instead of the input side
+            // this is needed to support redelivery on that output alone and not doing redelivery
+            // for the entire multicast block again which will start from scratch again
+            RouteContext routeContext = exchange.getUnitOfWork().getRouteContext();
+            ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+            // create error handler (create error handler directly to keep it light weight,
+            // instead of using ProcessorDefinition.wrapInErrorHandler)
+            try {
+                prepared = builder.createErrorHandler(routeContext, prepared);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return new ProcessorExchangePair(processor, prepared, exchange);
     }
 
     protected void doStop() throws Exception {

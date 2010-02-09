@@ -99,7 +99,7 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
                             Message in = newExchange.getIn();
                             in.setBody(part);
                         }
-                        return new ProcessorExchangePair(getProcessors().iterator().next(), newExchange);
+                        return createProcessorExchangePair(getProcessors().iterator().next(), newExchange);
                     }
 
                     public void remove() {
@@ -129,7 +129,7 @@ public class Splitter extends MulticastProcessor implements Processor, Traceable
                 Message in = newExchange.getIn();
                 in.setBody(part);
             }
-            result.add(new ProcessorExchangePair(getProcessors().iterator().next(), newExchange));
+            result.add(createProcessorExchangePair(getProcessors().iterator().next(), newExchange));
         }
         return result;
     }
