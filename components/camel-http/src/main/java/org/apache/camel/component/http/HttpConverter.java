@@ -19,12 +19,14 @@ package org.apache.camel.component.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.http.helper.GZIPHelper;
 
 /**
@@ -40,23 +42,25 @@ public final class HttpConverter {
     }
 
     @Converter
-    public static HttpServletRequest toServletRequest(HttpMessage message) {
+    public static HttpServletRequest toServletRequest(Message message) {
         if (message == null) {
             return null;
         }
-        return message.getRequest();
+        return message.getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
     }
 
     @Converter
-    public static HttpServletResponse toServletResponse(HttpMessage message) {
+    public static HttpServletResponse toServletResponse(Message message) {
         if (message == null) {
             return null;
         }
-        return message.getResponse();
+        return message.getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
     }
+    
+    
 
     @Converter
-    public static ServletInputStream toServletInputStream(HttpMessage message) throws IOException {
+    public static ServletInputStream toServletInputStream(Message message) throws IOException {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getInputStream();
@@ -65,12 +69,12 @@ public final class HttpConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(HttpMessage message) throws Exception {
+    public static InputStream toInputStream(Message message) throws Exception {
         return toInputStream(toServletRequest(message));
     }
 
     @Converter
-    public static BufferedReader toReader(HttpMessage message) throws IOException {
+    public static BufferedReader toReader(Message message) throws IOException {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getReader();

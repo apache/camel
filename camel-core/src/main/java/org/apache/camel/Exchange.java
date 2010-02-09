@@ -116,6 +116,9 @@ public interface Exchange {
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
     
     String SOAP_ACTION = "CamelSoapAction";
+    
+    String HTTP_SERVLET_REQUEST = "CamelHttpServletRequest";
+    String HTTP_SERVLET_RESPONSE = "CamelHttpServletResponse";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

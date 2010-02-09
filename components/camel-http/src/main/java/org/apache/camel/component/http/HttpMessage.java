@@ -37,6 +37,9 @@ public class HttpMessage extends DefaultMessage {
         setExchange(exchange);
         this.request = request;
         this.response = response;
+        // Put the request and response into the message header
+        this.setHeader(Exchange.HTTP_SERVLET_REQUEST, request);
+        this.setHeader(Exchange.HTTP_SERVLET_RESPONSE, response);
 
         // use binding to read the request allowing end users to use their
         // implementation of the binding
