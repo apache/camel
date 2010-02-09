@@ -16,6 +16,7 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Body;
@@ -27,6 +28,7 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
@@ -117,12 +119,17 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientListFailOnly() throws Exception {
         invoked.set(0);
 
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
 
         template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "fail");
 
         assertMockEndpointsSatisfied();
+
+        // wait until its done before we stop and check that retry was invoked
+        notify.matches(5, TimeUnit.SECONDS);
 
         context.stop();
 
@@ -132,12 +139,17 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientListFailAndOk() throws Exception {
         invoked.set(0);
 
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
 
         template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "fail,direct:foo");
 
         assertMockEndpointsSatisfied();
+
+        // wait until its done before we stop and check that retry was invoked
+        notify.matches(5, TimeUnit.SECONDS);
 
         context.stop();
 
@@ -147,12 +159,17 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientListOkAndFail() throws Exception {
         invoked.set(0);
 
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
 
         template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "direct:foo,fail");
 
         assertMockEndpointsSatisfied();
+
+        // wait until its done before we stop and check that retry was invoked
+        notify.matches(5, TimeUnit.SECONDS);
 
         context.stop();
 
@@ -177,12 +194,17 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientFailAndNotFail() throws Exception {
         invoked.set(0);
 
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
 
         template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "fail,not-fail");
 
         assertMockEndpointsSatisfied();
+
+        // wait until its done before we stop and check that retry was invoked
+        notify.matches(5, TimeUnit.SECONDS);
 
         context.stop();
 
@@ -192,12 +214,17 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
     public void testRetryUntilRecipientNotFailAndFail() throws Exception {
         invoked.set(0);
 
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
 
         template.sendBodyAndHeader("seda:start", "Hello World", "recipientListHeader", "not-fail,fail");
 
         assertMockEndpointsSatisfied();
+
+        // wait until its done before we stop and check that retry was invoked
+        notify.matches(5, TimeUnit.SECONDS);
 
         context.stop();
 
