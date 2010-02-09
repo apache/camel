@@ -22,6 +22,7 @@ import junit.framework.Assert;
 
 import com.example.customerservice.GetCustomersByName;
 
+import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.junit.Test;
 
 public class TypeNameStrategyTest {

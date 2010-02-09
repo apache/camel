@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.soap;
+package org.apache.camel.dataformat.soap;
 
 import java.io.InputStream;
 
@@ -34,8 +34,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.soap.name.ElementNameStrategy;
-import org.apache.camel.converter.soap.name.TypeNameStrategy;
+import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
+import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.test.CamelTestSupport;
 
 public class SoapClientTest extends CamelTestSupport {

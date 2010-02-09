@@ -25,6 +25,8 @@ import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
+import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;

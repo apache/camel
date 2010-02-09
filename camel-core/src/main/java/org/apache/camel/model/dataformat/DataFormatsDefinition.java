@@ -48,6 +48,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
         @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
         @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
+        @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
         @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),        
         @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),

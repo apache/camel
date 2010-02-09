@@ -34,6 +34,7 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
+import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
@@ -218,6 +219,34 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T serialization() {
         return dataFormat(new SerializationDataFormat());
+    }
+    
+    /**
+     * Uses the Soap JAXB data format
+     */
+    public T soapjaxb() {
+        return dataFormat(new SoapJaxbDataFormat());
+    }
+    
+    /**
+     * Uses the Soap JAXB data format
+     */
+    public T soapjaxb(String contextPath) {
+        return dataFormat(new SoapJaxbDataFormat(contextPath));
+    }
+    
+    /**
+     * Uses the Soap JAXB data format
+     */
+    public T soapjaxb(String contextPath, String elementNameStrategyRef) {
+        return dataFormat(new SoapJaxbDataFormat(contextPath, elementNameStrategyRef));
+    }
+    
+    /**
+     * Uses the Soap JAXB data format
+     */
+    public T soapjaxb(String contextPath, Object elementNameStrategy) {
+        return dataFormat(new SoapJaxbDataFormat(contextPath, elementNameStrategy));
     }
 
     /**

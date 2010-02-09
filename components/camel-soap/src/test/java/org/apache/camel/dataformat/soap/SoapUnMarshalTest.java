@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.soap;
+package org.apache.camel.dataformat.soap;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.Assert;
 
@@ -28,43 +29,40 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.soap.name.ElementNameStrategy;
-import org.apache.camel.converter.soap.name.TypeNameStrategy;
+import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
+import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.test.CamelTestSupport;
 
-public class SoapRoundtripTest extends CamelTestSupport {
+public class SoapUnMarshalTest extends CamelTestSupport {
+    private static final String SERVICE_PACKAGE = GetCustomersByName.class
+            .getPackage().getName();
+
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate producer;
 
-    public void testRoundTrip() throws IOException, InterruptedException {
+    public void testUnMarshalSoap() throws IOException, InterruptedException {
         resultEndpoint.expectedMessageCount(1);
-        GetCustomersByName request = new GetCustomersByName();
-        request.setName("Müller");
-        producer.sendBody(request);
+        InputStream in = this.getClass().getResourceAsStream("request.xml");
+        producer.sendBody(in);
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.getExchanges().get(0);
-        GetCustomersByName received = exchange.getIn().getBody(
-                GetCustomersByName.class);
-        Assert.assertNotNull(received);
-        Assert.assertEquals("Müller", received.getName());
+        Object body = exchange.getIn().getBody();
+        Assert.assertEquals(GetCustomersByName.class, body.getClass());
+        GetCustomersByName request = (GetCustomersByName) body;
+        Assert.assertEquals("Smith", request.getName());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            String jaxbPackage = GetCustomersByName.class.getPackage()
-                    .getName();
 
             @Override
             public void configure() throws Exception {
-                ElementNameStrategy elNameStrat = new TypeNameStrategy();
-                SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(
-                        jaxbPackage, elNameStrat);
-                from("direct:start").marshal(soapDataFormat).unmarshal(
-                        soapDataFormat).to("mock:result");
+                from("direct:start").unmarshal().soapjaxb(SERVICE_PACKAGE)
+                        .to("mock:result");
             }
         };
     }

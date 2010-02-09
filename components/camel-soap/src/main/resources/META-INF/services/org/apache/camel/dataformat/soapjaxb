@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.converter.jaxb.soap.SoapJaxbDataFormat
+class=org.apache.camel.dataformat.soap.SoapJaxbDataFormat

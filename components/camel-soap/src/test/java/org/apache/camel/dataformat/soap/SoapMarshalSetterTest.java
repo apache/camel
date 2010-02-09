@@ -14,36 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.soap.name;
+package org.apache.camel.dataformat.soap;
 
-import javax.xml.namespace.QName;
+import com.example.customerservice.GetCustomersByName;
 
 /**
- * Value object to hold type information about parameters and return type of a
- * method
+ * Works like SoapMarshalTest but the Dataformat is initialized by using the setters
+ * instead of the contructor
  */
-final class TypeInfo {
-    private final String typeName;
-    private final QName elName;
+public class SoapMarshalSetterTest extends SoapMarshalTest {
 
     /**
-     * Initialize TypeInfo with given name and resolved element name for a type
-     * 
-     * @param typeName
-     * @param elName
+     * Create Dataformat by using the setters
      */
-    public TypeInfo(final String typeName, final QName elName) {
-        super();
-        this.typeName = typeName;
-        this.elName = elName;
+    @Override
+    protected SoapJaxbDataFormat createDataFormat() {
+        String jaxbPackage = GetCustomersByName.class.getPackage().getName();
+        SoapJaxbDataFormat dataFormat = new SoapJaxbDataFormat();
+        dataFormat.setContextPath(jaxbPackage);
+        dataFormat.setElementNameStrategy(null);
+        return dataFormat;
     }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public QName getElName() {
-        return elName;
-    }
-
+    
 }

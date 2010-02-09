@@ -32,7 +32,7 @@
     <description>Camel SOAP support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.converter.jaxb.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.dataformat.soap.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
@@ -174,13 +174,13 @@
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/converter/soap/CustomerService.wsdl</wsdl>
+                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/dataformat/soap/CustomerService.wsdl</wsdl>
                                     <bindingFiles>
-                                        <bindingFile>${basedir}/src/test/resources/org/apache/camel/converter/soap/binding.xml</bindingFile>
+                                        <bindingFile>${basedir}/src/test/resources/org/apache/camel/dataformat/soap/binding.xml</bindingFile>
                                     </bindingFiles>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/converter/soap/CustomerService2.wsdl</wsdl>
+                                    <wsdl>${basedir}/src/test/resources/org/apache/camel/dataformat/soap/CustomerService2.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>

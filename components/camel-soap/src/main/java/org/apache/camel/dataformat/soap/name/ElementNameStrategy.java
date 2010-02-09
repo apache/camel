@@ -14,30 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.soap;
+package org.apache.camel.dataformat.soap.name;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import javax.xml.namespace.QName;
 
-public final class TestUtil {
-    private TestUtil() {
-    }
-
-    public static String readStream(InputStream is) throws IOException {
-        try {
-            StringBuilder sb = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "UTF-8"));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-            return sb.toString();
-        } finally {
-            is.close();
-        }
-    }
-
+/**
+ * Strategy interface for determining the element name for a SOAP body or fault
+ */
+public interface ElementNameStrategy {
+    
+    /**
+     * Deterimine element name for given type
+     * 
+     * @param soapAction
+     * @param type
+     * @return resolved element name
+     */
+    QName findQNameForSoapActionOrType(String soapAction, Class<?> type);
 }

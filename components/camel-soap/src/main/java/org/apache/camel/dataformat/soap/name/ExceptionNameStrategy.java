@@ -14,40 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.soap.name;
+package org.apache.camel.dataformat.soap.name;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.WebFault;
 
 /**
- * Value object to hold information about a method in a JAX-WS service interface
+ * Determine element name for an exception
  */
-final class MethodInfo {
-    private String soapAction;
-    private TypeInfo in;
-    private TypeInfo out;
+public class ExceptionNameStrategy implements ElementNameStrategy {
     
     /**
-     * Initialize 
-     * 
-     * @param soapAction
-     * @param in input parameter (document style so only one parameter)
-     * @param out return type
+     * @return QName from exception class by evaluating the WebFault annotataion
      */
-    public MethodInfo(String soapAction, TypeInfo in, TypeInfo out) {
-        super();
-        this.soapAction = soapAction;
-        this.in = in;
-        this.out = out;
+    public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
+        WebFault webFault = type.getAnnotation(WebFault.class);
+        if (webFault == null || webFault.targetNamespace() == null) {
+            throw new RuntimeException("The type " + type.getName() + " needs to have an WebFault annotation with name and targetNamespace");
+        }
+        return new QName(webFault.targetNamespace(), webFault.name());
     }
-
-    public String getSoapAction() {
-        return soapAction;
-    }
-
-    public TypeInfo getIn() {
-        return in;
-    }
-
-    public TypeInfo getOut() {
-        return out;
-    }
-
 }

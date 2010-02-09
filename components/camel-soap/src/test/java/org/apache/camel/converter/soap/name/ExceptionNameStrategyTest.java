@@ -22,6 +22,7 @@ import junit.framework.Assert;
 
 import com.example.customerservice.NoSuchCustomerException;
 
+import org.apache.camel.dataformat.soap.name.ExceptionNameStrategy;
 import org.junit.Test;
 
 public class ExceptionNameStrategyTest {

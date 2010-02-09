@@ -49,15 +49,21 @@
       <artifactId>camel-jms</artifactId>
     </dependency>
 
-	<dependency>
-		<groupId>org.apache.activemq</groupId>
-		<artifactId>activemq-core</artifactId>
-	</dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-core</artifactId>
+   </dependency>
 
-	<dependency>
-		<groupId>org.apache.activemq</groupId>
-		<artifactId>activemq-camel</artifactId>
-	</dependency>
+   <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+      <exclusions>
+      	<exclusion>
+          <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-web</artifactId>
+        </exclusion>
+      </exclusions>
+   </dependency>
     
     <dependency>
       <groupId>org.apache.xbean</groupId>

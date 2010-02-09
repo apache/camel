@@ -14,21 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.soap.name;
+package org.apache.camel.dataformat.soap.name;
 
 import javax.xml.namespace.QName;
 
 /**
- * Strategy interface for determining the element name for a SOAP body or fault
+ * Value object to hold type information about parameters and return type of a
+ * method
  */
-public interface ElementNameStrategy {
-    
+final class TypeInfo {
+    private final String typeName;
+    private final QName elName;
+
     /**
-     * Deterimine element name for given type
+     * Initialize TypeInfo with given name and resolved element name for a type
      * 
-     * @param soapAction
-     * @param type
-     * @return resolved element name
+     * @param typeName
+     * @param elName
      */
-    QName findQNameForSoapActionOrType(String soapAction, Class<?> type);
+    public TypeInfo(final String typeName, final QName elName) {
+        super();
+        this.typeName = typeName;
+        this.elName = elName;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public QName getElName() {
+        return elName;
+    }
+
 }

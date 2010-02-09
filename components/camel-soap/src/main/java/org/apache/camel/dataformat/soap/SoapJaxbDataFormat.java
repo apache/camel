@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.soap;
+package org.apache.camel.dataformat.soap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,9 +31,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
-import org.apache.camel.converter.soap.name.ElementNameStrategy;
-import org.apache.camel.converter.soap.name.ExceptionNameStrategy;
-import org.apache.camel.converter.soap.name.TypeNameStrategy;
+import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
+import org.apache.camel.dataformat.soap.name.ExceptionNameStrategy;
+import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Detail;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
@@ -50,6 +50,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
 
     private ElementNameStrategy elementNameStrategy;
+    
+    private String elementNameStrategyRef;
 
     /**
      * Remember to set the context path when using this constructor
@@ -81,6 +83,30 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         this(contextPath);
         this.elementNameStrategy = elementNameStrategy;
     }
+    
+    public void setElementNameStrategy(Object nameStrategy) {
+        if (nameStrategy instanceof ElementNameStrategy) {
+            this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
+        } else {
+            new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of " + ElementNameStrategy.class.getName());
+        }
+    }
+    
+    protected void checkElementNameStrategy(Exchange exchange) {
+        if (elementNameStrategy == null) {
+            synchronized (this) {
+                if (elementNameStrategy != null) {
+                    return;
+                } else {
+                    if (elementNameStrategyRef != null) {
+                        elementNameStrategy = exchange.getContext().getRegistry().lookup(elementNameStrategyRef, ElementNameStrategy.class);
+                    } else {
+                        elementNameStrategy = new TypeNameStrategy();
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Marshal inputObject to SOAP xml. If the exchange or message has an EXCEPTION_CAUGTH
@@ -89,9 +115,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * To determine the name of the top level xml elment the elementNameStrategy is used.
      */
     public void marshal(Exchange exchange, final Object inputObject, OutputStream stream) throws IOException {
-        if (elementNameStrategy == null) {
-            elementNameStrategy = new TypeNameStrategy();
-        }
+        
+        checkElementNameStrategy(exchange);
 
         String soapAction = (String) exchange.getProperty(Exchange.SOAP_ACTION);
         Body body = new Body();
