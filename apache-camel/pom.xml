@@ -252,6 +252,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-soap</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-snmp</artifactId>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>	
     <dependency>

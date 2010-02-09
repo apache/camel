@@ -90,7 +90,8 @@
         <include>org.apache.camel:camel-servlet</include>
         <include>org.apache.camel:camel-smpp</include>
         <include>org.apache.camel:camel-snmp</include>
-        <include>org.apache.camel:camel-spring</include>
+        <include>org.apache.camel:camel-soap</include>
+	<include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-osgi</include>
         <include>org.apache.camel:camel-sql</include>
