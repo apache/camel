@@ -28,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -125,6 +126,7 @@ public class ProducerCache extends ServiceSupport {
      * @param endpoint  the endpoint to send the exchange to
      * @param exchange  the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
      * @param pattern   the exchange pattern, can be <tt>null</tt>
+     * @param callback  the callback
      * @return the response from the callback
      * @throws Exception if an internal processing error has occurred.
      */
@@ -141,10 +143,25 @@ public class ProducerCache extends ServiceSupport {
             }
         }
 
+        long start = 0;
+        if (exchange != null) {
+            // record timing for sending the exchange using the producer
+            start = System.currentTimeMillis();
+        }
+
         try {
+            // now lets dispatch
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">>>> " + endpoint + " " + exchange);
+            }
             // invoke the callback
             return callback.doInProducer(producer, exchange, pattern);
         } finally {
+            if (exchange != null) {
+                long timeTaken = System.currentTimeMillis() - start;
+                // emit event that the exchange was sent to the endpoint
+                EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+            }
             if (producer instanceof ServicePoolAware) {
                 // release back to the pool
                 pool.release(endpoint, producer);
@@ -176,7 +193,15 @@ public class ProducerCache extends ServiceSupport {
                 // set property which endpoint we send to
                 exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
 
-                producer.process(exchange);
+                // send the exchange using the processor
+                long start = System.currentTimeMillis();
+                try {
+                    producer.process(exchange);
+                } finally {
+                    // emit event that the exchange was sent to the endpoint
+                    long timeTaken = System.currentTimeMillis() - start;
+                    EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+                }
                 return exchange;
             }
         });

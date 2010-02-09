@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -152,5 +153,15 @@ public interface EventFactory {
      * @return the created event
      */
     EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel);
+
+    /**
+     * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has been sent to the endpoint.
+     *
+     * @param exchange the exchange
+     * @param endpoint the destination
+     * @param timeTaken time in millis taken
+     * @return the created event
+     */
+    EventObject createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken);
 
 }

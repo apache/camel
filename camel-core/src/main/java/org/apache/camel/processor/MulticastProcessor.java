@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -39,6 +40,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.AtomicExchange;
@@ -240,6 +242,12 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private void doProcess(Processor producer, Exchange exchange) {
         TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
 
+        // compute time taken if sending to another endpoint
+        long start = 0;
+        if (producer instanceof Producer) {
+            start = System.currentTimeMillis();
+        }
+
         try {
             // prepare tracing starting from a new block
             if (traced != null) {
@@ -249,6 +257,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             // set property which endpoint we send to
             setToEndpoint(exchange, producer);
 
+            // wrap error handler
+            Processor wrapped = producer;
             if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getRouteContext() != null) {
                 // wrap the producer in error handler so we have fine grained error handling on
                 // the output side instead of the input side
@@ -259,17 +269,23 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
                 // create error handler (create error handler directly to keep it light weight,
                 // instead of using ProcessorDefinition.wrapInErrorHandler)
-                producer = builder.createErrorHandler(routeContext, producer);
+                wrapped = builder.createErrorHandler(routeContext, wrapped);
             }
 
             // let the producer process it
-            producer.process(exchange);
+            wrapped.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
         } finally {
             // pop the block so by next round we have the same staring point and thus the tracing looks accurate
             if (traced != null) {
                 traced.popBlock();
+            }
+            if (producer instanceof Producer) {
+                long timeTaken = System.currentTimeMillis() - start;
+                Endpoint endpoint = ((Producer) producer).getEndpoint();
+                // emit event that the exchange was sent to the endpoint
+                EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
             }
         }
     }

@@ -71,4 +71,9 @@ public interface EventNotifier {
     boolean isIgnoreExchangeFailureEvents();
 
     void setIgnoreExchangeFailureEvents(boolean ignoreExchangeFailureEvents);
+
+    boolean isIgnoreExchangeSentEvents();
+
+    void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents);
+
 }

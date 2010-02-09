@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -32,6 +33,7 @@ import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailureEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
+import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
 import org.apache.camel.management.event.ServiceStartupFailureEvent;
@@ -97,5 +99,9 @@ public class DefaultEventFactory implements EventFactory {
 
     public EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel) {
         return new ExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel);
+    }
+
+    public EventObject createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
+        return new ExchangeSentEvent(exchange, endpoint, timeTaken);
     }
 }
