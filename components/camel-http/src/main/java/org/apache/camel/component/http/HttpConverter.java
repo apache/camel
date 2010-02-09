@@ -60,7 +60,7 @@ public final class HttpConverter {
     
 
     @Converter
-    public static ServletInputStream toServletInputStream(Message message) throws IOException {
+    public static ServletInputStream toServletInputStream(HttpMessage message) throws IOException {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getInputStream();
@@ -69,12 +69,12 @@ public final class HttpConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(Message message) throws Exception {
+    public static InputStream toInputStream(HttpMessage message) throws Exception {
         return toInputStream(toServletRequest(message));
     }
 
     @Converter
-    public static BufferedReader toReader(Message message) throws IOException {
+    public static BufferedReader toReader(HttpMessage message) throws IOException {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getReader();
