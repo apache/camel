@@ -43,6 +43,7 @@ public class MinaConfiguration implements Cloneable {
     private int decoderMaxLineLength = -1;
     private List<IoFilter> filters;
     private boolean allowDefaultCodec = true;
+    private boolean disconnect;
 
     /**
      * Returns a copy of this configuration
@@ -197,5 +198,13 @@ public class MinaConfiguration implements Cloneable {
 
     public boolean isAllowDefaultCodec() {
         return allowDefaultCodec;
+    }
+
+    public boolean isDisconnect() {
+        return disconnect;
+    }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
     }
 }

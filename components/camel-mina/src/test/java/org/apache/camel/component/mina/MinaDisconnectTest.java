@@ -24,10 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test for close session when complete test.
  */
-public class MinaInOutCloseSessionWhenCompleteTest extends ContextTestSupport {
+public class MinaDisconnectTest extends ContextTestSupport {
+
+    private String uri = "mina:tcp://localhost:8080?sync=true&textline=true&disconnect=true";
 
     public void testCloseSessionWhenComplete() throws Exception {
-        Object out = template.requestBody("mina:tcp://localhost:8080?sync=true&textline=true", "Claus");
+        Object out = template.requestBody(uri, "Claus");
         assertEquals("Bye Claus", out);
     }
 
@@ -35,11 +37,10 @@ public class MinaInOutCloseSessionWhenCompleteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
+                from(uri).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);
-                        exchange.getOut().setHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, true);
                     }
                 });
             }

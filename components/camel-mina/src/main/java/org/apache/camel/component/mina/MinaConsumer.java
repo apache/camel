@@ -36,8 +36,6 @@ import org.apache.mina.common.IoSession;
  * @version $Revision$
  */
 public class MinaConsumer extends DefaultConsumer {
-    public static final transient String HEADER_CLOSE_SESSION_WHEN_COMPLETE = "CamelMinaCloseSessionWhenComplete";
-
     private static final transient Log LOG = LogFactory.getLog(MinaConsumer.class);
 
     private final MinaEndpoint endpoint;
@@ -145,15 +143,24 @@ public class MinaConsumer extends DefaultConsumer {
             // should session be closed after complete?
             Boolean close;
             if (ExchangeHelper.isOutCapable(exchange)) {
-                close = exchange.getOut().getHeader(HEADER_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+                close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
             } else {
-                close = exchange.getIn().getHeader(HEADER_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+                close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
             }
 
-            if (close != null && close) {
-                LOG.debug("Closing session when complete");
+            // should we disconnect, the header can override the configuration
+            boolean disconnect = endpoint.getConfiguration().isDisconnect();
+            if (close != null) {
+                disconnect = close;
+            }
+            if (disconnect) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Closing session when complete at address: " + address);
+                }
                 session.close();
             }
         }
     }
+
 }
+

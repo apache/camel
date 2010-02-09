@@ -129,6 +129,26 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
                 }
             }
         }
+
+        // should session be closed after complete?
+        Boolean close;
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+        } else {
+            close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+        }
+
+        // should we disconnect, the header can override the configuration
+        boolean disconnect = endpoint.getConfiguration().isDisconnect();
+        if (close != null) {
+            disconnect = close;
+        }
+        if (disconnect) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Closing session when complete at address: " + endpoint.getAddress());
+            }
+            session.close();
+        }
     }
 
     @Override
@@ -144,13 +164,17 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Stopping connector: " + connector + " at address: " + endpoint.getAddress());
         }
+        closeConnection();
+        super.doStop();
+    }
 
+    private void closeConnection() {
         if (connector instanceof SocketConnector) {
             // Change the worker timeout to 0 second to make the I/O thread quit soon when there's no connection to manage.
             // Default worker timeout is 60 sec and therefore the client using MinaProducer cannot terminate the JVM
-            // asap but must wait for the timeout to happend, so to speed this up we set the timeout to 0.
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting SocketConnector WorkerTimeout=0 to force MINA stopping its resources faster");
+            // asap but must wait for the timeout to happen, so to speed this up we set the timeout to 0.
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Setting SocketConnector WorkerTimeout=0 to force MINA stopping its resources faster");
             }
             ((SocketConnector) connector).setWorkerTimeout(0);
         }
@@ -158,8 +182,6 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         if (session != null) {
             session.close();
         }
-
-        super.doStop();
     }
 
     private void openConnection() {
