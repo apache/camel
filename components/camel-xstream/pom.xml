@@ -61,8 +61,8 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>wstx-asl</artifactId>
-      <version>3.2.9</version>
+      <artifactId>woodstox-core-asl</artifactId>
+      <version>${woodstox-version}</version>
     </dependency>
 
     <!-- testing -->
