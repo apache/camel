@@ -43,7 +43,7 @@
         </property>
   </bean>
   
-  <!-- As current CXF bus configure doesn't support to set the bus, we will fix it in next release of CXF -->
+  <!-- As current CXF bus configure doesn't support to set the bus CXF-2667, we will fix it in next release of CXF -->
   <!--
       <cxf:bus bus="cxf1">
         <cxf:outInterceptors>
