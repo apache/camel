@@ -21,19 +21,23 @@ import java.util.Properties;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * The <a href="http://camel.apache.org/properties">properties</a> component.
+ *
  * @version $Revision$
  */
 public class PropertiesComponent extends DefaultComponent {
 
     private static final transient Log LOG = LogFactory.getLog(PropertiesComponent.class);
-    // TODO: cache loading properties
-    private String[] locations;
+    private final Map<String[], Properties> cacheMap = new LRUCache<String[], Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
+    private String[] locations;
+    private boolean cache = true;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -61,7 +65,15 @@ public class PropertiesComponent extends DefaultComponent {
 
     public String parseUri(String uri, String... paths) throws Exception {
         ObjectHelper.notNull(paths, "paths");
-        Properties prop = propertiesResolver.resolveProperties(getCamelContext(), paths);
+
+        // check cache first
+        Properties prop = cache ? cacheMap.get(paths) : null;
+        if (prop == null) {
+            prop = propertiesResolver.resolveProperties(getCamelContext(), paths);
+            if (cache) {
+                cacheMap.put(paths, prop);
+            }
+        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Parsing uri " + uri + " with properties: " + prop);
@@ -88,4 +100,19 @@ public class PropertiesComponent extends DefaultComponent {
     public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
         this.propertiesResolver = propertiesResolver;
     }
+
+    public boolean isCache() {
+        return cache;
+    }
+
+    public void setCache(boolean cache) {
+        this.cache = cache;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        cacheMap.clear();
+        super.doStop();
+    }
+
 }
