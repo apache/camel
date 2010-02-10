@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPath;
@@ -35,12 +34,7 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.xml.sax.InputSource;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -49,12 +43,17 @@ import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
-
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
@@ -125,6 +124,49 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);
+    }
+
+    /**
+     * Matches the given xpath using the provided body.
+     *
+     * @param context the camel context
+     * @param body the body
+     * @return <tt>true</tt> if matches, <tt>false</tt> otherwise
+     */
+    public boolean matches(CamelContext context, Object body) {
+        ObjectHelper.notNull(context, "CamelContext");
+
+        // create a dummy Exchange to use during matching
+        Exchange dummy = new DefaultExchange(context);
+        dummy.getIn().setBody(body);
+
+        boolean answer = matches(dummy);
+
+        // remove the dummy from the thread local after usage
+        exchange.remove();
+        return answer;
+    }
+
+    /**
+     * Evaluates the given xpath using the provided body.
+     *
+     * @param context the camel context
+     * @param body the body
+     * @param type the type to return
+     * @return result of the evaluation
+     */
+    public <T> T evaluate(CamelContext context, Object body, Class<T> type) {
+        ObjectHelper.notNull(context, "CamelContext");
+
+        // create a dummy Exchange to use during evaluation
+        Exchange dummy = new DefaultExchange(context);
+        dummy.getIn().setBody(body);
+
+        T answer = evaluate(dummy, type);
+
+        // remove the dummy from the thread local after usage
+        exchange.remove();
+        return answer;
     }
 
     // Builder methods

@@ -296,4 +296,21 @@ public class XPathTest extends ContextTestSupport {
         exchange.getIn().setHeader("name", "James");
         return exchange;
     }
+
+    public void testXPathNotUsingExchangeMatches() throws Exception {
+        assertTrue(XPathBuilder.xpath("/foo/bar/@xyz").matches(context, "<foo><bar xyz='cheese'/></foo>"));
+        assertFalse(XPathBuilder.xpath("/foo/bar/@xyz").matches(context, "<foo>Hello World</foo>"));
+    }
+
+    public void testXPathNotUsingExchangeEvaluate() throws Exception {
+        String name = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>cheese</bar></foo>", String.class);
+        assertEquals("cheese", name);
+
+        Integer number = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>123</bar></foo>", Integer.class);
+        assertEquals(123, number.intValue());
+
+        Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</bar></foo>", Boolean.class);
+        assertEquals(true, bool.booleanValue());
+    }
+
 }
