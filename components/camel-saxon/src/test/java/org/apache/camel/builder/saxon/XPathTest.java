@@ -92,4 +92,19 @@ public class XPathTest extends CamelTestSupport {
         assertEquals("def", result);
         // END SNIPPET: e3
     }
+
+    @Test
+    public void testXPathFunctionTokenizeUsingSystemProperty() throws Exception {
+        // START SNIPPET: e4
+        // set system property with the XPath factory to use which is Saxon 
+        System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + ":" + "http://saxon.sf.net/jaxp/xpath/om", "net.sf.saxon.xpath.XPathFactoryImpl");
+
+        // create a builder to evaluate the xpath using saxon
+        XPathBuilder builder = XPathBuilder.xpath("tokenize(/foo/bar, '_')[2]");
+
+        // evaluate as a String result
+        String result = builder.evaluate(context, "<foo><bar>abc_def_ghi</bar></foo>");
+        assertEquals("def", result);
+        // END SNIPPET: e4
+    }
 }

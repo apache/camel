@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.xml.namespace.QName;
@@ -358,9 +359,29 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
         if (xpathFactory == null) {
             if (objectModelUri != null) {
+                LOG.info("Using objectModelUri " + objectModelUri + " when creating XPathFactory");
                 xpathFactory = XPathFactory.newInstance(objectModelUri);
+                return xpathFactory;
             }
-            xpathFactory = XPathFactory.newInstance();
+
+            // read system property and see if there is a factory set
+            Properties properties = System.getProperties();
+            for (Map.Entry prop : properties.entrySet()) {
+                String key = (String) prop.getKey();
+                if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
+                    String uri = ObjectHelper.after(key, ":");
+                    if (uri != null) {
+                        LOG.info("Using system property " + key + " with value: " + prop.getValue() + " when creating XPathFactory");
+                        xpathFactory = XPathFactory.newInstance(uri);
+                        return xpathFactory;
+                    }
+                }
+            }
+
+            if (xpathFactory == null) {
+                LOG.debug("Creating default XPathFactory");
+                xpathFactory = XPathFactory.newInstance();
+            }
         }
         return xpathFactory;
     }
