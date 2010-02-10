@@ -307,6 +307,19 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return this;
     }
 
+    /**
+     * Configures to use the provided XPath factory.
+     * <p/>
+     * Can be used to use Saxon instead of the build in factory from the JDK.
+     *
+     * @param xpathFactory the xpath factory to use
+     * @return the current builder.
+     */
+    public XPathBuilder factory(XPathFactory xpathFactory) {
+        setXPathFactory(xpathFactory);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
     public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
