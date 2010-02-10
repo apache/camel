@@ -19,8 +19,10 @@ package org.apache.camel.component.jetty;
 import java.io.InputStream;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpConverter;
@@ -36,6 +38,32 @@ public class HttpConverterTest extends CamelTestSupport {
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+    
+    @Test
+    public void testToServletRequestAndResponse() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("jetty://http://localhost:9080/test")
+                        // add this node to make sure the convert can work within DefaultMessageImpl
+                        .convertBodyTo(String.class)             
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
+                                assertNotNull("We should get request object here", request);
+                                HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
+                                assertNotNull("We should get response object here", response);
+                                String s = exchange.getIn().getBody(String.class);
+                                assertEquals("Hello World", s);
+                            }
+                        }).transform(constant("Bye World"));
+            }
+        });
+        context.start();
+
+        String out = template.requestBody("http://localhost:9080/test", "Hello World", String.class);
+        assertEquals("Bye World", out);
     }
 
     @Test

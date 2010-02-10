@@ -19,6 +19,9 @@ package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayInputStream;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
@@ -55,6 +58,16 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         client.setExceptionsThrownOnErrorStatus(false);
     }
     
+    @Test
+    public void testHttpConverter() throws Exception {
+        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/testConverter", new ByteArrayInputStream(POST_DATA.getBytes()), "text/xml; charset=UTF-8");
+        ServletUnitClient client = newClient();
+        client.setExceptionsThrownOnErrorStatus(false);
+        WebResponse response = client.getResponse(req);        
+        assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
+        assertEquals("The response body is wrong", "Bye World", response.getText());
+    }
+    
     public static class MyServletRoute extends RouteBuilder {
 
         @Override
@@ -62,7 +75,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
             errorHandler(noErrorHandler());
             // START SNIPPET: route
             from("servlet:///hello?matchOnUriPrefix=true").process(new Processor() {
-                public void process(Exchange exchange) throws Exception {
+                public void process(Exchange exchange) throws Exception {                    
                     String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
                     String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
                     assertEquals("Get a wrong content type", CONTENT_TYPE, contentType);
@@ -74,7 +87,21 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 }
             });
             // END SNIPPET: route
-        }
+            
+            from("servlet:///testConverter?matchOnUriPrefix=true")
+                .convertBodyTo(String.class)             
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpServletRequest request = exchange.getIn(HttpServletRequest.class);
+                        assertNotNull("We should get request object here", request);
+                        HttpServletResponse response = exchange.getIn(HttpServletResponse.class);
+                        assertNotNull("We should get response object here", response);
+                        String s = exchange.getIn().getBody(String.class);
+                        assertEquals("<request> hello world </request>", s);
+                    }
+                }).transform(constant("Bye World"));
+            }
+        
         
     }
 
