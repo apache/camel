@@ -47,6 +47,8 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertFalse(filter.applyFilterToExternalHeaders("Cache-Control", "no-cache", exchange));
         assertFalse(filter.applyFilterToExternalHeaders("connection", "close", exchange));
         assertFalse(filter.applyFilterToExternalHeaders("Connection", "close", exchange));
+        assertFalse(filter.applyFilterToExternalHeaders("date", "close", exchange));
+        assertFalse(filter.applyFilterToExternalHeaders("Data", "close", exchange));
         assertFalse(filter.applyFilterToExternalHeaders("pragma", "no-cache", exchange));
         assertFalse(filter.applyFilterToExternalHeaders("Pragma", "no-cache", exchange));
         assertFalse(filter.applyFilterToExternalHeaders("trailer", "Max-Forwards", exchange));
@@ -76,6 +78,8 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertTrue(filter.applyFilterToCamelHeaders("Cache-Control", "no-cache", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("connection", "close", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("Connection", "close", exchange));
+        assertTrue(filter.applyFilterToCamelHeaders("date", "close", exchange));
+        assertTrue(filter.applyFilterToCamelHeaders("Date", "close", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("pragma", "no-cache", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("Pragma", "no-cache", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("trailer", "Max-Forwards", exchange));

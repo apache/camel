@@ -34,6 +34,7 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
         getOutFilter().add("cache-control");
         getOutFilter().add("connection");
+        getOutFilter().add("date");
         getOutFilter().add("pragma");
         getOutFilter().add("trailer");
         getOutFilter().add("transfer-encoding");
