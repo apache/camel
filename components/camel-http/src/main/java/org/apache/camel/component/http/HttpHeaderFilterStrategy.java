@@ -32,14 +32,14 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add("content-type");
         // Add the filter for the Generic Message header
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
-        getOutFilter().add("Cache-Control");
-        getOutFilter().add("Connection");
-        getOutFilter().add("Pragma");
-        getOutFilter().add("Trailer");
-        getOutFilter().add("Transfer-Encoding");
-        getOutFilter().add("Upgrade");
-        getOutFilter().add("Via");
-        getOutFilter().add("Warning");
+        getOutFilter().add("cache-control");
+        getOutFilter().add("connection");
+        getOutFilter().add("pragma");
+        getOutFilter().add("trailer");
+        getOutFilter().add("transfer-encoding");
+        getOutFilter().add("upgrade");
+        getOutFilter().add("via");
+        getOutFilter().add("warning");
         
         setLowerCase(true);
         
