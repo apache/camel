@@ -21,6 +21,8 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TemporaryTopic;
 
+import org.springframework.jmx.export.annotation.ManagedResource;
+
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
  * for working with a {@link TemporaryTopic}
@@ -28,6 +30,7 @@ import javax.jms.TemporaryTopic;
  * @version $Revision$
  */
 // TODO need to be really careful to always use the same Connection otherwise the destination goes stale
+@ManagedResource(description = "Managed JMS Temporay Topic Endpoint")
 public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;
 

@@ -21,6 +21,8 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 
+import org.springframework.jmx.export.annotation.ManagedResource;
+
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
  * for working with a {@link TemporaryQueue}
@@ -28,6 +30,7 @@ import javax.jms.TemporaryQueue;
  * @version $Revision$
  */
 // TODO need to be really careful to always use the same Connection otherwise the destination goes stale
+@ManagedResource(description = "Managed JMS Temporary Queue Endpoint")
 public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;
 
