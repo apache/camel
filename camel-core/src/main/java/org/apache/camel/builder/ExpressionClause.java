@@ -373,7 +373,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * expression</a> with the specified result type
      * 
      * @param text the expression to be evaluated
-     * @param resultType the return type expected by the expressiopn
+     * @param resultType the return type expected by the expression
      * @return the builder to continue processing the DSL
      */
     public T xpath(String text, Class<?> resultType) {

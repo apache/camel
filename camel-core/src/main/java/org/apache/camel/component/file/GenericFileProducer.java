@@ -102,7 +102,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                         // we override the target so we do this by deleting it so the temp file can be renamed later
                         // with success as the existing target file have been deleted
                         if (log.isTraceEnabled()) {
-                            log.trace("Deleting existing file: " + tempTarget);
+                            log.trace("Deleting existing file: " + target);
                         }
                         if (!operations.deleteFile(target)) {
                             throw new GenericFileOperationFailedException("Cannot delete file: " + target);
