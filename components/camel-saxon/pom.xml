@@ -62,6 +62,10 @@
       <groupId>net.sf.saxon</groupId>
       <artifactId>saxon-sql</artifactId>
     </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-xpath</artifactId>
+    </dependency>
 
     <!-- testing -->
     <dependency>

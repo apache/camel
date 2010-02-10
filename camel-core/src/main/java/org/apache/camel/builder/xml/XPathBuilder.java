@@ -170,6 +170,28 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return answer;
     }
 
+    /**
+     * Evaluates the given xpath using the provided body as a String return type.
+     *
+     * @param context the camel context
+     * @param body the body
+     * @return result of the evaluation
+     */
+    public String evaluate(CamelContext context, Object body) {
+        ObjectHelper.notNull(context, "CamelContext");
+
+        // create a dummy Exchange to use during evaluation
+        Exchange dummy = new DefaultExchange(context);
+        dummy.getIn().setBody(body);
+
+        setResultQName(XPathConstants.STRING);
+        String answer = evaluate(dummy, String.class);
+
+        // remove the dummy from the thread local after usage
+        exchange.remove();
+        return answer;
+    }
+
     // Builder methods
     // -------------------------------------------------------------------------
 
@@ -240,6 +262,17 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      */
     public XPathBuilder objectModel(String uri) {
         this.objectModelUri = uri;
+        return this;
+    }
+
+    /**
+     * Configures to use Saxon as the XPathFactory which allows you to use XPath 2.0 functions
+     * which may not be part of the build in JDK XPath parser.
+     *
+     * @return the current builder
+     */
+    public XPathBuilder saxon() {
+        this.objectModelUri = "http://saxon.sf.net/jaxp/xpath/om";
         return this;
     }
 

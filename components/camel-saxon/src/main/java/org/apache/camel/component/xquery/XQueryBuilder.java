@@ -90,7 +90,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         Object body = evaluate(exchange);
         exchange.getOut().setBody(body);
 
-        // propogate headers
+        // propagate headers
         exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
     }
 
