@@ -16,45 +16,33 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.Bus;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Unit test for testing CXF bus injection.
- *
- * @version $Revision$
- */
-public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
-    
-    @Before
-    public void setUp() throws Exception {
-        ctx =  new ClassPathXmlApplicationContext(
-                new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"});
+public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport {
+
+    @Override
+    protected String[] getApplicationContextFiles() {
+        return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansBusSetting.xml"};    
     }
     
     @Test
     public void testBusInjectedBySpring() throws Exception {
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
-        Bus bus = (Bus)camelContext.getRegistry().lookup("cxf");
-        System.out.println("bus cxf is " + bus.getId());
         
         CxfEndpoint endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:routerEndpoint");
-        System.out.println("endpoint bus id " + endpoint.getBus().getId());
+        Bus cxf1 = endpoint.getBus();
+        
+        assertTrue(cxf1.getOutInterceptors().size() >= 1);
+        assertTrue(cxf1.getInInterceptors().size() == 0);
         
         endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:serviceEndpoint");
-
-        // verify the interceptor that is added by the logging feature
-        // Spring 3.0.0 has an issue of SPR-6589 which will call the BusApplicationListener twice for the same event,
-        // so we will get more one InInterceptors here
-        /*assertTrue(endpoint.getBus().getInInterceptors().size() >= 1);
-        assertEquals(LoggingInInterceptor.class, endpoint.getBus().getInInterceptors().get(0).getClass());*/
-        System.out.println("endpoint bus id " + endpoint.getBus().getId());
+        Bus cxf2 = endpoint.getBus();
+        assertTrue(cxf2.getInInterceptors().size() >= 1);
+        assertTrue(cxf2.getOutInterceptors().size() == 0);
+        
     }
 
 }
