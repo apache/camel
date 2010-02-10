@@ -85,7 +85,7 @@ public class JmsSimpleRequestCustomReplyToTest extends CamelTestSupport {
 
         public void run() {
             try {
-                LOG.debug("Wating for latch");
+                LOG.debug("Waiting for latch");
                 latch.await();
 
                 // wait 1 sec after latch before sending he late replay

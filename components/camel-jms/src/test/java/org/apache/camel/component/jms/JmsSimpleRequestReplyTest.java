@@ -56,6 +56,17 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
         assertEquals(123, out.getOut().getHeader("foo"));
     }
 
+    @Test
+    public void testRequetReply2Messages() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(2);
+
+        template.requestBody("activemq:queue:hello", "Hello World");
+        template.requestBody("activemq:queue:hello", "Gooday World");
+
+        result.assertIsSatisfied();
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
