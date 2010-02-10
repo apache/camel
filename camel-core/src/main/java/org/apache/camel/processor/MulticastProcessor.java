@@ -67,7 +67,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     /**
      * Class that represent each step in the multicast route to do
      */
-    static class ProcessorExchangePair {
+    static final class ProcessorExchangePair {
         private final Processor processor;
         private final Processor prepared;
         private final Exchange exchange;
