@@ -20,10 +20,10 @@ following projects:
 
     * Apache ActiveMQ which is the most popular and powerful open
       source message broker
-    * Apache CXF which is a smart web services suite (JAX-WS)
+    * Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
     * Apache MINA a networking framework
     * Apache ServiceMix which is the most popular and powerful distributed
-      open source ESB and JBI container
+      open source ESB, JBI and OSGi container
 
 
 Getting Started
@@ -86,5 +86,7 @@ software:
    * camel-mail can be configured for secure email communications
    * camel-cxf can be configured for secure web service communications
    * camel-jetty can be configured to use https
-   * camel-jhc can be configured as a secure http server using SSL
+   * camel-http can be configured to use https
+   * camel-gae can be configured for secure communications
+   * camel-xmlsecurity can be configured for secure communications
 
