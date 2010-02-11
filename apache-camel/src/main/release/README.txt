@@ -1,26 +1,35 @@
 Welcome to Apache Camel
 =============================================================================== 
 
-Apache Camel is a powerful rule based routing and mediation engine which 
-provides a POJO based implementation of the Enterprise Integration Patterns 
-using an extremely powerful fluent API (or declarative Java Domain Specific 
-Language) to configure routing and mediation rules. The Domain Specific 
-Language means that Apache Camel can support type-safe smart completion of 
-routing rules in your IDE using regular Java code without huge amounts of 
-XML configuration files; though Xml Configuration inside Spring is also 
-supported.
+Apache Camel is a powerful Spring based Integration Framework.
 
-Apache Camel uses generics, annotations and URIs so that it can easily work 
-directly with any kind of Transport or messaging model such as HTTP, JMS, JBI, 
-SCA, MINA or CXF Bus API without mandating a normalized message API which can 
-often lead to leaky abstractions. Apache Camel is also a small library which 
-has minimal dependencies for easy embedding in any Java application.
+Camel implements the Enterprise Integration Patterns allowing you to configure
+routing and mediation rules in either a Java based Domain Specific Language
+(or Fluent API) or via Spring based XML Configuration files. Either approaches
+mean you get smart completion of routing rules in your IDE whether in your
+Java or XML editor.
+
+Apache Camel uses URIs so that it can easily work directly with any kind of
+transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
+or CXF Bus API together with and working with pluggable Data Format options.
+Apache Camel is a small library which has minimal dependencies for easy
+embedding in any Java application.
+
+Apache Camel can be used as a routing and mediation engine for the
+following projects:
+
+    * Apache ActiveMQ which is the most popular and powerful open
+      source message broker
+    * Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
+    * Apache MINA a networking framework
+    * Apache ServiceMix which is the most popular and powerful distributed
+      open source ESB, JBI and OSGi container
 
 
 Getting Started
 =============================================================================== 
 
-To help you get started, try the following links:-
+To help you get started, try the following links:
 
 Getting Started
   http://camel.apache.org/getting-started.html
@@ -31,8 +40,8 @@ Building
 We welcome contributions of all kinds, for details of how you can help
   http://camel.apache.org/contributing.html
 
-Please refer to the website for details of finding the issue tracker, email 
-  lists, wiki or IRC channel
+Please refer to the website for details of finding the issue tracker, 
+email lists, wiki or IRC channel
   http://camel.apache.org/
 
 If you hit any problems please talk to us on the Camel Forums
@@ -77,5 +86,7 @@ software:
    * camel-mail can be configured for secure email communications
    * camel-cxf can be configured for secure web service communications
    * camel-jetty can be configured to use https
-   * camel-jhc can be configured as a secure http server using SSL
+   * camel-http can be configured to use https
+   * camel-gae can be configured for secure communications
+   * camel-xmlsecurity can be configured for secure communications
 
