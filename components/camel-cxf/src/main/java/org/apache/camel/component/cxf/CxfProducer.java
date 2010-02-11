@@ -18,7 +18,9 @@ package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -201,8 +203,8 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             Map<Class, Object> params = invokingContext.getRequestContent(inMessage);
             // invoke the stream message with the exchange context
             CxfClient cxfClient = (CxfClient)client;
-            // need to get the binding object to create the message
-            BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
+            // need to get the BindingOperationInfo object to create the message
+            BindingOperationInfo boi = getBindingOperationInfo(exchange);
             Message response = null;
             if (boi == null) {
                 // it should be the raw message
@@ -211,6 +213,8 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 // create the message here
                 Endpoint ep = ex.get(Endpoint.class);
                 response = ep.getBinding().createMessage();
+                // set the BindingOperationInfo object here
+                ex.put(BindingOperationInfo.class, boi);
             }
             response.setExchange(ex);
             // invoke the message prepare the context
@@ -225,6 +229,36 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
         }
 
+    }
+    
+    private BindingOperationInfo getBindingOperationInfo(CxfExchange ex) {
+
+        BindingOperationInfo answer = null;
+        String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
+        
+        if (lp == null) {
+            // try to get the BindingOperationInfo from cxfExchange
+            // make sure the old cxf payload code still working
+            LOG.fine("Try get the BindingOperationInfo from cxfExchange.");
+            org.apache.cxf.message.Exchange cxfExchange = ex.getExchange();
+            answer = cxfExchange.get(BindingOperationInfo.class);           
+            
+        } else {
+            String ns = ex.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE, String.class);
+            if (ns == null) {
+                ns = client.getEndpoint().getService().getName().getNamespaceURI();
+                
+                LOG.finer("Operation namespace not in header.  Set it to: " + ns);
+                
+            }
+
+            QName qname = new QName(ns, lp);
+            
+            LOG.finer("Operation qname = " + qname.toString());            
+            
+            answer = client.getEndpoint().getEndpointInfo().getBinding().getOperation(qname);
+        }
+        return answer;
     }
 
     @Override

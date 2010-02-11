@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.cxf.service.model.BindingOperationInfo;
 
 public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
@@ -41,6 +42,14 @@ public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
                             assertNotNull("We should get the elements here" , elements);
                             assertEquals("Get the wrong elements size" , elements.size(), 1);
                             assertEquals("Get the wrong namespace URI" , elements.get(0).getNamespaceURI(), "http://cxf.component.camel.apache.org/");
+                            // get the BindingOperationInfo object
+                            BindingOperationInfo bindingOperationInfo = ((CxfExchange)exchange).getExchange().get(BindingOperationInfo.class);
+                            assertNotNull("We should get the BindingOperationInfo here", bindingOperationInfo);
+                            // set the operation name from the bindingInfo , from camel 1.6.3 this feature is ported from camel 2.x  
+                            message.setHeader(CxfConstants.OPERATION_NAME, bindingOperationInfo.getOperationInfo().getName().getLocalPart());
+                            // removed the bindingOperationInfo, and let the cxf producer lookup the BindingOperationInfo with OPERATION_NAME header
+                            ((CxfExchange)exchange).getExchange().remove(BindingOperationInfo.class.getName());
+                            
                         }                        
                     }
                     
