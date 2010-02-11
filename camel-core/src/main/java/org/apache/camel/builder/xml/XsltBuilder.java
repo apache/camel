@@ -23,13 +23,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
@@ -53,6 +54,7 @@ public class XsltBuilder implements Processor {
     private Templates template;
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
+    private URIResolver uriResolver;
 
     public XsltBuilder() {
     }
@@ -156,6 +158,14 @@ public class XsltBuilder implements Processor {
         return this;
     }
 
+    /**
+     * Sets a custom URI resolver to be used
+     */
+    public XsltBuilder uriResolver(URIResolver uriResolver) {
+        setUriResolver(uriResolver);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -198,10 +208,15 @@ public class XsltBuilder implements Processor {
      * @throws TransformerConfigurationException is thrown if creating a XSLT transformer failed.
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
+        TransformerFactory factory = converter.getTransformerFactory();
+        if (getUriResolver() != null) {
+            factory.setURIResolver(getUriResolver());
+        }
+
         // Check that the call to newTemplates() returns a valid template instance.
         // In case of an xslt parse error, it will return null and we should stop the
         // deployment and raise an exception as the route will not be setup properly.
-        Templates templates = converter.getTransformerFactory().newTemplates(source);
+        Templates templates = factory.newTemplates(source);
         if (templates != null) {
             setTemplate(templates);
         } else {
@@ -242,6 +257,14 @@ public class XsltBuilder implements Processor {
         this.converter = converter;
     }
 
+    public URIResolver getUriResolver() {
+        return uriResolver;
+    }
+
+    public void setUriResolver(URIResolver uriResolver) {
+        this.uriResolver = uriResolver;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -269,6 +292,11 @@ public class XsltBuilder implements Processor {
      * Configures the transformer with exchange specific parameters
      */
     protected void configureTransformer(Transformer transformer, Exchange exchange) {
+        if (uriResolver == null) {
+            uriResolver = new XsltUriResolver(exchange.getContext().getClassResolver(), null);
+        }
+        transformer.setURIResolver(uriResolver);
+
         transformer.clearParameters();
 
         addParameters(transformer, exchange.getProperties());

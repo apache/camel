@@ -19,13 +19,14 @@ package org.apache.camel.component.xslt;
 import java.util.Map;
 
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.xml.XsltBuilder;
+import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.CamelContextHelper;
 import org.springframework.core.io.Resource;
 
 /**
@@ -80,6 +81,11 @@ public class XsltComponent extends ResourceBasedComponent {
         if (factory != null) {
             xslt.getConverter().setTransformerFactory(factory);
         }
+
+        // set resolver before input stream as resolver is used when loading the input stream
+        URIResolver resolver = new XsltUriResolver(getCamelContext().getClassResolver(), remaining);
+        xslt.setUriResolver(resolver);
+
         xslt.setTransformerInputStream(resource.getInputStream());
         configureXslt(xslt, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, xslt);
