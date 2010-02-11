@@ -62,6 +62,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
             // and store the file
             .to("file://target/subfolder")
             // return OK as response
+            .log("Wrote ${file:name} and returning OK response")
             .transform(constant(ok));
 
         // second part from the file backup -> send email
@@ -69,8 +70,8 @@ public class ReportIncidentRoutes extends RouteBuilder {
             // set the subject of the email
             .setHeader("subject", constant("new incident reported"))
             // send the email
+            .log("Sending email to incident@mycompany.com:\n${body}")
             .to("smtp://someone@localhost?password=secret&to=incident@mycompany.com");
-        
     }
     
     public static void main(String args[]) throws Exception {
