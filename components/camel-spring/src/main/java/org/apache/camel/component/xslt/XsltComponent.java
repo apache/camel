@@ -37,6 +37,7 @@ import org.springframework.core.io.Resource;
  */
 public class XsltComponent extends ResourceBasedComponent {
     private XmlConverter xmlConverter;
+    private URIResolver uriResolver;
 
     public XmlConverter getXmlConverter() {
         return xmlConverter;
@@ -44,6 +45,14 @@ public class XsltComponent extends ResourceBasedComponent {
 
     public void setXmlConverter(XmlConverter xmlConverter) {
         this.xmlConverter = xmlConverter;
+    }
+
+    public URIResolver getUriResolver() {
+        return uriResolver;
+    }
+
+    public void setUriResolver(URIResolver uriResolver) {
+        this.uriResolver = uriResolver;
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -83,7 +92,11 @@ public class XsltComponent extends ResourceBasedComponent {
         }
 
         // set resolver before input stream as resolver is used when loading the input stream
-        URIResolver resolver = new XsltUriResolver(getCamelContext().getClassResolver(), remaining);
+        URIResolver resolver = getUriResolver();
+        if (resolver == null) {
+            // fallback to use a Camel specific resolver
+            resolver = new XsltUriResolver(getCamelContext().getClassResolver(), remaining);
+        }
         xslt.setUriResolver(resolver);
 
         xslt.setTransformerInputStream(resource.getInputStream());
