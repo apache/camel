@@ -17,7 +17,6 @@
 package org.apache.camel.component.xslt;
 
 import java.util.Map;
-
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
@@ -91,12 +90,17 @@ public class XsltComponent extends ResourceBasedComponent {
             xslt.getConverter().setTransformerFactory(factory);
         }
 
-        // set resolver before input stream as resolver is used when loading the input stream
-        URIResolver resolver = getUriResolver();
+        // lookup custom resolver to use
+        URIResolver resolver = resolveAndRemoveReferenceParameter(parameters, "uriResolver", URIResolver.class);
+        if (resolver == null) {
+            // not in endpoint then use component specific resolver
+            resolver = getUriResolver();
+        }
         if (resolver == null) {
             // fallback to use a Camel specific resolver
             resolver = new XsltUriResolver(getCamelContext().getClassResolver(), remaining);
         }
+        // set resolver before input stream as resolver is used when loading the input stream
         xslt.setUriResolver(resolver);
 
         xslt.setTransformerInputStream(resource.getInputStream());
