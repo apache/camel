@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 /**
  * An interface to represent an object being managed.
  * <p/>
- * This allows you to gain fine grained control of manageing objects with Camel.
+ * This allows you to gain fine grained control of managing objects with Camel.
  * For example various Camel components will implement this interface to provide
  * management to their endpoints and consumers.
  * <p/>

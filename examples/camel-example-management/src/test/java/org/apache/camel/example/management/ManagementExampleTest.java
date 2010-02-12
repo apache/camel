@@ -37,15 +37,20 @@ public class ManagementExampleTest extends CamelSpringTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testManagementExample() throws Exception {
-        // give it a bit of time to run
+        // Give it a bit of time to run
         Thread.sleep(2000);
 
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        // Find the endpoints
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
+        assertEquals(6, set.size()); 
+        
+        // Find the routes
+        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(3, set.size());
-
-        // stop routes
+        
+        // Stop routes
         for (ObjectName on : set) {
             mbeanServer.invoke(on, "stop", null, null);
         }
