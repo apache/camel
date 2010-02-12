@@ -100,7 +100,7 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         public void setApplicationContext(ApplicationContext ctx) throws BeansException {
             if (getBus() == null) {
                 // Don't relate on the DefaultBus
-                BusFactory factory = new SpringBusFactory();
+                BusFactory factory = new SpringBusFactory(ctx);
                 Bus bus = factory.createBus();  
                 BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
                 setBus(bus);
