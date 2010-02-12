@@ -40,7 +40,13 @@
   		<id>servicemix</id>
   		<name>Apache ServiceMix Repository</name>
   		<url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-  	</repository>
+	</repository>
+	<!-- smack repo -->
+	<repository>
+		<id>m2-repository-smack</id>
+		<name>Smakc Maven2 Repository</name>
+		<url>http://maven.reucon.com/public</url>
+	</repository>
   </repositories>
 
   <dependencies>
