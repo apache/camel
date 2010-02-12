@@ -29,7 +29,7 @@ public class XsltIncludeRelativeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         // the include file has the span style so check that its there
-        mock.message(0).constant("<span style=\"font-size=22px;\">Minnie Mouse</span>");
+        mock.message(0).body().contains("<span style=\"font-size=22px;\">Minnie Mouse</span>");
 
         assertMockEndpointsSatisfied();
     }
