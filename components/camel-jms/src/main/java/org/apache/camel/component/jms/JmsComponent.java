@@ -170,6 +170,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
     }
 
+    public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
+        getConfiguration().setEagerLoadingOfProperties(eagerLoadingOfProperties);
+    }
+
     public void setAcknowledgementModeName(String consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementModeName(consumerAcknowledgementMode);
     }
@@ -238,6 +242,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setMessageConverter(messageConverter);
     }
 
+    public void setMapJmsMessage(boolean mapJmsMessage) {
+        getConfiguration().setMapJmsMessage(mapJmsMessage);
+    }
+
     public void setMessageIdEnabled(boolean messageIdEnabled) {
         getConfiguration().setMessageIdEnabled(messageIdEnabled);
     }
@@ -300,6 +308,18 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
         getConfiguration().setTestConnectionOnStartup(testConnectionOnStartup);
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        getConfiguration().setRequestTimeout(requestTimeout);
+    }
+
+    public void setTransferExchange(boolean transferExchange) {
+        getConfiguration().setTransferExchange(transferExchange);
+    }
+
+    public void setTransferException(boolean transferException) {
+        getConfiguration().setTransferException(transferException);
     }
 
     /**
