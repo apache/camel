@@ -49,7 +49,8 @@ public class MainTest extends TestCase {
         CamelContext camelContext = contextList.get(0);
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
-        endpoint.expectedMessageCount(2);
+        // in case we add more files in src/test/data
+        endpoint.expectedMinimumMessageCount(2);
         endpoint.assertIsSatisfied();
         List<Exchange> list = endpoint.getReceivedExchanges();
 
