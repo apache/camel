@@ -65,6 +65,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected int maxMessagesPerPoll;
     protected String tempPrefix;
     protected Expression tempFileName;
+    protected boolean eagerDeleteTargetFile = true;
     protected String include;
     protected String exclude;
     protected Expression fileName;
@@ -344,6 +345,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setTempFileName(String tempFileNameExpression) {
         this.tempFileName = createFileLanguageExpression(tempFileNameExpression);
+    }
+
+    public boolean isEagerDeleteTargetFile() {
+        return eagerDeleteTargetFile;
+    }
+
+    public void setEagerDeleteTargetFile(boolean eagerDeleteTargetFile) {
+        this.eagerDeleteTargetFile = eagerDeleteTargetFile;
     }
 
     public GenericFileConfiguration getConfiguration() {

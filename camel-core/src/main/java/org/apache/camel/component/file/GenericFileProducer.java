@@ -98,16 +98,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
                         return;
                     } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
                         throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
-                    } else if (endpoint.getFileExist() == GenericFileExist.Override) {
+                    } else if (endpoint.isEagerDeleteTargetFile() && endpoint.getFileExist() == GenericFileExist.Override) {
                         // we override the target so we do this by deleting it so the temp file can be renamed later
                         // with success as the existing target file have been deleted
                         if (log.isTraceEnabled()) {
-                            log.trace("Deleting existing file: " + target);
+                            log.trace("Eagerly deleting existing file: " + target);
                         }
                         if (!operations.deleteFile(target)) {
                             throw new GenericFileOperationFailedException("Cannot delete file: " + target);
                         }
-
                     }
                 }
 
@@ -128,6 +127,21 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // if we did write to a temporary name then rename it to the real
             // name after we have written the file
             if (tempTarget != null) {
+
+                // if we should not eager delete the target file then do it now just before renaming
+                if (!endpoint.isEagerDeleteTargetFile() && operations.existsFile(target)
+                        && endpoint.getFileExist() == GenericFileExist.Override) {
+                    // we override the target so we do this by deleting it so the temp file can be renamed later
+                    // with success as the existing target file have been deleted
+                    if (log.isTraceEnabled()) {
+                        log.trace("Deleting existing file: " + target);
+                    }
+                    if (!operations.deleteFile(target)) {
+                        throw new GenericFileOperationFailedException("Cannot delete file: " + target);
+                    }
+                }
+
+                // now we are ready to rename the temp file to the target file
                 if (log.isTraceEnabled()) {
                     log.trace("Renaming file: [" + tempTarget + "] to: [" + target + "]");
                 }
