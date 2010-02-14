@@ -54,6 +54,7 @@ public class Aggregator extends BatchProcessor implements Traceable {
                       Predicate aggregationCompletedPredicate) {
         this(processor, new PredicateAggregationCollection(correlationExpression, aggregationStrategy, aggregationCompletedPredicate));
         this.correlationExpression = correlationExpression;
+        setCompletionPredicate(aggregationCompletedPredicate);
     }
 
     public Aggregator(Processor processor, AggregationCollection collection) {

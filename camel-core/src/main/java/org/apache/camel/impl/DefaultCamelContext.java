@@ -902,6 +902,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             return;
         }
 
+        // super will invoke doStart which will prepare internal services before we continue and start the routes below
         super.start();
 
         LOG.debug("Starting routes...");
@@ -972,6 +973,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             for (Map.Entry<Integer, DefaultRouteStartupOrder> entry : inputs.entrySet()) {
                 Integer order = entry.getKey();
                 Route route = entry.getValue().getRoute();
+
                 RouteService routeService = entry.getValue().getRouteService();
                 for (Consumer consumer : routeService.getInputs().values()) {
                     Endpoint endpoint = consumer.getEndpoint();
@@ -1028,7 +1030,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         } catch (Exception e) {
             // fire event that we failed to start
             EventHelper.notifyCamelContextStartupFailed(this, e);
-            // rethrown cause
+            // rethrow cause
             throw e;
         }
     }

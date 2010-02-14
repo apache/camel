@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -30,6 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
@@ -47,6 +49,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BatchProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
 
+    // TODO: Should aggregate on the fly as well
+
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
@@ -57,6 +61,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
     private int outBatchSize;
     private boolean groupExchanges;
     private boolean batchConsumer;
+    private Predicate completionPredicate;
 
     private final Processor processor;
     private final Collection<Exchange> collection;
@@ -154,6 +159,14 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         this.batchConsumer = batchConsumer;
     }
 
+    public Predicate getCompletionPredicate() {
+        return completionPredicate;
+    }
+
+    public void setCompletionPredicate(Predicate completionPredicate) {
+        this.completionPredicate = completionPredicate;
+    }
+
     public Processor getProcessor() {
         return processor;
     }
@@ -198,7 +211,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
     protected void processExchange(Exchange exchange) throws Exception {
         processor.process(exchange);
         if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing Exchange: " + exchange, exchange.getException());
+            getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, exchange.getException());
         }
     }
 
@@ -242,6 +255,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         private Queue<Exchange> queue;
         private Lock queueLock = new ReentrantLock();
         private boolean exchangeEnqueued;
+        private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<String>();
         private Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
         public BatchSender() {
@@ -278,17 +292,38 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                 do {
                     try {
                         if (!exchangeEnqueued) {
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Waiting for new exchange to arrive or batchTimeout to occur after " + batchTimeout + " ms.");
+                            }
                             exchangeEnqueuedCondition.await(batchTimeout, TimeUnit.MILLISECONDS);
                         }
 
-                        if (!exchangeEnqueued) {
-                            drainQueueTo(collection, batchSize);
-                        } else {             
-                            exchangeEnqueued = false;
-                            while (isInBatchCompleted(queue.size())) {
-                                drainQueueTo(collection, batchSize);
+                        // if the completion predicate was triggered then there is an exchange id which denotes when to complete
+                        String id = null;
+                        if (!completionPredicateMatched.isEmpty()) {
+                            id = completionPredicateMatched.poll();
+                        }
+
+                        if (id != null || !exchangeEnqueued) {
+                            if (LOG.isTraceEnabled()) {
+                                if (id != null) {
+                                    LOG.trace("Collecting exchanges to be aggregated triggered by completion predicate");
+                                } else {
+                                    LOG.trace("Collecting exchanges to be aggregated triggered by batch timeout");
+                                }
                             }
-                            
+                            drainQueueTo(collection, batchSize, id);
+                        } else {
+                            exchangeEnqueued = false;
+                            boolean drained = false;
+                            while (isInBatchCompleted(queue.size())) {
+                                drained = true;
+                                drainQueueTo(collection, batchSize, id);
+                            }
+                            if (drained) {
+                                LOG.trace("Collecting exchanges to be aggregated triggered by new exchanges received");
+                            }
+
                             if (!isOutBatchCompleted()) {
                                 continue;
                             }
@@ -320,7 +355,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         /**
          * This method should be called with queueLock held
          */
-        private void drainQueueTo(Collection<Exchange> collection, int batchSize) {
+        private void drainQueueTo(Collection<Exchange> collection, int batchSize, String exchangeId) {
             for (int i = 0; i < batchSize; ++i) {
                 Exchange e = queue.poll();
                 if (e != null) {
@@ -330,6 +365,10 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                         e.setException(t);
                     } catch (Throwable t) {
                         getExceptionHandler().handleException(t);
+                    }
+                    if (exchangeId != null && exchangeId.equals(e.getExchangeId())) {
+                        // this batch is complete so stop draining
+                        break;
                     }
                 } else {
                     break;
@@ -342,8 +381,22 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         }
 
         public void enqueueExchange(Exchange exchange) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Received exchange to be batched: " + exchange);
+            }
             queueLock.lock();
             try {
+                // pre test whether the completion predicate matched
+                if (completionPredicate != null) {
+                    boolean matches = completionPredicate.matches(exchange);
+                    if (matches) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Exchange matched completion predicate: " + exchange);
+                        }
+                        // add this exchange to the list of exchanges which marks the batch as complete
+                        completionPredicateMatched.add(exchange.getExchangeId());
+                    }
+                }
                 queue.add(exchange);
                 exchangeEnqueued = true;
                 exchangeEnqueuedCondition.signal();
@@ -359,10 +412,13 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                 Exchange exchange = iter.next();
                 iter.remove();
                 try {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Sending aggregated exchange: " + exchange);
+                    }
                     processExchange(exchange);
                 } catch (Throwable t) {
                     // must catch throwable to avoid growing memory
-                    getExceptionHandler().handleException("Error processing Exchange: " + exchange, t);
+                    getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, t);
                 }
             }
         }
