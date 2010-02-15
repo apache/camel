@@ -25,6 +25,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,14 +34,15 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultTimeoutMap implements TimeoutMap, Runnable {
+public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Service {
 
-    private static final transient Log LOG = LogFactory.getLog(DefaultTimeoutMap.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
 
-    private final Map<Object, Object> map = new HashMap<Object, Object>();
-    private SortedSet<TimeoutMapEntry> index = new TreeSet<TimeoutMapEntry>();
-    private ScheduledExecutorService executor;
-    private long purgePollTime;
+    private final Map<K, TimeoutMapEntry<K, V>> map = new HashMap<K, TimeoutMapEntry<K, V>>();
+    private final SortedSet<TimeoutMapEntry<K, V>> index = new TreeSet<TimeoutMapEntry<K, V>>();
+    private final ScheduledExecutorService executor;
+    private final long purgePollTime;
+    private final long initialDelay = 1000L;
 
     public DefaultTimeoutMap() {
         this(null, 1000L);
@@ -52,10 +54,10 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         schedulePoll();
     }
 
-    public Object get(Object key) {
-        TimeoutMapEntry entry = null;
+    public V get(K key) {
+        TimeoutMapEntry<K, V> entry;
         synchronized (map) {
-            entry = (TimeoutMapEntry) map.get(key);
+            entry = map.get(key);
             if (entry == null) {
                 return null;
             }
@@ -66,10 +68,10 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         return entry.getValue();
     }
 
-    public void put(Object key, Object value, long timeoutMillis) {
-        TimeoutMapEntry entry = new TimeoutMapEntry(key, value, timeoutMillis);
+    public void put(K key, V value, long timeoutMillis) {
+        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
         synchronized (map) {
-            Object oldValue = map.put(key, entry);
+            TimeoutMapEntry<K, V> oldValue = map.put(key, entry);
             if (oldValue != null) {
                 index.remove(oldValue);
             }
@@ -78,9 +80,9 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         }
     }
 
-    public void remove(Object id) {
+    public void remove(K id) {
         synchronized (map) {
-            TimeoutMapEntry entry = (TimeoutMapEntry) map.remove(id);
+            TimeoutMapEntry entry = map.remove(id);
             if (entry != null) {
                 index.remove(entry);
             }
@@ -90,7 +92,7 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
     public Object[] getKeys() {
         Object[] keys = null;
         synchronized (map) {
-            Set<Object> keySet = map.keySet();
+            Set<K> keySet = map.keySet();
             keys = new Object[keySet.size()];
             keySet.toArray(keys);
         }
@@ -108,21 +110,20 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
      */
     public void run() {
         purge();
-        schedulePoll();
     }
 
     public void purge() {
         long now = currentTime();
         synchronized (map) {
-            for (Iterator<TimeoutMapEntry> iter = index.iterator(); iter.hasNext();) {
-                TimeoutMapEntry entry = (TimeoutMapEntry) iter.next();
+            for (Iterator<TimeoutMapEntry<K, V>> iter = index.iterator(); iter.hasNext();) {
+                TimeoutMapEntry<K, V> entry = iter.next();
                 if (entry == null) {
                     break;
                 }
                 if (entry.getExpireTime() < now) {
                     if (isValidForEviction(entry)) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Evicting inactive request for correlationID: " + entry);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Evicting inactive request for correlationID: " + entry);
                         }
                         map.remove(entry.getKey());
                         iter.remove();
@@ -153,14 +154,14 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
      */
     protected void schedulePoll() {
         if (executor != null) {
-            executor.schedule(this, purgePollTime, TimeUnit.MILLISECONDS);
+            executor.scheduleWithFixedDelay(this, initialDelay, purgePollTime, TimeUnit.MILLISECONDS);
         }
     }
 
     /**
      * A hook to allow derivations to avoid evicting the current entry
      */
-    protected boolean isValidForEviction(TimeoutMapEntry entry) {
+    protected boolean isValidForEviction(TimeoutMapEntry<K, V> entry) {
         return true;
     }
 
@@ -171,5 +172,16 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
 
     protected long currentTime() {
         return System.currentTimeMillis();
+    }
+
+    public void start() throws Exception {
+    }
+
+    public void stop() throws Exception {
+        if (executor != null) {
+            executor.shutdown();
+        }
+        map.clear();
+        index.clear();
     }
 }

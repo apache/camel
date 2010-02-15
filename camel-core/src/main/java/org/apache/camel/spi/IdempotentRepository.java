@@ -53,7 +53,7 @@ public interface IdempotentRepository<E> {
     boolean remove(E key);
 
     /**
-     * Confirms the key, after the exchange has been processed sucesfully.
+     * Confirms the key, after the exchange has been processed successfully.
      *
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if the key was confirmed

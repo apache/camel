@@ -14,49 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.processor.aggregate;
+
+import org.apache.camel.Exchange;
 
 /**
- * Represents a thread safe map of values which timeout after a period of
- * inactivity.
- *
+ * Access to a repository to store aggregated exchanges to support pluggable implementations.
+ *  
  * @version $Revision$
  */
-public interface TimeoutMap<K, V> extends Runnable {
+public interface AggregationRepository<K> {
 
     /**
-     * Looks up the value in the map by the given key.
+     * Add the given {@link Exchange} under the correlation key.
+     * <p/>
+     * Will replace any existing exchange.
      *
-     * @param key the key of the value to search for
-     * @return the value for the given key or null if it is not present (or has timed out)
+     * @param key  the correlation key
+     * @param exchange the aggregated exchange
+     * @return the old exchange if any existed
      */
-    V get(K key);
+    Exchange add(K key, Exchange exchange);
 
     /**
-     * Returns a copy of the keys in the map
-     */
-    Object[] getKeys();
-
-    /**
-     * Returns the size of the map
-     */
-    int size();
-
-    /**
-     * Adds the key value pair into the map such that some time after the given
-     * timeout the entry will be evicted
-     */
-    void put(K key, V value, long timeoutMillis);
-
-    /**
-     * Removes the object with the given key
+     * Gets the given exchange with the correlation key
      *
-     * @param key  key for the object to remove
+     * @param key the correlation key
+     * @return the exchange, or <tt>null</tt> if no exchange was previously added
+     */
+    Exchange get(K key);
+
+    /**
+     * Removes the exchange with the given correlation key
+     *
+     * @param key the correlation key
      */
     void remove(K key);
 
-    /**
-     * Purges any old entries from the map
-     */
-    void purge();
 }

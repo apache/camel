@@ -23,19 +23,19 @@ import java.util.Map;
  *
  * @version $Revision$
  */
-public class TimeoutMapEntry implements Comparable<Object>, Map.Entry<Object, Object> {
-    private Object key;
-    private Object value;
+public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V> {
+    private K key;
+    private V value;
     private long timeout;
     private long expireTime;
 
-    public TimeoutMapEntry(Object id, Object handler, long timeout) {
+    public TimeoutMapEntry(K id, V handler, long timeout) {
         this.key = id;
         this.value = handler;
         this.timeout = timeout;
     }
 
-    public Object getKey() {
+    public K getKey() {
         return key;
     }
 
@@ -47,12 +47,12 @@ public class TimeoutMapEntry implements Comparable<Object>, Map.Entry<Object, Ob
         this.expireTime = expireTime;
     }
 
-    public Object getValue() {
+    public V getValue() {
         return value;
     }
 
-    public Object setValue(Object value) {
-        Object oldValue = this.value;
+    public V setValue(V value) {
+        V oldValue = this.value;
         this.value = value;
         return oldValue;
     }
@@ -65,6 +65,7 @@ public class TimeoutMapEntry implements Comparable<Object>, Map.Entry<Object, Ob
         this.timeout = timeout;
     }
 
+    @SuppressWarnings("unchecked")
     public int compareTo(Object that) {
         if (this == that) {
             return 0;
@@ -75,7 +76,7 @@ public class TimeoutMapEntry implements Comparable<Object>, Map.Entry<Object, Ob
         return 1;
     }
 
-    public int compareTo(TimeoutMapEntry that) {
+    public int compareTo(TimeoutMapEntry<K, V> that) {
         long diff = this.expireTime - that.expireTime;
         if (diff > 0) {
             return 1;
