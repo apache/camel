@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,6 +30,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * @version $Revision$
@@ -352,5 +355,138 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         ap.stop();
     }
+
+    public void testAggregateUseBatchSizeFromConsumer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("A+B", "C+D+E");
+
+        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        Expression corr = header("id");
+        AggregationStrategy as = new BodyInAggregatingStrategy();
+
+        AggregateProcessor ap = new AggregateProcessor(done, corr, as);
+        ap.setCompletionAggregatedSize(100);
+        ap.setUseBatchSizeFromConsumer(true);
+
+        ap.start();
+
+        Exchange e1 = new DefaultExchange(context);
+        e1.getIn().setBody("A");
+        e1.getIn().setHeader("id", 123);
+        e1.setProperty(Exchange.BATCH_SIZE, 2);
+
+        Exchange e2 = new DefaultExchange(context);
+        e2.getIn().setBody("B");
+        e2.getIn().setHeader("id", 123);
+        e2.setProperty(Exchange.BATCH_SIZE, 2);
+
+        Exchange e3 = new DefaultExchange(context);
+        e3.getIn().setBody("C");
+        e3.getIn().setHeader("id", 123);
+        e3.setProperty(Exchange.BATCH_SIZE, 3);
+
+        Exchange e4 = new DefaultExchange(context);
+        e4.getIn().setBody("D");
+        e4.getIn().setHeader("id", 123);
+        e4.setProperty(Exchange.BATCH_SIZE, 3);
+
+        Exchange e5 = new DefaultExchange(context);
+        e5.getIn().setBody("E");
+        e5.getIn().setHeader("id", 123);
+        e5.setProperty(Exchange.BATCH_SIZE, 3);
+
+        ap.process(e1);
+        ap.process(e2);
+        ap.process(e3);
+        ap.process(e4);
+        ap.process(e5);
+
+        assertMockEndpointsSatisfied();
+
+        ap.stop();
+    }
+
+    public void testAggregateLogFailedExchange() throws Exception {
+        doTestAggregateLogFailedExchange(null);
+    }
+
+    public void testAggregateHandleFailedExchange() throws Exception {
+        final AtomicBoolean tested = new AtomicBoolean();
+
+        ExceptionHandler myHandler = new ExceptionHandler() {
+            public void handleException(Throwable exception) {
+            }
+
+            public void handleException(String message, Throwable exception) {
+            }
+
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                assertEquals("Error processing aggregated exchange", message);
+                assertEquals("B+Kaboom+END", exchange.getIn().getBody());
+                assertEquals("Damn", exception.getMessage());
+                tested.set(true);
+            }
+        };
+
+        doTestAggregateLogFailedExchange(myHandler);
+        assertEquals(true, tested.get());
+    }
+
+    private void doTestAggregateLogFailedExchange(ExceptionHandler handler) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("A+END");
+
+        Processor done = new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                if (exchange.getIn().getBody(String.class).contains("Kaboom")) {
+                    throw new IllegalArgumentException("Damn");
+                }
+                // else send it further along
+                new SendProcessor(context.getEndpoint("mock:result")).process(exchange);
+            }
+        };
+                
+        Expression corr = header("id");
+        AggregationStrategy as = new BodyInAggregatingStrategy();
+
+        AggregateProcessor ap = new AggregateProcessor(done, corr, as);
+        ap.setEagerCheckCompletion(true);
+        ap.setCompletionPredicate(body().isEqualTo("END"));
+        if (handler != null) {
+            ap.setExceptionHandler(handler);
+        }
+        ap.start();
+
+        Exchange e1 = new DefaultExchange(context);
+        e1.getIn().setBody("A");
+        e1.getIn().setHeader("id", 123);
+
+        Exchange e2 = new DefaultExchange(context);
+        e2.getIn().setBody("B");
+        e2.getIn().setHeader("id", 456);
+
+        Exchange e3 = new DefaultExchange(context);
+        e3.getIn().setBody("Kaboom");
+        e3.getIn().setHeader("id", 456);
+
+        Exchange e4 = new DefaultExchange(context);
+        e4.getIn().setBody("END");
+        e4.getIn().setHeader("id", 456);
+
+        Exchange e5 = new DefaultExchange(context);
+        e5.getIn().setBody("END");
+        e5.getIn().setHeader("id", 123);
+
+        ap.process(e1);
+        ap.process(e2);
+        ap.process(e3);
+        ap.process(e4);
+        ap.process(e5);
+
+        assertMockEndpointsSatisfied();
+
+        ap.stop();
+    }
+
 
 }

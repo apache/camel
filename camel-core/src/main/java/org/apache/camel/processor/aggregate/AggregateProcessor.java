@@ -29,7 +29,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -56,10 +58,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private ExecutorService executorService;
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
     private Set<Object> closedCorrelationKeys = new HashSet<Object>();
+    private ExceptionHandler exceptionHandler;
 
     // options
     private boolean ignoreBadCorrelationKeys;
     private boolean closeCorrelationKeyOnCompletion;
+    private boolean useBatchSizeFromConsumer;
+    private int concurrentConsumers = 1;
 
     // different ways to have completion triggered
     private boolean eagerCheckCompletion;
@@ -113,6 +118,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (isCloseCorrelationKeyOnCompletion()) {
             if (closedCorrelationKeys.contains(key)) {
                 throw new CamelExchangeException("Correlation key has been closed", exchange);
+            }
+        }
+
+        // if batch consumer is enabled then we need to adjust the batch size
+        // with the size from the batch consumer
+        if (isUseBatchSizeFromConsumer()) {
+            int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
+            if (size > 0 && size != completionAggregatedSize) {
+                completionAggregatedSize = size;
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using batch consumer completion, so setting completionAggregatedSize to: " + completionAggregatedSize);
+                }
             }
         }
 
@@ -208,6 +225,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     processor.process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
+                } catch (Throwable t) {
+                    // must catch throwable so we will handle all exceptions as the executor service will by default ignore them
+                    exchange.setException(new CamelExchangeException("Error processing aggregated exchange", exchange, t));
+                }
+
+                // if there was an exception then let the exception handler handle it
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing aggregated exchange", exchange, exchange.getException());
                 }
             }
         });
@@ -269,12 +294,39 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
+    public boolean isUseBatchSizeFromConsumer() {
+        return useBatchSizeFromConsumer;
+    }
+
+    public void setUseBatchSizeFromConsumer(boolean useBatchSizeFromConsumer) {
+        this.useBatchSizeFromConsumer = useBatchSizeFromConsumer;
+    }
+
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        if (exceptionHandler == null) {
+            exceptionHandler = new LoggingExceptionHandler(getClass());
+        }
+        return exceptionHandler;
+    }
+
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
+
     /**
      * Background tasks that looks for aggregated exchanges which is triggered by completion timeouts.
      */
-    private class TimeoutReaper extends DefaultTimeoutMap<Object, Exchange> {
+    private class AggregationTimeoutMap extends DefaultTimeoutMap<Object, Exchange> {
 
-        private TimeoutReaper(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
+        private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             super(executor, requestMapPollTimeMillis);
         }
 
@@ -297,13 +349,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         ServiceHelper.startService(aggregationRepository);
 
         if (executorService == null) {
-            executorService = ExecutorServiceHelper.newFixedThreadPool(10, "AggregateProcessor", true);
+            executorService = ExecutorServiceHelper.newFixedThreadPool(getConcurrentConsumers(), "AggregateProcessor", true);
         }
 
         // start timeout service if its in use
         if (getCompletionTimeout() > 0) {
-            ScheduledExecutorService scheduler = ExecutorServiceHelper.newScheduledThreadPool(1, "AggregationProcessorTimeoutReaper", true);
-            timeoutMap = new TimeoutReaper(scheduler, 1000L);
+            ScheduledExecutorService scheduler = ExecutorServiceHelper.newScheduledThreadPool(1, "AggregateProcessorTimeoutCompletion", true);
+            timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
             ServiceHelper.startService(timeoutMap);
         }
     }
