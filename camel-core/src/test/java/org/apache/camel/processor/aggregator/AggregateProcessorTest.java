@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -49,7 +50,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         AggregateProcessor ap = new AggregateProcessor(done, corr, as);
         ap.setCompletionPredicate(complete);
-        ap.setEagerEvaluateCompletionPredicate(false);
+        ap.setEagerCheckCompletion(false);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -89,7 +90,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         AggregateProcessor ap = new AggregateProcessor(done, corr, as);
         ap.setCompletionPredicate(complete);
-        ap.setEagerEvaluateCompletionPredicate(true);
+        ap.setEagerCheckCompletion(true);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -136,7 +137,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         AggregateProcessor ap = new AggregateProcessor(done, corr, as);
         ap.setCompletionAggregatedSize(3);
-        ap.setEagerEvaluateCompletionPredicate(eager);
+        ap.setEagerCheckCompletion(eager);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -183,7 +184,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         AggregateProcessor ap = new AggregateProcessor(done, corr, as);
         ap.setCompletionTimeout(3000);
-        ap.setEagerEvaluateCompletionPredicate(eager);
+        ap.setEagerCheckCompletion(eager);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -212,6 +213,140 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         Thread.sleep(5000);
         ap.process(e4);
+
+        assertMockEndpointsSatisfied();
+
+        ap.stop();
+    }
+
+    public void testAggregateIgnoreBadCorrelationKey() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("A+C+END");
+
+        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        Expression corr = header("id");
+        AggregationStrategy as = new BodyInAggregatingStrategy();
+        Predicate complete = body().contains("END");
+
+        AggregateProcessor ap = new AggregateProcessor(done, corr, as);
+        ap.setCompletionPredicate(complete);
+        ap.setIgnoreBadCorrelationKeys(true);
+
+        ap.start();
+
+        Exchange e1 = new DefaultExchange(context);
+        e1.getIn().setBody("A");
+        e1.getIn().setHeader("id", 123);
+
+        Exchange e2 = new DefaultExchange(context);
+        e2.getIn().setBody("B");
+
+        Exchange e3 = new DefaultExchange(context);
+        e3.getIn().setBody("C");
+        e3.getIn().setHeader("id", 123);
+
+        Exchange e4 = new DefaultExchange(context);
+        e4.getIn().setBody("END");
+        e4.getIn().setHeader("id", 123);
+
+        ap.process(e1);
+        ap.process(e2);
+        ap.process(e3);
+        ap.process(e4);
+
+        assertMockEndpointsSatisfied();
+
+        ap.stop();
+    }
+
+    public void testAggregateBadCorrelationKey() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("A+C+END");
+
+        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        Expression corr = header("id");
+        AggregationStrategy as = new BodyInAggregatingStrategy();
+        Predicate complete = body().contains("END");
+
+        AggregateProcessor ap = new AggregateProcessor(done, corr, as);
+        ap.setCompletionPredicate(complete);
+
+        ap.start();
+
+        Exchange e1 = new DefaultExchange(context);
+        e1.getIn().setBody("A");
+        e1.getIn().setHeader("id", 123);
+
+        Exchange e2 = new DefaultExchange(context);
+        e2.getIn().setBody("B");
+
+        Exchange e3 = new DefaultExchange(context);
+        e3.getIn().setBody("C");
+        e3.getIn().setHeader("id", 123);
+
+
+        Exchange e4 = new DefaultExchange(context);
+        e4.getIn().setBody("END");
+        e4.getIn().setHeader("id", 123);
+
+        ap.process(e1);
+
+        try {
+            ap.process(e2);
+            fail("Should have thrown an exception");
+        } catch (CamelExchangeException e) {
+            assertEquals("Correlation key could not be evaluated to a value. Exchange[Message: B]", e.getMessage());
+        }
+
+        ap.process(e3);
+        ap.process(e4);
+
+        assertMockEndpointsSatisfied();
+
+        ap.stop();
+    }
+
+    public void testAggregateCloseCorrelationKeyOnCompletion() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("A+B+END");
+
+        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        Expression corr = header("id");
+        AggregationStrategy as = new BodyInAggregatingStrategy();
+        Predicate complete = body().contains("END");
+
+        AggregateProcessor ap = new AggregateProcessor(done, corr, as);
+        ap.setCompletionPredicate(complete);
+        ap.setCloseCorrelationKeyOnCompletion(true);
+
+        ap.start();
+
+        Exchange e1 = new DefaultExchange(context);
+        e1.getIn().setBody("A");
+        e1.getIn().setHeader("id", 123);
+
+        Exchange e2 = new DefaultExchange(context);
+        e2.getIn().setBody("B");
+        e2.getIn().setHeader("id", 123);
+
+        Exchange e3 = new DefaultExchange(context);
+        e3.getIn().setBody("END");
+        e3.getIn().setHeader("id", 123);
+
+        Exchange e4 = new DefaultExchange(context);
+        e4.getIn().setBody("C");
+        e4.getIn().setHeader("id", 123);
+
+        ap.process(e1);
+        ap.process(e2);
+        ap.process(e3);
+
+        try {
+            ap.process(e4);
+            fail("Should have thrown an exception");
+        } catch (CamelExchangeException e) {
+            assertEquals("Correlation key has been closed. Exchange[Message: C]", e.getMessage());
+        }
 
         assertMockEndpointsSatisfied();
 

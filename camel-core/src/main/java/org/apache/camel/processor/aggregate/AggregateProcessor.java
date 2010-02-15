@@ -17,7 +17,9 @@
 package org.apache.camel.processor.aggregate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -53,9 +55,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final Expression correlationExpression;
     private ExecutorService executorService;
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
+    private Set<Object> closedCorrelationKeys = new HashSet<Object>();
+
+    // options
+    private boolean ignoreBadCorrelationKeys;
+    private boolean closeCorrelationKeyOnCompletion;
 
     // different ways to have completion triggered
-    private boolean eagerEvaluateCompletionPredicate;
+    private boolean eagerCheckCompletion;
     private Predicate completionPredicate;
     private long completionTimeout;
     private int completionAggregatedSize;
@@ -91,7 +98,22 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // compute correlation expression
         Object key = correlationExpression.evaluate(exchange, Object.class);
         if (ObjectHelper.isEmpty(key)) {
-            throw new CamelExchangeException("Correlation key could not be evaluated to a value", exchange);
+            // we have a bad correlation key
+            if (isIgnoreBadCorrelationKeys()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Correlation key could not be evaluated to a value. Exchange will be ignored: " + exchange);
+                }
+                return;
+            } else {
+                throw new CamelExchangeException("Correlation key could not be evaluated to a value", exchange);
+            }
+        }
+
+        // is the correlation key closed?
+        if (isCloseCorrelationKeyOnCompletion()) {
+            if (closedCorrelationKeys.contains(key)) {
+                throw new CamelExchangeException("Correlation key has been closed", exchange);
+            }
         }
 
         Exchange oldExchange = aggregationRepository.get(key);
@@ -104,9 +126,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             size++;
         }
 
-        // are we complete?
+        // check if we are complete
         boolean complete = false;
-        if (isEagerEvaluateCompletionPredicate()) {
+        if (isEagerCheckCompletion()) {
             complete = isCompleted(key, exchange, size);
         }
 
@@ -115,8 +137,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         newExchange = onAggregation(oldExchange, newExchange);
         newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
 
-        // if not set to evaluate eager then do that after the aggregation
-        if (!isEagerEvaluateCompletionPredicate()) {
+        // maybe we should check completion after the aggregation
+        if (!isEagerCheckCompletion()) {
+            // use the new aggregated exchange when testing
             complete = isCompleted(key, newExchange, size);
         }
 
@@ -169,6 +192,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             timeoutMap.remove(key);
         }
 
+        // this key has been closed so add it to the closed map
+        if (isCloseCorrelationKeyOnCompletion()) {
+            closedCorrelationKeys.add(key);
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Aggregation complete for correlation key " + key + " sending aggregated exchange: " + exchange);
         }
@@ -201,12 +229,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.completionPredicate = completionPredicate;
     }
 
-    public boolean isEagerEvaluateCompletionPredicate() {
-        return eagerEvaluateCompletionPredicate;
+    public boolean isEagerCheckCompletion() {
+        return eagerCheckCompletion;
     }
 
-    public void setEagerEvaluateCompletionPredicate(boolean eagerEvaluateCompletionPredicate) {
-        this.eagerEvaluateCompletionPredicate = eagerEvaluateCompletionPredicate;
+    public void setEagerCheckCompletion(boolean eagerCheckCompletion) {
+        this.eagerCheckCompletion = eagerCheckCompletion;
     }
 
     public long getCompletionTimeout() {
@@ -223,6 +251,22 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     public void setCompletionAggregatedSize(int completionAggregatedSize) {
         this.completionAggregatedSize = completionAggregatedSize;
+    }
+
+    public boolean isIgnoreBadCorrelationKeys() {
+        return ignoreBadCorrelationKeys;
+    }
+
+    public void setIgnoreBadCorrelationKeys(boolean ignoreBadCorrelationKeys) {
+        this.ignoreBadCorrelationKeys = ignoreBadCorrelationKeys;
+    }
+
+    public boolean isCloseCorrelationKeyOnCompletion() {
+        return closeCorrelationKeyOnCompletion;
+    }
+
+    public void setCloseCorrelationKeyOnCompletion(boolean closeCorrelationKeyOnCompletion) {
+        this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
     /**
@@ -274,6 +318,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         ServiceHelper.stopService(aggregationRepository);
+        closedCorrelationKeys.clear();
     }
 
 }
