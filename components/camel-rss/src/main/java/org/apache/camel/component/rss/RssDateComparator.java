@@ -24,7 +24,12 @@ import com.sun.syndication.feed.synd.SyndEntry;
 public class RssDateComparator implements Comparator<SyndEntry> {
 
     public int compare(SyndEntry s1, SyndEntry s2) {
-        return getUpdatedDate(s2).compareTo(getUpdatedDate(s1));
+        Date d1 = getUpdatedDate(s1);
+        Date d2 = getUpdatedDate(s2);
+        if ( d2 != null && d1 != null )
+            return d2.compareTo(d1);
+        else
+            return 0;
     }
 
     private Date getUpdatedDate(SyndEntry entry) {
