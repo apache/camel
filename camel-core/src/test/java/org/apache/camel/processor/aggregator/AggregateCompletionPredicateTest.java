@@ -125,7 +125,7 @@ public class AggregateCompletionPredicateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
-                            .completionPredicate(body().contains("END")).batchTimeout(20000)
+                            .completionPredicate(body().contains("END")).completionTimeout(20000)
                         .to("mock:aggregated");
             }
         };

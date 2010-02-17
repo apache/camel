@@ -31,6 +31,7 @@ import org.apache.camel.Expression;
  *
  * @version $Revision$
  */
+@Deprecated
 public interface AggregationCollection extends Collection<Exchange> {
 
     /**

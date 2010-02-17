@@ -56,7 +56,7 @@ public class AggregateMultipleSourceTest extends ContextTestSupport {
                 from("seda:baz").to("direct:aggregate");
 
                 from("direct:aggregate")
-                    .aggregate(header("type"), new MyAggregationStrategy()).batchSize(25).batchTimeout(5000)
+                    .aggregate(header("type"), new MyAggregationStrategy()).completionSize(25).completionTimeout(5000)
                         .to("mock:result")
                     .end();
             }

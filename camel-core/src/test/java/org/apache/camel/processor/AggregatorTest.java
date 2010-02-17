@@ -16,9 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * @version $Revision$
@@ -44,19 +48,15 @@ public class AggregatorTest extends ContextTestSupport {
         testSendALargeBatch("direct:predicate");
     }
     
-    public void testOutBatchPredicate() throws Exception {
-        testSendALargeBatch("direct:outBatchPredicate");
-    }
-
-    public void testOutBatchWithNoInBatching() throws Exception {
-        testSendALargeBatch("direct:outBatchNoInBatching");
-    }
-    
     public void testOneMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
         resultEndpoint.expectedMessageCount(1);
-        template.sendBodyAndHeader("direct:predicate", "test", "aggregated", 5);
+        Map headers = new HashMap();
+        headers.put("cheese", 123);
+        headers.put("aggregated", 5);
+
+        template.sendBodyAndHeaders("direct:predicate", "test", headers);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -84,25 +84,20 @@ public class AggregatorTest extends ContextTestSupport {
 
                 // START SNIPPET: ex
                 // in this route we aggregate all from direct:state based on the header id cheese
-                from("direct:start").aggregate(header("cheese")).to("mock:result");
+                from("direct:start")
+                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                        .to("mock:result");
 
-                from("seda:header").setHeader("visited", constant(true)).aggregate(header("cheese")).to("mock:result");
+                from("seda:header").setHeader("visited", constant(true))
+                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                        .to("mock:result");
 
                 // in this sample we aggregate using our own strategy with a completion predicate
                 // stating that the aggregated header is equal to 5.
-                from("direct:predicate").aggregate(header("cheese"), new MyAggregationStrategy()).
-                        completionPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
-                
-                // this sample is similar to the one above but it also illustrates the use of outBatchSize 
-                // to send exchanges to mock:endpoint in batches of 10.  
-                from("direct:outBatchPredicate").aggregate(header("cheese"), new MyAggregationStrategy()).
-                        completionPredicate(header("aggregated").isEqualTo(5)).outBatchSize(10).to("mock:result");
+                from("direct:predicate")
+                    .aggregate(header("cheese"), new MyAggregationStrategy()).completionPredicate(header("aggregated").isEqualTo(5))
+                        .to("mock:result");
                 // END SNIPPET: ex
-
-                // turning off in batching (batchSize = 1) is a good way to test "out" batching.  Don't include
-                // in wiki snippet as it may not be a good example to follow.
-                from("direct:outBatchNoInBatching").aggregate(header("cheese"), new MyAggregationStrategy()).
-                        completionPredicate(header("aggregated").isEqualTo(5)).batchSize(1).outBatchSize(10).to("mock:result");
             }
         };
     }

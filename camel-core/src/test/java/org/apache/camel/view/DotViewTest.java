@@ -19,6 +19,8 @@ package org.apache.camel.view;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
@@ -88,7 +90,9 @@ public class DotViewTest extends ContextTestSupport {
 
     static class AggreagateRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:foo").aggregate(constant("messageId")).to("seda:aggregated");
+            from("seda:foo")
+                .aggregate(constant("messageId"), new UseLatestAggregationStrategy()).completionTimeout(1000L).
+                    to("seda:aggregated");
         }
     }
 

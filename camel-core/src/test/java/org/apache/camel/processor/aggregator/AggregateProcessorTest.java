@@ -139,7 +139,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(done, corr, as);
-        ap.setCompletionAggregatedSize(3);
+        ap.setCompletionSize(3);
         ap.setEagerCheckCompletion(eager);
         ap.start();
 
@@ -365,35 +365,45 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(done, corr, as);
-        ap.setCompletionAggregatedSize(100);
-        ap.setUseBatchSizeFromConsumer(true);
+        ap.setCompletionSize(100);
+        ap.setCompletionFromBatchConsumer(true);
 
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
         e1.getIn().setBody("A");
         e1.getIn().setHeader("id", 123);
+        e1.setProperty(Exchange.BATCH_INDEX, 0);
         e1.setProperty(Exchange.BATCH_SIZE, 2);
+        e1.setProperty(Exchange.BATCH_COMPLETE, false);
 
         Exchange e2 = new DefaultExchange(context);
         e2.getIn().setBody("B");
         e2.getIn().setHeader("id", 123);
+        e2.setProperty(Exchange.BATCH_INDEX, 1);
         e2.setProperty(Exchange.BATCH_SIZE, 2);
+        e2.setProperty(Exchange.BATCH_COMPLETE, true);
 
         Exchange e3 = new DefaultExchange(context);
         e3.getIn().setBody("C");
         e3.getIn().setHeader("id", 123);
+        e3.setProperty(Exchange.BATCH_INDEX, 0);
         e3.setProperty(Exchange.BATCH_SIZE, 3);
+        e3.setProperty(Exchange.BATCH_COMPLETE, false);
 
         Exchange e4 = new DefaultExchange(context);
         e4.getIn().setBody("D");
         e4.getIn().setHeader("id", 123);
+        e4.setProperty(Exchange.BATCH_INDEX, 1);
         e4.setProperty(Exchange.BATCH_SIZE, 3);
+        e4.setProperty(Exchange.BATCH_COMPLETE, false);
 
         Exchange e5 = new DefaultExchange(context);
         e5.getIn().setBody("E");
         e5.getIn().setHeader("id", 123);
+        e5.setProperty(Exchange.BATCH_INDEX, 2);
         e5.setProperty(Exchange.BATCH_SIZE, 3);
+        e5.setProperty(Exchange.BATCH_COMPLETE, true);
 
         ap.process(e1);
         ap.process(e2);

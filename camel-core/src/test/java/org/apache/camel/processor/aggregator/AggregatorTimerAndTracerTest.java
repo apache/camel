@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * Unit test with timer, splitter, aggregator and tracer.
@@ -39,7 +40,7 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
                 getContext().setTracing(true);
                 
                 from("seda:splitted").
-                    aggregate(header("id")).
+                    aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(1000L).
                     to("mock:foo").
                     to("mock:result");
 

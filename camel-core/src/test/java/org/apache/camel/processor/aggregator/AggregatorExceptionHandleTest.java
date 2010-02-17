@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * Based on CAMEL-1546
@@ -63,7 +64,7 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("direct:start")
-                    .aggregate(header("id"))
+                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

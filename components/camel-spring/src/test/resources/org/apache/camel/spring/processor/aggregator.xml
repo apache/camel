@@ -22,83 +22,51 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="direct:start"/>
-      <aggregate>
-        <correlationExpression>
-          <simple>header.cheese</simple>
-        </correlationExpression>
-        <to uri="mock:result"/>
-      </aggregate>
-    </route>
+    <!-- START SNIPPET: example -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
-    <route>
-      <from uri="seda:header"/>
-      <process ref="setHeaderProcessor"/>
-      <to uri="direct:temp"/>
-    </route>
+        <route>
+            <from uri="direct:start"/>
+            <aggregate strategyRef="latestAggregationStrategy" completionTimeout="1000">
+                <correlationExpression>
+                    <simple>header.cheese</simple>
+                </correlationExpression>
+                <to uri="mock:result"/>
+            </aggregate>
+        </route>
 
-    <route>
-      <from uri="direct:temp"/>
-      <aggregate>
-        <correlationExpression>      
-          <simple>header.cheese</simple>
-        </correlationExpression>
-        <to uri="mock:result"/>
-      </aggregate>
-    </route>
+        <route>
+            <from uri="seda:header"/>
+            <setHeader headerName="visited">
+                <constant>true</constant>
+            </setHeader>
+            <aggregate strategyRef="latestAggregationStrategy" completionTimeout="1000">
+                <correlationExpression>
+                    <simple>header.cheese</simple>
+                </correlationExpression>
+                <to uri="mock:result"/>
+            </aggregate>
+        </route>
 
-    <route>
-      <from uri="direct:predicate"/>
-      <aggregate strategyRef="myAggregatorStrategy">
-        <correlationExpression>
-          <simple>header.cheese</simple>
-        </correlationExpression>
-        <to uri="mock:result"/>
-        <completionPredicate>
-          <method bean="myAggregatorStrategy" method="isCompleted"/>
-        </completionPredicate>
-      </aggregate>
-    </route>
-    
-    <route>
-      <from uri="direct:outBatchPredicate"/>
-      <aggregate strategyRef="myAggregatorStrategy" outBatchSize="10">
-        <correlationExpression>
-          <simple>header.cheese</simple>
-        </correlationExpression>
-        <to uri="mock:result"/>
-        <completionPredicate>
-          <method bean="myAggregatorStrategy" method="isCompleted"/>
-        </completionPredicate>
-      </aggregate>
-    </route>
-    
-    <!--  This route turns off in batching by setting batchSize to 1 to run unit test for out batching.
-          Normal use cases may not want to disable in batching
-    -->
-    <route>
-      <from uri="direct:outBatchNoInBatching"/>
-      <aggregate strategyRef="myAggregatorStrategy" batchSize="1" outBatchSize="10">
-        <correlationExpression>
-          <simple>header.cheese</simple>
-        </correlationExpression>
-        <to uri="mock:result"/>
-        <completionPredicate>
-          <method bean="myAggregatorStrategy" method="isCompleted"/>
-        </completionPredicate>
-      </aggregate>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
-  
+        <route>
+            <from uri="direct:predicate"/>
+            <aggregate strategyRef="myAggregatorStrategy">
+                <correlationExpression>
+                    <simple>header.cheese</simple>
+                </correlationExpression>
+                <completionPredicate>
+                    <simple>${header.aggregated} == 5</simple>
+                </completionPredicate>
+                <to uri="mock:result"/>
+            </aggregate>
+        </route>
 
-  <bean id="myAggregatorStrategy" class="org.apache.camel.processor.MyAggregationStrategy"/>
-  <bean id="setHeaderProcessor" class="org.apache.camel.spring.processor.SetHeaderProcessor">
-  	<property name="headerName" value ="visited"/>
-  	<property name="headerValue" value ="true"/>
-  </bean>
+
+    </camelContext>
+    <!-- END SNIPPET: example -->
+
+    <bean id="latestAggregationStrategy" class="org.apache.camel.processor.aggregate.UseLatestAggregationStrategy"/>
+
+    <bean id="myAggregatorStrategy" class="org.apache.camel.processor.MyAggregationStrategy"/>
 
 </beans>

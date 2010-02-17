@@ -67,7 +67,7 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
                     // aggregate all using same expression
                     .aggregate().constant(true)
                     // wait for 0.5 seconds to aggregate
-                    .batchTimeout(500L)
+                    .completionTimeout(500L)
                     // group the exchanges so we get one single exchange containing all the others
                     .groupExchanges()
                     .to("mock:result");

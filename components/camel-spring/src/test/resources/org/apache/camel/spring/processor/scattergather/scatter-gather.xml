@@ -32,7 +32,7 @@
     </route>
     <route>
       <from uri="seda:quoteAggregator"/>
-      <aggregate strategyRef="aggregatorStrategy">
+      <aggregate strategyRef="aggregatorStrategy" completionTimeout="1000">
         <correlationExpression>
           <header>quoteRequestId</header>
         </correlationExpression>

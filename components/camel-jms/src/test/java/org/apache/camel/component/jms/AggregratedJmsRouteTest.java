@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -95,7 +94,7 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
                         }
                         return newExchange;
                     }
-                }).to("mock:result");
+                }).completionTimeout(2000L).to("mock:result");
 
                 from(multicastEndpointUri).to("jms:queue:point1", "jms:queue:point2", "jms:queue:point3");
                 from("jms:queue:point1").process(new MyProcessor()).to("jms:queue:reply");

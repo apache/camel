@@ -32,8 +32,7 @@ public class CustomAggregationStrategyTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
 
         // we expect to find the two winners with the highest bid
-        result.expectedMessageCount(2);
-        result.expectedBodiesReceived("200", "150");
+        result.expectedBodiesReceivedInAnyOrder("200", "150");
 
         // then we sent all the message at once
         template.sendBodyAndHeader("direct:start", "100", "id", "1");
@@ -55,8 +54,8 @@ public class CustomAggregationStrategyTest extends ContextTestSupport {
                 from("direct:start")
                     // aggregated by header id and use our own strategy how to aggregate
                     .aggregate(new MyAggregationStrategy()).header("id")
-                    // wait for 0.5 seconds to aggregate
-                    .batchTimeout(500L)
+                    // wait for 1 seconds to aggregate
+                    .completionTimeout(1000L)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

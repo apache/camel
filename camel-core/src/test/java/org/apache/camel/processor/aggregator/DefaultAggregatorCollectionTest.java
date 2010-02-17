@@ -17,9 +17,9 @@
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * Unit test for DefaultAggregatorCollection.
@@ -32,11 +32,7 @@ public class DefaultAggregatorCollectionTest extends ContextTestSupport {
 
         // we expect 4 messages grouped by the latest message only
         result.expectedMessageCount(4);
-        result.expectedBodiesReceived("Message 1d", "Message 2b", "Message 3c", "Message 4");
-        result.message(0).property(Exchange.AGGREGATED_SIZE).isEqualTo(4);
-        result.message(1).property(Exchange.AGGREGATED_SIZE).isEqualTo(2);
-        result.message(2).property(Exchange.AGGREGATED_SIZE).isEqualTo(3);
-        result.message(3).property(Exchange.AGGREGATED_SIZE).isEqualTo(1);
+        result.expectedBodiesReceivedInAnyOrder("Message 1d", "Message 2b", "Message 3c", "Message 4");
 
         // then we sent all the message at once
         template.sendBodyAndHeader("direct:start", "Message 1a", "id", "1");
@@ -64,9 +60,9 @@ public class DefaultAggregatorCollectionTest extends ContextTestSupport {
                     // aggregated by header id
                     // as we have not configured more on the aggregator it will default to aggregate the
                     // latest exchange only
-                    .aggregate().header("id")
+                    .aggregate().header("id").aggregationStrategy(new UseLatestAggregationStrategy())
                     // wait for 0.5 seconds to aggregate
-                    .batchTimeout(500L)
+                    .completionTimeout(500L)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

@@ -68,7 +68,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(oldBody + "," + newBody);
                         return oldExchange;
                     }
-                }).batchSize(10).batchTimeout(2000L)
+                }).completionSize(10).completionTimeout(2000L)
                         .to("log:aggregated")
                         .to("mock:result");
             }

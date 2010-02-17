@@ -74,9 +74,9 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
                     // aggregated all use same expression
-                    .aggregate().constant(true).batchSize(2)
+                    .aggregate().constant(true).completionSize(2)
                     // wait for 0.5 seconds to aggregate
-                    .batchTimeout(500L)
+                    .completionTimeout(500L)
                     // group the exchanges so we get one single exchange containing all the others
                     .groupExchanges()
                     .to("mock:result");

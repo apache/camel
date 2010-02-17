@@ -41,6 +41,9 @@ public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTest
         template.sendBodyAndHeader("direct:start", "150", "foo", "A");
         template.sendBodyAndHeader("direct:start", "200", "foo", "B");
         template.sendBodyAndHeader("direct:start", "180", "foo", "B");
+
+        // to force B to timeout first as A is added last
+        Thread.sleep(100);
         template.sendBodyAndHeader("direct:start", "120", "foo", "A");
 
         assertMockEndpointsSatisfied();
@@ -50,18 +53,19 @@ public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTest
 
         assertEquals(3, grouped.size());
 
-        assertEquals("100", grouped.get(0).getIn().getBody(String.class));
-        assertEquals("150", grouped.get(1).getIn().getBody(String.class));
-        assertEquals("120", grouped.get(2).getIn().getBody(String.class));
+        // B timeout first
+        assertEquals("130", grouped.get(0).getIn().getBody(String.class));
+        assertEquals("200", grouped.get(1).getIn().getBody(String.class));
+        assertEquals("180", grouped.get(2).getIn().getBody(String.class));
 
         out = result.getExchanges().get(1);
         grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
 
         assertEquals(3, grouped.size());
 
-        assertEquals("130", grouped.get(0).getIn().getBody(String.class));
-        assertEquals("200", grouped.get(1).getIn().getBody(String.class));
-        assertEquals("180", grouped.get(2).getIn().getBody(String.class));
+        assertEquals("100", grouped.get(0).getIn().getBody(String.class));
+        assertEquals("150", grouped.get(1).getIn().getBody(String.class));
+        assertEquals("120", grouped.get(2).getIn().getBody(String.class));
         // END SNIPPET: e2
     }
 
@@ -74,10 +78,10 @@ public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTest
                 from("direct:start")
                     // aggregate all using the foo header
                     .aggregate().header("foo")
-                    // wait for 1 seconds to aggregate
-                    .batchTimeout(1000L)
                     // group the exchanges so we get one single exchange containing all the others
                     .groupExchanges()
+                    // wait for 1 seconds to aggregate
+                    .completionTimeout(1000L)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

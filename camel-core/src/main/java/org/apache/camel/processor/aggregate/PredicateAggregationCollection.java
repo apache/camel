@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
  *
  * @version $Revision$
  */
+@Deprecated
 public class PredicateAggregationCollection extends DefaultAggregationCollection {
     private Predicate aggregationCompletedPredicate;
     private List<Exchange> collection = new ArrayList<Exchange>();

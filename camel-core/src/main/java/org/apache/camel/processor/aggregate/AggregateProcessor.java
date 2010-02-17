@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.ExchangeHelper;
@@ -43,11 +44,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * <a href="http://camel.apache.org/aggregator.html">Aggregator</a> EIP pattern.
+ * An implementation of the <a
+ * href="http://camel.apache.org/aggregator2.html">Aggregator</a>
+ * pattern where a batch of messages are processed (up to a maximum amount or
+ * until some timeout is reached) and messages for the same correlation key are
+ * combined together using some kind of {@link AggregationStrategy}
+ * (by default the latest message is used) to compress many message exchanges
+ * into a smaller number of exchanges.
+ * <p/>
+ * A good example of this is stock market data; you may be receiving 30,000
+ * messages/second and you may want to throttle it right down so that multiple
+ * messages for the same stock are combined (or just the latest message is used
+ * and older prices are discarded). Another idea is to combine line item messages
+ * together into a single invoice message.
  *
  * @version $Revision$
  */
-public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
+public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
+
+    // TODO: Add support for parallelProcessing, setting custom ExecutorService like multicast
 
     private static final Log LOG = LogFactory.getLog(AggregateProcessor.class);
 
@@ -63,14 +78,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     // options
     private boolean ignoreBadCorrelationKeys;
     private boolean closeCorrelationKeyOnCompletion;
-    private boolean useBatchSizeFromConsumer;
     private int concurrentConsumers = 1;
 
     // different ways to have completion triggered
     private boolean eagerCheckCompletion;
     private Predicate completionPredicate;
     private long completionTimeout;
-    private int completionAggregatedSize;
+    private int completionSize;
+    private boolean completionFromBatchConsumer;
+    private int batchConsumerCounter;
 
     public AggregateProcessor(Processor processor, Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         ObjectHelper.notNull(processor, "processor");
@@ -84,6 +100,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     @Override
     public String toString() {
         return "AggregateProcessor[to: " + processor + "]";
+    }
+
+    public String getTraceLabel() {
+        return "aggregate[" + correlationExpression + "]";
     }
 
     public List<Processor> next() {
@@ -121,63 +141,68 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
-        // if batch consumer is enabled then we need to adjust the batch size
-        // with the size from the batch consumer
-        if (isUseBatchSizeFromConsumer()) {
-            int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
-            if (size > 0 && size != completionAggregatedSize) {
-                completionAggregatedSize = size;
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Using batch consumer completion, so setting completionAggregatedSize to: " + completionAggregatedSize);
-                }
-            }
+        doAggregation(key, exchange);
+    }
+
+    private synchronized Exchange doAggregation(Object key, Exchange exchange) {
+        // TODO: lock this based on keys so we can run in parallel groups
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("+++ start +++ onAggregation for key " + key);
         }
 
+        Exchange answer;
         Exchange oldExchange = aggregationRepository.get(key);
         Exchange newExchange = exchange;
 
         Integer size = 1;
         if (oldExchange != null) {
-            size = oldExchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class);
-            ObjectHelper.notNull(size, Exchange.AGGREGATED_SIZE + " on " + oldExchange);
+            size = oldExchange.getProperty(Exchange.AGGREGATED_SIZE, 0, Integer.class);
             size++;
         }
 
         // check if we are complete
         boolean complete = false;
         if (isEagerCheckCompletion()) {
-            complete = isCompleted(key, exchange, size);
+            // put the current aggregated size on the exchange so its avail during completion check
+            newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
+            complete = isCompleted(key, newExchange);
+            // remove it afterwards
+            newExchange.removeProperty(Exchange.AGGREGATED_SIZE);
         }
 
         // prepare the exchanges for aggregation and aggregate it
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
-        newExchange = onAggregation(oldExchange, newExchange);
-        newExchange.setProperty(Exchange.AGGREGATED_SIZE, size);
+        answer = onAggregation(oldExchange, exchange);
+        answer.setProperty(Exchange.AGGREGATED_SIZE, size);
 
         // maybe we should check completion after the aggregation
         if (!isEagerCheckCompletion()) {
-            // use the new aggregated exchange when testing
-            complete = isCompleted(key, newExchange, size);
+            // put the current aggregated size on the exchange so its avail during completion check
+            answer.setProperty(Exchange.AGGREGATED_SIZE, size);
+            complete = isCompleted(key, answer);
         }
 
         // only need to update aggregation repository if we are not complete
-        if (!complete && !newExchange.equals(oldExchange)) {
+        if (!complete) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Put exchange:" + newExchange + " with correlation key:"  + key);
+                LOG.trace("In progress aggregated exchange: " + answer + " with correlation key:" + key);
             }
-            aggregationRepository.add(key, newExchange);
+            aggregationRepository.add(key, answer);
         }
 
         if (complete) {
-            onCompletion(key, newExchange);
+            onCompletion(key, answer, false);
         }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("+++ end +++ onAggregation for key " + key + " with size " + size);
+        }
+
+        return answer;
     }
 
-    protected Exchange onAggregation(Exchange oldExchange, Exchange newExchange) {
-        return aggregationStrategy.aggregate(oldExchange, newExchange);
-    }
-
-    protected boolean isCompleted(Object key, Exchange exchange, int size) {
+    protected boolean isCompleted(Object key, Exchange exchange) {
         if (getCompletionPredicate() != null) {
             boolean answer = getCompletionPredicate().matches(exchange);
             if (answer) {
@@ -185,27 +210,44 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
-        if (getCompletionAggregatedSize() > 0) {
-            if (size >= getCompletionAggregatedSize()) {
+        if (getCompletionSize() > 0) {
+            int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
+            if (size >= getCompletionSize()) {
                 return true;
             }
         }
 
         if (getCompletionTimeout() > 0) {
             // timeout is used so use the timeout map to keep an eye on this
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Updating correlation key " + key + " to timeout after " + getCompletionTimeout() + " ms.");
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Updating correlation key " + key + " to timeout after "
+                        + getCompletionTimeout() + " ms. as exchange received: " + exchange);
             }
             timeoutMap.put(key, exchange, getCompletionTimeout());
+        }
+
+        if (isCompletionFromBatchConsumer()) {
+            batchConsumerCounter++;
+            int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
+            if (size > 0 && batchConsumerCounter >= size) {
+                // batch consumer is complete
+                batchConsumerCounter = 0;
+                return true;
+            }
         }
 
         return false;
     }
 
-    protected void onCompletion(Object key, final Exchange exchange) {
-        // remove from repository and timeout map as its completed
+    protected Exchange onAggregation(Exchange oldExchange, Exchange newExchange) {
+        return aggregationStrategy.aggregate(oldExchange, newExchange);
+    }
+
+    protected void onCompletion(Object key, final Exchange exchange, boolean fromTimeout) {
+        // remove from repository as its completed
         aggregationRepository.remove(key);
-        if (timeoutMap != null) {
+        if (!fromTimeout && timeoutMap != null) {
+            // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
             timeoutMap.remove(key);
         }
 
@@ -270,12 +312,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.completionTimeout = completionTimeout;
     }
 
-    public int getCompletionAggregatedSize() {
-        return completionAggregatedSize;
+    public int getCompletionSize() {
+        return completionSize;
     }
 
-    public void setCompletionAggregatedSize(int completionAggregatedSize) {
-        this.completionAggregatedSize = completionAggregatedSize;
+    public void setCompletionSize(int completionSize) {
+        this.completionSize = completionSize;
     }
 
     public boolean isIgnoreBadCorrelationKeys() {
@@ -294,12 +336,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
-    public boolean isUseBatchSizeFromConsumer() {
-        return useBatchSizeFromConsumer;
+    public boolean isCompletionFromBatchConsumer() {
+        return completionFromBatchConsumer;
     }
 
-    public void setUseBatchSizeFromConsumer(boolean useBatchSizeFromConsumer) {
-        this.useBatchSizeFromConsumer = useBatchSizeFromConsumer;
+    public void setCompletionFromBatchConsumer(boolean completionFromBatchConsumer) {
+        this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
     public int getConcurrentConsumers() {
@@ -334,14 +376,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (log.isDebugEnabled()) {
                 log.debug("Completion timeout triggered for correlation key: " + entry.getKey());
             }
-            onCompletion(entry.getKey(), entry.getValue());
+            onCompletion(entry.getKey(), entry.getValue(), true);
             return true;
         }
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (getCompletionTimeout() <= 0 && getCompletionAggregatedSize() <= 0 && getCompletionPredicate() == null) {
+        if (getCompletionTimeout() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null) {
             throw new IllegalStateException("At least one of the completions options"
                     + " [completionTimeout, completionAggregatedSize, completionPredicate] must be set");
         }

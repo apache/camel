@@ -44,14 +44,12 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.DefaultChannel;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -1373,20 +1371,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         answer.setAggregationStrategy(aggregationStrategy);
         addOutput(answer);
         return answer.createAndSetExpression();
-    }
-
-    /**
-     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
-     * Creates an aggregator allowing you to combine a number of messages together into a single message.
-     *
-     * @param aggregationCollection the collection used to perform the aggregation
-     * @return the builder
-     */
-    public AggregateDefinition aggregate(AggregationCollection aggregationCollection) {
-        AggregateDefinition answer = new AggregateDefinition();
-        answer.setAggregationCollection(aggregationCollection);
-        addOutput(answer);
-        return answer;
     }
 
     /**

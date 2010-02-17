@@ -82,11 +82,10 @@ public class CafeRouteBuilder extends RouteBuilder {
         from("seda:hotDrinks?concurrentConsumers=3").to("bean:barista?method=prepareHotDrink").to("direct:deliveries");
         
         from("direct:deliveries")
-            .aggregate(new CafeAggregationStrategy()).method("waiter", "checkOrder")
-            .batchTimeout(5 * 1000L)
+            .aggregate(new CafeAggregationStrategy()).method("waiter", "checkOrder").completionTimeout(5 * 1000L)
             .to("bean:waiter?method=prepareDelivery")
             .to("bean:waiter?method=deliverCafes");
-        
+
     }
     //END SNIPPET: RouteConfig
 

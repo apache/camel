@@ -90,7 +90,7 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
                             LOG.debug("Index: " + newIndex + ". Total so far: " + total);
                             return answer;
                         }
-                    }).batchTimeout(60000).completionPredicate(property(Exchange.AGGREGATED_SIZE).isEqualTo(100))
+                    }).completionTimeout(60000).completionPredicate(property(Exchange.AGGREGATED_SIZE).isEqualTo(100))
                     .to("direct:foo");
 
                 from("direct:foo").setBody().header("total").to("mock:result");

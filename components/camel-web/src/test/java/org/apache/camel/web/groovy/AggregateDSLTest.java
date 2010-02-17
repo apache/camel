@@ -40,14 +40,14 @@ public class AggregateDSLTest extends GroovyRendererTestSupport {
 
     @Test
     public void testAggregateGroupedExchange() throws Exception {
-        String dsl = "from(\"direct:start\").aggregate().simple(\"id\").batchTimeout(500L).groupExchanges().to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").aggregate().simple(\"id\").completionTimeout(500L).groupExchanges().to(\"mock:result\")";
         assertEquals(dsl, render(dsl));
     }
 
     @Test
     public void testAggregateTimeoutOnly() throws Exception {
-        String dsl = "from(\"direct:start\").aggregate(header(\"id\")).batchTimeout(3000).batchSize(0).to(\"mock:result\")";
-        String expected = "from(\"direct:start\").aggregate().header(\"id\").batchTimeout(3000).batchSize(0).to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").aggregate(header(\"id\")).completionTimeout(3000).completionSize(0).to(\"mock:result\")";
+        String expected = "from(\"direct:start\").aggregate().header(\"id\").completionTimeout(3000).completionSize(0).to(\"mock:result\")";
 
         assertEquals(expected, render(dsl));
     }

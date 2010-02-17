@@ -22,6 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * Based on CAMEL-1546
@@ -65,7 +66,7 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
 
                 from("direct:start")
                     .aggregate(header("id"))
-                    .batchTimeout(500)
+                    .completionTimeout(500)
                     .aggregationStrategy(new AggregationStrategy() {
                     
                         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -87,8 +88,8 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
                             }
                             return ExpressionBuilder.headerExpression("id").evaluate(exchange, type);
                         }
-                    })
-                    .batchTimeout(500)
+                    }, new UseLatestAggregationStrategy())
+                    .completionTimeout(500)
                     .to("mock:result");
             }
         };

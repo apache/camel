@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
 
 /**
  * Unit test inspired by user forum.
@@ -49,14 +48,12 @@ public class AggregatorAndOnExceptionTest extends ContextTestSupport {
                 onException(CamelException.class).maximumRedeliveries(2);
 
                 from("seda:start")
-                    .aggregate(new PredicateAggregationCollection(header("id"),
+                    .aggregate(header("id"),
                         new AggregationStrategy() {
                             public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                                 return newExchange;
                             }
-                        },
-                        property(Exchange.AGGREGATED_SIZE).isEqualTo(2)))
-                    .batchTimeout(500L)
+                        }).completionSize(2).completionTimeout(500L)
                     .to("mock:result");
             }
         };

@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * Unit test to verify that aggregate by timeout only also works.
@@ -29,7 +30,7 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
 
     public void testAggregateTimeoutOnly() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        // by default the use latest aggregatation strategy is used so we get message 9
+        // by default the use latest aggregation strategy is used so we get message 9
         result.expectedBodiesReceived("Message 9");
         // should take 3 seconds to complete this one
         result.setMinimumResultWaitTime(2500);
@@ -49,7 +50,7 @@ public class AggregateTimeoutOnlyTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // aggregate every 3th second and disable the batch size so we set it to 0
-                    .aggregate(header("id")).batchTimeout(3000).batchSize(0)
+                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000).completionSize(0)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

@@ -18,11 +18,8 @@
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationCollection;
-import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
@@ -60,20 +57,11 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // create the aggregation collection we will use.
-                // - we will correlate the received message based on the id header
-                // - as we will just keep the latest message we use the latest strategy
-                // - and finally we stop aggregate if we receive 2 or more messages
-                AggregationCollection ag = new PredicateAggregationCollection(header("id"),
-                    new UseLatestAggregationStrategy(),
-                    property(Exchange.AGGREGATED_SIZE).isEqualTo(3));
-
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
                     // we use the collection based aggregator we already have configured
-                    .aggregate(ag)
-                    // wait for 0.5 seconds to aggregate
-                    .batchTimeout(500L)
+                    .aggregate(header("id"), new UseLatestAggregationStrategy())
+                    .completionSize(3)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

@@ -150,10 +150,6 @@ public class ProducerCache extends ServiceSupport {
         }
 
         try {
-            // now lets dispatch
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(">>>> " + endpoint + " " + exchange);
-            }
             // invoke the callback
             return callback.doInProducer(producer, exchange, pattern);
         } finally {

@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 public class AggregatorExceptionTest extends ContextTestSupport {
 
@@ -45,8 +46,8 @@ public class AggregatorExceptionTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:start")
-                    .aggregate(header("id"))
-                    .batchSize(5)
+                    .aggregate(header("id"), new UseLatestAggregationStrategy())
+                    .completionSize(5)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             throw new java.lang.NoSuchMethodError(exceptionString);   

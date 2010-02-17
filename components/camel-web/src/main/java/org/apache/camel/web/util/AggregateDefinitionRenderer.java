@@ -32,15 +32,15 @@ public final class AggregateDefinitionRenderer {
 
         ExpressionRenderer.render(buffer, aggregate.getExpression());
 
-        if (aggregate.getBatchTimeout() != null) {
-            buffer.append(".batchTimeout(").append(aggregate.getBatchTimeout());
-            buffer.append(aggregate.getBatchTimeout() < 1000L ? "L)" : ")");
+        if (aggregate.getCompletionTimeout() != null) {
+            buffer.append(".completionTimeout(").append(aggregate.getCompletionTimeout());
+            buffer.append(aggregate.getCompletionTimeout() < 1000L ? "L)" : ")");
         }
-        if (aggregate.getBatchSize() != null) {
-            buffer.append(".batchSize(").append(aggregate.getBatchSize()).append(")");
+        if (aggregate.getCompletionSize() != null) {
+            buffer.append(".completionSize(").append(aggregate.getCompletionSize()).append(")");
         }
 
-        if (aggregate.getGroupExchanges() != null && aggregate.getGroupExchanges()) {
+        if (aggregate.isGroupExchanges() != null && aggregate.isGroupExchanges()) {
             buffer.append(".groupExchanges()");
         }
     }

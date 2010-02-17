@@ -94,7 +94,9 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
                     .to("seda:aggregate");
                 
                 // collect and re-assemble the validated OrderItems into an order again
-                from("seda:aggregate").aggregate(new MyOrderAggregationStrategy()).header("orderId").to("mock:result");
+                from("seda:aggregate")
+                    .aggregate(new MyOrderAggregationStrategy()).header("orderId").completionTimeout(1000L)
+                        .to("mock:result");
                 // END SNIPPET: e2
             }
         };

@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
+@Deprecated
 public class DefaultAggregationCollection extends AbstractCollection<Exchange> implements AggregationCollection {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultAggregationCollection.class);

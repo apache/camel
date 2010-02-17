@@ -16,14 +16,14 @@
  */
 package org.apache.camel.util;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Service;
 import org.apache.commons.logging.Log;
@@ -38,11 +38,11 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
 
     protected final transient Log log = LogFactory.getLog(getClass());
 
-    private final Map<K, TimeoutMapEntry<K, V>> map = new HashMap<K, TimeoutMapEntry<K, V>>();
-    private final SortedSet<TimeoutMapEntry<K, V>> index = new TreeSet<TimeoutMapEntry<K, V>>();
+    private final ConcurrentMap<K, TimeoutMapEntry<K, V>> map = new ConcurrentHashMap<K, TimeoutMapEntry<K, V>>();
     private final ScheduledExecutorService executor;
     private final long purgePollTime;
     private final long initialDelay = 1000L;
+    private final Lock lock = new ReentrantLock();
 
     public DefaultTimeoutMap() {
         this(null, 1000L);
@@ -56,82 +56,91 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
 
     public V get(K key) {
         TimeoutMapEntry<K, V> entry;
-        synchronized (map) {
+        lock.lock();
+        try {
             entry = map.get(key);
             if (entry == null) {
                 return null;
             }
-            index.remove(entry);
             updateExpireTime(entry);
-            index.add(entry);
+        } finally {
+            lock.unlock();
         }
         return entry.getValue();
     }
 
     public void put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
-        synchronized (map) {
-            TimeoutMapEntry<K, V> oldValue = map.put(key, entry);
-            if (oldValue != null) {
-                index.remove(oldValue);
-            }
+        lock.lock();
+        try {
+            map.put(key, entry);
             updateExpireTime(entry);
-            index.add(entry);
+        } finally {
+            lock.unlock();
         }
     }
 
     public void remove(K id) {
-        synchronized (map) {
-            TimeoutMapEntry entry = map.remove(id);
-            if (entry != null) {
-                index.remove(entry);
-            }
+        lock.lock();
+        try {
+            map.remove(id);
+        } finally {
+            lock.unlock();
         }
     }
 
     public Object[] getKeys() {
-        Object[] keys = null;
-        synchronized (map) {
+        Object[] keys;
+        lock.lock();
+        try {
             Set<K> keySet = map.keySet();
             keys = new Object[keySet.size()];
             keySet.toArray(keys);
+        } finally {
+            lock.unlock();
         }
         return keys;
     }
     
     public int size() {
-        synchronized (map) {
-            return map.size();
-        }
+        return map.size();
     }
 
     /**
      * The timer task which purges old requests and schedules another poll
      */
     public void run() {
-        purge();
+        if (log.isTraceEnabled()) {
+            log.trace("Running purge task to see if any entries has been timed out");
+        }
+        try {
+            purge();
+        } catch (Throwable t) {
+            // must catch and log exception otherwise the executor will now schedule next run
+            log.error("Exception occurred during purge task", t);
+        }
     }
 
     public void purge() {
+        if (log.isTraceEnabled()) {
+            log.debug("There are " + map.size() + " in the timeout map");
+        }
         long now = currentTime();
-        synchronized (map) {
-            for (Iterator<TimeoutMapEntry<K, V>> iter = index.iterator(); iter.hasNext();) {
-                TimeoutMapEntry<K, V> entry = iter.next();
-                if (entry == null) {
-                    break;
-                }
-                if (entry.getExpireTime() < now) {
-                    if (isValidForEviction(entry)) {
+
+        lock.lock();
+        try {
+            for (Map.Entry<K, TimeoutMapEntry<K, V>> entry : map.entrySet()) {
+                if (entry.getValue().getExpireTime() < now) {
+                    if (isValidForEviction(entry.getValue())) {
                         if (log.isDebugEnabled()) {
                             log.debug("Evicting inactive request for correlationID: " + entry);
                         }
-                        map.remove(entry.getKey());
-                        iter.remove();
+                        map.remove(entry.getKey(), entry.getValue());
                     }
-                } else {
-                    break;
                 }
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -182,6 +191,5 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
             executor.shutdown();
         }
         map.clear();
-        index.clear();
     }
 }

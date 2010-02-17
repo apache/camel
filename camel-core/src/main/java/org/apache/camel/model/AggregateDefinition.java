@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,11 +31,10 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.Aggregator;
-import org.apache.camel.processor.aggregate.AggregationCollection;
+import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -47,32 +45,26 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> {
-    @XmlElement(name = "correlationExpression", required = false)
+    @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
+    @XmlElement(name = "completionPredicate", required = false)
+    private ExpressionSubElementDefinition completionPredicate;
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
-    @XmlTransient
-    private AggregationCollection aggregationCollection;
-    @XmlAttribute(required = false)
-    private Integer batchSize;
-    @XmlAttribute(required = false)
-    private Integer outBatchSize;
-    @XmlAttribute(required = false)
-    private Long batchTimeout;
-    @XmlAttribute(required = false)
+    @XmlAttribute(required = true)
     private String strategyRef;
     @XmlAttribute(required = false)
-    private String collectionRef;    
+    private Integer completionSize;
+    @XmlAttribute(required = false)
+    private Long completionTimeout;
+    @XmlAttribute(required = false)
+    private Boolean completionFromBatchConsumer;
     @XmlAttribute(required = false)
     private Boolean groupExchanges;
-    @XmlAttribute(required = false)
-    private Boolean batchSizeFromConsumer;
-    @XmlElement(name = "completionPredicate", required = false)
-    private ExpressionSubElementDefinition completionPredicate;
 
     public AggregateDefinition() {
     }
@@ -125,65 +117,32 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return clause;
     }
     
-    protected Aggregator createAggregator(RouteContext routeContext) throws Exception {
-        final Processor processor = routeContext.createProcessor(this);
+    protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
+        Processor processor = routeContext.createProcessor(this);
+        // wrap the aggregated route in a unit of work processor
+        processor = new UnitOfWorkProcessor(routeContext, processor);
 
-        final Aggregator aggregator;
-        if (getAggregationCollection() == null) {
-            setAggregationCollection(createAggregationCollection(routeContext));
-        }
-        
-        if (aggregationCollection != null) {
-            // create the aggregator using the collection
-            // pre configure the collection if its expression and strategy is not set, then
-            // use the ones that is pre configured with this type
-            if (aggregationCollection.getCorrelationExpression() == null) {
-                aggregationCollection.setCorrelationExpression(getExpression());
-            }
-            if (aggregationCollection.getAggregationStrategy() == null) {
-                AggregationStrategy strategy = createAggregationStrategy(routeContext);
-                aggregationCollection.setAggregationStrategy(strategy);
-            }
-            aggregator = new Aggregator(processor, aggregationCollection);
-        } else {
-            // create the aggregator using a default collection
-            AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        Expression correlation = getExpression().createExpression(routeContext);
+        AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-            if (getExpression() == null) {
-                throw new IllegalArgumentException("You need to specify an expression or "
-                                                   + "aggregation collection for this aggregator: " + this);
-            }
-            
-            Expression aggregateExpression = getExpression().createExpression(routeContext);           
+        AggregateProcessor answer = new AggregateProcessor(processor, correlation, strategy);
 
-            Predicate predicate = null;
-            if (getCompletionPredicate() != null) {
-                predicate = getCompletionPredicate().createPredicate(routeContext);
-            }
-            if (predicate != null) {
-                aggregator = new Aggregator(processor, aggregateExpression, strategy, predicate);
-            } else {
-                aggregator = new Aggregator(processor, aggregateExpression, strategy);
-            }
-        }
-        
-        if (batchSize != null) {
-            aggregator.setBatchSize(batchSize);
-        }
-        if (batchTimeout != null) {
-            aggregator.setBatchTimeout(batchTimeout);
-        }
-        if (outBatchSize != null) {
-            aggregator.setOutBatchSize(outBatchSize);
-        }
-        if (groupExchanges != null) {
-            aggregator.setGroupExchanges(groupExchanges);
-        }
-        if (batchSizeFromConsumer != null) {
-            aggregator.setBatchConsumer(batchSizeFromConsumer);
+        if (getCompletionPredicate() != null) {
+            Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
+            answer.setCompletionPredicate(predicate);
         }
 
-        return aggregator;
+        if (getCompletionSize() != null) {
+            answer.setCompletionSize(getCompletionSize());
+        }
+        if (getCompletionTimeout() != null) {
+            answer.setCompletionTimeout(getCompletionTimeout());
+        }
+        if (isCompletionFromBatchConsumer() != null) {
+            answer.setCompletionFromBatchConsumer(isCompletionFromBatchConsumer());
+        }
+
+        return answer;
     }
 
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
@@ -191,33 +150,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (strategy == null && strategyRef != null) {
             strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
         }
-        // pick a default strategy
+        if (strategy == null && groupExchanges != null && groupExchanges) {
+            // if grouped exchange is enabled then use special strategy for that
+            strategy = new GroupedExchangeAggregationStrategy();
+        }
         if (strategy == null) {
-            if (groupExchanges != null && groupExchanges) {
-                // if grouped exchange is enabled then use special strategy for that
-                strategy = new GroupedExchangeAggregationStrategy();
-            } else {
-                // fallback to use latest
-                strategy = new UseLatestAggregationStrategy();
-            }
+            throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }
         return strategy;
-    }
-
-    private AggregationCollection createAggregationCollection(RouteContext routeContext) {
-        AggregationCollection collection = getAggregationCollection();
-        if (collection == null && collectionRef != null) {
-            collection = routeContext.lookup(collectionRef, AggregationCollection.class);
-        }
-        return collection;
-    }    
-    
-    public AggregationCollection getAggregationCollection() {
-        return aggregationCollection;
-    }
-
-    public void setAggregationCollection(AggregationCollection aggregationCollection) {
-        this.aggregationCollection = aggregationCollection;
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -228,55 +168,39 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    public Integer getBatchSize() {
-        return batchSize;
-    }
-
-    public void setBatchSize(Integer batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    public Integer getOutBatchSize() {
-        return outBatchSize;
-    }
-
-    public void setOutBatchSize(Integer outBatchSize) {
-        this.outBatchSize = outBatchSize;
-    }
-
-    public Long getBatchTimeout() {
-        return batchTimeout;
-    }
-
-    public void setBatchTimeout(Long batchTimeout) {
-        this.batchTimeout = batchTimeout;
-    }
-
-    public String getStrategyRef() {
+    public String getAggregationStrategyRef() {
         return strategyRef;
     }
 
-    public void setStrategyRef(String strategyRef) {
-        this.strategyRef = strategyRef;
+    public void setAggregationStrategyRef(String aggregationStrategyRef) {
+        this.strategyRef = aggregationStrategyRef;
     }
 
-    public String getCollectionRef() {
-        return collectionRef;
+    public Integer getCompletionSize() {
+        return completionSize;
     }
 
-    public void setCollectionRef(String collectionRef) {
-        this.collectionRef = collectionRef;
+    public void setCompletionSize(Integer completionSize) {
+        this.completionSize = completionSize;
     }
 
-    public void setCompletionPredicate(ExpressionSubElementDefinition completionPredicate) {
-        this.completionPredicate = completionPredicate;
+    public Long getCompletionTimeout() {
+        return completionTimeout;
+    }
+
+    public void setCompletionTimeout(Long completionTimeout) {
+        this.completionTimeout = completionTimeout;
     }
 
     public ExpressionSubElementDefinition getCompletionPredicate() {
         return completionPredicate;
     }
 
-    public Boolean getGroupExchanges() {
+    public void setCompletionPredicate(ExpressionSubElementDefinition completionPredicate) {
+        this.completionPredicate = completionPredicate;
+    }
+
+    public Boolean isGroupExchanges() {
         return groupExchanges;
     }
 
@@ -284,12 +208,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.groupExchanges = groupExchanges;
     }
 
-    public Boolean getBatchSizeFromConsumer() {
-        return batchSizeFromConsumer;
+    public Boolean isCompletionFromBatchConsumer() {
+        return completionFromBatchConsumer;
     }
 
-    public void setBatchSizeFromConsumer(Boolean batchSizeFromConsumer) {
-        this.batchSizeFromConsumer = batchSizeFromConsumer;
+    public void setCompletionFromBatchConsumer(Boolean completionFromBatchConsumer) {
+        this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
     // Fluent API
@@ -298,56 +222,36 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Enables the batch completion mode where we aggregate from a {@link org.apache.camel.BatchConsumer}
      * and aggregate the total number of exchanges the {@link org.apache.camel.BatchConsumer} has reported
-     * as total by setting the exchange property {@link org.apache.camel.Exchange#BATCH_SIZE}.
+     * as total by checking the exchange property {@link org.apache.camel.Exchange#BATCH_COMPLETE} when its complete.
      *
      * @return builder
      */
-    public AggregateDefinition batchSizeFromConsumer() {
-        setBatchSizeFromConsumer(true);
+    public AggregateDefinition completionFromBatchConsumer() {
+        setCompletionFromBatchConsumer(true);
         return this;
     }
 
     /**
-     * Sets the in batch size for number of exchanges received
+     * Sets the completion size, which is the number of aggregated exchanges which would
+     * cause the aggregate to consider the group as complete and send out the aggregated exchange.
      *
-     * @param batchSize  the batch size
+     * @param completionSize  the completion size
      * @return builder
      */
-    public AggregateDefinition batchSize(int batchSize) {
-        setBatchSize(batchSize);
+    public AggregateDefinition completionSize(int completionSize) {
+        setCompletionSize(completionSize);
         return this;
     }
 
     /**
-     * Sets the out batch size for number of exchanges sent
+     * Sets the completion timeout, which would cause the aggregate to consider the group as complete
+     * and send out the aggregated exchange.
      *
-     * @param batchSize  the batch size
-     * @return builder
-     */
-    public AggregateDefinition outBatchSize(int batchSize) {
-        setOutBatchSize(batchSize);
-        return this;
-    }
-
-    /**
-     * Sets the batch timeout
-     *
-     * @param batchTimeout  the timeout in millis
+     * @param completionTimeout  the timeout in millis
      * @return the builder
      */
-    public AggregateDefinition batchTimeout(long batchTimeout) {
-        setBatchTimeout(batchTimeout);
-        return this;
-    }
-
-    /**
-     * Sets the aggregate collection to use
-     *
-     * @param aggregationCollection  the aggregate collection to use
-     * @return the builder
-     */
-    public AggregateDefinition aggregationCollection(AggregationCollection aggregationCollection) {
-        setAggregationCollection(aggregationCollection);
+    public AggregateDefinition completionTimeout(long completionTimeout) {
+        setCompletionTimeout(completionTimeout);
         return this;
     }
 
@@ -363,24 +267,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the aggregate collection to use
-     *
-     * @param collectionRef  reference to the aggregate collection to lookup in the registry
-     * @return the builder
-     */
-    public AggregateDefinition collectionRef(String collectionRef) {
-        setCollectionRef(collectionRef);
-        return this;
-    }
-
-    /**
      * Sets the aggregate strategy to use
      *
-     * @param strategyRef  reference to the strategy to lookup in the registry
+     * @param aggregationStrategyRef  reference to the strategy to lookup in the registry
      * @return the builder
      */
-    public AggregateDefinition strategyRef(String strategyRef) {
-        setStrategyRef(strategyRef);
+    public AggregateDefinition aggregationStrategyRef(String aggregationStrategyRef) {
+        setAggregationStrategyRef(aggregationStrategyRef);
         return this;
     }
 
@@ -412,6 +305,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * Sets the predicate used to determine if the aggregation is completed
      *
      * @param predicate  the predicate
+     * @return the builder
      */
     public AggregateDefinition completionPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
@@ -436,7 +330,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     // Section - Methods from ExpressionNode
     // Needed to copy methods from ExpressionNode here so that I could specify the
     // correlation expression as optional in JAXB
-    
+
     public ExpressionDefinition getExpression() {
         if (expression == null && correlationExpression != null) {
             expression = correlationExpression.getExpressionType();            

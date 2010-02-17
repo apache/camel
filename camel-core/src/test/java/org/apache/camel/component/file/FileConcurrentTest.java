@@ -68,7 +68,10 @@ public class FileConcurrentTest extends ContextTestSupport {
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .threads(20)
                     .beanRef("business")
-                    .aggregate(header("country"), new MyBusinessTotal()).batchSize(10).batchTimeout(60000).to("mock:result");
+                    .log("Country is ${in.header.country}")
+                    .aggregate(header("country"), new MyBusinessTotal())
+                        .completionTimeout(2000L)
+                        .to("mock:result");
             }
         });
 
@@ -90,7 +93,9 @@ public class FileConcurrentTest extends ContextTestSupport {
                 from("file://target/concurrent?delay=60000&initialDelay=2500")
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .beanRef("business")
-                    .aggregate(header("country"), new MyBusinessTotal()).batchSize(10).batchTimeout(60000).to("mock:result");
+                    .aggregate(header("country"), new MyBusinessTotal())
+                        .completionTimeout(2000L)
+                        .to("mock:result");
             }
         });
 
@@ -142,7 +147,7 @@ public class FileConcurrentTest extends ContextTestSupport {
             }
             Integer add = newExchange.getIn().getBody(Integer.class);
             int total = current.intValue() + add.intValue();
-            LOG.debug("Aggregated sum so far: " + total + " for country: " + country);
+            LOG.info("Aggregated sum so far: " + total + " for country: " + country);
             answer.getIn().setBody(total);
             return answer;
         }

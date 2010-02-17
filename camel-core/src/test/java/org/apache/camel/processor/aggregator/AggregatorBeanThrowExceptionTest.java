@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
  * Unit test with timer, splitter, aggregator and tracer.
@@ -35,7 +36,8 @@ public class AggregatorBeanThrowExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
 
                 from("direct:start").
-                    aggregate(header("id")).
+                    aggregate(header("id"), new UseLatestAggregationStrategy()).
+                        completionTimeout(2000L).
                         bean(AggregatorBeanThrowExceptionTest.class, "fooDoesNotExistMethod").
                         to("log:foo");
             }
