@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -85,7 +86,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private long completionTimeout;
     private int completionSize;
     private boolean completionFromBatchConsumer;
-    private int batchConsumerCounter;
+    private AtomicInteger batchConsumerCounter = new AtomicInteger();
 
     public AggregateProcessor(Processor processor, Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         ObjectHelper.notNull(processor, "processor");
@@ -141,11 +142,23 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         doAggregation(key, exchange);
     }
 
+    /**
+     * Aggregates the exchange with the given correlation key
+     * <p/>
+     * This method <b>must</b> be run synchronized as we cannot aggregate the same correlation key
+     * in parallel.
+     *
+     * @param key the correlation key
+     * @param exchange the exchange
+     * @return the aggregated exchange
+     */
     private synchronized Exchange doAggregation(Object key, Exchange exchange) {
-        // TODO: lock this based on keys so we can run in parallel groups
+        // when memory based then its fast using synchronized, but if the aggregation repository is IO
+        // bound such as JPA etc then concurrent aggregation per correlation key could
+        // improve performance as we can run aggregation repository get/add in parallel
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("+++ start +++ onAggregation for key " + key);
+            LOG.trace("onAggregation +++ start +++ with correlation key: " + key);
         }
 
         Exchange answer;
@@ -193,7 +206,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("+++ end +++ onAggregation for key " + key + " with size " + size);
+            LOG.trace("onAggregation +++  end  +++ with correlation key: " + key);
         }
 
         return answer;
@@ -224,11 +237,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         if (isCompletionFromBatchConsumer()) {
-            batchConsumerCounter++;
+            batchConsumerCounter.incrementAndGet();
             int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
-            if (size > 0 && batchConsumerCounter >= size) {
-                // batch consumer is complete
-                batchConsumerCounter = 0;
+            if (size > 0 && batchConsumerCounter.intValue() >= size) {
+                // batch consumer is complete then reset the counter
+                batchConsumerCounter.set(0);
                 return true;
             }
         }
@@ -360,10 +373,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.parallelProcessing = parallelProcessing;
     }
 
+    public AggregationRepository<Object> getAggregationRepository() {
+        return aggregationRepository;
+    }
+
+    public void setAggregationRepository(AggregationRepository<Object> aggregationRepository) {
+        this.aggregationRepository = aggregationRepository;
+    }
+
     /**
      * Background tasks that looks for aggregated exchanges which is triggered by completion timeouts.
      */
-    private class AggregationTimeoutMap extends DefaultTimeoutMap<Object, Exchange> {
+    private final class AggregationTimeoutMap extends DefaultTimeoutMap<Object, Exchange> {
 
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             super(executor, requestMapPollTimeMillis);

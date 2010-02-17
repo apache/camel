@@ -34,6 +34,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
+import org.apache.camel.processor.aggregate.AggregationRepository;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -58,10 +59,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
     private ExecutorService executorService;
+    @XmlTransient
+    private AggregationRepository aggregationRepository;
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
     @XmlAttribute(required = false)
     private String executorServiceRef;
+    @XmlAttribute(required = false)
+    private String aggregationRepositoryRef;
     @XmlAttribute(required = true)
     private String strategyRef;
     @XmlAttribute(required = false)
@@ -129,7 +134,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.setExpression(clause);
         return clause;
     }
-    
+
+    @SuppressWarnings("unchecked")
     protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
         Processor processor = routeContext.createProcessor(this);
         // wrap the aggregated route in a unit of work processor
@@ -144,6 +150,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         answer.setExecutorService(executor);
         if (isParallelProcessing() != null) {
             answer.setParallelProcessing(isParallelProcessing());
+        }
+        AggregationRepository<Object> repository = createAggregationRepository(routeContext);
+        if (repository != null) {
+            answer.setAggregationRepository(repository);
         }
 
         if (getCompletionPredicate() != null) {
@@ -185,6 +195,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }
         return strategy;
+    }
+
+    private AggregationRepository createAggregationRepository(RouteContext routeContext) {
+        AggregationRepository repository = getAggregationRepository();
+        if (repository == null && aggregationRepositoryRef != null) {
+            repository = routeContext.lookup(aggregationRepositoryRef, AggregationRepository.class);
+        }
+        return repository;
     }
 
     private ExecutorService createExecutorService(RouteContext routeContext) {
@@ -306,6 +324,22 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
+    public AggregationRepository getAggregationRepository() {
+        return aggregationRepository;
+    }
+
+    public void setAggregationRepository(AggregationRepository aggregationRepository) {
+        this.aggregationRepository = aggregationRepository;
+    }
+
+    public String getAggregationRepositoryRef() {
+        return aggregationRepositoryRef;
+    }
+
+    public void setAggregationRepositoryRef(String aggregationRepositoryRef) {
+        this.aggregationRepositoryRef = aggregationRepositoryRef;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
@@ -400,6 +434,32 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setAggregationStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+
+    /**
+     * Sets the custom aggregate repository to use.
+     * <p/>
+     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
+     *
+     * @param aggregationRepository  the aggregate repository to use
+     * @return the builder
+     */
+    public AggregateDefinition aggregationRepository(AggregationRepository aggregationRepository) {
+        setAggregationRepository(aggregationRepository);
+        return this;
+    }
+
+    /**
+     * Sets the custom aggregate repository to use
+     * <p/>
+     * Will by default use {@link org.apache.camel.processor.aggregate.MemoryAggregationRepository}
+     *
+     * @param aggregationRepositoryRef  reference to the repository to lookup in the registry
+     * @return the builder
+     */
+    public AggregateDefinition aggregationRepositoryRef(String aggregationRepositoryRef) {
+        setAggregationRepositoryRef(aggregationRepositoryRef);
         return this;
     }
 
