@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.camel.Exchange;
@@ -75,11 +76,11 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             // load the velocity properties from property file
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
                 Resource resource = getResourceLoader().getResource(getPropertiesFile());
-                InputStream reader = resource.getInputStream();               
+                InputStream reader = resource.getInputStream();
                 properties.load(reader);
                 log.info("Loaded the velocity configuration file " + getPropertiesFile());
             }
-            
+
             properties.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
             properties.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
             properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
@@ -114,11 +115,11 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
     public String getEncoding() {
         return encoding;
     }
-    
+
     public void setPropertiesFile(String file) {
         propertiesFile = file;
     }
-    
+
     public String getPropertiesFile() {
         return propertiesFile;
     }
@@ -186,11 +187,10 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-       
+
         Map<String, Object> headers = (Map<String, Object>) velocityContext.get("headers");
-        for (String key : headers.keySet()) {
-            out.setHeader(key, headers.get(key));
+        for (Entry<String, Object> entry : headers.entrySet()) {
+            out.setHeader(entry.getKey(), entry.getValue());
         }
     }
-
 }
