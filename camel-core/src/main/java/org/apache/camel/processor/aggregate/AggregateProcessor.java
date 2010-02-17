@@ -62,23 +62,21 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
 
-    // TODO: Add support for parallelProcessing, setting custom ExecutorService like multicast
-
     private static final Log LOG = LogFactory.getLog(AggregateProcessor.class);
 
-    private TimeoutMap<Object, Exchange> timeoutMap;
     private final Processor processor;
     private final AggregationStrategy aggregationStrategy;
     private final Expression correlationExpression;
+    private TimeoutMap<Object, Exchange> timeoutMap;
     private ExecutorService executorService;
+    private ExceptionHandler exceptionHandler;
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
     private Set<Object> closedCorrelationKeys = new HashSet<Object>();
-    private ExceptionHandler exceptionHandler;
 
     // options
     private boolean ignoreBadCorrelationKeys;
     private boolean closeCorrelationKeyOnCompletion;
-    private int concurrentConsumers = 1;
+    private boolean parallelProcessing;
 
     // different ways to have completion triggered
     private boolean eagerCheckCompletion;
@@ -137,7 +135,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // is the correlation key closed?
         if (isCloseCorrelationKeyOnCompletion()) {
             if (closedCorrelationKeys.contains(key)) {
-                throw new CamelExchangeException("Correlation key has been closed", exchange);
+                throw new ClosedCorrelationKeyException(key, exchange);
             }
         }
 
@@ -344,14 +342,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
-    public int getConcurrentConsumers() {
-        return concurrentConsumers;
-    }
-
-    public void setConcurrentConsumers(int concurrentConsumers) {
-        this.concurrentConsumers = concurrentConsumers;
-    }
-
     public ExceptionHandler getExceptionHandler() {
         if (exceptionHandler == null) {
             exceptionHandler = new LoggingExceptionHandler(getClass());
@@ -361,6 +351,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
+    }
+
+    public boolean isParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
     }
 
     /**
@@ -391,12 +389,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         ServiceHelper.startService(aggregationRepository);
 
         if (executorService == null) {
-            executorService = ExecutorServiceHelper.newFixedThreadPool(getConcurrentConsumers(), "AggregateProcessor", true);
+            if (isParallelProcessing()) {
+                // we are running in parallel so create a default thread pool
+                executorService = ExecutorServiceHelper.newFixedThreadPool(10, "Aggregator", true);
+            } else {
+                // use a single threaded if we are not running in parallel
+                executorService = ExecutorServiceHelper.newFixedThreadPool(1, "Aggregator", true);
+            }
         }
 
         // start timeout service if its in use
         if (getCompletionTimeout() > 0) {
-            ScheduledExecutorService scheduler = ExecutorServiceHelper.newScheduledThreadPool(1, "AggregateProcessorTimeoutCompletion", true);
+            ScheduledExecutorService scheduler = ExecutorServiceHelper.newScheduledThreadPool(1, "AggregateTimeoutChecker", true);
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
             ServiceHelper.startService(timeoutMap);
         }

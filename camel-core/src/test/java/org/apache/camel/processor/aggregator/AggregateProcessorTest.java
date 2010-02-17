@@ -348,7 +348,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
             ap.process(e4);
             fail("Should have thrown an exception");
         } catch (CamelExchangeException e) {
-            assertEquals("Correlation key has been closed. Exchange[Message: C]", e.getMessage());
+            assertEquals("The correlation key [123] has been closed. Exchange[Message: C]", e.getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -497,6 +497,5 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         ap.stop();
     }
-
 
 }

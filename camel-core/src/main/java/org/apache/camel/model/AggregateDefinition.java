@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -55,6 +56,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
+    @XmlTransient
+    private ExecutorService executorService;
+    @XmlAttribute(required = false)
+    private Boolean parallelProcessing;
+    @XmlAttribute(required = false)
+    private String executorServiceRef;
     @XmlAttribute(required = true)
     private String strategyRef;
     @XmlAttribute(required = false)
@@ -65,6 +72,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean completionFromBatchConsumer;
     @XmlAttribute(required = false)
     private Boolean groupExchanges;
+    @XmlAttribute(required = false)
+    private Boolean eagerCheckCompletion;
+    @XmlAttribute(required = false)
+    private Boolean ignoreBadCorrelationKeys;
+    @XmlAttribute(required = false)
+    private Boolean closeCorrelationKeyOnCompletion;
 
     public AggregateDefinition() {
     }
@@ -127,11 +140,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
         AggregateProcessor answer = new AggregateProcessor(processor, correlation, strategy);
 
+        ExecutorService executor = createExecutorService(routeContext);
+        answer.setExecutorService(executor);
+        if (isParallelProcessing() != null) {
+            answer.setParallelProcessing(isParallelProcessing());
+        }
+
         if (getCompletionPredicate() != null) {
             Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
         }
-
         if (getCompletionSize() != null) {
             answer.setCompletionSize(getCompletionSize());
         }
@@ -140,6 +158,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (isCompletionFromBatchConsumer() != null) {
             answer.setCompletionFromBatchConsumer(isCompletionFromBatchConsumer());
+        }
+        if (isCloseCorrelationKeyOnCompletion() != null) {
+            answer.setCloseCorrelationKeyOnCompletion(isCloseCorrelationKeyOnCompletion());
+        }
+        if (isEagerCheckCompletion() != null) {
+            answer.setEagerCheckCompletion(isEagerCheckCompletion());
+        }
+        if (isIgnoreBadCorrelationKeys() != null) {
+            answer.setIgnoreBadCorrelationKeys(isIgnoreBadCorrelationKeys());
         }
 
         return answer;
@@ -158,6 +185,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }
         return strategy;
+    }
+
+    private ExecutorService createExecutorService(RouteContext routeContext) {
+        if (executorService == null && executorServiceRef != null) {
+            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+        }
+        return executorService;
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -216,8 +250,98 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.completionFromBatchConsumer = completionFromBatchConsumer;
     }
 
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    public Boolean isParallelProcessing() {
+        return parallelProcessing;
+    }
+
+    public void setParallelProcessing(Boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
+    }
+
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
+    }
+
+    public Boolean isEagerCheckCompletion() {
+        return eagerCheckCompletion;
+    }
+
+    public void setEagerCheckCompletion(Boolean eagerCheckCompletion) {
+        this.eagerCheckCompletion = eagerCheckCompletion;
+    }
+
+    public Boolean isIgnoreBadCorrelationKeys() {
+        return ignoreBadCorrelationKeys;
+    }
+
+    public void setIgnoreBadCorrelationKeys(Boolean ignoreBadCorrelationKeys) {
+        this.ignoreBadCorrelationKeys = ignoreBadCorrelationKeys;
+    }
+
+    public Boolean isCloseCorrelationKeyOnCompletion() {
+        return closeCorrelationKeyOnCompletion;
+    }
+
+    public void setCloseCorrelationKeyOnCompletion(Boolean closeCorrelationKeyOnCompletion) {
+        this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
+
+    /**
+     * Use eager completion checking which means that the {{completionPredicate}} will use the incoming Exchange.
+     * At opposed to without eager completion checking the {{completionPredicate}} will use the aggregated Exchange.
+     *
+     * @return builder
+     */
+    public AggregateDefinition eagerCheckCompletion() {
+        setEagerCheckCompletion(true);
+        return this;
+    }
+
+    /**
+     * If a correlation key cannot be successfully evaluated it will be ignored by logging a {{DEBUG}} and then just
+     * ignore the incoming Exchange.
+     *
+     * @return builder
+     */
+    public AggregateDefinition ignoreBadCorrelationKeys() {
+        setIgnoreBadCorrelationKeys(true);
+        return this;
+    }
+
+    /**
+     * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key
+     * that has been closed, it will be defined and a {@link org.apache.camel.processor.aggregate.ClosedCorrelationKeyException}
+     * is thrown.
+     *
+     * @return builder
+     */
+    public AggregateDefinition closeCorrelationKeyOnCompletion() {
+        setCloseCorrelationKeyOnCompletion(true);
+        return this;
+    }
 
     /**
      * Enables the batch completion mode where we aggregate from a {@link org.apache.camel.BatchConsumer}
@@ -310,6 +434,38 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public AggregateDefinition completionPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
         setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
+        return this;
+    }
+
+    /**
+     * Sending the aggregated output in parallel
+     *
+     * @return the builder
+     */
+    public AggregateDefinition parallelProcessing() {
+        setParallelProcessing(true);
+        return this;
+    }
+
+    /**
+     * Setting the executor service for executing the sending the aggregated output.
+     *
+     * @param executorService the executor service
+     * @return the builder
+     */
+    public AggregateDefinition executorService(ExecutorService executorService) {
+        setExecutorService(executorService);
+        return this;
+    }
+
+    /**
+     * Setting the executor service for executing the sending the aggregated output.
+     *
+     * @param executorServiceRef reference to the executor service
+     * @return the builder
+     */
+    public AggregateDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
         return this;
     }
 

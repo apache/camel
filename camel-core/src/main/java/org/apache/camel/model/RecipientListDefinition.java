@@ -151,7 +151,7 @@ public class RecipientListDefinition extends ExpressionNode {
     }
 
     /**
-     * Doing the splitting work in parallel
+     * Doing the recipient list work in parallel
      *
      * @return the builder
      */
@@ -181,6 +181,17 @@ public class RecipientListDefinition extends ExpressionNode {
      */
     public RecipientListDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
+        return this;
+    }
+
+    /**
+     * Setting the executor service for executing the sending to the recipients.
+     *
+     * @param executorServiceRef reference to the executor service
+     * @return the builder
+     */
+    public RecipientListDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
         return this;
     }
 

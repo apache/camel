@@ -123,7 +123,7 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
 
     public void purge() {
         if (log.isTraceEnabled()) {
-            log.debug("There are " + map.size() + " in the timeout map");
+            log.trace("There are " + map.size() + " in the timeout map");
         }
         long now = currentTime();
 
