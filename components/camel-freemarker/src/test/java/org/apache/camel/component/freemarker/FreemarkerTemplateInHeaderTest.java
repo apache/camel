@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.freemarker;
 
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -31,26 +34,46 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
 
     @Test
     public void testReceivesFooResponse() throws Exception {
-        assertRespondsWith("foo", "<hello>foo</hello>");
+        assertRespondsWith("cheese", "foo", "<hello>foo</hello>");
     }
 
     @Test
     public void testReceivesBarResponse() throws Exception {
-        assertRespondsWith("bar", "<hello>bar</hello>");
+        assertRespondsWith("cheese", "bar", "<hello>bar</hello>");
     }
 
-    protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException {
+    @Test
+    public void testRespectHeaderNamesUpperCase() throws Exception {
+        assertRespondsWith("Cheese", "bar", "<hello>bar</hello>");
+    }
+
+    @Test
+    public void testRespectHeaderNamesCamelCase() throws Exception {
+        assertRespondsWith("CorrelationID", "bar", "<hello>bar</hello>");
+    }
+
+    protected void assertRespondsWith(final String headerName, final String headerValue, String expectedBody) throws InvalidPayloadException {
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
-                in.setHeader(FreemarkerConstants.FREEMARKER_TEMPLATE, "<hello>${headers.cheese}</hello>");
-                in.setHeader("cheese", value);
+                in.setHeader(FreemarkerConstants.FREEMARKER_TEMPLATE, "<hello>${headers." + headerName + "}</hello>");
+                in.setHeader(headerName, headerValue);
             }
         });
         assertOutMessageBodyEquals(response, expectedBody);
 
         Object template = response.getOut().getHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
         assertNull("Template header should have been removed", template);
+
+        Set<Entry<String, Object>> entrySet = response.getOut().getHeaders().entrySet();
+        boolean keyFound = false;
+        for (Entry<String, Object> entry : entrySet) {
+            if (entry.getKey().equals(headerName)) {
+                keyFound = true;
+            }
+        }
+        assertTrue("Header should been found", keyFound);
+
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -60,5 +83,4 @@ public class FreemarkerTemplateInHeaderTest extends CamelTestSupport {
             }
         };
     }
-
 }

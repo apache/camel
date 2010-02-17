@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -146,10 +147,8 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
         Map<String, Object> headers = (Map<String, Object>) variableMap.get("headers");
-        for (String key : headers.keySet()) {
-            out.setHeader(key, headers.get(key));
+        for (Entry<String, Object> entry : headers.entrySet()) {
+            out.setHeader(entry.getKey(), entry.getValue());
         }
     }
-
 }
-
