@@ -17,9 +17,9 @@
 package org.apache.camel.processor.aggregate;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -35,6 +35,7 @@ import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.DefaultTimeoutMap;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.TimeoutMap;
@@ -71,11 +72,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private ExecutorService executorService;
     private ExceptionHandler exceptionHandler;
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
-    private Set<Object> closedCorrelationKeys = new HashSet<Object>();
+    private Map<Object, Object> closedCorrelationKeys;
 
     // options
     private boolean ignoreBadCorrelationKeys;
-    private boolean closeCorrelationKeyOnCompletion;
+    private Integer closeCorrelationKeyOnCompletion;
     private boolean parallelProcessing;
 
     // different ways to have completion triggered
@@ -133,10 +134,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         // is the correlation key closed?
-        if (isCloseCorrelationKeyOnCompletion()) {
-            if (closedCorrelationKeys.contains(key)) {
-                throw new ClosedCorrelationKeyException(key, exchange);
-            }
+        if (closedCorrelationKeys != null && closedCorrelationKeys.containsKey(key)) {
+            throw new ClosedCorrelationKeyException(key, exchange);
         }
 
         doAggregation(key, exchange);
@@ -250,8 +249,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         // this key has been closed so add it to the closed map
-        if (isCloseCorrelationKeyOnCompletion()) {
-            closedCorrelationKeys.add(key);
+        if (closedCorrelationKeys != null) {
+            closedCorrelationKeys.put(key, key);
         }
 
         if (LOG.isDebugEnabled()) {
@@ -326,11 +325,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.ignoreBadCorrelationKeys = ignoreBadCorrelationKeys;
     }
 
-    public boolean isCloseCorrelationKeyOnCompletion() {
+    public Integer getCloseCorrelationKeyOnCompletion() {
         return closeCorrelationKeyOnCompletion;
     }
 
-    public void setCloseCorrelationKeyOnCompletion(boolean closeCorrelationKeyOnCompletion) {
+    public void setCloseCorrelationKeyOnCompletion(Integer closeCorrelationKeyOnCompletion) {
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
@@ -386,6 +385,17 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     + " [completionTimeout, completionAggregatedSize, completionPredicate] must be set");
         }
 
+        if (getCloseCorrelationKeyOnCompletion() != null) {
+            if (getCloseCorrelationKeyOnCompletion() > 0) {
+                LOG.info("Using ClosedCorrelationKeys with a LRUCache with a capacity of " + getCloseCorrelationKeyOnCompletion());
+                closedCorrelationKeys = new LRUCache<Object, Object>(getCloseCorrelationKeyOnCompletion());
+            } else {
+                LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
+                closedCorrelationKeys = new HashMap<Object, Object>();
+            }
+
+        }
+
         ServiceHelper.startService(aggregationRepository);
 
         if (executorService == null) {
@@ -416,7 +426,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         ServiceHelper.stopService(aggregationRepository);
-        closedCorrelationKeys.clear();
+
+        if (closedCorrelationKeys != null) {
+            closedCorrelationKeys.clear();
+        }
     }
 
 }

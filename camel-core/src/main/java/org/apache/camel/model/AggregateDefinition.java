@@ -77,7 +77,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute(required = false)
     private Boolean ignoreBadCorrelationKeys;
     @XmlAttribute(required = false)
-    private Boolean closeCorrelationKeyOnCompletion;
+    private Integer closeCorrelationKeyOnCompletion;
 
     public AggregateDefinition() {
     }
@@ -159,14 +159,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (isCompletionFromBatchConsumer() != null) {
             answer.setCompletionFromBatchConsumer(isCompletionFromBatchConsumer());
         }
-        if (isCloseCorrelationKeyOnCompletion() != null) {
-            answer.setCloseCorrelationKeyOnCompletion(isCloseCorrelationKeyOnCompletion());
-        }
         if (isEagerCheckCompletion() != null) {
             answer.setEagerCheckCompletion(isEagerCheckCompletion());
         }
         if (isIgnoreBadCorrelationKeys() != null) {
             answer.setIgnoreBadCorrelationKeys(isIgnoreBadCorrelationKeys());
+        }
+        if (getCloseCorrelationKeyOnCompletion() != null) {
+            answer.setCloseCorrelationKeyOnCompletion(getCloseCorrelationKeyOnCompletion());
         }
 
         return answer;
@@ -298,11 +298,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.ignoreBadCorrelationKeys = ignoreBadCorrelationKeys;
     }
 
-    public Boolean isCloseCorrelationKeyOnCompletion() {
+    public Integer getCloseCorrelationKeyOnCompletion() {
         return closeCorrelationKeyOnCompletion;
     }
 
-    public void setCloseCorrelationKeyOnCompletion(Boolean closeCorrelationKeyOnCompletion) {
+    public void setCloseCorrelationKeyOnCompletion(Integer closeCorrelationKeyOnCompletion) {
         this.closeCorrelationKeyOnCompletion = closeCorrelationKeyOnCompletion;
     }
 
@@ -336,10 +336,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * that has been closed, it will be defined and a {@link org.apache.camel.processor.aggregate.ClosedCorrelationKeyException}
      * is thrown.
      *
+     * @param capacity the maximum capacity of the closed correlation key cache.
+     *                 Use <tt>0</tt> or negative value for unbounded capacity.
      * @return builder
      */
-    public AggregateDefinition closeCorrelationKeyOnCompletion() {
-        setCloseCorrelationKeyOnCompletion(true);
+    public AggregateDefinition closeCorrelationKeyOnCompletion(int capacity) {
+        setCloseCorrelationKeyOnCompletion(capacity);
         return this;
     }
 

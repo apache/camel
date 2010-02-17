@@ -320,7 +320,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         AggregateProcessor ap = new AggregateProcessor(done, corr, as);
         ap.setCompletionPredicate(complete);
-        ap.setCloseCorrelationKeyOnCompletion(true);
+        ap.setCloseCorrelationKeyOnCompletion(1000);
 
         ap.start();
 

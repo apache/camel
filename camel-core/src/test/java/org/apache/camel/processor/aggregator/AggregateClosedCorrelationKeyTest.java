@@ -27,7 +27,23 @@ import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
  */
 public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     public void testAggregateClosedCorrelationKey() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(2).closeCorrelationKeyOnCompletion(1000)
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
         getMockEndpoint("mock:result").expectedBodiesReceived("A+B");
 
         template.sendBodyAndHeader("direct:start", "A", "id", 1);
@@ -46,17 +62,51 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public void testAggregateClosedCorrelationKeyCache() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).closeCorrelationKeyOnCompletion()
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .completionSize(2).closeCorrelationKeyOnCompletion(2)
                         .to("mock:result");
-
             }
-        };
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("A+B", "C+D", "E+F");
+
+        template.sendBodyAndHeader("direct:start", "A", "id", 1);
+        template.sendBodyAndHeader("direct:start", "B", "id", 1);
+        template.sendBodyAndHeader("direct:start", "C", "id", 2);
+        template.sendBodyAndHeader("direct:start", "D", "id", 2);
+        template.sendBodyAndHeader("direct:start", "E", "id", 3);
+        template.sendBodyAndHeader("direct:start", "F", "id", 3);
+
+        // should NOT be closed because only 2 and 3 is remembered as they are the two last used
+        template.sendBodyAndHeader("direct:start", "G", "id", 1);
+
+        // should be closed
+        try {
+            template.sendBodyAndHeader("direct:start", "H", "id", 2);
+            fail("Should throw an exception");
+        } catch (CamelExecutionException e) {
+            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
+            assertEquals(2, cause.getCorrelationKey());
+            assertEquals("The correlation key [2] has been closed. Exchange[Message: H]", cause.getMessage());
+        }
+
+        // should be closed
+        try {
+            template.sendBodyAndHeader("direct:start", "I", "id", 3);
+            fail("Should throw an exception");
+        } catch (CamelExecutionException e) {
+            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
+            assertEquals(3, cause.getCorrelationKey());
+            assertEquals("The correlation key [3] has been closed. Exchange[Message: I]", cause.getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
     }
+
 }
