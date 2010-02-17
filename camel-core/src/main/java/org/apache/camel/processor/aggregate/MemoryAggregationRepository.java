@@ -21,9 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.AggregationRepository;
 
 /**
- * A memory based {@link org.apache.camel.processor.aggregate.AggregationRepository} which stores in memory only.
+ * A memory based {@link org.apache.camel.spi.AggregationRepository} which stores in memory only.
  *
  * @version $Revision$
  */

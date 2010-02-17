@@ -151,6 +151,17 @@ public class RecipientListDefinition extends ExpressionNode {
     }
 
     /**
+     * Set the aggregationStrategy
+     *
+     * @param aggregationStrategyRef a reference to a strategy to lookup
+     * @return the builder
+     */
+    public RecipientListDefinition aggregationStrategyRef(String aggregationStrategyRef) {
+        setStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+
+    /**
      * Doing the recipient list work in parallel
      *
      * @return the builder
