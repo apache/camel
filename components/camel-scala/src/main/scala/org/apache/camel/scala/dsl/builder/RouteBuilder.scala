@@ -131,7 +131,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages {
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
   def wiretap(uri: String) = stack.top.wiretap(uri)
   def wiretap(uri: String, expression: Exchange => Any) = stack.top.wiretap(uri, expression)
-  def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
+  def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = stack.top.aggregate(expression, strategy)
 
   // delegate to Java builder
   def errorHandler(error: ErrorHandlerBuilder) = builder.setErrorHandlerBuilder(error) 

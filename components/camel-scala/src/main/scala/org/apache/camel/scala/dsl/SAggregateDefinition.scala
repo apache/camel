@@ -37,16 +37,19 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
   }
 
   def strategy(strategy: AggregationStrategy) = wrap(target.setAggregationStrategy(strategy))
-  def strategy(ref: String) = wrap(target.setStrategyRef(ref));
 
-  def batchTimout(period: Period) = wrap(target.setBatchTimeout(period.milliseconds))
-  def completion(predicate: Exchange => Any) = wrap(target.completionPredicate(predicate))
+  def aggregationRepositoryRef(ref: String) = wrap(target.setAggregationRepositoryRef(ref))
+  def strategyRef(ref: String) = wrap(target.setStrategyRef(ref))
 
-  def batchSize(count: Int) = wrap(target.batchSize(count))
-  def outBatchSize(count: Int) = wrap(target.outBatchSize(count))
+  def completionSize(count: Int) = wrap(target.completionSize(count))
+  def completionTimeout(period: Period) = wrap(target.setCompletionTimeout(period.milliseconds))
 
+  def closeCorrelationKeyOnCompletion(count: Int) = wrap(target.setCloseCorrelationKeyOnCompletion(count))
+  def parallelProcessing = wrap(target.parallelProcessing)
+  def completionFromBatchConsumer = wrap(target.completionFromBatchConsumer)
+  def eagerCheckCompletion = wrap(target.eagerCheckCompletion)
+  def ignoreBadCorrelationKeys = wrap(target.ignoreBadCorrelationKeys)
   def groupExchanges = wrap(target.groupExchanges)
-  def batchSizeFromConsumer = wrap(target.batchSizeFromConsumer)
 
   override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SAggregateDefinition]
 }

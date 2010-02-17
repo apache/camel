@@ -149,7 +149,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def wiretap(uri: String) = wrap(target.wireTap(uri))
   def wiretap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri, expression))
   
-  def aggregate(expression: Exchange => Any) = SAggregateDefinition(target.aggregate(expression))
+  def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = SAggregateDefinition(target.aggregate(expression, strategy))
 
   /**
    * Helper method to return this Scala type instead of creating another wrapper type for the processor
