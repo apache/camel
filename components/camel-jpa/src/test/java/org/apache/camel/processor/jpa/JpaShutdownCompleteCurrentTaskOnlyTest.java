@@ -49,6 +49,11 @@ public class JpaShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
     protected JpaTemplate jpaTemplate;
 
     @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
