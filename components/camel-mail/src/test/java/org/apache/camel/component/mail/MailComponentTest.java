@@ -262,6 +262,17 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals(false, config.isDebugMode());
     }
 
+    @Test
+    public void testSMTPEndpointWithSubjectOption() throws Exception {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://myhost:25?subject=hello");
+        MailConfiguration config = endpoint.getConfiguration();
+        assertEquals("getProtocol()", "smtp", config.getProtocol());
+        assertEquals("getHost()", "myhost", config.getHost());
+        assertEquals("getPort()", 25, config.getPort());
+        assertEquals("getSubject()", "hello", config.getSubject());
+        assertEquals(false, config.isDebugMode());
+    }
+
     @Override
     protected MailEndpoint resolveMandatoryEndpoint(String uri) {
         Endpoint endpoint = super.resolveMandatoryEndpoint(uri);

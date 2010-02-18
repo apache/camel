@@ -87,6 +87,13 @@ public class MailBinding {
             throw new IllegalArgumentException("The mail message does not have any recipients set.");
         }
 
+        // set the subject if it was passed in as an option in the uri. Note: if it is in both the URI
+        // and headers the headers win.
+        String subject = endpoint.getConfiguration().getSubject();
+        if (subject != null) {
+            mimeMessage.setHeader("Subject", subject);
+        }
+
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
         appendHeadersFromCamelMessage(mimeMessage, endpoint.getConfiguration(), exchange);
 

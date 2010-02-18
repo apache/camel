@@ -45,6 +45,8 @@ public class FromFileSendMailTest extends CamelTestSupport {
         assertEquals(1, mailbox.size());
         Object body = mailbox.get(0).getContent(); 
         assertEquals("Hi how are you", body);
+        Object subject = mailbox.get(0).getSubject();
+        assertEquals("Hello World", subject);
     }
 
     @Override

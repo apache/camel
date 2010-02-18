@@ -44,6 +44,7 @@ public class MailConfiguration implements Cloneable {
     private int port = -1;
     private String username;
     private String password;
+    private String subject;
     private Session session;
     private String defaultEncoding;
     private String from = MailConstants.MAIL_DEFAULT_FROM;
@@ -275,6 +276,14 @@ public class MailConfiguration implements Cloneable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public int getPort() {
