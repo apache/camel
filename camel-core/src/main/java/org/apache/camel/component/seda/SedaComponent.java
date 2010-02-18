@@ -43,8 +43,14 @@ public class SedaComponent extends DefaultComponent {
         }
 
         // create queue
-        int size = getAndRemoveParameter(parameters, "size", Integer.class, 1000);
-        BlockingQueue<Exchange> queue = new LinkedBlockingQueue<Exchange>(size);
+        BlockingQueue<Exchange> queue;
+        Integer size = getAndRemoveParameter(parameters, "size", Integer.class);
+        if (size != null && size > 0) {
+            queue = new LinkedBlockingQueue<Exchange>(size);
+        } else {
+            queue = new LinkedBlockingQueue<Exchange>();
+        }
+
         queues.put(key, queue);
         return queue;
     }

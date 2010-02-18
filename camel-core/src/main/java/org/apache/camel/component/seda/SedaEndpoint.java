@@ -43,7 +43,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
  */
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private volatile BlockingQueue<Exchange> queue;
-    private int size = 1000;
+    private int size;
     private int concurrentConsumers = 1;
     private boolean multipleConsumers;
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
@@ -84,7 +84,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     public synchronized BlockingQueue<Exchange> getQueue() {
         if (queue == null) {
-            queue = new LinkedBlockingQueue<Exchange>(size);
+            if (size > 0) {
+                queue = new LinkedBlockingQueue<Exchange>(size);
+            } else {
+                queue = new LinkedBlockingQueue<Exchange>();
+            }
         }
         return queue;
     }
