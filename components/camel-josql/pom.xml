@@ -36,9 +36,9 @@
 
   <repositories>
     <repository>
-      <id>open.iona.m2</id>
-      <name>IONA Open Source Community Release Repository</name>
-      <url>http://repo.open.iona.com/maven2</url>
+      <id>fusesource.m2</id>
+      <name>Fusesource Release Repository</name>
+      <url>http://repo.fusesource.com/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>

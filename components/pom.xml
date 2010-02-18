@@ -49,6 +49,9 @@
     <module>camel-gae</module>
     <module>camel-guice</module>
     <module>camel-groovy</module>
+    <!-- component still under active development 
+    <module>camel-hawtdb</module>
+    -->
     <module>camel-http</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
