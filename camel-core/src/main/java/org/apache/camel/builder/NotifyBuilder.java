@@ -59,7 +59,7 @@ public class NotifyBuilder {
     private final List<EventPredicateHolder> predicates = new ArrayList<EventPredicateHolder>();
 
     // latch to be used to signal predicates matches
-    private final CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch latch = new CountDownLatch(1);
 
     // the current state while building an event predicate where we use a stack and the operation
     private final Stack<EventPredicate> stack = new Stack<EventPredicate>();
@@ -190,6 +190,11 @@ public class NotifyBuilder {
             }
 
             @Override
+            public void reset() {
+                current = 0;
+            }
+
+            @Override
             public String toString() {
                 return "whenReceived(" + number + ")";
             }
@@ -230,6 +235,11 @@ public class NotifyBuilder {
             }
 
             @Override
+            public void reset() {
+                current = 0;
+            }
+
+            @Override
             public String toString() {
                 return "whenDone(" + number + ")";
             }
@@ -264,6 +274,11 @@ public class NotifyBuilder {
             }
 
             @Override
+            public void reset() {
+                current = 0;
+            }
+
+            @Override
             public String toString() {
                 return "whenCompleted(" + number + ")";
             }
@@ -292,6 +307,11 @@ public class NotifyBuilder {
 
             public boolean matches() {
                 return current >= number;
+            }
+
+            @Override
+            public void reset() {
+                current = 0;
             }
 
             @Override
@@ -331,6 +351,11 @@ public class NotifyBuilder {
             }
 
             @Override
+            public void reset() {
+                current = 0;
+            }
+
+            @Override
             public String toString() {
                 return "whenExactlyDone(" + number + ")";
             }
@@ -362,6 +387,11 @@ public class NotifyBuilder {
             }
 
             @Override
+            public void reset() {
+                current = 0;
+            }
+
+            @Override
             public String toString() {
                 return "whenExactlyCompleted(" + number + ")";
             }
@@ -387,6 +417,11 @@ public class NotifyBuilder {
 
             public boolean matches() {
                 return current == number;
+            }
+
+            @Override
+            public void reset() {
+                current = 0;
             }
 
             @Override
@@ -447,6 +482,11 @@ public class NotifyBuilder {
 
             public boolean matches() {
                 return matches;
+            }
+
+            @Override
+            public void reset() {
+                matches = false;
             }
 
             @Override
@@ -514,6 +554,11 @@ public class NotifyBuilder {
             }
 
             @Override
+            public void reset() {
+                matches = true;
+            }
+
+            @Override
             public String toString() {
                 if (received) {
                     return "whenAllReceivedMatches(" + predicate + ")";
@@ -561,7 +606,6 @@ public class NotifyBuilder {
 
     private NotifyBuilder doWhenSatisfied(final MockEndpoint mock, final boolean received) {
         stack.push(new EventPredicateSupport() {
-
             private Producer producer;
 
             @Override
@@ -606,6 +650,11 @@ public class NotifyBuilder {
                 } catch (InterruptedException e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
+            }
+
+            @Override
+            public void reset() {
+                mock.reset();
             }
 
             @Override
@@ -701,6 +750,11 @@ public class NotifyBuilder {
                 } catch (InterruptedException e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
+            }
+
+            @Override
+            public void reset() {
+                mock.reset();
             }
 
             @Override
@@ -828,6 +882,12 @@ public class NotifyBuilder {
             }
 
             @Override
+            public void reset() {
+                matches = false;
+                current = 0;
+            }
+
+            @Override
             public String toString() {
                 if (received) {
                     return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
@@ -838,7 +898,6 @@ public class NotifyBuilder {
         });
         return this;
     }
-
 
     /**
      * Prepares to append an additional expression using the <i>and</i> operator.
@@ -910,6 +969,17 @@ public class NotifyBuilder {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         return matches();
+    }
+
+    /**
+     * Resets the notifier.
+     */
+    public void reset() {
+        for (EventPredicateHolder predicate : predicates) {
+            predicate.reset();
+        }
+        latch = new CountDownLatch(1);
+        matches = false;
     }
 
     @Override
@@ -1049,6 +1119,11 @@ public class NotifyBuilder {
         boolean matches();
 
         /**
+         * Resets the predicate
+         */
+        void reset();
+
+        /**
          * Callback for {@link Exchange} lifecycle
          *
          * @param exchange the exchange
@@ -1074,6 +1149,10 @@ public class NotifyBuilder {
     }
 
     private abstract class EventPredicateSupport implements EventPredicate {
+
+        public void reset() {
+            // noop
+        }
 
         public boolean onExchangeCreated(Exchange exchange) {
             return onExchange(exchange);
@@ -1112,6 +1191,10 @@ public class NotifyBuilder {
             return predicate;
         }
 
+        public void reset() {
+            predicate.reset();
+        }
+
         @Override
         public String toString() {
             return operation.name() + "()." + predicate;
@@ -1136,6 +1219,12 @@ public class NotifyBuilder {
                 }
             }
             return true;
+        }
+
+        public void reset() {
+            for (EventPredicate predicate : predicates) {
+                predicate.reset();
+            }
         }
 
         public boolean onExchangeCreated(Exchange exchange) {

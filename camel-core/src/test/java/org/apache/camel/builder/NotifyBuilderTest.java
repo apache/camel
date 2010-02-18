@@ -742,6 +742,48 @@ public class NotifyBuilderTest extends ContextTestSupport {
         assertEquals(false, notify.matches());
     }
 
+    public void testReset() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenExactlyDone(1)
+                .create();
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(true, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notify.matches());
+
+        // reset
+        notify.reset();
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(true, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notify.matches());
+    }
+
+    public void testResetBodiesReceived() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenBodiesReceived("Hello World", "Bye World")
+                .create();
+
+        template.sendBody("direct:foo", "Hello World");
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(true, notify.matches());
+
+        // reset
+        notify.reset();
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(true, notify.matches());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
