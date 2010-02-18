@@ -51,6 +51,10 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate", required = false)
     private ExpressionSubElementDefinition completionPredicate;
+    @XmlElement(name = "completionTimeout", required = false)
+    private ExpressionSubElementDefinition completionTimeoutExpression;
+    @XmlElement(name = "completionSize", required = false)
+    private ExpressionSubElementDefinition completionSizeExpression;
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlElementRef
@@ -160,11 +164,19 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
         }
-        if (getCompletionSize() != null) {
-            answer.setCompletionSize(getCompletionSize());
+        if (getCompletionTimeoutExpression() != null) {
+            Expression expression = getCompletionTimeoutExpression().createExpression(routeContext);
+            answer.setCompletionTimeoutExpression(expression);
         }
         if (getCompletionTimeout() != null) {
             answer.setCompletionTimeout(getCompletionTimeout());
+        }
+        if (getCompletionSizeExpression() != null) {
+            Expression expression = getCompletionSizeExpression().createExpression(routeContext);
+            answer.setCompletionSizeExpression(expression);
+        }
+        if (getCompletionSize() != null) {
+            answer.setCompletionSize(getCompletionSize());
         }
         if (isCompletionFromBatchConsumer() != null) {
             answer.setCompletionFromBatchConsumer(isCompletionFromBatchConsumer());
@@ -250,6 +262,22 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setCompletionPredicate(ExpressionSubElementDefinition completionPredicate) {
         this.completionPredicate = completionPredicate;
+    }
+
+    public ExpressionSubElementDefinition getCompletionTimeoutExpression() {
+        return completionTimeoutExpression;
+    }
+
+    public void setCompletionTimeoutExpression(ExpressionSubElementDefinition completionTimeoutExpression) {
+        this.completionTimeoutExpression = completionTimeoutExpression;
+    }
+
+    public ExpressionSubElementDefinition getCompletionSizeExpression() {
+        return completionSizeExpression;
+    }
+
+    public void setCompletionSizeExpression(ExpressionSubElementDefinition completionSizeExpression) {
+        this.completionSizeExpression = completionSizeExpression;
     }
 
     public Boolean isGroupExchanges() {
@@ -404,6 +432,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
+     * Sets the completion size, which is the number of aggregated exchanges which would
+     * cause the aggregate to consider the group as complete and send out the aggregated exchange.
+     *
+     * @param completionSize  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
+     * @return builder
+     */
+    public AggregateDefinition completionSize(Expression completionSize) {
+        setCompletionSizeExpression(new ExpressionSubElementDefinition(completionSize));
+        return this;
+    }
+
+    /**
      * Sets the completion timeout, which would cause the aggregate to consider the group as complete
      * and send out the aggregated exchange.
      *
@@ -412,6 +452,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition completionTimeout(long completionTimeout) {
         setCompletionTimeout(completionTimeout);
+        return this;
+    }
+
+    /**
+     * Sets the completion timeout, which would cause the aggregate to consider the group as complete
+     * and send out the aggregated exchange.
+     *
+     * @param completionTimeout  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
+     * @return the builder
+     */
+    public AggregateDefinition completionTimeout(Expression completionTimeout) {
+        setCompletionTimeoutExpression(new ExpressionSubElementDefinition(completionTimeout));
         return this;
     }
 

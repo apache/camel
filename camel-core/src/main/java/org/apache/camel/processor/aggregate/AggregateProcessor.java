@@ -85,7 +85,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private boolean eagerCheckCompletion;
     private Predicate completionPredicate;
     private long completionTimeout;
+    private Expression completionTimeoutExpression;
     private int completionSize;
+    private Expression completionSizeExpression;
     private boolean completionFromBatchConsumer;
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
 
@@ -221,6 +223,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
+        if (getCompletionSizeExpression() != null) {
+            Integer value = getCompletionSizeExpression().evaluate(exchange, Integer.class);
+            if (value != null && value > 0) {
+                int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
+                if (size >= value) {
+                    return true;
+                }
+            }
+        }
         if (getCompletionSize() > 0) {
             int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
             if (size >= getCompletionSize()) {
@@ -228,7 +239,21 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
-        if (getCompletionTimeout() > 0) {
+        // timeout can be either evaluated based on an expression or from a fixed value
+        // expression takes precedence
+        boolean timeoutSet = false;
+        if (getCompletionTimeoutExpression() != null) {
+            Long value = getCompletionTimeoutExpression().evaluate(exchange, Long.class);
+            if (value != null && value > 0) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Updating correlation key " + key + " to timeout after "
+                            + value + " ms. as exchange received: " + exchange);
+                }
+                timeoutMap.put(key, exchange, value);
+                timeoutSet = true;
+            }
+        }
+        if (!timeoutSet && getCompletionTimeout() > 0) {
             // timeout is used so use the timeout map to keep an eye on this
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Updating correlation key " + key + " to timeout after "
@@ -323,12 +348,28 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.completionTimeout = completionTimeout;
     }
 
+    public Expression getCompletionTimeoutExpression() {
+        return completionTimeoutExpression;
+    }
+
+    public void setCompletionTimeoutExpression(Expression completionTimeoutExpression) {
+        this.completionTimeoutExpression = completionTimeoutExpression;
+    }
+
     public int getCompletionSize() {
         return completionSize;
     }
 
     public void setCompletionSize(int completionSize) {
         this.completionSize = completionSize;
+    }
+
+    public Expression getCompletionSizeExpression() {
+        return completionSizeExpression;
+    }
+
+    public void setCompletionSizeExpression(Expression completionSizeExpression) {
+        this.completionSizeExpression = completionSizeExpression;
     }
 
     public boolean isIgnoreBadCorrelationKeys() {
@@ -402,9 +443,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStart() throws Exception {
-        if (getCompletionTimeout() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null) {
+        if (getCompletionTimeout() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null
+                && !isCompletionFromBatchConsumer() && getCompletionTimeoutExpression() == null
+                && getCompletionSizeExpression() == null) {
             throw new IllegalStateException("At least one of the completions options"
-                    + " [completionTimeout, completionAggregatedSize, completionPredicate] must be set");
+                    + " [completionTimeout, completionSize, completionPredicate, completionFromBatchConsumer] must be set");
         }
 
         if (getCloseCorrelationKeyOnCompletion() != null) {
@@ -431,7 +474,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         // start timeout service if its in use
-        if (getCompletionTimeout() > 0) {
+        if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             ScheduledExecutorService scheduler = ExecutorServiceHelper.newScheduledThreadPool(1, "AggregateTimeoutChecker", true);
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
             ServiceHelper.startService(timeoutMap);
