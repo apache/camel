@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring.config.scan;
 
 import java.util.concurrent.TimeUnit;
@@ -33,7 +32,6 @@ public class SpringComponentScanTest extends ContextTestSupport {
         ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScan.xml");
         context = (CamelContext)c.getBean("camelContext");
         template = context.createProducerTemplate();
-
     }
     
     public void testExcludedRoute() throws InterruptedException {

@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,12 +27,15 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
@@ -70,6 +72,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -117,6 +120,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private ShutdownRunningTask shutdownRunningTask;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
+    @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class, required = false)
+    private CamelPropertyPlaceholderDefinition camelPropertyPlaceholder;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElement(name = "packageScan", type = PackageScanDefinition.class, required = false)
@@ -124,7 +129,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;    
     @XmlElements({
-        @XmlElement(name = "propertyPlaceholder", type = CamelPropertiesComponentFactoryBean.class, required = false),
         @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
@@ -212,6 +216,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             LOG.info("Using custom Registry: " + registry);
             getContext().setRegistry(registry);
         }
+
+        // setup property placeholder so we got it as early as possible
+        initPropertyPlaceholder();
 
         Tracer tracer = getBeanForType(Tracer.class);
         if (tracer != null) {
@@ -565,6 +572,25 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
     }
 
+    private void initPropertyPlaceholder() throws Exception {
+        if (getCamelPropertyPlaceholder() != null) {
+            CamelPropertyPlaceholderDefinition def = getCamelPropertyPlaceholder();
+
+            PropertiesComponent pc = new PropertiesComponent();
+            pc.setLocation(def.getLocation());
+
+            // if using a custom resolver
+            if (ObjectHelper.isNotEmpty(def.getPropertiesResolverRef())) {
+                PropertiesResolver resolver = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesResolverRef(),
+                                                                                 PropertiesResolver.class);
+                pc.setPropertiesResolver(resolver);
+            }
+
+            // register the properties component
+            getContext().addComponent("properties", pc);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private <T> T getBeanForType(Class<T> clazz) {
         T bean = null;
@@ -706,6 +732,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      */
     public void setPackageScan(PackageScanDefinition packageScan) {
         this.packageScan = packageScan;
+    }
+
+    public CamelPropertyPlaceholderDefinition getCamelPropertyPlaceholder() {
+        return camelPropertyPlaceholder;
+    }
+
+    public void setCamelPropertyPlaceholder(CamelPropertyPlaceholderDefinition camelPropertyPlaceholder) {
+        this.camelPropertyPlaceholder = camelPropertyPlaceholder;
     }
 
     public void setBeanPostProcessor(BeanPostProcessor postProcessor) {
@@ -917,11 +951,18 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (packageScanDef != null && packageScanDef.getPackages().size() > 0) {
             // use package scan filter
             PatternBasedPackageScanFilter filter = new PatternBasedPackageScanFilter();
-            filter.addIncludePatterns(packageScanDef.getIncludes());
-            filter.addExcludePatterns(packageScanDef.getExcludes());
+            // support property placeholders in include and exclude
+            for (String include : packageScanDef.getIncludes()) {
+                include = getContext().resolvePropertyPlaceholders(include);
+                filter.addIncludePattern(include);
+            }
+            for (String exclude : packageScanDef.getExcludes()) {
+                exclude = getContext().resolvePropertyPlaceholders(exclude);
+                filter.addExcludePattern(exclude);
+            }
             resolver.addFilter(filter);
 
-            String[] normalized = normalizePackages(packageScanDef.getPackages());
+            String[] normalized = normalizePackages(getContext(), packageScanDef.getPackages());
             RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(),
                     getBeanPostProcessor(), getContext().getPackageScanClassResolver());
             finder.appendBuilders(builders);
@@ -943,9 +984,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
     }
 
-    private String[] normalizePackages(List<String> unnormalized) {
+    private String[] normalizePackages(CamelContext context, List<String> unnormalized) throws Exception {
         List<String> packages = new ArrayList<String>();
         for (String name : unnormalized) {
+            // it may use property placeholders
+            name = context.resolvePropertyPlaceholders(name);
             name = ObjectHelper.normalizeClassName(name);
             if (ObjectHelper.isNotEmpty(name)) {
                 if (LOG.isTraceEnabled()) {

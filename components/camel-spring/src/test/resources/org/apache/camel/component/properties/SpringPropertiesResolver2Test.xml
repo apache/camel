@@ -24,12 +24,10 @@
 
     <bean id="myResolver" class="org.apache.camel.component.properties.PropertiesResolverTest$MyCustomResolver"/>
 
-    <propertyPlaceholder id="properties"
-                         location="foo"
-                         propertiesResolverRef="myResolver"
-                         xmlns="http://camel.apache.org/schema/spring"/>
-
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder id="properties"
+                             location="foo"
+                             propertiesResolverRef="myResolver"/>
         <route>
             <from uri="direct:start"/>
             <to uri="properties:#{foo}"/>

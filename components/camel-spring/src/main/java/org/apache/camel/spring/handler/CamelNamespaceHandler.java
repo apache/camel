@@ -26,6 +26,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.spring.CamelPropertyPlaceholderDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,7 +42,6 @@ import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
 import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
-import org.apache.camel.spring.CamelPropertiesComponentFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
@@ -73,7 +73,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public static void renameNamespaceRecursive(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Document doc = node.getOwnerDocument();
-            if (((Element) node).getNamespaceURI().startsWith(SPRING_NS + "/v")) {
+            if ((node).getNamespaceURI().startsWith(SPRING_NS + "/v")) {
                 doc.renameNode(node, SPRING_NS, node.getNodeName());
             }
         }
@@ -88,18 +88,15 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     public void init() {
-        
         addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true);
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true);
         addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class, true);
         addBeanDefinitionParser("export", CamelServiceExporter.class, true);
-        addBeanDefinitionParser("propertyPlaceholder", CamelPropertiesComponentFactoryBean.class, true);
-
-        // jmx agent cannot be used outside of the camel context
-        addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
-
-        // endpoint
         addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class, true);
+
+        // jmx agent and property placeholder cannot be used outside of the camel context
+        addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false);
+        addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false);
 
         // camel context
         boolean osgi = false;
@@ -109,7 +106,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             osgi = true;
         } catch (Throwable t) {
             // not running with camel-osgi so we fallback to the regular factory bean
-            LOG.trace("Cannot find class so assuming not running in OSGI container: " + t.getMessage());
+            LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
         }
 
         if (osgi) {
@@ -230,6 +227,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 if (factoryBean.getPackages().length > 0) {
                     builder.addPropertyValue("packages", factoryBean.getPackages());
                 }
+                builder.addPropertyValue("camelPropertyPlaceholder", factoryBean.getCamelPropertyPlaceholder());
+                builder.addPropertyValue("camelJMXAgent", factoryBean.getCamelJMXAgent());
             }
 
             boolean createdBeanPostProcessor = false;
@@ -252,13 +251,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                             String id = childElement.getAttribute("id");
                             if (ObjectHelper.isNotEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
-                                if (localName.equals("jmxAgent")) {
-                                    builder.addPropertyReference("camelJMXAgent", id);
-                                }
-                                // set the templates with the camel context 
+                                // set the templates with the camel context
                                 if (localName.equals("template") || localName.equals("consumerTemplate")
-                                    || localName.equals("proxy") || localName.equals("export")
-                                    || localName.equals("propertyPlaceholder")) {
+                                    || localName.equals("proxy") || localName.equals("export")) {
                                     // set the camel context
                                     definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
                                 }   
@@ -351,7 +346,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
         }
 
-        // either we have not used templat before or we have auto registered it already and therefore we
+        // either we have not used template before or we have auto registered it already and therefore we
         // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
         // since we have multiple camel contexts
         boolean canDoTemplate = autoRegisterMap.get("template") != null
@@ -368,7 +363,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             autoRegisterBeanDefinition(id, definition, parserContext, contextId);
         }
 
-        // either we have not used templat before or we have auto registered it already and therefore we
+        // either we have not used template before or we have auto registered it already and therefore we
         // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
         // since we have multiple camel contexts
         boolean canDoConsumerTemplate = autoRegisterMap.get("consumerTemplate") != null

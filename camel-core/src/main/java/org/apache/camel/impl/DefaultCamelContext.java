@@ -685,6 +685,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         return answer;
     }
 
+    public String resolvePropertyPlaceholders(String uri) throws Exception {
+        // do not parse uris that are designated for the properties component as it will handle that itself
+        if (!uri.startsWith("properties:") && uri.contains("#{")) {
+            // the uri contains property placeholders so lookup mandatory properties component and let it parse it
+            Component component = hasComponent("properties");
+            if (component == null) {
+                throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
+                        + " in CamelContext to support property placeholders in endpoint URIs");
+            }
+            PropertiesComponent pc = getTypeConverter().mandatoryConvertTo(PropertiesComponent.class, component);
+            // the parser will throw exception if property key was not found
+            String answer = pc.parseUri(uri);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Resolved uri: " + uri + " --> " + answer);
+            }
+            return answer;
+        }
+        return uri;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -1509,26 +1529,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
 
         return answer;
-    }
-
-    protected String resolvePropertyPlaceholders(String uri) throws Exception {
-        // do not parse uris that are designated for the properties component as it will handle that itself
-        if (!uri.startsWith("properties:") && uri.contains("#{")) {
-            // the uri contains property placeholders so lookup mandatory properties component and let it parse it
-            Component component = hasComponent("properties");
-            if (component == null) {
-                throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                        + " in CamelContext to support property placeholders in endpoint URIs");
-            }
-            PropertiesComponent pc = getTypeConverter().mandatoryConvertTo(PropertiesComponent.class, component);
-            // the parser will throw exception if property key was not found
-            String answer = pc.parseUri(uri);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Resolved uri: " + uri + " --> " + answer);
-            }
-            return answer;
-        }
-        return uri;
     }
 
     @Override

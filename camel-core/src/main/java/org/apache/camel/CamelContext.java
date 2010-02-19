@@ -403,6 +403,15 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     Language resolveLanguage(String language);
 
     /**
+     * Parses the given text and resolve any property placeholders - using #{key}.
+     *
+     * @param text the text such as an endpoint uri or the likes
+     * @return the text with resolved property placeholders
+     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
+     */
+    String resolvePropertyPlaceholders(String text) throws Exception;
+
+    /**
      * Gets a readonly list with the names of the languages currently registered.
      *
      * @return a readonly list with the names of the the languages

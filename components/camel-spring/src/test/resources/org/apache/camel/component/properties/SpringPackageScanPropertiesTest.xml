@@ -23,30 +23,12 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-
-        <propertyPlaceholder id="properties"
-                             location="classpath:org/apache/camel/component/properties/cheese.properties"
-                             xmlns="http://camel.apache.org/schema/spring"/>
-
-        <route>
-            <from uri="direct:start"/>
-            <to uri="properties:#{cool.end}"/>
-        </route>
-
-        <route>
-            <from uri="direct:bar"/>
-            <to uri="properties:mock:#{cool.bar}"/>
-        </route>
-
-        <route>
-            <from uri="direct:start2"/>
-            <to uri="#{cool.end}"/>
-        </route>
-
-        <route>
-            <from uri="direct:bar2"/>
-            <to uri="mock:#{cool.bar}"/>
-        </route>
+        <propertyPlaceholder id="properties" location="org/apache/camel/component/properties/myprop.properties"/>
+        <packageScan>
+            <package>org.apache.camel.#{routescan}</package>
+            <includes>#{routeincludes}</includes>
+        </packageScan>
+        <jmxAgent id="agent"/>
     </camelContext>
 
 </beans>
