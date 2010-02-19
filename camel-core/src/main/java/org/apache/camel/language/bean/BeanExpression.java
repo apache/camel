@@ -66,7 +66,7 @@ public class BeanExpression implements Expression, Predicate {
         }
         try {
             Exchange newExchange = exchange.copy();
-            // The BeanExperession always has a result regardless of the ExchangePattern,
+            // The BeanExpression always has a result regardless of the ExchangePattern,
             // so I add a checker here to make sure we can get the result.
             if (!newExchange.getPattern().isOutCapable()) {
                 newExchange.setPattern(ExchangePattern.InOut);

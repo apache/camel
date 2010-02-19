@@ -684,6 +684,15 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
             }
         }
 
+        // validate route has output processors
+        if (outputs.isEmpty()) {
+            RouteDefinition route = routeContext.getRoute();
+            String at = fromType.toString();
+            Exception cause = new IllegalArgumentException("Route " + route.getId() + " has no output processors."
+                    + " You need to add outputs to the route such as to(\"log:foo\").");
+            throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
+        }
+
         List<ProcessorDefinition> list = new ArrayList<ProcessorDefinition>(outputs);
         for (ProcessorDefinition output : list) {
             try {
