@@ -61,6 +61,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         super(endpointUri, component);
         this.queue = queue;
+        this.size = queue.remainingCapacity();
         this.concurrentConsumers = concurrentConsumers;
     }
 
@@ -71,6 +72,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         super(endpointUri);
         this.queue = queue;
+        this.size = queue.remainingCapacity();
         this.concurrentConsumers = concurrentConsumers;
     }
     
@@ -95,6 +97,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     
     public void setQueue(BlockingQueue<Exchange> queue) {
         this.queue = queue;
+        this.size = queue.remainingCapacity();
     }
 
     public int getSize() {

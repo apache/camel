@@ -18,6 +18,7 @@ package org.apache.camel.component.seda;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -31,6 +32,30 @@ import org.apache.camel.Producer;
 public class SedaEndpointTest extends ContextTestSupport {
 
     private BlockingQueue<Exchange> queue = new ArrayBlockingQueue<Exchange>(1000);
+
+    public void testSedaEndpointUnboundedQueue() throws Exception {
+        BlockingQueue<Exchange> unbounded = new LinkedBlockingQueue<Exchange>();
+        SedaEndpoint seda = new SedaEndpoint("seda://foo", unbounded);
+        assertNotNull(seda);
+
+        assertEquals(Integer.MAX_VALUE, seda.getSize());
+        assertSame(unbounded, seda.getQueue());
+        assertEquals(1, seda.getConcurrentConsumers());
+
+        Producer prod = seda.createProducer();
+        seda.onStarted((SedaProducer) prod);
+        assertEquals(1, seda.getProducers().size());
+
+        Consumer cons = seda.createConsumer(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // do nothing
+            }
+        });
+        seda.onStarted((SedaConsumer) cons);
+        assertEquals(1, seda.getConsumers().size());
+
+        assertEquals(0, seda.getExchanges().size());
+    }
 
     public void testSedaEndpoint() throws Exception {
         SedaEndpoint seda = new SedaEndpoint("seda://foo", queue);
@@ -107,7 +132,7 @@ public class SedaEndpointTest extends ContextTestSupport {
 
     public void testSedaConsumer() throws Exception {
         SedaEndpoint seda = context.getEndpoint("seda://foo", SedaEndpoint.class);
-        Consumer consumer = (SedaConsumer) seda.createConsumer(new Processor() {
+        Consumer consumer = seda.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // do nothing
             }
