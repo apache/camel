@@ -37,25 +37,25 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      * Disable JMI (default false)
      */
     @XmlAttribute(required = false)
-    private Boolean disabled = Boolean.FALSE;
+    private String disabled = "false";
     
     /**
      * Only register processor if a custom id was defined for it.
      */
     @XmlAttribute(required = false)
-    private Boolean onlyRegisterProcessorWithCustomId = Boolean.FALSE;
+    private String onlyRegisterProcessorWithCustomId = "false";
 
     /**
      * RMI connector registry port (default 1099)
      */
     @XmlAttribute(required = false)
-    private Integer registryPort;
+    private String registryPort;
     
     /**
      * RMI connector server port (default -1 not used)
      */
     @XmlAttribute(required = false)
-    private Integer connectorPort;
+    private String connectorPort;
     
     /**
      * MBean server default domain name (default org.apache.camel)
@@ -79,13 +79,13 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      * A flag that indicates whether the agent should be created
      */
     @XmlAttribute(required = false)
-    private Boolean createConnector = Boolean.TRUE;
+    private String createConnector = "true";
     
     /**
      * A flag that indicates whether the platform mbean server should be used
      */
     @XmlAttribute(required = false)
-    private Boolean usePlatformMBeanServer = Boolean.TRUE;
+    private String usePlatformMBeanServer = "true";
 
     /**
      * Level of granularity for performance statistics enabled
@@ -93,76 +93,80 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     @XmlAttribute(required = false)
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
 
-    public Integer getConnectorPort() {
-        return connectorPort;
-    }
-    
-    public void setConnectorPort(Integer value) {
-        connectorPort = value;
+    public String getDisabled() {
+        return disabled;
     }
 
-    public Integer getRegistryPort() {
-        return registryPort;
-    }
-    
-    public void setRegistryPort(Integer value) {
-        registryPort = value;
-    }
-    
-    public String getMbeanServerDefaultDomain() {
-        return mbeanServerDefaultDomain;
-    }
-    
-    public void setMbeanServerDefaultDomain(String value) {
-        mbeanServerDefaultDomain = value;
-    }
-    
-    public String getMbeanObjectDomainName() {
-        return mbeanObjectDomainName;
-    }
-    
-    public void setMbeanObjectDomainName(String value) {
-        mbeanObjectDomainName = value;
-    }
-    
-    public String getServiceUrlPath() {
-        return serviceUrlPath;
-    }
-    
-    public void setServiceUrlPath(String value) {
-        serviceUrlPath = value;
+    public boolean isAgentDisabled() {
+        return disabled != null && Boolean.parseBoolean(disabled);
     }
 
-    public Boolean isCreateConnector() {
-        return createConnector;
-    }
-    
-    public void setCreateConnector(Boolean value) {
-        createConnector = value !=  null ? value : Boolean.FALSE;
+    public void setDisabled(String disabled) {
+        this.disabled = disabled;
     }
 
-    public Boolean isUsePlatformMBeanServer() {
-        return usePlatformMBeanServer;
-    }
-    
-    public void setUsePlatformMBeanServer(Boolean value) {
-        usePlatformMBeanServer = value !=  null ? value : Boolean.FALSE;
-    }
-
-    public Boolean getOnlyRegisterProcessorWithCustomId() {
+    public String getOnlyRegisterProcessorWithCustomId() {
         return onlyRegisterProcessorWithCustomId;
     }
 
-    public void setOnlyRegisterProcessorWithCustomId(Boolean onlyRegisterProcessorWithCustomId) {
+    public void setOnlyRegisterProcessorWithCustomId(String onlyRegisterProcessorWithCustomId) {
         this.onlyRegisterProcessorWithCustomId = onlyRegisterProcessorWithCustomId;
     }
 
-    public Boolean isDisabled() {
-        return disabled;
+    public String getRegistryPort() {
+        return registryPort;
     }
-    
-    public void setDisabled(Boolean value) {
-        disabled = value != null ? value : Boolean.FALSE;
+
+    public void setRegistryPort(String registryPort) {
+        this.registryPort = registryPort;
+    }
+
+    public String getConnectorPort() {
+        return connectorPort;
+    }
+
+    public void setConnectorPort(String connectorPort) {
+        this.connectorPort = connectorPort;
+    }
+
+    public String getMbeanServerDefaultDomain() {
+        return mbeanServerDefaultDomain;
+    }
+
+    public void setMbeanServerDefaultDomain(String mbeanServerDefaultDomain) {
+        this.mbeanServerDefaultDomain = mbeanServerDefaultDomain;
+    }
+
+    public String getMbeanObjectDomainName() {
+        return mbeanObjectDomainName;
+    }
+
+    public void setMbeanObjectDomainName(String mbeanObjectDomainName) {
+        this.mbeanObjectDomainName = mbeanObjectDomainName;
+    }
+
+    public String getServiceUrlPath() {
+        return serviceUrlPath;
+    }
+
+    public void setServiceUrlPath(String serviceUrlPath) {
+        this.serviceUrlPath = serviceUrlPath;
+    }
+
+    public String getCreateConnector() {
+        return createConnector;
+    }
+
+    public void setCreateConnector(String createConnector) {
+        this.createConnector = createConnector;
+    }
+
+    public String getUsePlatformMBeanServer() {
+        return usePlatformMBeanServer;
+    }
+
+    public void setUsePlatformMBeanServer(String usePlatformMBeanServer) {
+        this.usePlatformMBeanServer = usePlatformMBeanServer;
     }
 
     public ManagementStatisticsLevel getStatisticsLevel() {

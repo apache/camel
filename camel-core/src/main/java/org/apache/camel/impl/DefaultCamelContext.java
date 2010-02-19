@@ -184,7 +184,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
      */
     public DefaultCamelContext(Registry registry) {
         this();
-        this.registry = registry;
+        setRegistry(registry);
     }
 
     public String getName() {
@@ -687,7 +687,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public String resolvePropertyPlaceholders(String uri) throws Exception {
         // do not parse uris that are designated for the properties component as it will handle that itself
-        if (!uri.startsWith("properties:") && uri.contains("#{")) {
+        if (uri != null && !uri.startsWith("properties:") && uri.contains("#{")) {
             // the uri contains property placeholders so lookup mandatory properties component and let it parse it
             Component component = hasComponent("properties");
             if (component == null) {
@@ -787,6 +787,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     public Registry getRegistry() {
         if (registry == null) {
             registry = createRegistry();
+            setRegistry(registry);
         }
         return registry;
     }
@@ -802,6 +803,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     public void setRegistry(Registry registry) {
+        // wrap the registry so we always do propery placeholder lookups
+        if (!(registry instanceof PropertyPlaceholderDelegateRegistry)) {
+            registry = new PropertyPlaceholderDelegateRegistry(this, registry);
+        }
         this.registry = registry;
     }
 

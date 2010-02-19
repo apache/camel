@@ -14,32 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.component.properties;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
+import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Test for Registry injection.
- *
  * @version $Revision$
  */
-public class RegistryInjectionTest extends SpringTestSupport {
+public class SpringBuilderRefPropertiesTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        setUseRouteBuilder(false);
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/RegistryInjection.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringBuilderRefPropertiesTest.xml");
     }
 
-    public void testInjectedStrategy() throws Exception {
-        CamelContext context = createCamelContext();
+    public void testSpringBuilderRefProperties() throws Exception {
+        getMockEndpoint("#{result}").expectedMessageCount(1);
 
-        PropertyPlaceholderDelegateRegistry delegate = (PropertyPlaceholderDelegateRegistry) context.getRegistry();
-        assertTrue(delegate.getRegistry() instanceof JndiRegistry);
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
 }

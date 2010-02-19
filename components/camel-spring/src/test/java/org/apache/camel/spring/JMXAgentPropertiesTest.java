@@ -16,30 +16,19 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Test for Registry injection.
+ * Test that verifies JMX properties can be configured via Spring.
  *
  * @version $Revision$
  */
-public class RegistryInjectionTest extends SpringTestSupport {
+public class JMXAgentPropertiesTest extends JMXAgentTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        setUseRouteBuilder(false);
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/RegistryInjection.xml");
-    }
-
-    public void testInjectedStrategy() throws Exception {
-        CamelContext context = createCamelContext();
-
-        PropertyPlaceholderDelegateRegistry delegate = (PropertyPlaceholderDelegateRegistry) context.getRegistry();
-        assertTrue(delegate.getRegistry() instanceof JndiRegistry);
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfigUsingProperties.xml");
     }
 
 }

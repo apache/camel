@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 
 public class RefComponentTest extends ContextTestSupport {
 
@@ -48,7 +49,8 @@ public class RefComponentTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        JndiRegistry jndi = (JndiRegistry) context.getRegistry();
+        PropertyPlaceholderDelegateRegistry delegate = (PropertyPlaceholderDelegateRegistry) context.getRegistry();
+        JndiRegistry jndi = (JndiRegistry) delegate.getRegistry();
         bindToRegistry(jndi);
 
         template.sendBody("ref:foo", "Hello World");

@@ -103,17 +103,17 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
     @XmlAttribute(required = false)
-    private Boolean trace;
+    private String trace;
     @XmlAttribute(required = false)
-    private Boolean streamCache = Boolean.FALSE;
+    private String streamCache = "false";
     @XmlAttribute(required = false)
-    private Long delayer;
+    private String delayer;
     @XmlAttribute(required = false)
-    private Boolean handleFault;
+    private String handleFault;
     @XmlAttribute(required = false)
     private String errorHandlerRef;
     @XmlAttribute(required = false)
-    private Boolean autoStartup = Boolean.TRUE;
+    private String autoStartup = "true";
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
@@ -190,9 +190,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().setProperties(properties.asMap());
         }
 
-        // setup JMX agent at first
-        initJMXAgent();
-
         // set the resolvers first
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
@@ -219,6 +216,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         // setup property placeholder so we got it as early as possible
         initPropertyPlaceholder();
+
+        // setup JMX agent at first
+        initJMXAgent();
 
         Tracer tracer = getBeanForType(Tracer.class);
         if (tracer != null) {
@@ -315,6 +315,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 ((CamelBeanPostProcessor)beanPostProcessor).setCamelContext(getContext());
             }
         }
+
+        initSpringCamelContext(getContext());
 
         // do special preparation for some concepts such as interceptors and policies
         // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
@@ -542,7 +544,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initJMXAgent() throws Exception {
-        if (camelJMXAgent != null && camelJMXAgent.isDisabled()) {
+        if (camelJMXAgent != null && camelJMXAgent.isAgentDisabled()) {
             LOG.info("JMXAgent disabled");
             // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
             getContext().getLifecycleStrategies().clear();
@@ -551,14 +553,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         } else if (camelJMXAgent != null) {
             LOG.info("JMXAgent enabled: " + camelJMXAgent);
             DefaultManagementAgent agent = new DefaultManagementAgent();
-            agent.setConnectorPort(camelJMXAgent.getConnectorPort());
-            agent.setCreateConnector(camelJMXAgent.isCreateConnector());
-            agent.setMBeanObjectDomainName(camelJMXAgent.getMbeanObjectDomainName());
-            agent.setMBeanServerDefaultDomain(camelJMXAgent.getMbeanServerDefaultDomain());
-            agent.setRegistryPort(camelJMXAgent.getRegistryPort());
-            agent.setServiceUrlPath(camelJMXAgent.getServiceUrlPath());
-            agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
-            agent.setOnlyRegisterProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
+            agent.setConnectorPort(parseInteger(camelJMXAgent.getConnectorPort()));
+            agent.setCreateConnector(parseBoolean(camelJMXAgent.getCreateConnector()));
+            agent.setMBeanObjectDomainName(parseText(camelJMXAgent.getMbeanObjectDomainName()));
+            agent.setMBeanServerDefaultDomain(parseText(camelJMXAgent.getMbeanServerDefaultDomain()));
+            agent.setRegistryPort(parseInteger(camelJMXAgent.getRegistryPort()));
+            agent.setServiceUrlPath(parseText(camelJMXAgent.getServiceUrlPath()));
+            agent.setUsePlatformMBeanServer(parseBoolean(camelJMXAgent.getUsePlatformMBeanServer()));
+            agent.setOnlyRegisterProcessorWithCustomId(parseBoolean(camelJMXAgent.getOnlyRegisterProcessorWithCustomId()));
 
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(agent);
             getContext().setManagementStrategy(managementStrategy);
@@ -567,7 +569,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().getLifecycleStrategies().clear();
             getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
             // set additional configuration from camelJMXAgent
-            getContext().getManagementStrategy().onlyManageProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
+            boolean onlyId = agent.getOnlyRegisterProcessorWithCustomId() != null && agent.getOnlyRegisterProcessorWithCustomId();
+            getContext().getManagementStrategy().onlyManageProcessorWithCustomId(onlyId);
             getContext().getManagementStrategy().setStatisticsLevel(camelJMXAgent.getStatisticsLevel());
         }
     }
@@ -634,6 +637,63 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 }
             }
         }
+    }
+
+    private String parseText(String text) throws Exception {
+        // ensure we support property placeholders
+        return getContext().resolvePropertyPlaceholders(text);
+    }
+
+    private Integer parseInteger(String text) throws Exception {
+        // ensure we support property placeholders
+        String s = getContext().resolvePropertyPlaceholders(text);
+        if (s != null) {
+            try {
+                return new Integer(s);
+            } catch (NumberFormatException e) {
+                if (s.equals(text)) {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as an Integer.", e);
+                } else {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as an Integer.", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    private Long parseLong(String text) throws Exception {
+        // ensure we support property placeholders
+        String s = getContext().resolvePropertyPlaceholders(text);
+        if (s != null) {
+            try {
+                return new Long(s);
+            } catch (NumberFormatException e) {
+                if (s.equals(text)) {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Long.", e);
+                } else {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Long.", e);
+                }
+            }
+        }
+        return null;
+    }
+
+    private Boolean parseBoolean(String text) throws Exception {
+        // ensure we support property placeholders
+        String s = getContext().resolvePropertyPlaceholders(text);
+        if (s != null) {
+            s = s.trim().toLowerCase();
+            if (s.equals("true") || s.equals("false")) {
+                return new Boolean(s);
+            } else {
+                if (s.equals(text)) {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as a Boolean.");
+                } else {
+                    throw new IllegalArgumentException("Error parsing [" + s + "] from property " + text + " as a Boolean.");
+                }
+            }
+        }
+        return null;
     }
 
     // Properties
@@ -754,36 +814,44 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         camelJMXAgent = agent;
     }
 
-    public Boolean getTrace() {
+    public String getTrace() {
         return trace;
     }
 
-    public void setTrace(Boolean trace) {
+    public void setTrace(String trace) {
         this.trace = trace;
     }
 
-    public Boolean getStreamCache() {
+    public String getStreamCache() {
         return streamCache;
     }
 
-    public void setStreamCache(Boolean streamCache) {
+    public void setStreamCache(String streamCache) {
         this.streamCache = streamCache;
     }
 
-    public Long getDelayer() {
+    public String getDelayer() {
         return delayer;
     }
 
-    public void setDelayer(Long delayer) {
+    public void setDelayer(String delayer) {
         this.delayer = delayer;
     }
 
-    public Boolean getHandleFault() {
+    public String getHandleFault() {
         return handleFault;
     }
 
-    public void setHandleFault(Boolean handleFault) {
+    public void setHandleFault(String handleFault) {
         this.handleFault = handleFault;
+    }
+
+    public String getAutoStartup() {
+        return autoStartup;
+    }
+
+    public void setAutoStartup(String autoStartup) {
+        this.autoStartup = autoStartup;
     }
 
     public CamelJMXAgentDefinition getCamelJMXAgent() {
@@ -835,14 +903,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.onCompletions = onCompletions;
     }
 
-    public Boolean isAutoStartup() {
-        return autoStartup;
-    }
-
-    public void setAutoStartup(Boolean autoStartup) {
-        this.autoStartup = autoStartup;
-    }
-
     public ShutdownRoute getShutdownRoute() {
         return shutdownRoute;
     }
@@ -868,23 +928,33 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     protected SpringCamelContext createContext() {
         SpringCamelContext ctx = newCamelContext();
         ctx.setName(getId());
+        return ctx;
+    }
+
+    /**
+     * Initializes the context
+     * 
+     * @param ctx the contxt
+     * @throws Exception is thrown if error occurred
+     */
+    protected void initSpringCamelContext(SpringCamelContext ctx) throws Exception {
         if (streamCache != null) {
-            ctx.setStreamCaching(getStreamCache());
+            ctx.setStreamCaching(parseBoolean(getStreamCache()));
         }
         if (trace != null) {
-            ctx.setTracing(getTrace());
+            ctx.setTracing(parseBoolean(getTrace()));
         }
         if (delayer != null) {
-            ctx.setDelayer(getDelayer());
+            ctx.setDelayer(parseLong(getDelayer()));
         }
         if (handleFault != null) {
-            ctx.setHandleFault(getHandleFault());
+            ctx.setHandleFault(parseBoolean(getHandleFault()));
         }
         if (errorHandlerRef != null) {
             ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
         }
         if (autoStartup != null) {
-            ctx.setAutoStartup(isAutoStartup());
+            ctx.setAutoStartup(parseBoolean(getAutoStartup()));
         }
         if (shutdownRoute != null) {
             ctx.setShutdownRoute(getShutdownRoute());
@@ -892,7 +962,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (shutdownRunningTask != null) {
             ctx.setShutdownRunningTask(getShutdownRunningTask());
         }
-        return ctx;
     }
     
     protected SpringCamelContext newCamelContext() {
