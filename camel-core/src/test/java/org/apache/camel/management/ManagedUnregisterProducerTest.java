@@ -55,27 +55,29 @@ public class ManagedUnregisterProducerTest extends ContextTestSupport {
         producer.process(exchange);
         producer.stop();
 
-        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        // TODO: producers are not managed due they can lead to memory leak CAMEL-2484
 
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
-        assertEquals(1, set.size());
+//        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = set.iterator().next();
+//        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
+//        assertEquals(0, set.size());
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
-        String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-        assertEquals("mock://result", uri);
+//        ObjectName on = set.iterator().next();
+
+//        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+//        String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
+//        assertEquals("mock://result", uri);
 
         // TODO: populating route id on producers is not implemented yet
 //        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
 //        assertEquals("route1", routeId);
 
-        Boolean singleton = (Boolean) mbeanServer.getAttribute(on, "Singleton");
-        assertEquals(Boolean.TRUE, singleton);
+//        Boolean singleton = (Boolean) mbeanServer.getAttribute(on, "Singleton");
+//        assertEquals(Boolean.TRUE, singleton);
 
         context.stop();
 
-        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
+//        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
     }
 
     @Override

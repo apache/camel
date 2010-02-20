@@ -19,12 +19,14 @@ package org.apache.camel.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.Service;
+
 /**
  * A Least Recently Used Cache
  *
  * @version $Revision$
  */
-public class LRUCache<K, V> extends LinkedHashMap<K, V> {
+public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
     private static final long serialVersionUID = -342098639681884413L;
     private int maxCacheSize = 10000;
 
@@ -58,5 +60,17 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     protected boolean removeEldestEntry(Map.Entry<K, V> entry) {
         return size() > maxCacheSize;
+    }
+
+    public void start() throws Exception {
+        // noop
+    }
+
+    public void stop() throws Exception {
+        // stop the value and clear the cache
+        if (!isEmpty()) {
+            ServiceHelper.stopServices(values());
+            clear();
+        }
     }
 }

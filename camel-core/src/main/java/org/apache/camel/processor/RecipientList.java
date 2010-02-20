@@ -18,7 +18,9 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
@@ -87,19 +89,32 @@ public class RecipientList extends ServiceSupport implements Processor {
     public void sendToRecipientList(Exchange exchange, Object receipientList) throws Exception {
         Iterator<Object> iter = ObjectHelper.createIterator(receipientList, delimiter);
 
-        List<Processor> processors = new ArrayList<Processor>();
-        while (iter.hasNext()) {
-            Object recipient = iter.next();
-            Endpoint endpoint = resolveEndpoint(exchange, recipient);
-            Producer producer = getProducerCache(exchange).getProducer(endpoint);
-            processors.add(producer);
+        // we should acquire and release the producers we need so we can leverage the producer
+        // cache to the fullest
+        ProducerCache cache = getProducerCache(exchange);
+        Map<Endpoint, Producer> producers = new LinkedHashMap<Endpoint, Producer>();
+        try {
+            List<Processor> processors = new ArrayList<Processor>();
+            while (iter.hasNext()) {
+                Object recipient = iter.next();
+                Endpoint endpoint = resolveEndpoint(exchange, recipient);
+                // acquire producer which we then release later
+                Producer producer = cache.acquireProducer(endpoint);
+                processors.add(producer);
+                producers.put(endpoint, producer);
+            }
+
+            MulticastProcessor mp = new MulticastProcessor(processors, getAggregationStrategy(), isParallelProcessing(),
+                                                           getExecutorService(), false, isStopOnException());
+
+            // now let the multicast process the exchange
+            mp.process(exchange);
+        } finally {
+            // and release the producers back to the producer cache
+            for (Map.Entry<Endpoint, Producer> entry : producers.entrySet()) {
+                cache.releaseProducer(entry.getKey(), entry.getValue());
+            }
         }
-
-        MulticastProcessor mp = new MulticastProcessor(processors, getAggregationStrategy(), isParallelProcessing(),
-                                                       getExecutorService(), false, isStopOnException());
-
-        // now let the multicast process the exchange
-        mp.process(exchange);
     }
 
     protected ProducerCache getProducerCache(Exchange exchange) throws Exception {

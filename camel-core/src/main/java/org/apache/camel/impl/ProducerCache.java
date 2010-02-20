@@ -63,13 +63,32 @@ public class ProducerCache extends ServiceSupport {
         this.producers = cache;
     }
 
-    public Producer getProducer(Endpoint endpoint) {
-        // As the producer is returned outside this method we do not want to return pooled producers
-        // so we pass in false to the method. if we returned pooled producers then the user had
-        // to remember to return it back in the pool.
-        // See method doInProducer that is safe template pattern where we handle the lifecycle and
-        // thus safely can use pooled producers there
-        return doGetProducer(endpoint, false);
+    /**
+     * Acquires a pooled producer which you <b>must</b> release back again after usage using the
+     * {@link #releaseProducer(org.apache.camel.Endpoint, org.apache.camel.Producer)} method.
+     *
+     * @param endpoint the endpoint
+     * @return the producer
+     */
+    public Producer acquireProducer(Endpoint endpoint) {
+        return doGetProducer(endpoint, true);
+    }
+
+    /**
+     * Releases an acquired producer back after usage.
+     *
+     * @param endpoint the endpoint
+     * @param producer the producer to release
+     * @throws Exception can be thrown if error stopping producer if that was needed.
+     */
+    public void releaseProducer(Endpoint endpoint, Producer producer) throws Exception {
+        if (producer instanceof ServicePoolAware) {
+            // release back to the pool
+            pool.release(endpoint, producer);
+        } else if (!producer.isSingleton()) {
+            // stop non singleton producers as we should not leak resources
+            producer.stop();
+        }
     }
 
     /**
@@ -215,8 +234,8 @@ public class ProducerCache extends ServiceSupport {
             // create a new producer
             try {
                 answer = endpoint.createProducer();
-                // add it as service to camel context so it can be managed as well
-                context.addService(answer);
+                // must then start service so producer is ready to be used
+                ServiceHelper.startService(answer);
             } catch (Exception e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }

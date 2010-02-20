@@ -41,4 +41,21 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         cache.stop();
     }
 
+    public void testCacheProducerAcquireAndRelease() throws Exception {
+        ProducerCache cache = new ProducerCache(context);
+        cache.start();
+
+        assertEquals("Size should be 0", 0, cache.size());
+
+        // test that we cache at most 1000 producers to avoid it eating to much memory
+        for (int i = 0; i < 1003; i++) {
+            Endpoint e = context.getEndpoint("direct:queue:" + i);
+            Producer p = cache.acquireProducer(e);
+            cache.releaseProducer(e, p);
+        }
+
+        assertEquals("Size should be 1000", 1000, cache.size());
+        cache.stop();
+    }
+
 }
