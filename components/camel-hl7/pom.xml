@@ -36,9 +36,9 @@
 
     <repositories>
         <repository>
-            <id>servicemix</id>
-            <name>Apache ServiceMix Repository</name>
-            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+            <id>hapi</id>
+            <name>HAPI Maven Repository</name>
+            <url>http://hl7api.sourceforge.net/m2/</url>
         </repository>
     </repositories>
 
@@ -49,9 +49,9 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hl7</groupId>
-            <artifactId>hapi</artifactId>
-            <version>0.5.1</version>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-base</artifactId>
+            <version>0.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.mina</groupId>
@@ -69,6 +69,18 @@
 	    </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v24</artifactId>
+            <version>0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v25</artifactId>
+            <version>0.6</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
