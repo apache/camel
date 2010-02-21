@@ -24,6 +24,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.direct.DirectComponent;
@@ -172,6 +173,24 @@ public class DefaultCamelContextTest extends TestCase {
         } catch (ResolveEndpointFailedException e) {
             // expected
         }
+    }
+
+    public void testGetRouteById() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").routeId("coolRoute").to("mock:result");
+            }
+        });
+        ctx.start();
+
+        Route route = ctx.getRoute("coolRoute");
+        assertNotNull(route);
+        assertEquals("coolRoute", route.getId());
+        assertEquals("direct://start", route.getConsumer().getEndpoint().getEndpointUri());
+
+        assertNull(ctx.getRoute("unknown"));
     }
 
 }
