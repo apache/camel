@@ -42,9 +42,9 @@
         javax.xml.bind.annotation;resolution:=optional,
         javax.xml.bind.annotation.adapters;resolution:=optional,
         javax.xml.stream;resolution:=optional,
-        org.springframework.jmx.export.annotation;resolution:=optional,
-        org.springframework.jmx.export.assembler;resolution:=optional,
-        org.springframework.jmx.export.metadata;resolution:=optional,
+        org.springframework.jmx.export.annotation;resolution:=optional;version="[2.5,4)",
+        org.springframework.jmx.export.assembler;resolution:=optional;version="[2.5,4)",
+        org.springframework.jmx.export.metadata;resolution:=optional;version="[2.5,4)",
         *
     </camel.osgi.import>
     <camel.osgi.dynamic>
