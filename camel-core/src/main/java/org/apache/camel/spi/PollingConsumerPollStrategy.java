@@ -35,8 +35,9 @@ public interface PollingConsumerPollStrategy {
      *
      * @param consumer the consumer
      * @param endpoint the endpoint being consumed
+     * @return <tt>true</tt> to begin polling, or <tt>false</tt> to skip polling this time.
      */
-    void begin(Consumer consumer, Endpoint endpoint);
+    boolean begin(Consumer consumer, Endpoint endpoint);
 
     /**
      * Called when poll is completed successfully

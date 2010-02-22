@@ -31,8 +31,8 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
 
     protected final transient Log log = LogFactory.getLog(getClass());
 
-    public void begin(Consumer consumer, Endpoint endpoint) {
-        // noop
+    public boolean begin(Consumer consumer, Endpoint endpoint) {
+        return true;
     }
 
     public void commit(Consumer consumer, Endpoint endpoint) {

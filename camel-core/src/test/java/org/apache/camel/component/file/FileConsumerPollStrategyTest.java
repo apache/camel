@@ -71,11 +71,12 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
 
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
-        public void begin(Consumer consumer, Endpoint endpoint) {
+        public boolean begin(Consumer consumer, Endpoint endpoint) {
             if (counter++ == 0) {
                 // simulate an error on first poll
                 throw new IllegalArgumentException("Damn I cannot do this");
             }
+            return true;
         }
 
         public void commit(Consumer consumer, Endpoint endpoint) {

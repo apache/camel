@@ -101,10 +101,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                         }
                     }
 
-                    pollStrategy.begin(this, getEndpoint());
-                    retryCounter++;
-                    poll();
-                    pollStrategy.commit(this, getEndpoint());
+                    boolean begin = pollStrategy.begin(this, getEndpoint());
+                    if (begin) {
+                        retryCounter++;
+                        poll();
+                        pollStrategy.commit(this, getEndpoint());
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Cannot begin polling as pollStrategy returned false: " + pollStrategy);
+                        }
+                    }
                 }
 
                 if (LOG.isTraceEnabled()) {

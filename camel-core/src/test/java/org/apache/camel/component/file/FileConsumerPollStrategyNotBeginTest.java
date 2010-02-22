@@ -24,17 +24,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Unit test for poll strategy
  */
-public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSupport {
+public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
 
     private static int counter;
     private static String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll";
+    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -50,16 +49,16 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
-    public void testStopOnRollback() throws Exception {
+    public void testFirstPollNotBegin() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
-        // let it run for a little while and since it fails first time we should never get a message
-        Thread.sleep(1000);
+        mock.expectedMessageCount(1);
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("rollback", event);
+        // give file consumer a bit time
+        Thread.sleep(1000);
+
+        assertTrue(event.startsWith("beginbegincommit"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -73,19 +72,11 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public boolean begin(Consumer consumer, Endpoint endpoint) {
-            // start consumer as we simulate the fail in begin
-            // and thus before camel lazy start it itself
-            try {
-                consumer.start();
-            } catch (Exception e) {
-                ObjectHelper.wrapRuntimeCamelException(e);
-            }
-
+            event += "begin";
             if (counter++ == 0) {
-                // simulate an error on first poll
-                throw new IllegalArgumentException("Damn I cannot do this");
+                // deny polling at first call
+                return false;
             }
-
             return true;
         }
 
@@ -94,11 +85,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         }
 
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
-            if (cause.getMessage().equals("Damn I cannot do this")) {
-                event += "rollback";
-                // stop consumer as it does not work
-                consumer.stop();
-            }
+            event += "rollback";
             return false;
         }
     }

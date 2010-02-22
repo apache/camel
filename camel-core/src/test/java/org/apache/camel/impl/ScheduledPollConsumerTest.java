@@ -33,7 +33,8 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
 
         consumer.setPollStrategy(new PollingConsumerPollStrategy() {
-            public void begin(Consumer consumer, Endpoint endpoint) {
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                return true;
             }
 
             public void commit(Consumer consumer, Endpoint endpoint) {
@@ -74,7 +75,8 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
 
         consumer.setPollStrategy(new PollingConsumerPollStrategy() {
-            public void begin(Consumer consumer, Endpoint endpoint) {
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                return true;
             }
 
             public void commit(Consumer consumer, Endpoint endpoint) {

@@ -72,7 +72,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
 
     private class MyPollStrategy implements PollingConsumerPollStrategy {
 
-        public void begin(Consumer consumer, Endpoint endpoint) {
+        public boolean begin(Consumer consumer, Endpoint endpoint) {
             // start consumer as we simulate the fail in begin
             // and thus before camel lazy start it itself
             try {
