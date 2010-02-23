@@ -27,6 +27,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
+import org.apache.camel.wsdl_first.UnknownPersonFault;
 
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +43,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
 
     @Before
     public void startService() {
-        endpoint = Endpoint.publish("http://localhost:8092/PersonService/", new PersonImpl());
+        endpoint = Endpoint.publish("http://localhost:8093/PersonService", new PersonImpl());
     }
     
     @After
