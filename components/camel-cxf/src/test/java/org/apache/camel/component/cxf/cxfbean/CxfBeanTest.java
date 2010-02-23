@@ -25,19 +25,18 @@ import javax.xml.ws.Holder;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 
 /**
  *
@@ -61,91 +60,88 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         in = url.openStream();
         assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
         // END SNIPPET: clientInvocation
-        
+
     }
 
     @Test
     public void testPutConsumer() throws Exception {
-        PutMethod put = new PutMethod("http://localhost:9000/customerservice/customers");
-        RequestEntity entity = new StringRequestEntity(PUT_REQUEST, "text/xml", "ISO-8859-1");
-        put.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+        HttpPut put = new HttpPut("http://localhost:9000/customerservice/customers");
+        StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        put.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(put));
-            assertEquals("", put.getResponseBodyAsString());
-         // need to check the content type
-            assertEquals("We should get content-type from the response", "text/xml", put.getResponseHeader("content-type").getValue());
+        	HttpResponse response = httpclient.execute(put);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-            put.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
     }
     
     @Test
     public void testPostConsumer() throws Exception {
-        PostMethod post = new PostMethod("http://localhost:9000/customerservice/customers");
-        post.addRequestHeader("Accept" , "text/xml");
-        RequestEntity entity = new StringRequestEntity(POST_REQUEST, "text/xml", "ISO-8859-1");
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+        HttpPost post = new HttpPost("http://localhost:9000/customerservice/customers");
+        post.addHeader("Accept" , "text/xml");
+        StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        post.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(post));
+        	HttpResponse response = httpclient.execute(post);
+            assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
-                    post.getResponseBodyAsString());
-            // need to check the content type
-            assertEquals("We should get content-type from the response", "text/xml", post.getResponseHeader("content-type").getValue());
+            		EntityUtils.toString(response.getEntity()));
         } finally {
-            post.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
-
     }
     
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
-        PostMethod post = new PostMethod("http://localhost:9000/customerservice/customersUniqueResponseCode");
-        post.addRequestHeader("Accept" , "text/xml");
-        RequestEntity entity = new StringRequestEntity(POST_REQUEST, "text/xml", "ISO-8859-1");
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+    	HttpPost post = new HttpPost("http://localhost:9000/customerservice/customersUniqueResponseCode");
+        post.addHeader("Accept" , "text/xml");
+        StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        post.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(201, httpclient.executeMethod(post));
+        	HttpResponse response = httpclient.execute(post);
+            assertEquals(201, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
-                    post.getResponseBodyAsString());
-         // need to check the content type
-            assertEquals("We should get content-type from the response", "text/xml", post.getResponseHeader("content-type").getValue());
+            		EntityUtils.toString(response.getEntity()));
         } finally {
-            post.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
-
     }
 
     @Test
     public void testJaxWsBean() throws Exception {        
-        PostMethod post = new PostMethod("http://localhost:9090/customerservice/customers");
-        post.addRequestHeader("Accept" , "text/xml");
+    	HttpPost post = new HttpPost("http://localhost:9090/customerservice/customers");
+        post.addHeader("Accept" , "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
             + "<personId>hello</personId></GetPerson></soap:Body></soap:Envelope>";
         
-        RequestEntity entity = new StringRequestEntity(body, "text/xml", "ISO-8859-1");
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+        StringEntity entity = new StringEntity(body, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        post.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(post));
-            String response = post.getResponseBodyAsString();
+        	HttpResponse response = httpclient.execute(post);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseBody = EntityUtils.toString(response.getEntity());
             String correct = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
                 + "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
                 + "<personId>hello</personId><ssn>000-000-0000</ssn><name>Bonjour</name></GetPersonResponse></soap:Body></soap:Envelope>";
             
-            assertEquals("Get a wrong response", correct, response);
-            System.out.println(post.getResponseHeader("content-type"));
-            // need to check the content type
-            assertEquals("We should get content-type from the response", "text/xml", post.getResponseHeader("content-type").getValue());
+            assertEquals("Get a wrong response", correct, responseBody);
         } finally {
-            post.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
     }
     

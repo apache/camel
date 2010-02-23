@@ -18,12 +18,14 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -39,31 +41,31 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     
     @Test
     public void testGetCustomer() throws Exception {      
-        GetMethod get = new GetMethod("http://localhost:9000/customerservice/customers/123");
-        get.addRequestHeader("Accept" , "application/json");
-        
-        HttpClient httpclient = new HttpClient();
+        HttpGet get = new HttpGet("http://localhost:9000/customerservice/customers/123");
+        get.addHeader("Accept" , "application/json");
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(get));
+        	HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
-                         get.getResponseBodyAsString());
+            		EntityUtils.toString(response.getEntity()));
         } finally {
-            get.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
     }
     
     @Test
     public void testGetCustomers() throws Exception {      
-        GetMethod get = new GetMethod("http://localhost:9000/customerservice/customers/");
-        get.addRequestHeader("Accept" , "application/xml");
-        
-        HttpClient httpclient = new HttpClient();
+    	HttpGet get = new HttpGet("http://localhost:9000/customerservice/customers/");
+        get.addHeader("Accept" , "application/xml");
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(get));
+        	HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
             // order returned can differ on OS so match for both orders
-            String s = get.getResponseBodyAsString();
+            String s = EntityUtils.toString(response.getEntity());
             boolean m1 = "<Customers><Customer><id>123</id><name>John</name></Customer><Customer><id>113</id><name>Dan</name></Customer></Customers>".equals(s);
             boolean m2 = "<Customers><Customer><id>113</id><name>Dan</name></Customer><Customer><id>123</id><name>John</name></Customer></Customers>".equals(s);
 
@@ -71,75 +73,79 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
                 fail("Not expected body returned: " + s);
             }
         } finally {
-            get.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
     }
     
     @Test
     public void testGetSubResource() throws Exception {
-        GetMethod get = new GetMethod("http://localhost:9000/customerservice/orders/223/products/323");
-        get.addRequestHeader("Accept" , "application/json");
-
-        HttpClient httpclient = new HttpClient();
+    	HttpGet get = new HttpGet("http://localhost:9000/customerservice/orders/223/products/323");
+        get.addHeader("Accept" , "application/json");
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(get));
+        	HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", 
-                         get.getResponseBodyAsString());
+            		EntityUtils.toString(response.getEntity()));
         } finally {
-            get.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
     }
     
     @Test
     public void testPutConsumer() throws Exception {
-        PutMethod put = new PutMethod("http://localhost:9000/customerservice/customers");
-        RequestEntity entity = new StringRequestEntity(PUT_REQUEST, "text/xml", "ISO-8859-1");
-        put.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+        HttpPut put = new HttpPut("http://localhost:9000/customerservice/customers");
+        StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        put.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(put));
-            assertEquals("", put.getResponseBodyAsString());
+        	HttpResponse response = httpclient.execute(put);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-            put.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
     }
     
     @Test
     public void testPostConsumer() throws Exception {
-        PostMethod post = new PostMethod("http://localhost:9000/customerservice/customers");
-        post.addRequestHeader("Accept" , "text/xml");
-        RequestEntity entity = new StringRequestEntity(POST_REQUEST, "text/xml", "ISO-8859-1");
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+        HttpPost post = new HttpPost("http://localhost:9000/customerservice/customers");
+        post.addHeader("Accept" , "text/xml");
+        StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        post.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(post));
+        	HttpResponse response = httpclient.execute(post);
+            assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
-                    post.getResponseBodyAsString());
+            		EntityUtils.toString(response.getEntity()));
         } finally {
-            post.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
 
     }
     
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
-        PostMethod post = new PostMethod("http://localhost:9000/customerservice/customersUniqueResponseCode");
-        post.addRequestHeader("Accept" , "text/xml");
-        RequestEntity entity = new StringRequestEntity(POST_REQUEST, "text/xml", "ISO-8859-1");
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+    	HttpPost post = new HttpPost("http://localhost:9000/customerservice/customersUniqueResponseCode");
+        post.addHeader("Accept" , "text/xml");
+        StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
+        entity.setContentType("text/xml; charset=ISO-8859-1");
+        post.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(201, httpclient.executeMethod(post));
+        	HttpResponse response = httpclient.execute(post);
+            assertEquals(201, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
-                    post.getResponseBodyAsString());
+            		EntityUtils.toString(response.getEntity()));
         } finally {
-            post.releaseConnection();
+        	httpclient.getConnectionManager().shutdown();
         }
-
     }
-
 }
