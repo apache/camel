@@ -157,9 +157,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // create default connection manager if none provided
         if (httpConnectionManager == null) {
             httpConnectionManager = createConnectionManager(clientParams, uri);
+        } else if (LOG.isDebugEnabled()) {
+            LOG.debug("Using existing ClientConnectionManager: " + httpConnectionManager);
         }
-
-        LOG.info("Using ClientConnectionManager: " + httpConnectionManager);
 
         HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, httpClientConfigurer);
         if (httpBinding != null) {
@@ -180,9 +180,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
 
     protected ClientConnectionManager createConnectionManager(HttpParams clientParams, String uri) {
-        StringBuilder sb = new StringBuilder("Created ClientConnectionManager configured with");
-        ThreadSafeClientConnManager answer;
-
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         if (isSecureConnection(uri)) {
             schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
@@ -190,27 +187,19 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         }
 
-        answer = new ThreadSafeClientConnManager(clientParams, schemeRegistry);
-
         // configure additional configurations
         ConnManagerParamBean param = new ConnManagerParamBean(clientParams);
         if (getMaxTotalConnections() > 0) {
-            sb.append(" maxTotalConnections=" + getMaxTotalConnections());
             param.setMaxTotalConnections(getMaxTotalConnections());
         }
         if (getConnectionsPerRoute() > 0) {
-            sb.append(" connectionsPerRoute=" + getConnectionsPerRoute());
             param.setConnectionsPerRoute(new ConnPerRouteBean(getConnectionsPerRoute()));
         }
 
-        // log information about the created connection manager
-        if (LOG.isDebugEnabled()) {
-            String msg = sb.toString();
-            if (msg.endsWith("with")) {
-                msg += " default values";
-            }
-            LOG.debug(msg + ": " + answer);
-        }
+        ThreadSafeClientConnManager answer;
+        answer = new ThreadSafeClientConnManager(clientParams, schemeRegistry);
+
+        LOG.info("Created ClientConnectionManager " + answer);
 
         return answer;
     }
