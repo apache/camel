@@ -19,17 +19,15 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.junit.Test;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletQueryTest extends CamelTestSupport {
+public class RestletQueryTest extends RestletTestSupport {
     private static final String QUERY_STRING = "foo=bar&test=123";
 
     @Override
@@ -53,13 +51,8 @@ public class RestletQueryTest extends CamelTestSupport {
     
     @Test
     public void testPostBody() throws Exception {
-        HttpMethod method = new GetMethod("http://localhost:9080/users/homer?" + QUERY_STRING);
-        try {
-            HttpClient client = new HttpClient();
-            assertEquals(200, client.executeMethod(method));
-        } finally {
-            method.releaseConnection();
-        }
-
+    	HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer?" + QUERY_STRING));
+    	
+    	assertHttpResponse(response, 200, "text/plain");
     }
 }

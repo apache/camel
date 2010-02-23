@@ -23,11 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.junit.Test;
 
 /**
@@ -35,7 +33,7 @@ import org.junit.Test;
  * 
  * @version $Revision$
  */
-public class RestletMultiUriTemplatesEndpointTest extends CamelTestSupport {
+public class RestletMultiUriTemplatesEndpointTest extends RestletTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -50,30 +48,16 @@ public class RestletMultiUriTemplatesEndpointTest extends CamelTestSupport {
 
     @Test
     public void testPostUserUriPattern() throws Exception {
-        HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
-        try {
-            HttpClient client = new HttpClient();
-            assertEquals(200, client.executeMethod(method));
-            assertTrue(method.getResponseHeader("Content-Type").getValue().startsWith("text/plain"));
-            assertEquals("POST homer", method.getResponseBodyAsString());
-        } finally {
-            method.releaseConnection();
-        }
-
+    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+    	
+    	assertHttpResponse(response, 200, "text/plain", "POST homer");
     }
 
     @Test
     public void testGetAtomUriPattern() throws Exception {
-        HttpMethod method = new GetMethod("http://localhost:9080/atom/collection/foo/component/bar");
-        try {
-            HttpClient client = new HttpClient();
-            assertEquals(200, client.executeMethod(method));
-            assertTrue(method.getResponseHeader("Content-Type").getValue().startsWith("text/plain"));
-            assertEquals("GET foo bar", method.getResponseBodyAsString());
-        } finally {
-            method.releaseConnection();
-        }
-
+    	HttpResponse response = doExecute(new HttpGet("http://localhost:9080/atom/collection/foo/component/bar"));
+    	
+    	assertHttpResponse(response, 200, "text/plain", "GET foo bar");
     }
 
     @Override
@@ -93,15 +77,11 @@ public class RestletMultiUriTemplatesEndpointTest extends CamelTestSupport {
                             } else if ("http://localhost:9080/atom/collection/foo/component/bar".equals(uri)) {
                                 exchange.getOut().setBody(out + " " + exchange.getIn().getHeader("id", String.class)
                                                           + " " + exchange.getIn().getHeader("cid", String.class));
-
                             }
-
                         }
                     });
                 // END SNIPPET: routeDefinition
-
             }
         };
     }
-
 }

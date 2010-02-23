@@ -22,17 +22,15 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.junit.Test;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletResponseTest extends CamelTestSupport {
+public class RestletResponseTest extends RestletTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -55,15 +53,9 @@ public class RestletResponseTest extends CamelTestSupport {
     
     @Test
     public void testCustomResponse() throws Exception {
-        HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
-        try {
-            HttpClient client = new HttpClient();
-            assertEquals(417, client.executeMethod(method));
-            assertTrue(method.getResponseHeader("Content-Type").getValue()
-                    .startsWith("application/JSON"));
-        } finally {
-            method.releaseConnection();
-        }
+    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+    	
+    	assertHttpResponse(response, 417, "application/JSON");
     }
     
     @Test

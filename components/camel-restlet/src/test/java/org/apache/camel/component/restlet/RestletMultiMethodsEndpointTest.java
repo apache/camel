@@ -19,11 +19,9 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.junit.Test;
 
 /**
@@ -31,33 +29,20 @@ import org.junit.Test;
  * 
  * @version $Revision$
  */
-public class RestletMultiMethodsEndpointTest extends CamelTestSupport {
+public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
 
     @Test
     public void testPostMethod() throws Exception {
-        HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
-        try {
-            HttpClient client = new HttpClient();
-            assertEquals(200, client.executeMethod(method));
-            assertTrue(method.getResponseHeader("Content-Type").getValue().startsWith("text/plain"));
-            assertEquals("POST", method.getResponseBodyAsString());
-        } finally {
-            method.releaseConnection();
-        }
-
+    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+    	
+    	assertHttpResponse(response, 200, "text/plain", "POST");
     }
 
     @Test
     public void testGetMethod() throws Exception {
-        HttpMethod method = new GetMethod("http://localhost:9080/users/homer");
-        try {
-            HttpClient client = new HttpClient();
-            assertEquals(200, client.executeMethod(method));
-            assertTrue(method.getResponseHeader("Content-Type").getValue().startsWith("text/plain"));
-            assertEquals("GET", method.getResponseBodyAsString());
-        } finally {
-            method.releaseConnection();
-        }
+    	HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer"));
+    	
+    	assertHttpResponse(response, 200, "text/plain", "GET");
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -71,12 +56,10 @@ public class RestletMultiMethodsEndpointTest extends CamelTestSupport {
                             // echo the method
                             exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_METHOD,
                                                                                  String.class));
-
                         }
                     });
                 // END SNIPPET: routeDefinition
             }
         };
     }
-
 }

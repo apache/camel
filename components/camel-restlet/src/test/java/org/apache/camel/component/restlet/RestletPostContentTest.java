@@ -19,20 +19,18 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletPostContentTest extends CamelTestSupport {
+public class RestletPostContentTest extends RestletTestSupport {
 
     private static final String MSG_BODY = "Hello World!";
 
@@ -54,20 +52,15 @@ public class RestletPostContentTest extends CamelTestSupport {
         public void process(Exchange exchange) throws Exception {   
             assertEquals(MSG_BODY, exchange.getIn().getBody(String.class));
         }
-        
     }
     
     @Test
     public void testPostBody() throws Exception {
-        HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
-        try {
-            RequestEntity requestEntity = new StringRequestEntity(MSG_BODY, null, null);
-            ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
-            HttpClient client = new HttpClient();
-            assertEquals(200, client.executeMethod(method));
-        } finally {
-            method.releaseConnection();
-        }
-
+    	HttpUriRequest method = new HttpPost("http://localhost:9080/users/homer");
+        ((HttpEntityEnclosingRequestBase)method).setEntity(new StringEntity(MSG_BODY));
+    	
+        HttpResponse response = doExecute(method);
+        
+        assertHttpResponse(response, 200, "text/plain");
     }
 }

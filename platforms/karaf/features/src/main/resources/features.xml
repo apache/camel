@@ -362,7 +362,6 @@
     <bundle>mvn:org.apache.camel/camel-restlet/${pom.version}</bundle>
     <bundle>mvn:http://maven.restlet.org!org.restlet/org.restlet/${restlet-version}</bundle>
     <bundle>mvn:http://maven.restlet.org!com.noelios.restlet/com.noelios.restlet/${restlet-version}</bundle>
-    <feature version='${pom.version}'>camel-http</feature>
   </feature>
   <feature name='camel-rmi' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>

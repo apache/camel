@@ -37,15 +37,18 @@
         </camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>maven-restlet</id>
+      <name>Public online Restlet repository</name>
+      <url>http://maven.restlet.org</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
     </dependency>
 
     <dependency>
@@ -73,8 +76,9 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient4-version}</version>
       <scope>test</scope>
     </dependency>
     
@@ -103,12 +107,5 @@
     </dependency>
 
   </dependencies>
-  <repositories>
-    <repository>
-      <id>maven-restlet</id>
-      <name>Public online Restlet repository</name>
-      <url>http://maven.restlet.org</url>
-    </repository>
-  </repositories>
 
 </project>

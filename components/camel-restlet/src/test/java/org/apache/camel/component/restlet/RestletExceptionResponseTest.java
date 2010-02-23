@@ -19,17 +19,16 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletExceptionResponseTest extends CamelTestSupport {
+public class RestletExceptionResponseTest extends RestletTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -48,16 +47,11 @@ public class RestletExceptionResponseTest extends CamelTestSupport {
 
     @Test
     public void testExceptionResponse() throws Exception {
-        HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
-        try {
-            HttpClient client = new HttpClient();
-            assertEquals(500, client.executeMethod(method));
-            assertTrue(method.getResponseHeader("Content-Type").getValue().startsWith("text/plain"));
-            String body = method.getResponseBodyAsString();
-            assertTrue(body.contains("IllegalArgumentException"));
-            assertTrue(body.contains("Damn something went wrong"));
-        } finally {
-            method.releaseConnection();
-        }
+    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+    	String body = EntityUtils.toString(response.getEntity());
+    	
+    	assertHttpResponse(response, 500, "text/plain");
+        assertTrue(body.contains("IllegalArgumentException"));
+        assertTrue(body.contains("Damn something went wrong"));
     }
 }
