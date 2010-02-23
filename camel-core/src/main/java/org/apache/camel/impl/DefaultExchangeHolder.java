@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * Holder object for sending an exchange over a remote wire as a serialized object.
  * This is usually configured using the <tt>transferExchange=true</tt> option on the endpoint.
  * <p/>
- * As opposed to normal usage where only the body part of the exchange is transfered over the wire,
+ * As opposed to normal usage where only the body part of the exchange is transferred over the wire,
  * this holder object serializes the following fields over the wire:
  * <ul>
  * <li>in body</li>
@@ -52,9 +52,9 @@ public class DefaultExchangeHolder implements Serializable {
     private Object inBody;
     private Object outBody;
     private Boolean outFaultFlag = Boolean.FALSE;
-    private final Map<String, Object> inHeaders = new LinkedHashMap<String, Object>();
-    private final Map<String, Object> outHeaders = new LinkedHashMap<String, Object>();
-    private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
+    private Map<String, Object> inHeaders;
+    private Map<String, Object> outHeaders;
+    private Map<String, Object> properties;
     private Exception exception;
 
     /**
@@ -65,16 +65,30 @@ public class DefaultExchangeHolder implements Serializable {
      * @return the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange) {
+        return marshal(exchange, true);
+    }
+
+    /**
+     * Creates a payload object with the information from the given exchange.
+     * Only marshal the Serializable object
+     *
+     * @param exchange the exchange
+     * @param includeProperties whether or not to include exchange properties
+     * @return the holder object with information copied form the exchange
+     */
+    public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties) {
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
         payload.inBody = checkSerializableObject("in body", exchange, exchange.getIn().getBody());
-        payload.inHeaders.putAll(checkMapSerializableObjects("in headers", exchange, exchange.getIn().getHeaders()));
+        payload.safeSetInHeaders(exchange);
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableObject("out body", exchange, exchange.getOut().getBody());
-            payload.outHeaders.putAll(checkMapSerializableObjects("out headers", exchange, exchange.getOut().getHeaders()));
             payload.outFaultFlag = exchange.getOut().isFault();
+            payload.safeSetOutHeaders(exchange);
         }
-        payload.properties.putAll(checkMapSerializableObjects("exchange properties", exchange, exchange.getProperties()));
+        if (includeProperties) {
+            payload.safeSetProperties(exchange);
+        }
         payload.exception = exchange.getException();
 
         return payload;
@@ -88,14 +102,20 @@ public class DefaultExchangeHolder implements Serializable {
      */
     public static void unmarshal(Exchange exchange, DefaultExchangeHolder payload) {
         exchange.getIn().setBody(payload.inBody);
-        exchange.getIn().setHeaders(payload.inHeaders);
+        if (payload.inHeaders != null) {
+            exchange.getIn().setHeaders(payload.inHeaders);
+        }
         if (payload.outBody != null) {
             exchange.getOut().setBody(payload.outBody);
-            exchange.getOut().setHeaders(payload.outHeaders);
+            if (payload.outHeaders != null) {
+                exchange.getOut().setHeaders(payload.outHeaders);
+            }
             exchange.getOut().setFault(payload.outFaultFlag.booleanValue());
         }
-        for (String key : payload.properties.keySet()) {
-            exchange.setProperty(key, payload.properties.get(key));
+        if (payload.properties != null) {
+            for (String key : payload.properties.keySet()) {
+                exchange.setProperty(key, payload.properties.get(key));
+            }
         }
         exchange.setException(payload.exception);
     }
@@ -106,6 +126,36 @@ public class DefaultExchangeHolder implements Serializable {
         sb.append(", inHeaders=").append(inHeaders).append(", outHeaders=").append(outHeaders);
         sb.append(", properties=").append(properties).append(", exception=").append(exception);
         return sb.append(']').toString();
+    }
+
+    private Map<String, Object> safeSetInHeaders(Exchange exchange) {
+        if (exchange.getIn().hasHeaders()) {
+            Map<String, Object> map = checkMapSerializableObjects("in headers", exchange, exchange.getIn().getHeaders());
+            if (map != null && !map.isEmpty()) {
+                inHeaders = new LinkedHashMap<String, Object>(map);
+            }
+        }
+        return null;
+    }
+
+    private Map<String, Object> safeSetOutHeaders(Exchange exchange) {
+        if (exchange.hasOut() && exchange.getOut().hasHeaders()) {
+            Map<String, Object> map = checkMapSerializableObjects("out headers", exchange, exchange.getOut().getHeaders());
+            if (map != null && !map.isEmpty()) {
+                outHeaders = new LinkedHashMap<String, Object>(map);
+            }
+        }
+        return null;
+    }
+
+    private Map<String, Object> safeSetProperties(Exchange exchange) {
+        if (exchange.hasProperties()) {
+            Map<String, Object> map = checkMapSerializableObjects("properties", exchange, exchange.getProperties());
+            if (map != null && !map.isEmpty()) {
+                properties = new LinkedHashMap<String, Object>(map);
+            }
+        }
+        return null;
     }
 
     private static Object checkSerializableObject(String type, Exchange exchange, Object object) {

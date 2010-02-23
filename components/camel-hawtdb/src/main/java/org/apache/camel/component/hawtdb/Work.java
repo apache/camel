@@ -21,9 +21,15 @@ import org.fusesource.hawtdb.api.Transaction;
 /**
  * Demarcates the statements that need to be performed as a 
  * HawtDB transactional unit of work.
- * 
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 interface Work<T> {
+
+    /**
+     * Executs the work within the bounds of the given transaction
+     *
+     * @param transaction the transaction
+     * @return result of the work, can be <tt>null</tt> if no result to return.
+     */
     T execute(Transaction transaction);
+
 }

@@ -18,7 +18,10 @@ package org.apache.camel.component.hawtdb;
 
 import java.io.IOException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.AggregationRepository;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
@@ -30,15 +33,13 @@ import org.fusesource.hawtdb.util.marshaller.ObjectMarshaller;
 
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
- * 
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public class HawtDBAggregationRepository<K> implements AggregationRepository<K> {
-    
+
     private HawtDBFile file;
     private String name;
-    private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>(); 
-    private Marshaller<Exchange> exchangeMarshaller = new ObjectMarshaller<Exchange>(); 
+    private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>();
+    private Marshaller<DefaultExchangeHolder> exchangeMarshaller = new ObjectMarshaller<DefaultExchangeHolder>();
 
     public Exchange add(K key, Exchange exchange) {
         try {
@@ -55,7 +56,7 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
                     return index.put(keyBuffer, exchangeBuffer);
                 }
             });
-            if( rc ==null ) {
+            if (rc == null) {
                 return null;
             }
             return unmarshallExchange(rc);
@@ -74,7 +75,7 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
                     return index.get(keyBuffer);
                 }
             });
-            if( rc==null ) {
+            if (rc == null) {
                 return null;
             }
             return unmarshallExchange(rc);
@@ -102,57 +103,40 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
         keyMarshaller.writePayload(key, baos);
         return baos.toBuffer();
     }
-    
+
     protected Buffer marshallExchange(Exchange exchange) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-        exchangeMarshaller.writePayload(exchange, baos);
+        DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false);
+        exchangeMarshaller.writePayload(pe, baos);
         return baos.toBuffer();
     }
-    
+
     protected Exchange unmarshallExchange(Buffer buffer) throws IOException {
         DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-        return exchangeMarshaller.readPayload(bais);
-    }
 
+        DefaultExchangeHolder pe = exchangeMarshaller.readPayload(bais);
+
+        // create a new dummy default exchange which the aggregator must
+        // set the CamelContext
+        Exchange answer = new DefaultExchange((CamelContext) null);
+        DefaultExchangeHolder.unmarshal(answer, pe);
+        return answer;
+    }
 
     public HawtDBFile getFile() {
         return file;
     }
 
-
     public void setFile(HawtDBFile file) {
         this.file = file;
     }
-
 
     public String getName() {
         return name;
     }
 
-
     public void setName(String name) {
         this.name = name;
     }
 
-
-    public Marshaller<K> getKeyMarshaller() {
-        return keyMarshaller;
-    }
-
-
-    public void setKeyMarshaller(Marshaller<K> keyMarshaller) {
-        this.keyMarshaller = keyMarshaller;
-    }
-
-
-    public Marshaller<Exchange> getExchangeMarshaller() {
-        return exchangeMarshaller;
-    }
-
-
-    public void setExchangeMarshaller(Marshaller<Exchange> exchangeMarshaller) {
-        this.exchangeMarshaller = exchangeMarshaller;
-    }
-
-    
 }

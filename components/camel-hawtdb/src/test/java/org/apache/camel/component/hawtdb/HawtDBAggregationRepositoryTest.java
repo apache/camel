@@ -19,37 +19,39 @@ package org.apache.camel.component.hawtdb;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Tests the HawtDBAggregationRepository implementation.
- * 
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
-public class HawtDBAggregationRepositoryTest extends ExchangeTestSupport {
-    
+public class HawtDBAggregationRepositoryTest extends CamelTestSupport {
+
     private HawtDBFile hawtDBFile;
 
     @Override
-    protected void setUp() throws Exception {
-        File file = new File("target/test-data/"+getClass().getName()+"-"+getName());
+    public void setUp() throws Exception {
+        super.setUp();
+        deleteDirectory("target/data");
+        File file = new File("target/data/hawtdb.dat");
         hawtDBFile = new HawtDBFile();
         hawtDBFile.setFile(file);
         hawtDBFile.start();
     }
-    
+
     @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         hawtDBFile.stop();
+        super.tearDown();
     }
-    
+
+    @Test
     public void testOperations() {
-        
         HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
         repo.setFile(hawtDBFile);
         repo.setName("repo1");
-        
+
         // Can't get something we have not put in...
         Exchange actual = repo.get("missing");
         assertEquals(null, actual);
@@ -59,20 +61,21 @@ public class HawtDBAggregationRepositoryTest extends ExchangeTestSupport {
         exchange1.getIn().setBody("counter:1");
         actual = repo.add("foo", exchange1);
         assertEquals(null, actual);
-        
+
         // Get it back..
         actual = repo.get("foo");
-        assertEquals(exchange1, actual);
-              
+        assertEquals("counter:1", actual.getIn().getBody());
+
         // Change it..
         Exchange exchange2 = new DefaultExchange(context);
         exchange2.getIn().setBody("counter:2");
         actual = repo.add("foo", exchange2);
-        assertEquals(exchange1, actual);
-        
+        // the old one
+        assertEquals("counter:1", actual.getIn().getBody());
+
         // Get it back..
         actual = repo.get("foo");
-        assertEquals(exchange2, actual);
+        assertEquals("counter:2", actual.getIn().getBody());
     }
 
 }
