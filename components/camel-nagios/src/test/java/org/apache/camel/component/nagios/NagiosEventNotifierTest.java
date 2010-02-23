@@ -73,7 +73,7 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
         context.stop();
 
         List<MessagePayload> events = nagios.getMessagePayloadList();
-        assertEquals(10, events.size());
+        assertEquals(12, events.size());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class NagiosEventNotifierTest extends CamelTestSupport {
         context.stop();
 
         List<MessagePayload> events = nagios.getMessagePayloadList();
-        assertEquals(10, events.size());
+        assertEquals(11, events.size());
     }
 
     @Override
