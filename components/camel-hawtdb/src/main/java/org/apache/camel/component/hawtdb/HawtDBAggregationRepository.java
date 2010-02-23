@@ -59,9 +59,10 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
             if (rc == null) {
                 return null;
             }
+            // TODO: We can improve performance by not returning the old when adding
             return unmarshallExchange(rc);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error adding to repository " + name + " with key " + key, e);
         }
     }
 
@@ -80,7 +81,7 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
             }
             return unmarshallExchange(rc);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error getting key " + key + " from repository " + name, e);
         }
     }
 
@@ -94,7 +95,7 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error removing key " + key + " from repository " + name, e);
         }
     }
 
@@ -106,7 +107,9 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
 
     protected Buffer marshallExchange(Exchange exchange) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
+        // use DefaultExchangeHolder to marshal to a serialized object
         DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false);
+        // TODO: store aggregation size 
         exchangeMarshaller.writePayload(pe, baos);
         return baos.toBuffer();
     }

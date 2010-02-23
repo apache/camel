@@ -36,7 +36,9 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
 
     private static final transient Log LOG = LogFactory.getLog(HawtDBFile.class);
 
-    private final static BTreeIndexFactory<String, Integer> indexesFactory = new BTreeIndexFactory<String, Integer>();
+    // the root which contains an index with name -> page for the real indexes
+    private final static BTreeIndexFactory<String, Integer> rootIndexesFactory = new BTreeIndexFactory<String, Integer>();
+    // the real indexes where we store persisted data in buffers
     private final static BTreeIndexFactory<Buffer, Buffer> indexFactory = new BTreeIndexFactory<Buffer, Buffer>();
 
     public HawtDBFile() {
@@ -44,9 +46,9 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
     }
 
     static {
-        indexesFactory.setKeyMarshaller(StringMarshaller.INSTANCE);
-        indexesFactory.setValueMarshaller(IntegerMarshaller.INSTANCE);
-        indexesFactory.setDeferredEncoding(true);
+        rootIndexesFactory.setKeyMarshaller(StringMarshaller.INSTANCE);
+        rootIndexesFactory.setValueMarshaller(IntegerMarshaller.INSTANCE);
+        rootIndexesFactory.setDeferredEncoding(true);
         indexFactory.setKeyMarshaller(VariableBufferMarshaller.INSTANCE);
         indexFactory.setValueMarshaller(VariableBufferMarshaller.INSTANCE);
         indexFactory.setDeferredEncoding(true);
@@ -69,10 +71,10 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
                     int page = tx.allocator().alloc(1);
                     // if we just created the file, first allocated page should be 0
                     assert page == 0;
-                    indexesFactory.create(tx, 0);
+                    rootIndexesFactory.create(tx, 0);
                     LOG.info("Aggregation repository data store created using file: " + getFile());
                 } else {
-                    Index<String, Integer> indexes = indexesFactory.open(tx, 0);
+                    Index<String, Integer> indexes = rootIndexesFactory.open(tx, 0);
                     LOG.info("Aggregation repository data store loaded using file: " + getFile()
                             + " containing " + indexes.size() + " repositories.");
                 }
@@ -91,20 +93,28 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
     }
 
     public <T> T execute(Work<T> work) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Executing work " + work);
+        }
+
         Transaction tx = pageFile.tx();
         try {
             T rc = work.execute(tx);
             tx.commit();
             return rc;
         } catch (RuntimeException e) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Error executing work " + work + " will do rollback", e);
+            }
             tx.rollback();
             throw e;
         }
     }
 
     public Index<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name) {
-        Index<String, Integer> indexes = indexesFactory.open(tx, 0);
+        Index<String, Integer> indexes = rootIndexesFactory.open(tx, 0);
         Integer location = indexes.get(name);
+
         if (location == null) {
             // create it..
             int page = tx.allocator().alloc(1);
@@ -113,8 +123,15 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
             // add it to indexes so we can find it the next time
             indexes.put(name, page);
 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Created new repository index with name " + name + " at location " + page);
+            }
+
             return created;
         } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Repository index with name " + name + " at location " + location);
+            }
             return indexFactory.open(tx, location);
         }
     }
