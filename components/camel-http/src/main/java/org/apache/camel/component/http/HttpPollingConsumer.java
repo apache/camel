@@ -47,7 +47,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     public HttpPollingConsumer(HttpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        httpClient = endpoint.createHttpClient();
+        this.httpClient = endpoint.getHttpClient();
     }
 
     public Exchange receive() {

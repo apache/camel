@@ -57,7 +57,7 @@ public class HttpProducer extends DefaultProducer {
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
-        this.httpClient = endpoint.createHttpClient();
+        this.httpClient = endpoint.getHttpClient();
         this.throwException = endpoint.isThrowExceptionOnFailure();
     }
 

@@ -50,6 +50,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private HttpParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private ClientConnectionManager httpConnectionManager;
+    private HttpClient httpClient;
     private boolean throwExceptionOnFailure = true;
     private boolean bridgeEndpoint;
     private boolean matchOnUriPrefix;
@@ -85,9 +86,25 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     }
 
     /**
-     * Factory method used by producers and consumers to create a new {@link HttpClient} instance
+     * Gets the HttpClient to be used by {@link org.apache.camel.component.http.HttpProducer}
      */
-    public HttpClient createHttpClient() {
+    public synchronized HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = createHttpClient();
+        }
+        return httpClient;
+    }
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    /**
+     * Factory method to create a new {@link HttpClient} instance
+     * <p/>
+     * Producers and consumers should use the {@link #getHttpClient()} method instead.
+     */
+    protected HttpClient createHttpClient() {
         ObjectHelper.notNull(clientParams, "clientParams");
         ObjectHelper.notNull(httpConnectionManager, "httpConnectionManager");
 
@@ -108,6 +125,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
             configurer.configureHttpClient(answer);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created HttpClient " + answer);
         }
         return answer;
     }
@@ -248,4 +269,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }
+
+
 }

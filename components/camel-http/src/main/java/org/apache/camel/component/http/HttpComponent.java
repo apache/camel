@@ -25,11 +25,14 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.auth.params.AuthParamBean;
 import org.apache.http.client.params.ClientParamBean;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnConnectionParamBean;
 import org.apache.http.conn.params.ConnManagerParamBean;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.params.ConnRouteParamBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -49,10 +52,15 @@ import org.apache.http.params.HttpProtocolParamBean;
  * @version $Revision$
  */
 public class HttpComponent extends HeaderFilterStrategyComponent {
+    private static final transient Log LOG = LogFactory.getLog(HttpComponent.class);
+
     protected HttpClientConfigurer httpClientConfigurer;
     protected ClientConnectionManager httpConnectionManager;
     protected HttpBinding httpBinding;
 
+    // options to the default created http connection manager
+    protected int maxTotalConnections = 200;
+    protected int connectionsPerRoute = 20;
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -124,7 +132,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, parameters, "httpClient.");
-
         configureParameters(parameters);
 
         // should we use an exception for failed error codes?
@@ -147,19 +154,14 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             }
         }
 
-        ClientConnectionManager connMgr = httpConnectionManager;
-        if (connMgr == null) {
-            SchemeRegistry schemeRegistry = new SchemeRegistry();
-            if (isSecureConnection(uri)) {
-                schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
-            } else {
-                schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-            }
-
-            connMgr = new ThreadSafeClientConnManager(clientParams, schemeRegistry);
+        // create default connection manager if none provided
+        if (httpConnectionManager == null) {
+            httpConnectionManager = createConnectionManager(clientParams, uri);
         }
 
-        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, connMgr, httpClientConfigurer);
+        LOG.info("Using ClientConnectionManager: " + httpConnectionManager);
+
+        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, httpClientConfigurer);
         if (httpBinding != null) {
             endpoint.setBinding(httpBinding);
         }
@@ -177,8 +179,40 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return endpoint;
     }
 
-    private boolean isSecureConnection(String uri) {
-        return uri.startsWith("https");
+    protected ClientConnectionManager createConnectionManager(HttpParams clientParams, String uri) {
+        StringBuilder sb = new StringBuilder("Created ClientConnectionManager configured with");
+        ThreadSafeClientConnManager answer;
+
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        if (isSecureConnection(uri)) {
+            schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+        } else {
+            schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        }
+
+        answer = new ThreadSafeClientConnManager(clientParams, schemeRegistry);
+
+        // configure additional configurations
+        ConnManagerParamBean param = new ConnManagerParamBean(clientParams);
+        if (getMaxTotalConnections() > 0) {
+            sb.append(" maxTotalConnections=" + getMaxTotalConnections());
+            param.setMaxTotalConnections(getMaxTotalConnections());
+        }
+        if (getConnectionsPerRoute() > 0) {
+            sb.append(" connectionsPerRoute=" + getConnectionsPerRoute());
+            param.setConnectionsPerRoute(new ConnPerRouteBean(getConnectionsPerRoute()));
+        }
+
+        // log information about the created connection manager
+        if (LOG.isDebugEnabled()) {
+            String msg = sb.toString();
+            if (msg.endsWith("with")) {
+                msg += " default values";
+            }
+            LOG.debug(msg + ": " + answer);
+        }
+
+        return answer;
     }
 
     protected HttpParams configureHttpParams(Map<String, Object> parameters) throws Exception {
@@ -211,6 +245,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return clientParams;
     }
 
+    private boolean isSecureConnection(String uri) {
+        return uri.startsWith("https");
+    }
+
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;
@@ -240,4 +278,30 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         this.httpBinding = httpBinding;
     }
 
+    public int getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    public void setMaxTotalConnections(int maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public int getConnectionsPerRoute() {
+        return connectionsPerRoute;
+    }
+
+    public void setConnectionsPerRoute(int connectionsPerRoute) {
+        this.connectionsPerRoute = connectionsPerRoute;
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // shutdown connection manager
+        if (httpConnectionManager != null) {
+            LOG.info("Shutting down ClientConnectionManager: " + httpConnectionManager);
+            httpConnectionManager.shutdown();
+            httpConnectionManager = null;
+        }
+        super.stop();
+    }
 }
