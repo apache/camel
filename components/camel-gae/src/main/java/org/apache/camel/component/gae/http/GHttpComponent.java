@@ -28,8 +28,8 @@ import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.params.HttpParams;
 
 /**
  * The <a href="http://camel.apache.org/ghttp.html">Google App Engine HTTP
@@ -63,8 +63,8 @@ public class GHttpComponent extends ServletComponent {
 
     @Override
     protected ServletEndpoint createServletEndpoint(String endpointUri,
-            ServletComponent component, URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
+            ServletComponent component, URI httpUri, HttpParams params,
+            ClientConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws Exception {
         return new GHttpEndpoint(endpointUri, component, httpUri, params,
                 httpConnectionManager, clientConfigurer);

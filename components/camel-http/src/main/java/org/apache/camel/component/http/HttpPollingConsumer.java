@@ -27,10 +27,13 @@ import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.params.HttpConnectionParams;
 
 /**
  * A polling HTTP consumer which by default performs a GET
@@ -61,18 +64,22 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
 
     protected Exchange doReceive(int timeout) {
         Exchange exchange = endpoint.createExchange();
-        HttpMethod method = createMethod();
+        HttpRequestBase method = createMethod();
 
         // set optional timeout in millis
         if (timeout > 0) {
-            method.getParams().setSoTimeout(timeout);
+            HttpConnectionParams.setSoTimeout(method.getParams(), timeout);
         }
 
+        HttpEntity responeEntity = null;
         try {
-            int responseCode = httpClient.executeMethod(method);
+            HttpResponse response = httpClient.execute(method);
+            int responseCode = response.getStatusLine().getStatusCode();
+            responeEntity = response.getEntity();
             // lets store the result in the output message.
             LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
-            InputStream is = method.getResponseBodyAsStream();
+            InputStream is = responeEntity.getContent();
+
             try {
                 IOHelper.copy(is, bos);
                 bos.flush();
@@ -83,7 +90,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
             message.setBody(bos.createInputStream());
 
             // lets set the headers
-            Header[] headers = method.getResponseHeaders();
+            Header[] headers = response.getAllHeaders();
             HeaderFilterStrategy strategy = endpoint.getHeaderFilterStrategy();
             for (Header header : headers) {
                 String name = header.getName();
@@ -92,18 +99,25 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
                     message.setHeader(name, value);
                 }
             }
-        
+
             message.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
             return exchange;
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         } finally {
-            method.releaseConnection();
+            if (responeEntity != null) {
+                try {
+                    responeEntity.consumeContent();
+                } catch (IOException e) {
+                    // nothing what we can do
+                }
+            }
         }
     }
 
     // Properties
     //-------------------------------------------------------------------------
+
     public HttpClient getHttpClient() {
         return httpClient;
     }
@@ -114,9 +128,10 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected HttpMethod createMethod() {
+
+    protected HttpRequestBase createMethod() {
         String uri = endpoint.getEndpointUri();
-        return new GetMethod(uri);
+        return new HttpGet(uri);
     }
 
     protected void doStart() throws Exception {

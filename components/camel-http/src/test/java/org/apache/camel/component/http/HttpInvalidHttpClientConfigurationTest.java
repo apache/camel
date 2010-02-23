@@ -28,10 +28,13 @@ import static org.apache.camel.component.http.HttpMethods.POST;
 
 /**
  * Unit test of invalid configuration
+ *
+ * @version $Revision$
  */
 public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
 
     @Before
+    @Override
     public void setUp() throws Exception {
         try {
             super.setUp();
@@ -47,6 +50,7 @@ public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
         // dummy
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
@@ -54,5 +58,4 @@ public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
             }
         };
     }
-
 }

@@ -44,12 +44,10 @@
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-servlet_2.4_spec</artifactId>
     </dependency>
-
     <dependency>
-	  <!-- TODO: update group and artifact id when upgrading to httpclient 4.0 -->
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>${httpclient-version}</version>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpclient</artifactId>
+    	<version>${httpclient4-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -81,6 +79,12 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpclient</artifactId>
+    	<version>${httpclient4-version}</version>
+    	<classifier>tests</classifier>
+    	<scope>test</scope>
+    </dependency>
   </dependencies>
-
 </project>

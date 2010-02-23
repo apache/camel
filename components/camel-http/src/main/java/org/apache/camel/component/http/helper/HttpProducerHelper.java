@@ -67,7 +67,7 @@ public final class HttpProducerHelper {
     /**
      * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
      *
-     * @param exchange  the exchange
+     * @param exchange the exchange
      * @return the created method
      */
     public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint, boolean hasPayload) {

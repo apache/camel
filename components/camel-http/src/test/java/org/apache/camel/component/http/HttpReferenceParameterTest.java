@@ -19,32 +19,34 @@ package org.apache.camel.component.http;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.client.HttpClient;
 import org.junit.Test;
 
 /**
  * Unit test for resolving reference parameters.
+ *
+ * @version $Revision: $
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 
-    private static final String TEST_URI_1 = "http://localhost:8080?httpBindingRef=#customBinding&httpClientConfigurerRef=#customConfigurer"; 
-    private static final String TEST_URI_2 = "http://localhost:8081?httpBindingRef=customBinding&httpClientConfigurerRef=customConfigurer"; 
-    
+    private static final String TEST_URI_1 = "http://localhost:8080?httpBindingRef=#customBinding&httpClientConfigurerRef=#customConfigurer";
+    private static final String TEST_URI_2 = "http://localhost:8081?httpBindingRef=customBinding&httpClientConfigurerRef=customConfigurer";
+
     private HttpEndpoint endpoint1;
     private HttpEndpoint endpoint2;
-    
+
     private TestHttpBinding testBinding;
     private TestClientConfigurer testConfigurer;
-    
+
     @Override
     public void setUp() throws Exception {
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();
         super.setUp();
-        this.endpoint1 = (HttpEndpoint)context.getEndpoint(TEST_URI_1);
-        this.endpoint2 = (HttpEndpoint)context.getEndpoint(TEST_URI_2);
+        this.endpoint1 = (HttpEndpoint) context.getEndpoint(TEST_URI_1);
+        this.endpoint2 = (HttpEndpoint) context.getEndpoint(TEST_URI_2);
     }
-    
+
     @Test
     public void testHttpBindingRef() {
         assertSame(testBinding, endpoint1.getBinding());
@@ -64,7 +66,7 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
         registry.bind("customConfigurer", testConfigurer);
         return registry;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -77,12 +79,10 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
 
     private static class TestHttpBinding extends DefaultHttpBinding {
     }
-    
+
     private static class TestClientConfigurer implements HttpClientConfigurer {
 
         public void configureHttpClient(HttpClient client) {
         }
-
     }
-    
 }

@@ -19,30 +19,35 @@ package org.apache.camel.component.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.methods.OptionsMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.TraceMethod;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
 
 public enum HttpMethods implements Expression {
 
-    GET(GetMethod.class), POST(PostMethod.class), PUT(PutMethod.class), DELETE(DeleteMethod.class), HEAD(
-        HeadMethod.class), OPTIONS(OptionsMethod.class), TRACE(TraceMethod.class);
+    GET(HttpGet.class),
+    POST(HttpPost.class),
+    PUT(HttpPut.class),
+    DELETE(HttpDelete.class),
+    HEAD(HttpHead.class),
+    OPTIONS(HttpOptions.class),
+    TRACE(HttpTrace.class);
 
-    final Class<? extends HttpMethod> clazz;
+    final Class<? extends HttpRequestBase> clazz;
     final boolean entity;
 
-    HttpMethods(Class<? extends HttpMethod> clazz) {
+    HttpMethods(Class<? extends HttpRequestBase> clazz) {
         this.clazz = clazz;
-        entity = EntityEnclosingMethod.class.isAssignableFrom(clazz);
+        entity = HttpEntityEnclosingRequestBase.class.isAssignableFrom(clazz);
     }
 
-    public HttpMethod createMethod(final String url) {
+    public HttpRequestBase createMethod(final String url) {
         try {
             return clazz.getDeclaredConstructor(String.class).newInstance(url);
         } catch (Exception e) {

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,14 +35,17 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
 
 /**
  * @version $Revision$
@@ -58,7 +62,7 @@ public class HttpProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        HttpMethod method = createMethod(exchange);
+        HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
@@ -66,34 +70,35 @@ public class HttpProducer extends DefaultProducer {
         for (String headerName : in.getHeaders().keySet()) {
             String headerValue = in.getHeader(headerName, String.class);
             if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
-                method.addRequestHeader(headerName, headerValue);
+                httpRequest.addHeader(headerName, headerValue);
             }
         }
 
         // lets store the result in the output message.
+        HttpResponse httpResponse = null;
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http " + method.getName() + " method: " + method.getURI().toString());
+                LOG.debug("Executing http " + httpRequest.getMethod() + " method: " + httpRequest.getURI().toString());
             }
-            int responseCode = executeMethod(method);
+            httpResponse = executeMethod(httpRequest);
+            int responseCode = httpResponse.getStatusLine().getStatusCode();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Http responseCode: " + responseCode);
             }
 
-            if (!throwException) {
-                // if we do not use failed exception then populate response for all response codes
-                populateResponse(exchange, method, in, strategy, responseCode);
+            if (throwException && (responseCode < 100 || responseCode >= 300)) {
+                throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
             } else {
-                if (responseCode >= 100 && responseCode < 300) {
-                    // only populate response for OK response
-                    populateResponse(exchange, method, in, strategy, responseCode);
-                } else {
-                    // operation failed so populate exception to throw
-                    throw populateHttpOperationFailedException(exchange, method, responseCode);
-                }
+                populateResponse(exchange, httpRequest, httpResponse, in, strategy, responseCode);
             }
         } finally {
-            method.releaseConnection();
+            if (httpResponse != null && httpResponse.getEntity() != null) {
+                try {
+                    httpResponse.getEntity().consumeContent();
+                } catch (IOException e) {
+                    // nothing we could do
+                }
+            }
         }
     }
 
@@ -102,15 +107,15 @@ public class HttpProducer extends DefaultProducer {
         return (HttpEndpoint) super.getEndpoint();
     }
 
-    protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
+    protected void populateResponse(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
         Message answer = exchange.getOut();
 
         answer.setHeaders(in.getHeaders());
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
-        answer.setBody(extractResponseBody(method, exchange));
+        answer.setBody(extractResponseBody(httpRequest, httpResponse, exchange));
 
         // propagate HTTP response headers
-        Header[] headers = method.getResponseHeaders();
+        Header[] headers = httpResponse.getAllHeaders();
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
@@ -123,30 +128,22 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException {
+    protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse, int responseCode) throws IOException {
         HttpOperationFailedException exception;
-        String uri = method.getURI().toString();
-        String statusText = method.getStatusLine() != null ? method.getStatusLine().getReasonPhrase() : null;
-        Map<String, String> headers = extractResponseHeaders(method.getResponseHeaders());
-        InputStream is = extractResponseBody(method, exchange);
+        String uri = httpRequest.getURI().toString();
+        String statusText = httpResponse.getStatusLine() != null ? httpResponse.getStatusLine().getReasonPhrase() : null;
+        Map<String, String> headers = extractResponseHeaders(httpResponse.getAllHeaders());
+        InputStream is = extractResponseBody(httpRequest, httpResponse, exchange);
         // make a defensive copy of the response body in the exception so its detached from the cache
         String copy = null;
         if (is != null) {
             copy = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, is);
         }
 
-        if (responseCode >= 300 && responseCode < 400) {
-            String redirectLocation;
-            Header locationHeader = method.getResponseHeader("location");
-            if (locationHeader != null) {
-                redirectLocation = locationHeader.getValue();
-                exception = new HttpOperationFailedException(uri, responseCode, statusText, redirectLocation, headers, copy);
-            } else {
-                // no redirect location
-                exception = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
-            }
+        Header locationHeader = httpResponse.getFirstHeader("location");
+        if (locationHeader != null && (responseCode >= 300 && responseCode < 400)) {
+            exception = new HttpOperationFailedException(uri, responseCode, statusText, locationHeader.getValue(), headers, copy);
         } else {
-            // internal server error (error code 500)
             exception = new HttpOperationFailedException(uri, responseCode, statusText, null, headers, copy);
         }
 
@@ -156,12 +153,12 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Strategy when executing the method (calling the remote server).
      *
-     * @param method    the method to execute
-     * @return the response code
+     * @param httpRequest the http Request to execute
+     * @return the response
      * @throws IOException can be thrown
      */
-    protected int executeMethod(HttpMethod method) throws IOException {
-        return httpClient.executeMethod(method);
+    protected HttpResponse executeMethod(HttpUriRequest httpRequest) throws IOException {
+        return httpClient.execute(httpRequest);
     }
 
     /**
@@ -186,17 +183,22 @@ public class HttpProducer extends DefaultProducer {
     /**
      * Extracts the response from the method as a InputStream.
      *
-     * @param method  the method that was executed
-     * @return  the response as a stream
+     * @param httpRequest the method that was executed
+     * @return the response as a stream
      * @throws IOException can be thrown
      */
-    protected static InputStream extractResponseBody(HttpMethod method, Exchange exchange) throws IOException {
-        InputStream is = method.getResponseBodyAsStream();
+    protected static InputStream extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange) throws IOException {
+        HttpEntity entity = httpResponse.getEntity();
+        if (entity == null) {
+            return null;
+        }
+
+        InputStream is = entity.getContent();
         if (is == null) {
             return null;
         }
 
-        Header header = method.getRequestHeader(Exchange.CONTENT_ENCODING);
+        Header header = httpRequest.getFirstHeader(Exchange.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
 
         is = GZIPHelper.toGZIPInputStream(contentEncoding, is);
@@ -209,35 +211,49 @@ public class HttpProducer extends DefaultProducer {
             IOHelper.copy(is, cos);
             return cos.getInputStream();
         } finally {
-            ObjectHelper.close(is, "Extracting response body", LOG);            
+            ObjectHelper.close(is, "Extracting response body", LOG);
         }
     }
 
     /**
      * Creates the HttpMethod to use to call the remote server, either its GET or POST.
      *
-     * @param exchange  the exchange
+     * @param exchange the exchange
      * @return the created method as either GET or POST
+     * @throws URISyntaxException is thrown if the URI is invalid
      */
-    protected HttpMethod createMethod(Exchange exchange) {
-
+    protected HttpRequestBase createMethod(Exchange exchange) throws URISyntaxException {
         String url = HttpProducerHelper.createURL(exchange, getEndpoint());
+        URI uri = new URI(url);
 
-        RequestEntity requestEntity = createRequestEntity(exchange);
+        HttpEntity requestEntity = createRequestEntity(exchange);
         HttpMethods methodToUse = HttpProducerHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
-        HttpMethod method = methodToUse.createMethod(url);
 
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
             queryString = getEndpoint().getHttpUri().getQuery();
         }
-        if (queryString != null) {
-            method.setQueryString(queryString);
+
+        StringBuilder builder = new StringBuilder(uri.getScheme()).append("://").append(uri.getHost());
+
+        if (uri.getPort() != -1) {
+            builder.append(":").append(uri.getPort());
         }
 
+        if (uri.getPath() != null) {
+            builder.append(uri.getPath());
+        }
+
+        if (queryString != null) {
+            builder.append('?');
+            builder.append(queryString);
+        }
+
+        HttpRequestBase httpRequest = methodToUse.createMethod(builder.toString());
+
         if (methodToUse.isEntityEnclosing()) {
-            ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
+            ((HttpEntityEnclosingRequestBase) httpRequest).setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No Content-Type provided for URL: " + url + " with exchange: " + exchange);
@@ -245,29 +261,37 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
-        return method;
+        return httpRequest;
     }
 
     /**
      * Creates a holder object for the data to send to the remote server.
      *
-     * @param exchange  the exchange with the IN message with data to send
+     * @param exchange the exchange with the IN message with data to send
      * @return the data holder
      */
-    protected RequestEntity createRequestEntity(Exchange exchange) {
+    protected HttpEntity createRequestEntity(Exchange exchange) {
         Message in = exchange.getIn();
         if (in.getBody() == null) {
             return null;
         }
 
-        RequestEntity answer = in.getBody(RequestEntity.class);        
+        HttpEntity answer = in.getBody(HttpEntity.class);
         if (answer == null) {
             try {
                 String data = in.getBody(String.class);
                 if (data != null) {
                     String contentType = ExchangeHelper.getContentType(exchange);
                     String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-                    answer = new StringRequestEntity(data, contentType, charset);
+                    if (charset == null) {
+                        charset = HTTP.DEFAULT_CONTENT_CHARSET;
+                    }
+
+                    answer = new StringEntity(data, charset);
+                    ((StringEntity) answer).setContentEncoding(charset);
+                    if (contentType != null) {
+                        ((StringEntity) answer).setContentType(contentType);
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeCamelException(e);
@@ -283,4 +307,5 @@ public class HttpProducer extends DefaultProducer {
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
+
 }

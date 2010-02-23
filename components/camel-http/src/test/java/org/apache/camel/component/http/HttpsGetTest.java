@@ -16,25 +16,26 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.junit.Test;
 
-public class HttpsGetTest extends HttpGetTest {
+/**
+ *
+ * @version $Revision$
+ */
+public class HttpsGetTest extends BaseHttpsTest {
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        expectedText = "https://mail.google.com/mail/";
-        super.setUp();
-    }
+    @Test
+    public void httpsGet() throws Exception {
+        localServer.register("/mail/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start")
-                    .to("https://mail.google.com/mail/").to("mock:results");
+        Exchange exchange = template.request("https://" + getHostName() + ":" + getPort() + "/mail/", new Processor() {
+            public void process(Exchange exchange) throws Exception {
             }
-        };
+        });
+
+        assertExchange(exchange);
     }
 }

@@ -18,17 +18,22 @@ package org.apache.camel.component.http;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 
 /**
  * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
@@ -42,9 +47,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private HttpBinding binding;
     private HttpComponent component;
     private URI httpUri;
-    private HttpClientParams clientParams;
+    private HttpParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
-    private HttpConnectionManager httpConnectionManager;
+    private ClientConnectionManager httpConnectionManager;
     private boolean throwExceptionOnFailure = true;
     private boolean bridgeEndpoint;
     private boolean matchOnUriPrefix;
@@ -57,12 +62,12 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this(endPointURI, component, httpURI, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
-        this(endPointURI, component, httpURI, new HttpClientParams(), httpConnectionManager, null);
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, ClientConnectionManager httpConnectionManager) throws URISyntaxException {
+        this(endPointURI, component, httpURI, new BasicHttpParams(), httpConnectionManager, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams,
-                        HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpParams clientParams,
+                        ClientConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
@@ -86,7 +91,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         ObjectHelper.notNull(clientParams, "clientParams");
         ObjectHelper.notNull(httpConnectionManager, "httpConnectionManager");
 
-        HttpClient answer = new HttpClient(getClientParams());
+        HttpClient answer = new DefaultHttpClient(httpConnectionManager, getClientParams());
 
         // configure http proxy from camelContext
         if (ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyPort"))) {
@@ -96,10 +101,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
                 LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: "
                         + host + " port: " + port);
             }
-            answer.getHostConfiguration().setProxy(host, port);
+            HttpHost proxy = new HttpHost(host, port);
+            answer.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
         }
 
-        answer.setHttpConnectionManager(httpConnectionManager);
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
             configurer.configureHttpClient(answer);
@@ -132,7 +137,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
      * Provide access to the client parameters used on new {@link HttpClient} instances
      * used by producers or consumers of this endpoint.
      */
-    public HttpClientParams getClientParams() {
+    public HttpParams getClientParams() {
         return clientParams;
     }
 
@@ -140,7 +145,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
      * Provide access to the client parameters used on new {@link HttpClient} instances
      * used by producers or consumers of this endpoint.
      */
-    public void setClientParams(HttpClientParams clientParams) {
+    public void setClientParams(HttpParams clientParams) {
         this.clientParams = clientParams;
     }
 
@@ -196,11 +201,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this.httpUri = httpUri;
     }
 
-    public HttpConnectionManager getHttpConnectionManager() {
+    public ClientConnectionManager getHttpConnectionManager() {
         return httpConnectionManager;
     }
 
-    public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
+    public void setHttpConnectionManager(ClientConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
     }
 
@@ -219,27 +224,27 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
     }
-    
+
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
     }
-    
+
     public void setBridgeEndpoint(boolean bridge) {
         this.bridgeEndpoint = bridge;
     }
-    
+
     public boolean isMatchOnUriPrefix() {
         return matchOnUriPrefix;
     }
-    
+
     public void setMatchOnUriPrefix(boolean match) {
         this.matchOnUriPrefix = match;
     }
-    
+
     public boolean isChunked() {
         return this.chunked;
     }
-    
+
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }

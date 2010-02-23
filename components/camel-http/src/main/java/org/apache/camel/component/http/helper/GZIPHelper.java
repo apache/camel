@@ -34,7 +34,7 @@ public final class GZIPHelper {
 
     private GZIPHelper() {
     }
-    
+
     public static InputStream toGZIPInputStream(String contentEncoding, InputStream in) throws IOException {
         if (isGzip(contentEncoding)) {
             return new GZIPInputStream(in);

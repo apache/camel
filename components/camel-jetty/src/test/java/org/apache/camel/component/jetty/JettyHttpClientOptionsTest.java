@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpProducer;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.http.params.CoreConnectionPNames;
 import org.junit.Test;
 
 /**
@@ -32,8 +33,8 @@ public class JettyHttpClientOptionsTest extends CamelTestSupport {
         // assert jetty was configured with our timeout
         HttpEndpoint jettyEndpoint = context.getEndpoint("http://localhost:8080/myapp/myservice?httpClient.soTimeout=5555", HttpEndpoint.class);
         assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
-        HttpProducer producer = (HttpProducer)jettyEndpoint.createProducer();
-        assertEquals("Get the wrong http client parameter", 5555, producer.getHttpClient().getParams().getSoTimeout());
+        HttpProducer producer = (HttpProducer) jettyEndpoint.createProducer();
+        assertEquals("Get the wrong http client parameter", 5555, producer.getHttpClient().getParams().getIntParameter(CoreConnectionPNames.SO_TIMEOUT, -1));
 
         // send and receive
         Object out = template.requestBody("http://localhost:9080/myapp/myservice", "Hello World");

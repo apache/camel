@@ -19,18 +19,18 @@ package org.apache.camel.component.http;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.client.HttpClient;
 
 public class CompositeHttpConfigurer implements HttpClientConfigurer {
-    
+
     private List<HttpClientConfigurer> configurers = new ArrayList<HttpClientConfigurer>();
-    
+
     public void addConfigurer(HttpClientConfigurer configurer) {
         if (configurer != null) {
             configurers.add(configurer);
         }
     }
-    
+
     public void removeConfigurer(HttpClientConfigurer configurer) {
         configurers.remove(configurer);
     }
@@ -38,13 +38,13 @@ public class CompositeHttpConfigurer implements HttpClientConfigurer {
     public void configureHttpClient(HttpClient client) {
         for (HttpClientConfigurer configurer : configurers) {
             configurer.configureHttpClient(client);
-        }        
+        }
     }
-    
+
     public static CompositeHttpConfigurer combineConfigurers(HttpClientConfigurer oldConfigurer, HttpClientConfigurer newConfigurer) {
         if (oldConfigurer instanceof CompositeHttpConfigurer) {
-            ((CompositeHttpConfigurer)oldConfigurer).addConfigurer(newConfigurer);
-            return (CompositeHttpConfigurer)oldConfigurer;
+            ((CompositeHttpConfigurer) oldConfigurer).addConfigurer(newConfigurer);
+            return (CompositeHttpConfigurer) oldConfigurer;
         } else {
             CompositeHttpConfigurer answer = new CompositeHttpConfigurer();
             answer.addConfigurer(newConfigurer);

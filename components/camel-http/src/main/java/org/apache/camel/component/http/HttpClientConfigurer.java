@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.client.HttpClient;
 
 /**
  * A plugable strategy for configuring the HttpClient used by this component

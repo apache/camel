@@ -25,12 +25,11 @@ import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.params.HttpParams;
 
 public class ServletComponent extends HttpComponent {
     
@@ -58,8 +57,7 @@ public class ServletComponent extends HttpComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         uri = uri.startsWith("servlet:") ? remaining : uri;
 
-        HttpClientParams params = new HttpClientParams();
-        IntrospectionSupport.setProperties(params, parameters, "httpClient.");
+        HttpParams clientParams = configureHttpParams(parameters);
 
         // configure regular parameters
         configureParameters(parameters);
@@ -69,7 +67,7 @@ public class ServletComponent extends HttpComponent {
                 CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint result = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
+        ServletEndpoint result = createServletEndpoint(uri, this, httpUri, clientParams, getHttpConnectionManager(), httpClientConfigurer);
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
@@ -79,8 +77,8 @@ public class ServletComponent extends HttpComponent {
     }
 
     protected ServletEndpoint createServletEndpoint(String endpointUri,
-            ServletComponent component, URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
+            ServletComponent component, URI httpUri, HttpParams params,
+            ClientConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws Exception {
         return new ServletEndpoint(endpointUri, component, httpUri, params,
                 httpConnectionManager, clientConfigurer);

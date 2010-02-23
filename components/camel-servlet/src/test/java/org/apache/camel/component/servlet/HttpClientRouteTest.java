@@ -100,14 +100,11 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                         assertEquals("<request> hello world </request>", s);
                     }
                 }).transform(constant("Bye World"));
-            }
-        
-        
+        }
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new MyServletRoute();
     }    
-  
 
 }

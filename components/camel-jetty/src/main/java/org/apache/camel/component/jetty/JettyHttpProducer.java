@@ -117,7 +117,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     protected JettyContentExchange createHttpExchange(Exchange exchange) throws Exception {
         String url = HttpProducerHelper.createURL(exchange, getEndpoint());
         HttpMethods methodToUse = HttpProducerHelper.createMethod(exchange, getEndpoint(), exchange.getIn().getBody() != null);
-        String method = methodToUse.createMethod(url).getName();
+        String method = methodToUse.createMethod(url).getMethod();
 
         JettyContentExchange httpExchange = new JettyContentExchange(exchange, getBinding(), client);
         httpExchange.setMethod(method);

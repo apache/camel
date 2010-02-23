@@ -16,17 +16,27 @@
  */
 package org.apache.camel.component.http;
 
-import org.junit.Before;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.junit.Test;
 
 /**
- * @version $Revision$ 
+ *
+ * @version $Revision$
  */
-public class HttpGetWithQueryParamsTest extends HttpGetTest {
-    
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        expectedText = "activemq.apache.org";
-    }
+public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
 
+    @Test
+    public void notBridgeEndpointWithDefault() throws Exception {
+        localServer.register("/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
+
+        Exchange exchange = template.request("http://host/", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + getHostName() + ":" + getPort() + "/");
+            }
+        });
+
+        assertExchange(exchange);
+    }
 }

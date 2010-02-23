@@ -52,44 +52,42 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    @SuppressWarnings("unchecked")
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         // lets parser the parameterMap first to avoid consuming the POST parameters as InputStream
-        Map parameterMap = request.getParameterMap();
-        
+        request.getParameterMap();
+
         // lets force a parse of the body and headers
         message.getBody();
         // populate the headers from the request
         Map<String, Object> headers = message.getHeaders();
-        
-        String contentType = "";
+
         //apply the headerFilterStrategy
         Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
+            String name = (String) names.nextElement();
             Object value = request.getHeader(name);
             // mapping the content-type 
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
-                contentType = (String) value;                
             }
             if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                 headers.put(name, value);
             }
         }
 
         //we populate the http request parameters without checking the request method
-        
         names = request.getParameterNames();
         while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
+            String name = (String) names.nextElement();
             Object value = request.getParameter(name);
             if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                 headers.put(name, value);
             }
         }
-        
+
         // store the method and query and other info in headers
         headers.put(Exchange.HTTP_METHOD, request.getMethod());
         headers.put(Exchange.HTTP_QUERY, request.getQueryString());
@@ -111,7 +109,7 @@ public class DefaultHttpBinding implements HttpBinding {
         } else {
             // just copy the protocol relates header
             copyProtocolHeaders(exchange.getIn(), exchange.getOut());
-            Message out = exchange.getOut();            
+            Message out = exchange.getOut();
             if (out != null) {
                 doWriteResponse(out, response, exchange);
             }
@@ -122,7 +120,7 @@ public class DefaultHttpBinding implements HttpBinding {
         if (request.getHeader(Exchange.CONTENT_ENCODING) != null) {
             String contentEncoding = request.getHeader(Exchange.CONTENT_ENCODING, String.class);
             response.setHeader(Exchange.CONTENT_ENCODING, contentEncoding);
-        }        
+        }
     }
 
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
@@ -211,7 +209,7 @@ public class DefaultHttpBinding implements HttpBinding {
             // check the endpoint option
             Endpoint endpoint = exchange.getFromEndpoint();
             if (endpoint instanceof HttpEndpoint) {
-                answer = ((HttpEndpoint)endpoint).isChunked();
+                answer = ((HttpEndpoint) endpoint).isChunked();
             }
         } else {
             answer = message.getHeader(Exchange.HTTP_CHUNKED, boolean.class);

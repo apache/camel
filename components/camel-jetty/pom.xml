@@ -64,6 +64,13 @@
       <artifactId>camel-spring</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient4-version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
     <!-- to allow Spring annotations (jmx) to be tested -->
     <dependency>
       <groupId>org.springframework</groupId>

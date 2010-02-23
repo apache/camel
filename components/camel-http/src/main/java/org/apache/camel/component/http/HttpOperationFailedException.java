@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.camel.CamelException;

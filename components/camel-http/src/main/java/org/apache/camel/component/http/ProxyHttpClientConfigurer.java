@@ -16,31 +16,32 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
  * Strategy for configuring the HttpClient with a proxy
- *
- * @version 
  */
 public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
 
     private final String host;
     private final Integer port;
-    
+
     private final String username;
     private final String password;
     private final String domain;
     private final String ntHost;
-    
+
     public ProxyHttpClientConfigurer(String host, Integer port) {
         this(host, port, null, null, null, null);
     }
-    
+
     public ProxyHttpClientConfigurer(String host, Integer port, String username, String password, String domain, String ntHost) {
         this.host = host;
         this.port = port;
@@ -51,16 +52,16 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
     }
 
     public void configureHttpClient(HttpClient client) {
-        client.getHostConfiguration().setProxy(host, port);
+        client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(host, port));
 
         if (username != null && password != null) {
-            Credentials defaultcreds;        
+            Credentials defaultcreds;
             if (domain != null) {
                 defaultcreds = new NTCredentials(username, password, ntHost, domain);
             } else {
                 defaultcreds = new UsernamePasswordCredentials(username, password);
             }
-            client.getState().setProxyCredentials(AuthScope.ANY, defaultcreds);
+            ((DefaultHttpClient) client).getCredentialsProvider().setCredentials(AuthScope.ANY, defaultcreds);
         }
     }
 }

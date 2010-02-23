@@ -16,23 +16,38 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Message;
+import org.apache.http.HttpStatus;
 
 /**
+ *
  * @version $Revision$
  */
-public class HttpGetWithPathHeaderTest extends HttpGetTest {
-    
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start")
-                    .setHeader(Exchange.HTTP_PATH, constant("search"))
-                    .setHeader(Exchange.HTTP_QUERY, constant("hl=en&q=activemq"))
-                    .to("http://www.google.com").to("mock:results");
-            }
-        };
+public abstract class BaseHttpTest extends HttpServerTestSupport {
+
+    protected void assertExchange(Exchange exchange) {
+        assertNotNull(exchange);
+
+        Message out = exchange.getOut();
+        assertNotNull(out);
+        assertHeaders(out.getHeaders());
+        assertBody(out.getBody(String.class));
+    }
+
+    protected void assertHeaders(Map<String, Object> headers) {
+        assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("12", headers.get("Content-Length"));
+        assertEquals("text/plain; charset=ASCII", headers.get("Content-Type"));
+    }
+
+    protected void assertBody(String body) {
+        assertEquals(getExpectedContent(), body);
+    }
+
+    protected String getExpectedContent() {
+        return "camel rocks!";
     }
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -49,9 +48,6 @@ public class MultiThreadedHttpGetTest extends CamelTestSupport {
         // This is needed as by default there are 2 parallel
         // connections to some host and there is nothing that
         // closes the http connection here.
-
-        context.getComponent("http", HttpComponent.class).getHttpConnectionManager().getParams()
-            .setDefaultMaxConnectionsPerHost(5);
 
         String endpointName = "seda:withoutConversion?concurrentConsumers=5";
         sendMessagesTo(endpointName, 5);
@@ -100,10 +96,10 @@ public class MultiThreadedHttpGetTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("seda:withConversion?concurrentConsumers=5").to("http://localhost:5430/search")
-                    .convertBodyTo(String.class).to("mock:results");
+                        .convertBodyTo(String.class).to("mock:results");
 
                 from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:5430/search")
-                    .to("mock:results");
+                        .to("mock:results");
 
                 from("jetty:http://localhost:5430/search").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

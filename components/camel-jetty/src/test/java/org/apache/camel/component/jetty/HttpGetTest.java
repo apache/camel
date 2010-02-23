@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,17 +25,57 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpRequestHandler;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class HttpGetTest extends CamelTestSupport {
+
     protected String expectedText = "<html";
+    protected LocalTestServer localServer;
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        localServer = new LocalTestServer(null, null);
+        localServer.register("/", new HttpRequestHandler() {
+            public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws IOException {
+                if (!"GET".equals(request.getRequestLine().getMethod())) {
+                    response.setStatusCode(HttpStatus.SC_METHOD_FAILURE);
+                    return;
+                }
+
+                response.setStatusCode(HttpStatus.SC_OK);
+                response.setEntity(new StringEntity(expectedText, HTTP.ISO_8859_1));
+            }
+        });
+        localServer.start();
+
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (localServer != null) {
+            localServer.stop();
+        }
+    }
 
     @Test
-    @Ignore("ignore online tests, will be improved in Camel 2.3")
     public void testHttpGet() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
@@ -66,7 +107,7 @@ public class HttpGetTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("http://www.google.com").to("mock:results");
+                from("direct:start").to("http://" + localServer.getServiceHostName() + ":" + localServer.getServicePort()).to("mock:results");
             }
         };
     }
