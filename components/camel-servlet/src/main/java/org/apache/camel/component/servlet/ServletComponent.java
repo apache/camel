@@ -67,7 +67,7 @@ public class ServletComponent extends HttpComponent {
                 CastUtils.cast(parameters));
         uri = httpUri.toString();
 
-        ServletEndpoint result = createServletEndpoint(uri, this, httpUri, clientParams, getHttpConnectionManager(), httpClientConfigurer);
+        ServletEndpoint result = createServletEndpoint(uri, this, httpUri, clientParams, getClientConnectionManager(), httpClientConfigurer);
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
