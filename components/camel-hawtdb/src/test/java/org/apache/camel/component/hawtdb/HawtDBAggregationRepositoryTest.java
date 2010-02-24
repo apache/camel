@@ -73,6 +73,21 @@ public class HawtDBAggregationRepositoryTest extends CamelTestSupport {
         // Get it back..
         actual = repo.get("foo");
         assertEquals("counter:2", actual.getIn().getBody());
+
+        // now remove it
+        repo.remove("foo");
+        actual = repo.get("foo");
+        assertEquals(null, actual);
+
+        // add it again
+        exchange1 = new DefaultExchange(context);
+        exchange1.getIn().setBody("counter:3");
+        actual = repo.add("foo", exchange1);
+        assertEquals(null, actual);
+
+        // Get it back..
+        actual = repo.get("foo");
+        assertEquals("counter:3", actual.getIn().getBody());
     }
 
 }
