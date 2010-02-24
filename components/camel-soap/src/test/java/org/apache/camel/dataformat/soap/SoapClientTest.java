@@ -26,16 +26,14 @@ import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
-import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
+import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.test.CamelTestSupport;
 
 public class SoapClientTest extends CamelTestSupport {
@@ -51,8 +49,6 @@ public class SoapClientTest extends CamelTestSupport {
         }
     }
 
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint resultEndpoint;
     protected CustomerService proxy;
 
     @Produce(uri = "direct:start")
@@ -80,12 +76,12 @@ public class SoapClientTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                ElementNameStrategy elNameStrat = new TypeNameStrategy();
+                ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);
                 SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(
                         jaxbPackage, elNameStrat);
                 final InputStream in = this.getClass().getResourceAsStream(
                         "response.xml");
-                from("direct:start").marshal(soapDataFormat).to("mock:result")
+                from("direct:start").marshal(soapDataFormat)
                         .process(new FileReplyProcessor(in)).unmarshal(
                                 soapDataFormat);
             }

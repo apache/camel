@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.camel.Endpoint;
@@ -74,7 +73,7 @@ public class CamelInvocationHandler implements InvocationHandler {
                 }
                 throw (RuntimeCamelException) fault;
             }
-            throw new InvocationTargetException(fault);
+            throw fault;
         }
 
         // do not return a reply if the method is VOID or the MEP is not OUT capable

@@ -19,20 +19,23 @@ package org.apache.camel.dataformat.soap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.List;
 
+import javax.jws.WebMethod;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebFault;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
-import org.apache.camel.dataformat.soap.name.ExceptionNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Detail;
@@ -42,15 +45,17 @@ import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
 
 /**
  * Marshaling from Objects to SOAP and back by using JAXB. The classes to be
- * processed need to have JAXB annotations. For marshaling a
- * ElementNameStrategy is used to determine how the top level elements in SOAP
- * are named as this can not be extracted from JAXB.
+ * processed need to have JAXB annotations. For marshaling a ElementNameStrategy
+ * is used to determine how the top level elements in SOAP are named as this can
+ * not be extracted from JAXB.
  */
 public class SoapJaxbDataFormat extends JaxbDataFormat {
     private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
 
+    private static final QName FAULT_CODE_SERVER = new QName("http://www.w3.org/2003/05/soap-envelope", "Receiver");
+
     private ElementNameStrategy elementNameStrategy;
-    
+
     private String elementNameStrategyRef;
 
     /**
@@ -65,8 +70,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * 
      * @param contexPath
      */
-    public SoapJaxbDataFormat(String contexPath) {
-        super(contexPath);
+    public SoapJaxbDataFormat(String contextPath) {
+        super(contextPath);
     }
 
     /**
@@ -83,15 +88,16 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         this(contextPath);
         this.elementNameStrategy = elementNameStrategy;
     }
-    
+
     public void setElementNameStrategy(Object nameStrategy) {
         if (nameStrategy instanceof ElementNameStrategy) {
             this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
         } else {
-            new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of " + ElementNameStrategy.class.getName());
+            new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
+                    + ElementNameStrategy.class.getName());
         }
     }
-    
+
     protected void checkElementNameStrategy(Exchange exchange) {
         if (elementNameStrategy == null) {
             synchronized (this) {
@@ -99,7 +105,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                     return;
                 } else {
                     if (elementNameStrategyRef != null) {
-                        elementNameStrategy = exchange.getContext().getRegistry().lookup(elementNameStrategyRef, ElementNameStrategy.class);
+                        elementNameStrategy = exchange.getContext().getRegistry().lookup(elementNameStrategyRef,
+                                ElementNameStrategy.class);
                     } else {
                         elementNameStrategy = new TypeNameStrategy();
                     }
@@ -109,16 +116,25 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     /**
-     * Marshal inputObject to SOAP xml. If the exchange or message has an EXCEPTION_CAUGTH
-     * property or header then instead of the object the exception is marshaled.
+     * Marshal inputObject to SOAP xml. If the exchange or message has an
+     * EXCEPTION_CAUGTH property or header then instead of the object the
+     * exception is marshaled.
      * 
-     * To determine the name of the top level xml elment the elementNameStrategy is used.
+     * To determine the name of the top level xml elment the elementNameStrategy
+     * is used.
      */
     public void marshal(Exchange exchange, final Object inputObject, OutputStream stream) throws IOException {
-        
+
         checkElementNameStrategy(exchange);
 
-        String soapAction = (String) exchange.getProperty(Exchange.SOAP_ACTION);
+        String soapAction = (String) exchange.getIn().getHeader(Exchange.SOAP_ACTION);
+        if (soapAction == null && inputObject instanceof BeanInvocation) {
+            BeanInvocation beanInvocation = (BeanInvocation) inputObject;
+            WebMethod webMethod = beanInvocation.getMethod().getAnnotation(WebMethod.class);
+            if (webMethod != null && webMethod.action() != null) {
+                soapAction = webMethod.action();
+            }
+        }
         Body body = new Body();
 
         Throwable exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
@@ -145,9 +161,12 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * parameter are not supported. So the interface should be in doc lit bare
      * style.
      * 
-     * @param inputObject object to be put into the SOAP body
-     * @param soapAction for name resolution
-     * @param classResolver for name resolution
+     * @param inputObject
+     *            object to be put into the SOAP body
+     * @param soapAction
+     *            for name resolution
+     * @param classResolver
+     *            for name resolution
      * @return JAXBElement for the body content
      */
     @SuppressWarnings("unchecked")
@@ -178,7 +197,12 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      */
     @SuppressWarnings("unchecked")
     private JAXBElement<Fault> createFaultFromException(final Throwable exception, String soapAction) {
-        QName name = new ExceptionNameStrategy().findQNameForSoapActionOrType(soapAction, exception.getClass());
+        WebFault webFault = exception.getClass().getAnnotation(WebFault.class);
+        if (webFault == null || webFault.targetNamespace() == null) {
+            throw new RuntimeException("The exception " + exception.getClass().getName()
+                    + " needs to have an WebFault annotation with name and targetNamespace");
+        }
+        QName name = new QName(webFault.targetNamespace(), webFault.name());
         Object faultObject = null;
         try {
             Method method = exception.getClass().getMethod("getFaultInfo");
@@ -187,9 +211,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
             throw new RuntimeCamelException("Exception while trying to get fault details", e);
         }
         Fault fault = new Fault();
-        fault
-                .setFaultcode(new QName(exception.getClass().getPackage().getName(), exception.getClass()
-                        .getSimpleName()));
+        fault.setFaultcode(FAULT_CODE_SERVER);
         fault.setFaultstring(exception.getMessage());
         Detail detailEl = new ObjectFactory().createDetail();
         JAXBElement<?> faultDetailContent = new JAXBElement(name, faultObject.getClass(), faultObject);
@@ -208,7 +230,51 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         }
         Envelope envelope = (Envelope) rootObject;
         Object payloadEl = envelope.getBody().getAny().get(0);
-        return (isIgnoreJAXBElement()) ? JAXBIntrospector.getValue(payloadEl) : payloadEl;
+        Object payload = JAXBIntrospector.getValue(payloadEl);
+        if (payload instanceof Fault) {
+            Exception exception = createExceptionFromFault((Fault) payload);
+            exchange.setException(exception);
+            return null;
+        } else {
+            return isIgnoreJAXBElement() ? payload : payloadEl;
+        }
+    }
+
+    /**
+     * Creates an exception and eventually an embedded bean that contains the
+     * fault detail. The exception class is determined by using the
+     * elementNameStrategy. The qName of the fault detail should match the
+     * WebFault annotation of the Exception class. If no fault detail is set the
+     * a RuntimeCamelException is created.
+     * 
+     * @param fault
+     *            Soap fault
+     * @return created Exception
+     */
+    private Exception createExceptionFromFault(Fault fault) {
+        List<Object> detailList = fault.getDetail().getAny();
+        String message = fault.getFaultstring();
+
+        if (detailList.size() == 0) {
+            return new RuntimeCamelException(message);
+        }
+        JAXBElement<?> detailEl = (JAXBElement<?>) detailList.get(0);
+        Class<? extends Exception> exceptionClass = elementNameStrategy.findExceptionForFaultName(detailEl.getName());
+        Constructor<? extends Exception> messageContructor;
+        Constructor<? extends Exception> constructor;
+
+        try {
+            messageContructor = exceptionClass.getConstructor(String.class);
+            Object detail = JAXBIntrospector.getValue(detailEl);
+            try {
+                constructor = exceptionClass.getConstructor(String.class, detail.getClass());
+                return constructor.newInstance(message, detail);
+            } catch (NoSuchMethodException e) {
+                return messageContructor.newInstance(message);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     /**

@@ -29,8 +29,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
-import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.test.CamelTestSupport;
 
 public class SoapUnMarshalTest extends CamelTestSupport {

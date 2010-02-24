@@ -21,14 +21,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 /**
- * Strategy to determine the marshalled element name by looking at the annotations of the
- * class to be marshalled
+ * Strategy to determine the marshalled element name by looking at the
+ * annotations of the class to be marshalled
  */
 public class TypeNameStrategy implements ElementNameStrategy {
 
     /**
-     * @return determine element name by using the XmlType.name() of the type to be
-     * marshalled and the XmlSchema.namespace() of the package-info
+     * @return determine element name by using the XmlType.name() of the type to
+     *         be marshalled and the XmlSchema.namespace() of the package-info
      */
     public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
         XmlType xmlType = type.getAnnotation(XmlType.class);
@@ -44,5 +44,9 @@ public class TypeNameStrategy implements ElementNameStrategy {
         }
         return new QName(nameSpace, xmlType.name());
     }
-    
+
+    public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
+        throw new UnsupportedOperationException("Exception lookup is not supported for TypeNameStrategy");
+    }
+
 }

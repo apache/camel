@@ -27,6 +27,7 @@ import javax.jws.WebResult;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import javax.xml.ws.WebFault;
 
 import org.apache.camel.RuntimeCamelException;
 
@@ -40,6 +41,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private Map<String, QName> outTypeNameToQName = new HashMap<String, QName>();
     private boolean isClient;
     private ElementNameStrategy fallBackStrategy;
+    private Map<QName, Class<? extends Exception>> faultNameToException = new HashMap<QName, Class<? extends Exception>>();
 
     /**
      * Init with JAX-WS service interface
@@ -115,6 +117,19 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 soapActionToMethodInfo.put(info.getSoapAction(), info);
             }
             outTypeNameToQName.put(info.getOut().getTypeName(), info.getOut().getElName());
+            addExceptions(method);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addExceptions(Method method) {
+        Class<?>[] exTypes = method.getExceptionTypes();
+        for (Class<?> exType : exTypes) {
+            WebFault webFault = exType.getAnnotation(WebFault.class);
+            if (webFault != null) {
+                QName faultName = new QName(webFault.targetNamespace(), webFault.name());
+                faultNameToException.put(faultName, (Class<? extends Exception>) exType);
+            }
         }
     }
 
@@ -153,4 +168,9 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         }
         return qName;
     }
+
+    public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
+        return faultNameToException.get(faultName);
+    }
+
 }
