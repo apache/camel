@@ -72,11 +72,11 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         HttpClient httpclient = new DefaultHttpClient();
 
         try {
-        	HttpResponse response = httpclient.execute(put);
+            HttpResponse response = httpclient.execute(put);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-        	httpclient.getConnectionManager().shutdown();
+            httpclient.getConnectionManager().shutdown();
         }
     }
     
@@ -90,18 +90,18 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         HttpClient httpclient = new DefaultHttpClient();
 
         try {
-        	HttpResponse response = httpclient.execute(post);
+            HttpResponse response = httpclient.execute(post);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
-            		EntityUtils.toString(response.getEntity()));
+                         EntityUtils.toString(response.getEntity()));
         } finally {
-        	httpclient.getConnectionManager().shutdown();
+            httpclient.getConnectionManager().shutdown();
         }
     }
     
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
-    	HttpPost post = new HttpPost("http://localhost:9000/customerservice/customersUniqueResponseCode");
+        HttpPost post = new HttpPost("http://localhost:9000/customerservice/customersUniqueResponseCode");
         post.addHeader("Accept" , "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
@@ -109,18 +109,18 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         HttpClient httpclient = new DefaultHttpClient();
 
         try {
-        	HttpResponse response = httpclient.execute(post);
+            HttpResponse response = httpclient.execute(post);
             assertEquals(201, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
-            		EntityUtils.toString(response.getEntity()));
+                         EntityUtils.toString(response.getEntity()));
         } finally {
-        	httpclient.getConnectionManager().shutdown();
+            httpclient.getConnectionManager().shutdown();
         }
     }
 
     @Test
     public void testJaxWsBean() throws Exception {        
-    	HttpPost post = new HttpPost("http://localhost:9090/customerservice/customers");
+        HttpPost post = new HttpPost("http://localhost:9090/customerservice/customers");
         post.addHeader("Accept" , "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
@@ -132,7 +132,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         HttpClient httpclient = new DefaultHttpClient();
 
         try {
-        	HttpResponse response = httpclient.execute(post);
+            HttpResponse response = httpclient.execute(post);
             assertEquals(200, response.getStatusLine().getStatusCode());
             String responseBody = EntityUtils.toString(response.getEntity());
             String correct = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
@@ -141,7 +141,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             
             assertEquals("Get a wrong response", correct, responseBody);
         } finally {
-        	httpclient.getConnectionManager().shutdown();
+            httpclient.getConnectionManager().shutdown();
         }
     }
     

@@ -124,9 +124,9 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
         }
         
         // propagate HTTP CONTENT_TYPE
-       if (cxfMessage.get(Message.CONTENT_TYPE) != null) {
-           camelHeaders.put(Exchange.CONTENT_TYPE, cxfMessage.get(Message.CONTENT_TYPE));
-       }
+        if (cxfMessage.get(Message.CONTENT_TYPE) != null) {
+            camelHeaders.put(Exchange.CONTENT_TYPE, cxfMessage.get(Message.CONTENT_TYPE));
+        }
         
     }
 
