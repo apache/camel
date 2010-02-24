@@ -30,31 +30,34 @@ import org.fusesource.hawtdb.util.marshaller.StringMarshaller;
 import org.fusesource.hawtdb.util.marshaller.VariableBufferMarshaller;
 
 /**
- * Manages access to a shared HawtDB file from multiple HawtDBAggregationRepository objects.
+ * Manages access to a shared HawtDB file.
+ * <p/>
+ * Will by default not sync writes which allows it to be faster.
+ * You can force syncing by setting sync=true.
  */
 public class HawtDBFile extends HawtPageFileFactory implements Service {
 
     private static final transient Log LOG = LogFactory.getLog(HawtDBFile.class);
 
     // the root which contains an index with name -> page for the real indexes
-    private final static BTreeIndexFactory<String, Integer> rootIndexesFactory = new BTreeIndexFactory<String, Integer>();
+    private static final BTreeIndexFactory<String, Integer> ROOT_INDEXES_FACTORY = new BTreeIndexFactory<String, Integer>();
     // the real indexes where we store persisted data in buffers
-    private final static BTreeIndexFactory<Buffer, Buffer> indexFactory = new BTreeIndexFactory<Buffer, Buffer>();
+    private static final BTreeIndexFactory<Buffer, Buffer> INDEX_FACTORY = new BTreeIndexFactory<Buffer, Buffer>();
+
+    private HawtPageFile pageFile;
+
+    static {
+        ROOT_INDEXES_FACTORY.setKeyMarshaller(StringMarshaller.INSTANCE);
+        ROOT_INDEXES_FACTORY.setValueMarshaller(IntegerMarshaller.INSTANCE);
+        ROOT_INDEXES_FACTORY.setDeferredEncoding(true);
+        INDEX_FACTORY.setKeyMarshaller(VariableBufferMarshaller.INSTANCE);
+        INDEX_FACTORY.setValueMarshaller(VariableBufferMarshaller.INSTANCE);
+        INDEX_FACTORY.setDeferredEncoding(true);
+    }
 
     public HawtDBFile() {
         setSync(false);
     }
-
-    static {
-        rootIndexesFactory.setKeyMarshaller(StringMarshaller.INSTANCE);
-        rootIndexesFactory.setValueMarshaller(IntegerMarshaller.INSTANCE);
-        rootIndexesFactory.setDeferredEncoding(true);
-        indexFactory.setKeyMarshaller(VariableBufferMarshaller.INSTANCE);
-        indexFactory.setValueMarshaller(VariableBufferMarshaller.INSTANCE);
-        indexFactory.setDeferredEncoding(true);
-    }
-
-    private HawtPageFile pageFile;
 
     public void start() {
         if (LOG.isDebugEnabled()) {
@@ -71,10 +74,10 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
                     int page = tx.allocator().alloc(1);
                     // if we just created the file, first allocated page should be 0
                     assert page == 0;
-                    rootIndexesFactory.create(tx, 0);
+                    ROOT_INDEXES_FACTORY.create(tx, 0);
                     LOG.info("Aggregation repository data store created using file: " + getFile());
                 } else {
-                    Index<String, Integer> indexes = rootIndexesFactory.open(tx, 0);
+                    Index<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
                     LOG.info("Aggregation repository data store loaded using file: " + getFile()
                             + " containing " + indexes.size() + " repositories.");
                 }
@@ -112,13 +115,13 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
     }
 
     public Index<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name) {
-        Index<String, Integer> indexes = rootIndexesFactory.open(tx, 0);
+        Index<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
         Integer location = indexes.get(name);
 
         if (location == null) {
             // create it..
             int page = tx.allocator().alloc(1);
-            Index<Buffer, Buffer> created = indexFactory.create(tx, page);
+            Index<Buffer, Buffer> created = INDEX_FACTORY.create(tx, page);
 
             // add it to indexes so we can find it the next time
             indexes.put(name, page);
@@ -132,7 +135,7 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Repository index with name " + name + " at location " + location);
             }
-            return indexFactory.open(tx, location);
+            return INDEX_FACTORY.open(tx, location);
         }
     }
 
