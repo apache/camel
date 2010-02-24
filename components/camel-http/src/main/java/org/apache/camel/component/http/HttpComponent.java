@@ -55,7 +55,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     private static final transient Log LOG = LogFactory.getLog(HttpComponent.class);
 
     protected HttpClientConfigurer httpClientConfigurer;
-    protected ClientConnectionManager httpConnectionManager;
+    protected ClientConnectionManager clientConnectionManager;
     protected HttpBinding httpBinding;
 
     // options to the default created http connection manager
@@ -155,13 +155,13 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
 
         // create default connection manager if none provided
-        if (httpConnectionManager == null) {
-            httpConnectionManager = createConnectionManager(clientParams, uri);
+        if (clientConnectionManager == null) {
+            clientConnectionManager = createConnectionManager(clientParams, uri);
         } else if (LOG.isDebugEnabled()) {
-            LOG.debug("Using existing ClientConnectionManager: " + httpConnectionManager);
+            LOG.debug("Using existing ClientConnectionManager: " + clientConnectionManager);
         }
 
-        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, httpClientConfigurer);
+        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, clientConnectionManager, httpClientConfigurer);
         if (httpBinding != null) {
             endpoint.setBinding(httpBinding);
         }
@@ -251,12 +251,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
-    public ClientConnectionManager getHttpConnectionManager() {
-        return httpConnectionManager;
+    public ClientConnectionManager getClientConnectionManager() {
+        return clientConnectionManager;
     }
 
-    public void setHttpConnectionManager(ClientConnectionManager httpConnectionManager) {
-        this.httpConnectionManager = httpConnectionManager;
+    public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
+        this.clientConnectionManager = clientConnectionManager;
     }
 
     public HttpBinding getHttpBinding() {
@@ -286,10 +286,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     @Override
     public void stop() throws Exception {
         // shutdown connection manager
-        if (httpConnectionManager != null) {
-            LOG.info("Shutting down ClientConnectionManager: " + httpConnectionManager);
-            httpConnectionManager.shutdown();
-            httpConnectionManager = null;
+        if (clientConnectionManager != null) {
+            LOG.info("Shutting down ClientConnectionManager: " + clientConnectionManager);
+            clientConnectionManager.shutdown();
+            clientConnectionManager = null;
         }
         super.stop();
     }

@@ -49,7 +49,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private URI httpUri;
     private HttpParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
-    private ClientConnectionManager httpConnectionManager;
+    private ClientConnectionManager clientConnectionManager;
     private HttpClient httpClient;
     private boolean throwExceptionOnFailure = true;
     private boolean bridgeEndpoint;
@@ -63,18 +63,18 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this(endPointURI, component, httpURI, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, ClientConnectionManager httpConnectionManager) throws URISyntaxException {
-        this(endPointURI, component, httpURI, new BasicHttpParams(), httpConnectionManager, null);
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, ClientConnectionManager clientConnectionManager) throws URISyntaxException {
+        this(endPointURI, component, httpURI, new BasicHttpParams(), clientConnectionManager, null);
     }
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpParams clientParams,
-                        ClientConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+                        ClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
         this.clientParams = clientParams;
         this.httpClientConfigurer = clientConfigurer;
-        this.httpConnectionManager = httpConnectionManager;
+        this.clientConnectionManager = clientConnectionManager;
     }
 
     public Producer createProducer() throws Exception {
@@ -106,9 +106,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
      */
     protected HttpClient createHttpClient() {
         ObjectHelper.notNull(clientParams, "clientParams");
-        ObjectHelper.notNull(httpConnectionManager, "httpConnectionManager");
+        ObjectHelper.notNull(clientConnectionManager, "httpConnectionManager");
 
-        HttpClient answer = new DefaultHttpClient(httpConnectionManager, getClientParams());
+        HttpClient answer = new DefaultHttpClient(clientConnectionManager, getClientParams());
 
         // configure http proxy from camelContext
         if (ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyPort"))) {
@@ -222,12 +222,12 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this.httpUri = httpUri;
     }
 
-    public ClientConnectionManager getHttpConnectionManager() {
-        return httpConnectionManager;
+    public ClientConnectionManager getClientConnectionManager() {
+        return clientConnectionManager;
     }
 
-    public void setHttpConnectionManager(ClientConnectionManager httpConnectionManager) {
-        this.httpConnectionManager = httpConnectionManager;
+    public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
+        this.clientConnectionManager = clientConnectionManager;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
@@ -269,6 +269,5 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
     }
-
 
 }
