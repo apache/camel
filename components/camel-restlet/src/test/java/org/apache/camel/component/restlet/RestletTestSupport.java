@@ -32,27 +32,30 @@ import org.apache.http.util.EntityUtils;
  * @version $Revision$
  */
 public abstract class RestletTestSupport extends CamelTestSupport {
-	
+
     public HttpResponse doExecute(HttpUriRequest method) throws Exception {
-    	HttpClient client = new DefaultHttpClient();
+        HttpClient client = new DefaultHttpClient();
         try {
-        	HttpResponse response = client.execute(method);
-        	response.setEntity(new BufferedHttpEntity(response.getEntity()));
-        	return response;
+            HttpResponse response = client.execute(method);
+            response.setEntity(new BufferedHttpEntity(response.getEntity()));
+            return response;
         } finally {
-        	client.getConnectionManager().shutdown();
+            client.getConnectionManager().shutdown();
         }
     }
-    
-    public static void assertHttpResponse(HttpResponse response, int expectedStatusCode, String expectedContentType) throws ParseException, IOException {
-    	assertHttpResponse(response, expectedStatusCode, expectedContentType, null);
+
+    public static void assertHttpResponse(HttpResponse response, int expectedStatusCode,
+                                          String expectedContentType) throws ParseException, IOException {
+        assertHttpResponse(response, expectedStatusCode, expectedContentType, null);
     }
-    
-    public static void assertHttpResponse(HttpResponse response, int expectedStatusCode, String expectedContentType, String expectedBody) throws ParseException, IOException {
-    	assertEquals(expectedStatusCode, response.getStatusLine().getStatusCode());
-    	assertTrue(response.getFirstHeader("Content-Type").getValue().startsWith(expectedContentType));
-    	if (expectedBody != null) {
-    		assertEquals(expectedBody, EntityUtils.toString(response.getEntity()));
-    	}
+
+    public static void assertHttpResponse(HttpResponse response, int expectedStatusCode,
+                                          String expectedContentType, String expectedBody)
+        throws ParseException, IOException {
+        assertEquals(expectedStatusCode, response.getStatusLine().getStatusCode());
+        assertTrue(response.getFirstHeader("Content-Type").getValue().startsWith(expectedContentType));
+        if (expectedBody != null) {
+            assertEquals(expectedBody, EntityUtils.toString(response.getEntity()));
+        }
     }
 }

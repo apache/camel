@@ -53,9 +53,9 @@ public class RestletResponseTest extends RestletTestSupport {
     
     @Test
     public void testCustomResponse() throws Exception {
-    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
-    	
-    	assertHttpResponse(response, 417, "application/JSON");
+        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+
+        assertHttpResponse(response, 417, "application/JSON");
     }
     
     @Test

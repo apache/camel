@@ -49,8 +49,8 @@ public class RestletFaultTest extends RestletTestSupport {
     
     @Test
     public void testFaultResponse() throws Exception {
-    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
-    	
-    	assertHttpResponse(response, 404, "text/plain", "Application fault");
+        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+
+        assertHttpResponse(response, 404, "text/plain", "Application fault");
     }
 }

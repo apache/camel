@@ -56,9 +56,9 @@ public class RestletPostContentTest extends RestletTestSupport {
     
     @Test
     public void testPostBody() throws Exception {
-    	HttpUriRequest method = new HttpPost("http://localhost:9080/users/homer");
+        HttpUriRequest method = new HttpPost("http://localhost:9080/users/homer");
         ((HttpEntityEnclosingRequestBase)method).setEntity(new StringEntity(MSG_BODY));
-    	
+        
         HttpResponse response = doExecute(method);
         
         assertHttpResponse(response, 200, "text/plain");

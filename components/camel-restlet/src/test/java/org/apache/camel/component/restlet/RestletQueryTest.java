@@ -51,8 +51,8 @@ public class RestletQueryTest extends RestletTestSupport {
     
     @Test
     public void testPostBody() throws Exception {
-    	HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer?" + QUERY_STRING));
-    	
-    	assertHttpResponse(response, 200, "text/plain");
+        HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer?" + QUERY_STRING));
+
+        assertHttpResponse(response, 200, "text/plain");
     }
 }

@@ -48,16 +48,16 @@ public class RestletMultiUriTemplatesEndpointTest extends RestletTestSupport {
 
     @Test
     public void testPostUserUriPattern() throws Exception {
-    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
-    	
-    	assertHttpResponse(response, 200, "text/plain", "POST homer");
+        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+
+        assertHttpResponse(response, 200, "text/plain", "POST homer");
     }
 
     @Test
     public void testGetAtomUriPattern() throws Exception {
-    	HttpResponse response = doExecute(new HttpGet("http://localhost:9080/atom/collection/foo/component/bar"));
-    	
-    	assertHttpResponse(response, 200, "text/plain", "GET foo bar");
+        HttpResponse response = doExecute(new HttpGet("http://localhost:9080/atom/collection/foo/component/bar"));
+
+        assertHttpResponse(response, 200, "text/plain", "GET foo bar");
     }
 
     @Override

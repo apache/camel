@@ -47,10 +47,10 @@ public class RestletExceptionResponseTest extends RestletTestSupport {
 
     @Test
     public void testExceptionResponse() throws Exception {
-    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
-    	String body = EntityUtils.toString(response.getEntity());
-    	
-    	assertHttpResponse(response, 500, "text/plain");
+        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+        String body = EntityUtils.toString(response.getEntity());
+
+        assertHttpResponse(response, 500, "text/plain");
         assertTrue(body.contains("IllegalArgumentException"));
         assertTrue(body.contains("Damn something went wrong"));
     }

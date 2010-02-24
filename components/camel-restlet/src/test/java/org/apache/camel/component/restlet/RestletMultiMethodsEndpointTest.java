@@ -33,16 +33,16 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
 
     @Test
     public void testPostMethod() throws Exception {
-    	HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
-    	
-    	assertHttpResponse(response, 200, "text/plain", "POST");
+        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+
+        assertHttpResponse(response, 200, "text/plain", "POST");
     }
 
     @Test
     public void testGetMethod() throws Exception {
-    	HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer"));
-    	
-    	assertHttpResponse(response, 200, "text/plain", "GET");
+        HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer"));
+
+        assertHttpResponse(response, 200, "text/plain", "GET");
     }
 
     protected RouteBuilder createRouteBuilder() {

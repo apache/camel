@@ -26,10 +26,11 @@ public class RssDateComparator implements Comparator<SyndEntry> {
     public int compare(SyndEntry s1, SyndEntry s2) {
         Date d1 = getUpdatedDate(s1);
         Date d2 = getUpdatedDate(s2);
-        if ( d2 != null && d1 != null )
+        if (d2 != null && d1 != null) {
             return d2.compareTo(d1);
-        else
+        } else {
             return 0;
+        }
     }
 
     private Date getUpdatedDate(SyndEntry entry) {
