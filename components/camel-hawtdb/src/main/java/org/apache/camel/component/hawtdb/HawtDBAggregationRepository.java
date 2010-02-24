@@ -41,7 +41,7 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
     private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>();
     private Marshaller<DefaultExchangeHolder> exchangeMarshaller = new ObjectMarshaller<DefaultExchangeHolder>();
 
-    public Exchange add(K key, Exchange exchange) {
+    public Exchange add(CamelContext camelContext, K key, Exchange exchange) {
         try {
             // If we could guarantee that the key and exchange are immutable,
             // then we could have stuck them directly into the index, 
@@ -49,7 +49,7 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
             // in some cases.  But since we can.. we are going to force
             // early marshaling.
             final Buffer keyBuffer = marshallKey(key);
-            final Buffer exchangeBuffer = marshallExchange(exchange);
+            final Buffer exchangeBuffer = marshallExchange(camelContext, exchange);
             Buffer rc = file.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     Index<Buffer, Buffer> index = file.getRepositoryIndex(tx, name);
@@ -60,14 +60,14 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
                 return null;
             }
             // TODO: We can improve performance by not returning the old when adding
-            return unmarshallExchange(rc);
+            return unmarshallExchange(camelContext, rc);
         } catch (IOException e) {
             throw new RuntimeException("Error adding to repository " + name + " with key " + key, e);
         }
     }
 
 
-    public Exchange get(K key) {
+    public Exchange get(CamelContext camelContext, K key) {
         try {
             final Buffer keyBuffer = marshallKey(key);
             Buffer rc = file.execute(new Work<Buffer>() {
@@ -79,13 +79,13 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
             if (rc == null) {
                 return null;
             }
-            return unmarshallExchange(rc);
+            return unmarshallExchange(camelContext, rc);
         } catch (IOException e) {
             throw new RuntimeException("Error getting key " + key + " from repository " + name, e);
         }
     }
 
-    public void remove(K key) {
+    public void remove(CamelContext camelContext, K key) {
         try {
             final Buffer keyBuffer = marshallKey(key);
             file.execute(new Work<Buffer>() {
@@ -105,23 +105,20 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
         return baos.toBuffer();
     }
 
-    protected Buffer marshallExchange(Exchange exchange) throws IOException {
+    protected Buffer marshallExchange(CamelContext camelContext, Exchange exchange) throws IOException {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
         // use DefaultExchangeHolder to marshal to a serialized object
         DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false);
-        // TODO: store aggregation size 
+        // add the aggregated size property as the only property we want to retain
+        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_SIZE, exchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class));
         exchangeMarshaller.writePayload(pe, baos);
         return baos.toBuffer();
     }
 
-    protected Exchange unmarshallExchange(Buffer buffer) throws IOException {
+    protected Exchange unmarshallExchange(CamelContext camelContext, Buffer buffer) throws IOException {
         DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-
         DefaultExchangeHolder pe = exchangeMarshaller.readPayload(bais);
-
-        // create a new dummy default exchange which the aggregator must
-        // set the CamelContext
-        Exchange answer = new DefaultExchange((CamelContext) null);
+        Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         return answer;
     }

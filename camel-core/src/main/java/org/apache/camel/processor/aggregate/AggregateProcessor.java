@@ -165,7 +165,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         Exchange answer;
-        Exchange oldExchange = aggregationRepository.get(key);
+        Exchange oldExchange = aggregationRepository.get(exchange.getContext(), key);
         Exchange newExchange = exchange;
 
         Integer size = 1;
@@ -201,7 +201,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (LOG.isTraceEnabled()) {
                 LOG.trace("In progress aggregated exchange: " + answer + " with correlation key:" + key);
             }
-            aggregationRepository.add(key, answer);
+            aggregationRepository.add(exchange.getContext(), key, answer);
         }
 
         if (complete) {
@@ -281,7 +281,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     protected void onCompletion(Object key, final Exchange exchange, boolean fromTimeout) {
         // remove from repository as its completed
-        aggregationRepository.remove(key);
+        aggregationRepository.remove(exchange.getContext(), key);
         if (!fromTimeout && timeoutMap != null) {
             // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
             timeoutMap.remove(key);

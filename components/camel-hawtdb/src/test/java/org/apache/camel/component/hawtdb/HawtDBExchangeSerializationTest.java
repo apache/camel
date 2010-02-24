@@ -17,13 +17,14 @@
 package org.apache.camel.component.hawtdb;
 
 import java.io.File;
+import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HawtDBAggregationRepositoryTest extends CamelTestSupport {
+public class HawtDBExchangeSerializationTest extends CamelTestSupport {
 
     private HawtDBFile hawtDBFile;
 
@@ -44,50 +45,47 @@ public class HawtDBAggregationRepositoryTest extends CamelTestSupport {
     }
 
     @Test
-    public void testOperations() {
+    public void testExchangeSerialization() {
         HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
         repo.setFile(hawtDBFile);
         repo.setName("repo1");
 
-        // Can't get something we have not put in...
-        Exchange actual = repo.get(context, "missing");
-        assertEquals(null, actual);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello World");
+        exchange.getIn().setHeader("name", "Claus");
+        exchange.getIn().setHeader("number", 123);
+        exchange.setProperty("quote", "Camel rocks");
 
-        // Store it..
-        Exchange exchange1 = new DefaultExchange(context);
-        exchange1.getIn().setBody("counter:1");
-        actual = repo.add(context, "foo", exchange1);
-        assertEquals(null, actual);
+        Date now = new Date();
+        exchange.getIn().setHeader("date", now);
 
-        // Get it back..
+        repo.add(context, "foo", exchange);
+
+        Exchange actual = repo.get(context, "foo");
+        assertEquals("Hello World", actual.getIn().getBody());
+        assertEquals("Claus", actual.getIn().getHeader("name"));
+        assertEquals(123, actual.getIn().getHeader("number"));
+        Date date = actual.getIn().getHeader("date", Date.class);
+        assertNotNull(date);
+        assertEquals(now.getTime(), date.getTime());
+        // we do not serialize properties to avoid storing all kind of not needed information
+        assertNull(actual.getProperty("quote"));
+        assertSame(context, actual.getContext());
+
+        // change something
+        exchange.getIn().setBody("Bye World");
+        exchange.getIn().setHeader("name", "Hiram");
+        exchange.getIn().removeHeader("date");
+
+        repo.add(context, "foo", exchange);
+
         actual = repo.get(context, "foo");
-        assertEquals("counter:1", actual.getIn().getBody());
-
-        // Change it..
-        Exchange exchange2 = new DefaultExchange(context);
-        exchange2.getIn().setBody("counter:2");
-        actual = repo.add(context, "foo", exchange2);
-        // the old one
-        assertEquals("counter:1", actual.getIn().getBody());
-
-        // Get it back..
-        actual = repo.get(context, "foo");
-        assertEquals("counter:2", actual.getIn().getBody());
-
-        // now remove it
-        repo.remove(context, "foo");
-        actual = repo.get(context, "foo");
-        assertEquals(null, actual);
-
-        // add it again
-        exchange1 = new DefaultExchange(context);
-        exchange1.getIn().setBody("counter:3");
-        actual = repo.add(context, "foo", exchange1);
-        assertEquals(null, actual);
-
-        // Get it back..
-        actual = repo.get(context, "foo");
-        assertEquals("counter:3", actual.getIn().getBody());
+        assertEquals("Bye World", actual.getIn().getBody());
+        assertEquals("Hiram", actual.getIn().getHeader("name"));
+        assertEquals(123, actual.getIn().getHeader("number"));
+        date = actual.getIn().getHeader("date", Date.class);
+        assertNull(date);
+        assertSame(context, actual.getContext());
     }
 
 }

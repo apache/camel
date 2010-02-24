@@ -52,7 +52,7 @@ public class HawtDBAggregationRepositoryLoadExistingTest extends CamelTestSuppor
         // Store it..
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("counter:1");
-        Exchange actual = repo.add("foo", exchange1);
+        Exchange actual = repo.add(context, "foo", exchange1);
         assertEquals(null, actual);
 
         // stop the repo
@@ -64,18 +64,18 @@ public class HawtDBAggregationRepositoryLoadExistingTest extends CamelTestSuppor
         hawtDBFile.start();
 
         // Get it back..
-        actual = repo.get("foo");
+        actual = repo.get(context, "foo");
         assertEquals("counter:1", actual.getIn().getBody());
 
         // Change it..
         Exchange exchange2 = new DefaultExchange(context);
         exchange2.getIn().setBody("counter:2");
-        actual = repo.add("foo", exchange2);
+        actual = repo.add(context, "foo", exchange2);
         // the old one
         assertEquals("counter:1", actual.getIn().getBody());
 
         // Get it back..
-        actual = repo.get("foo");
+        actual = repo.get(context, "foo");
         assertEquals("counter:2", actual.getIn().getBody());
     }
 

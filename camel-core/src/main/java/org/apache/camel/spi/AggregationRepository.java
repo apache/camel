@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
 /**
@@ -30,25 +31,28 @@ public interface AggregationRepository<K> {
      * <p/>
      * Will replace any existing exchange.
      *
+     * @param camelContext the current CamelContext
      * @param key  the correlation key
      * @param exchange the aggregated exchange
      * @return the old exchange if any existed
      */
-    Exchange add(K key, Exchange exchange);
+    Exchange add(CamelContext camelContext, K key, Exchange exchange);
 
     /**
      * Gets the given exchange with the correlation key
      *
+     * @param camelContext the current CamelContext
      * @param key the correlation key
      * @return the exchange, or <tt>null</tt> if no exchange was previously added
      */
-    Exchange get(K key);
+    Exchange get(CamelContext camelContext, K key);
 
     /**
      * Removes the exchange with the given correlation key
      *
+     * @param camelContext the current CamelContext
      * @param key the correlation key
      */
-    void remove(K key);
+    void remove(CamelContext camelContext, K key);
 
 }

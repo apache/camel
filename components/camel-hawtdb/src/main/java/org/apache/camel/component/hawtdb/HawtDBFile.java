@@ -30,10 +30,10 @@ import org.fusesource.hawtdb.util.marshaller.StringMarshaller;
 import org.fusesource.hawtdb.util.marshaller.VariableBufferMarshaller;
 
 /**
- * Manages access to a shared HawtDB file.
+ * Manages access to a shared <a href="http://hawtdb.fusesource.org/">HawtDB</a> file.
  * <p/>
  * Will by default not sync writes which allows it to be faster.
- * You can force syncing by setting sync=true.
+ * You can force syncing by setting the sync option to <tt>true</tt>.
  */
 public class HawtDBFile extends HawtPageFileFactory implements Service {
 

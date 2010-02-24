@@ -120,6 +120,26 @@ public class DefaultExchangeHolder implements Serializable {
         exchange.setException(payload.exception);
     }
 
+    /**
+     * Adds a property to the payload.
+     * <p/>
+     * This can be done in special situations where additional information must be added which was not provided
+     * from the source.
+     *
+     * @param payload the serialized payload
+     * @param key the property key to add
+     * @param property the property value to add
+     */
+    public static void addProperty(DefaultExchangeHolder payload, String key, Serializable property) {
+        if (key == null || property == null) {
+            return;
+        }
+        if (payload.properties == null) {
+            payload.properties = new LinkedHashMap<String, Object>();
+        }
+        payload.properties.put(key, property);
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder("DefaultExchangeHolder[");
         sb.append("inBody=").append(inBody).append(", outBody=").append(outBody);

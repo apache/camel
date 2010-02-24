@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.AggregationRepository;
@@ -32,15 +33,15 @@ public class MemoryAggregationRepository extends ServiceSupport implements Aggre
 
     private final Map<Object, Exchange> cache = new ConcurrentHashMap<Object, Exchange>();
 
-    public Exchange add(Object key, Exchange exchange) {
+    public Exchange add(CamelContext camelContext, Object key, Exchange exchange) {
         return cache.put(key, exchange);
     }
 
-    public Exchange get(Object key) {
+    public Exchange get(CamelContext camelContext, Object key) {
         return cache.get(key);
     }
 
-    public void remove(Object key) {
+    public void remove(CamelContext camelContext, Object key) {
         cache.remove(key);
     }
 

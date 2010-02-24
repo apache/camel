@@ -52,11 +52,11 @@ public class HawtDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
         for (int i = 0; i < 100; i++) {
             Exchange exchange1 = new DefaultExchange(context);
             exchange1.getIn().setBody("counter:" + i);
-            repo.add("foo", exchange1);
+            repo.add(context, "foo", exchange1);
         }
 
         // Get it back..
-        Exchange actual = repo.get("foo");
+        Exchange actual = repo.get(context, "foo");
         assertEquals("counter:99", actual.getIn().getBody());
     }
 
@@ -70,14 +70,14 @@ public class HawtDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
             Exchange exchange1 = new DefaultExchange(context);
             exchange1.getIn().setBody("counter:" + i);
             String key = i % 2 == 0 ? "foo" : "bar";
-            repo.add(key, exchange1);
+            repo.add(context, key, exchange1);
         }
 
         // Get it back..
-        Exchange actual = repo.get("foo");
+        Exchange actual = repo.get(context, "foo");
         assertEquals("counter:98", actual.getIn().getBody());
 
-        actual = repo.get("bar");
+        actual = repo.get(context, "bar");
         assertEquals("counter:99", actual.getIn().getBody());
     }
 
@@ -91,12 +91,12 @@ public class HawtDBAggregationRepositoryAlotDataTest extends CamelTestSupport {
             Exchange exchange1 = new DefaultExchange(context);
             exchange1.getIn().setBody("counter:" + i);
             String key = "key" + i;
-            repo.add(key, exchange1);
+            repo.add(context, key, exchange1);
         }
 
         // Get it back..
         for (int i = 0; i < 100; i++) {
-            Exchange actual = repo.get("key" + i);
+            Exchange actual = repo.get(context, "key" + i);
             assertEquals("counter:" + i, actual.getIn().getBody());
         }
     }
