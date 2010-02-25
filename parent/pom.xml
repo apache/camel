@@ -55,8 +55,9 @@
     <spring-osgi-version>1.1.2</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
     <uface-version>1.0-m1</uface-version>
+    <javassist-version>3.9.0.GA</javassist-version>
+    <javax-mail-version>1.4.3</javax-mail-version>
     <jaxb-version>2.1.6</jaxb-version>
-    <javax-mail-version>1.4.1_2</javax-mail-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <stax-api-version>1.0.1</stax-api-version>
     <log4j-version>1.2.14</log4j-version>
@@ -894,13 +895,6 @@
         <groupId>hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb-version}</version>
-      </dependency>
-
-      <!-- optional JavaMail -->
-      <dependency>
-        <groupId>org.apache.servicemix.bundles</groupId>
-        <artifactId>org.apache.servicemix.bundles.javax.mail</artifactId>
-        <version>${javax-mail-version}</version>
       </dependency>
    
       <!-- optional XStream -->

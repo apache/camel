@@ -36,6 +36,13 @@
 	<camel.osgi.export.pkg>org.apache.camel.language.ognl.*</camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
+    </repository>
+  </repositories>
   <dependencies>
 
     <dependency>
@@ -45,6 +52,19 @@
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
+      <exclusions>
+         <exclusion>
+            <groupId>jboss</groupId>
+            <artifactId>javassist</artifactId>
+         </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- using the javassist from spring osgi bundle repo -->
+    <dependency>
+      <groupId>org.jboss.javassist</groupId>
+      <artifactId>com.springsource.javassist</artifactId>
+      <version>${javassist-version}</version>
     </dependency>
 
     <!-- testing -->
