@@ -92,7 +92,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequencer(header("seqnum")).stream().to("mock:result");
+                from("direct:start").resequence(header("seqnum")).stream().to("mock:result");
                 // END SNIPPET: example
             }
         };

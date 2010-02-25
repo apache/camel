@@ -107,14 +107,14 @@ public class JmsResequencerTest extends CamelTestSupport  {
 
                 from("activemq:queue:batch")
                     .to(callExecuteOnBean("myBean1"))
-                    .resequencer(header("seqnum"))
+                    .resequence(header("seqnum"))
                     .batch(new BatchResequencerConfig(100, 2000L))
                     .to(callExecuteOnBean("myBean2"))
                     .to("activemq:queue:stop");
                 
                 from("activemq:queue:stream")
                     .to(callExecuteOnBean("myBean1"))
-                    .resequencer(header("seqnum"))
+                    .resequence(header("seqnum"))
                     .stream()
                     .to(callExecuteOnBean("myBean2"))
                     .to("activemq:queue:stop");

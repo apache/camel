@@ -1341,7 +1341,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param expressions the list of expressions on which to compare messages in order
      * @return the builder
      */
-    public ResequenceDefinition resequencer(Expression... expressions) {
+    public ResequenceDefinition resequence(Expression... expressions) {
         List<Expression> list = new ArrayList<Expression>();
         list.addAll(Arrays.asList(expressions));
         return resequence(list);

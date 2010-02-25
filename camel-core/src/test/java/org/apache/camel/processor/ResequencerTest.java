@@ -56,7 +56,7 @@ public class ResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequencer(body()).to("mock:result");
+                from("direct:start").resequence(body()).to("mock:result");
                 // END SNIPPET: example
             }
         };
