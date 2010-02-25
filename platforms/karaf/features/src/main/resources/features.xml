@@ -66,7 +66,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/${velocity-bundle-version}</bundle>
     <bundle>mvn:org.apache.ws.commons.axiom/axiom-impl/${axiom-version}</bundle>
     <bundle>mvn:org.apache.ws.commons.axiom/axiom-api/${axiom-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax.mail/${javax-mail-version}</bundle>
+    <bundle>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.neethi/${neethi-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.abdera/${abdera-bundle-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxws_2.1_spec/${geronimo-jaxws-spec-version}</bundle>
@@ -315,7 +315,7 @@
   <feature name='camel-mail' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-context/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-context-support/${spring-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax.mail/${javax-mail-version}</bundle>
+    <bundle>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${pom.version}</bundle>
   </feature>

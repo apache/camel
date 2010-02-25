@@ -73,8 +73,7 @@
     <httpcore4-version>4.0.1</httpcore4-version>
     <httpclient4-version>4.0.1</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
-    <javamail-version>1.4.1</javamail-version>
-    <javax-mail-version>1.4.1_2</javax-mail-version>
+    <javax-mail-version>1.4.3</javax-mail-version>
     <jaxb-version>2.1.12</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <jetty-version>6.1.22</jetty-version>
@@ -1104,13 +1103,6 @@
         <groupId>hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb-version}</version>
-      </dependency>
-
-      <!-- optional JavaMail -->
-      <dependency>
-        <groupId>org.apache.servicemix.bundles</groupId>
-        <artifactId>org.apache.servicemix.bundles.javax.mail</artifactId>
-        <version>${javax-mail-version}</version>
       </dependency>
 
       <!-- optional SNMP4J -->

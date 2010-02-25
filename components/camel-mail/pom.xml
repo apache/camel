@@ -35,7 +35,7 @@
     </properties>
 
     <repositories>
-        <!-- for jvnet mock-mail -->
+        <!-- for javax mail and jvnet mock-mail -->
         <repository>
             <id>java.net.m2</id>
             <name>Java.net Repository for Maven</name>
@@ -59,8 +59,9 @@
             <artifactId>spring-context-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.javax.mail</artifactId>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax-mail-version}</version>
         </dependency>
 
         <!-- testing -->
