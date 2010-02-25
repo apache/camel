@@ -87,7 +87,6 @@
       <mvel-bundle-version>2.0.8_3</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
       <neethi-bundle-version>2.0.4_2</neethi-bundle-version>
-      <ognl-bundle-version>2.7.3_3</ognl-bundle-version>
       <oro-bundle-version>2.0.8_3</oro-bundle-version>
       <openjpa-bundle-version>1.2.1_2</openjpa-bundle-version>
       <oscache-bundle-version>2.4_3</oscache-bundle-version>
@@ -98,7 +97,6 @@
       <servicemix-specs-version>1.4.0</servicemix-specs-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_2</serp-bundle-version>
-      <snmp4j-bundle-version>1.8.1_3</snmp4j-bundle-version>
       <smack-bundle-version>3.0.4_2</smack-bundle-version>      
       <spring-version>2.5.6.SEC01</spring-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
