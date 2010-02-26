@@ -71,7 +71,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         return new RouteBuilder() {
             public void configure() {
                 from("direct:parallel-custom-pool")
-                    .split(body().tokenize(",")).parallelProcessing(true)
+                    .split(body().tokenize(",")).parallelProcessing()
                     .executorService(customThreadPoolExecutor).to("mock:result");
             }
         };

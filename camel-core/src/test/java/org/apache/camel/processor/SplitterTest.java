@@ -209,7 +209,7 @@ public class SplitterTest extends ContextTestSupport {
 
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
 
-                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing(true).to("mock:result");
+                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().to("mock:result");
 
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
 
@@ -218,7 +218,7 @@ public class SplitterTest extends ContextTestSupport {
                 from("direct:exception")
                     .split(body().tokenize(","))
                     .aggregationStrategy(new MyAggregationStrategy())
-                    .parallelProcessing(true)
+                    .parallelProcessing()
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String string = exchange.getIn().getBody(String.class);

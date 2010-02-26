@@ -136,27 +136,23 @@ public class SplitDefinition extends ExpressionNode {
     }
     
     /**
+     * Set the aggregationStrategy
+     *
+     * @param aggregationStrategyRef a reference to a strategy to lookup
+     * @return the builder
+     */
+    public SplitDefinition aggregationStrategyRef(String aggregationStrategyRef) {
+        setStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+
+    /**
      * Doing the splitting work in parallel
      *
      * @return the builder
      */
     public SplitDefinition parallelProcessing() {
         setParallelProcessing(true);
-        return this;
-    }
-    
-    /**
-     * Set the splitting action's thread model
-     *
-     * @param parallelProcessing <tt>true</tt> to use a thread pool, if <tt>false</tt> then work is done in the
-     * calling thread.
-     *
-     * @deprecated use #parallelProcessing instead
-     * @return the builder
-     */
-    @Deprecated
-    public SplitDefinition parallelProcessing(boolean parallelProcessing) {
-        setParallelProcessing(parallelProcessing);
         return this;
     }
     
@@ -195,6 +191,17 @@ public class SplitDefinition extends ExpressionNode {
         return this;
     }
     
+    /**
+     * Setting the executor service for executing the splitting action.
+     *
+     * @param executorServiceRef reference to the executor service
+     * @return the builder
+     */
+    public SplitDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -243,5 +250,21 @@ public class SplitDefinition extends ExpressionNode {
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
     }
 }

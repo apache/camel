@@ -83,6 +83,17 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
     }
     
     /**
+     * Set the aggregationStrategy
+     *
+     * @param aggregationStrategyRef a reference to a strategy to lookup
+     * @return the builder
+     */
+    public MulticastDefinition aggregationStrategyRef(String aggregationStrategyRef) {
+        setStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+
+    /**
      * Uses the {@link java.util.concurrent.ExecutorService} to do the multicasting work
      *     
      * @return the builder
@@ -123,8 +134,19 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
     public MulticastDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
-    }    
-        
+    }
+
+    /**
+     * Setting the executor service for executing the sending to the recipients.
+     *
+     * @param executorServiceRef reference to the executor service
+     * @return the builder
+     */
+    public MulticastDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
+        return this;
+    }
+
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
         if (strategyRef != null) {
             aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
@@ -182,4 +204,19 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
         this.executorService = executorService;
     }
 
+    public String getStrategyRef() {
+        return strategyRef;
+    }
+
+    public void setStrategyRef(String strategyRef) {
+        this.strategyRef = strategyRef;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
+    }
 }
