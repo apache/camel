@@ -219,6 +219,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (getCompletionPredicate() != null) {
             boolean answer = getCompletionPredicate().matches(exchange);
             if (answer) {
+                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "predicate");
                 return true;
             }
         }
@@ -228,6 +229,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (value != null && value > 0) {
                 int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
                 if (size >= value) {
+                    exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "size");
                     return true;
                 }
             }
@@ -235,6 +237,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (getCompletionSize() > 0) {
             int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);
             if (size >= getCompletionSize()) {
+                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "size");
                 return true;
             }
         }
@@ -268,6 +271,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (size > 0 && batchConsumerCounter.intValue() >= size) {
                 // batch consumer is complete then reset the counter
                 batchConsumerCounter.set(0);
+                exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "consumer");
                 return true;
             }
         }
@@ -433,10 +437,15 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
 
         protected boolean isValidForEviction(TimeoutMapEntry<Object, Exchange> entry) {
+            Object key = entry.getKey();
+            Exchange exchange = entry.getValue();
+
             if (log.isDebugEnabled()) {
-                log.debug("Completion timeout triggered for correlation key: " + entry.getKey());
+                log.debug("Completion timeout triggered for correlation key: " + key);
             }
-            onCompletion(entry.getKey(), entry.getValue(), true);
+
+            exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
+            onCompletion(key, exchange, true);
             return true;
         }
     }

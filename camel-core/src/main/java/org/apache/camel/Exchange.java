@@ -36,6 +36,7 @@ public interface Exchange {
     @Deprecated
     String AGGREGATED_INDEX = "CamelAggregatedIndex";
     String AGGREGATED_SIZE  = "CamelAggregatedSize";
+    String AGGREGATED_COMPLETED_BY = "CamelAggregatedCompletedBy";
 
     String ASYNC_WAIT = "CamelAsyncWait";
 

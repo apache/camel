@@ -45,6 +45,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
     public void testAggregateProcessorCompletionPredicate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+END");
+        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "predicate");
 
         Processor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
@@ -85,6 +86,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
     public void testAggregateProcessorCompletionPredicateEager() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+END");
+        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "predicate");
 
         Processor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
@@ -133,6 +135,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
     private void doTestAggregateProcessorCompletionAggregatedSize(boolean eager) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+C");
+        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "size");
 
         Processor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
@@ -180,6 +183,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
     private void doTestAggregateProcessorCompletionTimeout(boolean eager) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+C");
+        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
         Processor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
@@ -359,6 +363,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
     public void testAggregateUseBatchSizeFromConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B", "C+D+E");
+        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "consumer");
 
         Processor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
