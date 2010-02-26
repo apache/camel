@@ -59,6 +59,13 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("sys.who", "I was here");
     }
 
+    public void testSimpleSystemEnvironmentExpressions() throws Exception {
+        String path = System.getenv("PATH");
+        if (path != null) {
+            assertExpression("sysenv.PATH", path);
+        }
+    }
+
     public void testDateExpressions() throws Exception {
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);

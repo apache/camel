@@ -381,6 +381,41 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for a system environment value with the given name
+     *
+     * @param propertyName the name of the system environment the expression will return
+     * @return an expression object which will return the system property value
+     */
+    public static Expression systemEnvironmentExpression(final String propertyName) {
+        return systemEnvironmentExpression(propertyName, null);
+    }
+
+    /**
+     * Returns an expression for a system environment value with the given name
+     *
+     * @param propertyName the name of the system environment the expression will return
+     * @param defaultValue default value to return if no system environment exists
+     * @return an expression object which will return the system environment value
+     */
+    public static Expression systemEnvironmentExpression(final String propertyName,
+                                                         final String defaultValue) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String answer = System.getenv(propertyName);
+                if (answer == null) {
+                    answer = defaultValue;
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "systemEnvironment(" + propertyName + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the constant value
      *
      * @param value the value the expression will return

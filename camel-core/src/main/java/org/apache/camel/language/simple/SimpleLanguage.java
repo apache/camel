@@ -33,6 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  * <li>out.header.foo to access an outbound header called 'foo'</li>
  * <li>property.foo to access the exchange property called 'foo'</li>
  * <li>sys.foo to access the system property called 'foo'</li>
+ * <li>sysenv.foo to access the system environment called 'foo'</li>
  * <li>exception.messsage to access the exception message</li>
  * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Supported commands are: <tt>now</tt> for current timestamp,
@@ -126,6 +127,12 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         remainder = ifStartsWithReturnRemainder("sys.", expression);
         if (remainder != null) {
             return ExpressionBuilder.systemPropertyExpression(remainder);
+        }
+
+        // system property
+        remainder = ifStartsWithReturnRemainder("sysenv.", expression);
+        if (remainder != null) {
+            return ExpressionBuilder.systemEnvironmentExpression(remainder);
         }
 
         // file: prefix
