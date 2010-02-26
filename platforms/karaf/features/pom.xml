@@ -44,7 +44,6 @@
       <dozer-bundle-version>5.2.0_1</dozer-bundle-version>
       <cglib-version>2.1_3_4</cglib-version>
       <commons-beanutils-bundle-version>1.7.0_3</commons-beanutils-bundle-version>
-      <commons-dbcp-bundle-version>1.2.2_5</commons-dbcp-bundle-version>
       <commons-csv-version>1.0-r706899_3</commons-csv-version>
       <commons-codec-bundle-version>1.3_2</commons-codec-bundle-version>
       <commons-httpclient-bundle-version>3.1_4</commons-httpclient-bundle-version>
