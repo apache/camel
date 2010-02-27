@@ -84,7 +84,7 @@
     <!-- spring 2.5.x is only compatible with junit 4.4 or lower - see SPR-5145 -->
     <junit-version>4.4</junit-version>
     <log4j-version>1.2.14</log4j-version>
-    <lucene-version>3.0.0</lucene-version>
+    <lucene-version>3.0.1</lucene-version>
     <mina-version>1.1.7</mina-version>
     <mockito-version>1.8.2</mockito-version>
     <ognl-version>2.7.3_3</ognl-version>
