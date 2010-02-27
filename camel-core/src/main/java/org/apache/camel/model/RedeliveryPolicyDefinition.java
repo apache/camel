@@ -55,7 +55,15 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private LoggingLevel retryAttemptedLogLevel;
     @XmlAttribute
+    private Boolean logRetryAttempted;
+    @XmlAttribute
     private Boolean logStackTrace;
+    @XmlAttribute
+    private Boolean logRetryStackTrace;
+    @XmlAttribute
+    private Boolean logHandled;
+    @XmlAttribute
+    private Boolean logExhasted;
     @XmlAttribute
     private Boolean disableRedelivery;
 
@@ -97,6 +105,18 @@ public class RedeliveryPolicyDefinition {
         }
         if (logStackTrace != null) {
             answer.setLogStackTrace(logStackTrace);
+        }
+        if (logRetryStackTrace != null) {
+            answer.setLogRetryStackTrace(logRetryStackTrace);
+        }
+        if (logHandled != null) {
+            answer.setLogHandled(logHandled);
+        }
+        if (logRetryAttempted != null) {
+            answer.setLogRetryAttempted(logRetryAttempted);
+        }
+        if (logExhasted != null) {
+            answer.setLogExhausted(logExhasted);
         }
         if (disableRedelivery != null && disableRedelivery) {
             answer.setMaximumRedeliveries(0);
@@ -178,9 +198,10 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
-     * Sets wheter stack traces should be logged, can be used to reduce verbose.
+     * Sets whether stack traces should be logged.
+     * Can be used to include or reduce verbose.
      *
-     * @param logStackTrace  wheter stack traces should be logged or not
+     * @param logStackTrace  whether stack traces should be logged or not
      * @return the builder
      */
     public RedeliveryPolicyDefinition logStackTrace(boolean logStackTrace) {
@@ -188,8 +209,54 @@ public class RedeliveryPolicyDefinition {
         return this;
     }
 
+    /**
+     * Sets whether stack traces should be logged when an retry attempt failed.
+     * Can be used to include or reduce verbose.
+     *
+     * @param logRetryStackTrace  whether stack traces should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logRetryStackTrace(boolean logRetryStackTrace) {
+        setLogRetryStackTrace(logRetryStackTrace);
+        return this;
+    }
 
-        
+    /**
+     * Sets whether retry attempts should be logged or not
+     * Can be used to include or reduce verbose.
+     *
+     * @param logRetryAttempted  whether retry attempts should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logRetryAttempted(boolean logRetryAttempted) {
+        setLogRetryAttempted(logRetryAttempted);
+        return this;
+    }
+
+    /**
+     * Sets whether handled exceptions should be logged or not
+     * Can be used to include or reduce verbose.
+     *
+     * @param logHandled  whether handled exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logHandled(boolean logHandled) {
+        setLogHandled(logHandled);
+        return this;
+    }
+
+    /**
+     * Sets whether exhausted exceptions should be logged or not
+     * Can be used to include or reduce verbose.
+     *
+     * @param logExhausted  whether exhausted exceptions should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logExhausted(boolean logExhausted) {
+        setLogExhasted(logExhausted);
+        return this;
+    }
+
     /**
      * Sets the maximum redeliveries
      * <ul>
@@ -345,5 +412,37 @@ public class RedeliveryPolicyDefinition {
 
     public void setDisableRedelivery(Boolean disableRedelivery) {
         this.disableRedelivery = disableRedelivery;
+    }
+
+    public Boolean isLogRetryStackTrace() {
+        return logRetryStackTrace;
+    }
+
+    public void setLogRetryStackTrace(Boolean logRetryStackTrace) {
+        this.logRetryStackTrace = logRetryStackTrace;
+    }
+
+    public Boolean isLogHandled() {
+        return logHandled;
+    }
+
+    public void setLogHandled(Boolean logHandled) {
+        this.logHandled = logHandled;
+    }
+
+    public Boolean isLogRetryAttempted() {
+        return logRetryAttempted;
+    }
+
+    public void setLogRetryAttempted(Boolean logRetryAttempted) {
+        this.logRetryAttempted = logRetryAttempted;
+    }
+
+    public Boolean isLogExhasted() {
+        return logExhasted;
+    }
+
+    public void setLogExhasted(Boolean logExhasted) {
+        this.logExhasted = logExhasted;
     }
 }

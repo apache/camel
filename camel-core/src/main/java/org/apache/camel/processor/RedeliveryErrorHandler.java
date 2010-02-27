@@ -261,7 +261,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
                 + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e;
-        logFailedDelivery(true, exchange, msg, data, e);
+        logFailedDelivery(true, false, exchange, msg, data, e);
 
         data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
     }
@@ -300,10 +300,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // clear exception as we let the failure processor handle it
         exchange.setException(null);
 
+        boolean handled = false;
         if (data.handledPredicate != null && data.handledPredicate.matches(exchange)) {
             // its handled then remove traces of redelivery attempted
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+            handled = true;
         } else {
             // must decrement the redelivery counter as we didn't process the redelivery but is
             // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
@@ -345,7 +347,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         // log that we failed delivery as we are exhausted
-        logFailedDelivery(false, exchange, msg, data, null);
+        logFailedDelivery(false, handled, exchange, msg, data, null);
     }
 
     protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data) {
@@ -389,8 +391,23 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
-    private void logFailedDelivery(boolean shouldRedeliver, Exchange exchange, String message, RedeliveryData data, Throwable e) {
+    private void logFailedDelivery(boolean shouldRedeliver, boolean handled, Exchange exchange, String message, RedeliveryData data, Throwable e) {
         if (logger == null) {
+            return;
+        }
+
+        if (handled && !data.currentRedeliveryPolicy.isLogHandled()) {
+            // do not log handled
+            return;
+        }
+
+        if (shouldRedeliver && !data.currentRedeliveryPolicy.isLogRetryAttempted()) {
+            // do not log retry attempts
+            return;
+        }
+
+        if (!shouldRedeliver && !data.currentRedeliveryPolicy.isLogExhausted()) {
+            // do not log exhausted
             return;
         }
 

@@ -331,6 +331,46 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     }
 
     /**
+     * Sets whether to log stacktrace for failed messages.
+     */
+    public OnExceptionDefinition logStackTrace(boolean logStackTrace) {
+        getOrCreateRedeliveryPolicy().setLogStackTrace(logStackTrace);
+        return this;
+    }
+
+    /**
+     * Sets whether to log stacktrace for failed redelivery attempts
+     */
+    public OnExceptionDefinition logRetryStackTrace(boolean logRetryStackTrace) {
+        getOrCreateRedeliveryPolicy().setLogRetryStackTrace(logRetryStackTrace);
+        return this;
+    }
+
+    /**
+     * Sets whether to log errors even if its handled
+     */
+    public OnExceptionDefinition logHandled(boolean logHandled) {
+        getOrCreateRedeliveryPolicy().setLogHandled(logHandled);
+        return this;
+    }
+
+    /**
+     * Sets whether to log retry attempts
+     */
+    public OnExceptionDefinition logRetryAttempted(boolean logRetryAttempted) {
+        getOrCreateRedeliveryPolicy().setLogRetryAttempted(logRetryAttempted);
+        return this;
+    }
+
+    /**
+     * Sets whether to log exhausted exceptions
+     */
+    public OnExceptionDefinition logExhausted(boolean logExhausted) {
+        getOrCreateRedeliveryPolicy().setLogExhasted(logExhausted);
+        return this;
+    }
+
+    /**
      * Sets the maximum redeliveries
      * <ul>
      *   <li>5 = default value</li>

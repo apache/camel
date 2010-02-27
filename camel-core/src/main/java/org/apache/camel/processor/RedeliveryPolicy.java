@@ -45,8 +45,11 @@ import org.apache.commons.logging.LogFactory;
  *   <li>useCollisionAvoidance = false</li>
  *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
  *   <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
+ *   <li>logRetryAttempted = true</li>
  *   <li>logRetryStackTrace = false</li>
  *   <li>logStackTrace = true</li>
+ *   <li>logHandled = false</li>
+ *   <li>logExhausted = true</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -88,6 +91,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.DEBUG;
     protected boolean logStackTrace = true;
     protected boolean logRetryStackTrace;
+    protected boolean logHandled;
+    protected boolean logExhausted = true;
+    protected boolean logRetryAttempted = true;
     protected String delayPattern;
 
     public RedeliveryPolicy() {
@@ -100,8 +106,11 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
+            + ", logRetryAttempted=" + logRetryAttempted
             + ", logStackTrace=" + logStackTrace
             + ", logRetryStackTrace=" + logRetryStackTrace
+            + ", logHandled=" + logHandled
+            + ", logExhausted=" + logExhausted
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
@@ -296,10 +305,18 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     public RedeliveryPolicy retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
-    }    
-    
+    }
+
     /**
-     * Sets whether to log stacktraces for failed messages.
+     * Sets whether to log retry attempts
+     */
+    public RedeliveryPolicy logRetryAttempted(boolean logRetryAttempted) {
+        setLogRetryAttempted(logRetryAttempted);
+        return this;
+    }
+
+    /**
+     * Sets whether to log stacktrace for failed messages.
      */
     public RedeliveryPolicy logStackTrace(boolean logStackTrace) {
         setLogStackTrace(logStackTrace);
@@ -311,6 +328,22 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public RedeliveryPolicy logRetryStackTrace(boolean logRetryStackTrace) {
         setLogRetryStackTrace(logRetryStackTrace);
+        return this;
+    }
+
+    /**
+     * Sets whether to log errors even if its handled
+     */
+    public RedeliveryPolicy logHandled(boolean logHandled) {
+        setLogHandled(logHandled);
+        return this;
+    }
+
+    /**
+     * Sets whether to log exhausted errors
+     */
+    public RedeliveryPolicy logExhausted(boolean logExhausted) {
+        setLogExhausted(logExhausted);
         return this;
     }
 
@@ -494,4 +527,36 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         this.logRetryStackTrace = logRetryStackTrace;
     }
 
+    public boolean isLogHandled() {
+        return logHandled;
+    }
+
+    /**
+     * Sets whether errors should be logged even if its handled
+     */
+    public void setLogHandled(boolean logHandled) {
+        this.logHandled = logHandled;
+    }
+
+    public boolean isLogRetryAttempted() {
+        return logRetryAttempted;
+    }
+
+    /**
+     * Sets whether retry attempts should be logged or not
+     */
+    public void setLogRetryAttempted(boolean logRetryAttempted) {
+        this.logRetryAttempted = logRetryAttempted;
+    }
+
+    public boolean isLogExhausted() {
+        return logExhausted;
+    }
+
+    /**
+     * Sets whether exhausted exceptions should be logged or not
+     */
+    public void setLogExhausted(boolean logExhausted) {
+        this.logExhausted = logExhausted;
+    }
 }

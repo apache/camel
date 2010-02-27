@@ -131,6 +131,16 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DefaultErrorHandlerBuilder logHandled(boolean logHandled) {
+        getRedeliveryPolicy().setLogHandled(logHandled);
+        return this;
+    }
+
+    public DefaultErrorHandlerBuilder logExhausted(boolean logExhausted) {
+        getRedeliveryPolicy().setLogExhausted(logExhausted);
+        return this;
+    }
+
     /**
      * Sets whether the exchange should be marked as handled or not.
      *
