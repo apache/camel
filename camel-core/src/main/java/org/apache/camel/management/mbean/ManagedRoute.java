@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
@@ -126,5 +128,15 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     @ManagedOperation(description = "Stop Route")
     public void stop() throws Exception {
         context.stopRoute(getRouteId());
+    }
+
+    @ManagedOperation(description = "Graceful Shutdown Route")
+    public void shutdown() throws Exception {
+        context.shutdownRoute(getRouteId());
+    }
+
+    @ManagedOperation(description = "Graceful Shutdown Route using timeout in seconds")
+    public void shutdown(long timeout) throws Exception {
+        context.shutdownRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 }

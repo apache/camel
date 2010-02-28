@@ -34,7 +34,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     private static final transient Log LOG = LogFactory.getLog(DefaultInflightRepository.class);
     private final AtomicInteger totalCount = new AtomicInteger();
-    // us endpoint key as key so endpoints with lenient properties is registered using the same key (eg dynamic http endpoints)
+    // use endpoint key as key so endpoints with lenient properties is registered using the same key (eg dynamic http endpoints)
     private final ConcurrentHashMap<String, AtomicInteger> endpointCount = new ConcurrentHashMap<String, AtomicInteger>();
 
     public void add(Exchange exchange) {

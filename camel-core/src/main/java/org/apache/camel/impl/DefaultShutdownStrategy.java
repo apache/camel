@@ -66,13 +66,16 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private boolean shutdownNowOnTimeout = true;
 
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
+        shutdown(context, routes, getTimeout(), getTimeUnit());
+    }
 
+    public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
         long start = System.currentTimeMillis();
 
         if (timeout > 0) {
-            LOG.info("Starting to graceful shutdown routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase() + ")");
+            LOG.info("Starting to graceful shutdown " + routes.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase() + ")");
         } else {
-            LOG.info("Starting to graceful shutdown routes (no timeout)");
+            LOG.info("Starting to graceful shutdown " + routes.size() + " routes (no timeout)");
         }
 
         // use another thread to perform the shutdowns so we can support timeout
@@ -88,7 +91,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             future.cancel(true);
 
             if (shutdownNowOnTimeout) {
-                LOG.warn("Timeout occurred. Now forcing all routes to be shutdown now.");
+                LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
                 // force the routes to shutdown now
                 shutdownRoutesNow(routes);
             } else {
@@ -100,10 +103,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         long delta = System.currentTimeMillis() - start;
-        // convert to seconds as its easier to read than a big milli seconds number 
+        // convert to seconds as its easier to read than a big milli seconds number
         long seconds = TimeUnit.SECONDS.convert(delta, TimeUnit.MILLISECONDS);
 
-        LOG.info("Graceful shutdown of routes completed in " + seconds + " seconds");
+        LOG.info("Graceful shutdown of " + routes.size() + " routes completed in " + seconds + " seconds");
     }
 
     public void setTimeout(long timeout) {

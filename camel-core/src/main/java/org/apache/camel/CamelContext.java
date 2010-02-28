@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
@@ -321,7 +322,8 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     void startRoute(String routeId) throws Exception;
 
     /**
-     * Stops the given route. It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
+     * Stops the given route.
+     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
      * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
      *
      * @param route the route to stop
@@ -330,13 +332,36 @@ public interface CamelContext extends Service, RuntimeConfiguration {
     void stopRoute(RouteDefinition route) throws Exception;
 
     /**
-     * Stops the given route. It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
+     * Stops the given route.
+     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
      * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
      *
      * @param routeId the route id
      * @throws Exception is thrown if the route could not be stopped for whatever reason
      */
     void stopRoute(String routeId) throws Exception;
+
+    /**
+     * Shutdown the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
+     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
+     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     *
+     * @param routeId the route id
+     * @throws Exception is thrown if the route could not be shutdown for whatever reason
+     */
+    void shutdownRoute(String routeId) throws Exception;
+
+    /**
+     * Shutdown the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
+     * It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
+     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     *
+     * @param routeId the route id
+     * @param timeout   timeout
+     * @param timeUnit  the unit to use
+     * @throws Exception is thrown if the route could not be shutdown for whatever reason
+     */
+    void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
 
     /**
      * Returns the current status of the given route

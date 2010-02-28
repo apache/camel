@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
@@ -639,12 +640,35 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         stopRoute(route.idOrCreate(nodeIdFactory));
     }
 
-    /**
-     * Stops the route denoted by the given RouteType id
-     */
-    public synchronized void stopRoute(String key) throws Exception {
-        RouteService routeService = routeServices.get(key);
+    public synchronized void stopRoute(String routeId) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
+            routeService.stop();
+        }
+    }
+
+    public synchronized void shutdownRoute(String routeId) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            routes.add(order);
+
+            getShutdownStrategy().shutdown(this, routes);
+            // must stop route service as well
+            routeService.stop();
+        }
+    }
+
+    public synchronized void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
+        RouteService routeService = routeServices.get(routeId);
+        if (routeService != null) {
+            List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
+            RouteStartupOrder order = new DefaultRouteStartupOrder(1, routeService.getRoutes().iterator().next(), routeService);
+            routes.add(order);
+
+            getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
+            // must stop route service as well
             routeService.stop();
         }
     }
