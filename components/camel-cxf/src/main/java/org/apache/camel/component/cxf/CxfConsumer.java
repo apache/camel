@@ -93,23 +93,30 @@ public class CxfConsumer extends DefaultConsumer {
                     throw new Fault(e);
                 }
                 
-                // check failure
+                checkFailure(camelExchange);
+              
+                // bind the Camel response into a CXF response
+                if (camelExchange.getPattern().isOutCapable()) {
+                    binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
+                }
+                
+                // check failure again as fault could be discovered by converter
+                checkFailure(camelExchange);
+
+                // copy the headers javax.xml.ws header back
+                binding.copyJaxWsContext(cxfExchange, context);
+                // response should have been set in outMessage's content
+                return null;
+            }
+
+            private void checkFailure(org.apache.camel.Exchange camelExchange) throws Fault {
                 if (camelExchange.isFailed()) {
                     // either Fault or Exception
                     Throwable t = (camelExchange.hasOut() && camelExchange.getOut().isFault()) 
                         ? (Throwable)camelExchange.getOut().getBody() : camelExchange.getException();
                     throw (t instanceof Fault) ? (Fault)t : new Fault(t);
                 }
-                
-                // bind the Camel response into a CXF response
-                if (camelExchange.getPattern().isOutCapable()) {
-                    binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
-                }
-                
-                // copy the headers javax.xml.ws header back
-                binding.copyJaxWsContext(cxfExchange, context);
-                // response should have been set in outMessage's content
-                return null;
+                                
             }
             
         });

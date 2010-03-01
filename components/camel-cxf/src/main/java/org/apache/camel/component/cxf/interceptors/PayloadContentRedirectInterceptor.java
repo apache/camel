@@ -17,6 +17,8 @@
 package org.apache.camel.component.cxf.interceptors;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -30,6 +32,7 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.staxutils.StaxUtils;
 
 public class PayloadContentRedirectInterceptor extends AbstractPhaseInterceptor<Message> {
+    private static final Logger LOG = Logger.getLogger(PayloadContentRedirectInterceptor.class.getName());
 
     public PayloadContentRedirectInterceptor() {
         super(Phase.POST_STREAM);
@@ -37,18 +40,25 @@ public class PayloadContentRedirectInterceptor extends AbstractPhaseInterceptor<
 
     @SuppressWarnings("unchecked")
     public void handleMessage(Message message) throws Fault {
-        // check the fault from the message
-        Throwable ex = message.getContent(Throwable.class);
-        if (ex != null) {
-            if (ex instanceof Fault) {
-                throw (Fault)ex;
-            } else {
-                throw new Fault(ex);
+        
+        XMLStreamWriter out = message.getContent(XMLStreamWriter.class);
+
+        if (out == null) {
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("XMLStreamWriter is null");
             }
+            return;
         }
 
-        XMLStreamWriter out = message.getContent(XMLStreamWriter.class);
         List<Element> in = message.get(List.class);
+
+        if (in == null) {
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("Payload List is null");
+            }
+            return;
+        }
+
         try {
             for (Element el : in) {
                 StaxUtils.writeElement(el, out, false, true);
@@ -56,5 +66,6 @@ public class PayloadContentRedirectInterceptor extends AbstractPhaseInterceptor<
         } catch (XMLStreamException e) {
             throw new Fault(e);
         }
+        
     }
 }

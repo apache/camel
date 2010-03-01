@@ -27,6 +27,7 @@ import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
+import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,6 +88,41 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         Holder<String> name2 = new Holder<String>();
         client2.getPerson(personId2, ssn2, name2);
         assertEquals("Bonjour", name2.value);
+    }
+    
+    @Test
+    public void testSoapFaultRoutes() {
+        URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
+        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first",
+                                                                "PersonService"));
+        // test message mode
+        Person client = ss.getSoap();
+        Holder<String> personId = new Holder<String>();
+        personId.value = "";
+        Holder<String> ssn = new Holder<String>();
+        Holder<String> name = new Holder<String>();
+        Throwable t = null;
+        try {
+            client.getPerson(personId, ssn, name);
+            fail("Expect exception");
+        } catch (UnknownPersonFault e) {
+            t = e;
+        }
+        assertTrue(t instanceof UnknownPersonFault);
+
+        // test PAYLOAD mode
+        Person client2 = ss.getSoap2();
+        Holder<String> personId2 = new Holder<String>();
+        personId2.value = "";
+        Holder<String> ssn2 = new Holder<String>();
+        Holder<String> name2 = new Holder<String>();
+        try {
+            client2.getPerson(personId2, ssn2, name2);
+            fail("Expect exception");
+        } catch (UnknownPersonFault e) {
+            t = e;
+        }
+        assertTrue(t instanceof UnknownPersonFault);
     }
 
 

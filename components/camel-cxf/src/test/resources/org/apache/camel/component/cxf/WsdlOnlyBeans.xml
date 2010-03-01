@@ -56,15 +56,9 @@
                    xmlns:person="http://camel.apache.org/wsdl-first">
    </cxf:cxfEndpoint>
    
-
-    <!-- setup our error handler as the deal letter channel -->
-    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetterUri" value="mock:error"/>
-    </bean>
-
    <bean id="processor" class="org.apache.camel.processor.Logger"/>
 
-   <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
       <route>
          <from uri="cxf:bean:routerEndpoint?dataFormat=MESSAGE" />
          <to uri="cxf:bean:serviceEndpoint?dataFormat=MESSAGE" />
