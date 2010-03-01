@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
@@ -161,6 +162,10 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false);
         // add the aggregated size property as the only property we want to retain
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_SIZE, exchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class));
+        // persist the from endpoint as well
+        if (exchange.getFromEndpoint() != null) {
+            DefaultExchangeHolder.addProperty(pe, "CamelAggregatedFromEndpoint", exchange.getFromEndpoint().getEndpointUri());
+        }
         exchangeMarshaller.writePayload(pe, baos);
         return baos.toBuffer();
     }
@@ -170,6 +175,14 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         DefaultExchangeHolder pe = exchangeMarshaller.readPayload(bais);
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
+        // restore the from endpoint
+        String fromEndpointUri = (String) answer.removeProperty("CamelAggregatedFromEndpoint");
+        if (fromEndpointUri != null) {
+            Endpoint fromEndpoint = camelContext.hasEndpoint(fromEndpointUri);
+            if (fromEndpoint != null) {
+                answer.setFromEndpoint(fromEndpoint);
+            }
+        }
         return answer;
     }
 

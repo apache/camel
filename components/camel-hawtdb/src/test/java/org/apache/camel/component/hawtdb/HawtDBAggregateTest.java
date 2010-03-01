@@ -43,6 +43,9 @@ public class HawtDBAggregateTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
         assertMockEndpointsSatisfied();
+
+        // from endpoint should be preserved
+        assertEquals("direct://start", mock.getReceivedExchanges().get(0).getFromEndpoint().getEndpointUri());
     }
 
     @Override
