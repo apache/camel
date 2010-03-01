@@ -225,6 +225,15 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- for http component tests -->
+    	<dependency>
+    		<groupId>org.apache.httpcomponents</groupId>
+    		<artifactId>httpclient</artifactId>
+    		<version>${httpclient4-version}</version>
+    		<classifier>tests</classifier>
+    		<scope>test</scope>
+    	</dependency>
     </dependencies>
 
     <build>

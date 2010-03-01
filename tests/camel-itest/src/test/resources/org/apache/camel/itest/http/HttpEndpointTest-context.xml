@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    <!-- START SNIPPET: e1 -->
+    <bean id="httpEndpoint" class="org.apache.camel.component.http.HttpEndpoint">
+        <property name="httpUri" value="http://127.0.0.1:18080/"/>
+        <property name="clientParams" ref="clientParams"/>
+        <property name="clientConnectionManager" ref="clientConnectionManager"/>
+    </bean>
+
+    <bean id="clientParams" class="org.apache.http.params.BasicHttpParams" />
+    
+    <bean id="clientConnectionManager" class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
+        <constructor-arg ref="clientParams"/>
+        <constructor-arg ref="schemeRegistry"/>
+    </bean>
+    
+    <bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
+    
+    <bean id="http" class="org.apache.http.conn.scheme.Scheme">
+    	<constructor-arg value="http" />
+    	<constructor-arg>
+    		<bean class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
+    	</constructor-arg>
+    	<constructor-arg value="80" />
+    </bean>
+    
+    <bean id="schemeRegistry" class="org.apache.http.conn.scheme.SchemeRegistry" />
+    
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    	<property name="targetObject" ref="schemeRegistry"/>
+		<property name="targetMethod" value="register"/>
+    	<property name="arguments">
+    		<list>
+    			<ref bean="http"/>
+    		</list>
+    	</property>
+    </bean>
+    <!-- END SNIPPET: e1 -->
+
+    <!-- START SNIPPET: e2 -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
+        <route>
+            <from uri="direct:start"/>
+            <to uri="httpEndpoint"/>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: e2 -->
+
+</beans>
