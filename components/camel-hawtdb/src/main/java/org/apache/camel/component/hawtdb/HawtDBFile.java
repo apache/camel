@@ -60,6 +60,10 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
     }
 
     public void start() {
+        if (getFile() == null) {
+            throw new IllegalArgumentException("A file must be configured");
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Starting HawtDB using file: " + getFile());
         }

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,24 +28,62 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HawtDBAggregateTest extends CamelTestSupport {
+/**
+ * @version $Revision$
+ */
+public class HawtDBAggregateConcurrentSameGroupTest extends CamelTestSupport {
+
+    private HawtDBFile hawtDBFile;
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
+        File file = new File("target/data/hawtdb.dat");
+        hawtDBFile = new HawtDBFile();
+        hawtDBFile.setFile(file);
+        hawtDBFile.start();
+
         super.setUp();
     }
 
-    @Test
-    public void testHawtDBAggregate() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregated");
-        mock.expectedBodiesReceived("ABCDE");
+    @Override
+    public void tearDown() throws Exception {
+        hawtDBFile.stop();
+        super.tearDown();
+    }
 
-        template.sendBodyAndHeader("direct:start", "A", "id", 123);
-        template.sendBodyAndHeader("direct:start", "B", "id", 123);
-        template.sendBodyAndHeader("direct:start", "C", "id", 123);
-        template.sendBodyAndHeader("direct:start", "D", "id", 123);
-        template.sendBodyAndHeader("direct:start", "E", "id", 123);
+    @Test
+    public void testNoConcurrentProducers() throws Exception {
+        doSendMessages(1, 1);
+    }
+
+    @Test
+    public void testConcurrentProducers() throws Exception {
+        doSendMessages(10, 5);
+    }
+
+    @Test
+    public void testMoreConcurrentProducers() throws Exception {
+        doSendMessages(50, 10);
+    }
+
+    private void doSendMessages(int files, int poolSize) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:aggregated");
+        mock.expectedMessageCount(1);
+        // match number of expected numbers
+        mock.message(0).body(String.class).regex("[0-9]{" + files + "}");
+
+        ExecutorService executor = Executors.newFixedThreadPool(poolSize);
+        for (int i = 0; i < files; i++) {
+            final int index = i;
+            executor.submit(new Callable<Object>() {
+                public Object call() throws Exception {
+                    int idx = index % 10;
+                    template.sendBodyAndHeader("direct:start", idx, "id", 123);
+                    return null;
+                }
+            });
+        }
 
         assertMockEndpointsSatisfied();
     }
@@ -48,24 +91,20 @@ public class HawtDBAggregateTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
-            // START SNIPPET: e1
             public void configure() throws Exception {
-                // create the hawtdb repo
-                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
+                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
+                repo.setHawtDBFile(hawtDBFile);
+                repo.setRepositoryName("repo1");
 
-                // here is the Camel route where we aggregate
                 from("direct:start")
                     .aggregate(header("id"), new MyAggregationStrategy())
-                        // use our created hawtdb repo as aggregation repository
-                        .completionSize(5).aggregationRepository(repo)
+                        .completionTimeout(3000).aggregationRepository(repo)
                         .to("mock:aggregated");
             }
-            // END SNIPPET: e1
         };
     }
 
-    public static class MyAggregationStrategy implements AggregationStrategy {
+    private class MyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
@@ -78,4 +117,5 @@ public class HawtDBAggregateTest extends CamelTestSupport {
             return oldExchange;
         }
     }
+
 }

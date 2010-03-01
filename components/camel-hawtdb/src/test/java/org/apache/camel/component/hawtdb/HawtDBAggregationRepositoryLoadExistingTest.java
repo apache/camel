@@ -46,8 +46,8 @@ public class HawtDBAggregationRepositoryLoadExistingTest extends CamelTestSuppor
     @Test
     public void testExisting() throws Exception {
         HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
-        repo.setFile(hawtDBFile);
-        repo.setName("repo1");
+        repo.setHawtDBFile(hawtDBFile);
+        repo.setRepositoryName("repo1");
 
         // Store it..
         Exchange exchange1 = new DefaultExchange(context);

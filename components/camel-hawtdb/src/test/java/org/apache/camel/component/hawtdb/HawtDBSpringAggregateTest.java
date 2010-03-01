@@ -17,18 +17,24 @@
 package org.apache.camel.component.hawtdb;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class HawtDBAggregateTest extends CamelTestSupport {
+public class HawtDBSpringAggregateTest extends CamelSpringTestSupport {
 
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();
+    }
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/hawtdb/HawtDBSpringAggregateTest.xml");
     }
 
     @Test
@@ -45,26 +51,6 @@ public class HawtDBAggregateTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            // START SNIPPET: e1
-            public void configure() throws Exception {
-                // create the hawtdb repo
-                HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
-
-                // here is the Camel route where we aggregate
-                from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        // use our created hawtdb repo as aggregation repository
-                        .completionSize(5).aggregationRepository(repo)
-                        .to("mock:aggregated");
-            }
-            // END SNIPPET: e1
-        };
-    }
-
     public static class MyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -78,4 +64,5 @@ public class HawtDBAggregateTest extends CamelTestSupport {
             return oldExchange;
         }
     }
+
 }

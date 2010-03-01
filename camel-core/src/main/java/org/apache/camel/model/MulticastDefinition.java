@@ -157,6 +157,9 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
         }
         if (executorServiceRef != null) {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+            if (executorService == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+            }
         }
 
         return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executorService,

@@ -47,8 +47,8 @@ public class HawtDBExchangeSerializationTest extends CamelTestSupport {
     @Test
     public void testExchangeSerialization() {
         HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
-        repo.setFile(hawtDBFile);
-        repo.setName("repo1");
+        repo.setHawtDBFile(hawtDBFile);
+        repo.setRepositoryName("repo1");
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello World");

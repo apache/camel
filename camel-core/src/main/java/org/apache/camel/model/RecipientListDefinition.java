@@ -117,6 +117,9 @@ public class RecipientListDefinition extends ExpressionNode {
     private ExecutorService createExecutorService(RouteContext routeContext) {
         if (executorService == null && executorServiceRef != null) {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+            if (executorService == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+            }
         }
         if (executorService == null) {
             // fall back and use default

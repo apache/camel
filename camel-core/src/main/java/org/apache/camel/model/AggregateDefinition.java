@@ -213,6 +213,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         AggregationRepository repository = getAggregationRepository();
         if (repository == null && aggregationRepositoryRef != null) {
             repository = routeContext.lookup(aggregationRepositoryRef, AggregationRepository.class);
+            if (repository == null) {
+                throw new IllegalArgumentException("AggregationRepositoryRef " + aggregationRepositoryRef + " not found in registry.");
+            }
         }
         return repository;
     }
@@ -220,6 +223,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private ExecutorService createExecutorService(RouteContext routeContext) {
         if (executorService == null && executorServiceRef != null) {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+            if (executorService == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+            }
         }
         return executorService;
     }

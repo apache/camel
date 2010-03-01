@@ -46,12 +46,12 @@ public class HawtDBAggregationRepositoryMultipleRepoTest extends CamelTestSuppor
     @Test
     public void testMultipeRepo() {
         HawtDBAggregationRepository<String> repo1 = new HawtDBAggregationRepository<String>();
-        repo1.setFile(hawtDBFile);
-        repo1.setName("repo1");
+        repo1.setHawtDBFile(hawtDBFile);
+        repo1.setRepositoryName("repo1");
 
         HawtDBAggregationRepository<String> repo2 = new HawtDBAggregationRepository<String>();
-        repo2.setFile(hawtDBFile);
-        repo2.setName("repo2");
+        repo2.setHawtDBFile(hawtDBFile);
+        repo2.setRepositoryName("repo2");
 
         // Can't get something we have not put in...
         Exchange actual = repo1.get(context, "missing");
@@ -98,12 +98,12 @@ public class HawtDBAggregationRepositoryMultipleRepoTest extends CamelTestSuppor
     @Test
     public void testMultipeRepoSameKeyDifferentContent() {
         HawtDBAggregationRepository<String> repo1 = new HawtDBAggregationRepository<String>();
-        repo1.setFile(hawtDBFile);
-        repo1.setName("repo1");
+        repo1.setHawtDBFile(hawtDBFile);
+        repo1.setRepositoryName("repo1");
 
         HawtDBAggregationRepository<String> repo2 = new HawtDBAggregationRepository<String>();
-        repo2.setFile(hawtDBFile);
-        repo2.setName("repo2");
+        repo2.setHawtDBFile(hawtDBFile);
+        repo2.setRepositoryName("repo2");
 
         Exchange exchange1 = new DefaultExchange(context);
         exchange1.getIn().setBody("Hello World");

@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
 import org.fusesource.hawtdb.util.buffer.Buffer;
@@ -34,12 +38,58 @@ import org.fusesource.hawtdb.util.marshaller.ObjectMarshaller;
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
  */
-public class HawtDBAggregationRepository<K> implements AggregationRepository<K> {
+public class HawtDBAggregationRepository<K> extends ServiceSupport implements AggregationRepository<K> {
 
-    private HawtDBFile file;
-    private String name;
+    private HawtDBFile hawtDBFile;
+    private String persistentFileName;
+    private String repositoryName;
+    private boolean sync;
     private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>();
     private Marshaller<DefaultExchangeHolder> exchangeMarshaller = new ObjectMarshaller<DefaultExchangeHolder>();
+
+    /**
+     * Creates an aggregation repository
+     */
+    public HawtDBAggregationRepository() {
+    }
+
+    /**
+     * Creates an aggregation repository
+     *
+     * @param repositoryName the repository name
+     */
+    public HawtDBAggregationRepository(String repositoryName) {
+        ObjectHelper.notEmpty(repositoryName, "name");
+        this.repositoryName = repositoryName;
+    }
+
+    /**
+     * Creates an aggregation repository using a new {@link org.apache.camel.component.hawtdb.HawtDBFile}
+     * that persists using the provided file.
+     *
+     * @param repositoryName the repository name
+     * @param persistentFileName the persistent store filename
+     */
+    public HawtDBAggregationRepository(String repositoryName, String persistentFileName) {
+        ObjectHelper.notEmpty(repositoryName, "name");
+        ObjectHelper.notEmpty(persistentFileName, "fileName");
+        this.hawtDBFile = new HawtDBFile();
+        this.hawtDBFile.setFile(new File(persistentFileName));
+        this.repositoryName = repositoryName;
+    }
+
+    /**
+     * Creates an aggregation repository using the provided {@link org.apache.camel.component.hawtdb.HawtDBFile}.
+     *
+     * @param repositoryName the repository name
+     * @param hawtDBFile the hawtdb file to use as persistent store
+     */
+    public HawtDBAggregationRepository(String repositoryName, HawtDBFile hawtDBFile) {
+        ObjectHelper.notEmpty(repositoryName, "name");
+        ObjectHelper.notNull(hawtDBFile, "HawtDBFile");
+        this.hawtDBFile = hawtDBFile;
+        this.repositoryName = repositoryName;
+    }
 
     public Exchange add(CamelContext camelContext, K key, Exchange exchange) {
         try {
@@ -50,19 +100,19 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
             // early marshaling.
             final Buffer keyBuffer = marshallKey(key);
             final Buffer exchangeBuffer = marshallExchange(camelContext, exchange);
-            Buffer rc = file.execute(new Work<Buffer>() {
+            Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> index = file.getRepositoryIndex(tx, name);
+                    Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
                     return index.put(keyBuffer, exchangeBuffer);
                 }
             });
             if (rc == null) {
                 return null;
             }
-            // TODO: We can improve performance by not returning the old when adding
+            // we can improve performance by not returning the old when adding
             return unmarshallExchange(camelContext, rc);
         } catch (IOException e) {
-            throw new RuntimeException("Error adding to repository " + name + " with key " + key, e);
+            throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
         }
     }
 
@@ -70,9 +120,9 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
     public Exchange get(CamelContext camelContext, K key) {
         try {
             final Buffer keyBuffer = marshallKey(key);
-            Buffer rc = file.execute(new Work<Buffer>() {
+            Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> index = file.getRepositoryIndex(tx, name);
+                    Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
                     return index.get(keyBuffer);
                 }
             });
@@ -81,21 +131,21 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
             }
             return unmarshallExchange(camelContext, rc);
         } catch (IOException e) {
-            throw new RuntimeException("Error getting key " + key + " from repository " + name, e);
+            throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
         }
     }
 
     public void remove(CamelContext camelContext, K key) {
         try {
             final Buffer keyBuffer = marshallKey(key);
-            file.execute(new Work<Buffer>() {
+            hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
-                    Index<Buffer, Buffer> index = file.getRepositoryIndex(tx, name);
+                    Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
                     return index.remove(keyBuffer);
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException("Error removing key " + key + " from repository " + name, e);
+            throw new RuntimeException("Error removing key " + key + " from repository " + repositoryName, e);
         }
     }
 
@@ -123,20 +173,56 @@ public class HawtDBAggregationRepository<K> implements AggregationRepository<K> 
         return answer;
     }
 
-    public HawtDBFile getFile() {
-        return file;
+    public HawtDBFile getHawtDBFile() {
+        return hawtDBFile;
     }
 
-    public void setFile(HawtDBFile file) {
-        this.file = file;
+    public void setHawtDBFile(HawtDBFile hawtDBFile) {
+        this.hawtDBFile = hawtDBFile;
     }
 
-    public String getName() {
-        return name;
+    public String getRepositoryName() {
+        return repositoryName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRepositoryName(String repositoryName) {
+        this.repositoryName = repositoryName;
+    }
+
+    public String getPersistentFileName() {
+        return persistentFileName;
+    }
+
+    public void setPersistentFileName(String persistentFileName) {
+        this.persistentFileName = persistentFileName;
+    }
+
+    public boolean isSync() {
+        return sync;
+    }
+
+    public void setSync(boolean sync) {
+        this.sync = sync;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // either we have a HawtDB configured or we use a provided fileName
+        if (hawtDBFile == null && persistentFileName != null) {
+            hawtDBFile = new HawtDBFile();
+            hawtDBFile.setFile(new File(persistentFileName));
+            hawtDBFile.setSync(isSync());
+        }
+
+        ObjectHelper.notNull(hawtDBFile, "Either set a persistentFileName or a hawtDBFile");
+        ObjectHelper.notNull(repositoryName, "repositoryName");
+
+        ServiceHelper.startService(hawtDBFile);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(hawtDBFile);
     }
 
 }
