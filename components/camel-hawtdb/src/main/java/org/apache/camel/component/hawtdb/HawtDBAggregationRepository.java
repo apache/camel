@@ -28,6 +28,8 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
 import org.fusesource.hawtdb.util.buffer.Buffer;
@@ -41,6 +43,7 @@ import org.fusesource.hawtdb.util.marshaller.ObjectMarshaller;
  */
 public class HawtDBAggregationRepository<K> extends ServiceSupport implements AggregationRepository<K> {
 
+    private static final transient Log LOG = LogFactory.getLog(HawtDBAggregationRepository.class);
     private HawtDBFile hawtDBFile;
     private String persistentFileName;
     private String repositoryName;
@@ -93,6 +96,9 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     }
 
     public Exchange add(CamelContext camelContext, K key, Exchange exchange) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Adding key   [" + key + "] -> " + exchange);
+        }
         try {
             // If we could guarantee that the key and exchange are immutable,
             // then we could have stuck them directly into the index, 
@@ -111,14 +117,17 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
                 return null;
             }
             // we can improve performance by not returning the old when adding
-            return unmarshallExchange(camelContext, rc);
+            // return unmarshallExchange(camelContext, rc);
         } catch (IOException e) {
             throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
         }
+
+        return null;
     }
 
 
     public Exchange get(CamelContext camelContext, K key) {
+        Exchange answer = null;
         try {
             final Buffer keyBuffer = marshallKey(key);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
@@ -127,16 +136,23 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
                     return index.get(keyBuffer);
                 }
             });
-            if (rc == null) {
-                return null;
+            if (rc != null) {
+                answer = unmarshallExchange(camelContext, rc);
             }
-            return unmarshallExchange(camelContext, rc);
         } catch (IOException e) {
             throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
         }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Getting key  [" + key + "] -> " + answer);
+        }
+        return answer;
     }
 
     public void remove(CamelContext camelContext, K key) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Removing key [" + key + "]");
+        }
         try {
             final Buffer keyBuffer = marshallKey(key);
             hawtDBFile.execute(new Work<Buffer>() {
