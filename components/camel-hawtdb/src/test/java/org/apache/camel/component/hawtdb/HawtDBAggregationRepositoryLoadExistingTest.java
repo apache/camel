@@ -48,6 +48,7 @@ public class HawtDBAggregationRepositoryLoadExistingTest extends CamelTestSuppor
         HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>();
         repo.setHawtDBFile(hawtDBFile);
         repo.setRepositoryName("repo1");
+        repo.setReturnOldExchange(true);
 
         // Store it..
         Exchange exchange1 = new DefaultExchange(context);

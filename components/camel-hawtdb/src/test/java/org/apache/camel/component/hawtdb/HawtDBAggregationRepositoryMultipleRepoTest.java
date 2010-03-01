@@ -48,10 +48,12 @@ public class HawtDBAggregationRepositoryMultipleRepoTest extends CamelTestSuppor
         HawtDBAggregationRepository<String> repo1 = new HawtDBAggregationRepository<String>();
         repo1.setHawtDBFile(hawtDBFile);
         repo1.setRepositoryName("repo1");
+        repo1.setReturnOldExchange(true);
 
         HawtDBAggregationRepository<String> repo2 = new HawtDBAggregationRepository<String>();
         repo2.setHawtDBFile(hawtDBFile);
         repo2.setRepositoryName("repo2");
+        repo2.setReturnOldExchange(true);
 
         // Can't get something we have not put in...
         Exchange actual = repo1.get(context, "missing");

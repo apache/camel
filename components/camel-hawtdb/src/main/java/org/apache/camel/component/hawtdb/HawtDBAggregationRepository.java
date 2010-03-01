@@ -48,6 +48,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private String persistentFileName;
     private String repositoryName;
     private boolean sync;
+    private boolean returnOldExchange;
     private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>();
     private Marshaller<DefaultExchangeHolder> exchangeMarshaller = new ObjectMarshaller<DefaultExchangeHolder>();
 
@@ -116,8 +117,11 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
             if (rc == null) {
                 return null;
             }
-            // we can improve performance by not returning the old when adding
-            // return unmarshallExchange(camelContext, rc);
+
+            // only return old exchange if enabled
+            if (isReturnOldExchange()) {
+                return unmarshallExchange(camelContext, rc);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
         }
@@ -232,6 +236,14 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
 
     public void setSync(boolean sync) {
         this.sync = sync;
+    }
+
+    public boolean isReturnOldExchange() {
+        return returnOldExchange;
+    }
+
+    public void setReturnOldExchange(boolean returnOldExchange) {
+        this.returnOldExchange = returnOldExchange;
     }
 
     @Override
