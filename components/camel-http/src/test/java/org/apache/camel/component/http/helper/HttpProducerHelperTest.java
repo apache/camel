@@ -132,24 +132,24 @@ public class HttpProducerHelperTest {
         Exchange exchange = new DefaultExchange(context);
         Message inMsg = exchange.getIn();
         if (httpQuery != null) {
-            inMsg.setHeader("CamelHttpQuery", httpQuery);
+            inMsg.setHeader(Exchange.HTTP_QUERY, httpQuery);
         }
         if (httpMethod != null) {
-            inMsg.setHeader("CamelHttpMethod", httpMethod);
+            inMsg.setHeader(Exchange.HTTP_METHOD, httpMethod);
         }
 
         return exchange;
     }
 
-    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath) {
+    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath) throws URISyntaxException {
         CamelContext context = new DefaultCamelContext();
-        Exchange exchange = new DefaultExchange(context);
+        DefaultExchange exchange = new DefaultExchange(context);
         Message inMsg = exchange.getIn();
         if (endpointURI != null) {
-            inMsg.setHeader("CamelHttpUri", endpointURI);
+            inMsg.setHeader(Exchange.HTTP_URI, endpointURI);
         }
         if (httpPath != null) {
-            inMsg.setHeader("CamelHttpPath", httpPath);
+            inMsg.setHeader(Exchange.HTTP_PATH, httpPath);
         }
 
         return exchange;
