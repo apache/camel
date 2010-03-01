@@ -299,7 +299,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                     if (shutdown) {
                         // if we are to shutdown then check whether we can suspend instead as its a more
-                        // gentle wat to graceful shutdown
+                        // gentle way to graceful shutdown
 
                         // some consumers do not support shutting down so let them decide
                         // if a consumer is suspendable then prefer to use that and then shutdown later

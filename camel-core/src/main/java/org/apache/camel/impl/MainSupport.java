@@ -80,7 +80,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("d", "duration",
-                "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
+                "Sets the time duration that the application will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
                 "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 String value = parameter.toUpperCase();
@@ -113,13 +113,29 @@ public abstract class MainSupport extends ServiceSupport {
             // if we have an issue starting the propagate exception to caller
             start();
             try {
-                // while running then just log errors
+                afterStart();
                 waitUntilCompleted();
+                beforeStop();
                 stop();
             } catch (Exception e) {
+                // while running then just log errors
                 LOG.error("Failed: " + e, e);
             }
         }
+    }
+
+    /**
+     * Callback to run custom logic after CamelContext has been started
+     */
+    protected void afterStart() {
+        // noop
+    }
+
+    /**
+     * Callback to run custom logic before CamelContext is being stopped
+     */
+    protected void beforeStop() {
+        // noop
     }
 
     /**
@@ -129,6 +145,8 @@ public abstract class MainSupport extends ServiceSupport {
         completed.set(true);
         latch.countDown();
     }
+
+
 
     /**
      * Displays the command line options
@@ -319,7 +337,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected void postProcessContext() throws Exception {
         Map<String, CamelContext> map = getCamelContextMap();
         if (map.size() == 0) {
-            throw new CamelException("Can't find any Camel Context from the Application Context. Please check your Application Context setting");
+            throw new CamelException("Cannot find any Camel Context from the Application Context. Please check your Application Context setting");
         }
         Set<Map.Entry<String, CamelContext>> entries = map.entrySet();
         int size = entries.size();
@@ -328,7 +346,7 @@ public abstract class MainSupport extends ServiceSupport {
             CamelContext camelContext = entry.getValue();
             camelContexts.add(camelContext);
             generateDot(name, camelContext, size);
-            postProcesCamelContext(camelContext);
+            postProcessCamelContext(camelContext);
         }
 
         if (isAggregateDot()) {
@@ -377,7 +395,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    protected void postProcesCamelContext(CamelContext camelContext) throws Exception {
+    protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         for (RouteBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
         }
