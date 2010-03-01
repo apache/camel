@@ -73,10 +73,10 @@ public final class HttpProducerHelper {
                             path = path.substring(1);
                         }
                     } else {
-                        throw new RuntimeCamelException("Can't anylze the Exchange.HTTP_PATH header, due to: can't find the right HTTP_BASE_URI");
+                        throw new RuntimeCamelException("Cannot analyze the Exchange.HTTP_PATH header, due to: cannot find the right HTTP_BASE_URI");
                     }
                 } catch (Throwable t) {
-                    throw new RuntimeCamelException("Can't anylze the Exchange.HTTP_PATH header, due to: "
+                    throw new RuntimeCamelException("Cannot analyze the Exchange.HTTP_PATH header, due to: "
                                                     + t.getMessage(), t);
                 }
 
