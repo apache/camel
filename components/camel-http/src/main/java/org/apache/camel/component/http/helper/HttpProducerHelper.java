@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.http.helper;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpMethods;
 
@@ -47,18 +51,44 @@ public final class HttpProducerHelper {
         }
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
-        // when the endpoint is not working as a bridge
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         if (path != null) {
-            // make sure that there is exactly one "/" between HTTP_URI and
-            // HTTP_PATH
-            if (!uri.endsWith("/")) {
-                uri = uri + "/";
-            }
             if (path.startsWith("/")) {
-                path = path.substring(1);
+                URI baseURI;
+                String baseURIString = exchange.getIn().getHeader(Exchange.HTTP_BASE_URI, String.class);
+                try {
+                    if (baseURIString == null) {
+                        if (exchange.getFromEndpoint() != null) {
+                            baseURIString = exchange.getFromEndpoint().getEndpointUri();
+                        } else {
+                            // will set a default one for it
+                            baseURIString = "/";
+                        }
+                    }
+                    baseURI = new URI(baseURIString);
+                    String basePath = baseURI.getPath();
+                    if (path.startsWith(basePath)) {
+                        path = path.substring(basePath.length());
+                        if (path.startsWith("/")) {
+                            path = path.substring(1);
+                        }
+                    } else {
+                        throw new RuntimeCamelException("Can't anylze the Exchange.HTTP_PATH header, due to: can't find the right HTTP_BASE_URI");
+                    }
+                } catch (Throwable t) {
+                    throw new RuntimeCamelException("Can't anylze the Exchange.HTTP_PATH header, due to: "
+                                                    + t.getMessage(), t);
+                }
+
             }
-            uri = uri.concat(path);
+            if (path.length() > 0) {
+                // make sure that there is exactly one "/" between HTTP_URI and
+                // HTTP_PATH
+                if (!uri.endsWith("/")) {
+                    uri = uri + "/";
+                }
+                uri = uri.concat(path);
+            }
         }
 
         return uri;
