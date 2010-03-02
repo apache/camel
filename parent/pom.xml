@@ -548,6 +548,11 @@
 
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-aggregate</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-bam</artifactId>
         <version>${project.version}</version>
       </dependency>
