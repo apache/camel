@@ -57,9 +57,9 @@ public class SoapClientTest extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     public void testRoundTrip() throws Exception {
         context.setTracing(true);
-        Endpoint start = context.getEndpoint("direct:start");
-        proxy = ProxyHelper.createProxy(start,
-                this.getClass().getClassLoader(), CustomerService.class);
+        Endpoint startEndpoint = context.getEndpoint("direct:start");
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        proxy = ProxyHelper.createProxy(startEndpoint, classLoader, CustomerService.class);
 
         GetCustomersByNameResponse response = proxy
                 .getCustomersByName(new GetCustomersByName());

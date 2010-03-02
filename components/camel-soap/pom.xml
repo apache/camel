@@ -32,7 +32,7 @@
     <description>Camel SOAP support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.soap.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.dataformat.soap.*, org.xmlsoap.schemas.soap.envelope.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

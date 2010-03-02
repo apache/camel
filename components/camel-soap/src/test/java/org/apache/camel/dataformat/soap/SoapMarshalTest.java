@@ -90,11 +90,8 @@ public class SoapMarshalTest extends CamelTestSupport {
             public void configure() throws Exception {
                 SoapJaxbDataFormat df = createDataFormat();
                 from("direct:start") //
-                        .onException(Exception.class) //
-                            .marshal(df) //
-                            .end() //
-                        .marshal(df) //
-                        .to("mock:result");
+                    .marshal(df) //
+                    .to("mock:result");
             }
         };
     }
