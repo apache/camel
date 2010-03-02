@@ -242,6 +242,12 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-irc/${pom.version}</bundle>
   </feature>
+  <feature name='camel-jackson' version='${pom.version}'>
+    <bundle>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jackson/${pom.version}</bundle>
+  </feature>    
   <feature name='camel-jaxb' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jaxb/${pom.version}</bundle>
