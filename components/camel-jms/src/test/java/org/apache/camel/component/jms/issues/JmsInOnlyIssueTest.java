@@ -17,19 +17,19 @@
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 /**
  * @version $Revision$
  */
-public class JmsInOnlyIssueTest extends ContextTestSupport {
+public class JmsInOnlyIssueTest extends CamelTestSupport {
 
     @Test
     public void testInOnlyWithSendBody() throws Exception {

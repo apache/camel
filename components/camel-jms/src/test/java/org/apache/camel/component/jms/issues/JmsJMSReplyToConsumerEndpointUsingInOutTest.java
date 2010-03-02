@@ -18,10 +18,11 @@ package org.apache.camel.component.jms.issues;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
 /**
@@ -29,10 +30,11 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  *
  * @version $Revision$
  */
-public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends ContextTestSupport {
+public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSupport {
     private static final String MQURI = "vm://localhost?broker.persistent=false&broker.useJmx=false";
     private ActiveMQComponent amq;
 
+    @Test
     public void testCustomJMSReplyToInOut() throws Exception {
         template.sendBody("activemq:queue:hello", "What is your name?");
 

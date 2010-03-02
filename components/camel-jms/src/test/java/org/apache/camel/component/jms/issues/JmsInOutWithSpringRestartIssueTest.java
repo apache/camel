@@ -17,7 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision$
  */
-public class JmsInOutWithSpringRestartIssueTest extends SpringTestSupport {
+public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

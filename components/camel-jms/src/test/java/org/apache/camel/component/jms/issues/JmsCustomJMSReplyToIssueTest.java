@@ -21,21 +21,23 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 
 /**
  * @version $Revision$
  */
-public class JmsCustomJMSReplyToIssueTest extends ContextTestSupport {
+public class JmsCustomJMSReplyToIssueTest extends CamelTestSupport {
 
     private ActiveMQComponent amq;
 
+    @Test
     public void testCustomJMSReplyTo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
