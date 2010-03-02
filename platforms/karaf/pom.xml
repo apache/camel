@@ -53,6 +53,18 @@
     </pluginRepositories>
 
     <repositories>
+      <!--ServiceMix OSGi bundle repo -->
+      <repository>
+        <id>servicemix</id>
+        <name>ServiceMix OSGi bundle Repository</name>
+	<url>http://repo2.maven.org/maven2</url>
+        <releases>
+           <enabled>true</enabled>
+        </releases>
+        <snapshots>
+           <enabled>false</enabled>
+        </snapshots>
+      </repository> 
       <!-- OPS4J repo -->
       <repository>
         <id>ops4j</id>
