@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class CometdEndpoint extends DefaultEndpoint {
    
-    private String resourceBase;
+    private String baseResource;
     private int timeout = 240000;
     private int interval;
     private int maxInterval = 30000;
@@ -104,12 +104,12 @@ public class CometdEndpoint extends DefaultEndpoint {
         return uri;
     }
 
-    public String getResourceBase() {
-        return resourceBase;
+    public String getBaseResource() {
+        return baseResource;
     }
 
-    public void setResourceBase(String resourceBase) {
-        this.resourceBase = resourceBase;
+    public void setBaseResource(String baseResource) {
+        this.baseResource = baseResource;
     }
    
     public int getTimeout() {
