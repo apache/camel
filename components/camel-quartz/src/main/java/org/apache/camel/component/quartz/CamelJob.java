@@ -26,10 +26,10 @@ import org.quartz.JobExecutionException;
 public class CamelJob implements Job {
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        QuartzEndpoint component = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
-        if (component == null) {
+        QuartzEndpoint endpoint = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
+        if (endpoint == null) {
             throw new JobExecutionException("No quartz endpoint available for key: " + QuartzConstants.QUARTZ_ENDPOINT);
         }
-        component.onJobExecute(context);
+        endpoint.onJobExecute(context);
     }
 }
