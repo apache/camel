@@ -70,7 +70,7 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
 
         final boolean initialize = !file.exists();
         open();
-        pageFile = getConcurrentPageFile();
+        pageFile = getHawtPageFile();
 
         execute(new Work<Boolean>() {
             public Boolean execute(Transaction tx) {
