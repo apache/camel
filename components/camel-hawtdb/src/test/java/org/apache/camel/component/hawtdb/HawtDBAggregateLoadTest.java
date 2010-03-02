@@ -22,7 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class HawtDBAggregateLoadTest extends CamelTestSupport {
@@ -37,7 +36,6 @@ public class HawtDBAggregateLoadTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore
     public void testLoadTestHawtDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -62,7 +60,6 @@ public class HawtDBAggregateLoadTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 HawtDBAggregationRepository<String> repo = new HawtDBAggregationRepository<String>("repo1", "target/data/hawtdb.dat");
-                repo.setSync(true);
 
                 from("seda:start?size=" + SIZE)
                     .to("log:input?groupSize=500")

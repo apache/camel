@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
@@ -42,7 +41,6 @@ public class HawtDBAggregateLoadConcurrentTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore
     public void testLoadTestHawtDBAggregate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(10);
