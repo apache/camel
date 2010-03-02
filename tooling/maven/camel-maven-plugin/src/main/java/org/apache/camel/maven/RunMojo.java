@@ -385,7 +385,7 @@ public class RunMojo extends AbstractExecMojo {
         
         if (usingSpringJavaConfigureMain) {
             mainClass = "org.apache.camel.spring.javaconfig.Main";
-            getLog().info("Using the org.apache.camel.spring.javaconfig.Main to initate a camel context");
+            getLog().info("Using the org.apache.camel.spring.javaconfig.Main to initiate a CamelContext");
         }
         
         if (getLog().isDebugEnabled()) {
@@ -414,6 +414,11 @@ public class RunMojo extends AbstractExecMojo {
                     }
                     main.invoke(main, new Object[] {arguments});
                 } catch (Exception e) { // just pass it on
+                    // let it be printed so end users can see the exception on the console
+                    System.err.println("*************************************");
+                    System.err.println("Error occurred while running main from: " + mainClass);
+                    e.printStackTrace();
+                    System.err.println("*************************************");
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }
             }
