@@ -46,14 +46,13 @@
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
-            <version>${cometd-bayeux-version}</version>
         </dependency>
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
-            <artifactId>cometd-bayeux</artifactId>
-            <version>${cometd-bayeux-version}</version>
+            <artifactId>cometd-server</artifactId>
+            <version>${jetty-version}</version>
         </dependency>
-
+        
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>

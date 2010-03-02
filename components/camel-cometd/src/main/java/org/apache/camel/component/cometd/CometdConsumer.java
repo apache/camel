@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.cometd;
 
-import dojox.cometd.Bayeux;
-import dojox.cometd.Client;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
+import org.cometd.Bayeux;
+import org.cometd.Client;
 import org.mortbay.cometd.AbstractBayeux;
 import org.mortbay.cometd.BayeuxService;
 
