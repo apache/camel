@@ -52,6 +52,7 @@
       <commons-lang-version>2.4</commons-lang-version>
       <commons-net-version>2.0</commons-net-version>
       <commons-management-version>1.0</commons-management-version>
+      <commons-pool-bundle-version>1.5.4_1</commons-pool-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
       <flatpack-bundle-version>3.1.1_3</flatpack-bundle-version>
       <freemarker-bundle-version>2.3.15_3</freemarker-bundle-version>
@@ -82,7 +83,7 @@
       <juel-bundle-version>2.1.2_1</juel-bundle-version>
       <junit-bundle-version>4.7_1</junit-bundle-version>
       <jsmpp-bundle-version>2.0_2</jsmpp-bundle-version>
-      <lucene-bundle-version>3.0.1</lucene-bundle-version>
+      <lucene-bundle-version>3.0.0_1-SNAPSHOT</lucene-bundle-version>
       <mvel-bundle-version>2.0.8_3</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
       <neethi-bundle-version>2.0.4_2</neethi-bundle-version>
