@@ -101,24 +101,29 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
 
     public <T> T execute(Work<T> work) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Executing work " + work);
+            LOG.trace("Executing work +++ start +++ " + work);
         }
 
+        T answer;
         Transaction tx = pageFile.tx();
         try {
-            T rc = work.execute(tx);
+            answer = work.execute(tx);
             tx.commit();
-            return rc;
         } catch (RuntimeException e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Error executing work " + work + " will do rollback", e);
-            }
+            LOG.warn("Error executing work " + work + " will do rollback.", e);
             tx.rollback();
             throw e;
         }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Executing work +++ done  +++ " + work);
+        }
+        return answer;
     }
 
     public Index<Buffer, Buffer> getRepositoryIndex(Transaction tx, String name) {
+        Index<Buffer, Buffer> answer;
+
         Index<String, Integer> indexes = ROOT_INDEXES_FACTORY.open(tx, 0);
         Integer location = indexes.get(name);
 
@@ -134,13 +139,18 @@ public class HawtDBFile extends HawtPageFileFactory implements Service {
                 LOG.debug("Created new repository index with name " + name + " at location " + page);
             }
 
-            return created;
+            answer = created;
         } else {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Repository index with name " + name + " at location " + location);
             }
-            return INDEX_FACTORY.open(tx, location);
+            answer = INDEX_FACTORY.open(tx, location);
         }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Repository index with name " + name + " -> " + answer);
+        }
+        return answer;
     }
 
 }

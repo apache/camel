@@ -96,7 +96,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         this.repositoryName = repositoryName;
     }
 
-    public Exchange add(CamelContext camelContext, K key, Exchange exchange) {
+    public Exchange add(CamelContext camelContext, final K key, Exchange exchange) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding key   [" + key + "] -> " + exchange);
         }
@@ -112,6 +112,11 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
                 public Buffer execute(Transaction tx) {
                     Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
                     return index.put(keyBuffer, exchangeBuffer);
+                }
+
+                @Override
+                public String toString() {
+                    return "Adding key [" + key + "]";
                 }
             });
             if (rc == null) {
@@ -130,7 +135,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     }
 
 
-    public Exchange get(CamelContext camelContext, K key) {
+    public Exchange get(CamelContext camelContext, final K key) {
         Exchange answer = null;
         try {
             final Buffer keyBuffer = marshallKey(key);
@@ -138,6 +143,11 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
                 public Buffer execute(Transaction tx) {
                     Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
                     return index.get(keyBuffer);
+                }
+
+                @Override
+                public String toString() {
+                    return "Getting key [" + key + "]";
                 }
             });
             if (rc != null) {
@@ -153,7 +163,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         return answer;
     }
 
-    public void remove(CamelContext camelContext, K key) {
+    public void remove(CamelContext camelContext, final K key) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Removing key [" + key + "]");
         }
@@ -163,6 +173,11 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
                 public Buffer execute(Transaction tx) {
                     Index<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName);
                     return index.remove(keyBuffer);
+                }
+
+                @Override
+                public String toString() {
+                    return "Removing key [" + key + "]";
                 }
             });
         } catch (IOException e) {
