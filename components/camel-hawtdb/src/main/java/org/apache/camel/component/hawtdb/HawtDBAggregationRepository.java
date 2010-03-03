@@ -47,6 +47,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
     private HawtDBFile hawtDBFile;
     private String persistentFileName;
     private String repositoryName;
+    private Integer bufferSize;
     private boolean sync;
     private boolean returnOldExchange;
     private Marshaller<K> keyMarshaller = new ObjectMarshaller<K>();
@@ -64,7 +65,7 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
      * @param repositoryName the repository name
      */
     public HawtDBAggregationRepository(String repositoryName) {
-        ObjectHelper.notEmpty(repositoryName, "name");
+        ObjectHelper.notEmpty(repositoryName, "repositoryName");
         this.repositoryName = repositoryName;
     }
 
@@ -76,11 +77,10 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
      * @param persistentFileName the persistent store filename
      */
     public HawtDBAggregationRepository(String repositoryName, String persistentFileName) {
-        ObjectHelper.notEmpty(repositoryName, "name");
-        ObjectHelper.notEmpty(persistentFileName, "fileName");
-        this.hawtDBFile = new HawtDBFile();
-        this.hawtDBFile.setFile(new File(persistentFileName));
+        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        ObjectHelper.notEmpty(persistentFileName, "persistentFileName");
         this.repositoryName = repositoryName;
+        this.persistentFileName = persistentFileName;
     }
 
     /**
@@ -90,8 +90,8 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
      * @param hawtDBFile the hawtdb file to use as persistent store
      */
     public HawtDBAggregationRepository(String repositoryName, HawtDBFile hawtDBFile) {
-        ObjectHelper.notEmpty(repositoryName, "name");
-        ObjectHelper.notNull(hawtDBFile, "HawtDBFile");
+        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        ObjectHelper.notNull(hawtDBFile, "hawtDBFile");
         this.hawtDBFile = hawtDBFile;
         this.repositoryName = repositoryName;
     }
@@ -253,6 +253,14 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
         this.sync = sync;
     }
 
+    public Integer getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setBufferSize(Integer bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
     public boolean isReturnOldExchange() {
         return returnOldExchange;
     }
@@ -268,6 +276,9 @@ public class HawtDBAggregationRepository<K> extends ServiceSupport implements Ag
             hawtDBFile = new HawtDBFile();
             hawtDBFile.setFile(new File(persistentFileName));
             hawtDBFile.setSync(isSync());
+            if (getBufferSize() != null) {
+                hawtDBFile.setMappingSegementSize(getBufferSize());
+            }
         }
 
         ObjectHelper.notNull(hawtDBFile, "Either set a persistentFileName or a hawtDBFile");
