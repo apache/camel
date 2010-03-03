@@ -74,7 +74,7 @@
       <jdom-bundle-version>1.1_2</jdom-bundle-version>
       <jettison-bundle-version>1.2</jettison-bundle-version>
       <jetty-bundle-version>6.1.22_1</jetty-bundle-version>
-      <jetty-cometd-bundle-version>6.1.11_3</jetty-cometd-bundle-version>
+      <jetty-cometd-bundle-version>6.1.22_1-SNAPSHOT</jetty-cometd-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
       <jodatime-bundle-version>1.5.2_2</jodatime-bundle-version>
       <josql-bundle-version>1.5_3</josql-bundle-version>
@@ -83,7 +83,7 @@
       <juel-bundle-version>2.1.2_1</juel-bundle-version>
       <junit-bundle-version>4.7_1</junit-bundle-version>
       <jsmpp-bundle-version>2.0_2</jsmpp-bundle-version>
-      <lucene-bundle-version>3.0.0_1-SNAPSHOT</lucene-bundle-version>
+      <lucene-bundle-version>3.0.1_1-SNAPSHOT</lucene-bundle-version>
       <mvel-bundle-version>2.0.8_3</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
       <neethi-bundle-version>2.0.4_2</neethi-bundle-version>
