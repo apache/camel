@@ -74,6 +74,18 @@ public class JettyHandleExceptionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         assertTrue("Should get the RuntimeCamelException", response.startsWith("org.apache.camel.RuntimeCamelException"));
     }
+    
+    @Test
+    public void testHttpRouteProcessorException() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        
+        template.sendBody("direct:router", "otherException");
+        String response = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertMockEndpointsSatisfied();
+        assertTrue("Should get the RuntimeCamelException", response.startsWith("org.apache.camel.RuntimeCamelException"));
+        
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -82,7 +94,8 @@ public class JettyHandleExceptionTest extends CamelTestSupport {
             public void configure() throws Exception {
                 onException(ValidationException.class).setHeader(Exchange.HTTP_RESPONSE_CODE, constant(HttpServletResponse.SC_BAD_REQUEST));
                 onException(ExchangeTimedOutException.class).setOutHeader(Exchange.HTTP_RESPONSE_CODE, constant(HttpServletResponse.SC_GATEWAY_TIMEOUT));
-
+                onException(RuntimeCamelException.class).setOutHeader(Exchange.HTTP_RESPONSE_CODE, constant(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
+                
                 from("direct:start").to("jetty://http://localhost:8123/myserver?throwExceptionOnFailure=false").to("mock:result");
                 // this is our jetty server where we simulate the 404
                 from("jetty://http://localhost:8123/myserver")
@@ -99,8 +112,32 @@ public class JettyHandleExceptionTest extends CamelTestSupport {
                                     throw new RuntimeCamelException("Runtime exception");
                                 }
                             });
+                
+                from("direct:router").to("http://localhost:8125/router?throwExceptionOnFailure=false").to("mock:result");
+                
+                from("jetty://http://localhost:8124/server").process(new Processor() {
+
+                    public void process(Exchange exchange) throws Exception {
+                        // set the out message directly
+                        exchange.getOut().setBody(exchange.getIn().getBody());
+                    }
+                    
+                });
+                from("jetty://http://localhost:8125/router")
+                    .to("http://localhost:8124/server?bridgeEndpoint=true").process(new Processor() {
+
+                        public void process(Exchange exchange) throws Exception {
+                            String request = exchange.getIn().getBody(String.class);
+                            if (request.equals("ValidationException")) {
+                                throw new ValidationException(exchange, request);
+                            }
+                            throw new RuntimeCamelException("Runtime exception");
+                        }
+                        
+                    });
                          
             }
+            
         };
     }
     
