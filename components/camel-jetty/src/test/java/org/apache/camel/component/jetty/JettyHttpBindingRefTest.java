@@ -73,8 +73,11 @@ public class JettyHttpBindingRefTest extends CamelTestSupport {
     // START SNIPPET: e1
     public class MyHttpBinding extends DefaultHttpBinding {
 
+        // From camel 2.3.0, we added a new parameter responseCode into doWriteExceptionResponse method
+        // If the camel version is below camel 2.3.0, please still use below method
+        // public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException
         @Override
-        public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
+        public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response, int responseCode) throws IOException {
             // we override the doWriteExceptionResponse as we only want to alter the binding how exceptions is
             // written back to the client. 
 

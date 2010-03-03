@@ -101,17 +101,23 @@ public class DefaultHttpBinding implements HttpBinding {
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
         if (exchange.isFailed()) {
             if (exchange.getException() != null) {
-                doWriteExceptionResponse(exchange.getException(), response);
+                // need to check the response code header
+                int responseCode = 500;
+                if (exchange.hasOut()) {
+                    responseCode = exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, 500, int.class);
+                } else { // get the header from in message
+                    responseCode = exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, 500, int.class);
+                }
+                doWriteExceptionResponse(exchange.getException(), response, responseCode);
             } else {
                 // it must be a fault, no need to check for the fault flag on the message
                 doWriteFaultResponse(exchange.getOut(), response, exchange);
             }
         } else {
-            // just copy the protocol relates header
-            copyProtocolHeaders(exchange.getIn(), exchange.getOut());
-            Message out = exchange.getOut();
-            if (out != null) {
-                doWriteResponse(out, response, exchange);
+            if (exchange.hasOut()) {
+                // just copy the protocol relates header
+                copyProtocolHeaders(exchange.getIn(), exchange.getOut());
+                doWriteResponse(exchange.getOut(), response, exchange);
             }
         }
     }
@@ -122,9 +128,18 @@ public class DefaultHttpBinding implements HttpBinding {
             response.setHeader(Exchange.CONTENT_ENCODING, contentEncoding);
         }
     }
-
+    
+    /**
+     * Please use public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response, int responseCode) throws IOException
+     */
+    @Deprecated
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
-        response.setStatus(500); // 500 for internal server error
+        // set the reponse code to be 500
+        doWriteExceptionResponse(exception, response, 500);
+    }
+
+    public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response, int responseCode) throws IOException {
+        response.setStatus(responseCode); 
         response.setContentType("text/plain");
 
         // append the stacktrace as response
