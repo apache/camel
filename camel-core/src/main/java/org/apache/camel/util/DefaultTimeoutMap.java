@@ -16,6 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -127,15 +131,44 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
         }
         long now = currentTime();
 
+        List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K,V>>();
+
         lock.lock();
         try {
+            // need to find the expired entries and add to the expired list
             for (Map.Entry<K, TimeoutMapEntry<K, V>> entry : map.entrySet()) {
                 if (entry.getValue().getExpireTime() < now) {
                     if (isValidForEviction(entry.getValue())) {
                         if (log.isDebugEnabled()) {
                             log.debug("Evicting inactive request for correlationID: " + entry);
                         }
-                        map.remove(entry.getKey(), entry.getValue());
+                        expired.add(entry.getValue());
+                    }
+                }
+            }
+
+            // if we found any expired then we need to sort, onEviction and remove
+            if (!expired.isEmpty()) {
+                // sort according to the expired time so we got the first expired first
+                Collections.sort(expired, new Comparator<TimeoutMapEntry<K, V>>() {
+                    public int compare(TimeoutMapEntry<K, V> a, TimeoutMapEntry<K, V> b) {
+                        long diff = a.getExpireTime() - b.getExpireTime();
+                        if (diff == 0) {
+                            return 0;
+                        }
+                        return diff > 0 ? 1 : -1;
+                    }
+                });
+
+                try {
+                    // now fire eviction notification
+                    for (TimeoutMapEntry<K, V> entry : expired) {
+                        onEviction(entry.getKey(), entry.getValue());
+                    }
+                } finally {
+                    // and must remove from list after we have fired the notifications
+                    for (TimeoutMapEntry<K, V> entry : expired) {
+                        map.remove(entry.getKey());
                     }
                 }
             }
@@ -172,6 +205,10 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
      */
     protected boolean isValidForEviction(TimeoutMapEntry<K, V> entry) {
         return true;
+    }
+
+    public void onEviction(K key, V value) {
+        // noop
     }
 
     protected void updateExpireTime(TimeoutMapEntry entry) {

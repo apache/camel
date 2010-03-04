@@ -43,7 +43,7 @@ public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTest
         template.sendBodyAndHeader("direct:start", "180", "foo", "B");
 
         // to force B to timeout first as A is added last
-        Thread.sleep(100);
+        Thread.sleep(250);
         template.sendBodyAndHeader("direct:start", "120", "foo", "A");
 
         assertMockEndpointsSatisfied();

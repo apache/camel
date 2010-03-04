@@ -41,7 +41,6 @@ import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.TimeoutMap;
-import org.apache.camel.util.TimeoutMapEntry;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -436,17 +435,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             super(executor, requestMapPollTimeMillis);
         }
 
-        protected boolean isValidForEviction(TimeoutMapEntry<Object, Exchange> entry) {
-            Object key = entry.getKey();
-            Exchange exchange = entry.getValue();
-
+        @Override
+        public void onEviction(Object key, Exchange exchange) {
             if (log.isDebugEnabled()) {
                 log.debug("Completion timeout triggered for correlation key: " + key);
             }
 
             exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
             onCompletion(key, exchange, true);
-            return true;
         }
     }
 

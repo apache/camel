@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
 import junit.framework.TestCase;
@@ -116,6 +118,46 @@ public class DefaultTimeoutMapTest extends TestCase {
         assertEquals(0, map.size());
 
         assertSame(e, map.getExecutor());
+    }
+
+    public void testExpiredInCorrectOrder() throws Exception {
+        final List<String> keys = new ArrayList<String>();
+        final List<Integer> values = new ArrayList<Integer>();
+
+        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>() {
+            @Override
+            public void onEviction(String key, Integer value) {
+                keys.add(key);
+                values.add(value);
+            }
+        };
+        assertEquals(0, map.size());
+
+        map.put("A", 1, 500);
+        map.put("B", 2, 300);
+        map.put("C", 3, 400);
+        map.put("D", 4, 200);
+        map.put("E", 5, 400);
+        // is not expired
+        map.put("F", 6, 8000);
+
+        Thread.sleep(2000);
+
+        // force purge
+        map.purge();
+
+        assertEquals("D", keys.get(0));
+        assertEquals(4, values.get(0).intValue());
+        assertEquals("B", keys.get(1));
+        assertEquals(2, values.get(1).intValue());
+        assertEquals("C", keys.get(2));
+        assertEquals(3, values.get(2).intValue());
+        assertEquals("E", keys.get(3));
+        assertEquals(5, values.get(3).intValue());
+        assertEquals("A", keys.get(4));
+        assertEquals(1, values.get(4).intValue());
+
+        assertEquals(1, map.size());
     }
 
 }

@@ -34,19 +34,35 @@ public interface TimeoutMap<K, V> extends Runnable {
 
     /**
      * Returns a copy of the keys in the map
+     *
+     * @return the keys
      */
     Object[] getKeys();
 
     /**
      * Returns the size of the map
+     *
+     * @return the size
      */
     int size();
 
     /**
      * Adds the key value pair into the map such that some time after the given
      * timeout the entry will be evicted
+     *
+     * @param key   the key
+     * @param value the value
+     * @param timeoutMillis  timeout in millis
      */
     void put(K key, V value, long timeoutMillis);
+
+    /**
+     * Callback when the value has been evicted
+     *
+     * @param key the key
+     * @param value the value
+     */
+    void onEviction(K key, V value);
 
     /**
      * Removes the object with the given key
