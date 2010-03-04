@@ -130,7 +130,7 @@ public interface Message {
      * Removes the headers from this message
      *
      * @param pattern pattern of names
-     * @return boolean whether any headers was removed
+     * @return boolean whether any headers matched
      */
     boolean removeHeaders(String pattern);
 
