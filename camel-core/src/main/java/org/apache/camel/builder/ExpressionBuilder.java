@@ -469,6 +469,30 @@ public final class ExpressionBuilder {
 
     /**
      * Returns the expression for the exchanges inbound message body converted
+     * to the given type
+     */
+    public static Expression bodyExpression(final String name) {
+        return new ExpressionAdapter() {
+            @SuppressWarnings("unchecked")
+            public Object evaluate(Exchange exchange) {
+                Class type;
+                try {
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                return exchange.getIn().getBody(type);
+            }
+
+            @Override
+            public String toString() {
+                return "bodyAs[" + name + "]";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body converted
      * to the given type.
      * <p/>
      * Does <b>not</b> allow null bodies.

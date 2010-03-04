@@ -34,7 +34,7 @@ public class DefaultClassResolver implements ClassResolver {
 
     public <T> Class<T> resolveClass(String name, Class<T> type) {
         Class<T> answer = CastUtils.cast(loadClass(name, DefaultClassResolver.class.getClassLoader()));
-        return (Class<T>) answer;
+        return answer;
     }
 
     public Class<?> resolveClass(String name, ClassLoader loader) {

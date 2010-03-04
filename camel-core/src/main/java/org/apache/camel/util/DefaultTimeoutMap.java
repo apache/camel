@@ -131,7 +131,7 @@ public class DefaultTimeoutMap<K, V> implements TimeoutMap<K, V>, Runnable, Serv
         }
         long now = currentTime();
 
-        List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K,V>>();
+        List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K, V>>();
 
         lock.lock();
         try {

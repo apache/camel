@@ -28,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * <ul>
  * <li>id to access the inbound message id</li>
  * <li>in.body or body to access the inbound body</li>
+ * <li>bodyAs(&lt;classname&gt;) to convert the in body to the given type</li>
  * <li>out.body to access the inbound body</li>
  * <li>in.header.foo or header.foo to access an inbound header called 'foo'</li>
  * <li>out.header.foo to access an outbound header called 'foo'</li>
@@ -93,8 +94,18 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.exchangeExceptionMessageExpression();
         }
 
+        // bodyAs
+        String remainder = ifStartsWithReturnRemainder("bodyAs", expression);
+        if (remainder != null) {
+            String type = ObjectHelper.between(remainder, "(", ")");
+            if (type == null) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${bodyAs(type)} was: " + expression);
+            }
+            return ExpressionBuilder.bodyExpression(type);
+        }
+
         // in header expression
-        String remainder = ifStartsWithReturnRemainder("in.header.", expression);
+        remainder = ifStartsWithReturnRemainder("in.header.", expression);
         if (remainder == null) {
             remainder = ifStartsWithReturnRemainder("header.", expression);
         }

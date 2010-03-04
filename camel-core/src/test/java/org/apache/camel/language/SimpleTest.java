@@ -129,6 +129,13 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("Hello ${exception.message} World", "Hello Just testing World");
     }
 
+    public void testBodyAs() throws Exception {
+        assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
+
+        exchange.getIn().setBody(456);
+        assertExpression("${bodyAs(Integer)}", 456);
+    }
+
     public void testIllegalSyntax() throws Exception {
         try {
             assertExpression("hey ${xxx} how are you?", "");
@@ -142,6 +149,13 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
             assertEquals("Illegal syntax: xxx", e.getMessage());
+        }
+
+        try {
+            assertExpression("${bodyAs(xxx}", "");
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: Valid syntax: ${bodyAs(type)} was: bodyAs(xxx", e.getMessage());
         }
     }
 

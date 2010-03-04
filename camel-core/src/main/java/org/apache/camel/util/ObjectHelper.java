@@ -623,14 +623,19 @@ public final class ObjectHelper {
      * @return the class or null if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader, boolean needToWarn) {
-        // must clean the name so its pure java name, eg remoing \n or whatever people can do in the Spring XML
+        // must clean the name so its pure java name, eg removing \n or whatever people can do in the Spring XML
         name = normalizeClassName(name);
 
         // special for byte[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
             return byte[].class;
+        // and these is common as well
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return String.class;
+        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name)) {
+            return Integer.class;
+        } else if ("java.lang.Long".equals(name) || "Long".equals(name)) {
+            return Long.class;
         }
 
         // try context class loader first
