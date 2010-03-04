@@ -30,6 +30,8 @@ class RichMessage(val message: Message) extends Message {
 
   def removeHeader(name: String) = message.removeHeader(name)
 
+  def removeHeaders(pattern: String) = message.removeHeaders(pattern)
+
   def removeAttachment(id: String) = message.removeAttachment(id)
 
   def isFault = message.isFault

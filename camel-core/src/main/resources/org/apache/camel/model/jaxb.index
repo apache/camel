@@ -52,6 +52,7 @@ ProcessDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
 RemoveHeaderDefinition
+RemoveHeadersDefinition
 RemovePropertyDefinition
 ResequenceDefinition
 RollbackDefinition

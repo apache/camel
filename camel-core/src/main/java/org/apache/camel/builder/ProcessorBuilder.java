@@ -171,6 +171,22 @@ public final class ProcessorBuilder {
     }
 
     /**
+     * Removes the headers on the IN message
+     */
+    public static Processor removeHeaders(final String pattern) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().removeHeaders(pattern);
+            }
+
+            @Override
+            public String toString() {
+                return "removeHeaders(" + pattern +  ")";
+            }
+        };
+    }
+
+    /**
      * Removes the header on the FAULT message
      */
     public static Processor removeFaultHeader(final String name) {

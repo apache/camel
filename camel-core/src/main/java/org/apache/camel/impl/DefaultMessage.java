@@ -24,6 +24,7 @@ import javax.activation.DataHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.util.CaseInsensitiveMap;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.MessageHelper;
 
 /**
@@ -118,6 +119,22 @@ public class DefaultMessage extends MessageSupport {
             return null;
         }
         return headers.remove(name);
+    }
+
+    public boolean removeHeaders(String pattern) {
+        if (!hasHeaders()) {
+            return false;
+        }
+
+        boolean matches = false;
+        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+            String key = entry.getKey();
+            if (EndpointHelper.matchPattern(key, pattern)) {
+                matches = true;
+                headers.remove(entry.getKey());
+            }
+        }
+        return matches;
     }
 
     public Map<String, Object> getHeaders() {

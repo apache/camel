@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -29,7 +28,6 @@ import org.junit.Test;
 public class JettyCallHttpThenExceptionTest extends CamelTestSupport {
 
     @Test
-    @Ignore
     public void testJettyCallHttpThenException() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
@@ -54,23 +52,10 @@ public class JettyCallHttpThenExceptionTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("jetty://http://localhost:8234/myserver")
                     .to("log:A")
-                    .convertBodyTo(String.class)
-                    .removeHeader(Exchange.HTTP_PATH)
-                    .removeHeader(Exchange.HTTP_BASE_URI)
-                    .removeHeader(Exchange.HTTP_RESPONSE_CODE)
-                    .removeHeader(Exchange.HTTP_CHARACTER_ENCODING)
-                    .removeHeader(Exchange.HTTP_CHUNKED)
-                    .removeHeader(Exchange.HTTP_METHOD)
-                    .removeHeader(Exchange.HTTP_QUERY)
-                    .removeHeader(Exchange.HTTP_RESPONSE_CODE)
-                    .removeHeader(Exchange.HTTP_SERVLET_REQUEST)
-                    .removeHeader(Exchange.HTTP_SERVLET_RESPONSE)
-                    .removeHeader(Exchange.HTTP_URI)
-                    .removeHeader(Exchange.HTTP_URL)
-                    .removeHeader("Content-Length")
+                    // remove http headers before and after invoking http service
+                    .removeHeaders("CamelHttp*")
                     .to("http://localhost:8234/other")
-                    .convertBodyTo(String.class)
-                    .to("log:B")
+                    .removeHeaders("CamelHttp*")
                     .to("mock:bar")
                     // now just force an exception immediately
                     .throwException(new IllegalArgumentException("I cannot do this"));

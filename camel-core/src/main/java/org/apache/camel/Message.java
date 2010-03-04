@@ -127,6 +127,14 @@ public interface Message {
     Object removeHeader(String name);
 
     /**
+     * Removes the headers from this message
+     *
+     * @param pattern pattern of names
+     * @return boolean whether any headers was removed
+     */
+    boolean removeHeaders(String pattern);
+
+    /**
      * Returns all of the headers associated with the message
      *
      * @return all the headers in a Map

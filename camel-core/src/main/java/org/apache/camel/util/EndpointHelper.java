@@ -94,7 +94,7 @@ public final class EndpointHelper {
      *   <li>otherwise returns false</li>
      * </ul>
      *
-     * @param uri  the endpoint uri
+     * @param uri     the endpoint uri
      * @param pattern a pattern to match
      * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
      */
@@ -111,43 +111,57 @@ public final class EndpointHelper {
             // try without :// also
             String scheme = ObjectHelper.before(uri, "://");
             String path = ObjectHelper.after(uri, "://");
-            if (doMatchEndpoint(scheme + ":" + path, pattern)) {
+            if (matchPattern(scheme + ":" + path, pattern)) {
                 return true;
             }
         } else {
             // try with :// also
             String scheme = ObjectHelper.before(uri, ":");
             String path = ObjectHelper.after(uri, ":");
-            if (doMatchEndpoint(scheme + "://" + path, pattern)) {
+            if (matchPattern(scheme + "://" + path, pattern)) {
                 return true;
             }
         }
 
         // and fallback to test with the uri as is
-        return doMatchEndpoint(uri, pattern);
+        return matchPattern(uri, pattern);
     }
 
-
-    private static boolean doMatchEndpoint(String uri, String pattern) {
-        if (uri.equals(pattern)) {
+    /**
+     * Matches the name with the given pattern.
+     * <p/>
+     * The match rules are applied in this order:
+     * <ul>
+     *   <li>exact match, returns true</li>
+     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     *   <li>regular expression match, returns true</li>
+     *   <li>otherwise returns false</li>
+     * </ul>
+     *
+     * @param name    the name
+     * @param pattern a pattern to match
+     * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
+     */
+    public static boolean matchPattern(String name, String pattern) {
+        if (name.equals(pattern)) {
             // exact match
             return true;
         }
 
         // we have wildcard support in that hence you can match with: file* to match any file endpoints
-        if (pattern.endsWith("*") && uri.startsWith(pattern.substring(0, pattern.length() - 1))) {
+        if (pattern.endsWith("*") && name.startsWith(pattern.substring(0, pattern.length() - 1))) {
             return true;
         }
 
         // match by regular expression
         try {
-            if (uri.matches(pattern)) {
+            if (name.matches(pattern)) {
                 return true;
             }
         } catch (PatternSyntaxException e) {
             // ignore
         }
-        
+
         // no match
         return false;
     }
@@ -155,8 +169,8 @@ public final class EndpointHelper {
     /**
      * Sets the regular properties on the given bean
      *
-     * @param context the camel context
-     * @param bean the bean
+     * @param context    the camel context
+     * @param bean       the bean
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
      */
@@ -170,8 +184,8 @@ public final class EndpointHelper {
      * This is convention over configuration, setting all reference parameters (using {@link #isReferenceParameter(String)}
      * by looking it up in registry and setting it on the bean if possible.
      *
-     * @param context the camel context
-     * @param bean the bean
+     * @param context    the camel context
+     * @param bean       the bean
      * @param parameters parameters
      * @throws Exception is thrown if setting property fails
      */
@@ -208,17 +222,16 @@ public final class EndpointHelper {
     public static boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.trim().startsWith("#");
     }
-    
+
     /**
      * Resolves a reference parameter by making a lookup in the registry.
-     * 
-     * @param <T> type of object to lookup.
+     *
+     * @param <T>     type of object to lookup.
      * @param context Camel context to use for lookup.
-     * @param value reference parameter value.
-     * @param type type of object to lookup.
-     * @return lookup result. 
-     * @throws IllegalArgumentException if referenced object was not found in 
-     *         registry.
+     * @param value   reference parameter value.
+     * @param type    type of object to lookup.
+     * @return lookup result.
+     * @throws IllegalArgumentException if referenced object was not found in registry.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type) {
         return resolveReferenceParameter(context, value, type, true);
@@ -226,15 +239,15 @@ public final class EndpointHelper {
 
     /**
      * Resolves a reference parameter by making a lookup in the registry.
-     * 
-     * @param <T> type of object to lookup.
+     *
+     * @param <T>     type of object to lookup.
      * @param context Camel context to use for lookup.
-     * @param value reference parameter value.
-     * @param type type of object to lookup.
-     * @return lookup result (or <code>null</code> only if 
-     *         <code>mandatory</code> is <code>false</code>). 
-     * @throws IllegalArgumentException if object was not found in registry and 
-     *         <code>mandatory</code> is <code>true</code>.
+     * @param value   reference parameter value.
+     * @param type    type of object to lookup.
+     * @return lookup result (or <code>null</code> only if
+     *         <code>mandatory</code> is <code>false</code>).
+     * @throws IllegalArgumentException if object was not found in registry and
+     *                                  <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
         String valueNoHash = value.replaceAll("#", "");
@@ -249,20 +262,16 @@ public final class EndpointHelper {
      * Resolves a reference list parameter by making lookups in the registry.
      * The parameter value must be one of the following:
      * <ul>
-     * <li>a comma-separated list of references to beans of type T</li>
-     * <li>a single reference to a bean type T</li>
-     * <li>a single reference to a bean of type java.util.List</li>
+     *   <li>a comma-separated list of references to beans of type T</li>
+     *   <li>a single reference to a bean type T</li>
+     *   <li>a single reference to a bean of type java.util.List</li>
      * </ul>
-     * 
-     * @param context
-     *            Camel context to use for lookup.
-     * @param value
-     *            reference parameter value.
-     * @param elementType
-     *            result list element type.
+     *
+     * @param context     Camel context to use for lookup.
+     * @param value       reference parameter value.
+     * @param elementType result list element type.
      * @return list of lookup results.
-     * @throws IllegalArgumentException if any referenced object was not found 
-     *         in registry.
+     * @throws IllegalArgumentException if any referenced object was not found in registry.
      */
     @SuppressWarnings("unchecked")
     public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
@@ -274,7 +283,7 @@ public final class EndpointHelper {
             Object bean = resolveReferenceParameter(context, elements.get(0).trim(), Object.class);
             if (bean instanceof List) {
                 // The bean is a list
-                return (List)bean;
+                return (List) bean;
             } else {
                 // The bean is a list element
                 return Arrays.asList(elementType.cast(bean));
@@ -287,5 +296,5 @@ public final class EndpointHelper {
             return result;
         }
     }
-    
+
 }
