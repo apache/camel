@@ -34,6 +34,8 @@
         <!-- the repo must have an unique name,
              as you can have multiple repositories in the same file -->
         <property name="repositoryName" value="myCoolRepo"/>
+        <!-- the repo file segment size -->
+        <property name="bufferSize" value="602400"/>
     </bean>
 
     <!-- this is the camel route which asks for input and aggregates the number -->
