@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,16 +38,18 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
+public class WireTapDefinition extends SendDefinition<WireTapDefinition> implements ExecutorServiceAware<ProcessorDefinition> {
 
     @XmlTransient
     private Processor newExchangeProcessor;
-
     @XmlAttribute(name = "processorRef", required = false)
     private String newExchangeProcessorRef;
-
     @XmlElement(name = "body", required = false)
     private ExpressionSubElementDefinition newExchangeExpression;
+    @XmlTransient
+    private ExecutorService executorService;
+    @XmlAttribute(required = false)
+    private String executorServiceRef;
 
     public WireTapDefinition() {
     }
@@ -72,6 +75,14 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
             answer.setNewExchangeExpression(newExchangeExpression.createExpression(routeContext));
         }
 
+        if (executorServiceRef != null) {
+            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+            if (executorService == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+            }
+        }
+        answer.setExecutorService(executorService);
+
         return answer;
     }
 
@@ -87,6 +98,20 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
     @Override
     public String getShortName() {
         return "wireTap";
+    }
+
+    @SuppressWarnings("unchecked")
+    public ProcessorDefinition executorService(ExecutorService executorService) {
+        // wiretap has no outputs and therefore we cannot use custom wiretap builder methods in Java DSL
+        // as the Java DSL is stretched so far we can using regular Java
+        throw new UnsupportedOperationException("wireTap does not support these builder methods");
+    }
+
+    @SuppressWarnings("unchecked")
+    public ProcessorDefinition executorServiceRef(String executorServiceRef) {
+        // wiretap has no outputs and therefore we cannot use custom wiretap builder methods in Java DSL
+        // as the Java DSL is stretched so far we can using regular Java
+        throw new UnsupportedOperationException("wireTap does not support these builder methods");
     }
 
     public Processor getNewExchangeProcessor() {
@@ -117,4 +142,19 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
         this.newExchangeExpression = new ExpressionSubElementDefinition(expression);
     }
 
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
+    }
 }

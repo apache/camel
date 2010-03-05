@@ -37,7 +37,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> {
+public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAware<ThreadsDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;
@@ -79,21 +79,13 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> {
         return "Threads[" + getOutputs() + "]";
     }
 
-    /**
-     * Setting the executor service for the thread pool
-     *
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public ThreadsDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    /**
-     * Setting the executor service for the thread pool
-     *
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public ThreadsDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

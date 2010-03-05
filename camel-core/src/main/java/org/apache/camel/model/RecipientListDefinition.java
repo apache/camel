@@ -41,7 +41,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RecipientListDefinition extends ExpressionNode {
+public class RecipientListDefinition extends ExpressionNode implements ExecutorServiceAware<RecipientListDefinition> {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
@@ -187,23 +187,13 @@ public class RecipientListDefinition extends ExpressionNode {
         return this;
     }
 
-    /**
-     * Setting the executor service for executing the sending to the recipients.
-     *
-     * @param executorService the executor service
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public RecipientListDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    /**
-     * Setting the executor service for executing the sending to the recipients.
-     *
-     * @param executorServiceRef reference to the executor service
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public RecipientListDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

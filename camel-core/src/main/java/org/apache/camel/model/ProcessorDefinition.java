@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -1592,12 +1593,53 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other using {@link ExchangePattern#InOnly}.
      *
+     * @param uri  the destination
      * @return the builder
      */
     @SuppressWarnings("unchecked")
     public Type wireTap(String uri) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends messages to all its child outputs; so that each processor and
+     * destination gets a copy of the original message to avoid the processors
+     * interfering with each other using {@link ExchangePattern#InOnly}.
+     *
+     * @param uri  the destination
+     * @param      executorService a custom {@link ExecutorService} to use as thread pool
+     *             for sending tapped exchanges
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type wireTap(String uri, ExecutorService executorService) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        answer.setExecutorService(executorService);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends messages to all its child outputs; so that each processor and
+     * destination gets a copy of the original message to avoid the processors
+     * interfering with each other using {@link ExchangePattern#InOnly}.
+     *
+     * @param uri  the destination
+     * @param      executorServiceRef reference to lookup a custom {@link ExecutorService}
+     *             to use as thread pool for sending tapped exchanges
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type wireTap(String uri, String executorServiceRef) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        answer.setExecutorServiceRef(executorServiceRef);
         addOutput(answer);
         return (Type) this;
     }

@@ -37,7 +37,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
+public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAware<MulticastDefinition> {
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
     @XmlAttribute(required = false)
@@ -126,22 +126,13 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
         return this;
     }
        
-    /**
-     * Setting the executor service for executing the multicasting action.
-     *
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public MulticastDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    /**
-     * Setting the executor service for executing the sending to the recipients.
-     *
-     * @param executorServiceRef reference to the executor service
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public MulticastDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

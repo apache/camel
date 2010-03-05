@@ -19,12 +19,14 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -40,7 +42,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> implements ExecutorServiceAware<OnCompletionDefinition> {
 
     @XmlAttribute(required = false)
     private Boolean onCompleteOnly = Boolean.FALSE;
@@ -50,6 +52,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     private WhenDefinition onWhen;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    @XmlTransient
+    private ExecutorService executorService;
+    @XmlAttribute(required = false)
+    private String executorServiceRef;
 
     public OnCompletionDefinition() {
     }
@@ -90,7 +96,16 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
-        return new OnCompletionProcessor(childProcessor, onCompleteOnly, onFailureOnly, when);
+        if (executorServiceRef != null) {
+            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+            if (executorService == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+            }
+        }
+
+        OnCompletionProcessor answer = new OnCompletionProcessor(childProcessor, onCompleteOnly, onFailureOnly, when);
+        answer.setExecutorService(executorService);
+        return answer;
     }
 
     /**
@@ -112,6 +127,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public ProcessorDefinition<? extends ProcessorDefinition<?>> end() {
         // pop parent block, as we added our self as block to parent when synchronized was defined in the route
         getParent().popBlock();
@@ -172,6 +188,17 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
         return clause;
     }
 
+    @SuppressWarnings("unchecked")
+    public OnCompletionDefinition executorService(ExecutorService executorService) {
+        setExecutorService(executorService);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public OnCompletionDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
+        return this;
+    }
 
     public List<ProcessorDefinition> getOutputs() {
         return outputs;
@@ -205,4 +232,19 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
         this.onWhen = onWhen;
     }
 
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
+    }
 }

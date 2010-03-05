@@ -46,7 +46,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> {
+public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAware<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate", required = false)
@@ -567,23 +567,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return this;
     }
 
-    /**
-     * Setting the executor service for executing the sending the aggregated output.
-     *
-     * @param executorService the executor service
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public AggregateDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    /**
-     * Setting the executor service for executing the sending the aggregated output.
-     *
-     * @param executorServiceRef reference to the executor service
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public AggregateDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

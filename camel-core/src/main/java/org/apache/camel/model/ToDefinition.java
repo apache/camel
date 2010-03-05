@@ -40,7 +40,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> {
+public class ToDefinition extends SendDefinition<ToDefinition> implements ExecutorServiceAware<ToDefinition> {
     @XmlTransient
     private final List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlAttribute(required = false)
@@ -87,8 +87,14 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
             return super.createProcessor(routeContext);
         }
 
+        // this code below is only for creating when async is enabled
+        // ----------------------------------------------------------
+
         if (executorServiceRef != null) {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+            if (executorService == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+            }
         }
         if (executorService == null && poolSize != null) {
             executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "ToAsync[" + getLabel() + "]", true);
@@ -173,20 +179,20 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     }
 
     /**
-     * Setting the executor service for executing the async routing.
-     *
-     * @return the builder
+     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      */
+    public ToDefinition pattern(ExchangePattern pattern) {
+        setPattern(pattern);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
     public ToDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
-    /**
-     * Setting the executor service for executing the async routing.
-     *
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public ToDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

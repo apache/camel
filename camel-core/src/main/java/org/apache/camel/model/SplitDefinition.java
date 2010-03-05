@@ -40,7 +40,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SplitDefinition extends ExpressionNode {
+public class SplitDefinition extends ExpressionNode implements ExecutorServiceAware<SplitDefinition> {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -180,23 +180,13 @@ public class SplitDefinition extends ExpressionNode {
         return this;
     }
 
-    /**
-     * Setting the executor service for executing the splitting action.
-     *
-     * @param executorService the executor service
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public SplitDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
     
-    /**
-     * Setting the executor service for executing the splitting action.
-     *
-     * @param executorServiceRef reference to the executor service
-     * @return the builder
-     */
+    @SuppressWarnings("unchecked")
     public SplitDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;

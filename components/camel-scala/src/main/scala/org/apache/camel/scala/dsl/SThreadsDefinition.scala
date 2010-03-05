@@ -26,9 +26,6 @@ import org.apache.camel.WaitForTaskToComplete;
  */
 case class SThreadsDefinition(override val target: ThreadsDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ThreadsDefinition] {
 
-  def executorService(service: ExecutorService) = wrap(target.executorService(service))
-  def executorService(ref: String) = wrap(target.executorServiceRef(ref))
-
   def poolSize(size: Int) = wrap(target.poolSize(size))
 
   def waitForTaskToComplete(wait: WaitForTaskToComplete) = wrap(target.waitForTaskToComplete(wait))
