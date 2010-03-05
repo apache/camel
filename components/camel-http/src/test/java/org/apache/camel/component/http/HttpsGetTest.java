@@ -31,7 +31,7 @@ public class HttpsGetTest extends BaseHttpsTest {
     public void httpsGet() throws Exception {
         localServer.register("/mail/", new BasicValidationHandler("GET", null, null, getExpectedContent()));
 
-        Exchange exchange = template.request("https://" + getHostName() + ":" + getPort() + "/mail/", new Processor() {
+        Exchange exchange = template.request("https://127.0.0.1:" + getPort() + "/mail/", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
