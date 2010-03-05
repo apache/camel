@@ -38,7 +38,6 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 public class WireTapProcessor extends SendProcessor {
 
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private ExecutorService executorService;
 
     // expression or processor used for populating a new exchange to send
@@ -161,8 +160,8 @@ public class WireTapProcessor extends SendProcessor {
         return executorService;
     }
 
-    private ExecutorService createExecutorService() {
-        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, this.toString(), true);
+    protected ExecutorService createExecutorService() {
+        return ExecutorServiceHelper.newCachedThreadPool(this.toString(), true);
     }
 
     public void setExecutorService(ExecutorService executorService) {

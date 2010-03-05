@@ -50,11 +50,14 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (executorServiceRef != null) {
+        if (executorService == null && executorServiceRef != null) {
             executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
+            if (executorService == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+            }
         }
         if (executorService == null && poolSize != null) {
-            executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "Threads", true);
+            executorService = ExecutorServiceHelper.newThreadPool("Threads", poolSize, poolSize);
         }
         Processor childProcessor = routeContext.createProcessor(this);
 

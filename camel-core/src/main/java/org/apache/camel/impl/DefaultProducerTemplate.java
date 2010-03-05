@@ -46,7 +46,6 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  * @version $Revision$
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private final CamelContext context;
     private final ProducerCache producerCache;
     private Endpoint defaultEndpoint;
@@ -55,7 +54,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
         this.producerCache = new ProducerCache(context);
-        this.executor = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "ProducerTemplate", true);
+        this.executor = ExecutorServiceHelper.newCachedThreadPool("ProducerTemplate", true);
     }
 
     public DefaultProducerTemplate(CamelContext context, ExecutorService executor) {
@@ -684,7 +683,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         super.start();
         ServiceHelper.startService(producerCache);
         if (executor == null || executor.isShutdown()) {
-            executor = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "ProducerTemplate", true);
+            executor = ExecutorServiceHelper.newCachedThreadPool("ProducerTemplate", true);
         }
     }
 

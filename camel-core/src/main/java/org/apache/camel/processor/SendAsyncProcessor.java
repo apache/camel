@@ -123,7 +123,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     }
 
     /**
-     * The producer is <b>not</b> capable of async processing so lets simulate this by transfering the task
+     * The producer is <b>not</b> capable of async processing so lets simulate this by transferring the task
      * to another {@link ExecutorService} for async processing.
      *
      * @param producer the producer
@@ -165,7 +165,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
 
     public ExecutorService getExecutorService() {
         if (executorService == null) {
-            executorService = createExecutorService("SendAsyncProcessor-Consumer");
+            executorService = ExecutorServiceHelper.newThreadPool("SendAsyncProcessor-Consumer", poolSize, poolSize);
         }
         return executorService;
     }
@@ -261,10 +261,6 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
                 }
             }
         }
-    }
-
-    protected ExecutorService createExecutorService(String name) {
-        return ExecutorServiceHelper.newScheduledThreadPool(poolSize, name, true);
     }
 
     protected void doStart() throws Exception {

@@ -18,8 +18,11 @@ package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -37,6 +40,9 @@ public final class ExecutorServiceHelper {
 
     /**
      * Creates a new thread name with the given prefix
+     *
+     * @param name the prefix
+     * @return the thread name, which is unique
      */
     public static String getThreadName(String name) {
         return "Camel thread " + nextThreadCounter() + ": " + name;
@@ -46,6 +52,14 @@ public final class ExecutorServiceHelper {
         return threadCounter.getAndIncrement();
     }
 
+    /**
+     * Creates a new scheduled thread pool which can schedule threads.
+     *
+     * @param poolSize the core pool size
+     * @param name     part of the thread name
+     * @param daemon   whether the threads is daemon or not
+     * @return the created pool
+     */
     public static ScheduledExecutorService newScheduledThreadPool(final int poolSize, final String name, final boolean daemon) {
         return Executors.newScheduledThreadPool(poolSize, new ThreadFactory() {
             public Thread newThread(Runnable r) {
@@ -76,6 +90,13 @@ public final class ExecutorServiceHelper {
         });
     }
 
+    /**
+     * Creates a new cached thread pool which should be the most commonly used.
+     *
+     * @param name    part of the thread name
+     * @param daemon  whether the threads is daemon or not
+     * @return the created pool
+     */
     public static ExecutorService newCachedThreadPool(final String name, final boolean daemon) {
         return Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable r) {
@@ -84,6 +105,43 @@ public final class ExecutorServiceHelper {
                 return answer;
             }
         });
+    }
+
+    /**
+     * Creates a new custom thread pool using 60 seconds as keep alive
+     *
+     * @param name          part of the thread name
+     * @param corePoolSize  the core size
+     * @param maxPoolSize   the maximum pool size
+     * @return the created pool
+     */
+    public static ExecutorService newThreadPool(final String name, int corePoolSize, int maxPoolSize) {
+        return ExecutorServiceHelper.newThreadPool(name, corePoolSize, maxPoolSize, 60, TimeUnit.SECONDS, true);
+    }
+
+    /**
+     * Creates a new custom thread pool
+     *
+     * @param name          part of the thread name
+     * @param corePoolSize  the core size
+     * @param maxPoolSize   the maximum pool size
+     * @param keepAliveTime keep alive
+     * @param timeUnit      keep alive time unit
+     * @param daemon        whether the threads is daemon or not
+     * @return the created pool
+     */
+    public static ExecutorService newThreadPool(final String name, int corePoolSize, int maxPoolSize,
+                                                long keepAliveTime, TimeUnit timeUnit, final boolean daemon) {
+        ThreadPoolExecutor answer = new ThreadPoolExecutor(corePoolSize, maxPoolSize,
+                                                           keepAliveTime, timeUnit, new LinkedBlockingQueue<Runnable>());
+        answer.setThreadFactory(new ThreadFactory() {
+            public Thread newThread(Runnable r) {
+                Thread answer = new Thread(r, getThreadName(name));
+                answer.setDaemon(daemon);
+                return answer;
+            }
+        });
+        return answer;
     }
 
 }

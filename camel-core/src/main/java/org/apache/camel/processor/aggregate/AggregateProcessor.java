@@ -470,17 +470,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         if (executorService == null) {
             if (isParallelProcessing()) {
-                // we are running in parallel so create a default thread pool
-                executorService = ExecutorServiceHelper.newFixedThreadPool(10, "Aggregator", true);
+                // we are running in parallel so create a cached thread pool which grows/shrinks automatic
+                executorService = ExecutorServiceHelper.newCachedThreadPool("Aggregator", true);
             } else {
                 // use a single threaded if we are not running in parallel
-                executorService = ExecutorServiceHelper.newFixedThreadPool(1, "Aggregator", true);
+                executorService = ExecutorServiceHelper.newSingleThreadExecutor("Aggregator", true);
             }
         }
 
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             ScheduledExecutorService scheduler = ExecutorServiceHelper.newScheduledThreadPool(1, "AggregateTimeoutChecker", true);
+            // check for timed out aggregated messages once every second
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
             ServiceHelper.startService(timeoutMap);
         }

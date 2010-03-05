@@ -61,7 +61,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class MulticastProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
 
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private static final transient Log LOG = LogFactory.getLog(MulticastProcessor.class);
 
     /**
@@ -125,11 +124,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         this.streaming = streaming;
         this.stopOnException = stopOnException;
 
-        if (isParallelProcessing()) {
-            if (this.executorService == null) {
-                // setup default executor as parallel processing requires an executor
-                this.executorService = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "Multicast", true);
-            }
+        if (isParallelProcessing() && getExecutorService() == null) {
+            this.executorService = ExecutorServiceHelper.newCachedThreadPool("Multicast", true);
         }
     }
 

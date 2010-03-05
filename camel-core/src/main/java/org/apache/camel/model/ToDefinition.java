@@ -97,7 +97,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
             }
         }
         if (executorService == null && poolSize != null) {
-            executorService = ExecutorServiceHelper.newScheduledThreadPool(poolSize, "ToAsync[" + getLabel() + "]", true);
+            executorService = ExecutorServiceHelper.newThreadPool("ToAsync[" + getLabel() + "]", poolSize, poolSize);
         }
 
         // create the child processor which is the async route

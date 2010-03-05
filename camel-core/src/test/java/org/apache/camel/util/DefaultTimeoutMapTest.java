@@ -104,7 +104,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testExecutor() throws Exception {
-        ScheduledExecutorService e = ExecutorServiceHelper.newScheduledThreadPool(1, "foo", true);
+        ScheduledExecutorService e = ExecutorServiceHelper.newScheduledThreadPool(2, "foo", true);
 
         DefaultTimeoutMap map = new DefaultTimeoutMap(e, 500);
         assertEquals(500, map.getPurgePollTime());

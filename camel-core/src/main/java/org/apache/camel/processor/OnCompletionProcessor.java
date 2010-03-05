@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class OnCompletionProcessor extends ServiceSupport implements Processor, Traceable {
 
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private static final transient Log LOG = LogFactory.getLog(OnCompletionProcessor.class);
     private ExecutorService executorService;
     private Processor processor;
@@ -176,8 +175,8 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         return executorService;
     }
 
-    private ExecutorService createExecutorService() {
-        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, this.toString(), true);
+    protected ExecutorService createExecutorService() {
+        return ExecutorServiceHelper.newCachedThreadPool(this.toString(), true);
     }
 
     public void setExecutorService(ExecutorService executorService) {

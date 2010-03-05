@@ -123,7 +123,7 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
         }
         if (executorService == null) {
             // fall back and use default
-            executorService = ExecutorServiceHelper.newScheduledThreadPool(10, "RecipientList", true);
+            executorService = ExecutorServiceHelper.newCachedThreadPool("RecipientList", true);
         }
         return executorService;
     }
