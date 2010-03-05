@@ -65,6 +65,18 @@
            <enabled>false</enabled>
         </snapshots>
       </repository> 
+      <!--ServiceMix OSGi bundle snapshot repo -->
+      <repository>
+        <id>servicemix.snapshot</id>
+        <name>ServiceMix OSGi bundle snapshot Repository</name>
+	<url>http://repository.apache.org/content/groups/snapshots-group</url>
+        <releases>
+           <enabled>false</enabled>
+        </releases>
+        <snapshots>
+           <enabled>true</enabled>
+        </snapshots>
+      </repository>
       <!-- OPS4J repo -->
       <repository>
         <id>ops4j</id>
