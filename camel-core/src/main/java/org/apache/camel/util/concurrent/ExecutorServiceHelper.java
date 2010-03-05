@@ -129,9 +129,16 @@ public final class ExecutorServiceHelper {
      * @param timeUnit      keep alive time unit
      * @param daemon        whether the threads is daemon or not
      * @return the created pool
+     * @throws IllegalArgumentException if parameters is not valid
      */
     public static ExecutorService newThreadPool(final String name, int corePoolSize, int maxPoolSize,
                                                 long keepAliveTime, TimeUnit timeUnit, final boolean daemon) {
+
+        // validate max >= core
+        if (maxPoolSize < corePoolSize) {
+            throw new IllegalArgumentException("MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
+        }
+
         ThreadPoolExecutor answer = new ThreadPoolExecutor(corePoolSize, maxPoolSize,
                                                            keepAliveTime, timeUnit, new LinkedBlockingQueue<Runnable>());
         answer.setThreadFactory(new ThreadFactory() {

@@ -876,7 +876,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Leverages a thread pool for multi threading processing exchanges.
      * <p/>
      * The caller thread will either wait for the async route
-     * to complete or imeddiately continue. If continue the OUT message will
+     * to complete or immediately continue. If continue the OUT message will
      * contain a {@link java.util.concurrent.Future} handle so you can get the real response
      * later using this handle.
      * <p/>
@@ -886,6 +886,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *   <li>Provide an IN header with the key {@link org.apache.camel.Exchange#ASYNC_WAIT} with the
      * value containing a type {@link org.apache.camel.WaitForTaskToComplete}. The header will take precedence, if provided.</li>
      * </ul>
+     * <p/>
+     * If no <tt>corePoolSize</tt> is set then a default CachedExecutorService is used which automatic grown and shrinks.
+     * If no <tt>maxPoolSize</tt> is set, then the <tt>corePoolSize</tt> is used as max.
      *
      * @return the builder
      */
@@ -899,6 +902,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Leverages a thread pool for multi threading processing exchanges.
      * <p/>
      * See {@link #threads()} for more details.
+     * If no <tt>maxPoolSize</tt> is set, then the <tt>corePoolSize</tt> is used as max.
      *
      * @param poolSize the core pool size
      * @return the builder
@@ -906,6 +910,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     public ThreadsDefinition threads(int poolSize) {
         ThreadsDefinition answer = threads();
         answer.setPoolSize(poolSize);
+        return answer;
+    }
+
+    /**
+     * Leverages a thread pool for multi threading processing exchanges.
+     * <p/>
+     * See {@link #threads()} for more details.
+     *
+     * @param poolSize    the core pool size
+     * @param maxPoolSize the maximum pool size
+     * @return the builder
+     */
+    public ThreadsDefinition threads(int poolSize, int maxPoolSize) {
+        ThreadsDefinition answer = threads();
+        answer.setPoolSize(poolSize);
+        answer.setMaxPoolSize(maxPoolSize);
         return answer;
     }
 

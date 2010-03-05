@@ -17,14 +17,17 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
+import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -46,6 +49,13 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     @XmlAttribute(required = false)
     private Integer poolSize;
     @XmlAttribute(required = false)
+    private Integer maxPoolSize;
+    @XmlAttribute(required = false)
+    private Integer keepAliveTime = 60;
+    @XmlAttribute(required = false)
+    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    private TimeUnit units = TimeUnit.SECONDS;
+    @XmlAttribute(required = false)
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
 
     @Override
@@ -56,8 +66,15 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
                 throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
             }
         }
-        if (executorService == null && poolSize != null) {
-            executorService = ExecutorServiceHelper.newThreadPool("Threads", poolSize, poolSize);
+        if (executorService == null) {
+            if (poolSize == null || poolSize <= 0) {
+                // use the cached thread pool
+                executorService = ExecutorServiceHelper.newCachedThreadPool("Threads", true);
+            } else {
+                // use a custom pool based on the settings
+                int max = getMaxPoolSize() != null ? getMaxPoolSize() : poolSize;
+                executorService = ExecutorServiceHelper.newThreadPool("Threads", poolSize, max, getKeepAliveTime(), getUnits(), true);
+            }
         }
         Processor childProcessor = routeContext.createProcessor(this);
 
@@ -95,12 +112,47 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     }
 
     /**
-     * Setting the core pool size for the underlying {@link java.util.concurrent.ExecutorService}.
+     * Sets the core pool size for the underlying {@link java.util.concurrent.ExecutorService}.
      *
+     * @param poolSize the core pool size to keep minimum in the pool
      * @return the builder
      */
     public ThreadsDefinition poolSize(int poolSize) {
         setPoolSize(poolSize);
+        return this;
+    }
+
+    /**
+     * Sets the maximum pool size for the underlying {@link java.util.concurrent.ExecutorService}.
+     *
+     * @param maxPoolSize the maximum pool size
+     * @return the builder
+     */
+    public ThreadsDefinition maxPoolSize(int maxPoolSize) {
+        setMaxPoolSize(maxPoolSize);
+        return this;
+    }
+
+    /**
+     * Sets the keep alive time for idle threads
+     *
+     * @param keepAliveTime keep alive time
+     * @return the builder
+     */
+    public ThreadsDefinition keepAliveTime(int keepAliveTime) {
+        setKeepAliveTime(keepAliveTime);
+        return this;
+    }
+
+    /**
+     * Sets the keep alive time unit.
+     * By default SECONDS is used.
+     *
+     * @param keepAliveTimeUnits time unit
+     * @return the builder
+     */
+    public ThreadsDefinition units(TimeUnit keepAliveTimeUnits) {
+        setUnits(keepAliveTimeUnits);
         return this;
     }
 
@@ -147,5 +199,29 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     public void setWaitForTaskToComplete(WaitForTaskToComplete waitForTaskToComplete) {
         this.waitForTaskToComplete = waitForTaskToComplete;
+    }
+
+    public Integer getMaxPoolSize() {
+        return maxPoolSize;
+    }
+
+    public void setMaxPoolSize(Integer maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
+
+    public Integer getKeepAliveTime() {
+        return keepAliveTime;
+    }
+
+    public void setKeepAliveTime(Integer keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
+    }
+
+    public TimeUnit getUnits() {
+        return units;
+    }
+
+    public void setUnits(TimeUnit units) {
+        this.units = units;
     }
 }
