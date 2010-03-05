@@ -97,7 +97,7 @@
       <servicemix-specs-version>1.4.0</servicemix-specs-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_2</serp-bundle-version>
-      <smack-bundle-version>3.0.4_2</smack-bundle-version>      
+      <smack-bundle-version>3.1.0_1-SNAPSHOT</smack-bundle-version>      
       <spring-version>2.5.6.SEC01</spring-version>
       <spring-osgi-version>1.2.0</spring-osgi-version>
       <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
