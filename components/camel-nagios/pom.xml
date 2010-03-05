@@ -38,8 +38,8 @@
 
     <repositories>
         <repository>
-           <id>open.iona.m2-all</id>
-           <name>Fuse Source Maven Repo</name>
+           <id>fusesource.m2-all</id>
+          <name>Fusesource Dependency Repository</name>
            <url>http://repo.fusesource.com/maven2-all</url>
         </repository>
     </repositories>
