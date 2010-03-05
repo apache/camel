@@ -22,12 +22,21 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- define a custom thread pool -->
+        <threadPool id="myPool" poolSize="2" maxPoolSize="4" threadName="myPool"/>
+
         <route>
             <from uri="direct:start"/>
-            <threads poolSize="5" maxPoolSize="10" keepAliveTime="10" units="SECONDS">
+            <!-- use the custom thread pool in the camel route -->
+            <threads executorServiceRef="myOtherPool">
                 <to uri="mock:result"/>
             </threads>
         </route>
+        
     </camelContext>
+    <!-- END SNIPPET: e1 -->
+
 </beans>

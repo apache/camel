@@ -26,8 +26,9 @@
         <route>
             <from uri="direct:start"/>
             <from uri="direct:foo"/>
-            <threads poolSize="5"/>
-            <to uri="mock:result"/>
+            <threads poolSize="5">
+                <to uri="mock:result"/>
+            </threads>
         </route>
     </camelContext>
 </beans>

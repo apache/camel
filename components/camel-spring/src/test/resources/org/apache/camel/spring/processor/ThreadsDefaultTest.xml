@@ -25,8 +25,10 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <threads/>
-            <to uri="mock:result"/>
+            <threads>
+                <to uri="log:foo"/>
+                <to uri="mock:result"/>
+            </threads>
         </route>
     </camelContext>
 </beans>

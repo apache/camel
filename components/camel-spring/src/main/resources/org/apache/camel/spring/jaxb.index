@@ -18,6 +18,7 @@ CamelBeanPostProcessor
 CamelConsumerTemplateFactoryBean
 CamelContextFactoryBean
 CamelEndpointFactoryBean
+CamelExecutorServiceFactoryBean
 CamelJMXAgentDefinition
 CamelProducerTemplateFactoryBean
 CamelPropertyPlaceholderDefinition

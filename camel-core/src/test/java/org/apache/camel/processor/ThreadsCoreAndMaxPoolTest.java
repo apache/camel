@@ -52,7 +52,7 @@ public class ThreadsCoreAndMaxPoolTest extends ContextTestSupport {
 
                 from("direct:foo")
                     // using the builder style
-                    .threads().poolSize(5).maxPoolSize(10)
+                    .threads().poolSize(5).maxPoolSize(10).threadName("myPool")
                     .to("mock:result");
             }
         };

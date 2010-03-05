@@ -137,6 +137,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List beans;    
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
+    @XmlElement(name = "threadPool", required = false)
+    private List<CamelExecutorServiceFactoryBean> threadPools;
     @XmlElement(name = "endpoint", required = false)
     private List<CamelEndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats", required = false)

@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class ThreadsDefaultTest extends ContextTestSupport {
 
     public void testThreadsDefault() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -40,6 +40,7 @@ public class ThreadsDefaultTest extends ContextTestSupport {
                 from("direct:start")
                     // will use a cached thread pool which can grown/shrink
                     .threads()
+                    .to("log:foo")
                     .to("mock:result");
             }
         };

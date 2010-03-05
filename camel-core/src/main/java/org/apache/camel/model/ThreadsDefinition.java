@@ -56,6 +56,8 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
     private TimeUnit units = TimeUnit.SECONDS;
     @XmlAttribute(required = false)
+    private String threadName;
+    @XmlAttribute(required = false)
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
 
     @Override
@@ -66,14 +68,16 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
                 throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
             }
         }
+
         if (executorService == null) {
+            String name = getThreadName() != null ? getThreadName() : "Threads";
             if (poolSize == null || poolSize <= 0) {
                 // use the cached thread pool
-                executorService = ExecutorServiceHelper.newCachedThreadPool("Threads", true);
+                executorService = ExecutorServiceHelper.newCachedThreadPool(name, true);
             } else {
                 // use a custom pool based on the settings
                 int max = getMaxPoolSize() != null ? getMaxPoolSize() : poolSize;
-                executorService = ExecutorServiceHelper.newThreadPool("Threads", poolSize, max, getKeepAliveTime(), getUnits(), true);
+                executorService = ExecutorServiceHelper.newThreadPool(name, poolSize, max, getKeepAliveTime(), getUnits(), true);
             }
         }
         Processor childProcessor = routeContext.createProcessor(this);
@@ -157,6 +161,17 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
     }
 
     /**
+     * Sets the thread name to use.
+     *
+     * @param threadName the thread name
+     * @return the builder
+     */
+    public ThreadsDefinition threadName(String threadName) {
+        setThreadName(threadName);
+        return this;
+    }
+
+    /**
      * Setting to whether to wait for async tasks to be complete before continuing original route.
      * <p/>
      * Is default <tt>IfReplyExpected</tt>
@@ -223,5 +238,13 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     public void setUnits(TimeUnit units) {
         this.units = units;
+    }
+
+    public String getThreadName() {
+        return threadName;
+    }
+
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
     }
 }

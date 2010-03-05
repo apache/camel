@@ -56,7 +56,6 @@ public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryB
     private Endpoint endpoint;
     @XmlTransient
     private ApplicationContext applicationContext;
-   
 
     public Object getObject() throws Exception {
         if (endpoint == null) {
