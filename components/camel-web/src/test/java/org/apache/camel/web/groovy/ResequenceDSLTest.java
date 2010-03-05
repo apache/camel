@@ -32,7 +32,7 @@ public class ResequenceDSLTest extends GroovyRendererTestSupport {
 
     @Test
     public void testResequencer() throws Exception {
-        String dsl = "from(\"direct:start\").resequencer(header(\"seqnum\")).stream().to(\"mock:result\")";
+        String dsl = "from(\"direct:start\").resequence(header(\"seqnum\")).stream().to(\"mock:result\")";
         String expected = "from(\"direct:start\").resequence(header(\"seqnum\")).stream().to(\"mock:result\")";
 
         assertEquals(expected, render(dsl));
