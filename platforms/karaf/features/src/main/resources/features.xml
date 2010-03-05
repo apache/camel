@@ -406,6 +406,13 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.snmp4j/${snmp4j-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-snmp/${pom.version}</bundle>
   </feature>
+  <feature name='camel-soap' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-jaxb</feature>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-jaxws_2.1_spec/${geronimo-jaxws-spec-version}</bundle> 
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata-spec-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix-specs-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-soap/${pom.version}</bundle>
+  </feature>  
   <feature name='camel-spring-integration' version='${pom.version}'>
     <bundle>mvn:http://repository.springsource.com/maven/bundles/release!org.springframework.integration/org.springframework.integration/${spring-integration-version}</bundle>
     <feature version='${pom.version}'>camel-spring-osgi</feature>
