@@ -23,7 +23,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.camel.CamelException;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -33,8 +33,8 @@ import org.apache.camel.processor.resequencer.ResequencerEngine;
 import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The
@@ -61,7 +61,8 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor, Navigate<Processor>, Traceable {
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
-    
+
+    private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
     private final ResequencerEngine<Exchange> engine;
     private final Processor processor;
@@ -74,7 +75,9 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
      * @param processor next processor that processes re-ordered exchanges.
      * @param comparator a sequence element comparator for exchanges.
      */
-    public StreamResequencer(Processor processor, SequenceElementComparator<Exchange> comparator) {
+    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator) {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        this.camelContext = camelContext;
         this.exceptionHandler = new LoggingExceptionHandler(getClass());
         this.engine = new ResequencerEngine<Exchange>(comparator);
         this.engine.setSequenceSender(this);
@@ -189,7 +192,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
         
         public Delivery() {
-            super(ExecutorServiceHelper.getThreadName("Resequencer Delivery"));
+            super(camelContext.getExecutorServiceStrategy().getThreadName("Resequencer Delivery"));
         }
         
         @Override

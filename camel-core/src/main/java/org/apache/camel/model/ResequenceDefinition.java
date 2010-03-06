@@ -270,7 +270,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
             StreamResequencerConfig config) throws Exception {
         config.getComparator().setExpressions(resolveExpressionList(routeContext));
         Processor processor = routeContext.createProcessor(this);
-        StreamResequencer resequencer = new StreamResequencer(processor, config.getComparator());
+        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), processor, config.getComparator());
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
         return resequencer;

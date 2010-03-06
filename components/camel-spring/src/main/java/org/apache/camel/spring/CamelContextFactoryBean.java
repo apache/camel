@@ -64,6 +64,7 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
@@ -208,8 +209,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             LOG.info("Using custom FactoryFinderResolver: " + factoryFinderResolver);
             getContext().setFactoryFinderResolver(factoryFinderResolver);
         }
+        ExecutorServiceStrategy executorServiceStrategy = getBeanForType(ExecutorServiceStrategy.class);
+        if (executorServiceStrategy != null) {
+            LOG.info("Using custom ExecutorServiceStrategy: " + executorServiceStrategy);
+            getContext().setExecutorServiceStrategy(executorServiceStrategy);
+        }
 
-        // set the strategy if defined
+        // set the custom registry if defined
         Registry registry = getBeanForType(Registry.class);
         if (registry != null) {
             LOG.info("Using custom Registry: " + registry);
