@@ -35,7 +35,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -73,7 +72,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             inputStream = resolveStreamFromUrl();
         }
 
-        executor = ExecutorServiceHelper.newSingleThreadExecutor(endpoint.getEndpointUri(), true);
+        executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(endpoint.getEndpointUri());
         executor.execute(this);
     }
 

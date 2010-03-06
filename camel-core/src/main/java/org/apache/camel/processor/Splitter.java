@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -44,13 +45,13 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class Splitter extends MulticastProcessor implements Processor, Traceable {
     private final Expression expression;
 
-    public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
-        this(expression, destination, aggregationStrategy, false, null, false, false);
+    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
+        this(camelContext, expression, destination, aggregationStrategy, false, null, false, false);
     }
 
-    public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
+    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
                     boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException) {
-        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException);
+        super(camelContext, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException);
 
         this.expression = expression;
         notNull(expression, "expression");

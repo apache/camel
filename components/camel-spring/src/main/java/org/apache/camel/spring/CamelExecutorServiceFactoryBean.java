@@ -22,12 +22,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A {@link org.springframework.beans.factory.FactoryBean} which instantiates {@link java.util.concurrent.ExecutorService} objects
@@ -36,7 +43,7 @@ import org.springframework.beans.factory.FactoryBean;
  */
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelExecutorServiceFactoryBean extends IdentifiedType implements FactoryBean {
+public class CamelExecutorServiceFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware, ApplicationContextAware {
 
     @XmlAttribute(required = false)
     private Integer poolSize;
@@ -51,18 +58,30 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
     private String threadName;
     @XmlAttribute
     private Boolean deamon = Boolean.TRUE;
+    @XmlAttribute
+    private String camelContextId;
+    @XmlTransient
+    private CamelContext camelContext;
+    @XmlTransient
+    private ApplicationContext applicationContext;
 
     public Object getObject() throws Exception {
+        if (camelContext == null && camelContextId != null) {
+            camelContext = CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+        }
+        notNull(camelContext, "camelContext");
+
         String name = getThreadName() != null ? getThreadName() : getId();
 
         ExecutorService answer;
         if (getPoolSize() == null || getPoolSize() <= 0) {
             // use the cached thread pool
-            answer = ExecutorServiceHelper.newCachedThreadPool(name, isDeamon());
+            answer = camelContext.getExecutorServiceStrategy().newCachedThreadPool(name);
         } else {
             // use a custom pool based on the settings
             int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
-            answer = ExecutorServiceHelper.newThreadPool(name, getPoolSize(), max, getKeepAliveTime(), getUnits(), isDeamon());
+            answer = camelContext.getExecutorServiceStrategy()
+                        .newThreadPool(name, getPoolSize(), max, getKeepAliveTime(), getUnits(), isDeamon());
         }
         return answer;
     }
@@ -121,5 +140,29 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
 
     public void setDeamon(Boolean deamon) {
         this.deamon = deamon;
+    }
+
+    public String getCamelContextId() {
+        return camelContextId;
+    }
+
+    public void setCamelContextId(String camelContextId) {
+        this.camelContextId = camelContextId;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 }

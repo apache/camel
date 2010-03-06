@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * A default endpoint useful for implementation inheritance
@@ -197,7 +196,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     }
 
     protected ScheduledExecutorService createScheduledExecutorService() {
-        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, getEndpointUri(), true);
+        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
     }
 
     public void configureProperties(Map<String, Object> options) {

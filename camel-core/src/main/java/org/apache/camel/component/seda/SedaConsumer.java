@@ -33,7 +33,6 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -171,15 +170,17 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 processors.add(consumer.getProcessor());
             }
 
-            ExecutorService multicastExecutor = ExecutorServiceHelper.newFixedThreadPool(size, endpoint.getEndpointUri() + "(multicast)", true);
-            multicast = new MulticastProcessor(processors, null, true, multicastExecutor, false, false);
+            ExecutorService multicastExecutor = endpoint.getCamelContext().getExecutorServiceStrategy()
+                                                    .newFixedThreadPool(endpoint.getEndpointUri() + "(multicast)", size);
+            multicast = new MulticastProcessor(endpoint.getCamelContext(), processors, null, true, multicastExecutor, false, false);
         }
         return multicast;
     }
 
     protected void doStart() throws Exception {
         int poolSize = endpoint.getConcurrentConsumers();
-        executor = ExecutorServiceHelper.newFixedThreadPool(poolSize, endpoint.getEndpointUri(), true);
+        executor = endpoint.getCamelContext().getExecutorServiceStrategy()
+                        .newFixedThreadPool(endpoint.getEndpointUri(), poolSize);
         for (int i = 0; i < poolSize; i++) {
             executor.execute(this);
         }

@@ -31,7 +31,6 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;threads/&gt; element
@@ -73,11 +72,12 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
             String name = getThreadName() != null ? getThreadName() : "Threads";
             if (poolSize == null || poolSize <= 0) {
                 // use the cached thread pool
-                executorService = ExecutorServiceHelper.newCachedThreadPool(name, true);
+                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(name);
             } else {
                 // use a custom pool based on the settings
                 int max = getMaxPoolSize() != null ? getMaxPoolSize() : poolSize;
-                executorService = ExecutorServiceHelper.newThreadPool(name, poolSize, max, getKeepAliveTime(), getUnits(), true);
+                executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
+                                        .newThreadPool(name, poolSize, max, getKeepAliveTime(), getUnits(), true);
             }
         }
         Processor childProcessor = routeContext.createProcessor(this);
@@ -85,7 +85,7 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
         // wrap it in a unit of work so the route that comes next is also done in a unit of work
         UnitOfWorkProcessor uow = new UnitOfWorkProcessor(routeContext, childProcessor);
 
-        return new ThreadsProcessor(uow, executorService, waitForTaskToComplete);
+        return new ThreadsProcessor(routeContext.getCamelContext(), uow, executorService, waitForTaskToComplete);
     }
 
     @Override

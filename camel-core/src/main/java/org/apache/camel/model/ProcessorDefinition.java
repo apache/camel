@@ -282,7 +282,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * to using a {@link Pipeline} but derived classes could change the behaviour
      */
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        return new Pipeline(list);
+        return new Pipeline(routeContext.getCamelContext(), list);
     }
 
     /**

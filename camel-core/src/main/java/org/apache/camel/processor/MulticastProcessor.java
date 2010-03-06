@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -45,7 +46,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.AtomicExchange;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -99,6 +99,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
+    private final CamelContext camelContext;
     private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
     private final boolean isParallelProcessing;
@@ -106,17 +107,19 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private final boolean stopOnException;
     private ExecutorService executorService;
 
-    public MulticastProcessor(Collection<Processor> processors) {
-        this(processors, null);
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
+        this(camelContext, processors, null);
     }
 
-    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(processors, aggregationStrategy, false, null, false, false);
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
+        this(camelContext,processors, aggregationStrategy, false, null, false, false);
     }
     
-    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy,
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException) {
+        notNull(camelContext, "camelContext");
         notNull(processors, "processors");
+        this.camelContext = camelContext;
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.isParallelProcessing = parallelProcessing;
@@ -125,7 +128,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         this.stopOnException = stopOnException;
 
         if (isParallelProcessing() && getExecutorService() == null) {
-            this.executorService = ExecutorServiceHelper.newCachedThreadPool("Multicast", true);
+            this.executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool("Multicast");
         }
     }
 

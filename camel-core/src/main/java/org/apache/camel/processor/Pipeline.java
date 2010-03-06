@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
@@ -36,17 +37,17 @@ import org.apache.commons.logging.LogFactory;
 public class Pipeline extends MulticastProcessor implements Processor, Traceable {
     private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
 
-    public Pipeline(Collection<Processor> processors) {
-        super(processors);
+    public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
+        super(camelContext, processors);
     }
 
-    public static Processor newInstance(List<Processor> processors) {
+    public static Processor newInstance(CamelContext camelContext, List<Processor> processors) {
         if (processors.isEmpty()) {
             return null;
         } else if (processors.size() == 1) {
             return processors.get(0);
         }
-        return new Pipeline(processors);
+        return new Pipeline(camelContext, processors);
     }
 
     public void process(Exchange exchange) throws Exception {

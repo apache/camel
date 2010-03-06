@@ -71,6 +71,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -154,9 +155,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     private int defaultRouteStartupOrder = 1000;
-    private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy();
+    private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy(this);
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
+    private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
 
     public DefaultCamelContext() {
         super();
@@ -1522,6 +1524,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
+    }
+
+    public ExecutorServiceStrategy getExecutorServiceStrategy() {
+        return executorServiceStrategy;
+    }
+
+    public void setExecutorServiceStrategy(ExecutorServiceStrategy executorServiceStrategy) {
+        this.executorServiceStrategy = executorServiceStrategy;
     }
 
     protected String getEndpointKey(String uri, Endpoint endpoint) {

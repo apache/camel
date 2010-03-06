@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Predicate;
@@ -27,9 +28,10 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * @version $Revision$
@@ -37,13 +39,17 @@ import org.apache.commons.logging.LogFactory;
 public class OnCompletionProcessor extends ServiceSupport implements Processor, Traceable {
 
     private static final transient Log LOG = LogFactory.getLog(OnCompletionProcessor.class);
+    private final CamelContext camelContext;
+    private final Processor processor;
     private ExecutorService executorService;
-    private Processor processor;
     private boolean onCompleteOnly;
     private boolean onFailureOnly;
     private Predicate onWhen;
 
-    public OnCompletionProcessor(Processor processor, boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen) {
+    public OnCompletionProcessor(CamelContext camelContext, Processor processor, boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen) {
+        notNull(camelContext, "camelContext");
+        notNull(processor, "processor");
+        this.camelContext = camelContext;
         // wrap processor in UnitOfWork so what we send out runs in a UoW
         this.processor = new UnitOfWorkProcessor(processor);
         this.onCompleteOnly = onCompleteOnly;
@@ -176,7 +182,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     }
 
     protected ExecutorService createExecutorService() {
-        return ExecutorServiceHelper.newCachedThreadPool(this.toString(), true);
+        return camelContext.getExecutorServiceStrategy().newCachedThreadPool(this.toString());
     }
 
     public void setExecutorService(ExecutorService executorService) {

@@ -19,18 +19,20 @@ package org.apache.camel.spring.util;
 import org.apache.camel.CamelContext;
 import org.springframework.context.ApplicationContext;
 
+/**
+ * Helper to resolve {@link CamelContext} from the Spring {@link org.springframework.context.ApplicationContext}.
+ */
 public final class CamelContextResolverHelper {
+
     private CamelContextResolverHelper() {
         // The helper class
     }
     
     public static CamelContext getCamelContextWithId(ApplicationContext context, String contextId) {
-        CamelContext answer;
         try {
-            answer = (CamelContext) context.getBean(contextId);
-            return answer;
+            return (CamelContext) context.getBean(contextId);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Can't find the CamelContext with id " + contextId + ", the cause : ", e);
+            throw new IllegalArgumentException("Cannot find the CamelContext with id " + contextId, e);
         }
     }
 

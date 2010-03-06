@@ -20,11 +20,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Threads processor that leverage a thread pool for processing exchanges.
@@ -39,11 +40,15 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
+    protected final CamelContext camelContext;
     protected ExecutorService executorService;
     protected WaitForTaskToComplete waitForTaskToComplete;
 
-    public ThreadsProcessor(Processor output, ExecutorService executorService, WaitForTaskToComplete waitForTaskToComplete) {
+    public ThreadsProcessor(CamelContext camelContext, Processor output, ExecutorService executorService, WaitForTaskToComplete waitForTaskToComplete) {
         super(output);
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(executorService, "executorService");
+        this.camelContext = camelContext;
         this.executorService = executorService;
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
@@ -98,13 +103,9 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
     public ExecutorService getExecutorService() {
         if (executorService == null) {
-            executorService = createExecutorService();
+            executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool("Threads");
         }
         return executorService;
-    }
-
-    protected ExecutorService createExecutorService() {
-        return ExecutorServiceHelper.newCachedThreadPool("Threads", true);
     }
 
     protected void doStop() throws Exception {

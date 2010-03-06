@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -41,7 +42,6 @@ import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.TimeoutMap;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -66,6 +66,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     private static final Log LOG = LogFactory.getLog(AggregateProcessor.class);
 
+    private final CamelContext camelContext;
     private final Processor processor;
     private final AggregationStrategy aggregationStrategy;
     private final Expression correlationExpression;
@@ -90,10 +91,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private boolean completionFromBatchConsumer;
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
 
-    public AggregateProcessor(Processor processor, Expression correlationExpression, AggregationStrategy aggregationStrategy) {
+    public AggregateProcessor(CamelContext camelContext, Processor processor,
+                              Expression correlationExpression, AggregationStrategy aggregationStrategy) {
+        ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(correlationExpression, "correlationExpression");
         ObjectHelper.notNull(aggregationStrategy, "aggregationStrategy");
+        this.camelContext = camelContext;
         this.processor = processor;
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
@@ -471,16 +475,16 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (executorService == null) {
             if (isParallelProcessing()) {
                 // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-                executorService = ExecutorServiceHelper.newCachedThreadPool("Aggregator", true);
+                executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool("Aggregator");
             } else {
                 // use a single threaded if we are not running in parallel
-                executorService = ExecutorServiceHelper.newSingleThreadExecutor("Aggregator", true);
+                executorService = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor("Aggregator");
             }
         }
 
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
-            ScheduledExecutorService scheduler = ExecutorServiceHelper.newScheduledThreadPool(1, "AggregateTimeoutChecker", true);
+            ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool("AggregateTimeoutChecker", 1);
             // check for timed out aggregated messages once every second
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
             ServiceHelper.startService(timeoutMap);

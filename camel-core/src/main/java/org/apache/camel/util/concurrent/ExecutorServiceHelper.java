@@ -30,7 +30,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * create thread names with Camel prefix.
  *
  * @version $Revision$
+ * @deprecated replaced with {@link org.apache.camel.spi.ExecutorServiceStrategy}
  */
+@Deprecated
 public final class ExecutorServiceHelper {
 
     private static AtomicInteger threadCounter = new AtomicInteger();

@@ -29,7 +29,6 @@ import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
@@ -161,7 +160,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     protected ExecutorService createExecutorService() {
-        return ExecutorServiceHelper.newCachedThreadPool(this.toString(), true);
+        return getDestination().getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this.toString());
     }
 
     public void setExecutorService(ExecutorService executorService) {

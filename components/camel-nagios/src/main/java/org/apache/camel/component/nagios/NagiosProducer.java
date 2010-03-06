@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.nagios;
 
+import java.util.concurrent.ExecutorService;
+
 import com.googlecode.jsendnsca.core.INagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.core.Level;
 import com.googlecode.jsendnsca.core.MessagePayload;
 import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 import static org.apache.camel.component.nagios.NagiosConstants.HOST_NAME;
 import static org.apache.camel.component.nagios.NagiosConstants.LEVEL;
@@ -67,7 +68,9 @@ public class NagiosProducer extends DefaultProducer {
         // if non blocking then set a executor service on it
         if (sender instanceof NonBlockingNagiosPassiveCheckSender) {
             NonBlockingNagiosPassiveCheckSender nonBlocking = (NonBlockingNagiosPassiveCheckSender) sender;
-            nonBlocking.setExecutor(ExecutorServiceHelper.newSingleThreadExecutor(getEndpoint().getEndpointUri(), true));
+            ExecutorService executor = getEndpoint().getCamelContext().getExecutorServiceStrategy()
+                                            .newSingleThreadExecutor(getEndpoint().getEndpointUri());
+            nonBlocking.setExecutor(executor);
         }
         super.doStart();
     }

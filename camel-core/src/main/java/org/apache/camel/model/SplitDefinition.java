@@ -31,7 +31,6 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;split/&gt; element
@@ -87,8 +86,9 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = routeContext.createProcessor(this);
         aggregationStrategy = createAggregationStrategy(routeContext);
         executorService = createExecutorService(routeContext);
-        return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
-                isParallelProcessing(), executorService, isStreaming(), isStopOnException());
+        Expression exp = getExpression().createExpression(routeContext);
+        return new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
+                            isParallelProcessing(), executorService, isStreaming(), isStopOnException());
     }
 
     
@@ -113,7 +113,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         }
         if (executorService == null) {
             // fall back and use default
-            executorService = ExecutorServiceHelper.newCachedThreadPool("Split", true);
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool("Split");
         }
         return executorService;
     }

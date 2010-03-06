@@ -36,7 +36,6 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
@@ -54,7 +53,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
         this.producerCache = new ProducerCache(context);
-        this.executor = ExecutorServiceHelper.newCachedThreadPool("ProducerTemplate", true);
+        this.executor = context.getExecutorServiceStrategy().newCachedThreadPool("ProducerTemplate");
     }
 
     public DefaultProducerTemplate(CamelContext context, ExecutorService executor) {
@@ -683,7 +682,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         super.start();
         ServiceHelper.startService(producerCache);
         if (executor == null || executor.isShutdown()) {
-            executor = ExecutorServiceHelper.newCachedThreadPool("ProducerTemplate", true);
+            executor = context.getExecutorServiceStrategy().newCachedThreadPool("ProducerTemplate");
         }
     }
 

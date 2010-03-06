@@ -92,7 +92,7 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
                     List<Processor> list = new ArrayList<Processor>(2);
                     list.add(output);
                     list.add(interceptedTarget);
-                    return new Pipeline(list);
+                    return new Pipeline(context, list);
                 } else {
                     return output;
                 }

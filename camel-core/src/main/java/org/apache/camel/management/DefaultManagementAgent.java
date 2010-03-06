@@ -393,6 +393,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         if (executorService == null) {
             // we only need a single for the JMX connector
+            // TODO use ExecutorServiceStrategy
             executorService = ExecutorServiceHelper.newSingleThreadExecutor("JMXConnector: " + url, true);
         }
 

@@ -33,7 +33,6 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -196,7 +195,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     protected ScheduledExecutorService createScheduledExecutorService() {
         String name = getClass().getSimpleName();
-        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, name, true);
+        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(name, DEFAULT_THREADPOOL_SIZE);
     }
 
     protected void doStart() throws Exception {

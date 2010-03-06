@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,7 +57,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         if (service instanceof ScheduledExecutorService) {
             scheduled = (ScheduledExecutorService) service;
         } else {
-            scheduled = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, getEndpoint().getEndpointUri(), true);
+            scheduled = endpoint.getCamelContext().getExecutorServiceStrategy()
+                            .newScheduledThreadPool(getEndpoint().getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
         }
 
         this.executor = scheduled;

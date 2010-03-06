@@ -153,8 +153,8 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> i
             }
         }
 
-        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executorService,
-                                      isStreaming(), isStopOnException());
+        return new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
+                                      executorService, isStreaming(), isStopOnException());
     }
 
     public AggregationStrategy getAggregationStrategy() {

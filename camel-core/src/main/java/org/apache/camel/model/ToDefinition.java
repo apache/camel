@@ -31,7 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.SendAsyncProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -97,7 +96,8 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
             }
         }
         if (executorService == null && poolSize != null) {
-            executorService = ExecutorServiceHelper.newThreadPool("ToAsync[" + getLabel() + "]", poolSize, poolSize);
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
+                                .newThreadPool("ToAsync[" + getLabel() + "]", poolSize, poolSize);
         }
 
         // create the child processor which is the async route

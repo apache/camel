@@ -148,7 +148,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        AggregateProcessor answer = new AggregateProcessor(processor, correlation, strategy);
+        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy);
 
         ExecutorService executor = createExecutorService(routeContext);
         answer.setExecutorService(executor);

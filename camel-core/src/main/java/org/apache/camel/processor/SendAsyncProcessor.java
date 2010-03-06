@@ -36,7 +36,6 @@ import org.apache.camel.ProducerCallback;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * @version $Revision$
@@ -165,7 +164,8 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
 
     public ExecutorService getExecutorService() {
         if (executorService == null) {
-            executorService = ExecutorServiceHelper.newThreadPool("SendAsyncProcessor-Consumer", poolSize, poolSize);
+            executorService = destination.getCamelContext().getExecutorServiceStrategy()
+                                .newThreadPool("SendAsyncProcessor-Consumer", poolSize, poolSize);
         }
         return executorService;
     }
@@ -182,7 +182,8 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     public ExecutorService getProducerExecutorService() {
         if (producerExecutorService == null) {
             // use a cached pool for the producers which can grow/schrink itself
-            producerExecutorService = ExecutorServiceHelper.newCachedThreadPool("SendAsyncProcessor-Producer", true);
+            producerExecutorService = destination.getCamelContext().getExecutorServiceStrategy()
+                                        .newCachedThreadPool("SendAsyncProcessor-Producer");
         }
         return producerExecutorService;
     }

@@ -103,7 +103,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
             }
         }
 
-        OnCompletionProcessor answer = new OnCompletionProcessor(childProcessor, onCompleteOnly, onFailureOnly, when);
+        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
+                                                                 onCompleteOnly, onFailureOnly, when);
         answer.setExecutorService(executorService);
         return answer;
     }

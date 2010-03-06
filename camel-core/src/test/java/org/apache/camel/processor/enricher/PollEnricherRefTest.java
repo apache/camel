@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,8 +40,14 @@ public class PollEnricherRefTest extends ContextTestSupport {
         return jndi;
     }
 
-    public void testPollEnrichRef() throws Exception {
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
         cool.setCamelContext(context);
+        return context;
+    }
+
+    public void testPollEnrichRef() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Bye World");
         cool.getQueue().add(exchange);

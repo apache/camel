@@ -104,8 +104,8 @@ public class RecipientList extends ServiceSupport implements Processor {
                 producers.put(endpoint, producer);
             }
 
-            MulticastProcessor mp = new MulticastProcessor(processors, getAggregationStrategy(), isParallelProcessing(),
-                                                           getExecutorService(), false, isStopOnException());
+            MulticastProcessor mp = new MulticastProcessor(exchange.getContext(), processors, getAggregationStrategy(),
+                                                           isParallelProcessing(), getExecutorService(), false, isStopOnException());
 
             // now let the multicast process the exchange
             mp.process(exchange);

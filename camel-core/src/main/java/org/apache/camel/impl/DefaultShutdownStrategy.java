@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
 import org.apache.camel.ShutdownRoute;
@@ -36,7 +37,6 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -57,13 +57,21 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy {
+public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
     private static final transient Log LOG = LogFactory.getLog(DefaultShutdownStrategy.class);
 
+    private CamelContext camelContext;
     private ExecutorService executor;
     private long timeout = 5 * 60;
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private boolean shutdownNowOnTimeout = true;
+
+    public DefaultShutdownStrategy() {
+    }
+
+    public DefaultShutdownStrategy(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
         shutdown(context, routes, getTimeout(), getTimeUnit());
@@ -131,6 +139,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     public boolean isShutdownNowOnTimeout() {
         return shutdownNowOnTimeout;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     /**
@@ -217,13 +233,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private ExecutorService getExecutorService() {
         if (executor == null) {
-            executor = ExecutorServiceHelper.newSingleThreadExecutor("ShutdownTask", true);
+            executor = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor("ShutdownTask");
         }
         return executor;
     }
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext must be set");
     }
 
     @Override

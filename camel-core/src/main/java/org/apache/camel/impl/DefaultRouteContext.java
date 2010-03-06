@@ -145,7 +145,7 @@ public class DefaultRouteContext implements RouteContext {
     public void commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
-            Processor processor = Pipeline.newInstance(eventDrivenProcessors);
+            Processor processor = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             Processor unitOfWorkProcessor = new UnitOfWorkProcessor(this, processor);

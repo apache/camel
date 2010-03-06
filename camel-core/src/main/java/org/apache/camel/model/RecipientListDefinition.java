@@ -32,7 +32,6 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;recipientList/&gt; element
@@ -123,7 +122,7 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
         }
         if (executorService == null) {
             // fall back and use default
-            executorService = ExecutorServiceHelper.newCachedThreadPool("RecipientList", true);
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool("RecipientList");
         }
         return executorService;
     }
