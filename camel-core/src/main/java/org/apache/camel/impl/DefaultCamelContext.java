@@ -1556,7 +1556,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         } else {
             try {
                 LOG.info("JMX enabled. Using DefaultManagedLifecycleStrategy.");
-                answer = new ManagedManagementStrategy(new DefaultManagementAgent());
+                answer = new ManagedManagementStrategy(new DefaultManagementAgent(this));
                 // prefer to have it at first strategy
                 lifecycleStrategies.add(0, new DefaultManagementLifecycleStrategy(this));
             } catch (NoClassDefFoundError e) {

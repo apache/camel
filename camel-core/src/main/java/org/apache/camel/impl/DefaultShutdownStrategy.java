@@ -240,7 +240,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext must be set");
+        ObjectHelper.notNull(camelContext, "CamelContext");
     }
 
     @Override

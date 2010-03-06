@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedComponent;
@@ -50,8 +51,8 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
     private static final Log LOG = LogFactory.getLog(ManagedManagementStrategy.class);
 
-    public ManagedManagementStrategy() {
-        this(new DefaultManagementAgent());
+    public ManagedManagementStrategy(CamelContext camelContext) {
+        this(new DefaultManagementAgent(camelContext));
     }
 
     public ManagedManagementStrategy(ManagementAgent managementAgent) {

@@ -23,6 +23,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -206,8 +207,9 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
                 }
                 try {
                     engine.deliver();
-                } catch (Exception e) {
-                    exceptionHandler.handleException(e);
+                } catch (Throwable t) {
+                    // a fail safe to handle all exceptions being thrown
+                    getExceptionHandler().handleException(t);
                 }
             }
         }

@@ -251,7 +251,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
     protected Resequencer createBatchResequencer(RouteContext routeContext,
             BatchResequencerConfig config) throws Exception {
         Processor processor = routeContext.createProcessor(this);
-        Resequencer resequencer = new Resequencer(processor, resolveExpressionList(routeContext));
+        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext));
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         return resequencer;

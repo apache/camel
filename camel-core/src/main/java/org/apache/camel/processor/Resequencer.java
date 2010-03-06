@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -37,16 +38,16 @@ public class Resequencer extends BatchProcessor implements Traceable {
 
     // TODO: Rework to avoid using BatchProcessor
 
-    public Resequencer(Processor processor, Expression expression) {
-        this(processor, createSet(expression));
+    public Resequencer(CamelContext camelContext, Processor processor, Expression expression) {
+        this(camelContext, processor, createSet(expression));
     }
 
-    public Resequencer(Processor processor, List<Expression> expressions) {
-        this(processor, createSet(expressions));
+    public Resequencer(CamelContext camelContext, Processor processor, List<Expression> expressions) {
+        this(camelContext, processor, createSet(expressions));
     }
 
-    public Resequencer(Processor processor, Set<Exchange> collection) {
-        super(processor, collection);
+    public Resequencer(CamelContext camelContext, Processor processor, Set<Exchange> collection) {
+        super(camelContext, processor, collection);
     }
 
     @Override

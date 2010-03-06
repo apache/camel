@@ -36,32 +36,36 @@ public class DefaultExecutorServiceStrategy implements ExecutorServiceStrategy {
         this.camelContext = camelContext;
     }
 
+    public String getThreadName(String nameSuffix) {
+        return ExecutorServiceHelper.getThreadName(nameSuffix);
+    }
+
     public ExecutorService lookup(String executorServiceRef) {
         return camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
     }
 
-    public ExecutorService newCachedThreadPool(String name) {
-        return ExecutorServiceHelper.newCachedThreadPool(name, true);
+    public ExecutorService newCachedThreadPool(String nameSuffix) {
+        return ExecutorServiceHelper.newCachedThreadPool(nameSuffix, true);
     }
 
-    public ScheduledExecutorService newScheduledThreadPool(String name, int poolSize) {
-        return ExecutorServiceHelper.newScheduledThreadPool(poolSize, name, true);
+    public ScheduledExecutorService newScheduledThreadPool(String nameSuffix, int poolSize) {
+        return ExecutorServiceHelper.newScheduledThreadPool(poolSize, nameSuffix, true);
     }
 
-    public ExecutorService newFixedThreadPool(String name, int poolSize) {
-        return ExecutorServiceHelper.newFixedThreadPool(poolSize, name, true);
+    public ExecutorService newFixedThreadPool(String nameSuffix, int poolSize) {
+        return ExecutorServiceHelper.newFixedThreadPool(poolSize, nameSuffix, true);
     }
 
-    public ExecutorService newSingleThreadExecutor(String name) {
-        return ExecutorServiceHelper.newSingleThreadExecutor(name, true);
+    public ExecutorService newSingleThreadExecutor(String nameSuffix) {
+        return ExecutorServiceHelper.newSingleThreadExecutor(nameSuffix, true);
     }
 
-    public ExecutorService newThreadPool(String name, int corePoolSize, int maxPoolSize) {
-        return ExecutorServiceHelper.newThreadPool(name, corePoolSize, maxPoolSize);
+    public ExecutorService newThreadPool(String nameSuffix, int corePoolSize, int maxPoolSize) {
+        return ExecutorServiceHelper.newThreadPool(nameSuffix, corePoolSize, maxPoolSize);
     }
 
-    public ExecutorService newThreadPool(String name, int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, boolean daemon) {
-        return ExecutorServiceHelper.newThreadPool(name, corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
+    public ExecutorService newThreadPool(String nameSuffix, int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, boolean daemon) {
+        return ExecutorServiceHelper.newThreadPool(nameSuffix, corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
     }
 
     public void shutdown(ExecutorService executorService) {

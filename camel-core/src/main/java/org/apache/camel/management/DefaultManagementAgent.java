@@ -39,9 +39,11 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ManagementAgent;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
@@ -50,7 +52,7 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 /**
  * Default implementation of the Camel JMX service agent
  */
-public class DefaultManagementAgent extends ServiceSupport implements ManagementAgent {
+public class DefaultManagementAgent extends ServiceSupport implements ManagementAgent, CamelContextAware {
 
     public static final String DEFAULT_DOMAIN = "org.apache.camel";
     public static final String DEFAULT_HOST = "localhost";
@@ -59,6 +61,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
     private static final transient Log LOG = LogFactory.getLog(DefaultManagementAgent.class);
 
+    private CamelContext camelContext;
     private ExecutorService executorService;
     private MBeanServer server;
     private final Set<ObjectName> mbeansRegistered = new HashSet<ObjectName>();
@@ -73,6 +76,13 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean usePlatformMBeanServer = true;
     private Boolean createConnector;
     private Boolean onlyRegisterProcessorWithCustomId;
+
+    public DefaultManagementAgent() {
+    }
+
+    public DefaultManagementAgent(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     protected void finalizeSettings() {
         if (registryPort == null) {
@@ -189,6 +199,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         this.executorService = executorService;
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     public void register(Object obj, ObjectName name) throws JMException {
         register(obj, name, false);
     }
@@ -224,6 +242,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
         assembler = new MetadataMBeanInfoAssembler();
         assembler.setAttributeSource(new AnnotationJmxAttributeSource());
 
@@ -393,8 +412,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         if (executorService == null) {
             // we only need a single for the JMX connector
-            // TODO use ExecutorServiceStrategy
-            executorService = ExecutorServiceHelper.newSingleThreadExecutor("JMXConnector: " + url, true);
+            executorService = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor("JMXConnector: " + url);
         }
 
         // execute the JMX connector

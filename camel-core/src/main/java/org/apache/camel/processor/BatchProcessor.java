@@ -28,7 +28,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.camel.CamelException;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
@@ -38,7 +38,6 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,17 +62,20 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
     private boolean batchConsumer;
     private Predicate completionPredicate;
 
+    private final CamelContext camelContext;
     private final Processor processor;
     private final Collection<Exchange> collection;
     private ExceptionHandler exceptionHandler;
 
     private final BatchSender sender;
 
-    public BatchProcessor(Processor processor, Collection<Exchange> collection) {
+    public BatchProcessor(CamelContext camelContext, Processor processor, Collection<Exchange> collection) {
+        ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(collection, "collection");
 
         // wrap processor in UnitOfWork so what we send out of the batch runs in a UoW
+        this.camelContext = camelContext;
         this.processor = new UnitOfWorkProcessor(processor);
         this.collection = collection;
         this.sender = new BatchSender();
@@ -259,7 +261,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         private Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
         public BatchSender() {
-            super(ExecutorServiceHelper.getThreadName("Batch Sender"));
+            super(camelContext.getExecutorServiceStrategy().getThreadName("Batch Sender"));
             this.queue = new LinkedList<Exchange>();
         }
 
@@ -335,7 +337,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                                 sendExchanges();
                             } catch (Throwable t) {
                                 // a fail safe to handle all exceptions being thrown
-                                getExceptionHandler().handleException(new CamelException(t));
+                                getExceptionHandler().handleException(t);
                             }
                         } finally {
                             queueLock.lock();
