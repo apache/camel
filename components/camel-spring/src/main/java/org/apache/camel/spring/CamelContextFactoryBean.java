@@ -560,7 +560,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
             LOG.info("JMXAgent enabled: " + camelJMXAgent);
-            DefaultManagementAgent agent = new DefaultManagementAgent();
+            DefaultManagementAgent agent = new DefaultManagementAgent(getContext());
             agent.setConnectorPort(parseInteger(camelJMXAgent.getConnectorPort()));
             agent.setCreateConnector(parseBoolean(camelJMXAgent.getCreateConnector()));
             agent.setMBeanObjectDomainName(parseText(camelJMXAgent.getMbeanObjectDomainName()));

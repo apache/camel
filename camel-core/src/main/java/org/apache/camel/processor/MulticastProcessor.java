@@ -112,7 +112,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext,processors, aggregationStrategy, false, null, false, false);
+        this(camelContext, processors, aggregationStrategy, false, null, false, false);
     }
     
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
