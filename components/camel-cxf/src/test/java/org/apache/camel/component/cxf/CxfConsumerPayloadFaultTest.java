@@ -52,10 +52,10 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
     protected static final String SERVICE_ADDRESS = "http://localhost:8092/PersonService";
     
-    protected static String FROM_URI = "cxf://" + SERVICE_ADDRESS + "?" 
+    protected static final String FROM_URI = "cxf://" + SERVICE_ADDRESS + "?" 
         + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + DataFormat.PAYLOAD;
 
-    protected static String DETAILS = "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\">"
+    protected static final String DETAILS = "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\">"
         + "<personId></personId></UnknownPersonFault></detail>";
     @Override
     protected RouteBuilder createRouteBuilder() {
