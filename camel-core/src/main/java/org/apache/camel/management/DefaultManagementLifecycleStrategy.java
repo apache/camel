@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.management.JMException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -81,16 +82,27 @@ import org.apache.commons.logging.LogFactory;
  * @see org.apache.camel.spi.ManagementStrategy
  * @version $Revision$
  */
-public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service {
+public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Service, CamelContextAware {
 
     private static final Log LOG = LogFactory.getLog(DefaultManagementLifecycleStrategy.class);
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
-    private final CamelContext context;
+    private CamelContext camelContext;
     private boolean initialized;
 
-    public DefaultManagementLifecycleStrategy(CamelContext context) {
-        this.context = context;
+    public DefaultManagementLifecycleStrategy() {
+    }
+
+    public DefaultManagementLifecycleStrategy(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public void onContextStart(CamelContext context) {
@@ -365,7 +377,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(context, route);
+            ManagedRoute mr = new ManagedRoute(camelContext, route);
             mr.init(getManagementStrategy());
 
             // skip already managed routes, for example if the route has been restarted
@@ -472,7 +484,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         // that then delegates to the real mbean which we register later in the onServiceAdd method
         DelegatePerformanceCounter pc = new DelegatePerformanceCounter();
         // set statistics enabled depending on the option
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+        boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
         pc.setStatisticsEnabled(enabled);
 
         // and add it as a a registered counter that will be used lazy when Camel
@@ -516,10 +528,11 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     private ManagementStrategy getManagementStrategy() {
-        return context.getManagementStrategy();
+        return camelContext.getManagementStrategy();
     }
 
     public void start() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
     }
 
     public void stop() throws Exception {

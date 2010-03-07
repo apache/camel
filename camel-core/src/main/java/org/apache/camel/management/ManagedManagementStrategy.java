@@ -51,6 +51,9 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
     private static final Log LOG = LogFactory.getLog(ManagedManagementStrategy.class);
 
+    public ManagedManagementStrategy() {
+    }
+
     public ManagedManagementStrategy(CamelContext camelContext) {
         this(new DefaultManagementAgent(camelContext));
     }

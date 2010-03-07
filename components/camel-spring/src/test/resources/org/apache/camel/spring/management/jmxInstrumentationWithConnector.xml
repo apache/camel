@@ -22,54 +22,48 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <bean id="agent" class="org.apache.camel.management.DefaultManagementAgent">
-    <property name="MBeanServer" ref="mbeanServer"/>
-    <!-- From Camel 2.3.0, you need to set the camelContext property of DefaultManagementAgent -->
-    <property name="camelContext" ref="camel" />
-  </bean>
+    <!-- START SNIPPET: example -->
+    <bean id="agent" class="org.apache.camel.management.DefaultManagementAgent">
+        <property name="MBeanServer" ref="mbeanServer"/>
+    </bean>
 
     <bean id="managementStrategy" class="org.apache.camel.management.ManagedManagementStrategy">
-        <constructor-arg index="0"><ref bean="agent"/></constructor-arg>
+        <property name="managementAgent" ref="agent"/>
     </bean>
-  
-  <bean id="lifeCycleStrategy" class="org.apache.camel.management.DefaultManagementLifecycleStrategy">
-      <constructor-arg index="0" ref="camel"/>
-  </bean>
-  
-  <bean id="mybean" class="org.apache.camel.spring.example.DummyBean">
-    <property name="endpoint" ref="endpoint1"/>
-  </bean>
-  
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <beanPostProcessor/>
-    <endpoint id="endpoint1" uri="direct:start"/>
-    <endpoint id="endpoint2" uri="mock:end"/>
 
-    <route>
-      <from ref="endpoint1"/>
-      <to ref="endpoint2"/>
-    </route>
-  </camelContext>
+    <bean id="mybean" class="org.apache.camel.spring.example.DummyBean">
+        <property name="endpoint" ref="endpoint1"/>
+    </bean>
 
-  <!--
-    this bean needs to be eagerly pre-instantiated in order for the exporting to occur;
-    this means that it must not be marked as lazily initialized
-  -->
-  <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
-    <property name="defaultDomain" value="org.apache.camel.test"/>
-  </bean>
-  <bean id="registry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
-    <property name="port" value="9877"/>
-  </bean>
-  <bean id="serverConnector"
-      class="org.springframework.jmx.support.ConnectorServerFactoryBean" depends-on="registry">
-    <property name="objectName" value="connector:name=rmi"/>
-    <property name="serviceUrl" 
-      value="service:jmx:rmi:///jndi/rmi://localhost:9877/jmxrmi"/>
-    <property name="threaded" value="true"/>
-    <property name="daemon" value="true"/>
-  </bean>
-  <!-- END SNIPPET: example -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <endpoint id="endpoint1" uri="direct:start"/>
+        <endpoint id="endpoint2" uri="mock:end"/>
+
+        <route>
+            <from ref="endpoint1"/>
+            <to ref="endpoint2"/>
+        </route>
+    </camelContext>
+
+    <!--
+      this bean needs to be eagerly pre-instantiated in order for the exporting to occur;
+      this means that it must not be marked as lazily initialized
+    -->
+    <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+        <property name="defaultDomain" value="org.apache.camel.test"/>
+    </bean>
+
+    <bean id="registry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
+        <property name="port" value="9877"/>
+    </bean>
+
+    <bean id="serverConnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean"
+          depends-on="registry">
+        <property name="objectName" value="connector:name=rmi"/>
+        <property name="serviceUrl" value="service:jmx:rmi:///jndi/rmi://localhost:9877/jmxrmi"/>
+        <property name="threaded" value="true"/>
+        <property name="daemon" value="true"/>
+    </bean>
+    <!-- END SNIPPET: example -->
 
 </beans>
