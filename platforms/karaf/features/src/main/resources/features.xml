@@ -338,6 +338,11 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mvel/${pom.version}</bundle>
   </feature>
+  <feature name='camel-nagios' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>	
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/${jsendnsca-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-nagios/${pom.version}</bundle>
+  </feature>	  
   <feature name='camel-ognl' version='${pom.version}'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-version}</bundle>
