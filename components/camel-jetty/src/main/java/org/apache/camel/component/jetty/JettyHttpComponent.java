@@ -395,6 +395,14 @@ public class JettyHttpComponent extends HttpComponent {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        if (CONNECTORS.size() > 0) {
+            for (ConnectorRef connectorRef : CONNECTORS.values()) {
+                connectorRef.server.removeConnector(connectorRef.connector);
+                connectorRef.connector.stop();
+                connectorRef.server.stop();                
+            }
+            CONNECTORS.clear();
+        }
         if (httpClient != null) {
             httpClient.stop();
         }
