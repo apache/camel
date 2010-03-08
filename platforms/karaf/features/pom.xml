@@ -57,7 +57,6 @@
       <flatpack-bundle-version>3.1.1_3</flatpack-bundle-version>
       <freemarker-bundle-version>2.3.15_3</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
-      <geronimo-jaxws-spec-version>1.0</geronimo-jaxws-spec-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
       <gernimo-annotation-spec-version>1.1.1</gernimo-annotation-spec-version>
@@ -95,6 +94,7 @@
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
       <saxon-bundle-version>9.1.0.1_3</saxon-bundle-version>
       <servicemix-specs-version>1.4.0</servicemix-specs-version>
+      <jaxws.api.version>2.1</jaxws.api.version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_2</serp-bundle-version>
       <smack-bundle-version>3.1.0_1-SNAPSHOT</smack-bundle-version>      
