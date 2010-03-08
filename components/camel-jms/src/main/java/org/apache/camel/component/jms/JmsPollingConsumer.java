@@ -28,10 +28,12 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class JmsPollingConsumer extends PollingConsumerSupport {
     private JmsOperations template;
+    private JmsEndpoint jmsEndpoint;
     private final boolean spring20x;
 
     public JmsPollingConsumer(JmsEndpoint endpoint, JmsOperations template) {
         super(endpoint);
+        this.jmsEndpoint = endpoint;
         this.template = template;
         this.spring20x = JmsHelper.isSpring20x();
     }
@@ -68,7 +70,13 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
 
     public Exchange receive(long timeout) {
         setReceiveTimeout(timeout);
-        Message message = template.receive();
+        Message message = null;
+        // using the selector
+        if (jmsEndpoint.getSelector() != null && jmsEndpoint.getSelector().length() > 0) {
+            message = template.receiveSelected(jmsEndpoint.getSelector());
+        } else {
+            message = template.receive();
+        }
         if (message != null) {
             return getEndpoint().createExchange(message);
         }
