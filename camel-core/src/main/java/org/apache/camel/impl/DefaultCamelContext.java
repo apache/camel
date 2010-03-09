@@ -174,8 +174,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     /**
-     * Creates the {@link CamelContext} using the given JNDI context as the
-     * registry
+     * Creates the {@link CamelContext} using the given JNDI context as the registry
+     *
+     * @param jndiContext the JNDI context
      */
     public DefaultCamelContext(Context jndiContext) {
         this();
@@ -184,6 +185,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     /**
      * Creates the {@link CamelContext} using the given registry
+     *
+     * @param registry the registry
      */
     public DefaultCamelContext(Registry registry) {
         this();
@@ -196,6 +199,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
 
     /**
      * Sets the name of the this context.
+     *
+     * @param name the name
      */
     public void setName(String name) {
         this.name = name;
@@ -724,7 +729,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // do not parse uris that are designated for the properties component as it will handle that itself
         if (uri != null && !uri.startsWith("properties:") && uri.contains("#{")) {
             // the uri contains property placeholders so lookup mandatory properties component and let it parse it
-            Component component = hasComponent("properties");
+            Component component = getComponent("properties");
             if (component == null) {
                 throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
                         + " in CamelContext to support property placeholders in endpoint URIs");
