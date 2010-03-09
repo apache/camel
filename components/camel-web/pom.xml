@@ -43,14 +43,14 @@
 			<url>http://download.java.net/maven/2/</url>
 			<layout>default</layout>
 		</repository>
-        <repository>
-           	<id>glassfish-repo-archive</id>
-       		<name>Nexus repository collection for Glassfish</name>
-       		<url>http://maven.glassfish.org/content/groups/glassfish</url>
-      		<snapshots>
-           		<updatePolicy>never</updatePolicy>
-       		</snapshots>
-      	</repository>
+		<repository>
+			<id>glassfish-repo-archive</id>
+			<name>Nexus repository collection for Glassfish</name>
+			<url>http://maven.glassfish.org/content/groups/glassfish</url>
+			<snapshots>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
 		<repository>
 			<id>release.openqa.org</id>
 			<name>OpenQA Releases</name>
@@ -252,7 +252,8 @@
 
 				<configuration>
 					<!--
-						<connectors> <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+						<connectors> <connector
+						implementation="org.mortbay.jetty.nio.SelectChannelConnector">
 						<port>${jetty.port}</port> <maxIdleTime>60000</maxIdleTime>
 						</connector> </connectors>
 					-->
@@ -319,14 +320,6 @@
 							<artifactId>xercesImpl</artifactId>
 							<version>2.8.1</version>
 						</docletArtifact>
-						<!--
-							<docletArtifact> <groupId>javax.xml.bind</groupId>
-							<artifactId>jaxb-api</artifactId>
-							<version>${jaxb-api-version}</version> </docletArtifact>
-							<docletArtifact> <groupId>javax.xml</groupId>
-							<artifactId>jaxb-impl</artifactId>
-							<version>${jaxb-version}</version> </docletArtifact>
-						-->
 						<docletArtifact>
 							<groupId>javax.xml.bind</groupId>
 							<artifactId>jaxb-api</artifactId>
@@ -347,11 +340,6 @@
 							<artifactId>stax-api</artifactId>
 							<version>${stax-api-version}</version>
 						</docletArtifact>
-						<!--
-							<docletArtifact> <groupId>javax.xml.stream</groupId>
-							<artifactId>stax-api</artifactId>
-							<version>${stax-api-version}</version> </docletArtifact>
-						-->
 					</docletArtifacts>
 					<additionalparam>-output
 						${project.build.outputDirectory}/resourcedoc.xml</additionalparam>
@@ -407,13 +395,6 @@
 								</property>
 							</properties>
 						</wadlGeneratorDescription>
-						<!--
-							<wadlGeneratorDescription>
-							<className>com.sun.jersey.samples.generatewadl.util.ExampleWadlGenerator</className>
-							<properties> <property> <name>resourceDocFile</name>
-							<value>${project.build.outputDirectory}/resourcedoc.xml</value>
-							</property> </properties> </wadlGeneratorDescription>
-						-->
 					</wadlGenerators>
 				</configuration>
 
@@ -449,9 +430,9 @@
 					<executions>
 						<execution>
 							<phase>process-sources</phase>
-							<goals>  
-   	                          <goal>generate</goal>  
-                            </goals>
+							<goals>
+								<goal>generate</goal>
+							</goals>
 							<configuration>
 								<destdir>${project.build.directory}/schema</destdir>
 								<srcdir>src/main/java/org/apache/camel/web/model</srcdir>
@@ -531,20 +512,17 @@
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>copy</id>
+								<id>unpack</id>
 								<phase>generate-sources</phase>
 								<goals>
-									<goal>copy</goal>
+									<goal>unpack</goal>
 								</goals>
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>com.sun.tools.jxc.maven2</groupId>
-						<artifactId>maven-jaxb-schemagen-plugin</artifactId>
-					</plugin>
 				</plugins>
 			</build>
+
 		</profile>
 		<profile>
 			<id>on-hpjdk</id>
@@ -561,21 +539,18 @@
 						<artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>copy</id>
+								<id>unpack</id>
 								<phase>generate-sources</phase>
 								<goals>
-									<goal>copy</goal>
+									<goal>unpack</goal>
 								</goals>
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>com.sun.tools.jxc.maven2</groupId>
-						<artifactId>maven-jaxb-schemagen-plugin</artifactId>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
+
 
 		<profile>
 			<id>osgi</id>
@@ -584,20 +559,20 @@
 					org.apache.camel.web.resources
 				</osgi.export.pkg>
 				<osgi.import.pkg>
-				    com.sun.jersey.api.view;resolution:=optional,
+					com.sun.jersey.api.view;resolution:=optional,
 					com.sun.jersey.api.core;resolution:=optional,
 					com.sun.jersey.server.impl.container;resolution:=optional,
 					com.sun.jersey.server.impl.container.config;resolution:=optional,
 					com.sun.jersey.spi.container;resolution:=optional,
 					com.sun.jersey.spi.inject;resolution:=optional,
-				    com.sun.jersey.spi.resource;resolution:=optional,
+					com.sun.jersey.spi.resource;resolution:=optional,
 					com.sun.jersey.spi.spring.container.servlet;resolution:=optional,
 					com.sun.org.apache.xerces.internal.jaxp;resolution:=optional,
-				    com.sun.research.ws.wadl;resolution:=optional,
-				    com.sun.xml.bind.v2.ContextFactory;resolution:=optional,
-				    javax.annotation;resolution:=optional,
-				    javax.el;resolution:=optional,
-				    javax.naming;resolution:=optional,
+					com.sun.research.ws.wadl;resolution:=optional,
+					com.sun.xml.bind.v2.ContextFactory;resolution:=optional,
+					javax.annotation;resolution:=optional,
+					javax.el;resolution:=optional,
+					javax.naming;resolution:=optional,
 					javax.servlet;resolution:=optional,
 					javax.servlet.http;resolution:=optional,
 					javax.servlet.jsp;resolution:=optional,
@@ -605,41 +580,41 @@
 					javax.servlet.jsp.tagext;resolution:=optional,
 					javax.servlet.jsp.jstl.core;resolution:=optional,
 					javax.servlet.resources;resolution:=optional,
-				    javax.ws.rs;resolution:=optional,
-				    javax.ws.rs.core;resolution:=optional,
-				    javax.ws.rs.ext;resolution:=optional,
-				    javax.xml;resolution:=optional,
-				    javax.xml.bind;resolution:=optional,
-				    javax.xml.bind.annotation;resolution:=optional,
-				    javax.xml.bind.annotation.adapters;resolution:=optional,
-				    javax.xml.bind.attachment;resolution:=optional,
-				    javax.xml.bind.helpers;resolution:=optional,
-				    javax.xml.bind.util;resolution:=optional,
-				    javax.xml.namespace;resolution:=optional,
+					javax.ws.rs;resolution:=optional,
+					javax.ws.rs.core;resolution:=optional,
+					javax.ws.rs.ext;resolution:=optional,
+					javax.xml;resolution:=optional,
+					javax.xml.bind;resolution:=optional,
+					javax.xml.bind.annotation;resolution:=optional,
+					javax.xml.bind.annotation.adapters;resolution:=optional,
+					javax.xml.bind.attachment;resolution:=optional,
+					javax.xml.bind.helpers;resolution:=optional,
+					javax.xml.bind.util;resolution:=optional,
+					javax.xml.namespace;resolution:=optional,
 					javax.xml.parsers;resolution:=optional,
-				    org.apache.camel;version="[2.1, 2.5)",
-				    org.apache.camel.builder;version="[2.1, 2.5)",
-				    org.apache.camel.impl;version="[2.1, 2.5)",
-				    org.apache.camel.impl.converter;version="[2.1, 2.5)",
-				    org.apache.camel.model;version="[2.1, 2.5)",
-				    org.apache.camel.spi;version="[2.1, 2.5)",
-				    org.apache.camel.spring;version="[2.1, 2.5)",
-				    org.apache.camel.osgi;version="[2.1, 2.5)",
-				    org.apache.camel.util;version="[2.1, 2.5)",
-				    org.apache.camel.web.resources;resolution:=optional,
-				    org.apache.commons.logging;resolution:=optional,
-				    org.osgi.service.http;version="[1.0.0,2.0.0)",
-				    org.ops4j.pax.web.service;resolution:=optional,
-				    org.w3c.dom;resolution:=optional,
-				    org.xml.sax;resolution:=optional,
-				    org.xml.sax.helpers;resolution:=optional,
+					org.apache.camel;version="[2.1, 2.5)",
+					org.apache.camel.builder;version="[2.1, 2.5)",
+					org.apache.camel.impl;version="[2.1, 2.5)",
+					org.apache.camel.impl.converter;version="[2.1, 2.5)",
+					org.apache.camel.model;version="[2.1, 2.5)",
+					org.apache.camel.spi;version="[2.1, 2.5)",
+					org.apache.camel.spring;version="[2.1, 2.5)",
+					org.apache.camel.osgi;version="[2.1, 2.5)",
+					org.apache.camel.util;version="[2.1, 2.5)",
+					org.apache.camel.web.resources;resolution:=optional,
+					org.apache.commons.logging;resolution:=optional,
+					org.osgi.service.http;version="[1.0.0,2.0.0)",
+					org.ops4j.pax.web.service;resolution:=optional,
+					org.w3c.dom;resolution:=optional,
+					org.xml.sax;resolution:=optional,
+					org.xml.sax.helpers;resolution:=optional,
 					org.springframework.aop.support;version="[2.5.6, 3.0.0)",
 					org.springframework.context;version="[2.5.6, 3.0.0)",
 					org.springframework.util;version="[2.5.6, 3.0.0)",
 					org.springframework.beans.factory;version="[2.5.6, 3.0.0)",
 					org.springframework.beans.factory.config;version="[2.5.6, 3.0.0)",
 					org.springframework.beans.factory.xml;version="[2.5.6, 3.0.0)",
-				    org.springframework.jmx.export.metadata;version="[2.5.6, 3.0.0)",
+					org.springframework.jmx.export.metadata;version="[2.5.6, 3.0.0)",
 					org.springframework.web.context;version="[2.5.6, 3.0.0)",
 					org.springframework.web.context.support;version="[2.5.6, 3.0.0)",
 					org.springframework.osgi.web.context.support;version="[1.0, 2.0)"
@@ -726,20 +701,20 @@
 							<artifactId>spring-web</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.bundles</groupId>
-						    <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>							
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>
@@ -749,20 +724,20 @@
 					<version>${jersey-version}</version>
 					<exclusions>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.bundles</groupId>
-						    <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>							
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>
@@ -772,43 +747,43 @@
 					<version>${jersey-version}</version>
 					<exclusions>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.bundles</groupId>
-						    <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>							
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>
-    			<dependency>
+				<dependency>
 					<groupId>com.sun.jersey</groupId>
 					<artifactId>jersey-json</artifactId>
 					<version>${jersey-version}</version>
 					<exclusions>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.specs</groupId>
-						    <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>						
+							<groupId>org.apache.servicemix.specs</groupId>
+							<artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
 						</exclusion>
 						<exclusion>
-						    <groupId>org.apache.servicemix.bundles</groupId>
-						    <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>							
+							<groupId>org.apache.servicemix.bundles</groupId>
+							<artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>
@@ -921,7 +896,7 @@
 						</configuration>
 					</plugin>
 				</plugins>
-				</build>
+			</build>
 		</profile>
 	</profiles>
 </project>
