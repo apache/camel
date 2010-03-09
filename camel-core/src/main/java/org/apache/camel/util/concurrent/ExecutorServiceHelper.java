@@ -40,18 +40,25 @@ public final class ExecutorServiceHelper {
     private ExecutorServiceHelper() {
     }
 
+    private static synchronized int nextThreadCounter() {
+        return threadCounter.getAndIncrement();
+    }
+
     /**
      * Creates a new thread name with the given prefix
      *
-     * @param name the prefix
+     * @param pattern the pattern
+     * @param name the name
      * @return the thread name, which is unique
      */
-    public static String getThreadName(String name) {
-        return "Camel thread " + nextThreadCounter() + ": " + name;
-    }
+    public static String getThreadName(String pattern, String name) {
+        String answer = pattern.replaceFirst("\\$\\{counter\\}", ""  + nextThreadCounter());
+        answer = answer.replaceFirst("\\$\\{name\\}", name);
+        if (answer.indexOf("$") > -1 || answer.indexOf("${") > -1 || answer.indexOf("}") > -1) {
+            throw new IllegalArgumentException("Pattern is invalid: " + pattern);
+        }
 
-    protected static synchronized int nextThreadCounter() {
-        return threadCounter.getAndIncrement();
+        return answer;
     }
 
     /**
@@ -65,7 +72,7 @@ public final class ExecutorServiceHelper {
     public static ScheduledExecutorService newScheduledThreadPool(final int poolSize, final String name, final boolean daemon) {
         return Executors.newScheduledThreadPool(poolSize, new ThreadFactory() {
             public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(name));
+                Thread answer = new Thread(r, name);
                 answer.setDaemon(daemon);
                 return answer;
             }
@@ -75,7 +82,7 @@ public final class ExecutorServiceHelper {
     public static ExecutorService newFixedThreadPool(final int poolSize, final String name, final boolean daemon) {
         return Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
             public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(name));
+                Thread answer = new Thread(r, name);
                 answer.setDaemon(daemon);
                 return answer;
             }
@@ -85,7 +92,7 @@ public final class ExecutorServiceHelper {
     public static ExecutorService newSingleThreadExecutor(final String name, final boolean daemon) {
         return Executors.newSingleThreadExecutor(new ThreadFactory() {
             public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(name));
+                Thread answer = new Thread(r, name);
                 answer.setDaemon(daemon);
                 return answer;
             }
@@ -95,14 +102,14 @@ public final class ExecutorServiceHelper {
     /**
      * Creates a new cached thread pool which should be the most commonly used.
      *
-     * @param name    part of the thread name
+     * @param name    the full thread name
      * @param daemon  whether the threads is daemon or not
      * @return the created pool
      */
     public static ExecutorService newCachedThreadPool(final String name, final boolean daemon) {
         return Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(name));
+                Thread answer = new Thread(r, name);
                 answer.setDaemon(daemon);
                 return answer;
             }
@@ -112,7 +119,7 @@ public final class ExecutorServiceHelper {
     /**
      * Creates a new custom thread pool using 60 seconds as keep alive
      *
-     * @param name          part of the thread name
+     * @param name          the full thread name
      * @param corePoolSize  the core size
      * @param maxPoolSize   the maximum pool size
      * @return the created pool
@@ -124,7 +131,7 @@ public final class ExecutorServiceHelper {
     /**
      * Creates a new custom thread pool
      *
-     * @param name          part of the thread name
+     * @param name          the full thread name
      * @param corePoolSize  the core size
      * @param maxPoolSize   the maximum pool size
      * @param keepAliveTime keep alive
@@ -145,7 +152,7 @@ public final class ExecutorServiceHelper {
                                                            keepAliveTime, timeUnit, new LinkedBlockingQueue<Runnable>());
         answer.setThreadFactory(new ThreadFactory() {
             public Thread newThread(Runnable r) {
-                Thread answer = new Thread(r, getThreadName(name));
+                Thread answer = new Thread(r, name);
                 answer.setDaemon(daemon);
                 return answer;
             }

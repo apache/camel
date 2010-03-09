@@ -1101,22 +1101,20 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         if (isStreamCaching()) {
             // only add a new stream cache if not already configured
             if (StreamCaching.getStreamCaching(this) == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("StreamCaching is enabled");
-                }
+                LOG.info("StreamCaching is enabled on CamelContext" + getName());
                 addInterceptStrategy(new StreamCaching());
             }
         }
 
         if (isTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
-            LOG.debug("Tracing is enabled");
+            LOG.info("Tracing is enabled on CamelContext" + getName());
         }
 
         if (isHandleFault()) {
             // only add a new handle fault if not already configured
             if (HandleFault.getHandleFault(this) == null) {
-                LOG.debug("HandleFault is enabled");
+                LOG.info("HandleFault is enabled on CamelContext" + getName());
                 addInterceptStrategy(new HandleFault());
             }
         }
@@ -1125,7 +1123,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
             // only add a new delayer if not already configured
             if (Delayer.getDelayer(this) == null) {
                 long millis = getDelayer();
-                LOG.debug("Delayer is enabled with: " + millis + " ms.");
+                LOG.info("Delayer is enabled with: " + millis + " ms. on CamelContext" + getName());
                 addInterceptStrategy(new Delayer(millis));
             }
         }

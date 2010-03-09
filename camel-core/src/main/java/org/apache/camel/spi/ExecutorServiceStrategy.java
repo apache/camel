@@ -39,10 +39,30 @@ public interface ExecutorServiceStrategy {
     /**
      * Creates a full thread name
      *
-     * @param nameSuffix  suffix which is appended to the thread name
+     * @param name  name which is appended to the full thread name
      * @return the full thread name
      */
-    String getThreadName(String nameSuffix);
+    String getThreadName(String name);
+
+    /**
+     * Gets the thread name pattern used for creating the full thread name.
+     *
+     * @return the pattern
+     */
+    String getThreadNamePattern();
+
+    /**
+     * Sets the thread name pattern used for creating the full thread name.
+     * <p/>
+     * The default pattern is: <tt>Camel Thread ${counter} - ${suffix}</tt>
+     * </br>
+     * Where <tt>${counter}</tt> is a unique incrementing counter.
+     * And <tt>${name}</tt> is the thread name.
+     *
+     * @param pattern  the pattern
+     * @throws IllegalArgumentException if the pattern is invalid.
+     */
+    void setThreadNamePattern(String pattern) throws IllegalArgumentException;
 
     /**
      * Lookup a {@link java.util.concurrent.ExecutorService} from the {@link org.apache.camel.spi.Registry}.
@@ -55,53 +75,53 @@ public interface ExecutorServiceStrategy {
     /**
      * Creates a new cached thread pool.
      *
-     * @param nameSuffix  suffix which is appended to the thread name
+     * @param name  name which is appended to the thread name
      * @return the thread pool
      */
-    ExecutorService newCachedThreadPool(String nameSuffix);
+    ExecutorService newCachedThreadPool(String name);
 
     /**
      * Creates a new scheduled thread pool.
      *
-     * @param nameSuffix  suffix which is appended to the thread name
+     * @param name        name which is appended to the thread name
      * @param poolSize    the core pool size
      * @return the thread pool
      */
-    ScheduledExecutorService newScheduledThreadPool(String nameSuffix, int poolSize);
+    ScheduledExecutorService newScheduledThreadPool(String name, int poolSize);
 
     /**
      * Creates a new fixed thread pool.
      *
-     * @param nameSuffix  suffix which is appended to the thread name
+     * @param name        name which is appended to the thread name
      * @param poolSize    the core pool size
      * @return the thread pool
      */
-    ExecutorService newFixedThreadPool(String nameSuffix, int poolSize);
+    ExecutorService newFixedThreadPool(String name, int poolSize);
 
     /**
      * Creates a new single-threaded thread pool. This is often used for background threads.
      *
-     * @param nameSuffix  suffix which is appended to the thread name
+     * @param name  name which is appended to the thread name
      * @return the thread pool
      */
-    ExecutorService newSingleThreadExecutor(String nameSuffix);
+    ExecutorService newSingleThreadExecutor(String name);
 
     /**
      * Creates a new custom thread pool.
      * <p/>
      * Will by default use 60 seconds for keep alive time for idle threads.
      *
-     * @param nameSuffix    suffix which is appended to the thread name
+     * @param name          name which is appended to the thread name
      * @param corePoolSize  the core pool size
      * @param maxPoolSize   the maximum pool size
      * @return the thread pool
      */
-    ExecutorService newThreadPool(String nameSuffix, int corePoolSize, int maxPoolSize);
+    ExecutorService newThreadPool(String name, int corePoolSize, int maxPoolSize);
 
     /**
      * Creates a new custom thread pool.
      *
-     * @param nameSuffix    suffix which is appended to the thread name
+     * @param name          name which is appended to the thread name
      * @param corePoolSize  the core pool size
      * @param maxPoolSize   the maximum pool size
      * @param keepAliveTime keep alive time for idle threads
@@ -109,7 +129,7 @@ public interface ExecutorServiceStrategy {
      * @param daemon        whether or not the created threads is daemon or not
      * @return the thread pool
      */
-    ExecutorService newThreadPool(final String nameSuffix, int corePoolSize, int maxPoolSize,
+    ExecutorService newThreadPool(final String name, int corePoolSize, int maxPoolSize,
                                   long keepAliveTime, TimeUnit timeUnit, boolean daemon);
 
     /**
