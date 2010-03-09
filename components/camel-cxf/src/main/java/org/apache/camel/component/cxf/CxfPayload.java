@@ -17,8 +17,11 @@
 package org.apache.camel.component.cxf;
 
 import java.util.List;
-
+import javax.xml.transform.TransformerException;
 import org.w3c.dom.Element;
+
+import org.apache.camel.converter.jaxp.XmlConverter;
+
 
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
@@ -44,10 +47,26 @@ public class CxfPayload<T> {
     }
     
     public String toString() {
+        XmlConverter converter = new XmlConverter();
         StringBuffer buf = new StringBuffer();
         buf.append(getClass().getName());
         buf.append(" headers: " + headers);
-        buf.append("body: " + body);
+        // go through the list of element and turn it into String
+        if (body == null) {
+            buf.append("body: " + body);
+        } else {
+            buf.append("body: [ ");
+            for (Element element : body) {
+                String elementString = "";
+                try {
+                    elementString = converter.toString(element);
+                } catch (TransformerException e) {
+                    elementString = element.toString();
+                }
+                buf.append("[" + elementString + "]");
+            }
+            buf.append("]");
+        }
         return buf.toString();
     }
 
