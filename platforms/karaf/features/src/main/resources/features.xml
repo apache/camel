@@ -22,19 +22,7 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-spring-osgi/${pom.version}</bundle>
   </feature>
-  <feature name='camel-spring' version='${pom.version}'>
-    <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-version}'>spring</feature>
-    <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-spring/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-osgi' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-spring</feature>
-    <feature version='${spring-osgi-version}'>spring-dm</feature>
-    <bundle>mvn:org.apache.camel/camel-osgi/${pom.version}</bundle>
-  </feature>
-   <feature name='camel-test' version='${pom.version}'>
+  <feature name='camel-test' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring-osgi</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>    
     <bundle>mvn:org.apache.camel/camel-test/${pom.version}</bundle>
