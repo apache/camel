@@ -16,45 +16,59 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.io.IOException;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-public class SpringHttpsRouteTest extends CamelSpringTestSupport {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"/org/apache/camel/component/jetty/jetty-https.xml"})
+public class SpringHttpsRouteTest {
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
+    protected transient Log log = LogFactory.getLog(TestSupport.class);
 
-    @Override
+    @EndpointInject(uri="mock:a")
+    MockEndpoint mockEndpoint;
+    
+    @Produce
+    private ProducerTemplate template;
+
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         // ensure jsse clients can validate the self signed dummy localhost cert, 
         // use the server keystore as the trust store for these tests
-        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+        URL trustStoreUrl = Thread.currentThread().getContextClassLoader().getResource("jsse/localhost.ks");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
     }
 
-    @Override
     @After
     public void tearDown() throws Exception {
         restoreSystemProperties();
-        super.tearDown();
     }
 
     private void setSystemProp(String key, String value) {
@@ -75,15 +89,15 @@ public class SpringHttpsRouteTest extends CamelSpringTestSupport {
 
     @Test
     public void testEndpoint() throws Exception {
-        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
+        mockEndpoint.reset();
         mockEndpoint.expectedBodiesReceived(expectedBody);
 
-        invokeHttpEndpoint();
+        template.sendBodyAndHeader("https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        assertNotNull("exchange", exchange);
+        TestSupport.assertNotNull("exchange", exchange);
 
         Message in = exchange.getIn();
         assertNotNull("in", in);
@@ -97,7 +111,7 @@ public class SpringHttpsRouteTest extends CamelSpringTestSupport {
 
     @Test
     public void testEndpointWithoutHttps() {
-        MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
+        mockEndpoint.reset();
         try {
             template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
@@ -106,12 +120,4 @@ public class SpringHttpsRouteTest extends CamelSpringTestSupport {
         assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
     }
 
-    protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader("https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
-    }
-
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jetty/jetty-https.xml");
-    }
 }

@@ -33,7 +33,7 @@
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.jetty.*</camel.osgi.export.pkg>
   </properties>
-
+  
   <dependencies>
 
     <dependency>
@@ -81,6 +81,12 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
+      <optional>true</optional>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
       <optional>true</optional>
       <scope>test</scope>
     </dependency>
