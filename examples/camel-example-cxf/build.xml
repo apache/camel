@@ -24,7 +24,7 @@
 	<fail unless="env.ACTIVEMQ_HOME" message="You must download ActiveMQ and set your ACTIVEMQ_HOME to run this demo."/>
 	<fail unless="env.CXF_HOME" message="You must download CXF and set your CXF_HOME to run this demo."/>
 	<fail unless="env.SPRING_HOME" message="You must download Spring2.5 and set your CXF_HOME to run this demo."/>
-	<fail unless="env.JETTY_HOME" message="You must download Jetty6 and set your JETTY_HOME to run this demo."/>
+	<fail unless="env.JETTY_HOME" message="You must download Jetty7 and set your JETTY_HOME to run this demo."/>
 
 	<property name="project.name" value="camel-example-cxf"/>
 

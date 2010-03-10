@@ -25,8 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.junit.Test;
-import org.mortbay.jetty.handler.StatisticsHandler;
 
 public class HandlerTest extends CamelTestSupport {
     private StatisticsHandler statisticsHandler1 = new StatisticsHandler();
@@ -36,28 +36,35 @@ public class HandlerTest extends CamelTestSupport {
     private String htmlResponse = "<html><body>Book 123 is Camel in Action</body></html>";
 
     @Test
-    public void testHandler() throws Exception {
+    public void testWithOneHandler() throws Exception {
         // First test the situation where one should invoke the handler once
         assertEquals(0, statisticsHandler1.getRequests());
         assertEquals(0, statisticsHandler2.getRequests());
         assertEquals(0, statisticsHandler3.getRequests());
+        
         ByteArrayInputStream html = (ByteArrayInputStream) template
                 .requestBody("http://localhost:9080/", "");
         BufferedReader br = new BufferedReader(new InputStreamReader(html));
+        
         assertEquals(htmlResponse, br.readLine());
         assertEquals(1, statisticsHandler1.getRequests());
+        assertEquals(0, statisticsHandler2.getRequests());
+        assertEquals(0, statisticsHandler3.getRequests());
+    }
+    
+    @Test
+    public void testWithTwoHandlers() throws Exception {
+        // First test the situation where one should invoke the handler once
+        assertEquals(0, statisticsHandler1.getRequests());
         assertEquals(0, statisticsHandler2.getRequests());
         assertEquals(0, statisticsHandler3.getRequests());
 
-        // Now test the situation where one should invoke the handler twice
-        assertEquals(1, statisticsHandler1.getRequests());
-        assertEquals(0, statisticsHandler2.getRequests());
-        assertEquals(0, statisticsHandler3.getRequests());
-        html = (ByteArrayInputStream) template.requestBody(
+        ByteArrayInputStream html = (ByteArrayInputStream) template.requestBody(
                 "http://localhost:9081/", "");
-        br = new BufferedReader(new InputStreamReader(html));
+        BufferedReader br = new BufferedReader(new InputStreamReader(html));
+        
         assertEquals(htmlResponse, br.readLine());
-        assertEquals(1, statisticsHandler1.getRequests());
+        assertEquals(0, statisticsHandler1.getRequests());
         assertEquals(1, statisticsHandler2.getRequests());
         assertEquals(1, statisticsHandler3.getRequests());
     }

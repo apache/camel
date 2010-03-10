@@ -38,9 +38,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.io.ByteArrayBuffer;
-import org.mortbay.jetty.client.HttpClient;
-import org.mortbay.jetty.client.HttpExchange;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpExchange;
+import org.eclipse.jetty.io.ByteArrayBuffer;
 
 /**
  * @version $Revision$
@@ -219,5 +219,4 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         super.doStop();
         client.stop();
     }
-
 }

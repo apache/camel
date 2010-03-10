@@ -26,11 +26,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.eclipse.jetty.http.security.Constraint;
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.junit.Test;
-import org.mortbay.jetty.security.Constraint;
-import org.mortbay.jetty.security.ConstraintMapping;
-import org.mortbay.jetty.security.HashUserRealm;
-import org.mortbay.jetty.security.SecurityHandler;
 
 /**
  * @version $Revision$
@@ -45,19 +47,19 @@ public class HttpBasicAuthTest extends CamelTestSupport {
     }
 
     private SecurityHandler getSecurityHandler() throws IOException {
-        Constraint constraint = new Constraint();
-        constraint.setName(Constraint.__BASIC_AUTH);
-
-        constraint.setRoles(new String[]{"user"});
+        Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
 
         ConstraintMapping cm = new ConstraintMapping();
-        cm.setConstraint(constraint);
         cm.setPathSpec("/*");
+        cm.setConstraint(constraint);
 
-        SecurityHandler sh = new SecurityHandler();
-        HashUserRealm realm = new HashUserRealm("MyRealm", "src/test/resources/myRealm.properties");
-        sh.setUserRealm(realm);
+        ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
+        sh.setAuthenticator(new BasicAuthenticator());
+        sh.setConstraintMappings(new ConstraintMapping[] {cm});
+        
+        HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
+        sh.setLoginService(loginService);
         sh.setConstraintMappings(new ConstraintMapping[]{cm});
 
         return sh;

@@ -24,10 +24,10 @@ import org.apache.camel.example.reportincident.InputReportIncident;
 import org.apache.camel.example.reportincident.OutputReportIncident;
 import org.apache.camel.example.reportincident.ReportIncidentService_PortType;
 import org.apache.camel.example.reportincident.ReportIncidentService_ServiceLocator;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * Unit test with embedded Jetty to execute a webservice request using Axis

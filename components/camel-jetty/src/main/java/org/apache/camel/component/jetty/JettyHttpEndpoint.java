@@ -25,8 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.server.Handler;
 
 /**
  * @version $Revision$

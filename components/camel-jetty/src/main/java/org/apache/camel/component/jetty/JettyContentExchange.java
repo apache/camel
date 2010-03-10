@@ -31,11 +31,11 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.io.Buffer;
-import org.mortbay.jetty.HttpHeaders;
-import org.mortbay.jetty.client.ContentExchange;
-import org.mortbay.jetty.client.HttpClient;
-import org.mortbay.jetty.client.HttpExchange;
+import org.eclipse.jetty.client.ContentExchange;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpExchange;
+import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.io.Buffer;
 
 /**
  * Jetty specific exchange which keeps track of the the request and response.

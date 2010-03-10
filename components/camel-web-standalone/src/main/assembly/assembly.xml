@@ -45,6 +45,7 @@
       <outputDirectory></outputDirectory>
       <outputFileNameMapping></outputFileNameMapping>
       <includes>
+      	<!-- not org.eclipse.jetty:jetty-runner at present -->
         <include>org.mortbay.jetty:jetty-runner</include>
       </includes>
     </dependencySet>

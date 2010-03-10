@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.cometd;
 
-import org.mortbay.cometd.AbstractBayeux;
+import org.cometd.server.AbstractBayeux;
+
 
 public interface CometdProducerConsumer {
 
@@ -29,5 +30,5 @@ public interface CometdProducerConsumer {
      * Sets the bayeux to use.
      */
     void setBayeux(AbstractBayeux bayeux);
-    
+   
 }

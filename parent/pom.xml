@@ -78,7 +78,7 @@
     <javax-mail-version>1.4.3</javax-mail-version>
     <jaxb-version>2.1.12</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
-    <jetty-version>6.1.22</jetty-version>
+    <jetty-version>7.0.1.v20091125</jetty-version>
     <jettison-version>1.2</jettison-version>
     <jruby-version>1.4.0</jruby-version>
     <juel-version>2.1.2</juel-version>
@@ -928,13 +928,28 @@
 
       <!-- optional jetty support -->
       <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty</artifactId>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-client</artifactId>
         <version>${jetty-version}</version>
       </dependency>
       <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-client</artifactId>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>${jetty-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-servlet</artifactId>
+        <version>${jetty-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-security</artifactId>
+        <version>${jetty-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-webapp</artifactId>
         <version>${jetty-version}</version>
       </dependency>
 

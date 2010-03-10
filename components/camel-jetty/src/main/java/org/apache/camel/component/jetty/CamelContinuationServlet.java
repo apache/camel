@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
-import org.mortbay.util.ajax.Continuation;
-import org.mortbay.util.ajax.ContinuationSupport;
+import org.eclipse.jetty.continuation.Continuation;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 
 /**
  * @version $Revision$
@@ -47,8 +47,8 @@ public class CamelContinuationServlet extends CamelServlet {
                 return;
             }
 
-            final Continuation continuation = ContinuationSupport.getContinuation(request, null);
-            if (continuation.isNew()) {
+            final Continuation continuation = ContinuationSupport.getContinuation(request);
+            if (continuation.isInitial()) {
                 // Have the camel process the HTTP exchange.
                 // final DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
                 // exchange.setProperty(HttpConstants.SERVLET_REQUEST, request);
@@ -81,7 +81,7 @@ public class CamelContinuationServlet extends CamelServlet {
             }
 
             if (continuation.isResumed()) {
-                Exchange exchange = (Exchange)continuation.getObject();
+                Exchange exchange = (Exchange)continuation.getAttribute("result");
                 // now lets output to the response
                 consumer.getBinding().writeResponse(exchange, response);
                 return;

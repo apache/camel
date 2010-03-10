@@ -33,20 +33,22 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.component.LifeCycle;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Handler;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.client.Address;
-import org.mortbay.jetty.client.HttpClient;
-import org.mortbay.jetty.handler.ContextHandlerCollection;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.security.SslSocketConnector;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.servlet.SessionHandler;
-import org.mortbay.thread.QueuedThreadPool;
-import org.mortbay.thread.ThreadPool;
+import org.eclipse.jetty.client.Address;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
@@ -59,7 +61,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
    
     private static final transient Log LOG = LogFactory.getLog(JettyHttpComponent.class);
-    private static final String JETTY_SSL_KEYSTORE = "jetty.ssl.keystore";
+    private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     
     protected String sslKeyPassword;
     protected String sslPassword;
@@ -157,7 +159,7 @@ public class JettyHttpComponent extends HttpComponent {
                 server.addConnector(connector);
 
                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers()));
-                connector.start();
+                connectorRef.server.start();
                 
                 CONNECTORS.put(connectorKey, connectorRef);
                 
@@ -174,17 +176,18 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     private void enableSessionSupport(Server server) throws Exception {
-        Context context = (Context)server.getChildHandlerByClass(Context.class);
+        ServletContextHandler context = (ServletContextHandler)server.getChildHandlerByClass(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
-            context.setSessionHandler(sessionHandler);
             if (context.isStarted()) {
                 // restart the context
                 context.stop();
+                context.setSessionHandler(sessionHandler);
                 context.start();
+            } else {
+                context.setSessionHandler(sessionHandler);
             }
         }
-
     }
 
     /**
@@ -351,22 +354,27 @@ public class JettyHttpComponent extends HttpComponent {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected CamelServlet createServletForConnector(Server server, Connector connector, List<Handler> handlers) throws Exception {
-        CamelServlet camelServlet = new CamelServlet();
-
-        Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
+        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});
 
-        if (handlers != null) {
+        if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
-                context.addHandler(handler);
+                if (handler instanceof HandlerWrapper) {
+                    ((HandlerWrapper) handler).setHandler(server.getHandler());
+                    server.setHandler(handler);
+                } else {
+                    HandlerCollection handlerCollection = new HandlerCollection();
+                    handlerCollection.addHandler(server.getHandler());
+                    handlerCollection.addHandler(handler);
+                    server.setHandler(handlerCollection);
+                }
             }
         }
 
+        CamelServlet camelServlet = new CamelServlet();
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
         context.addServlet(holder, "/*");
-        connector.start();
-        context.start();
 
         return camelServlet;
     }
@@ -374,9 +382,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected Server createServer() throws Exception {
         Server server = new Server();
         ContextHandlerCollection collection = new ContextHandlerCollection();
-        collection.setServer(server);
-        server.addHandler(collection);
-        server.start();
+        server.setHandler(collection);
         return server;
     }
 

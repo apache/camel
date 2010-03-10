@@ -27,7 +27,7 @@
     <wsdl:types>
         <xs:schema targetNamespace="http://reportincident.example.camel.apache.org">
             <xs:element name="inputReportIncident">
-                <xs:complexType name="inputReportIncident">
+                <xs:complexType>
                     <xs:sequence>
                         <xs:element type="xs:string" name="incidentId"/>
                         <xs:element type="xs:string" name="incidentDate"/>
@@ -41,7 +41,7 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="outputReportIncident">
-                <xs:complexType name="outputReportIncident">
+                <xs:complexType>
                     <xs:sequence>
                         <xs:element type="xs:string" name="code"/>
                     </xs:sequence>

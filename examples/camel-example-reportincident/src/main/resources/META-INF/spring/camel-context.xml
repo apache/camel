@@ -32,8 +32,7 @@
  <cxf:cxfEndpoint id="reportIncident"
                      address="http://localhost:9080/camel-example-reportincident/webservices/incident"
                      wsdlURL="etc/report_incident.wsdl"
-                     serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint">
- </cxf:cxfEndpoint>
+                     serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
  
  <bean id="myBean" class="org.apache.camel.example.reportincident.MyBean"/>
  <bean id="filenameGenerator" class="org.apache.camel.example.reportincident.FilenameGenerator"/>

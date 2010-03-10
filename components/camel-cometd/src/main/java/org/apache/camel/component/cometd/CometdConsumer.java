@@ -23,8 +23,8 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.cometd.Bayeux;
 import org.cometd.Client;
-import org.mortbay.cometd.AbstractBayeux;
-import org.mortbay.cometd.BayeuxService;
+import org.cometd.server.AbstractBayeux;
+import org.cometd.server.BayeuxService;
 
 /**
  * A Consumer for receiving messages using Cometd and Bayeux protocol.
@@ -85,5 +85,4 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
             consumer.getProcessor().process(exchange);
         }
     }
-
 }

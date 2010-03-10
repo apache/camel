@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.mortbay.jetty.security.SslSocketConnector;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
 
 public class ExplicitHttpsRouteTest extends HttpsRouteTest {
     
@@ -64,4 +64,3 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
         };
     }
 }
-

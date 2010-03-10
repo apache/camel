@@ -24,7 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.cometd.Client;
-import org.mortbay.cometd.AbstractBayeux;
+import org.cometd.server.AbstractBayeux;
 
 /**
  * A Producer to send messages using Cometd and Bayeux protocol.

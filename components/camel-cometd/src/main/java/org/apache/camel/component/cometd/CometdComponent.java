@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.cometd;
 
-import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,18 +24,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.mortbay.cometd.AbstractBayeux;
-import org.mortbay.cometd.continuation.ContinuationCometdServlet;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.ContextHandlerCollection;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.security.SslSocketConnector;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.resource.FileResource;
-import org.mortbay.resource.Resource;
-import org.mortbay.resource.URLResource;
+import org.cometd.server.AbstractBayeux;
+import org.cometd.server.continuation.ContinuationCometdServlet;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 
 /**
  * Component for Jetty Cometd
@@ -113,7 +108,7 @@ public class CometdComponent extends DefaultComponent {
 
                 ContinuationCometdServlet servlet = createServletForConnector(connector, endpoint);
                 connectorRef = new ConnectorRef(connector, servlet);
-                connector.start();
+                getServer().start();
 
                 connectors.put(connectorKey, connectorRef);
             } else {
@@ -149,7 +144,7 @@ public class CometdComponent extends DefaultComponent {
     protected ContinuationCometdServlet createServletForConnector(Connector connector, CometdEndpoint endpoint) throws Exception {
         ContinuationCometdServlet servlet = new ContinuationCometdServlet();
 
-        Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
+        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});
 
         ServletHolder holder = new ServletHolder();
@@ -158,29 +153,20 @@ public class CometdComponent extends DefaultComponent {
         // Use baseResource to pass as a parameter the url
         // pointing to by example classpath:webapp
         if (endpoint.getBaseResource() != null) {
-
             String[] resources = endpoint.getBaseResource().split(":");
             LOG.debug(">>> Protocol found :" + resources[0] + ", and resource : " + resources[1]);
             
             if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));
-                
             } else if (resources[0].equals("classpath")) {
-                
                 // Create a URL handler using classpath protocol
                 URL url = this.getCamelContext().getClassResolver().loadResourceAsURL(resources[1]); 
                 context.setBaseResource(Resource.newResource(url));
-                
             } 
-
         }
         
-        
         context.addServlet(holder, "/cometd/*");
-        context.addServlet("org.mortbay.jetty.servlet.DefaultServlet", "/");
-
-        connector.start();
-        context.start();
+        context.addServlet("org.eclipse.jetty.servlet.DefaultServlet", "/");
 
         holder.setInitParameter("timeout", Integer.toString(endpoint.getTimeout()));
         holder.setInitParameter("interval", Integer.toString(endpoint.getInterval()));
@@ -244,10 +230,7 @@ public class CometdComponent extends DefaultComponent {
     protected Server createServer() throws Exception {
         Server server = new Server();
         ContextHandlerCollection collection = new ContextHandlerCollection();
-        collection.setServer(server);
-        server.addHandler(collection);
-        server.start();
-
+        server.setHandler(collection);
         return server;
     }
 
@@ -268,5 +251,4 @@ public class CometdComponent extends DefaultComponent {
     protected void doStart() throws Exception {
         super.doStart();
     }
-    
 }

@@ -33,7 +33,14 @@
     <bundle>mvn:org.springframework/spring-jms/${spring-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-bundle/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-util/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-io/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-http/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-client/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-continuation/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-server/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-security/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/${commons-codec-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle>mvn:org.codehaus.jettison/jettison/${jettison-bundle-version}</bundle>
@@ -101,7 +108,16 @@
     <bundle>mvn:org.apache.camel/camel-mina/${pom.version}</bundle>
   </feature>
   <feature name='camel-jetty' version='${pom.version}'>
-     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-bundle/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-util/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-io/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-http/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-client/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-continuation/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-server/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-security/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-bundle-version}</bundle>
+    <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-http</feature>
     <bundle>mvn:org.apache.camel/camel-jetty/${pom.version}</bundle>
   </feature>
@@ -159,9 +175,17 @@
   </feature>
   <feature name='camel-cometd' version='${pom.version}'>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-bundle/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-cometd/${jetty-cometd-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-util/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-io/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-http/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-client/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-continuation/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-server/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-security/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/${cometd-java-server-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
+    <feature version='${pom.version}'>camel-stream</feature>
     <bundle>mvn:org.apache.camel/camel-cometd/${pom.version}</bundle>
   </feature>
   <feature name='camel-csv' version='${pom.version}'>
