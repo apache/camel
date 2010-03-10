@@ -729,12 +729,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // do not parse uris that are designated for the properties component as it will handle that itself
         if (uri != null && !uri.startsWith("properties:") && uri.contains("#{")) {
             // the uri contains property placeholders so lookup mandatory properties component and let it parse it
-            Component component = getComponent("properties");
+            Component component = hasComponent("properties");
+            if (component == null) {
+                // then fallback to lookup the component
+                component = getRegistry().lookup("properties", Component.class);
+            }
             if (component == null) {
                 throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
                         + " in CamelContext to support property placeholders in endpoint URIs");
             }
-            PropertiesComponent pc = getTypeConverter().mandatoryConvertTo(PropertiesComponent.class, component);
+            // force component to be created and registered as a component
+            PropertiesComponent pc = getComponent("properties", PropertiesComponent.class);
             // the parser will throw exception if property key was not found
             String answer = pc.parseUri(uri);
             if (LOG.isDebugEnabled()) {
