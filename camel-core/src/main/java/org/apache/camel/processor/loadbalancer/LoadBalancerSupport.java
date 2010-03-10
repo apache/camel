@@ -24,6 +24,8 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A default base class for a {@link LoadBalancer} implementation
@@ -33,6 +35,7 @@ import org.apache.camel.util.ServiceHelper;
 public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor> {
 
     private final List<Processor> processors = new CopyOnWriteArrayList<Processor>();
+    protected final Log log = LogFactory.getLog(getClass());
 
     public void addProcessor(Processor processor) {
         processors.add(processor);

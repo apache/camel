@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -34,9 +35,15 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
+    @XmlAttribute
+    private Boolean roundRobin = Boolean.FALSE;
+    @XmlAttribute
+    private Integer maximumFailoverAttempts;
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
+        FailOverLoadBalancer answer;
+
         if (!exceptions.isEmpty()) {
             List<Class<?>> classes = new ArrayList<Class<?>>();
             for (String name : exceptions) {
@@ -46,10 +53,19 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
                 }
                 classes.add(type);
             }
-            return new FailOverLoadBalancer(classes);
+            answer = new FailOverLoadBalancer(classes);
         } else {
-            return new FailOverLoadBalancer();
+            answer = new FailOverLoadBalancer();
         }
+
+        if (getMaximumFailoverAttempts() != null) {
+            answer.setMaximumFailoverAttempts(getMaximumFailoverAttempts());
+        }
+        if (isRoundRobin() != null) {
+            answer.setRoundRobin(isRoundRobin());
+        }
+
+        return answer;
     }
 
     public List<String> getExceptions() {
@@ -58,6 +74,22 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
 
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
+    }
+
+    public Boolean isRoundRobin() {
+        return roundRobin;
+    }
+
+    public void setRoundRobin(Boolean roundRobin) {
+        this.roundRobin = roundRobin;
+    }
+
+    public Integer getMaximumFailoverAttempts() {
+        return maximumFailoverAttempts;
+    }
+
+    public void setMaximumFailoverAttempts(Integer maximumFailoverAttempts) {
+        this.maximumFailoverAttempts = maximumFailoverAttempts;
     }
 
     @Override

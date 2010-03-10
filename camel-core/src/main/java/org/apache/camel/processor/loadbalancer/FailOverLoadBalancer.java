@@ -23,11 +23,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * This FailOverLoadBalancer will failover to use next processor when an exception occured
+ * This FailOverLoadBalancer will failover to use next processor when an exception occurred
  */
 public class FailOverLoadBalancer extends LoadBalancerSupport {
 
     private final List<Class<?>> exceptions;
+    private boolean roundRobin;
+    private int maximumFailoverAttempts = -1;
+
+    // stateful counter
+    private int counter = -1;
 
     public FailOverLoadBalancer() {
         this.exceptions = null;
@@ -35,6 +40,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
 
     public FailOverLoadBalancer(List<Class<?>> exceptions) {
         this.exceptions = exceptions;
+
         for (Class<?> type : exceptions) {
             if (!ObjectHelper.isAssignableFrom(Throwable.class, type)) {
                 throw new IllegalArgumentException("Class is not an instance of Throwable: " + type);
@@ -44,6 +50,22 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
 
     public List<Class<?>> getExceptions() {
         return exceptions;
+    }
+
+    public boolean isRoundRobin() {
+        return roundRobin;
+    }
+
+    public void setRoundRobin(boolean roundRobin) {
+        this.roundRobin = roundRobin;
+    }
+
+    public int getMaximumFailoverAttempts() {
+        return maximumFailoverAttempts;
+    }
+
+    public void setMaximumFailoverAttempts(int maximumFailoverAttempts) {
+        this.maximumFailoverAttempts = maximumFailoverAttempts;
     }
 
     /**
@@ -78,22 +100,53 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
 
         int index = 0;
+        int attempts = 0;
+
+        // pick the first endpoint to use
+        if (isRoundRobin()) {
+            if (++counter >= list.size()) {
+                counter = 0;
+            }
+            index = counter;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Failover starting with endpoint index " + index);
+        }
+
         Processor processor = list.get(index);
 
         // process the first time
-        processExchange(processor, exchange);
+        processExchange(processor, exchange, attempts);
 
         // loop while we should fail over
         while (shouldFailOver(exchange)) {
+            attempts++;
+            // are we exhausted by attempts?
+            if (maximumFailoverAttempts > -1 && attempts > maximumFailoverAttempts) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Braking out of failover after " + attempts + " failover attempts");
+                }
+                break;
+            }
+
             index++;
+            counter++;
+
             if (index < list.size()) {
                 // try again but prepare exchange before we failover
                 prepareExchangeForFailover(exchange);
                 processor = list.get(index);
-                processExchange(processor, exchange);
+                processExchange(processor, exchange, attempts);
             } else {
-                // no more processors to try
-                break;
+                if (isRoundRobin()) {
+                    log.debug("Failover is round robin enabled and therefore starting from the first endpoint");
+                    index = 0;
+                    counter = 0;
+                } else {
+                    // no more processors to try
+                    log.debug("Braking out of failover as we reach the end of endpoints to use for failover");
+                    break;
+                }
             }
         }
     }
@@ -113,11 +166,14 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
     }
 
-    private void processExchange(Processor processor, Exchange exchange) {
+    private void processExchange(Processor processor, Exchange exchange, int attempt) {
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         }
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("Processing failover at attempt " + attempt + " for exchange: " + exchange);
+            }
             processor.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);

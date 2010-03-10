@@ -151,6 +151,22 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
     }
 
+    /**
+     * Reset all mock endpoints
+     *
+     * @param context the camel context used to find all the available endpoints to reset
+     */
+    public static void resetMocks(CamelContext context) {
+        ObjectHelper.notNull(context, "camelContext");
+        Collection<Endpoint> endpoints = context.getEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            if (endpoint instanceof MockEndpoint) {
+                MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
+                mockEndpoint.reset();
+            }
+        }
+    }
+
     public static void expectsMessageCount(int count, MockEndpoint... endpoints) throws InterruptedException {
         for (MockEndpoint endpoint : endpoints) {
             endpoint.setExpectedMessageCount(count);
