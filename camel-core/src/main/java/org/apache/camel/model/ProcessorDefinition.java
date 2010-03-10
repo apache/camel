@@ -26,9 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Channel;
@@ -78,6 +78,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     protected final transient Log log = LogFactory.getLog(getClass());
     protected ErrorHandlerBuilder errorHandlerBuilder;
     protected String errorHandlerRef;
+    protected Boolean inheritErrorHandler = Boolean.TRUE;
     private NodeFactory nodeFactory;
     private final LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition<?> parent;
@@ -201,19 +202,31 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // set the error handler, must be done after init as we can set the error handler as first in the chain
         if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
-            return channel;
         } else if (defn instanceof MulticastDefinition || defn instanceof RecipientListDefinition) {
-            // do not use error handler for multicast or recipientlist based as it offers fine grained error handlers for its outputs
-            return channel;
+            // do not use error handler for multicast or recipient list based as it offers fine grained error handlers for its outputs
         } else {
-            // regular definition so add the error handler
-            Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(routeContext, getErrorHandlerBuilder(), output);
-            // set error handler on channel
-            channel.setErrorHandler(errorHandler);
-
-            return channel;
+            if (inheritErrorHandler) {
+                if (log.isTraceEnabled()) {
+                    log.trace(defn + " is configured to inheritErrorHandler");
+                }
+                // only add error handler if we are configured to do so
+                // regular definition so add the error handler
+                Processor output = channel.getOutput();
+                Processor errorHandler = wrapInErrorHandler(routeContext, getErrorHandlerBuilder(), output);
+                // set error handler on channel
+                channel.setErrorHandler(errorHandler);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug(defn + " is configured to not inheritErrorHandler.");
+                }
+            }
         }
+
+
+        if (log.isTraceEnabled()) {
+            log.trace(defn + " wrapped in Channel: " + channel);
+        }
+        return channel;
     }
 
     /**
@@ -2507,6 +2520,34 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return (Type) this;
     }
 
+    /**
+     * Sets whether or not to inherit the configured error handler.
+     * <br/>
+     * The default value is <tt>true</tt>.
+     * <p/>
+     * You can use this to disable using the inherited error handler for a given
+     * DSL such as a load balancer where you want to use a custom error handler strategy.
+     *
+     * @param inheritErrorHandler whether to not to inherit the error handler for this node
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type inheritErrorHandler(boolean inheritErrorHandler) {
+        // set on last output
+        int size = getOutputs().size();
+        if (size == 0) {
+            // if no outputs then configure this DSL
+            setInheritErrorHandler(inheritErrorHandler);
+        } else {
+            // configure on last output as its the intended
+            ProcessorDefinition output = getOutputs().get(size - 1);
+            if (output != null) {
+                output.setInheritErrorHandler(inheritErrorHandler);
+            }
+        }
+        return (Type) this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
     @XmlTransient
@@ -2552,6 +2593,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
 
     public void addInterceptStrategy(InterceptStrategy strategy) {
         this.interceptStrategies.add(strategy);
+    }
+
+    public Boolean isInheritErrorHandler() {
+        return inheritErrorHandler;
+    }
+
+    @XmlAttribute
+    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+        this.inheritErrorHandler = inheritErrorHandler;
     }
 
     /**
