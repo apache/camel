@@ -99,7 +99,7 @@ public class ResequencerEngine<E> {
     }
 
     public void start() {
-        timer = new Timer(ExecutorServiceHelper.getThreadName("Camel Thread ${counter} - ${suffix}", "Stream Resequencer Timer"), true);
+        timer = new Timer(ExecutorServiceHelper.getThreadName("Camel Thread ${counter} - ${name}", "Stream Resequencer Timer"), true);
     }
 
     /**
