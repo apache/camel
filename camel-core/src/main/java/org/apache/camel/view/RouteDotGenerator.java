@@ -173,26 +173,5 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
         writer.println("}");
     }
 
-    /**
-     * Is the given node a pipeline
-     */
-    private static boolean isPipeline(ProcessorDefinition node) {
-        if (node instanceof MulticastDefinition) {
-            return false;
-        }
-        if (node instanceof PipelineDefinition) {
-            return true;
-        }
-        if (node.getOutputs().size() > 1) {
-            // is pipeline if there is more than 1 output and they are all To types
-            for (Object type : node.getOutputs()) {
-                if (!(type instanceof ToDefinition)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
 
 }

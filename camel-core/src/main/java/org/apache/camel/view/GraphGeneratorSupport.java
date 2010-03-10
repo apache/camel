@@ -42,14 +42,11 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public abstract class GraphGeneratorSupport {
-    protected final transient Log log = LogFactory.getLog(getClass());
+public abstract class GraphGeneratorSupport extends GraphSupport {
     protected String dir;
     protected int clusterCounter;
     protected String extension;
 
-    private final String imagePrefix = "http://camel.apache.org/images/eip/";
-    private final Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private final boolean makeParentDirs = true;
     private Map<String, List<RouteDefinition>> routeGroupMap;
 
@@ -112,61 +109,4 @@ public abstract class GraphGeneratorSupport {
 
     protected abstract void generateFile(PrintWriter writer, Map<String, List<RouteDefinition>> map);
 
-    protected boolean isMulticastNode(ProcessorDefinition node) {
-        return node instanceof MulticastDefinition || node instanceof ChoiceDefinition;
-    }
-
-    protected String getLabel(List<ExpressionDefinition> expressions) {
-        CollectionStringBuffer buffer = new CollectionStringBuffer();
-        for (ExpressionDefinition expression : expressions) {
-            buffer.append(getLabel(expression));
-        }
-        return buffer.toString();
-    }
-
-    protected String getLabel(ExpressionDefinition expression) {
-        if (expression != null) {
-            return expression.getLabel();
-        }
-        return "";
-    }
-
-    protected NodeData getNodeData(Object node) {
-        Object key = node;
-        if (node instanceof FromDefinition) {
-            FromDefinition fromType = (FromDefinition) node;
-            key = fromType.getUriOrRef();
-        } else if (node instanceof ToDefinition) {
-            ToDefinition toType = (ToDefinition) node;
-            key = toType.getUriOrRef();
-        }
-        NodeData answer = nodeMap.get(key);
-        if (answer == null) {
-            String id = "node" + (nodeMap.size() + 1);
-            answer = new NodeData(id, node, imagePrefix);
-            nodeMap.put(key, answer);
-        }
-        return answer;
-    }
-
-    protected Map<String, List<RouteDefinition>> createRouteGroupMap(List<RouteDefinition> routes) {
-        Map<String, List<RouteDefinition>> map = new HashMap<String, List<RouteDefinition>>();
-        for (RouteDefinition route : routes) {
-            addRouteToMap(map, route);
-        }
-        return map;
-    }
-
-    protected void addRouteToMap(Map<String, List<RouteDefinition>> map, RouteDefinition route) {
-        String group = route.getGroup();
-        if (group == null) {
-            group = "Camel Routes";
-        }
-        List<RouteDefinition> list = map.get(group);
-        if (list == null) {
-            list = new ArrayList<RouteDefinition>();
-            map.put(group, list);
-        }
-        list.add(route);
-    }
 }
