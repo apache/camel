@@ -212,8 +212,6 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     log.trace("Decoded urlPath: " + urlPath + " with protocol: " + url.getProtocol());
                 }
 
-                boolean isLocalFileSystem = "file".equals(url.getProtocol());
-
                 // If it's a file in a directory, trim the stupid file: spec
                 if (urlPath.startsWith("file:")) {
                     // file path can be temporary folder which uses characters that the URLDecoder decodes wrong
@@ -229,7 +227,6 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     if (urlPath.startsWith("file:")) {
                         urlPath = urlPath.substring(5);
                     }
-                    isLocalFileSystem = true;
                 }
 
                 // osgi bundles should be skipped
@@ -244,7 +241,6 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 }
 
                 if (log.isTraceEnabled()) {
-                    log.trace("isLocalFileSystem: " + isLocalFileSystem);
                     log.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
                 }
 
@@ -256,8 +252,10 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
                     InputStream stream;
-                    if (!isLocalFileSystem) {
-                        // load resources using http (and other protocols) such as java webstart
+                    if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
+                            || urlPath.startsWith("sonicfs:")) {
+                        // load resources using http/https
+                        // sonic ESB requires to be loaded using a regular URLConnection
                         if (log.isTraceEnabled()) {
                             log.trace("Loading from jar using http/https: " + urlPath);
                         }
