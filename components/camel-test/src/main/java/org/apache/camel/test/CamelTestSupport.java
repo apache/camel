@@ -323,6 +323,13 @@ public abstract class CamelTestSupport extends TestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    /**
+     * Reset all Mock endpoints.
+     */
+    protected void resetMocks() {
+        MockEndpoint.resetMocks(context);
+    }
+
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
     }
