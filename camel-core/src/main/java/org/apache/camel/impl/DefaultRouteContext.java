@@ -186,6 +186,11 @@ public class DefaultRouteContext implements RouteContext {
                 routePolicyProcessor.setRoute(edcr);
             }
 
+            // invoke init on route policy
+            if (policy != null) {
+                policy.onInit(edcr);
+            }
+
             routes.add(edcr);
         }
     }

@@ -63,6 +63,11 @@ public class RoutePolicyProcessor extends DelegateProcessor {
                     }
                     routePolicy.onExchangeDone(route, exchange);
                 }
+
+                @Override
+                public String toString() {
+                    return "RoutePolicy";
+                }
             });
         }
 

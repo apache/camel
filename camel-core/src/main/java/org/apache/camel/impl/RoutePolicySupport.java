@@ -35,10 +35,16 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     protected final transient Log log = LogFactory.getLog(getClass());
     private ExceptionHandler exceptionHandler;
 
+    public void onInit(Route route) {
+        // noop
+    }
+
     public void onExchangeBegin(Route route, Exchange exchange) {
+        // noop
     }
 
     public void onExchangeDone(Route route, Exchange exchange) {
+        // noop
     }
 
     protected boolean startConsumer(Consumer consumer) throws Exception {
@@ -57,6 +63,14 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
         return suspended;
     }
 
+    protected void startRoute(Route route) throws Exception {
+        route.getRouteContext().getCamelContext().startRoute(route.getId());
+    }
+
+    protected void stopRoute(Route route) throws Exception {
+        route.getRouteContext().getCamelContext().stopRoute(route.getId());
+    }
+
     /**
      * Handles the given exception using the {@link #getExceptionHandler()}
      *
@@ -68,10 +82,12 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
 
     @Override
     protected void doStart() throws Exception {
+        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
+        // noop
     }
 
     public ExceptionHandler getExceptionHandler() {

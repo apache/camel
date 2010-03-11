@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 
@@ -30,7 +31,14 @@ import org.apache.camel.Route;
 public interface RoutePolicy {
 
     /**
-     * Callback invokes when an {@link Exchange} is started being routed on the given {@link Route}
+     * Callback invoked when the {@link Route} is being initialized
+     *
+     * @param route     the route being initialized
+     */
+    void onInit(Route route);
+
+    /**
+     * Callback invoked when an {@link Exchange} is started being routed on the given {@link Route}
      *
      * @param route     the route where the exchange started from
      * @param exchange  the created exchange
@@ -38,7 +46,7 @@ public interface RoutePolicy {
     void onExchangeBegin(Route route, Exchange exchange);
 
     /**
-     * Callback invokes when an {@link Exchange} is done being routed, where it started from the given {@link Route}
+     * Callback invoked when an {@link Exchange} is done being routed, where it started from the given {@link Route}
      * <p/>
      * Notice this callback is invoked when the <b>Exchange</b> is done and the {@link Route} is the route where
      * the {@link Exchange} was started. Most often its also the route where the exchange is done. However its
