@@ -66,6 +66,7 @@
       <jaxb-bundle-version>2.1.12_1</jaxb-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <hapi-bundle-version>0.5.1_3</hapi-bundle-version>
+      <hawtdb-maven-repo-url>http://hawtdb.fusesource.org/repo/snapshot</hawtdb-maven-repo-url>
       <httpcore-bundle-version>4.0-alpha6_1</httpcore-bundle-version>
       <irclib-bundle-version>1.10_2</irclib-bundle-version>
       <isorelax-bundle-version>20050913_1</isorelax-bundle-version>

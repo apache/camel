@@ -239,6 +239,11 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hl7/${pom.version}</bundle>
   </feature>
+  <feature name='camel-hawtdb' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-core</feature>  
+    <bundle>mvn:${hawtdb-maven-repo-url}!org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hawtdb/${pom.version}</bundle>
+  </feature>	  
   <feature name='camel-ibatis' version='${pom.version}'>
     <feature version='${pom.version}'>camel-spring-osgi</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
