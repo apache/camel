@@ -37,7 +37,7 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.wsdl11.WSDLServiceFactory;
 
-//The service factorybean which just create the service for soap component
+//The service factory bean which is used for the service without SEI
 public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
     private QName serviceName;
     private QName endpointName;

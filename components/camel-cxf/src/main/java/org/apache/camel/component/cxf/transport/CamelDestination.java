@@ -28,8 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.camel.component.cxf.CxfSoapBinding;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
+import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.Bus;
@@ -157,7 +157,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         getLogger().log(Level.FINE, "server received request: ", camelExchange);
         org.apache.cxf.message.Message inMessage =
-            CxfSoapBinding.getCxfInMessage(headerFilterStrategy, camelExchange, false);
+            CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
 
         inMessage.put(CxfConstants.CAMEL_EXCHANGE, camelExchange);
         ((MessageImpl)inMessage).setDestination(this);

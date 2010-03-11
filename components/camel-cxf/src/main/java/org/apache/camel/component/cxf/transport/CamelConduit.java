@@ -26,8 +26,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.camel.component.cxf.CxfSoapBinding;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
+import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
@@ -193,7 +193,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         private void handleResponse(org.apache.camel.Exchange exchange) throws IOException {
             org.apache.cxf.message.Message inMessage = null;
             try {
-                inMessage = CxfSoapBinding.getCxfInMessage(headerFilterStrategy,
+                inMessage = CxfMessageHelper.getCxfInMessage(headerFilterStrategy,
                     exchange, true);
             } catch (Exception ex) {
                 // Throw IOException here

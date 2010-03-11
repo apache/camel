@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cxf.CxfSoapBinding;
+import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,7 +67,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
         
     
         org.apache.cxf.message.Message answer = 
-            CxfSoapBinding.getCxfInMessage(headerFilterStrategy, camelExchange, false);
+            CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
         
         answer.put(org.apache.cxf.message.Message.REQUEST_URI, path);
         answer.put(org.apache.cxf.message.Message.BASE_PATH, basePath);

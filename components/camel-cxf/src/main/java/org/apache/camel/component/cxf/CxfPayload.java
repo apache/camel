@@ -17,7 +17,9 @@
 package org.apache.camel.component.cxf;
 
 import java.util.List;
+
 import javax.xml.transform.TransformerException;
+
 import org.w3c.dom.Element;
 
 import org.apache.camel.converter.jaxp.XmlConverter;
