@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.jetty;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +39,12 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/org/apache/camel/component/jetty/jetty-https.xml"})
+@ContextConfiguration(locations = {"/org/apache/camel/component/jetty/jetty-https.xml"})
 public class SpringHttpsRouteTest {
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     protected String expectedBody = "<hello>world!</hello>";
@@ -52,7 +52,7 @@ public class SpringHttpsRouteTest {
     protected Properties originalValues = new Properties();
     protected transient Log log = LogFactory.getLog(TestSupport.class);
 
-    @EndpointInject(uri="mock:a")
+    @EndpointInject(uri = "mock:a")
     MockEndpoint mockEndpoint;
     
     @Produce
