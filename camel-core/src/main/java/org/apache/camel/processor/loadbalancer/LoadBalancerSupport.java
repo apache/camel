@@ -34,8 +34,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor> {
 
-    private final List<Processor> processors = new CopyOnWriteArrayList<Processor>();
     protected final Log log = LogFactory.getLog(getClass());
+    private final List<Processor> processors = new CopyOnWriteArrayList<Processor>();
 
     public void addProcessor(Processor processor) {
         processors.add(processor);

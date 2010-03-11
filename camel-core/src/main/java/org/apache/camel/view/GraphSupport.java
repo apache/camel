@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.view;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.FromDefinition;
@@ -29,20 +33,15 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
- * A base class for Graph processing code of Camel EIPs contianing a number of helper methods
- * 
- * @version $Revision: 1.1 $
+ * A base class for Graph processing code of Camel EIPs containing a number of helper methods
+ *
+ * @version $Revision$
  */
 public class GraphSupport {
     protected final transient Log log = LogFactory.getLog(getClass());
-    private String imagePrefix = "http://camel.apache.org/images/eip/";
     protected final Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
+    private String imagePrefix = "http://camel.apache.org/images/eip/";
 
     protected String getLabel(List<ExpressionDefinition> expressions) {
         CollectionStringBuffer buffer = new CollectionStringBuffer();

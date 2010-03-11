@@ -122,7 +122,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             processor = wrapProcessor(routeContext, processor);
             loadBalancer.addProcessor(processor);
         }
-       return loadBalancer;
+        return loadBalancer;
     }
     
     // Fluent API
