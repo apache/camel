@@ -40,15 +40,17 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
                     .threads(20)
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal())
-                        .completionTimeout(2000L)
+                        .completionTimeout(4000L)
                         .to("mock:result");
             }
         });
+        context.start();
 
         long start = System.currentTimeMillis();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceivedInAnyOrder("2000", "2500");
+        result.setResultWaitTime(20000);
 
         assertMockEndpointsSatisfied();
 
@@ -64,15 +66,17 @@ public class FileConcurrentAggregateBatchConsumerTest extends FileConcurrentTest
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal())
-                        .completionTimeout(2000L)
+                        .completionTimeout(4000L)
                         .to("mock:result");
             }
         });
+        context.start();
 
         long start = System.currentTimeMillis();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceivedInAnyOrder("2000", "2500");
+        result.setResultWaitTime(20000);
 
         assertMockEndpointsSatisfied();
 
