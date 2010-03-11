@@ -279,7 +279,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals("cake", map.get("FOO"));
     }
 
-    public void testRomeksTransferedToHashMapAfterwards() {
+    public void testRomeksTransferredToHashMapAfterwards() {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Foo", "cheese");
         map.put("FOO", "cake");
@@ -341,6 +341,23 @@ public class CaseInsensitiveMapTest extends TestCase {
 
         Map<String, Object> other = new HashMap<String, Object>();
         other.putAll(map);
+
+        assertEquals(false, other.containsKey("foo"));
+        assertEquals(true, other.containsKey("Foo"));
+        assertEquals(false, other.containsKey("bar"));
+        assertEquals(true, other.containsKey("BAR"));
+        assertEquals(2, other.size());
+    }
+
+    public void testCopyToAnotherMapPreserveKeyCaseCtr() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Foo", "cheese");
+        map.put("BAR", "cake");
+        assertEquals(2, map.size());
+        assertEquals(true, map.containsKey("foo"));
+        assertEquals(true, map.containsKey("bar"));
+
+        Map<String, Object> other = new HashMap<String, Object>(map);
 
         assertEquals(false, other.containsKey("foo"));
         assertEquals(true, other.containsKey("Foo"));
