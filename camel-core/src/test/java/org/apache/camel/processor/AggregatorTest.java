@@ -28,7 +28,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  * @version $Revision$
  */
 public class AggregatorTest extends ContextTestSupport {
-    protected int messageCount = 100;
+    protected int messageCount = 50;
 
     public void testSendingLotsOfMessagesGetAggregatedToTheLatestMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -63,7 +63,6 @@ public class AggregatorTest extends ContextTestSupport {
     public void testBatchTimeoutExpiry() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.setSleepForEmptyTest(2 * BatchProcessor.DEFAULT_BATCH_TIMEOUT);
         template.sendBodyAndHeader("direct:start", "message:1", "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
@@ -73,7 +72,6 @@ public class AggregatorTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("visited").isNotNull();
-        resultEndpoint.setSleepForEmptyTest(2 * BatchProcessor.DEFAULT_BATCH_TIMEOUT);
         template.sendBodyAndHeader("seda:header", "message:1", "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
@@ -111,7 +109,7 @@ public class AggregatorTest extends ContextTestSupport {
             String body = "message:" + i;
             template.sendBodyAndHeader(endpointUri, body, "cheese", 123);
             // need a little sleep when sending large batches
-            Thread.sleep(2);
+            Thread.sleep(3);
         }
 
         resultEndpoint.assertIsSatisfied();
