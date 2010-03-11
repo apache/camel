@@ -371,4 +371,11 @@ public interface Exchange {
      */
     void addOnCompletion(Synchronization onCompletion);
 
+    /**
+     * Handover all the on completions from this exchange to the target exchange.
+     *
+     * @param target the target exchange
+     */
+    void handoverCompletions(Exchange target);
+
 }

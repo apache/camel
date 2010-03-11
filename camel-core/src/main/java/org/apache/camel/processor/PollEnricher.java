@@ -150,6 +150,10 @@ public class PollEnricher extends ServiceSupport implements Processor {
             if (aggregatedExchange != null) {
                 // copy aggregation result onto original exchange (preserving pattern)
                 copyResultsPreservePattern(exchange, aggregatedExchange);
+                // handover any synchronization
+                if (resourceExchange != null) {
+                    resourceExchange.handoverCompletions(exchange);
+                }
             }
         }
     }

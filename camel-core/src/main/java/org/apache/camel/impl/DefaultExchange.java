@@ -297,29 +297,43 @@ public final class DefaultExchange implements Exchange {
 
     public void setUnitOfWork(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
-        if (this.onCompletions != null) {
+        if (onCompletions != null) {
             // now an unit of work has been assigned so add the on completions
             // we might have registered already
-            for (Synchronization onCompletion : this.onCompletions) {
-                this.unitOfWork.addSynchronization(onCompletion);
+            for (Synchronization onCompletion : onCompletions) {
+                unitOfWork.addSynchronization(onCompletion);
             }
             // cleanup the temporary on completion list as they now have been registered
             // on the unit of work
-            this.onCompletions.clear();
-            this.onCompletions = null;
+            onCompletions.clear();
+            onCompletions = null;
         }
     }
 
     public void addOnCompletion(Synchronization onCompletion) {
-        if (this.unitOfWork == null) {
+        if (unitOfWork == null) {
             // unit of work not yet registered so we store the on completion temporary
             // until the unit of work is assigned to this exchange by the UnitOfWorkProcessor
-            if (this.onCompletions == null) {
-                this.onCompletions = new ArrayList<Synchronization>();
+            if (onCompletions == null) {
+                onCompletions = new ArrayList<Synchronization>();
             }
-            this.onCompletions.add(onCompletion);
+            onCompletions.add(onCompletion);
         } else {
-            this.getUnitOfWork().addSynchronization(onCompletion);
+            getUnitOfWork().addSynchronization(onCompletion);
+        }
+    }
+
+    public void handoverCompletions(Exchange target) {
+        if (onCompletions != null) {
+            for (Synchronization onCompletion : onCompletions) {
+                target.addOnCompletion(onCompletion);
+            }
+            // cleanup the temporary on completion list as they have been handed over
+            onCompletions.clear();
+            onCompletions = null;
+        } else if (unitOfWork != null) {
+            // let unit of work handover
+            unitOfWork.handoverSynchronization(target);
         }
     }
 
