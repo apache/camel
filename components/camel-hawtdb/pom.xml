@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.fusesource.hawtdb</groupId>
             <artifactId>hawtdb</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${hawtdb-version}</version>
         </dependency>
 
         <!-- testing -->
