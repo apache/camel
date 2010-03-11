@@ -60,25 +60,32 @@ public class FileConcurrentTest extends ContextTestSupport {
         }
     }
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     public void testProcessFilesConcurrently() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/concurrent?delay=60000&initialDelay=2500")
+                from("file://target/concurrent")
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .threads(20)
                     .beanRef("business")
                     .log("Country is ${in.header.country}")
                     .aggregate(header("country"), new MyBusinessTotal())
-                        .completionTimeout(2000L)
+                        .completionTimeout(4000L)
                         .to("mock:result");
             }
         });
+        context.start();
 
         long start = System.currentTimeMillis();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceivedInAnyOrder("2000", "2500");
+        result.setResultWaitTime(20000);
 
         assertMockEndpointsSatisfied();
 
@@ -90,19 +97,21 @@ public class FileConcurrentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/concurrent?delay=60000&initialDelay=2500")
+                from("file://target/concurrent")
                     .setHeader("id", simple("${file:onlyname.noext}"))
                     .beanRef("business")
                     .aggregate(header("country"), new MyBusinessTotal())
-                        .completionTimeout(2000L)
+                        .completionTimeout(4000L)
                         .to("mock:result");
             }
         });
+        context.start();
 
         long start = System.currentTimeMillis();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceivedInAnyOrder("2000", "2500");
+        result.setResultWaitTime(20000);
 
         assertMockEndpointsSatisfied();
 
