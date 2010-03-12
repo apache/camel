@@ -21,6 +21,7 @@
 <wsdl:definitions name="wsdl-first"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:tns="http://camel.apache.org/wsdl-first"
@@ -99,6 +100,22 @@
        </wsdl:operation>
    </wsdl:binding>
    
+   <wsdl:binding name="PersonSOAPBinding12" type="tns:Person">
+      <soap12:binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/" style="document" /> 
+      <wsdl:operation name="GetPerson">
+          <soap12:operation style="document" soapAction="GetPersonAction"/>		
+          <wsdl:input>
+              <soap12:body use="literal" />
+          </wsdl:input>
+          <wsdl:output>
+              <soap12:body use="literal" />
+          </wsdl:output>
+          <wsdl:fault name="UnknownPerson">
+              <soap12:fault use="literal" name="UnknownPerson" />
+          </wsdl:fault>
+      </wsdl:operation>
+   </wsdl:binding>   
+   
        <wsdl:binding name="PersonSOAPBinding2" type="tns:Person">
     	<soap:binding style="document" transport="http://cxf.apache.org/transports/camel" />
 		<wsdl:operation name="GetPerson">
@@ -125,5 +142,11 @@
        <soap:address location="camel://direct:camel.apache.org.wsdl-first.PersonService"/>
        </wsdl:port>
    </wsdl:service>
+   
+   <wsdl:service name="PersonService12">
+       <wsdl:port binding="tns:PersonSOAPBinding12" name="soap">
+       <soap12:address location="http://localhost:8092/PersonService/" />
+       </wsdl:port>
+   </wsdl:service>      
 
 </wsdl:definitions>

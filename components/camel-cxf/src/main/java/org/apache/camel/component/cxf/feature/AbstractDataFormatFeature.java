@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.cxf.feature;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -63,6 +64,18 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
                     getLogger().info("removing the interceptor " + p);
                     interceptors.remove(p);
                 }
+            }
+        }
+    }
+    
+      
+    @SuppressWarnings("rawtypes")
+    protected void removeInterceptors(List<Interceptor> interceptors,
+                                      Collection<Class> toBeRemovedInterceptors) {
+        for (Interceptor interceptor : interceptors) {
+            if (toBeRemovedInterceptors.contains(interceptor.getClass())) {
+                getLogger().info("removing the interceptor " + interceptor);
+                interceptors.remove(interceptor);
             }
         }
     }

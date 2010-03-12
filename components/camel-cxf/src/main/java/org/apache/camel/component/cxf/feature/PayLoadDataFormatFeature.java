@@ -16,23 +16,26 @@
  */
 package org.apache.camel.component.cxf.feature;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.apache.camel.component.cxf.interceptors.DOMInInterceptor;
 import org.apache.camel.component.cxf.interceptors.DOMOutInterceptor;
 import org.apache.camel.component.cxf.interceptors.PayloadContentRedirectInterceptor;
-import org.apache.camel.component.cxf.interceptors.PayloadFaultInInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.Binding;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.interceptor.ClientFaultConverter;
 import org.apache.cxf.phase.Phase;
 
 /**
  * This feature just setting up the CXF endpoint interceptor for handling the
  * Message in PAYLOAD data format
  */
+@SuppressWarnings("rawtypes")
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);
     // filter the unused phase
@@ -48,6 +51,14 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         Phase.POST_LOGICAL_ENDING
     };
     
+    private static final Collection<Class> REMOVING_FAULT_IN_INTERCEPTORS;
+    
+    static {
+        REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class>();
+        // remove ClientFaultConverter as it tries to unmarshal to java object.  
+        REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
+    }
+    
     @Override
     public void initialize(Client client, Bus bus) {
         removeInterceptorWhichIsInThePhases(client.getInInterceptors(), REMOVING_IN_PHASES);
@@ -60,11 +71,11 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         removeInterceptorWhichIsInThePhases(client.getEndpoint().getOutInterceptors(), REMOVING_OUT_PHASES);
         removeInterceptorWhichIsInThePhases(client.getEndpoint().getBinding().getOutInterceptors(), REMOVING_OUT_PHASES);
         
-        removeInterceptorWhichIsInThePhases(client.getInFaultInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getInFaultInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_IN_PHASES);
-        
+        removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+
         addDataHandlingInterceptors(client.getEndpoint().getBinding());        
     }
 
@@ -79,10 +90,10 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         removeInterceptorWhichIsInThePhases(server.getEndpoint().getOutInterceptors(), REMOVING_OUT_PHASES);
         removeInterceptorWhichIsInThePhases(server.getEndpoint().getBinding().getOutInterceptors(), REMOVING_OUT_PHASES);
         
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getService().getInFaultInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getInFaultInterceptors(), REMOVING_IN_PHASES);
-        removeInterceptorWhichIsInThePhases(server.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_IN_PHASES);
-        
+        removeInterceptors(server.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(server.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(server.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+
         addDataHandlingInterceptors(server.getEndpoint().getBinding());        
     }
 
@@ -90,12 +101,12 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         binding.getInInterceptors().add(new DOMInInterceptor());
         binding.getOutInterceptors().add(new DOMOutInterceptor());
         binding.getOutInterceptors().add(new PayloadContentRedirectInterceptor());
-        binding.getInFaultInterceptors().add(new PayloadFaultInInterceptor());
     }
 
     @Override
     protected Logger getLogger() {
         return LOG;
     }
+    
 
 }

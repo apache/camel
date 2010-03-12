@@ -39,11 +39,10 @@ import org.junit.Test;
 
 public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     
-    protected static final String SERVICE_NAME = "{http://camel.apache.org/wsdl-first}PersonService";
-    protected static final String SERVICE_NAME_PROP =  "serviceName=" + SERVICE_NAME;
+    protected static final String SERVICE_NAME_PROP =  "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    private Endpoint endpoint;
+    protected Endpoint endpoint;
 
     @Before
     public void startService() {
@@ -62,8 +61,8 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf://http://localhost:8092/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
-                    .to("cxf://http://localhost:8093/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
+                from("cxf://http://localhost:8092/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
+                    .to("cxf://http://localhost:8093/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
             }
         };
     }
@@ -75,7 +74,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     @Test
     public void testRoutes() throws Exception {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
-        PersonService ss = new PersonService(wsdlURL, QName.valueOf(SERVICE_NAME));
+        PersonService ss = new PersonService(wsdlURL, QName.valueOf(getServiceName()));
 
         Person client = ss.getSoap();
         
@@ -95,7 +94,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     @Test
     public void testApplicationFault() {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
-        PersonService ss = new PersonService(wsdlURL, QName.valueOf(SERVICE_NAME));
+        PersonService ss = new PersonService(wsdlURL, QName.valueOf(getServiceName()));
 
         Person client = ss.getSoap();
         
@@ -120,5 +119,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         
     }
     
-    
+    protected String getServiceName() {
+        return "{http://camel.apache.org/wsdl-first}PersonService";
+    }
 }
