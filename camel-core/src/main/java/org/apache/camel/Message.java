@@ -135,7 +135,13 @@ public interface Message {
     boolean removeHeaders(String pattern);
 
     /**
-     * Returns all of the headers associated with the message
+     * Returns all of the headers associated with the message.
+     * <p/>
+     * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
+     * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
+     * <p/>
+     * If you want to walk the returned Map and fetch all the keys and values, you should use
+     * the {@link java.util.Map#entrySet()} method, which ensure you get the keys in the original case.
      *
      * @return all the headers in a Map
      */
