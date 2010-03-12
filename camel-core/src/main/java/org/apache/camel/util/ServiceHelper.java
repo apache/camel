@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.Service;
+import org.apache.camel.ShutdownableService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
@@ -40,6 +41,9 @@ public final class ServiceHelper {
     private ServiceHelper() {
     }
 
+    /**
+     * Starts all of the given services
+     */
     public static void startService(Object value) throws Exception {
         if (value instanceof Service) {
             Service service = (Service)value;
@@ -84,6 +88,9 @@ public final class ServiceHelper {
         stopServices(list);
     }
 
+    /**
+     * Stops all of the given services, throwing the first exception caught
+     */
     public static void stopService(Object value) throws Exception {
         if (value instanceof Service) {
             Service service = (Service)value;
@@ -110,7 +117,72 @@ public final class ServiceHelper {
                     }
                     service.stop();
                 } catch (Exception e) {
-                    LOG.debug("Caught exception shutting down: " + e, e);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Caught exception stopping service: " + service, e);
+                    }
+                    if (firstException == null) {
+                        firstException = e;
+                    }
+                }
+            }
+        }
+        if (firstException != null) {
+            throw firstException;
+        }
+    }
+
+    /**
+     * Stops and shutdowns all of the given services, throwing the first exception caught
+     */
+    public static void stopAndShutdownServices(Object... services) throws Exception {
+        List<Object> list = Arrays.asList(services);
+        stopAndShutdownServices(list);
+    }
+
+    /**
+     * Stops and shutdowns all of the given services, throwing the first exception caught
+     */
+    public static void stopAndShutdownService(Object value) throws Exception {
+        if (value instanceof Service) {
+            // must stop it first
+            stopService(value);
+        }
+
+        // then try to shutdown
+        if (value instanceof ShutdownableService) {
+            ShutdownableService service = (ShutdownableService)value;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Shutting down service " + value);
+            }
+            service.shutdown();
+        } else if (value instanceof Collection) {
+            stopAndShutdownServices((Collection<?>)value);
+        }
+    }
+
+    /**
+     * Stops and shutdowns all of the given services, throwing the first exception caught
+     */
+    public static void stopAndShutdownServices(Collection<?> services) throws Exception {
+        Exception firstException = null;
+
+        for (Object value : services) {
+
+            // must stop it first
+            stopService(value);
+
+            // then try to shutdown
+            if (value instanceof ShutdownableService) {
+                ShutdownableService service = (ShutdownableService)value;
+                try {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Shutting down service: " + service);
+                    }
+                    service.shutdown();
+                } catch (Exception e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Caught exception shutting down service: " + service, e);
+                    }
                     if (firstException == null) {
                         firstException = e;
                     }

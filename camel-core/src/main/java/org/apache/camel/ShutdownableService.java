@@ -16,29 +16,23 @@
  */
 package org.apache.camel;
 
-import java.io.Serializable;
-
 /**
- * Represents the status of a {@link Service} instance
+ * A {@link org.apache.camel.Service} which is also capable of shutting down.
+ * <p/>
+ * This is useable for services which needs more fine grained control when {@link CamelContext} is shutting down.
+ * Then its possible to have different behavior when stopping or shutting down.
+ * <p/>
+ * For example to shutdown thread pools on shutdown and <b>not</b> on stop.
  *
  * @version $Revision$
  */
-public enum ServiceStatus implements Serializable {
-    Starting, Started, Stopping, Stopped;
+public interface ShutdownableService extends Service {
 
-    public boolean isStartable() {
-        return this == Stopped;
-    }
+    /**
+     * Shutdown the service, which means it cannot be started again.
+     *
+     * @throws Exception is thrown if shutting down failed
+     */
+    void shutdown() throws Exception;
 
-    public boolean isStoppable() {
-        return this == Starting || this == Started;
-    }
-
-    public boolean isStarted() {
-        return this == Started;
-    }
-
-    public boolean isStopped() {
-        return this == Stopped;
-    }
 }

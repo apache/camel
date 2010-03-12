@@ -48,4 +48,48 @@ public class ServiceSupportTest extends TestSupport {
         assertEquals(false, service.isStarted());
         assertEquals(false, service.isStarting());
     }
+
+    private class MyShutdownService extends ServiceSupport {
+
+        private boolean shutdown;
+
+        @Override
+        protected void doStart() throws Exception {
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+        }
+
+        @Override
+        protected void doShutdown() throws Exception {
+            shutdown = true;
+        }
+
+        public boolean isShutdown() {
+            return shutdown;
+        }
+    }
+
+    public void testServiceSupportShutdown() throws Exception {
+        MyShutdownService service = new MyShutdownService();
+        service.start();
+
+        assertEquals(true, service.isStarted());
+        assertEquals(false, service.isStarting());
+        assertEquals(false, service.isStopped());
+        assertEquals(false, service.isStopping());
+        assertEquals(false, service.isShutdown());
+
+        service.shutdown();
+
+        assertEquals(true, service.isStopped());
+        assertEquals(false, service.isStopping());
+        assertEquals(false, service.isStarted());
+        assertEquals(false, service.isStarting());
+
+        assertEquals(true, service.isShutdown());
+    }
+
+
 }

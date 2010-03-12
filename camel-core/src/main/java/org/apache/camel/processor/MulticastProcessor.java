@@ -355,19 +355,23 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         return new ProcessorExchangePair(processor, prepared, exchange);
     }
 
-    protected void doStop() throws Exception {
-        if (executorService != null) {
-            executorService.shutdown();
-            executorService.awaitTermination(0, TimeUnit.SECONDS);
-            executorService = null;
-        }
-        ServiceHelper.stopServices(processors);
-    }
-
     protected void doStart() throws Exception {
         ServiceHelper.startServices(processors);
     }
-    
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(processors);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // only shutdown thread pool on shutdown
+        if (executorService != null) {
+            executorService.shutdownNow();
+            executorService = null;
+        }
+    }
+
     private static void setToEndpoint(Exchange exchange, Processor processor) {
         if (processor instanceof Producer) {
             Producer producer = (Producer) processor;

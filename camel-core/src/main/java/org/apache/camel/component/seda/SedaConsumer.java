@@ -189,6 +189,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     protected void doStop() throws Exception {
         endpoint.onStopped(this);
+        // must shutdown executor on stop to avoid overhead of having them running
         executor.shutdownNow();
         executor = null;
 

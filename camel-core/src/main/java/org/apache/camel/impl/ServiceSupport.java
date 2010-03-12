@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.ShutdownableService;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
@@ -31,12 +32,14 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public abstract class ServiceSupport implements Service {
+public abstract class ServiceSupport implements Service, ShutdownableService {
 
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicBoolean starting = new AtomicBoolean(false);
     private final AtomicBoolean stopping = new AtomicBoolean(false);
     private final AtomicBoolean stopped = new AtomicBoolean(false);
+    private final AtomicBoolean shuttingdown = new AtomicBoolean(false);
+    private final AtomicBoolean shutdown = new AtomicBoolean(false);
     private Collection<Object> childServices;
     private String version;
 
@@ -98,6 +101,26 @@ public abstract class ServiceSupport implements Service {
     public void stop() throws Exception {
         if (started.get()) {
             stop(true);
+        }
+    }
+
+    public void shutdown() throws Exception {
+        // ensure we are stopped first
+        stop();
+
+        if (shuttingdown.compareAndSet(false, true)) {
+            try {
+                try {
+                    doShutdown();
+                } finally {
+                    if (childServices != null) {
+                        ServiceHelper.stopAndShutdownService(childServices);
+                    }
+                }
+            } finally {
+                shutdown.set(true);
+                shuttingdown.set(false);
+            }
         }
     }
 
@@ -164,6 +187,10 @@ public abstract class ServiceSupport implements Service {
     protected abstract void doStart() throws Exception;
 
     protected abstract void doStop() throws Exception;
+
+    protected void doShutdown() throws Exception {
+        // noop
+    }
 
     @SuppressWarnings("unchecked")
     protected void addChildService(Object childService) {

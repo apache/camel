@@ -63,12 +63,17 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(processor);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // only shutdown thread pool on shutdown
         if (executorService != null) {
-            executorService.shutdown();
+            executorService.shutdownNow();
             // must null it so we can restart
             executorService = null;
         }
-        ServiceHelper.stopService(processor);
     }
 
     public void process(Exchange exchange) throws Exception {

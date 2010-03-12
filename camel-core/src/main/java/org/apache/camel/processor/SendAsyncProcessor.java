@@ -275,6 +275,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     protected void doStop() throws Exception {
         super.doStop();
 
+        // must shutdown thread pools on stop as we are consumers
         if (producerExecutorService != null) {
             producerExecutorService.shutdownNow();
             producerExecutorService = null;
@@ -284,7 +285,6 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
             executorService = null;
         }
         completedTasks.clear();
-
     }
 
 }

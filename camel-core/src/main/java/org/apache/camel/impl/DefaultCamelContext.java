@@ -1172,34 +1172,34 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
     }
 
     protected synchronized void doStop() throws Exception {
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is shutting down");
         EventHelper.notifyCamelContextStopping(this);
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
         shutdownStrategy.shutdown(this, getRouteStartupOrder());
         getRouteStartupOrder().clear();
 
-        stopServices(routeServices.values());
+        shutdownServices(routeServices.values());
         // do not clear route services as we can start Camel again and get the route back as before
 
         // the stop order is important
 
-        stopServices(servicesToClose);
+        shutdownServices(servicesToClose);
         servicesToClose.clear();
 
-        stopServices(endpoints.values());
+        shutdownServices(endpoints.values());
         endpoints.clear();
 
-        stopServices(components.values());
+        shutdownServices(components.values());
         components.clear();
 
         // special shutdown of a shared producer service pool as it should only be shutdown by camel context
         if (producerServicePool instanceof SharedProducerServicePool) {
             ((SharedProducerServicePool) producerServicePool).shutdown(this);
         } else {
-            stopServices(producerServicePool);
+            shutdownServices(producerServicePool);
         }
-        stopServices(inflightRepository);
+        shutdownServices(inflightRepository);
 
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -1212,10 +1212,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
 
-        // stop management as the last one
-        stopServices(getManagementStrategy());
+        // shutdown management as the last one
+        shutdownServices(getManagementStrategy());
 
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") shutdown");
     }
 
     private void stopServices(Object service) throws Exception {
@@ -1229,12 +1229,23 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
     }
 
-    private void stopServices(Collection<?> services) throws Exception {
-        // reverse stopping by default
-        stopServices(services, true);
+    private void shutdownServices(Object service) throws Exception {
+        // allow us to do custom work before delegating to service helper
+        try {
+            ServiceHelper.stopAndShutdownService(service);
+        } catch (Exception e) {
+            LOG.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.");
+            // fire event
+            EventHelper.notifyServiceStopFailure(this, service, e);
+        }
     }
 
-    private void stopServices(Collection<?> services, boolean reverse) throws Exception {
+    private void shutdownServices(Collection<?> services) throws Exception {
+        // reverse stopping by default
+        shutdownServices(services, true);
+    }
+
+    private void shutdownServices(Collection<?> services, boolean reverse) throws Exception {
         Collection<Object> list = CastUtils.cast(services);
         if (reverse) {
             ArrayList<Object> reverseList = new ArrayList<Object>(services);
@@ -1243,7 +1254,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         }
 
         for (Object service : list) {
-            stopServices(service);
+            shutdownServices(service);
         }
     }
 

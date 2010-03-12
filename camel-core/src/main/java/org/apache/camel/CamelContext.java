@@ -67,6 +67,13 @@ public interface CamelContext extends Service, RuntimeConfiguration {
      */
     String getVersion();
 
+    /**
+     * Get the status of this context
+     *
+     * @return the status
+     */
+    ServiceStatus getStatus();
+
     // Service Methods
     //-----------------------------------------------------------------------
 

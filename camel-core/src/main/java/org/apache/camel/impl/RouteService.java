@@ -165,6 +165,9 @@ public class RouteService extends ServiceSupport {
             strategy.onRoutesRemove(routes);
         }
 
+        // if we are stopping CamelContext then we are shutting down
+        boolean isShutdownCamelContext = camelContext.isStopping();
+
         for (Route route : routes) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Stopping route: " + route);
@@ -177,10 +180,14 @@ public class RouteService extends ServiceSupport {
             for (Service service : services) {
                 doGetChildServices(list, service);
             }
-            stopChildService(route, list);
+            stopChildService(route, list, isShutdownCamelContext);
 
             // stop the route itself
-            ServiceHelper.stopService(route);
+            if (isShutdownCamelContext) {
+                ServiceHelper.stopAndShutdownService(route);
+            } else {
+                ServiceHelper.stopService(route);
+            }
 
             // fire event
             EventHelper.notifyRouteStopped(camelContext, route);
@@ -204,12 +211,16 @@ public class RouteService extends ServiceSupport {
         }
     }
 
-    protected void stopChildService(Route route, List<Service> services) throws Exception {
+    protected void stopChildService(Route route, List<Service> services, boolean shutdown) throws Exception {
         for (Service service : services) {
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceRemove(camelContext, service, route);
             }
-            ServiceHelper.stopService(service);
+            if (shutdown) {
+                ServiceHelper.stopAndShutdownService(service);
+            } else {
+                ServiceHelper.stopService(service);
+            }
             removeChildService(service);
         }
     }

@@ -53,18 +53,14 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        // only shutdown thread pool on shutdown
         if (executorService != null) {
-            executorService.shutdown();
+            executorService.shutdownNow();
             // must null it so we can restart
             executorService = null;
         }
-        super.doStop();
     }
 
     @Override
@@ -81,7 +77,7 @@ public class WireTapProcessor extends SendProcessor {
         getProducerCache(exchange).doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 Exchange wireTapExchange = configureExchange(exchange, pattern);
-                procesWireTap(producer, wireTapExchange);
+                processWireTap(producer, wireTapExchange);
                 return wireTapExchange;
             }
         });
@@ -92,10 +88,10 @@ public class WireTapProcessor extends SendProcessor {
      *
      * @param exchange  the exchange to wire tap
      */
-    protected void procesWireTap(final Producer producer, final Exchange exchange) {
+    protected void processWireTap(final Producer producer, final Exchange exchange) {
         // use submit instead of execute to force it to use a new thread, execute might
         // decide to use current thread, so we must submit a new task
-        // as we dont care for the response we dont hold the future object and wait for the result
+        // as we don't care for the response we dont hold the future object and wait for the result
         getExecutorService().submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
                 if (LOG.isDebugEnabled()) {
@@ -153,7 +149,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     public ExecutorService getExecutorService() {
-        if (executorService == null || executorService.isShutdown()) {
+        if (executorService == null) {
             executorService = createExecutorService();
         }
         return executorService;

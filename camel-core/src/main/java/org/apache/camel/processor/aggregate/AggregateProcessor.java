@@ -495,15 +495,19 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     protected void doStop() throws Exception {
         ServiceHelper.stopService(timeoutMap);
 
-        if (executorService != null) {
-            executorService.shutdown();
-            executorService = null;
-        }
-
         ServiceHelper.stopService(aggregationRepository);
 
         if (closedCorrelationKeys != null) {
             closedCorrelationKeys.clear();
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // only shutdown thread pool when we are shutting down
+        if (executorService != null) {
+            executorService.shutdownNow();
+            executorService = null;
         }
     }
 
