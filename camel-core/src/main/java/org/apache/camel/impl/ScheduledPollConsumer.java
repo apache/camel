@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -52,16 +51,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
-        ScheduledExecutorService scheduled;
-        ExecutorService service = endpoint.getExecutorService();
-        if (service instanceof ScheduledExecutorService) {
-            scheduled = (ScheduledExecutorService) service;
-        } else {
-            scheduled = endpoint.getCamelContext().getExecutorServiceStrategy()
+        // TODO: this executor should also be shutdown when CamelContext stops
+        this.executor = endpoint.getCamelContext().getExecutorServiceStrategy()
                             .newScheduledThreadPool(this, getEndpoint().getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
-        }
-
-        this.executor = scheduled;
         ObjectHelper.notNull(executor, "executor");
     }
 

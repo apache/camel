@@ -119,29 +119,21 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         this.camelContext = camelContext;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.4
+     */
+    @Deprecated
     public synchronized ExecutorService getExecutorService() {
         if (executorService == null) {
-            Component c = getComponent();
-            if (c instanceof DefaultComponent) {
-                DefaultComponent dc = (DefaultComponent) c;
-                executorService = dc.getExecutorService();
-            }
-            if (executorService == null) {
-                executorService = createScheduledExecutorService();
-            }
+            executorService = createScheduledExecutorService();
         }
         return executorService;
     }
-    
-    public synchronized ScheduledExecutorService getScheduledExecutorService() {
-        ExecutorService executor = getExecutorService();
-        if (executor instanceof ScheduledExecutorService) {
-            return (ScheduledExecutorService) executor;
-        } else {
-            return createScheduledExecutorService();
-        }
-    }
 
+    /**
+     * @deprecated will be removed in Camel 2.4
+     */
+    @Deprecated
     public synchronized void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
@@ -195,6 +187,10 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         this.exchangePattern = exchangePattern;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.4
+     */
+    @Deprecated
     protected ScheduledExecutorService createScheduledExecutorService() {
         return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
     }

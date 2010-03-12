@@ -20,8 +20,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -44,9 +42,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final transient Log LOG = LogFactory.getLog(DefaultComponent.class);
 
-    private static final int DEFAULT_THREADPOOL_SIZE = 10;
     private CamelContext camelContext;
-    private ExecutorService executorService;
 
     public DefaultComponent() {
     }
@@ -170,44 +166,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         this.camelContext = context;
     }
 
-    public synchronized ExecutorService getExecutorService() {
-        if (executorService == null) {
-            executorService = createScheduledExecutorService();
-        }
-        return executorService;
-    }
-
-    public synchronized void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
-    public synchronized ScheduledExecutorService getScheduledExecutorService() {
-        ExecutorService executor = getExecutorService();
-        if (executor instanceof ScheduledExecutorService) {
-            return (ScheduledExecutorService) executor;
-        } else {
-            return createScheduledExecutorService();
-        }
-    }
-
-    /**
-     * A factory method to create a default thread pool and executor
-     */
-    protected ScheduledExecutorService createScheduledExecutorService() {
-        String name = getClass().getSimpleName();
-        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, name, DEFAULT_THREADPOOL_SIZE);
-    }
-
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
     }
 
     protected void doStop() throws Exception {
-        if (executorService != null) {
-            executorService.shutdown();
-            // must null it so we can restart
-            executorService = null;
-        }
+        // noop
     }
 
     /**
@@ -242,79 +206,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     protected boolean useIntrospectionOnEndpoint() {
         return true;
-    }
-
-
-    // Some helper methods
-    //-------------------------------------------------------------------------
-
-    /**
-     * Converts the given value to the requested type
-     * @deprecated will be removed in Camel 2.3
-     */
-    @Deprecated
-    public <T> T convertTo(Class<T> type, Object value) {
-        return CamelContextHelper.convertTo(getCamelContext(), type, value);
-    }
-
-    /**
-     * Converts the given value to the specified type throwing an {@link IllegalArgumentException}
-     * if the value could not be converted to a non null value
-     * @deprecated will be removed in Camel 2.3
-     */
-    @Deprecated
-    public  <T> T mandatoryConvertTo(Class<T> type, Object value) {
-        return CamelContextHelper.mandatoryConvertTo(getCamelContext(), type, value);
-    }
-
-    /**
-     * Creates a new instance of the given type using the {@link org.apache.camel.spi.Injector} on the given
-     * {@link CamelContext}
-     * @deprecated will be removed in Camel 2.3
-     */
-    @Deprecated
-    public  <T> T newInstance(Class<T> beanType) {
-        return getCamelContext().getInjector().newInstance(beanType);
-    }
-
-    /**
-     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext}
-     * @deprecated will be removed in Camel 2.3
-     */
-    @Deprecated
-    public Object lookup(String name) {
-        return getCamelContext().getRegistry().lookup(name);
-    }
-
-    /**
-     * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext}
-     * @deprecated will be removed in Camel 2.3
-     */
-    @Deprecated
-    public <T> T lookup(String name, Class<T> beanType) {
-        return getCamelContext().getRegistry().lookup(name, beanType);
-    }
-
-    /**
-     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} or throws exception if not found.
-     * @deprecated will be removed in Camel 2.3
-     */
-    @Deprecated
-    public Object mandatoryLookup(String name) {
-        return CamelContextHelper.mandatoryLookup(getCamelContext(), name);
-    }
-
-    /**
-     * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} or throws exception if not found.
-     * @deprecated will be removed in Camel 2.3
-     */
-    @Deprecated
-    public <T> T mandatoryLookup(String name, Class<T> beanType) {
-        return CamelContextHelper.mandatoryLookup(getCamelContext(), name, beanType);
     }
 
     /**

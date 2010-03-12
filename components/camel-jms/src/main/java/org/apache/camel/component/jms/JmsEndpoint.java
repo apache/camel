@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -53,6 +54,9 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, ManagementAware<JmsEndpoint>, MultipleConsumersSupport {
+    private static final int DEFAULT_THREADPOOL_SIZE = 100;
+
+    private ScheduledExecutorService scheduledExecutorService;
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -294,6 +298,18 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setRequestor(Requestor requestor) {
         this.requestor = requestor;
+    }
+
+    public synchronized ScheduledExecutorService getScheduledExecutorService() {
+        if (scheduledExecutorService == null) {
+            scheduledExecutorService = getCamelContext().getExecutorServiceStrategy()
+                    .newScheduledThreadPool(this, getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
+        }
+        return scheduledExecutorService;
+    }
+
+    public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+        this.scheduledExecutorService = scheduledExecutorService;
     }
 
     public boolean isPubSubDomain() {

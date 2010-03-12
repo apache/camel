@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Session;
@@ -53,8 +54,10 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 public class JmsComponent extends DefaultComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
 
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
+    private static final int DEFAULT_THREADPOOL_SIZE = 100;
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
+    private ScheduledExecutorService scheduledExecutorService;
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
     private Requestor requestor;
@@ -348,6 +351,18 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     public void setRequestor(Requestor requestor) {
         this.requestor = requestor;
+    }
+
+    public synchronized ScheduledExecutorService getScheduledExecutorService() {
+        if (scheduledExecutorService == null) {
+            scheduledExecutorService = getCamelContext().getExecutorServiceStrategy()
+                    .newScheduledThreadPool(this, "JmsComponent", DEFAULT_THREADPOOL_SIZE);
+        }
+        return scheduledExecutorService;
+    }
+
+    public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+        this.scheduledExecutorService = scheduledExecutorService;
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
