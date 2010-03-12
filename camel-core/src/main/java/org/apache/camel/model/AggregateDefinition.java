@@ -38,6 +38,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;aggregate/&gt; element
@@ -46,7 +47,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAware<AggregateDefinition> {
+public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate", required = false)
@@ -150,8 +151,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
         AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy);
 
-        ExecutorService executor = createExecutorService(routeContext);
-        answer.setExecutorService(executor);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        answer.setExecutorService(executorService);
         if (isParallelProcessing() != null) {
             answer.setParallelProcessing(isParallelProcessing());
         }
@@ -218,16 +219,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             }
         }
         return repository;
-    }
-
-    private ExecutorService createExecutorService(RouteContext routeContext) {
-        if (executorService == null && executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
-        return executorService;
     }
 
     public AggregationStrategy getAggregationStrategy() {

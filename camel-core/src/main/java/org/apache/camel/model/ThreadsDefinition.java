@@ -31,6 +31,7 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;threads/&gt; element
@@ -39,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAware<ThreadsDefinition> {
+public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;
@@ -61,14 +62,10 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (executorService == null && executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
-
+        // prefer any explicit configured executor service
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         if (executorService == null) {
+            // none was configured so create an executor based on the other parameters
             String name = getThreadName() != null ? getThreadName() : "Threads";
             if (poolSize == null || poolSize <= 0) {
                 // use the cached thread pool

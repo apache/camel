@@ -31,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.SendAsyncProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -39,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToDefinition extends SendDefinition<ToDefinition> implements ExecutorServiceAware<ToDefinition> {
+public class ToDefinition extends SendDefinition<ToDefinition> implements ExecutorServiceAwareDefinition<ToDefinition> {
     @XmlTransient
     private final List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlAttribute(required = false)
@@ -89,13 +90,9 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
         // this code below is only for creating when async is enabled
         // ----------------------------------------------------------
 
-        if (executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         if (executorService == null && poolSize != null) {
+            // crete a new based on the other options
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
                                 .newThreadPool("ToAsync[" + getLabel() + "]", poolSize, poolSize);
         }

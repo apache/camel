@@ -16,11 +16,20 @@
  */
 package org.apache.camel.spring.processor;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.SplitterWithCustomThreadPoolExecutorTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSplitterWithCustomThreadPoolExecutorTest extends SplitterWithCustomThreadPoolExecutorTest {
+
+    @Override
+    protected ThreadPoolExecutor getThreadPoolExecutor() {
+        return context.getRegistry().lookup("myThreadPoolExecutor", ThreadPoolExecutor.class);
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/splitterWithCustomThreadPoolExecutor.xml");
     }

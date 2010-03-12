@@ -25,14 +25,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.model.ExecutorServiceAwareDefinition;
+import org.apache.camel.spi.ExecutorServiceStrategy;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * Helper for {@link java.util.concurrent.ExecutorService} to construct executors using a thread factory that
  * create thread names with Camel prefix.
+ * <p/>
+ * This helper should <b>NOT</b> be used by end users of Camel, as you should use
+ * {@link org.apache.camel.spi.ExecutorServiceStrategy} which you obtain from {@link org.apache.camel.CamelContext}
+ * to create thread pools.
+ * <p/>
+ * This helper should only be used internally in Camel.
  *
  * @version $Revision$
- * @deprecated replaced with {@link org.apache.camel.spi.ExecutorServiceStrategy}
  */
-@Deprecated
 public final class ExecutorServiceHelper {
 
     private static AtomicInteger threadCounter = new AtomicInteger();
@@ -158,6 +167,41 @@ public final class ExecutorServiceHelper {
             }
         });
         return answer;
+    }
+
+    /**
+     * Will lookup and get the configured {@link java.util.concurrent.ExecutorService} from the given definition.
+     * <p/>
+     * This method will lookup for configured thread pool in the following order
+     * <ul>
+     *   <li>from the definition if any explicit configured executor service.</li>
+     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
+     * configured executor services in the same coherent way.
+     *
+     * @param routeContext  the rout context
+     * @param definition    the node definition which may leverage executor service.
+     * @return the configured executor service, or <tt>null</tt> if none was configured.
+     * @throws IllegalArgumentException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
+     */
+    public static ExecutorService getConfiguredExecutorService(RouteContext routeContext,
+                                                               ExecutorServiceAwareDefinition definition) throws IllegalArgumentException {
+        ExecutorServiceStrategy strategy = routeContext.getCamelContext().getExecutorServiceStrategy();
+        ObjectHelper.notNull(strategy, "ExecutorServiceStrategy", routeContext.getCamelContext());
+
+        // prefer to use explicit configured executor on the definition
+        if (definition.getExecutorService() != null) {
+            return definition.getExecutorService();
+        } else if (definition.getExecutorServiceRef() != null) {
+            ExecutorService answer = strategy.lookup(definition.getExecutorServiceRef());
+            if (answer == null) {
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry.");
+            }
+            return answer;
+        }
+
+        return null;
     }
 
 }

@@ -34,6 +34,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;onCompletion/&gt; element
@@ -42,7 +43,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> implements ExecutorServiceAware<OnCompletionDefinition> {
+public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
 
     @XmlAttribute(required = false)
     private Boolean onCompleteOnly = Boolean.FALSE;
@@ -82,6 +83,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        if (onCompleteOnly && onFailureOnly) {
+            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+        }
+
         Processor childProcessor = createOutputsProcessor(routeContext);
 
         // wrap the on completion route in a unit of work processor
@@ -92,19 +97,9 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        if (onCompleteOnly && onFailureOnly) {
-            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
-        }
-
-        if (executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
-
         OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
                                                                  onCompleteOnly, onFailureOnly, when);
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         answer.setExecutorService(executorService);
         return answer;
     }

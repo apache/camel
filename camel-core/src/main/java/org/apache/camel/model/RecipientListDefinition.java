@@ -32,6 +32,7 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;recipientList/&gt; element
@@ -40,7 +41,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RecipientListDefinition extends ExpressionNode implements ExecutorServiceAware<RecipientListDefinition> {
+public class RecipientListDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition> {
 
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
@@ -97,7 +98,12 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
         }
         
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
-        answer.setExecutorService(createExecutorService(routeContext));
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        if (executorService == null) {
+            // fallback to create a new executor
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool("RecipientList");
+        }
+        answer.setExecutorService(executorService);
 
         return answer;
     }
@@ -111,20 +117,6 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
         return aggregationStrategy;
-    }
-
-    private ExecutorService createExecutorService(RouteContext routeContext) {
-        if (executorService == null && executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
-        if (executorService == null) {
-            // fall back and use default
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool("RecipientList");
-        }
-        return executorService;
     }
 
     @Override

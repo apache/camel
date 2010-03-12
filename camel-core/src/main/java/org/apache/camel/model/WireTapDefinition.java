@@ -30,6 +30,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;wireTap/&gt; element
@@ -38,7 +39,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WireTapDefinition extends SendDefinition<WireTapDefinition> implements ExecutorServiceAware<ProcessorDefinition> {
+public class WireTapDefinition extends SendDefinition<WireTapDefinition> implements ExecutorServiceAwareDefinition<ProcessorDefinition> {
 
     @XmlTransient
     private Processor newExchangeProcessor;
@@ -75,12 +76,7 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
             answer.setNewExchangeExpression(newExchangeExpression.createExpression(routeContext));
         }
 
-        if (executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         answer.setExecutorService(executorService);
 
         return answer;

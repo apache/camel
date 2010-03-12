@@ -278,6 +278,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Disable stream caching for this route.
+     * 
+     * @return the builder
      */
     public RouteDefinition noStreamCaching() {
         setStreamCache(Boolean.FALSE);
@@ -287,6 +289,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Enable stream caching for this route.
+     * 
+     * @return the builder
      */
     public RouteDefinition streamCaching() {
         setStreamCache(Boolean.TRUE);
@@ -301,6 +305,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Disable tracing for this route.
+     * 
+     * @return the builder
      */
     public RouteDefinition noTracing() {
         setTrace(false);
@@ -309,6 +315,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Enable tracing for this route.
+     * 
+     * @return the builder
      */
     public RouteDefinition tracing() {
         setTrace(true);
@@ -317,6 +325,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Disable handle fault for this route.
+     * 
+     * @return the builder
      */
     public RouteDefinition noHandleFault() {
         setHandleFault(false);
@@ -325,6 +335,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Enable handle fault for this route.
+     * 
+     * @return the builder
      */
     public RouteDefinition handleFault() {
         setHandleFault(true);
@@ -333,6 +345,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Disable delayer for this route.
+     * 
+     * @return the builder
      */
     public RouteDefinition noDelayer() {
         setDelayer(0L);
@@ -343,6 +357,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      * Enable delayer for this route.
      *
      * @param delay delay in millis
+     * @return the builder
      */
     public RouteDefinition delayer(long delay) {
         setDelayer(delay);
@@ -362,6 +377,8 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
     /**
      * Disables this route from being auto started when Camel starts.
+     * 
+     * @return the builder
      */
     public RouteDefinition noAutoStartup() {
         setAutoStartup(Boolean.FALSE);
@@ -375,7 +392,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      * Camel will stop routes in reverse order when its stopping.
      *
      * @param order the order represented as a number
-     * @return this builder
+     * @return the builder
      */
     public RouteDefinition startupOrder(int order) {
         setStartupOrder(order);
@@ -383,8 +400,11 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     }
 
     /**
-     * Disables this route from being auto started when Camel starts.
-     */
+     * Configures a route policy for this route
+     *
+     * @param routePolicy the route policy
+     * @return the builder
+     */ 
     public RouteDefinition routePolicy(RoutePolicy routePolicy) {
         setRoutePolicy(routePolicy);
         return this;
@@ -394,6 +414,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      * Configures a route policy for this route
      *
      * @param routePolicyRef reference to a {@link RoutePolicy} to lookup and use.
+     * @return the builder
      */
     public RouteDefinition routePolicyRef(String routePolicyRef) {
         setRoutePolicyRef(routePolicyRef);
@@ -404,6 +425,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      * Configures a shutdown route option.
      *
      * @param shutdownRoute the option to use when shutting down this route
+     * @return the builder
      */
     public RouteDefinition shutdownRoute(ShutdownRoute shutdownRoute) {
         setShutdownRoute(shutdownRoute);
@@ -414,6 +436,7 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
      * Configures a shutdown running task option.
      *
      * @param shutdownRunningTask the option to use when shutting down and how to act upon running tasks.
+     * @return the builder
      */
     public RouteDefinition shutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         setShutdownRunningTask(shutdownRunningTask);
@@ -663,14 +686,23 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
 
         // configure auto startup
         if (autoStartup != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Using AutoStartup " + isAutoStartup() + " on route: " + this);
+            }
             routeContext.setAutoStartup(isAutoStartup());
         }
 
         // configure shutdown
         if (shutdownRoute != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Using ShutdownRoute " + getShutdownRoute() + " on route: " + this);
+            }
             routeContext.setShutdownRoute(getShutdownRoute());
         }
         if (shutdownRunningTask != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Using ShutdownRunningTask " + getShutdownRunningTask() + " on route: " + this);
+            }
             routeContext.setShutdownRunningTask(getShutdownRunningTask());
         }
 

@@ -26,7 +26,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:parallel-custom-pool"/>
-      <split executorServiceRef="threadPoolExecutor">
+      <split executorServiceRef="myThreadPoolExecutor">
         <xpath>/invoice/lineItems</xpath>
         <to uri="mock:result"/>
       </split>
@@ -35,7 +35,7 @@
 
   <!-- There's an easier way of specifying constructor args, just can't remember it
        at the moment... old Spring syntax will do for now! -->
-  <bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor">
+  <bean id="myThreadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor">
     <constructor-arg index="0" value="8"/>
     <constructor-arg index="1" value="16"/>
     <constructor-arg index="2" value="0"/>

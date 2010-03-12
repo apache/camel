@@ -31,6 +31,7 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;split/&gt; element
@@ -39,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SplitDefinition extends ExpressionNode implements ExecutorServiceAware<SplitDefinition> {
+public class SplitDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -84,8 +85,15 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
+
         aggregationStrategy = createAggregationStrategy(routeContext);
-        executorService = createExecutorService(routeContext);
+
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        if (executorService == null) {
+            // fallback to create a new executor
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool("Split");
+        }
+
         Expression exp = getExpression().createExpression(routeContext);
         return new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
                             isParallelProcessing(), executorService, isStreaming(), isStopOnException());
@@ -103,21 +111,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         }
         return strategy;
     }        
-    
-    private ExecutorService createExecutorService(RouteContext routeContext) {
-        if (executorService == null && executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
-        if (executorService == null) {
-            // fall back and use default
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool("Split");
-        }
-        return executorService;
-    }
-    
+
     // Fluent API
     // -------------------------------------------------------------------------
 

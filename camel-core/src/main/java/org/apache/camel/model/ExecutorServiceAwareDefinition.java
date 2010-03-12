@@ -18,12 +18,16 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.ExecutorServiceAware;
+
 /**
  * Enables definitions to support concurrency using {@link java.util.concurrent.ExecutorService}
  *
  * @version $Revision$
+ * @see org.apache.camel.util.concurrent.ExecutorServiceHelper#getConfiguredExecutorService(org.apache.camel.spi.RouteContext,
+ *                                                                                          ExecutorServiceAwareDefinition)
  */
-public interface ExecutorServiceAware<Type extends ProcessorDefinition> {
+public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition> extends ExecutorServiceAware {
 
     /**
      * Setting the executor service for executing
@@ -31,7 +35,7 @@ public interface ExecutorServiceAware<Type extends ProcessorDefinition> {
      * @param executorService the executor service
      * @return the builder
      */
-    <Type> Type executorService(ExecutorService executorService);
+    Type executorService(ExecutorService executorService);
 
     /**
      * Setting the executor service for executing
@@ -40,14 +44,6 @@ public interface ExecutorServiceAware<Type extends ProcessorDefinition> {
      *                           to lookup in the {@link org.apache.camel.spi.Registry}
      * @return the builder
      */
-    <Type> Type executorServiceRef(String executorServiceRef);
-
-    ExecutorService getExecutorService();
-
-    void setExecutorService(ExecutorService executorService);
-
-    String getExecutorServiceRef();
-
-    void setExecutorServiceRef(String executorServiceRef);
+    Type executorServiceRef(String executorServiceRef);
 
 }

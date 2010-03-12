@@ -29,6 +29,7 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;multicast/&gt; element
@@ -37,7 +38,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "multicast")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAware<MulticastDefinition> {
+public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> implements ExecutorServiceAwareDefinition<MulticastDefinition> {
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
     @XmlAttribute(required = false)
@@ -146,12 +147,7 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> i
             // default to use latest aggregation strategy
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
-        if (executorServiceRef != null) {
-            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
-            if (executorService == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
-            }
-        }
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
 
         return new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
                                       executorService, isStreaming(), isStopOnException());
