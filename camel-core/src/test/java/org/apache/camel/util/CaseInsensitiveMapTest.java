@@ -366,4 +366,28 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(2, other.size());
     }
 
+    public void testCopyToAnotherMapPreserveKeyKeySet() {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Foo", "cheese");
+        map.put("BAR", "cake");
+        assertEquals(2, map.size());
+        assertEquals(true, map.containsKey("foo"));
+        assertEquals(true, map.containsKey("bar"));
+
+        Map<String, Object> other = new HashMap<String, Object>();
+
+        // this is wrong!!! you should use entrySet
+        for (String key : map.keySet()) {
+            Object value = map.get(key);
+            other.put(key, value);
+        }
+
+        // now the keys will be in lower case
+        assertEquals(true, other.containsKey("foo"));
+        assertEquals(false, other.containsKey("Foo"));
+        assertEquals(true, other.containsKey("bar"));
+        assertEquals(false, other.containsKey("BAR"));
+        assertEquals(2, other.size());
+    }
+
 }
