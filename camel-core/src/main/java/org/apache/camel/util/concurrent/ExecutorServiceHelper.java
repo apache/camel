@@ -194,7 +194,7 @@ public final class ExecutorServiceHelper {
         if (definition.getExecutorService() != null) {
             return definition.getExecutorService();
         } else if (definition.getExecutorServiceRef() != null) {
-            ExecutorService answer = strategy.lookup(definition.getExecutorServiceRef());
+            ExecutorService answer = strategy.lookup(definition, definition.getExecutorServiceRef());
             if (answer == null) {
                 throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry.");
             }

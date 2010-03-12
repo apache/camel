@@ -475,16 +475,16 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (executorService == null) {
             if (isParallelProcessing()) {
                 // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-                executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool("Aggregator");
+                executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "Aggregator");
             } else {
                 // use a single threaded if we are not running in parallel
-                executorService = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor("Aggregator");
+                executorService = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor(this, "Aggregator");
             }
         }
 
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
-            ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool("AggregateTimeoutChecker", 1);
+            ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
             // check for timed out aggregated messages once every second
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
             ServiceHelper.startService(timeoutMap);

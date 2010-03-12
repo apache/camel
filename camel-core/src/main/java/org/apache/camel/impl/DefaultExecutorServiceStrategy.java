@@ -49,31 +49,31 @@ public class DefaultExecutorServiceStrategy implements ExecutorServiceStrategy {
         this.threadNamePattern = threadNamePattern;
     }
 
-    public ExecutorService lookup(String executorServiceRef) {
+    public ExecutorService lookup(Object source, String executorServiceRef) {
         return camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
     }
 
-    public ExecutorService newCachedThreadPool(String name) {
+    public ExecutorService newCachedThreadPool(Object source, String name) {
         return ExecutorServiceHelper.newCachedThreadPool(getThreadName(name), true);
     }
 
-    public ScheduledExecutorService newScheduledThreadPool(String name, int poolSize) {
+    public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
         return ExecutorServiceHelper.newScheduledThreadPool(poolSize, getThreadName(name), true);
     }
 
-    public ExecutorService newFixedThreadPool(String name, int poolSize) {
+    public ExecutorService newFixedThreadPool(Object source, String name, int poolSize) {
         return ExecutorServiceHelper.newFixedThreadPool(poolSize, getThreadName(name), true);
     }
 
-    public ExecutorService newSingleThreadExecutor(String name) {
+    public ExecutorService newSingleThreadExecutor(Object source, String name) {
         return ExecutorServiceHelper.newSingleThreadExecutor(getThreadName(name), true);
     }
 
-    public ExecutorService newThreadPool(String name, int corePoolSize, int maxPoolSize) {
+    public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize) {
         return ExecutorServiceHelper.newThreadPool(getThreadName(name), corePoolSize, maxPoolSize);
     }
 
-    public ExecutorService newThreadPool(String name, int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, boolean daemon) {
+    public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, boolean daemon) {
         return ExecutorServiceHelper.newThreadPool(getThreadName(name), corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
     }
 

@@ -171,7 +171,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             }
 
             ExecutorService multicastExecutor = endpoint.getCamelContext().getExecutorServiceStrategy()
-                                                    .newFixedThreadPool(endpoint.getEndpointUri() + "(multicast)", size);
+                                                    .newFixedThreadPool(this, endpoint.getEndpointUri() + "(multicast)", size);
             multicast = new MulticastProcessor(endpoint.getCamelContext(), processors, null, true, multicastExecutor, false, false);
         }
         return multicast;
@@ -180,7 +180,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     protected void doStart() throws Exception {
         int poolSize = endpoint.getConcurrentConsumers();
         executor = endpoint.getCamelContext().getExecutorServiceStrategy()
-                        .newFixedThreadPool(endpoint.getEndpointUri(), poolSize);
+                        .newFixedThreadPool(this, endpoint.getEndpointUri(), poolSize);
         for (int i = 0; i < poolSize; i++) {
             executor.execute(this);
         }

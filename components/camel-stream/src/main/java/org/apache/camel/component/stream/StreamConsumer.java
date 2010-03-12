@@ -72,7 +72,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             inputStream = resolveStreamFromUrl();
         }
 
-        executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(endpoint.getEndpointUri());
+        executor = endpoint.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, endpoint.getEndpointUri());
         executor.execute(this);
     }
 

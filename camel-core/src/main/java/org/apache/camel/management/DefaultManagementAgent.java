@@ -412,7 +412,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         if (executorService == null) {
             // we only need a single for the JMX connector
-            executorService = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor("JMXConnector: " + url);
+            executorService = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor(this, "JMXConnector: " + url);
         }
 
         // execute the JMX connector

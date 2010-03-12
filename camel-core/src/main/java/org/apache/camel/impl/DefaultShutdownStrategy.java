@@ -233,7 +233,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private ExecutorService getExecutorService() {
         if (executor == null) {
-            executor = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor("ShutdownTask");
+            executor = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor(this, "ShutdownTask");
         }
         return executor;
     }

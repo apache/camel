@@ -58,7 +58,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             scheduled = (ScheduledExecutorService) service;
         } else {
             scheduled = endpoint.getCamelContext().getExecutorServiceStrategy()
-                            .newScheduledThreadPool(getEndpoint().getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
+                            .newScheduledThreadPool(this, getEndpoint().getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
         }
 
         this.executor = scheduled;

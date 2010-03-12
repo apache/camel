@@ -195,7 +195,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     protected ScheduledExecutorService createScheduledExecutorService() {
         String name = getClass().getSimpleName();
-        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(name, DEFAULT_THREADPOOL_SIZE);
+        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, name, DEFAULT_THREADPOOL_SIZE);
     }
 
     protected void doStart() throws Exception {

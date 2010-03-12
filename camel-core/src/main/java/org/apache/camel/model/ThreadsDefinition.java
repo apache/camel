@@ -69,12 +69,12 @@ public class ThreadsDefinition extends OutputDefinition<ProcessorDefinition> imp
             String name = getThreadName() != null ? getThreadName() : "Threads";
             if (poolSize == null || poolSize <= 0) {
                 // use the cached thread pool
-                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(name);
+                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, name);
             } else {
                 // use a custom pool based on the settings
                 int max = getMaxPoolSize() != null ? getMaxPoolSize() : poolSize;
                 executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
-                                        .newThreadPool(name, poolSize, max, getKeepAliveTime(), getUnits(), true);
+                                        .newThreadPool(this, name, poolSize, max, getKeepAliveTime(), getUnits(), true);
             }
         }
         Processor childProcessor = routeContext.createProcessor(this);

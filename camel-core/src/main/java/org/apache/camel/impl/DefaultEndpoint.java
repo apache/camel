@@ -196,7 +196,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     }
 
     protected ScheduledExecutorService createScheduledExecutorService() {
-        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
+        return getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
     }
 
     public void configureProperties(Map<String, Object> options) {

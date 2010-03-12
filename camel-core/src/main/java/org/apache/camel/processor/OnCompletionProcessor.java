@@ -182,7 +182,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     }
 
     protected ExecutorService createExecutorService() {
-        return camelContext.getExecutorServiceStrategy().newCachedThreadPool(this.toString());
+        return camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, this.toString());
     }
 
     public void setExecutorService(ExecutorService executorService) {

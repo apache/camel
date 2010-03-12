@@ -103,7 +103,7 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
     public ExecutorService getExecutorService() {
         if (executorService == null) {
-            executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool("Threads");
+            executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "Threads");
         }
         return executorService;
     }

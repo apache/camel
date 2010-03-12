@@ -101,7 +101,7 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         if (executorService == null) {
             // fallback to create a new executor
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool("RecipientList");
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "RecipientList");
         }
         answer.setExecutorService(executorService);
 

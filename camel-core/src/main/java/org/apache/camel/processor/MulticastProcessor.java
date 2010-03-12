@@ -128,7 +128,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         this.stopOnException = stopOnException;
 
         if (isParallelProcessing() && getExecutorService() == null) {
-            this.executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool("Multicast");
+            this.executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "Multicast");
         }
     }
 

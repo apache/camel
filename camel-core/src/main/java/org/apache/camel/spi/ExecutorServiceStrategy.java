@@ -67,60 +67,67 @@ public interface ExecutorServiceStrategy {
     /**
      * Lookup a {@link java.util.concurrent.ExecutorService} from the {@link org.apache.camel.spi.Registry}.
      *
-     * @param executorServiceRef  reference to lookup
+     * @param source               the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param executorServiceRef   reference to lookup
      * @return the {@link java.util.concurrent.ExecutorService} or <tt>null</tt> if not found
      */
-    ExecutorService lookup(String executorServiceRef);
+    ExecutorService lookup(Object source, String executorServiceRef);
 
     /**
      * Creates a new cached thread pool.
      *
-     * @param name  name which is appended to the thread name
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
      * @return the thread pool
      */
-    ExecutorService newCachedThreadPool(String name);
+    ExecutorService newCachedThreadPool(Object source, String name);
 
     /**
      * Creates a new scheduled thread pool.
      *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
      * @param poolSize    the core pool size
      * @return the thread pool
      */
-    ScheduledExecutorService newScheduledThreadPool(String name, int poolSize);
+    ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize);
 
     /**
      * Creates a new fixed thread pool.
      *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
      * @param poolSize    the core pool size
      * @return the thread pool
      */
-    ExecutorService newFixedThreadPool(String name, int poolSize);
+    ExecutorService newFixedThreadPool(Object source, String name, int poolSize);
 
     /**
      * Creates a new single-threaded thread pool. This is often used for background threads.
      *
-     * @param name  name which is appended to the thread name
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
      * @return the thread pool
      */
-    ExecutorService newSingleThreadExecutor(String name);
+    ExecutorService newSingleThreadExecutor(Object source, String name);
 
     /**
      * Creates a new custom thread pool.
      * <p/>
      * Will by default use 60 seconds for keep alive time for idle threads.
      *
+     * @param source        the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name          name which is appended to the thread name
      * @param corePoolSize  the core pool size
      * @param maxPoolSize   the maximum pool size
      * @return the thread pool
      */
-    ExecutorService newThreadPool(String name, int corePoolSize, int maxPoolSize);
+    ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize);
 
     /**
      * Creates a new custom thread pool.
      *
+     * @param source        the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name          name which is appended to the thread name
      * @param corePoolSize  the core pool size
      * @param maxPoolSize   the maximum pool size
@@ -129,7 +136,7 @@ public interface ExecutorServiceStrategy {
      * @param daemon        whether or not the created threads is daemon or not
      * @return the thread pool
      */
-    ExecutorService newThreadPool(final String name, int corePoolSize, int maxPoolSize,
+    ExecutorService newThreadPool(Object source, final String name, int corePoolSize, int maxPoolSize,
                                   long keepAliveTime, TimeUnit timeUnit, boolean daemon);
 
     /**

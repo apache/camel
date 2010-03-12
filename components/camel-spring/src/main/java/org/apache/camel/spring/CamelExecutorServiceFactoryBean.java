@@ -76,12 +76,12 @@ public class CamelExecutorServiceFactoryBean extends IdentifiedType implements F
         ExecutorService answer;
         if (getPoolSize() == null || getPoolSize() <= 0) {
             // use the cached thread pool
-            answer = camelContext.getExecutorServiceStrategy().newCachedThreadPool(name);
+            answer = camelContext.getExecutorServiceStrategy().newCachedThreadPool(getId(), name);
         } else {
             // use a custom pool based on the settings
             int max = getMaxPoolSize() != null ? getMaxPoolSize() : getPoolSize();
             answer = camelContext.getExecutorServiceStrategy()
-                        .newThreadPool(name, getPoolSize(), max, getKeepAliveTime(), getUnits(), isDeamon());
+                        .newThreadPool(getId(), name, getPoolSize(), max, getKeepAliveTime(), getUnits(), isDeamon());
         }
         return answer;
     }

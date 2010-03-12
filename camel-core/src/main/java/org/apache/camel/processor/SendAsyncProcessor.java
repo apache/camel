@@ -165,7 +165,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     public ExecutorService getExecutorService() {
         if (executorService == null) {
             executorService = destination.getCamelContext().getExecutorServiceStrategy()
-                                .newThreadPool("SendAsyncProcessor-Consumer", poolSize, poolSize);
+                                .newThreadPool(this, "SendAsyncProcessor-Consumer", poolSize, poolSize);
         }
         return executorService;
     }
@@ -183,7 +183,7 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
         if (producerExecutorService == null) {
             // use a cached pool for the producers which can grow/schrink itself
             producerExecutorService = destination.getCamelContext().getExecutorServiceStrategy()
-                                        .newCachedThreadPool("SendAsyncProcessor-Producer");
+                                        .newCachedThreadPool(this, "SendAsyncProcessor-Producer");
         }
         return producerExecutorService;
     }

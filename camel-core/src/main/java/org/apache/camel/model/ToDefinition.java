@@ -94,7 +94,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
         if (executorService == null && poolSize != null) {
             // crete a new based on the other options
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
-                                .newThreadPool("ToAsync[" + getLabel() + "]", poolSize, poolSize);
+                                .newThreadPool(this, "ToAsync[" + getLabel() + "]", poolSize, poolSize);
         }
 
         // create the child processor which is the async route

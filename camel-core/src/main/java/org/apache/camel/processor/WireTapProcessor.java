@@ -160,7 +160,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     protected ExecutorService createExecutorService() {
-        return getDestination().getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this.toString());
+        return getDestination().getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, this.toString());
     }
 
     public void setExecutorService(ExecutorService executorService) {
