@@ -53,7 +53,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
         // TODO: this executor should also be shutdown when CamelContext stops
         this.executor = endpoint.getCamelContext().getExecutorServiceStrategy()
-                            .newScheduledThreadPool(this, getEndpoint().getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
+                            .newScheduledThreadPool(this, endpoint.getEndpointUri(), DEFAULT_THREADPOOL_SIZE);
         ObjectHelper.notNull(executor, "executor");
     }
 
