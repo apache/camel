@@ -107,4 +107,6 @@ class RichExchange(val exchange : Exchange) extends Exchange {
   def copy = new RichExchange(exchange.copy)
 
   def addOnCompletion(onCompletion: Synchronization) = exchange.addOnCompletion(onCompletion)
+  
+  def handoverCompletions(exchange : Exchange) = exchange.handoverCompletions(exchange)
 }
