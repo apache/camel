@@ -18,6 +18,8 @@ package org.apache.camel.language;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LanguageTestSupport;
@@ -158,6 +160,39 @@ public class SimpleTest extends LanguageTestSupport {
             assertEquals("Illegal syntax: Valid syntax: ${bodyAs(type)} was: bodyAs(xxx", e.getMessage());
         }
     }
+
+    public void testHeaderMap() throws Exception {
+        Map map = new HashMap();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        map.put("code", 4321);
+        exchange.getIn().setHeader("wicket", map);
+
+        assertExpression("${header.wicket[cool]}", "Camel rocks");
+        assertExpression("${header.wicket[dude]}", "Hey dude");
+        assertExpression("${header.wicket[unknown]}", "");
+        assertExpression("${header.wicket[code]}", 4321);
+        assertExpression("${header.unknown[cool]}", "");
+    }
+
+    public void testHeaderMapNotMap() throws Exception {
+        try {
+            assertExpression("${header.foo[bar]}", null);
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Header foo cannot be converted to a Map on headerAsMap(foo)[bar]", e.getMessage());
+        }
+    }
+
+    public void testHeaderMapIllegalSyntax() throws Exception {
+        try {
+            assertExpression("${header.foo[bar}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: Valid syntax: ${header.name[key]} was: header.foo[bar", e.getMessage());
+        }
+    }
+
 
     protected String getLanguageName() {
         return "simple";

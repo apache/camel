@@ -33,7 +33,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.language.simple.SimpleLangaugeOperator.*;
+import static org.apache.camel.language.simple.SimpleLanguageOperator.*;
 
 /**
  * Abstract base class for Simple languages.
@@ -97,7 +97,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         } else {
             // dual group with an and/or operator between the two groups
             final Expression first = doCreateOperatorExpression(expression, matcher.group(2), matcher.group(3), matcher.group(4));
-            final SimpleLangaugeOperator operator = asOperator(operatorText);
+            final SimpleLanguageOperator operator = asOperator(operatorText);
             final Expression last = doCreateOperatorExpression(expression, matcher.group(8), matcher.group(9), matcher.group(10));
 
             // create a compound predicate to combine the two groups with the operator
@@ -130,7 +130,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                                                   final String operatorText, final String rightText) {
         // left value is always a simple expression
         final Expression left = createSimpleExpression(leftText, true);
-        final SimpleLangaugeOperator operator = asOperator(operatorText);
+        final SimpleLanguageOperator operator = asOperator(operatorText);
 
         // the right hand side expression can either be a constant expression with or without enclosing ' '
         // or another simple expression using ${ } placeholders

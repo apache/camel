@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -77,6 +79,37 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "header(" + headerName + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression to lookup a key in the header which should be Map based.
+     *
+     * @param headerName the name of the header the expression will return
+     * @param keyName    the name of the key to lookup in the header value
+     * @return an expression object which will return the key value looked up in the header
+     */
+    public static Expression headerAsMapExpression(final String headerName, final String keyName) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object header = exchange.getIn().getHeader(headerName);
+                if (header == null) {
+                    return null;
+                }
+
+                try {
+                    Map map = exchange.getContext().getTypeConverter().mandatoryConvertTo(Map.class, header);
+                    Object answer = map.get(keyName);
+                    return answer;
+                } catch (NoTypeConversionAvailableException e) {
+                    throw new IllegalArgumentException("Header " + headerName + " cannot be converted to a Map on " + this, e);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "headerAsMap(" + headerName + ")[" + keyName + "]";
             }
         };
     }

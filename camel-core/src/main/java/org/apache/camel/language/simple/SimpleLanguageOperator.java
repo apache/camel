@@ -19,9 +19,9 @@ package org.apache.camel.language.simple;
 /**
  * Operators supported by simple language
  * <ul>
- *   <li>== : equlas</li>
- *   <li>> : greather than</li>
- *   <li>>= : greather than or equals</li>
+ *   <li>== : equals</li>
+ *   <li>> : greater than</li>
+ *   <li>>= : greater than or equals</li>
  *   <li>< : less than</li>
  *   <li><= : less than or equals</li>
  *   <li>!= : not</li>
@@ -40,19 +40,19 @@ package org.apache.camel.language.simple;
  * </ul>
  * <p/>
  * The <tt>and</tt> and <tt>or</tt> operator is special as they are used as optional operator to combine two expressions.
- * This allows you to build combiled expressions. Currently only one and/or operator is supported, but this might change
+ * This allows you to build combined expressions. Currently only one and/or operator is supported, but this might change
  * in the future.
  * <br/>
  * For example we can create this compound expression that has two groups that is combined with the and operator:
  * <tt>${in.header.action} == 'login' and ${in.header.password} != null</tt>
  * <br/>
  */
-public enum SimpleLangaugeOperator {
+public enum SimpleLanguageOperator {
 
     EQ, GT, GTE, LT, LTE, NOT, CONTAINS, NOT_CONTAINS, REGEX, NOT_REGEX,
     IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE, AND, OR;
 
-    public static SimpleLangaugeOperator asOperator(String text) {
+    public static SimpleLanguageOperator asOperator(String text) {
         if ("==".equals(text)) {
             return EQ;
         } else if (">".equals(text)) {
@@ -93,7 +93,7 @@ public enum SimpleLangaugeOperator {
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
 
-    public String getOperatorText(SimpleLangaugeOperator operator) {
+    public String getOperatorText(SimpleLanguageOperator operator) {
         if (operator == EQ) {
             return "==";
         } else if (operator == GT) {

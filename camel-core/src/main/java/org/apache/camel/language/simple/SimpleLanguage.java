@@ -16,6 +16,9 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -31,6 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  * <li>bodyAs(&lt;classname&gt;) to convert the in body to the given type</li>
  * <li>out.body to access the inbound body</li>
  * <li>in.header.foo or header.foo to access an inbound header called 'foo'</li>
+ * <li>in.header.foo[bar] or header.foo[bar] to access an inbound header called 'foo' as a Map and lookup the map with 'bar' as key</li>
  * <li>out.header.foo to access an outbound header called 'foo'</li>
  * <li>property.foo to access the exchange property called 'foo'</li>
  * <li>sys.foo to access the system property called 'foo'</li>
@@ -78,6 +82,7 @@ import org.apache.camel.util.ObjectHelper;
 public class SimpleLanguage extends SimpleLanguageSupport {
 
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
+    private static final Pattern HEADER_MAP = Pattern.compile("^(.*)\\[(.*)\\]$");
 
     public static Expression simple(String expression) {
         return SIMPLE.createExpression(expression);
@@ -116,7 +121,18 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             remainder = ifStartsWithReturnRemainder("in.headers.", expression);
         }
         if (remainder != null) {
-            return ExpressionBuilder.headerExpression(remainder);
+            // could be a map based index
+            Matcher matcher = HEADER_MAP.matcher(remainder);
+            if (matcher.matches()) {
+                String name = matcher.group(1);
+                String key = matcher.group(2);
+                return ExpressionBuilder.headerAsMapExpression(name, key);
+            } else {
+                if (remainder.contains("[") || remainder.contains("]")) {
+                    throw new ExpressionIllegalSyntaxException("Valid syntax: ${header.name[key]} was: " + expression);
+                }
+                return ExpressionBuilder.headerExpression(remainder);
+            }
         }
 
         // out header expression
