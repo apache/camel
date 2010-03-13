@@ -18,6 +18,7 @@ package org.apache.camel.component.dataset;
 
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -29,6 +30,7 @@ import org.apache.camel.processor.ThroughputLogger;
  * @version $Revision$
  */
 public class DataSetConsumer extends DefaultConsumer {
+    private final CamelContext camelContext;
     private DataSetEndpoint endpoint;
     private Processor reporter;
     private ExecutorService executorService;
@@ -36,6 +38,7 @@ public class DataSetConsumer extends DefaultConsumer {
     public DataSetConsumer(DataSetEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+        this.camelContext = endpoint.getCamelContext();
     }
 
     @Override
@@ -50,7 +53,7 @@ public class DataSetConsumer extends DefaultConsumer {
 
         sendMessages(0, preloadSize);
 
-        executorService = endpoint.getCamelContext().getExecutorServiceStrategy()
+        executorService = camelContext.getExecutorServiceStrategy()
                 .newSingleThreadExecutor(this, endpoint.getEndpointUri());
 
         executorService.execute(new Runnable() {
@@ -74,7 +77,7 @@ public class DataSetConsumer extends DefaultConsumer {
         super.doStop();
 
         if (executorService != null) {
-            executorService.shutdown();
+            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
             executorService = null;
         }
     }

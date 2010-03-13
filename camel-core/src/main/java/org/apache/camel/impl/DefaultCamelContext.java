@@ -1215,7 +1215,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext 
         // shutdown management as the last one
         shutdownServices(getManagementStrategy());
 
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") shutdown");
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is shutdown");
     }
 
     private void stopServices(Object service) throws Exception {

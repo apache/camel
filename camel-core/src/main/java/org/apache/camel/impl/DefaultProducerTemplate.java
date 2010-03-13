@@ -419,17 +419,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return answer;
     }
 
-    protected void doStart() throws Exception {
-        producerCache.start();
-    }
-
-    protected void doStop() throws Exception {
-        producerCache.stop();
-        if (executor != null) {
-            executor.shutdown();
-        }
-    }
-
     protected Object extractResultBody(Exchange result) {
         return extractResultBody(result, null);
     }
@@ -677,11 +666,23 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
 
+    protected void doStart() throws Exception {
+        producerCache.start();
+    }
+
+    protected void doStop() throws Exception {
+        producerCache.stop();
+        if (executor != null) {
+            context.getExecutorServiceStrategy().shutdownNow(executor);
+            executor = null;
+        }
+    }
+
     @Override
     public void start() throws Exception {
         super.start();
         ServiceHelper.startService(producerCache);
-        if (executor == null || executor.isShutdown()) {
+        if (executor == null) {
             executor = context.getExecutorServiceStrategy().newCachedThreadPool(this, "ProducerTemplate");
         }
     }
@@ -691,7 +692,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         super.stop();
         ServiceHelper.stopService(producerCache);
         if (executor != null) {
-            executor.shutdown();
+            context.getExecutorServiceStrategy().shutdownNow(executor);
         }
     }
 }

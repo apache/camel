@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -43,6 +44,7 @@ import org.apache.camel.util.ExchangeHelper;
 public class SendAsyncProcessor extends SendProcessor implements Runnable, Navigate<Processor> {
 
     private static final int DEFAULT_THREADPOOL_SIZE = 10;
+    protected final CamelContext camelContext;
     protected final Processor target;
     protected final BlockingQueue<Exchange> completedTasks = new LinkedBlockingQueue<Exchange>();
     protected ExecutorService executorService;
@@ -53,11 +55,13 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
     public SendAsyncProcessor(Endpoint destination, Processor target) {
         super(destination);
         this.target = target;
+        this.camelContext = destination.getCamelContext();
     }
 
     public SendAsyncProcessor(Endpoint destination, ExchangePattern pattern, Processor target) {
         super(destination, pattern);
         this.target = target;
+        this.camelContext = destination.getCamelContext();
     }
 
     @Override
@@ -277,11 +281,11 @@ public class SendAsyncProcessor extends SendProcessor implements Runnable, Navig
 
         // must shutdown thread pools on stop as we are consumers
         if (producerExecutorService != null) {
-            producerExecutorService.shutdownNow();
+            camelContext.getExecutorServiceStrategy().shutdownNow(producerExecutorService);
             producerExecutorService = null;
         }
         if (executorService != null) {
-            executorService.shutdownNow();
+            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
             executorService = null;
         }
         completedTasks.clear();

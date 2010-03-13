@@ -70,7 +70,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     protected void doShutdown() throws Exception {
         // only shutdown thread pool on shutdown
         if (executorService != null) {
-            executorService.shutdownNow();
+            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
             // must null it so we can restart
             executorService = null;
         }

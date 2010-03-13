@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -37,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class WireTapProcessor extends SendProcessor {
 
+    private final CamelContext camelContext;
     private ExecutorService executorService;
 
     // expression or processor used for populating a new exchange to send
@@ -46,10 +48,12 @@ public class WireTapProcessor extends SendProcessor {
 
     public WireTapProcessor(Endpoint destination) {
         super(destination);
+        this.camelContext = destination.getCamelContext();
     }
 
     public WireTapProcessor(Endpoint destination, ExchangePattern pattern) {
         super(destination, pattern);
+        this.camelContext = destination.getCamelContext();
     }
 
     @Override
@@ -57,7 +61,7 @@ public class WireTapProcessor extends SendProcessor {
         super.doShutdown();
         // only shutdown thread pool on shutdown
         if (executorService != null) {
-            executorService.shutdownNow();
+            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
             // must null it so we can restart
             executorService = null;
         }

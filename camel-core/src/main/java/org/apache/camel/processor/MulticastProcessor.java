@@ -367,7 +367,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     protected void doShutdown() throws Exception {
         // only shutdown thread pool on shutdown
         if (executorService != null) {
-            executorService.shutdownNow();
+            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
             executorService = null;
         }
     }
