@@ -33,14 +33,7 @@
     <bundle>mvn:org.springframework/spring-jms/${spring-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-util/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-io/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-http/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-client/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-continuation/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-server/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-security/${jetty-bundle-version}</bundle>
-    <bundle>mvn:org.eclipse.jetty/jetty-servlet/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty-bundle/${jetty6-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/${commons-codec-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle>mvn:org.codehaus.jettison/jettison/${jettison-bundle-version}</bundle>
