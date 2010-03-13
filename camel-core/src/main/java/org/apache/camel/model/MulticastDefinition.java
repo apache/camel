@@ -147,7 +147,12 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> i
             // default to use latest aggregation strategy
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
+
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        if (isParallelProcessing() && executorService == null) {
+            // we are running in parallel so create a cached thread pool which grows/shrinks automatic
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "Multicast");
+        }
 
         return new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
                                       executorService, isStreaming(), isStopOnException());

@@ -23,7 +23,6 @@ import java.util.concurrent.Future;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ShutdownableService;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -42,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ThreadsProcessor extends DelegateProcessor implements Processor {
 
     protected final CamelContext camelContext;
-    protected ExecutorService executorService;
+    protected final ExecutorService executorService;
     protected WaitForTaskToComplete waitForTaskToComplete;
 
     public ThreadsProcessor(CamelContext camelContext, Processor output, ExecutorService executorService, WaitForTaskToComplete waitForTaskToComplete) {
@@ -69,7 +68,7 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         Callable<Exchange> task = createTask(output, copy);
 
         // submit the task
-        Future<Exchange> future = getExecutorService().submit(task);
+        Future<Exchange> future = executorService.submit(task);
 
         // compute if we should wait for task to complete or not
         WaitForTaskToComplete wait = waitForTaskToComplete;
@@ -102,20 +101,12 @@ public class ThreadsProcessor extends DelegateProcessor implements Processor {
         };
     }
 
-    public ExecutorService getExecutorService() {
-        if (executorService == null) {
-            executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "Threads");
-        }
-        return executorService;
-    }
-
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
         // only shutdown thread pool on shutdown
         if (executorService != null) {
             camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-            executorService = null;
         }
     }
 

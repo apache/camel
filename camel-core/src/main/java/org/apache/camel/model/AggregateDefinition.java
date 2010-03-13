@@ -149,18 +149,26 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy);
-
+        // executor service is mandatory for the Aggregator
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
-        answer.setExecutorService(executorService);
-        if (isParallelProcessing() != null) {
-            answer.setParallelProcessing(isParallelProcessing());
+        if (executorService == null) {
+            if (isParallelProcessing()) {
+                // we are running in parallel so create a cached thread pool which grows/shrinks automatic
+                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "Aggregator");
+            } else {
+                // use a single threaded if we are not running in parallel
+                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newSingleThreadExecutor(this, "Aggregator");
+            }
         }
+        AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy, executorService);
+
         AggregationRepository<Object> repository = createAggregationRepository(routeContext);
         if (repository != null) {
             answer.setAggregationRepository(repository);
         }
 
+        // set other options
+        answer.setParallelProcessing(isParallelProcessing());
         if (getCompletionPredicate() != null) {
             Predicate predicate = getCompletionPredicate().createPredicate(routeContext);
             answer.setCompletionPredicate(predicate);
@@ -301,11 +309,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.executorService = executorService;
     }
 
-    public Boolean isParallelProcessing() {
-        return parallelProcessing;
+    public boolean isParallelProcessing() {
+        return parallelProcessing != null && parallelProcessing;
     }
 
-    public void setParallelProcessing(Boolean parallelProcessing) {
+    public void setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 

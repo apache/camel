@@ -89,18 +89,15 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
         } else {
             answer = new RecipientList(expression);
         }
-
-        if (parallelProcessing != null) {
-            answer.setParallelProcessing(isParallelProcessing());
-        }
+        answer.setAggregationStrategy(createAggregationStrategy(routeContext));
+        answer.setParallelProcessing(isParallelProcessing());
         if (stopOnException != null) {
             answer.setStopOnException(isStopOnException());
         }
-        
-        answer.setAggregationStrategy(createAggregationStrategy(routeContext));
+
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
-        if (executorService == null) {
-            // fallback to create a new executor
+        if (isParallelProcessing() && executorService == null) {
+            // we are running in parallel so create a cached thread pool which grows/shrinks automatic
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "RecipientList");
         }
         answer.setExecutorService(executorService);
@@ -201,11 +198,11 @@ public class RecipientListDefinition extends ExpressionNode implements ExecutorS
         this.delimiter = delimiter;
     }
 
-    public Boolean isParallelProcessing() {
-        return parallelProcessing;
+    public boolean isParallelProcessing() {
+        return parallelProcessing != null && parallelProcessing;
     }
 
-    public void setParallelProcessing(Boolean parallelProcessing) {
+    public void setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
     }
 

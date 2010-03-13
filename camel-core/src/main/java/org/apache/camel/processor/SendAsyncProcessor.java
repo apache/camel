@@ -44,13 +44,14 @@ import org.apache.camel.util.ExchangeHelper;
 public class SendAsyncProcessor extends SendProcessor implements Runnable, Navigate<Processor> {
 
     private static final int DEFAULT_THREADPOOL_SIZE = 10;
-    protected final CamelContext camelContext;
-    protected final Processor target;
-    protected final BlockingQueue<Exchange> completedTasks = new LinkedBlockingQueue<Exchange>();
-    protected ExecutorService executorService;
-    protected ExecutorService producerExecutorService;
-    protected int poolSize = DEFAULT_THREADPOOL_SIZE;
-    protected ExceptionHandler exceptionHandler;
+    private final CamelContext camelContext;
+    private final Processor target;
+    private final BlockingQueue<Exchange> completedTasks = new LinkedBlockingQueue<Exchange>();
+    private ExecutorService executorService;
+    private ExecutorService producerExecutorService;
+    private int poolSize = DEFAULT_THREADPOOL_SIZE;
+    private ExceptionHandler exceptionHandler;
+
 
     public SendAsyncProcessor(Endpoint destination, Processor target) {
         super(destination);

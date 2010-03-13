@@ -66,7 +66,12 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
-        WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern());
+
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
+        if (executorService == null) {
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "WireTap");
+        }
+        WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
 
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);
@@ -76,8 +81,6 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
             answer.setNewExchangeExpression(newExchangeExpression.createExpression(routeContext));
         }
 
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
-        answer.setExecutorService(executorService);
 
         return answer;
     }

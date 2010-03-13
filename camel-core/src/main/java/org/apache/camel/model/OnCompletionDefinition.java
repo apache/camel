@@ -97,10 +97,12 @@ public class OnCompletionDefinition extends ProcessorDefinition<ProcessorDefinit
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor,
-                                                                 onCompleteOnly, onFailureOnly, when);
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
-        answer.setExecutorService(executorService);
+        if (executorService == null) {
+            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "OnCompletion");
+        }
+        OnCompletionProcessor answer = new OnCompletionProcessor(routeContext.getCamelContext(), childProcessor, executorService,
+                                                                 onCompleteOnly, onFailureOnly, when);
         return answer;
     }
 

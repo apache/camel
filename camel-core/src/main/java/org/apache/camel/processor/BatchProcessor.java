@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
  * A base class for any kind of {@link Processor} which implements some kind of batch processing.
  * 
  * @version $Revision$
- * @deprecated will be removed in Camel 2.4
+ * @deprecated may be removed in the future
  */
 @Deprecated
 public class BatchProcessor extends ServiceSupport implements Processor, Navigate<Processor> {

@@ -90,6 +90,12 @@ public class MethodInfo {
                 recipientList.setExecutorService(executor);
             }
 
+            if (annotation.parallelProcessoing() && recipientList.getExecutorService() == null) {
+                // we are running in parallel so create a cached thread pool which grows/shrinks automatic
+                ExecutorService executor = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "@RecipientList");
+                recipientList.setExecutorService(executor);
+            }
+
             if (ObjectHelper.isNotEmpty(annotation.strategyRef())) {
                 AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, annotation.strategyRef(), AggregationStrategy.class);
                 recipientList.setAggregationStrategy(strategy);

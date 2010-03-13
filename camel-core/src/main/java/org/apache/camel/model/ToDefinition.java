@@ -90,13 +90,6 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
         // this code below is only for creating when async is enabled
         // ----------------------------------------------------------
 
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
-        if (executorService == null && poolSize != null) {
-            // crete a new based on the other options
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy()
-                                .newThreadPool(this, "ToAsync[" + getLabel() + "]", poolSize, poolSize);
-        }
-
         // create the child processor which is the async route
         Processor childProcessor = routeContext.createProcessor(this);
 
@@ -106,7 +99,11 @@ public class ToDefinition extends SendDefinition<ToDefinition> implements Execut
         // create async processor
         Endpoint endpoint = resolveEndpoint(routeContext);
 
+        // TODO: rework to have configured executor service in SendAsyncProcessor being handled in stop/start scenario
+
         SendAsyncProcessor async = new SendAsyncProcessor(endpoint, getPattern(), uow);
+
+        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
         if (executorService != null) {
             async.setExecutorService(executorService);
         }

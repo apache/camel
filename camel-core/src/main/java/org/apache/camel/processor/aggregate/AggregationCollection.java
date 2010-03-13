@@ -30,6 +30,7 @@ import org.apache.camel.Expression;
  * Other implementations could for instance just add all exchanges as a batch.
  *
  * @version $Revision$
+ * @deprecated will be removed in Camel 2.4
  */
 @Deprecated
 public interface AggregationCollection extends Collection<Exchange> {

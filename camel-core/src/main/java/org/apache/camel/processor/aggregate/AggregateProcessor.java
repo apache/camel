@@ -70,8 +70,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final Processor processor;
     private final AggregationStrategy aggregationStrategy;
     private final Expression correlationExpression;
+    private final ExecutorService executorService;
     private TimeoutMap<Object, Exchange> timeoutMap;
-    private ExecutorService executorService;
     private ExceptionHandler exceptionHandler;
     private AggregationRepository<Object> aggregationRepository = new MemoryAggregationRepository();
     private Map<Object, Object> closedCorrelationKeys;
@@ -92,15 +92,18 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
 
     public AggregateProcessor(CamelContext camelContext, Processor processor,
-                              Expression correlationExpression, AggregationStrategy aggregationStrategy) {
+                              Expression correlationExpression, AggregationStrategy aggregationStrategy,
+                              ExecutorService executorService) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(correlationExpression, "correlationExpression");
         ObjectHelper.notNull(aggregationStrategy, "aggregationStrategy");
+        ObjectHelper.notNull(executorService, "executorService");
         this.camelContext = camelContext;
         this.processor = processor;
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
+        this.executorService = executorService;
     }
 
     @Override
@@ -323,14 +326,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         });
     }
 
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
     public Predicate getCompletionPredicate() {
         return completionPredicate;
     }
@@ -472,16 +467,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         ServiceHelper.startService(aggregationRepository);
 
-        if (executorService == null) {
-            if (isParallelProcessing()) {
-                // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-                executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "Aggregator");
-            } else {
-                // use a single threaded if we are not running in parallel
-                executorService = camelContext.getExecutorServiceStrategy().newSingleThreadExecutor(this, "Aggregator");
-            }
-        }
-
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
@@ -505,10 +490,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     @Override
     protected void doShutdown() throws Exception {
         // only shutdown thread pool when we are shutting down
-        if (executorService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-            executorService = null;
-        }
+        camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
     }
 
 }

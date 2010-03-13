@@ -29,6 +29,7 @@ import org.apache.camel.Predicate;
  * a particular correlation key
  *
  * @version $Revision$
+ * @deprecated will be removed in Camel 2.4
  */
 @Deprecated
 public class PredicateAggregationCollection extends DefaultAggregationCollection {

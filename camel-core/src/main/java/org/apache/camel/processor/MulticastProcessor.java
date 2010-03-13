@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -105,7 +104,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private final boolean isParallelProcessing;
     private final boolean streaming;
     private final boolean stopOnException;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
         this(camelContext, processors, null);
@@ -126,10 +125,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         this.executorService = executorService;
         this.streaming = streaming;
         this.stopOnException = stopOnException;
-
-        if (isParallelProcessing() && getExecutorService() == null) {
-            this.executorService = camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, "Multicast");
-        }
     }
 
     @Override
@@ -149,6 +144,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         // so use try .. catch to cater for this
         try {
             if (isParallelProcessing()) {
+                // ensure an executor is set when running in parallel
+                ObjectHelper.notNull(executorService, "executorService", this);
                 doProcessParallel(result, pairs, isStreaming());
             } else {
                 doProcessSequential(result, pairs);
@@ -356,6 +353,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     }
 
     protected void doStart() throws Exception {
+        if (isParallelProcessing() && executorService == null) {
+            throw new IllegalArgumentException("ParallelProcessing is enabled but ExecutorService has not been set");
+        }
         ServiceHelper.startServices(processors);
     }
 
@@ -368,7 +368,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         // only shutdown thread pool on shutdown
         if (executorService != null) {
             camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-            executorService = null;
         }
     }
 
@@ -413,14 +412,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
     public boolean isParallelProcessing() {
         return isParallelProcessing;
-    }
-
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     public List<Processor> next() {

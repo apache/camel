@@ -89,8 +89,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         aggregationStrategy = createAggregationStrategy(routeContext);
 
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, this);
-        if (executorService == null) {
-            // fallback to create a new executor
+        if (isParallelProcessing() && executorService == null) {
+            // we are running in parallel so create a cached thread pool which grows/shrinks automatic
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "Split");
         }
 

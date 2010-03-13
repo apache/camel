@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * correlation key.
  *
  * @version $Revision$
+ * @deprecated will be removed in Camel 2.4
  */
 @Deprecated
 public class DefaultAggregationCollection extends AbstractCollection<Exchange> implements AggregationCollection {

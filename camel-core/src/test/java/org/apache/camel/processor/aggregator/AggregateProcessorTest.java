@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelExchangeException;
@@ -37,9 +39,17 @@ import org.apache.camel.spi.ExceptionHandler;
  */
 public class AggregateProcessorTest extends ContextTestSupport {
 
+    private ExecutorService executorService;
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        executorService = Executors.newSingleThreadExecutor();
     }
 
     public void testAggregateProcessorCompletionPredicate() throws Exception {
@@ -52,7 +62,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionPredicate(complete);
         ap.setEagerCheckCompletion(false);
         ap.start();
@@ -93,7 +103,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().isEqualTo("END");
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionPredicate(complete);
         ap.setEagerCheckCompletion(true);
         ap.start();
@@ -141,7 +151,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionSize(3);
         ap.setEagerCheckCompletion(eager);
         ap.start();
@@ -189,7 +199,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionTimeout(3000);
         ap.setEagerCheckCompletion(eager);
         ap.start();
@@ -235,7 +245,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionPredicate(complete);
         ap.setIgnoreBadCorrelationKeys(true);
 
@@ -275,7 +285,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionPredicate(complete);
 
         ap.start();
@@ -322,7 +332,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionPredicate(complete);
         ap.setCloseCorrelationKeyOnCompletion(1000);
 
@@ -369,7 +379,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setCompletionSize(100);
         ap.setCompletionFromBatchConsumer(true);
 
@@ -464,7 +474,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as);
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
         ap.setEagerCheckCompletion(true);
         ap.setCompletionPredicate(body().isEqualTo("END"));
         if (handler != null) {

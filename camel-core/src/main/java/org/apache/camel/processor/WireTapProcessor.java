@@ -39,20 +39,24 @@ import org.apache.camel.util.ObjectHelper;
 public class WireTapProcessor extends SendProcessor {
 
     private final CamelContext camelContext;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
 
     // expression or processor used for populating a new exchange to send
     // as opposed to traditional wiretap that sends a copy of the original exchange
     private Expression newExchangeExpression;
     private Processor newExchangeProcessor;
 
-    public WireTapProcessor(Endpoint destination) {
+    public WireTapProcessor(Endpoint destination, ExecutorService executorService) {
         super(destination);
+        ObjectHelper.notNull(executorService, "executorService");
+        this.executorService = executorService;
         this.camelContext = destination.getCamelContext();
     }
 
-    public WireTapProcessor(Endpoint destination, ExchangePattern pattern) {
+    public WireTapProcessor(Endpoint destination, ExchangePattern pattern, ExecutorService executorService) {
         super(destination, pattern);
+        ObjectHelper.notNull(executorService, "executorService");
+        this.executorService = executorService;
         this.camelContext = destination.getCamelContext();
     }
 
@@ -62,8 +66,6 @@ public class WireTapProcessor extends SendProcessor {
         // only shutdown thread pool on shutdown
         if (executorService != null) {
             camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-            // must null it so we can restart
-            executorService = null;
         }
     }
 
@@ -90,13 +92,14 @@ public class WireTapProcessor extends SendProcessor {
     /**
      * Wiretaps the exchange.
      *
+     * @param producer  the producer
      * @param exchange  the exchange to wire tap
      */
     protected void processWireTap(final Producer producer, final Exchange exchange) {
         // use submit instead of execute to force it to use a new thread, execute might
         // decide to use current thread, so we must submit a new task
         // as we don't care for the response we dont hold the future object and wait for the result
-        getExecutorService().submit(new Callable<Exchange>() {
+        executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Processing wiretap: " + exchange);
@@ -150,21 +153,6 @@ public class WireTapProcessor extends SendProcessor {
         }
 
         return answer;
-    }
-
-    public ExecutorService getExecutorService() {
-        if (executorService == null) {
-            executorService = createExecutorService();
-        }
-        return executorService;
-    }
-
-    protected ExecutorService createExecutorService() {
-        return getDestination().getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, this.toString());
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     public Processor getNewExchangeProcessor() {

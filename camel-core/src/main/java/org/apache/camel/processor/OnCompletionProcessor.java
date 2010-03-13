@@ -41,17 +41,20 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
     private static final transient Log LOG = LogFactory.getLog(OnCompletionProcessor.class);
     private final CamelContext camelContext;
     private final Processor processor;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
     private boolean onCompleteOnly;
     private boolean onFailureOnly;
     private Predicate onWhen;
 
-    public OnCompletionProcessor(CamelContext camelContext, Processor processor, boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen) {
+    public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
+                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
+        notNull(executorService, "executorService");
         this.camelContext = camelContext;
         // wrap processor in UnitOfWork so what we send out runs in a UoW
         this.processor = new UnitOfWorkProcessor(processor);
+        this.executorService = executorService;
         this.onCompleteOnly = onCompleteOnly;
         this.onFailureOnly = onFailureOnly;
         this.onWhen = onWhen;
@@ -71,8 +74,6 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         // only shutdown thread pool on shutdown
         if (executorService != null) {
             camelContext.getExecutorServiceStrategy().shutdownNow(executorService);
-            // must null it so we can restart
-            executorService = null;
         }
     }
 
@@ -97,7 +98,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
                 // must use a copy as we dont want it to cause side effects of the original exchange
                 final Exchange copy = prepareExchange(exchange);
 
-                getExecutorService().submit(new Callable<Exchange>() {
+                executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Processing onComplete: " + copy);
@@ -124,7 +125,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
                 // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
                 copy.setException(null);
 
-                getExecutorService().submit(new Callable<Exchange>() {
+                executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Processing onFailure: " + copy);
@@ -177,21 +178,6 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         // add a header flag to indicate its a on completion exchange
         copy.setProperty(Exchange.ON_COMPLETION, Boolean.TRUE);
         return copy;
-    }
-
-    public ExecutorService getExecutorService() {
-        if (executorService == null) {
-            executorService = createExecutorService();
-        }
-        return executorService;
-    }
-
-    protected ExecutorService createExecutorService() {
-        return camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, this.toString());
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     @Override
