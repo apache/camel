@@ -147,7 +147,6 @@ public class BeanExpression implements Expression, Predicate {
         private final Object bean;
         private final String ognl;
         private Object result;
-        private boolean startElvis;
 
         public OgnlInvokeProcessor(Object bean, String ognl) {
             this.bean = bean;
@@ -156,30 +155,23 @@ public class BeanExpression implements Expression, Predicate {
             this.result = bean;
         }
 
-
         public void process(Exchange exchange) throws Exception {
             // copy the original exchange to avoid side effects on it
             Exchange resultExchange = exchange.copy();
             // force to use InOut to retrieve the result on the OUT message
             resultExchange.setPattern(ExchangePattern.InOut);
 
-            // loop and invoke each method
-            Object beanToCall = bean;
-
             // current ognl path as we go along
             String ognlPath = "";
 
+            // loop and invoke each method
+            Object beanToCall = bean;
             List<String> methods = OgnlHelper.splitOgnl(ognl);
             for (String methodName : methods) {
                 BeanHolder holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
 
                 // support the elvis operator
                 boolean elvis = OgnlHelper.isElvis(methodName);
-                if (startElvis) {
-                    elvis = true;
-                    // flip flag to not apply elvis the next time
-                    startElvis = false;
-                }
 
                 // keep up with how far are we doing
                 ognlPath += methodName;
