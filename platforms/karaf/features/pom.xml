@@ -71,8 +71,7 @@
       <jcr-bundle-version>1.0_2</jcr-bundle-version>
       <jdom-bundle-version>1.1_2</jdom-bundle-version>
       <jettison-bundle-version>1.1</jettison-bundle-version>
-      <jetty-bundle-version>6.1.14_2</jetty-bundle-version>
-      <jetty-cometd-bundle-version>6.1.11_3</jetty-cometd-bundle-version>
+      <jetty-bundle-version>6.1.22_1</jetty-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
       <jodatime-bundle-version>1.5.2_2</jodatime-bundle-version>
       <josql-bundle-version>1.5_3</josql-bundle-version>
