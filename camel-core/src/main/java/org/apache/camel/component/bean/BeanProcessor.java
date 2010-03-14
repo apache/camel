@@ -42,6 +42,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     private Method methodObject;
     private String method;
     private BeanHolder beanHolder;
+    private boolean shorthandMethod;
 
     public BeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
@@ -203,6 +204,20 @@ public class BeanProcessor extends ServiceSupport implements Processor {
      */
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public boolean isShorthandMethod() {
+        return shorthandMethod;
+    }
+
+    /**
+     * Sets whether to support getter style method name, so you can
+     * say the method is called 'name' but it will invoke the 'getName' method.
+     * <p/>
+     * Is by default turned off.
+     */
+    public void setShorthandMethod(boolean shorthandMethod) {
+        this.shorthandMethod = shorthandMethod;
     }
 
     // Implementation methods

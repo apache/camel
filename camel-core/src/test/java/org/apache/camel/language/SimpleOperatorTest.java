@@ -32,7 +32,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         return jndi;
     }
 
-    public void tesValueWithSpace() throws Exception {
+    public void testValueWithSpace() throws Exception {
         exchange.getIn().setBody("Hello Big World");
         assertExpression("${in.body} == 'Hello Big World'", true);
     }

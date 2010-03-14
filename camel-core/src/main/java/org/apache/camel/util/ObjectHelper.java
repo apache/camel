@@ -109,6 +109,18 @@ public final class ObjectHelper {
      */
     @SuppressWarnings("unchecked")
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
+
+        // prefer to NOT coerce to String so use the type which is not String
+        // for example if we are comparing String vs Integer then prefer to coerce to Interger
+        // as all types can be converted to String which does not work well for comparison
+        // as eg "10" < 6 would return true, where as 10 < 6 will return false.
+        // if they are both String then it doesn't matter
+        if (rightValue instanceof String && (!(leftValue instanceof String))) {
+            // if right is String and left is not then flip order (remember to * -1 the result then)
+            return typeCoerceCompare(converter, rightValue, leftValue) * -1;
+        }
+
+        // prefer to coerce to the right hand side at first
         if (rightValue instanceof Comparable) {
             Object value = converter.convertTo(rightValue.getClass(), leftValue);
             if (value != null) {
@@ -116,6 +128,7 @@ public final class ObjectHelper {
             }
         }
 
+        // then fallback to the left hand side
         if (leftValue instanceof Comparable) {
             Object value = converter.convertTo(leftValue.getClass(), rightValue);
             if (value != null) {

@@ -244,6 +244,50 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body.getAge}", 6);
     }
 
+    public void testBodyOGNLSimpleShorthand() throws Exception {
+        Animal camel = new Animal("Camel", 6);
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.name}", "Camel");
+        assertExpression("${in.body.age}", 6);
+    }
+
+    public void testBodyOGNLSimpleOperator() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal camel = new Animal("Camel", 6);
+        camel.setFriend(tiger);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.getName} contains 'Camel'", true);
+        assertExpression("${in.body.getName} contains 'Tiger'", false);
+        assertExpression("${in.body.getAge} < 10", true);
+        assertExpression("${in.body.getAge} > 10", false);
+        assertExpression("${in.body.getAge} <= '6'", true);
+        assertExpression("${in.body.getAge} > '6'", false);
+
+        assertExpression("${in.body.getAge} < ${body.getFriend.getAge}'", true);
+        assertExpression("${in.body.getFriend.isDangerous} == true", true);
+    }
+
+    public void testBodyOGNLSimpleOperatorShorthand() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal camel = new Animal("Camel", 6);
+        camel.setFriend(tiger);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.name} contains 'Camel'", true);
+        assertExpression("${in.body.name} contains 'Tiger'", false);
+        assertExpression("${in.body.age} < 10", true);
+        assertExpression("${in.body.age} > 10", false);
+        assertExpression("${in.body.age} <= '6'", true);
+        assertExpression("${in.body.age} > '6'", false);
+
+        assertExpression("${in.body.age} < ${body.friend.age}'", true);
+        assertExpression("${in.body.friend.dangerous} == true", true);
+    }
+
     public void testBodyOGNLNested() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         Animal camel = new Animal("Camel", 6);
@@ -256,6 +300,20 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body.getFriend.getName}", "Tony the Tiger");
         assertExpression("${in.body.getFriend.getAge}", "13");
+    }
+
+    public void testBodyOGNLNestedShorthand() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal camel = new Animal("Camel", 6);
+        camel.setFriend(tiger);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.name}", "Camel");
+        assertExpression("${in.body.age}", 6);
+
+        assertExpression("${in.body.friend.name}", "Tony the Tiger");
+        assertExpression("${in.body.friend.age}", "13");
     }
 
     public void testBodyOGNLOrderList() throws Exception {
@@ -273,6 +331,21 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body.getLines[1].getName}", "ActiveMQ in Action");
     }
 
+    public void testBodyOGNLOrderListShorthand() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+
+        exchange.getIn().setBody(order);
+
+        assertExpression("${in.body.lines[0].id}", 123);
+        assertExpression("${in.body.lines[0].name}", "Camel in Action");
+
+        assertExpression("${in.body.lines[1].id}", 456);
+        assertExpression("${in.body.lines[1].name}", "ActiveMQ in Action");
+    }
+
     public void testBodyOGNLList() throws Exception {
         List<OrderLine> lines = new ArrayList<OrderLine>();
         lines.add(new OrderLine(123, "Camel in Action"));
@@ -287,6 +360,20 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body[1].getName}", "ActiveMQ in Action");
     }
 
+    public void testBodyOGNLListShorthand() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${in.body[0].id}", 123);
+        assertExpression("${in.body[0].name}", "Camel in Action");
+
+        assertExpression("${in.body[1].id}", 456);
+        assertExpression("${in.body[1].name}", "ActiveMQ in Action");
+    }
+
     public void testBodyOGNLArray() throws Exception {
         OrderLine[] lines = new OrderLine[2];
         lines[0] = new OrderLine(123, "Camel in Action");
@@ -299,6 +386,20 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body[1].getId}", 456);
         assertExpression("${in.body[1].getName}", "ActiveMQ in Action");
+    }
+
+    public void testBodyOGNLArrayShorthand() throws Exception {
+        OrderLine[] lines = new OrderLine[2];
+        lines[0] = new OrderLine(123, "Camel in Action");
+        lines[1] = new OrderLine(456, "ActiveMQ in Action");
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${in.body[0].id}", 123);
+        assertExpression("${in.body[0].name}", "Camel in Action");
+
+        assertExpression("${in.body[1].id}", 456);
+        assertExpression("${in.body[1].name}", "ActiveMQ in Action");
     }
 
     public void testBodyOGNLOrderListOutOfBounds() throws Exception {
@@ -319,6 +420,24 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testBodyOGNLOrderListOutOfBoundsShorthand() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+
+        exchange.getIn().setBody(order);
+
+        try {
+            assertExpression("${in.body.lines[3].id}", 123);
+            fail("Should have thrown an exception");
+        } catch (RuntimeBeanExpressionException e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+
+            assertTrue(cause.getMessage().startsWith("Index: 3, Size: 2 out of bounds with List from bean"));
+        }
+    }
+
     public void testBodyOGNLOrderListOutOfBoundsWithElvis() throws Exception {
         List<OrderLine> lines = new ArrayList<OrderLine>();
         lines.add(new OrderLine(123, "Camel in Action"));
@@ -328,6 +447,17 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(order);
 
         assertExpression("${in.body?.getLines[3].getId}", "");
+    }
+
+    public void testBodyOGNLOrderListOutOfBoundsWithElvisShorthand() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+
+        exchange.getIn().setBody(order);
+
+        assertExpression("${in.body?.lines[3].id}", "");
     }
 
     public void testBodyOGNLOrderListNoMethodNameWithElvis() throws Exception {
@@ -344,6 +474,23 @@ public class SimpleTest extends LanguageTestSupport {
         } catch (RuntimeBeanExpressionException e) {
             MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
             assertEquals("getRating", cause.getMethodName());
+        }
+    }
+
+    public void testBodyOGNLOrderListNoMethodNameWithElvisShorthand() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+
+        exchange.getIn().setBody(order);
+
+        try {
+            assertExpression("${in.body.lines[0]?.rating}", "");
+            fail("Should have thrown exception");
+        } catch (RuntimeBeanExpressionException e) {
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            assertEquals("rating", cause.getMethodName());
         }
     }
 
@@ -372,6 +519,32 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testBodyOGNLElvisToAvoidNPEShorthand() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal camel = new Animal("Camel", 6);
+        camel.setFriend(tiger);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.name}", "Camel");
+        assertExpression("${in.body.age}", 6);
+
+        // just to mix it a bit
+        assertExpression("${in.body.friend.getName}", "Tony the Tiger");
+        assertExpression("${in.body.getFriend.age}", "13");
+
+        // using elvis to avoid the NPE
+        assertExpression("${in.body.friend?.friend.name}", "");
+        try {
+            // without elvis we get an NPE
+            assertExpression("${in.body.friend.friend.name}", "");
+            fail("Should have thrown exception");
+        } catch (RuntimeBeanExpressionException e) {
+            assertEquals("Failed to invoke method: .friend.friend.name on null due to: java.lang.NullPointerException", e.getMessage());
+            assertIsInstanceOf(NullPointerException.class, e.getCause());
+        }
+    }
+
     public void testBodyOGNLReentrant() throws Exception {
         Animal camel = new Animal("Camel", 6);
         Animal tiger = new Animal("Tony the Tiger", 13);
@@ -386,6 +559,36 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.getFriend.getFriend.getFriend.getName}", "Camel");
         assertExpression("${body.getFriend.getFriend.getFriend.getFriend.getName}", "Tony the Tiger");
         assertExpression("${body.getFriend.getFriend.getFriend.getFriend.getFriend.getName}", "Big Ella");
+    }
+
+    public void testBodyOGNLReentrantShorthand() throws Exception {
+        Animal camel = new Animal("Camel", 6);
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal elephant = new Animal("Big Ella", 48);
+
+        camel.setFriend(tiger);
+        tiger.setFriend(elephant);
+        elephant.setFriend(camel);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${body.friend.friend.friend.name}", "Camel");
+        assertExpression("${body.friend.friend.friend.friend.name}", "Tony the Tiger");
+        assertExpression("${body.friend.friend.friend.friend.friend.name}", "Big Ella");
+    }
+
+    public void testBodyOGNLBoolean() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        exchange.getIn().setBody(tiger);
+        
+        assertExpression("${body.isDangerous}", "true");
+        assertExpression("${body.dangerous}", "true");
+
+        Animal camel = new Animal("Camel", 6);
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${body.isDangerous}", "false");
+        assertExpression("${body.dangerous}", "false");
     }
 
     protected String getLanguageName() {
@@ -416,6 +619,10 @@ public class SimpleTest extends LanguageTestSupport {
 
         public void setFriend(Animal friend) {
             this.friend = friend;
+        }
+
+        public boolean isDangerous() {
+            return name.contains("Tiger");
         }
 
         @Override

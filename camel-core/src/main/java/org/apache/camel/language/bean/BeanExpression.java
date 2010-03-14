@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanHolder;
@@ -67,6 +68,12 @@ public class BeanExpression implements Expression, Predicate {
         }
         
         // invoking the bean can either be the easy way or using OGNL
+
+        // validate OGNL
+        if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
+            ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
+            throw new RuntimeBeanExpressionException(exchange, beanName, method, cause);
+        }
 
         if (OgnlHelper.isValidOgnlExpression(method)) {
             // okay the method is an ognl expression
@@ -118,6 +125,8 @@ public class BeanExpression implements Expression, Predicate {
             BeanProcessor processor = new BeanProcessor(beanHolder);
             if (methodName != null) {
                 processor.setMethod(methodName);
+                // enable OGNL like invocation
+                processor.setShorthandMethod(true);
             }
             try {
                 // copy the original exchange to avoid side effects on it

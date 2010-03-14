@@ -67,6 +67,23 @@ public final class IntrospectionSupport {
         return params.length == 0 && !type.equals(Void.TYPE);
     }
 
+    public static String getGetterShorthandName(Method method) {
+        if (!isGetter(method)) {
+            return method.getName();
+        }
+
+        String name = method.getName();
+        if (name.startsWith("get")) {
+            name = name.substring(3);
+            name = name.substring(0, 1).toLowerCase() + name.substring(1);
+        } else if (name.startsWith("is")) {
+            name = name.substring(2);
+            name = name.substring(0, 1).toLowerCase() + name.substring(1);
+        }
+
+        return name;
+    }
+
     public static boolean isSetter(Method method) {
         String name = method.getName();
         Class<?> type = method.getReturnType();

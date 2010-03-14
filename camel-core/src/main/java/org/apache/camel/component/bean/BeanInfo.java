@@ -51,6 +51,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ExchangeHelper.convertToType;
+
 /**
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
@@ -134,8 +135,8 @@ public class BeanInfo {
 
         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (name != null) {
-            if (operations.containsKey(name)) {
-                List<MethodInfo> methods = operations.get(name);
+            if (hasOperations(name)) {
+                List<MethodInfo> methods = getOperations(name);
                 if (methods != null && methods.size() == 1) {
                     // only one method then choose it
                     methodInfo = methods.get(0);
@@ -233,9 +234,9 @@ public class BeanInfo {
             LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
         }
 
-        if (operations.containsKey(opName)) {
+        if (hasOperations(opName)) {
             // we have an overloaded method so add the method info to the same key
-            List<MethodInfo> existing = operations.get(opName);
+            List<MethodInfo> existing = getOperations(opName);
             existing.add(methodInfo);
         } else {
             // its a new method we have not seen before so wrap it in a list and add it
@@ -670,6 +671,48 @@ public class BeanInfo {
             return clazz.getSuperclass();
         }
         return clazz;
+    }
+
+    /**
+     * Do we have an operation with the given name.
+     * <p/>
+     * Shorthand method names for getters is supported, so you can pass in eg 'name' and Camel
+     * will can find the real 'getName' method instead.
+     *
+     * @param methodName the method name
+     * @return <tt>true</tt> if we have such a method.
+     */
+    private boolean hasOperations(String methodName) {
+        return getOperations(methodName) != null;
+    }
+
+    /**
+     * Get the operation(s) with the given name. We can have multiple when methods is overloaded.
+     * <p/>
+     * Shorthand method names for getters is supported, so you can pass in eg 'name' and Camel
+     * will can find the real 'getName' method instead.
+     *
+     * @param methodName the method name
+     * @return the found method, or <tt>null</tt> if not found
+     */
+    private List<MethodInfo> getOperations(String methodName) {
+        List<MethodInfo> answer = operations.get(methodName);
+        if (answer != null) {
+            return answer;
+        }
+
+        // now try all getters to see if any of those matched the methodName
+        for (Method method : methodMap.keySet()) {
+            if (IntrospectionSupport.isGetter(method)) {
+                String shorthandMethodName = IntrospectionSupport.getGetterShorthandName(method);
+                // if the two names matches then see if we can find it using that name
+                if (methodName.equals(shorthandMethodName)) {
+                    return operations.get(method.getName());
+                }
+            }
+        }
+
+        return null;
     }
 
 }
