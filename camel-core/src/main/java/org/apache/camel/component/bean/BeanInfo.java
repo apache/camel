@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.Attachments;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -50,7 +51,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ExchangeHelper.convertToType;
-
 /**
  * Represents the metadata about a bean type created via a combination of
  * introspection and annotations together with some useful sensible defaults
@@ -605,8 +605,9 @@ public class BeanInfo {
 
     private Expression createParameterUnmarshalExpressionForAnnotation(Class<?> clazz, Method method, 
             Class<?> parameterType, Annotation annotation) {
-
-        if (annotation instanceof Property) {
+        if (annotation instanceof Attachments) {
+            return ExpressionBuilder.attachmentsExpression();
+        } else if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
             return ExpressionBuilder.propertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof Properties) {

@@ -56,6 +56,24 @@ public final class ExpressionBuilder {
      */
     private ExpressionBuilder() {
     }
+    
+    /**
+     * Returns an expression for the inbound message attachments
+     *
+     * @return an expression object which will return the inbound message attachments
+     */
+    public static Expression attachmentsExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getAttachments();
+            }
+
+            @Override
+            public String toString() {
+                return "attachments";
+            }
+        };
+    }
 
     /**
      * Returns an expression for the header value with the given name
