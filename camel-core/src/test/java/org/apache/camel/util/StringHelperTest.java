@@ -35,4 +35,13 @@ public class StringHelperTest extends TestCase {
         assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }
 
+    public void testCountChar() {
+        assertEquals(0, StringHelper.countChar("Hello World", 'x'));
+        assertEquals(1, StringHelper.countChar("Hello World", 'e'));
+        assertEquals(3, StringHelper.countChar("Hello World", 'l'));
+        assertEquals(1, StringHelper.countChar("Hello World", ' '));
+        assertEquals(0, StringHelper.countChar("", ' '));
+        assertEquals(0, StringHelper.countChar(null, ' '));
+    }
+
 }

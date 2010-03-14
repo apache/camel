@@ -44,5 +44,28 @@ public final class StringHelper {
             .replace('/', '-')
             .replace('\\', '-');
     }
+
+    /**
+     * Counts the number of times the given char is in the string
+     *
+     * @param s  the string
+     * @param ch the char
+     * @return number of times char is located in the string
+     */
+    public static int countChar(String s, char ch) {
+        if (ObjectHelper.isEmpty(s)) {
+            return 0;
+        }
+
+        int matches = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (ch == c) {
+                matches++;
+            }
+        }
+
+        return matches;
+    }
     
 }

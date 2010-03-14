@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -33,16 +32,17 @@ import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
+import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OgnlHelper;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -102,32 +102,37 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression to lookup a key in the header which should be Map based.
+     * Returns the expression for the exchanges inbound message header invoking methods defined
+     * in a simple OGNL notation
      *
-     * @param headerName the name of the header the expression will return
-     * @param keyName    the name of the key to lookup in the header value
-     * @return an expression object which will return the key value looked up in the header
+     * @param ognl  methods to invoke on the header in a simple OGNL syntax
      */
-    public static Expression headerAsMapExpression(final String headerName, final String keyName) {
+    public static Expression headersOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Object header = exchange.getIn().getHeader(headerName);
+                // try with full name first
+                Object header = exchange.getIn().getHeader(ognl);
+                if (header != null) {
+                    return header;
+                }
+
+                // split into first name
+                List<String> methods = OgnlHelper.splitOgnl(ognl);
+                // remove any OGNL operators so we got the pure key name
+                String key = OgnlHelper.removeOperators(methods.get(0));
+
+                header = exchange.getIn().getHeader(key);
                 if (header == null) {
                     return null;
                 }
-
-                try {
-                    Map map = exchange.getContext().getTypeConverter().mandatoryConvertTo(Map.class, header);
-                    Object answer = map.get(keyName);
-                    return answer;
-                } catch (NoTypeConversionAvailableException e) {
-                    throw new IllegalArgumentException("Header " + headerName + " cannot be converted to a Map on " + this, e);
-                }
+                // the remainder is the rest of the ognl without the key
+                String remainder = ObjectHelper.after(ognl, key);
+                return new MethodCallExpression(header, remainder).evaluate(exchange);
             }
 
             @Override
             public String toString() {
-                return "headerAsMap(" + headerName + ")[" + keyName + "]";
+                return "headerOgnl(" + ognl + ")";
             }
         };
     }
@@ -497,6 +502,29 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "body";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     */
+    public static Expression bodyOgnlExpression(final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object body = exchange.getIn().getBody();
+                if (body == null) {
+                    return null;
+                }
+                return new MethodCallExpression(body, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "bodyOgnl(" + ognl + ")";
             }
         };
     }

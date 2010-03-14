@@ -16,13 +16,17 @@
  */
 package org.apache.camel.language;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.component.bean.MethodNotFoundException;
+import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 
 /**
  * @version $Revision$
@@ -161,7 +165,43 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
-    public void testHeaderMap() throws Exception {
+    public void testOGNLHeaderList() throws Exception {
+        List<String> lines = new ArrayList<String>();
+        lines.add("Camel in Action");
+        lines.add("ActiveMQ in Action");
+        exchange.getIn().setHeader("wicket", lines);
+
+        assertExpression("${header.wicket[0]}", "Camel in Action");
+        assertExpression("${header.wicket[1]}", "ActiveMQ in Action");
+        try {
+            assertExpression("${header.wicket[2]}", "");
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertEquals("Index: 2, Size: 2", cause.getMessage());
+        }
+        assertExpression("${header.unknown[cool]}", "");
+    }
+
+    public void testOGNLHeaderLinesList() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        exchange.getIn().setHeader("wicket", lines);
+
+        assertExpression("${header.wicket[0].getId}", 123);
+        assertExpression("${header.wicket[1].getName}", "ActiveMQ in Action");
+        try {
+            assertExpression("${header.wicket[2]}", "");
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertEquals("Index: 2, Size: 2", cause.getMessage());
+        }
+        assertExpression("${header.unknown[cool]}", "");
+    }
+
+    public void testOGNLHeaderMap() throws Exception {
         Map map = new HashMap();
         map.put("cool", "Camel rocks");
         map.put("dude", "Hey dude");
@@ -172,19 +212,22 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${header.wicket[dude]}", "Hey dude");
         assertExpression("${header.wicket[unknown]}", "");
         assertExpression("${header.wicket[code]}", 4321);
+        // no header named unknown
+        assertExpression("${header?.unknown[cool]}", "");
         assertExpression("${header.unknown[cool]}", "");
     }
 
-    public void testHeaderMapNotMap() throws Exception {
+    public void testOGNLHeaderMapNotMap() throws Exception {
         try {
             assertExpression("${header.foo[bar]}", null);
             fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Header foo cannot be converted to a Map on headerAsMap(foo)[bar]", e.getMessage());
+        } catch (RuntimeBeanExpressionException e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertEquals("Key: bar not found in bean: abc of type: java.lang.String using OGNL path [[bar]]", cause.getMessage());
         }
     }
 
-    public void testHeaderMapIllegalSyntax() throws Exception {
+    public void testOGNLHeaderMapIllegalSyntax() throws Exception {
         try {
             assertExpression("${header.foo[bar}", null);
             fail("Should have thrown an exception");
@@ -193,8 +236,225 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testBodyOGNLSimple() throws Exception {
+        Animal camel = new Animal("Camel", 6);
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.getName}", "Camel");
+        assertExpression("${in.body.getAge}", 6);
+    }
+
+    public void testBodyOGNLNested() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal camel = new Animal("Camel", 6);
+        camel.setFriend(tiger);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.getName}", "Camel");
+        assertExpression("${in.body.getAge}", 6);
+
+        assertExpression("${in.body.getFriend.getName}", "Tony the Tiger");
+        assertExpression("${in.body.getFriend.getAge}", "13");
+    }
+
+    public void testBodyOGNLOrderList() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+        
+        exchange.getIn().setBody(order);
+
+        assertExpression("${in.body.getLines[0].getId}", 123);
+        assertExpression("${in.body.getLines[0].getName}", "Camel in Action");
+
+        assertExpression("${in.body.getLines[1].getId}", 456);
+        assertExpression("${in.body.getLines[1].getName}", "ActiveMQ in Action");
+    }
+
+    public void testBodyOGNLList() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${in.body[0].getId}", 123);
+        assertExpression("${in.body[0].getName}", "Camel in Action");
+
+        assertExpression("${in.body[1].getId}", 456);
+        assertExpression("${in.body[1].getName}", "ActiveMQ in Action");
+    }
+
+    public void testBodyOGNLArray() throws Exception {
+        OrderLine[] lines = new OrderLine[2];
+        lines[0] = new OrderLine(123, "Camel in Action");
+        lines[1] = new OrderLine(456, "ActiveMQ in Action");
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${in.body[0].getId}", 123);
+        assertExpression("${in.body[0].getName}", "Camel in Action");
+
+        assertExpression("${in.body[1].getId}", 456);
+        assertExpression("${in.body[1].getName}", "ActiveMQ in Action");
+    }
+
+    public void testBodyOGNLOrderListOutOfBounds() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+
+        exchange.getIn().setBody(order);
+
+        try {
+            assertExpression("${in.body.getLines[3].getId}", 123);
+            fail("Should have thrown an exception");
+        } catch (RuntimeBeanExpressionException e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+
+            assertTrue(cause.getMessage().startsWith("Index: 3, Size: 2 out of bounds with List from bean"));
+        }
+    }
+
+    public void testBodyOGNLOrderListOutOfBoundsWithElvis() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+
+        exchange.getIn().setBody(order);
+
+        assertExpression("${in.body?.getLines[3].getId}", "");
+    }
+
+    public void testBodyOGNLOrderListNoMethodNameWithElvis() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        Order order = new Order(lines);
+
+        exchange.getIn().setBody(order);
+
+        try {
+            assertExpression("${in.body.getLines[0]?.getRating}", "");
+            fail("Should have thrown exception");
+        } catch (RuntimeBeanExpressionException e) {
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            assertEquals("getRating", cause.getMethodName());
+        }
+    }
+
+    public void testBodyOGNLElvisToAvoidNPE() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal camel = new Animal("Camel", 6);
+        camel.setFriend(tiger);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${in.body.getName}", "Camel");
+        assertExpression("${in.body.getAge}", 6);
+
+        assertExpression("${in.body.getFriend.getName}", "Tony the Tiger");
+        assertExpression("${in.body.getFriend.getAge}", "13");
+
+        // using elvis to avoid the NPE
+        assertExpression("${in.body.getFriend?.getFriend.getName}", "");
+        try {
+            // without elvis we get an NPE
+            assertExpression("${in.body.getFriend.getFriend.getName}", "");
+            fail("Should have thrown exception");
+        } catch (RuntimeBeanExpressionException e) {
+            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on null due to: java.lang.NullPointerException", e.getMessage());
+            assertIsInstanceOf(NullPointerException.class, e.getCause());
+        }
+    }
+
+    public void testBodyOGNLReentrant() throws Exception {
+        Animal camel = new Animal("Camel", 6);
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        Animal elephant = new Animal("Big Ella", 48);
+
+        camel.setFriend(tiger);
+        tiger.setFriend(elephant);
+        elephant.setFriend(camel);
+
+        exchange.getIn().setBody(camel);
+
+        assertExpression("${body.getFriend.getFriend.getFriend.getName}", "Camel");
+        assertExpression("${body.getFriend.getFriend.getFriend.getFriend.getName}", "Tony the Tiger");
+        assertExpression("${body.getFriend.getFriend.getFriend.getFriend.getFriend.getName}", "Big Ella");
+    }
 
     protected String getLanguageName() {
         return "simple";
+    }
+
+    public static final class Animal {
+        private String name;
+        private int age;
+        private Animal friend;
+
+        private Animal(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public Animal getFriend() {
+            return friend;
+        }
+
+        public void setFriend(Animal friend) {
+            this.friend = friend;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    public static final class Order {
+        private List lines;
+
+        public Order(List lines) {
+            this.lines = lines;
+        }
+
+        public List getLines() {
+            return lines;
+        }
+
+        public void setLines(List lines) {
+            this.lines = lines;
+        }
+    }
+
+    public static final class OrderLine {
+        private int id;
+        private String name;
+
+        public OrderLine(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }

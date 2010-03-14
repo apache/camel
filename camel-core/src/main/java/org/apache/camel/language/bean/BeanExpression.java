@@ -16,15 +16,21 @@
  */
 package org.apache.camel.language.bean;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.RegistryBean;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OgnlHelper;
 
 /**
  * Evaluates an expression using a bean method invocation
@@ -59,22 +65,28 @@ public class BeanExpression implements Expression, Predicate {
         } else {
             holder = new ConstantBeanHolder(bean, exchange.getContext());
         }
+        
+        // invoking the bean can either be the easy way or using OGNL
 
-        BeanProcessor processor = new BeanProcessor(holder);
-        if (method != null) {
-            processor.setMethod(method);
-        }
-        try {
-            Exchange newExchange = exchange.copy();
-            // The BeanExpression always has a result regardless of the ExchangePattern,
-            // so I add a checker here to make sure we can get the result.
-            if (!newExchange.getPattern().isOutCapable()) {
-                newExchange.setPattern(ExchangePattern.InOut);
+        if (OgnlHelper.isValidOgnlExpression(method)) {
+            // okay the method is an ognl expression
+            Object beanToCall = holder.getBean();
+            OgnlInvokeProcessor ognl = new OgnlInvokeProcessor(beanToCall, method);
+            try {
+                ognl.process(exchange);
+                return ognl.getResult();
+            } catch (Exception e) {
+                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
             }
-            processor.process(newExchange);
-            return newExchange.getOut().getBody();
-        } catch (Exception e) {
-            throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
+        } else {
+            // regular non ognl invocation
+            InvokeProcessor invoke = new InvokeProcessor(holder, method);
+            try {
+                invoke.process(exchange);
+                return invoke.getResult();
+            } catch (Exception e) {
+                throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
+            }
         }
     }
 
@@ -86,6 +98,158 @@ public class BeanExpression implements Expression, Predicate {
     public boolean matches(Exchange exchange) {
         Object value = evaluate(exchange);
         return ObjectHelper.evaluateValuePredicate(value);
+    }
+
+    /**
+     * Invokes a given bean holder. The method name is optional.
+     */
+    private final class InvokeProcessor implements Processor {
+
+        private BeanHolder beanHolder;
+        private String methodName;
+        private Object result;
+
+        private InvokeProcessor(BeanHolder beanHolder, String methodName) {
+            this.beanHolder = beanHolder;
+            this.methodName = methodName;
+        }
+
+        public void process(Exchange exchange) throws Exception {
+            BeanProcessor processor = new BeanProcessor(beanHolder);
+            if (methodName != null) {
+                processor.setMethod(methodName);
+            }
+            try {
+                // copy the original exchange to avoid side effects on it
+                Exchange resultExchange = exchange.copy();
+                // force to use InOut to retrieve the result on the OUT message
+                resultExchange.setPattern(ExchangePattern.InOut);
+                processor.process(resultExchange);
+                result = resultExchange.getOut().getBody();
+            } catch (Exception e) {
+                throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
+            }
+        }
+
+        public Object getResult() {
+            return result;
+        }
+    }
+
+    /**
+     * To invoke a bean using a OGNL notation which denotes the chain of methods to invoke.
+     * <p/>
+     * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic
+     * programming language such as Groovy, JuEL, JavaScript.
+     */
+    private final class OgnlInvokeProcessor implements Processor {
+
+        private final Object bean;
+        private final String ognl;
+        private Object result;
+        private boolean startElvis;
+
+        public OgnlInvokeProcessor(Object bean, String ognl) {
+            this.bean = bean;
+            this.ognl = ognl;
+            // we must start with having bean as the result
+            this.result = bean;
+        }
+
+
+        public void process(Exchange exchange) throws Exception {
+            // copy the original exchange to avoid side effects on it
+            Exchange resultExchange = exchange.copy();
+            // force to use InOut to retrieve the result on the OUT message
+            resultExchange.setPattern(ExchangePattern.InOut);
+
+            // loop and invoke each method
+            Object beanToCall = bean;
+
+            // current ognl path as we go along
+            String ognlPath = "";
+
+            List<String> methods = OgnlHelper.splitOgnl(ognl);
+            for (String methodName : methods) {
+                BeanHolder holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
+
+                // support the elvis operator
+                boolean elvis = OgnlHelper.isElvis(methodName);
+                if (startElvis) {
+                    elvis = true;
+                    // flip flag to not apply elvis the next time
+                    startElvis = false;
+                }
+
+                // keep up with how far are we doing
+                ognlPath += methodName;
+
+                // get rid of leading ?. or . as we only needed that to determine if elvis was enabled or not
+                methodName = OgnlHelper.removeLeadingOperators(methodName);
+
+                // are we doing an index lookup (eg in Map/List/array etc)?
+                String key = null;
+                KeyValueHolder<String, String> index = OgnlHelper.isOgnlIndex(methodName);
+                if (index != null) {
+                    methodName = index.getKey();
+                    key = index.getValue();
+                }
+
+                // only invoke if we have a method name to use to invoke
+                if (methodName != null) {
+                    InvokeProcessor invoke = new InvokeProcessor(holder, methodName);
+                    invoke.process(resultExchange);
+                    result = invoke.getResult();
+                }
+
+                // if there was a key then we need to lookup using the key
+                if (key != null) {
+                    result = lookupResult(resultExchange, key, result, elvis, ognlPath, holder.getBean());
+                }
+
+                // check elvis for null results
+                if (result == null && elvis) {
+                    return;
+                }
+
+                // prepare for next bean to invoke
+                beanToCall = result;
+            }
+        }
+
+        private Object lookupResult(Exchange exchange, String key, Object result, boolean elvis, String ognlPath, Object bean) {
+            // try map first
+            Map map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
+            if (map != null) {
+                return map.get(key);
+            }
+
+            Integer num = exchange.getContext().getTypeConverter().convertTo(Integer.class, key);
+            if (num != null) {
+                List list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
+                if (list != null) {
+                    if (list.size() > num - 1) {
+                        return list.get(num);
+                    } else if (!elvis) {
+                        // not elvis then its mandatory so thrown out of bounds exception
+                        throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
+                                + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");
+                    }
+                }
+            }
+
+            if (!elvis) {
+                throw new IndexOutOfBoundsException("Key: " + key + " not found in bean: " + bean + " of type: "
+                        + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath + "]");
+            } else {
+                // elvis so we can return null
+                return null;
+            }
+        }
+
+        public Object getResult() {
+            return result;
+        }
     }
 
 }

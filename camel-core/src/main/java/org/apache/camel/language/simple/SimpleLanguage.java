@@ -16,13 +16,11 @@
  */
 package org.apache.camel.language.simple;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OgnlHelper;
 
 /**
  * A <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -31,10 +29,12 @@ import org.apache.camel.util.ObjectHelper;
  * <ul>
  * <li>id to access the inbound message id</li>
  * <li>in.body or body to access the inbound body</li>
+ * <li>in.body.OGNL or body.OGNL to access the inbound body using an OGNL expression</li>
  * <li>bodyAs(&lt;classname&gt;) to convert the in body to the given type</li>
  * <li>out.body to access the inbound body</li>
  * <li>in.header.foo or header.foo to access an inbound header called 'foo'</li>
  * <li>in.header.foo[bar] or header.foo[bar] to access an inbound header called 'foo' as a Map and lookup the map with 'bar' as key</li>
+ * <li>in.header.foo.OGNL or header.OGNL to access an inbound header called 'foo' using an OGNL expression</li>
  * <li>out.header.foo to access an outbound header called 'foo'</li>
  * <li>property.foo to access the exchange property called 'foo'</li>
  * <li>sys.foo to access the system property called 'foo'</li>
@@ -52,6 +52,8 @@ import org.apache.camel.util.ObjectHelper;
  *     The locations parameter is optional and you can enter multiple locations separated with comma.
  * </li>
 * </ul>
+ * <p/>
+ * The simple language supports OGNL notation when accessing either body or header.
  * <p/>
  * The simple language now also includes file language out of the box which means the following expression is also
  * supported:
@@ -82,7 +84,6 @@ import org.apache.camel.util.ObjectHelper;
 public class SimpleLanguage extends SimpleLanguageSupport {
 
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
-    private static final Pattern HEADER_MAP = Pattern.compile("^(.*)\\[(.*)\\]$");
 
     public static Expression simple(String expression) {
         return SIMPLE.createExpression(expression);
@@ -109,28 +110,45 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.bodyExpression(type);
         }
 
-        // in header expression
-        remainder = ifStartsWithReturnRemainder("in.header.", expression);
+        // body OGNL
+        remainder = ifStartsWithReturnRemainder("body", expression);
         if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("header.", expression);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("headers.", expression);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("in.headers.", expression);
+            remainder = ifStartsWithReturnRemainder("in.body", expression);
         }
         if (remainder != null) {
-            // could be a map based index
-            Matcher matcher = HEADER_MAP.matcher(remainder);
-            if (matcher.matches()) {
-                String name = matcher.group(1);
-                String key = matcher.group(2);
-                return ExpressionBuilder.headerAsMapExpression(name, key);
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${body.OGNL} was: " + expression);
+            }
+            return ExpressionBuilder.bodyOgnlExpression(remainder);
+        }
+
+        // in header expression
+        remainder = ifStartsWithReturnRemainder("in.headers", expression);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("in.header", expression);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("headers", expression);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("header", expression);
+        }
+        if (remainder != null) {
+            // remove leading dot
+            remainder = remainder.substring(1);
+
+            // validate syntax
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${header.name[key]} was: " + expression);
+            }
+
+            if (OgnlHelper.isValidOgnlExpression(remainder)) {
+                // ognl based header
+                return ExpressionBuilder.headersOgnlExpression(remainder);
             } else {
-                if (remainder.contains("[") || remainder.contains("]")) {
-                    throw new ExpressionIllegalSyntaxException("Valid syntax: ${header.name[key]} was: " + expression);
-                }
+                // regular header
                 return ExpressionBuilder.headerExpression(remainder);
             }
         }
