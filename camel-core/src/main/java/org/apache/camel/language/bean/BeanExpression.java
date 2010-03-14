@@ -219,19 +219,40 @@ public class BeanExpression implements Expression, Predicate {
         }
 
         private Object lookupResult(Exchange exchange, String key, Object result, boolean elvis, String ognlPath, Object bean) {
+            // trim key
+            key = key.trim();
+
             // try map first
             Map map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
             if (map != null) {
                 return map.get(key);
             }
 
+            // special for list is last keyword
             Integer num = exchange.getContext().getTypeConverter().convertTo(Integer.class, key);
-            if (num != null) {
+            boolean checkList = key.startsWith("last") || num != null;
+
+            if (checkList) {
                 List list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
                 if (list != null) {
-                    if (list.size() > num - 1) {
+                    if (key.startsWith("last")) {
+                        num = list.size() - 1;
+
+                        // maybe its an expression to subtract a number after last
+                        String after = ObjectHelper.after(key, "-");
+                        if (after != null) {
+                            Integer redux = exchange.getContext().getTypeConverter().convertTo(Integer.class, after.trim());
+                            if (redux != null) {
+                                num -= redux;
+                            } else {
+                                throw new ExpressionIllegalSyntaxException(key);
+                            }
+                        }
+                    }
+                    if (num != null && num >= 0 && list.size() > num - 1) {
                         return list.get(num);
-                    } else if (!elvis) {
+                    }
+                    if (!elvis) {
                         // not elvis then its mandatory so thrown out of bounds exception
                         throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
                                 + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");

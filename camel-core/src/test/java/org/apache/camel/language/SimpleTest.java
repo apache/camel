@@ -329,6 +329,12 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body.getLines[1].getId}", 456);
         assertExpression("${in.body.getLines[1].getName}", "ActiveMQ in Action");
+
+        assertExpression("${in.body.getLines[last].getId}", 456);
+        assertExpression("${in.body.getLines[last].getName}", "ActiveMQ in Action");
+
+        assertExpression("${in.body.getLines[last-1].getId}", 123);
+        assertExpression("${in.body.getLines[last-1].getName}", "Camel in Action");
     }
 
     public void testBodyOGNLOrderListShorthand() throws Exception {
@@ -344,6 +350,12 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body.lines[1].id}", 456);
         assertExpression("${in.body.lines[1].name}", "ActiveMQ in Action");
+
+        assertExpression("${in.body.lines[last].id}", 456);
+        assertExpression("${in.body.lines[last].name}", "ActiveMQ in Action");
+
+        assertExpression("${in.body.lines[last-1].id}", 123);
+        assertExpression("${in.body.lines[last-1].name}", "Camel in Action");
     }
 
     public void testBodyOGNLList() throws Exception {
@@ -415,8 +427,23 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (RuntimeBeanExpressionException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-
             assertTrue(cause.getMessage().startsWith("Index: 3, Size: 2 out of bounds with List from bean"));
+        }
+
+        try {
+            assertExpression("${in.body.getLines[last-2].getId}", 123);
+            fail("Should have thrown an exception");
+        } catch (RuntimeBeanExpressionException e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertTrue(cause.getMessage().startsWith("Index: -1, Size: 2 out of bounds with List from bean"));
+        }
+
+        try {
+            assertExpression("${in.body.getLines[last - XXX].getId}", 123);
+            fail("Should have thrown an exception");
+        } catch (RuntimeBeanExpressionException e) {
+            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
+            assertEquals("last - XXX", cause.getExpression());
         }
     }
 
@@ -433,8 +460,23 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (RuntimeBeanExpressionException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-
             assertTrue(cause.getMessage().startsWith("Index: 3, Size: 2 out of bounds with List from bean"));
+        }
+
+        try {
+            assertExpression("${in.body.lines[last - 2].id}", 123);
+            fail("Should have thrown an exception");
+        } catch (RuntimeBeanExpressionException e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertTrue(cause.getMessage().startsWith("Index: -1, Size: 2 out of bounds with List from bean"));
+        }
+
+        try {
+            assertExpression("${in.body.lines[last - XXX].id}", 123);
+            fail("Should have thrown an exception");
+        } catch (RuntimeBeanExpressionException e) {
+            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
+            assertEquals("last - XXX", cause.getExpression());
         }
     }
 
