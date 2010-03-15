@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.CamelServlet;
@@ -44,8 +45,10 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.MultiPartFilter;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -57,6 +60,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
  * @version $Revision$
  */
 public class JettyHttpComponent extends HttpComponent {
+    public static final String TMP_DIR = "CamelJettyTempDir";
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
    
@@ -374,6 +378,15 @@ public class JettyHttpComponent extends HttpComponent {
         CamelServlet camelServlet = new CamelServlet();
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
+        CamelContext camelContext = this.getCamelContext();
+        FilterHolder filterHolder = new FilterHolder();
+        filterHolder.setInitParameter("deleteFiles", "true");
+        if (camelContext.getProperties().get(TMP_DIR) != null) {
+            context.setAttribute("javax.servlet.context.tempdir", camelContext.getProperties().get(TMP_DIR));
+        }
+        filterHolder.setFilter(new MultiPartFilter());
+        //add the default MultiPartFilter filter for it
+        context.addFilter(filterHolder, "/*", 0);
         context.addServlet(holder, "/*");
 
         return camelServlet;
