@@ -28,7 +28,7 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
-    private ExecutorService myPool = ExecutorServiceHelper.newCachedThreadPool("myPool", true);
+    private ExecutorService myPool = ExecutorServiceHelper.newCachedThreadPool(null, "myPool", true);
 
     public void testAggregateShutdownDefaultThreadPoolTest() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");

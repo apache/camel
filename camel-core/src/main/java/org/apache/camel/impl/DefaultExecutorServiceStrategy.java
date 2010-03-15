@@ -54,27 +54,27 @@ public class DefaultExecutorServiceStrategy implements ExecutorServiceStrategy {
     }
 
     public ExecutorService newCachedThreadPool(Object source, String name) {
-        return ExecutorServiceHelper.newCachedThreadPool(getThreadName(name), true);
+        return ExecutorServiceHelper.newCachedThreadPool(threadNamePattern, name, true);
     }
 
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
-        return ExecutorServiceHelper.newScheduledThreadPool(poolSize, getThreadName(name), true);
+        return ExecutorServiceHelper.newScheduledThreadPool(poolSize, threadNamePattern, name, true);
     }
 
     public ExecutorService newFixedThreadPool(Object source, String name, int poolSize) {
-        return ExecutorServiceHelper.newFixedThreadPool(poolSize, getThreadName(name), true);
+        return ExecutorServiceHelper.newFixedThreadPool(poolSize, threadNamePattern, name, true);
     }
 
     public ExecutorService newSingleThreadExecutor(Object source, String name) {
-        return ExecutorServiceHelper.newSingleThreadExecutor(getThreadName(name), true);
+        return ExecutorServiceHelper.newSingleThreadExecutor(threadNamePattern, name, true);
     }
 
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize) {
-        return ExecutorServiceHelper.newThreadPool(getThreadName(name), corePoolSize, maxPoolSize);
+        return ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize);
     }
 
     public ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, boolean daemon) {
-        return ExecutorServiceHelper.newThreadPool(getThreadName(name), corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
+        return ExecutorServiceHelper.newThreadPool(threadNamePattern, name, corePoolSize, maxPoolSize, keepAliveTime, timeUnit, daemon);
     }
 
     public void shutdown(ExecutorService executorService) {
